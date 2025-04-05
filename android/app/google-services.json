@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "205107241099",
+    "project_id": "squeak-c005f",
+    "storage_bucket": "squeak-c005f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205107241099:android:312e685d4db90d561d748e",
+        "android_client_info": {
+          "package_name": "com.softicare.squeak"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwEglyUZAt_RlZrPV-9JisoUOwomx09R0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

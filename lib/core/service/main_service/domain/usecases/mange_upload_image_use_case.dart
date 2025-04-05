@@ -1,0 +1,20 @@
+import 'dart:io';
+import 'package:dartz/dartz.dart';
+import 'package:squeak/core/error/failure.dart';
+import 'package:squeak/core/service/main_service/domain/entities/image_entity.dart';
+
+import '../../../../base_usecase/base_usecase.dart';
+import '../../../../utils/enums/upload_place.dart';
+import '../repositories/app_repository.dart';
+
+class ManageUploadImageUseCase extends BaseUseCase<ImageEntity, UploadImageParams> {
+  final AppRepository repository;
+
+  ManageUploadImageUseCase(this.repository);
+
+  @override
+  Future<Either<Failure, ImageEntity>> call(UploadImageParams parameters) async {
+    return await repository.uploadImage(parameters.file, parameters.uploadPlace);
+  }
+}
+
