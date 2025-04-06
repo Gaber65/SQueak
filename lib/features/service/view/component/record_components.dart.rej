@@ -1,0 +1,12 @@
+diff a/lib/features/service/view/component/record_components.dart b/lib/features/service/view/component/record_components.dart	(rejected hunks)
+@@ -216,7 +216,9 @@
+                     child: Text(
+                       reminderModel.time.toString(),
+                       // textAlign: TextAlign.center,
+-                      textDirection:  isArabic() ? ui.TextDirection.rtl : ui.TextDirection.ltr,
++                      textDirection: isArabic()
++                          ? ui.TextDirection.rtl
++                          : ui.TextDirection.ltr,
+                     ),
+                   ),
+                 ],

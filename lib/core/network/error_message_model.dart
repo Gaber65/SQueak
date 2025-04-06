@@ -23,7 +23,9 @@ class ErrorMessageModel extends Equatable {
   }
 
 
-
+  static Map<String, List<dynamic>> convertJsonToMap(Map<String, dynamic> json) {
+    return Map<String, List<dynamic>>.from(json['errors']);
+  }
   @override
   List<Object?> get props => [errors, message, success, statusCode];
 }

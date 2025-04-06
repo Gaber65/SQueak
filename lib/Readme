@@ -1,0 +1,25 @@
+🔄 Enable Background Token Refresh
+To enable periodic background token refreshing, make sure to uncomment the following lines in the respective files:
+
+📍 File: lib/core/service/refresh_token_manger/token_manager.dart
+Uncomment the Workmanager().executeTask block:
+
+Workmanager().executeTask((task, inputData) async {
+  print('Executing refresh token task');
+  TokenManager tokenManager = TokenManager();
+  await CacheHelper.init();
+  await tokenManager.refreshToken();
+  return Future.value(true);
+});
+📍 File: lib/core/service/main_service/presentation/widgets/init_functions.dart
+Uncomment the initialization and task registration:
+
+Workmanager().initialize(ReminderManager.callbackDispatcher, isInDebugMode: kDebugMode);
+
+Workmanager().registerPeriodicTask(
+  '1',
+  'refreshTokenTask',
+  frequency: Duration(hours: 4),
+  initialDelay: Duration(seconds: 10),
+  constraints: Constraints(networkType: NetworkType.connected),
+);

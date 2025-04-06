@@ -3,14 +3,9 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 import '../../../../../firebase_options.dart';
-import '../../../../network/config_model.dart';
-import '../../../../network/dio.dart';
-import '../../../../utils/enums/env_enums.dart';
-import '../../../cache/shared_preferences/cache_helper.dart';
-import '../../../local_notifications/notification_initializer.dart';
-import '../../../observer/observe.dart';
-import '../../../service_locator/service_locator.dart';
+
 
 class InitFunctions {
   static Future<void> initialize() async {
@@ -20,6 +15,7 @@ class InitFunctions {
     await _initServiceLocator();
     await initNotifications();
     await _initFirebase();
+    await LocalDatabaseHelper.initDB(); // ✅ Initialize local database
     await _initCache();
     await _initDio();
     await _configureChucker();

@@ -1,22 +1,10 @@
-import 'dart:io';
-
-import 'package:app_links/app_links.dart';
-import 'package:chucker_flutter/chucker_flutter.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
-import 'package:squeak/core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
-import 'package:squeak/core/utils/theme/dark/dark_theme_manager.dart';
-
-import '../../../../../generated/l10n.dart';
-import '../../../../utils/enums/upload_place.dart';
-import '../../../../utils/theme/light/light_theme_manager.dart';
-import '../../../service_locator/service_locator.dart';
-import '../controller/main_cubit/main_state.dart';
-import '../widgets/deep_link_handler.dart';
-import '../widgets/route_generator.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:chucker_flutter/chucker_flutter.dart';
+import '../../../../../features/vetcare/view/vetCareRegister.dart';
+import '../../../../utils/export_path/export_files.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -28,15 +16,31 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  StreamSubscription? _sub;
+  Widget? appStartPoint;
+
   @override
   void initState() {
     super.initState();
-    _initializeDeepLinkListener();
-    RouteGenerator.navigateToNextScreen();
+    WidgetsBinding.instance.addObserver(this);
+    initDeepLinkHandler(navigatorKey, _sub, (uri) => handleDeepLink(uri, navigatorKey));
+    determineStartPoint(context).then((screen) => setState(() => appStartPoint = screen));
   }
 
-  void _initializeDeepLinkListener() {
-    DeepLinkHandler(appLinks: AppLinks(), navigatorKey: navigatorKey).init();
+  @override
+  void dispose() {
+    _sub?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _sub?.pause();
+    } else if (state == AppLifecycleState.resumed) {
+      _sub?.resume();
+    }
   }
 
   @override
@@ -49,33 +53,30 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             fromSharedLang: CacheHelper.getData('language') ?? 'en',
           )..requestNotificationPermissions();
       },
-
-      child: BlocConsumer<MainCubit, MainState>(
-        listener: (context, state) {},
+      child: BlocBuilder<MainCubit, MainState>(
         builder: (context, state) {
-          var cubit = MainCubit.get(context);
+          final cubit = MainCubit.get(context);
           return MaterialApp(
             title: 'SQueak',
             theme: buildThemeDataLight(context),
             navigatorKey: navigatorKey,
-            // add routes screen
-            //routes: routes,
-            home: Scaffold(
-              floatingActionButton: FloatingActionButton(
-                backgroundColor: Colors.black,
-                onPressed: () {
+            routes: routes,
+            onGenerateRoute: (settings) {
+              final uri = Uri.parse(settings.name!);
+              final invitationCode = uri.pathSegments.length > 1 ? uri.pathSegments[1] : '';
+              CacheHelper.saveData('invitationCode', invitationCode);
 
-                },
-                child: const Icon(Icons.dark_mode, color: Colors.white),
-              ),
-            ),
-            // onGenerateRoute: RouteGenerator.generateRoute,
+              if (invitationCode.isNotEmpty) {
+                return MaterialPageRoute(
+                  builder: (context) => VetCareRegister(invitationCode: invitationCode),
+                );
+              }
+              return MaterialPageRoute(builder: (context) => appStartPoint ?? const SizedBox());
+            },
             themeMode: cubit.isDark ? ThemeMode.dark : ThemeMode.light,
             darkTheme: buildThemeData(),
-            locale:
-                MainCubit.get(context).language == 'en'
-                    ? const Locale('en')
-                    : const Locale('ar'),
+            debugShowCheckedModeBanner: false,
+            locale: cubit.language == 'en' ? const Locale('en') : const Locale('ar'),
             localizationsDelegates: const [
               S.delegate,
               GlobalMaterialLocalizations.delegate,
