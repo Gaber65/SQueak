@@ -4,9 +4,10 @@ import 'package:comment_tree/widgets/tree_theme_data.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shimmer/shimmer.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/thames/styles.dart';
 
-
+import '../../../../core/constant/global_function/global_function.dart';
+import '../../../../core/helper/build_service/main_cubit/main_cubit.dart';
 
 class CommentWidget extends StatelessWidget {
   const CommentWidget({
@@ -31,7 +32,7 @@ class CommentWidget extends StatelessWidget {
                 commentsDummy[index],
                 [],
                 treeThemeData: TreeThemeData(
-                  lineColor: ColorManager.primaryColor,
+                  lineColor: ColorTheme.primaryColor,
                   lineWidth: 1,
                 ),
                 avatarRoot: (context, data) {

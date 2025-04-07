@@ -1,5 +1,6 @@
-import 'package:squeak/core/utils/export_path/export_files.dart';
-class VerSionModel extends ErrorMessageModel {
+import 'package:squeak/core/helper/image_helper/helper_model/response_model.dart';
+
+class VerSionModel extends ResponseModel {
 
   final DataVersion data;
   VerSionModel({
@@ -12,7 +13,7 @@ class VerSionModel extends ErrorMessageModel {
 
   factory VerSionModel.fromJson(Map<String, dynamic> json) => VerSionModel(
         success: json["success"],
-        errors:ErrorMessageModel.convertJsonToMap(json),
+        errors:ResponseModel.convertJsonToMap(json),
         message: json["message"],
         statusCode: json["statusCode"],
         data: DataVersion.fromJson(json["data"]),

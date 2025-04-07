@@ -1,9 +1,15 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/constant/global_function/global_function.dart';
+import 'package:squeak/core/thames/styles.dart';
 import 'package:squeak/features/comments/view/comment.dart';
-
+import '../../../../../core/constant/global_function/custom_text_form_field.dart';
+import '../../../../../core/constant/global_widget/video_detail.dart';
+import '../../../../../core/helper/build_service/main_cubit/main_cubit.dart';
+import '../../../../../core/helper/cache/cache_helper.dart';
+import '../../../../../core/helper/remotely/end-points.dart';
+import '../../../../../core/thames/decorations.dart';
 import '../../../models/post_model.dart';
 
 class BuildPostItem extends StatelessWidget {

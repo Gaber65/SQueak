@@ -1,4 +1,5 @@
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/constant/global_function/global_function.dart';
+
 class VaccinationModel {
   final String id;
   final String petId;

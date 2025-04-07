@@ -5,9 +5,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/helper/build_service/main_cubit/main_cubit.dart';
+import 'package:squeak/core/helper/cache/cache_helper.dart';
+import 'package:squeak/core/helper/image_helper/helper_model/response_model.dart';
+import 'package:squeak/core/helper/remotely/end-points.dart';
 
-
+import '../../../../core/helper/remotely/dio.dart';
 import '../../../vetcare/models/vetIcare_client_model.dart';
 import '../../models/clinic_model.dart';
 
@@ -81,7 +84,7 @@ class SearchCubit extends Cubit<SearchState> {
       );
     } on DioException catch (e) {
       print('DioError caught: ${e.response!.data}');
-      emit(FollowError(ErrorMessageModel.fromJson(e.response!.data)));
+      emit(FollowError(ResponseModel.fromJson(e.response!.data)));
     }
   }
 
@@ -131,7 +134,7 @@ class SearchCubit extends Cubit<SearchState> {
     } on DioException catch (e) {
       print("Show me");
       print(e.response!.data);
-      emit(FollowError(ErrorMessageModel.fromJson(e.response!.data)));
+      emit(FollowError(ResponseModel.fromJson(e.response!.data)));
     }
   }
 

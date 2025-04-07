@@ -18,7 +18,7 @@ final class AddPetError extends PetState {}
 final class PetCreateSuccessState extends PetState {}
 
 final class PetCreateErrorState extends PetState {
-  final ErrorMessageModel error;
+  final ResponseModel error;
 
   PetCreateErrorState(this.error);
 }

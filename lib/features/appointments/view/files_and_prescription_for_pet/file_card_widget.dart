@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/constant/global_function/global_function.dart';
+import 'package:squeak/core/helper/build_service/main_cubit/main_cubit.dart';
 
+import '../../../../core/thames/decorations.dart';
 
 class FileCardWidget extends StatelessWidget {
   const FileCardWidget({

@@ -2,8 +2,13 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:comment_tree/widgets/comment_tree_widget.dart';
 import 'package:comment_tree/widgets/tree_theme_data.dart';
 import 'package:flutter/material.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/constant/global_function/global_Image.dart';
+import 'package:squeak/core/constant/global_function/global_function.dart';
+import 'package:squeak/core/helper/build_service/main_cubit/main_cubit.dart';
 
+import '../../../../core/helper/cache/cache_helper.dart';
+import '../../../../core/helper/remotely/end-points.dart';
+import '../../../../core/thames/styles.dart';
 import '../../../../generated/l10n.dart';
 import '../../controller/comment_cubit.dart';
 import '../../models/get_comment_post.dart';
@@ -39,7 +44,7 @@ class SuccessComment extends StatelessWidget {
               comments[index],
               comments[index].isSelected ? comments[index].replies : [],
               treeThemeData: TreeThemeData(
-                lineColor: ColorManager.primaryColor,
+                lineColor: ColorTheme.primaryColor,
                 lineWidth: 1,
               ),
               avatarRoot: (context, data) {

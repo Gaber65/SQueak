@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/helper/build_service/main_cubit/main_cubit.dart';
+import 'package:squeak/core/thames/styles.dart';
 import 'package:squeak/features/comments/controller/comment_cubit.dart';
 import 'package:squeak/features/comments/view/comment.dart';
+import '../../../../core/helper/cache/cache_helper.dart';
 import '../../../../generated/l10n.dart';
 
 class EditComment extends StatefulWidget {
@@ -46,10 +48,10 @@ class _EditCommentState extends State<EditComment> {
       child: BlocConsumer<CommentCubit, CommentState>(
         listener: (context, state) {
           if (state is UpdateCommentSuccess) {
-            // if (MainCubit.get(context).modelImage != null) {
-            //   MainCubit.get(context).modelImage = null;
-            //   CommentCubit.get(context).commentImage = null;
-            // }
+            if (MainCubit.get(context).modelImage != null) {
+              MainCubit.get(context).modelImage = null;
+              CommentCubit.get(context).commentImage = null;
+            }
 
             commentController.clear();
             navigateAndFinish(
@@ -72,46 +74,46 @@ class _EditCommentState extends State<EditComment> {
                   onPressed: cubit.isLoading
                       ? null
                       : () {
-                          // if (commentController.text.isNotEmpty) {
-                          //   if (cubit.commentImage != null) {
-                          //     cubit.isLoading = true;
-                          //     cubit.emit(CreateCommentLoading());
-                          //
-                          //     MainCubit.get(context)
-                          //         .getGlobalImage(
-                          //       file: cubit.commentImage!,
-                          //       uploadPlace: UploadPlace.commentImages.value,
-                          //     )
-                          //         .then((value) {
-                          //       cubit.updateComment(
-                          //         postId: widget.postId,
-                          //         commentId: widget.id,
-                          //         content: commentController.text,
-                          //         petId: CacheHelper.getData('isPet') == true
-                          //             ? CacheHelper.getData('activeId')
-                          //             : null,
-                          //         image:
-                          //             MainCubit.get(context).modelImage!.data!,
-                          //         parentId: isReplayCommentOpen
-                          //             ? CacheHelper.getData('replayCommentID')
-                          //             : null,
-                          //       );
-                          //     });
-                          //   } else {
-                          //     cubit.updateComment(
-                          //       postId: widget.postId,
-                          //       commentId: widget.id,
-                          //       content: commentController.text,
-                          //       petId: CacheHelper.getData('isPet') == true
-                          //           ? CacheHelper.getData('activeId')
-                          //           : null,
-                          //       image: widget.commentImage,
-                          //       parentId: isReplayCommentOpen
-                          //           ? CacheHelper.getData('replayCommentID')
-                          //           : null,
-                          //     );
-                          //   }
-                          // }
+                          if (commentController.text.isNotEmpty) {
+                            if (cubit.commentImage != null) {
+                              cubit.isLoading = true;
+                              cubit.emit(CreateCommentLoading());
+
+                              MainCubit.get(context)
+                                  .getGlobalImage(
+                                file: cubit.commentImage!,
+                                uploadPlace: UploadPlace.commentImages.value,
+                              )
+                                  .then((value) {
+                                cubit.updateComment(
+                                  postId: widget.postId,
+                                  commentId: widget.id,
+                                  content: commentController.text,
+                                  petId: CacheHelper.getData('isPet') == true
+                                      ? CacheHelper.getData('activeId')
+                                      : null,
+                                  image:
+                                      MainCubit.get(context).modelImage!.data!,
+                                  parentId: isReplayCommentOpen
+                                      ? CacheHelper.getData('replayCommentID')
+                                      : null,
+                                );
+                              });
+                            } else {
+                              cubit.updateComment(
+                                postId: widget.postId,
+                                commentId: widget.id,
+                                content: commentController.text,
+                                petId: CacheHelper.getData('isPet') == true
+                                    ? CacheHelper.getData('activeId')
+                                    : null,
+                                image: widget.commentImage,
+                                parentId: isReplayCommentOpen
+                                    ? CacheHelper.getData('replayCommentID')
+                                    : null,
+                              );
+                            }
+                          }
                         },
                   icon: cubit.isLoading
                       ? const CircularProgressIndicator()

@@ -2,12 +2,14 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
+import 'package:squeak/core/constant/global_function/global_function.dart';
+import 'package:squeak/core/helper/cache/cache_helper.dart';
 import 'package:squeak/features/authentication/controller/auth_cubit.dart';
 import 'package:squeak/features/authentication/view/register_screen.dart';
 
-
+import '../../../core/constant/global_function/custom_text_form_field.dart';
+import '../../../core/constant/global_widget/toast.dart';
+import '../../../core/thames/styles.dart';
 import '../../../generated/l10n.dart';
 import 'contact_us.dart';
 import 'login_screen.dart';
@@ -233,7 +235,7 @@ class VerifyUser extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              backgroundColor: ColorManager.primaryColor,
+                              backgroundColor: ColorTheme.primaryColor,
                             ),
                             onPressed: cubit.isVerifyUser
                                 ? null

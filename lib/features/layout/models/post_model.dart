@@ -1,5 +1,6 @@
-import 'package:squeak/core/utils/export_path/export_files.dart';
-class PostModel extends ErrorMessageModel {
+import 'package:squeak/core/helper/image_helper/helper_model/response_model.dart';
+
+class PostModel extends ResponseModel {
   final List<Posts> posts;
 
   PostModel({
@@ -14,7 +15,7 @@ class PostModel extends ErrorMessageModel {
     return PostModel(
       posts: List<Posts>.from(
           json['data']['result'].map((x) => Posts.fromJson(x))),
-      errors: ErrorMessageModel.fromJson(json).errors,
+      errors: ResponseModel.fromJson(json).errors,
       message: json['message'],
       statusCode: json['statusCode'],
       success: json['success'],

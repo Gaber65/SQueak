@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:squeak/core/constant/global_widget/toast.dart';
+import 'package:squeak/core/helper/cache/cache_helper.dart';
 import 'package:squeak/features/authentication/controller/auth_cubit.dart';
 import 'package:squeak/features/authentication/view/forgot_password.dart';
 import 'package:squeak/features/authentication/view/register_screen.dart';
@@ -10,8 +11,8 @@ import 'package:squeak/features/layout/controller/layout_cubit.dart';
 import 'package:squeak/features/layout/layout.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
+import '../../../core/constant/global_function/custom_text_form_field.dart';
+import '../../../core/thames/styles.dart';
 import '../../../generated/l10n.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -132,7 +133,7 @@ class LoginView extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  backgroundColor: ColorManager.primaryColor,
+                  backgroundColor: ColorTheme.primaryColor,
                 ),
                 onPressed: cubit.isLoggedIn
                     ? null
@@ -170,7 +171,7 @@ class LoginView extends StatelessWidget {
                     style: FontStyleThame.textStyle(
                       context: context,
                       fontSize: 14,
-                      fontColor: ColorManager.secondColor,
+                      fontColor: ColorTheme.secondColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

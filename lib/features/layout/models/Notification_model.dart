@@ -1,6 +1,7 @@
 
 
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import '../../../core/helper/build_service/firebase_messaging_handler.dart';
+
 class NotificationModel {
   final String message;
   final String eventType;

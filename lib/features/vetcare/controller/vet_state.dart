@@ -10,7 +10,7 @@ class LoadingRegisterState extends VetState {}
 class SuccessRegisterState extends VetState {}
 
 class ErrorRegisterState extends VetState {
-  final ErrorMessageModel error;
+  final ResponseModel error;
 
   ErrorRegisterState(this.error);
 }
@@ -44,7 +44,7 @@ class SuccessAcceptIvationState extends VetState {
 class LoadingAcceptIvationState extends VetState {}
 
 class ErrorAcceptIvationState extends VetState {
-  final ErrorMessageModel error;
+  final ResponseModel error;
 
   ErrorAcceptIvationState(this.error);
 }
@@ -59,7 +59,7 @@ class SuccessLoginState extends VetState {
 }
 
 class ErrorLoginState extends VetState {
-  final ErrorMessageModel error;
+  final ResponseModel error;
 
   ErrorLoginState(this.error);
 }
@@ -73,7 +73,7 @@ class SuccessAddInSqueakStatuesState extends VetState {
 }
 
 class ErrorAddInSqueakStatuesState extends VetState {
-  final ErrorMessageModel error;
+  final ResponseModel error;
 
   ErrorAddInSqueakStatuesState(this.error);
 }

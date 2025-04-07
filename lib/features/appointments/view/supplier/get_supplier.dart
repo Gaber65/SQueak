@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/constant/global_function/global_function.dart';
+import 'package:squeak/core/helper/build_service/main_cubit/main_cubit.dart';
+import 'package:squeak/core/helper/remotely/end-points.dart';
+import 'package:squeak/core/thames/styles.dart';
 import 'package:squeak/features/appointments/controller/clinic/appointment_cubit.dart';
 import 'package:squeak/features/appointments/view/availability/availability_screen.dart';
 import 'package:squeak/features/layout/controller/SearchCubit/search_cubit.dart';
 
-
+import '../../../../core/constant/global_widget/toast.dart';
+import '../../../../core/thames/decorations.dart';
 import '../../../../generated/l10n.dart';
 import '../../../layout/view/search/search_screen.dart';
 import '../../../vetcare/view/pet_merge_screen.dart';
@@ -223,7 +225,7 @@ class MySupplierScreen extends StatelessWidget {
                                                   Icon(
                                                     IconlyBold.location,
                                                     color:
-                                                        ColorManager.secondColor,
+                                                        ColorTheme.secondColor,
                                                     size: 18,
                                                   ),
                                                   SizedBox(width: 10),

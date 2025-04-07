@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lottie/lottie.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/constant/global_widget/responsive_screen.dart';
+import 'package:squeak/core/thames/decorations.dart';
+import 'package:squeak/core/thames/styles.dart';
 import 'package:squeak/features/layout/layout.dart';
 import 'package:squeak/features/layout/controller/SearchCubit/search_cubit.dart';
 import 'package:squeak/features/layout/models/clinic_model.dart';
 import 'package:squeak/features/vetcare/view/pet_merge_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
+import '../../../../core/constant/global_function/custom_text_form_field.dart';
+import '../../../../core/constant/global_function/global_function.dart';
+import '../../../../core/constant/global_widget/toast.dart';
+import '../../../../core/helper/remotely/end-points.dart';
+import '../../../../generated/l10n.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});

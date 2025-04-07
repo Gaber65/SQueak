@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
+import 'package:squeak/core/helper/remotely/dio.dart';
+import 'package:squeak/core/helper/remotely/end-points.dart';
 
 import '../../models/files_and_prescription_for_pet_model.dart';
 

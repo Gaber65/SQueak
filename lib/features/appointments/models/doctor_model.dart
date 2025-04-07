@@ -1,4 +1,4 @@
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/helper/remotely/end-points.dart';
 
 class DoctorModel {
   const DoctorModel({

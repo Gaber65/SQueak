@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
+import '../../../../core/constant/global_function/global_function.dart';
+import '../../../../core/thames/styles.dart';
 import '../../../pets/models/pet_model.dart';
 import '../../models/reminder.dart';
 
@@ -99,7 +99,7 @@ class _ReminderWizardState extends State<ReminderWizard> {
         ElevatedButton(
           onPressed: _handleFinish,
           style: ElevatedButton.styleFrom(
-            backgroundColor: ColorManager.primaryColor,
+            backgroundColor: ColorTheme.primaryColor,
             foregroundColor: Colors.white,
           ),
           child: Text(

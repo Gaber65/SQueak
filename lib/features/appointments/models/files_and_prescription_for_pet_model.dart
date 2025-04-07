@@ -212,7 +212,7 @@ class Errors {
 //
 //
 //
-// class GetPrescriptionAndFilesModel extends ErrorMessageModel {
+// class GetPrescriptionAndFilesModel extends ResponseModel {
 //   final PrescriptionAndFilesModel? data;
 //
 //   GetPrescriptionAndFilesModel({

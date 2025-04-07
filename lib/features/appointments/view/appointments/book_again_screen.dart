@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/constant/global_widget/toast.dart';
+import 'package:squeak/core/thames/styles.dart';
 import 'package:squeak/features/appointments/controller/clinic/appointment_cubit.dart';
 import 'package:squeak/features/appointments/controller/clinic/appointment_state.dart';
 import 'package:squeak/features/appointments/models/doctor_model.dart';
@@ -10,7 +11,10 @@ import 'package:squeak/features/appointments/models/get_client_clinic_model.dart
 import 'package:squeak/features/appointments/view/component/CustomCalendarDatePicker.dart';
 import 'package:intl/intl.dart';
 
-
+import '../../../../core/constant/global_function/global_function.dart';
+import '../../../../core/helper/build_service/main_cubit/main_cubit.dart';
+import '../../../../core/thames/color_manager.dart';
+import '../../../../core/thames/decorations.dart';
 import '../../../../generated/l10n.dart';
 import '../../../layout/controller/layout_cubit.dart';
 import '../../../layout/layout.dart';
@@ -55,9 +59,9 @@ class BooKAgainScreen extends StatelessWidget {
           if (state is CreateAppointmentsError) {
             errorToast(
               context,
-              state.errorMessageModel.errors.isNotEmpty
-                  ? state.errorMessageModel.errors.values.first.first
-                  : state.errorMessageModel.message,
+              state.responseModel.errors.isNotEmpty
+                  ? state.responseModel.errors.values.first.first
+                  : state.responseModel.message,
             );
           }
         },
@@ -75,7 +79,7 @@ class BooKAgainScreen extends StatelessWidget {
                     child: TextButton(
                       style: TextButton.styleFrom(
                         backgroundColor:
-                            ColorManager.primaryColor.withOpacity(.2),
+                            ColorTheme.primaryColor.withOpacity(.2),
                       ),
                       onPressed: cubit.isLoading
                           ? null
@@ -129,7 +133,7 @@ class BooKAgainScreen extends StatelessWidget {
                                 context: context,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
-                                fontColor: ColorManager.primaryColor,
+                                fontColor: ColorTheme.primaryColor,
                               ),
                             ),
                     ),

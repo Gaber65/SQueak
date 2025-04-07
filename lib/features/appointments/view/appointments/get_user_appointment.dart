@@ -4,8 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lottie/lottie.dart';
-
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/constant/global_widget/toast.dart';
+import 'package:squeak/core/thames/decorations.dart';
+import 'package:squeak/core/thames/styles.dart';
 import 'package:squeak/features/appointments/models/get_appointment_model.dart';
 import 'package:squeak/features/appointments/view/appointments/all_apointment.dart';
 import 'package:squeak/features/appointments/view/appointments/book_again_screen.dart';
@@ -15,7 +16,11 @@ import 'package:squeak/features/appointments/view/files_and_prescription_for_pet
 import 'package:squeak/features/layout/controller/layout_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
+import '../../../../core/constant/global_function/global_function.dart';
+import '../../../../core/constant/global_widget/offline_widget.dart';
+import '../../../../core/helper/build_service/main_cubit/main_cubit.dart';
+import '../../../../core/helper/remotely/config_model.dart';
+import '../../../../core/thames/color_manager.dart';
 import '../../../../generated/l10n.dart';
 import '../../../pets/models/pet_model.dart';
 import '../../controller/user/user_appointment_cubit.dart';
@@ -127,7 +132,7 @@ class GetUserAppointment extends StatelessWidget {
               ],
             ),
             floatingActionButton: FloatingActionButton(
-              backgroundColor: ColorManager.primaryColor,
+              backgroundColor: ColorTheme.primaryColor,
               onPressed: () {
                 LayoutCubit.get(context).changeBottomNav(1);
               },
@@ -1110,7 +1115,7 @@ class GetUserAppointment extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: FontStyleThame.textStyle(
                     context: context,
-                    fontColor: ColorManager.secondColor,
+                    fontColor: ColorTheme.secondColor,
                   ),
                 ),
               ),

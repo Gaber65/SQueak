@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:share_plus/share_plus.dart';
-
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/helper/build_service/main_cubit/main_cubit.dart';
+import 'package:squeak/core/thames/decorations.dart';
+import 'package:squeak/core/thames/styles.dart';
 import 'package:squeak/features/authentication/view/contact_us.dart';
 import 'package:squeak/features/authentication/view/login_screen.dart';
 import 'package:squeak/features/layout/controller/layout_cubit.dart';
@@ -14,7 +15,10 @@ import 'package:squeak/features/settings/view/update_profile_screen.dart';
 import 'package:squeak/features/settings/view//about_page.dart';
 import 'package:widget_circular_animator/widget_circular_animator.dart';
 
-
+import '../../../core/constant/global_function/global_function.dart';
+import '../../../core/helper/cache/cache_helper.dart';
+import '../../../core/helper/remotely/end-points.dart';
+import '../../../core/thames/color_manager.dart';
 import '../../../generated/l10n.dart';
 
 class SettingScreen extends StatelessWidget {
@@ -137,7 +141,7 @@ class SettingScreen extends StatelessWidget {
                           },
                           icon: Icon(
                             Icons.edit,
-                            color: ColorManager.primaryColor,
+                            color: ColorTheme.primaryColor,
                           ),
                         ),
                       ],
@@ -379,7 +383,7 @@ class SettingScreen extends StatelessWidget {
                               activeTrackColor:
                                   ColorManager.profileBaseBlueColors,
                               activeColor: ColorManager.sWhite,
-                              value: false,
+                              value: cubit.isAllowNotification,
                               onChanged: (value) async {
                                 if (value) {
                                   await cubit.requestNotificationPermissions();

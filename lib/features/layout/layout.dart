@@ -9,11 +9,15 @@ import 'package:iconly/iconly.dart';
 import 'package:lottie/lottie.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
+import 'package:squeak/core/constant/global_function/global_function.dart';
+import 'package:squeak/core/helper/cache/cache_helper.dart';
+import 'package:squeak/core/thames/styles.dart';
 import 'package:squeak/features/layout/models/version_model.dart';
 import 'package:squeak/features/pets/view/pet_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../core/helper/build_service/main_cubit/main_cubit.dart';
+import '../../core/thames/color_manager.dart';
 import '../../generated/l10n.dart';
 import '../authentication/view/login_screen.dart';
 import 'controller/layout_cubit.dart';
@@ -27,19 +31,17 @@ Future<bool> showExitConfirmationDialog(BuildContext context) async {
   QuickAlert.show(
     context: context,
     type: QuickAlertType.confirm,
-    backgroundColor:
-        MainCubit.get(context).isDark
-            ? ColorManager.myPetsBaseBlackColor
-            : Colors.white,
+    backgroundColor: MainCubit.get(context).isDark
+        ? ColorManager.myPetsBaseBlackColor
+        : Colors.white,
     textColor: MainCubit.get(context).isDark ? Colors.white : Colors.black,
     titleColor: MainCubit.get(context).isDark ? Colors.white : Colors.black,
     title: isArabic() ? 'إغلاق التطبيق' : 'Close App',
     cancelBtnText: isArabic() ? 'لا' : 'No',
     confirmBtnText: isArabic() ? 'نعم' : 'Yes',
-    text:
-        isArabic()
-            ? 'هل أنت متأكد من إغلاق التطبيق؟'
-            : 'Are you sure you want to close the app?',
+    text: isArabic()
+        ? 'هل أنت متأكد من إغلاق التطبيق؟'
+        : 'Are you sure you want to close the app?',
     showCancelBtn: true,
     onCancelBtnTap: () {
       Navigator.of(context).pop(); // Close the alert.
@@ -74,121 +76,116 @@ class _LayoutScreenState extends State<LayoutScreen> {
   void initState() {
     super.initState();
     MainCubit.get(context).saveToken();
-    MainCubit.get(
-      context,
-    ).setLangInAPI(CacheHelper.getData('language') == 'ar' ? 1 : 0);
+    MainCubit.get(context)
+        .setLangInAPI(CacheHelper.getData('language') == 'ar' ? 1 : 0);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create:
-          (context) =>
-              LayoutCubit()
-                ..getOwnerPet()
-                ..getOwnerData()
-                ..getVersion()
-                ..getAppVersion(),
-      child: BlocConsumer<LayoutCubit, LayoutState>(
-        listener: (context, state) async {
-          if (CacheHelper.getBool('isExpiredToken')) {
-            await buildShowDialogExpierToken(context).whenComplete(() {
-              CacheHelper.clearData();
-              navigateAndFinish(context, const LoginScreen());
-            });
-          }
-          if (LayoutCubit.get(context).getVersionFromBackLoading == false) {
-            print("@@@@@@@@@@@@@@");
-            print(LayoutCubit.get(context).version!.data.version);
-            print(LayoutCubit.get(context).currentVersion);
-            if (!_isDialogShown) {
-              if (LayoutCubit.get(context).version != null) {
-                if (LayoutCubit.get(context).version!.data.version !=
-                    LayoutCubit.get(context).currentVersion) {
-                  _isDialogShown = true;
-                  await buildShowDialogUpdate(
-                    context,
-                    LayoutCubit.get(context).version!,
-                  ).whenComplete(() {
-                    _isDialogShown = false;
-                  });
-                }
+    return BlocConsumer<LayoutCubit, LayoutState>(
+      listener: (context, state) async {
+        if (CacheHelper.getBool('isExpiredToken')) {
+          await buildShowDialogExpierToken(context).whenComplete(() {
+            CacheHelper.clearData();
+            navigateAndFinish(context, const LoginScreen());
+          });
+        }
+        if (LayoutCubit.get(context).getVersionFromBackLoading == false) {
+          print("@@@@@@@@@@@@@@");
+          print(LayoutCubit.get(context).version!.data.version);
+          print(LayoutCubit.get(context).currentVersion);
+          if (!_isDialogShown) {
+            if (LayoutCubit.get(context).version != null) {
+              if (LayoutCubit.get(context).version!.data.version !=
+                  LayoutCubit.get(context).currentVersion) {
+                _isDialogShown = true;
+                await buildShowDialogUpdate(
+                        context, LayoutCubit.get(context).version!)
+                    .whenComplete(() {
+                  _isDialogShown = false;
+                });
               }
             }
           }
-        },
-        builder: (context, state) {
-          var cubit = LayoutCubit.get(context);
+        }
+      },
+      builder: (context, state) {
+        var cubit = LayoutCubit.get(context);
 
-          return Scaffold(
-            extendBody: false,
-            resizeToAvoidBottomInset: false,
-            body: PopScope(
-              canPop: false,
-              onPopInvokedWithResult:
-                  (didPop, result) => showExitConfirmationDialog(context),
-              child: cubit.screens[cubit.selectedIndex],
-            ),
-            floatingActionButton: SizedBox(
-              width: 70, // Set the width as desired
-              height: 70, // Set the height as desired
-              child: BlocConsumer<MainCubit, MainState>(
-                listener: (context, state) {
-                  // TODO: implement listener
-                },
-                builder: (context, state) {
-                  return FloatingActionButton(
-                    backgroundColor:
-                        MainCubit.get(context).isDark
-                            ? ThemeData.dark().scaffoldBackgroundColor
-                            : Colors.white,
-                    foregroundColor: ColorManager.primaryColor,
-                    onPressed: () {
-                      navigateToScreen(context, PetScreen());
-                    },
-                    child: Icon(Icons.pets, size: 30),
-                  );
-                },
-              ),
-            ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
-            bottomNavigationBar: BlocConsumer<MainCubit, MainState>(
+        return Scaffold(
+          extendBody: false,
+          resizeToAvoidBottomInset: false,
+          body: PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) =>
+                showExitConfirmationDialog(context),
+            child: cubit.screens[cubit.selectedIndex],
+          ),
+          floatingActionButton: SizedBox(
+            width: 70, // Set the width as desired
+            height: 70, // Set the height as desired
+            child: BlocConsumer<MainCubit, MainState>(
               listener: (context, state) {
                 // TODO: implement listener
               },
               builder: (context, state) {
-                return AnimatedBottomNavigationBar(
-                  activeColor: ColorManager.primaryColor,
-                  backgroundColor:
-                      MainCubit.get(context).isDark
-                          ? ThemeData.dark().scaffoldBackgroundColor
-                          : Colors.white,
-                  inactiveColor: Colors.grey,
-                  splashSpeedInMilliseconds: 300,
-                  gapWidth: 100,
-                  activeIndex: cubit.selectedIndex,
-                  onTap: (index) {
-                    cubit.changeBottomNav(index);
+                return FloatingActionButton(
+                  backgroundColor: MainCubit.get(context).isDark
+                      ? ThemeData.dark().scaffoldBackgroundColor
+                      : Colors.white,
+                  foregroundColor: ColorTheme.primaryColor,
+                  onPressed: () {
+                    navigateToScreen(
+                      context,
+                      PetScreen(),
+                    );
                   },
-                  gapLocation: GapLocation.center,
-                  notchSmoothness: NotchSmoothness.softEdge,
-                  icons: [
-                    IconlyLight.home,
-                    IconlyLight.add_user,
-                    IconlyLight.time_circle,
-                    IconlyLight.setting,
-                  ],
+                  child: Icon(
+                    Icons.pets,
+                    size: 30,
+                  ),
                 );
               },
             ),
-          );
-        },
-      ),
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          bottomNavigationBar: BlocConsumer<MainCubit, MainState>(
+            listener: (context, state) {
+              // TODO: implement listener
+            },
+            builder: (context, state) {
+              return AnimatedBottomNavigationBar(
+                activeColor: ColorTheme.primaryColor,
+                backgroundColor: MainCubit.get(context).isDark
+                    ? ThemeData.dark().scaffoldBackgroundColor
+                    : Colors.white,
+                inactiveColor: Colors.grey,
+                splashSpeedInMilliseconds: 300,
+                gapWidth: 100,
+                activeIndex: cubit.selectedIndex,
+                onTap: (index) {
+                  cubit.changeBottomNav(index);
+                },
+                gapLocation: GapLocation.center,
+                notchSmoothness: NotchSmoothness.softEdge,
+                icons: [
+                  IconlyLight.home,
+                  IconlyLight.add_user,
+                  IconlyLight.time_circle,
+                  IconlyLight.setting,
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
-  Future<dynamic> buildShowDialogExpierToken(BuildContext context) {
+  Future<dynamic> buildShowDialogExpierToken(
+    BuildContext context,
+  ) {
     return showDialog(
       context: context,
       builder: (context) {
@@ -240,7 +237,9 @@ class _LayoutScreenState extends State<LayoutScreen> {
                       color: Colors.red.shade400,
                       size: 50,
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(
+                      width: 10,
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -254,7 +253,9 @@ class _LayoutScreenState extends State<LayoutScreen> {
                             fontSize: 18,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(
+                          height: 10,
+                        ),
                         Text(
                           isArabic()
                               ? 'سيتم تحويلك لصفحة تسجيل الدخول'
@@ -267,10 +268,12 @@ class _LayoutScreenState extends State<LayoutScreen> {
                           ),
                         ),
                       ],
-                    ),
+                    )
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(
+                  height: 20,
+                ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: SizedBox(
@@ -285,7 +288,9 @@ class _LayoutScreenState extends State<LayoutScreen> {
                         CacheHelper.clearData();
                         navigateAndFinish(context, const LoginScreen());
                       },
-                      child: Text(isArabic() ? "موافق" : "OK"),
+                      child: Text(
+                        isArabic() ? "موافق" : "OK",
+                      ),
                     ),
                   ),
                 ),
@@ -298,9 +303,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
   }
 
   Future<dynamic> buildShowDialogUpdate(
-    BuildContext context,
-    VerSionModel model,
-  ) {
+      BuildContext context, VerSionModel model) {
     return showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -321,7 +324,9 @@ class _LayoutScreenState extends State<LayoutScreen> {
                 width: 400,
                 repeat: true,
               ),
-              SizedBox(height: 10),
+              SizedBox(
+                height: 10,
+              ),
               Text(
                 S.of(context).updateVersionModuleContent,
                 maxLines: 2,
@@ -331,7 +336,9 @@ class _LayoutScreenState extends State<LayoutScreen> {
                   fontSize: 22,
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(
+                height: 10,
+              ),
               Text(
                 S.of(context).updateVersionModuleContent2,
                 maxLines: 2,
@@ -341,20 +348,23 @@ class _LayoutScreenState extends State<LayoutScreen> {
                   fontSize: 16,
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(
+                height: 10,
+              ),
               if (model.data.forceUpdate)
                 SizedBox(
                   height: 44,
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorManager.primaryColor,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
+                        backgroundColor: ColorTheme.primaryColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        )),
+                    onPressed: () => launchUrl(
+                      Uri.parse(model.data.link),
                     ),
-                    onPressed: () => launchUrl(Uri.parse(model.data.link)),
                     child: Text(
                       S.of(context).updateVersionModuleButtonUpdateNow,
                     ),
@@ -368,12 +378,11 @@ class _LayoutScreenState extends State<LayoutScreen> {
                         height: 40,
                         child: TextButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
+                              backgroundColor: Colors.black,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              )),
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -383,13 +392,15 @@ class _LayoutScreenState extends State<LayoutScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 10),
+                    SizedBox(
+                      width: 10,
+                    ),
                     Expanded(
                       child: SizedBox(
                         height: 40,
                         child: TextButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorManager.primaryColor,
+                            backgroundColor: ColorTheme.primaryColor,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
@@ -404,14 +415,11 @@ class _LayoutScreenState extends State<LayoutScreen> {
                             debugPrint("Running on: $iosLink");
                             debugPrint("Opening URL: $androidLink");
                             final Uri url = Uri.parse(
-                              Platform.isIOS ? iosLink : androidLink,
-                            );
+                                Platform.isIOS ? iosLink : androidLink);
 
                             if (await canLaunchUrl(url)) {
-                              await launchUrl(
-                                url,
-                                mode: LaunchMode.externalApplication,
-                              );
+                              await launchUrl(url,
+                                  mode: LaunchMode.externalApplication);
                               // Print mobile type and URL
                             } else {
                               debugPrint("Could not launch $url");

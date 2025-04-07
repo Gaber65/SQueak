@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/constant/global_function/global_function.dart';
+import 'package:squeak/core/thames/styles.dart';
 import 'package:squeak/features/appointments/view/component/CustomCalendarDatePicker.dart';
 import 'package:squeak/features/layout/controller/layout_cubit.dart';
 import 'package:squeak/features/layout/layout.dart';
+import '../../../../core/helper/build_service/main_cubit/main_cubit.dart';
 import '../../../layout/models/clinic_model.dart';
 import '../../controller/clinic/appointment_cubit.dart';
 import '../../controller/clinic/appointment_state.dart';
@@ -205,7 +207,7 @@ class AvailabilityScreen extends StatelessWidget {
             //               shape: RoundedRectangleBorder(
             //                 borderRadius: BorderRadius.circular(8),
             //               ),
-            //               backgroundColor: ColorManager.primaryColor,
+            //               backgroundColor: ColorTheme.primaryColor,
             //             ),
             //             onPressed: () {
             //               navigateToScreen(

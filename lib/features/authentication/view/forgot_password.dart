@@ -1,11 +1,12 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
+import 'package:squeak/core/constant/global_function/global_function.dart';
+import 'package:squeak/core/constant/global_widget/toast.dart';
 import 'package:squeak/features/authentication/view/reset_password.dart';
 
-
+import '../../../core/constant/global_function/custom_text_form_field.dart';
+import '../../../core/thames/styles.dart';
 import '../../../generated/l10n.dart';
 import '../controller/auth_cubit.dart';
 import 'contact_us.dart';
@@ -144,7 +145,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                               style: FontStyleThame.textStyle(
                                 context: context,
                                 fontSize: 16,
-                                fontColor: ColorManager.secondColor,
+                                fontColor: ColorTheme.secondColor,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -162,7 +163,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            backgroundColor: ColorManager.primaryColor,
+                            backgroundColor: ColorTheme.primaryColor,
                           ),
                           onPressed: cubit.isForgetPassword
                               ? null

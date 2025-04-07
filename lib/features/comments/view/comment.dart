@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/thames/color_manager.dart';
 import 'package:squeak/features/comments/view/widgets/loading_comment.dart';
 import 'package:squeak/features/comments/view/widgets/success_comment.dart';
 import 'package:squeak/features/layout/controller/layout_cubit.dart';
@@ -9,8 +9,9 @@ import 'package:squeak/features/layout/layout.dart';
 
 import '../../../../generated/l10n.dart';
 
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
+import '../../../core/helper/build_service/main_cubit/main_cubit.dart';
+import '../../../core/helper/cache/cache_helper.dart';
+import '../../../core/thames/styles.dart';
 import '../controller/comment_cubit.dart';
 
 class CommentScreen extends StatelessWidget {
@@ -38,11 +39,11 @@ class CommentScreen extends StatelessWidget {
         listener: (context, state) {
           if (state is CreateCommentSuccess) {
             commentController.clear();
-            // if (MainCubit.get(context).modelImage != null) {
-            //   MainCubit.get(context).modelImage = null;
-            //   print(MainCubit.get(context).modelImage);
-            //   CommentCubit.get(context).commentImage = null;
-            // }
+            if (MainCubit.get(context).modelImage != null) {
+              MainCubit.get(context).modelImage = null;
+              print(MainCubit.get(context).modelImage);
+              CommentCubit.get(context).commentImage = null;
+            }
           }
         },
         builder: (context, state) {
@@ -183,47 +184,47 @@ class CommentScreen extends StatelessWidget {
                 onPressed: cubit.isLoading
                     ? null
                     : () {
-                        // if (commentController.text.isNotEmpty) {
-                        //   if (cubit.commentImage != null) {
-                        //     cubit.isLoading = true;
-                        //     cubit.emit(CreateCommentLoading());
-                        //     MainCubit.get(context)
-                        //         .getGlobalImage(
-                        //       file: cubit.commentImage!,
-                        //       uploadPlace: UploadPlace.commentImages.value,
-                        //     )
-                        //         .whenComplete(() {
-                        //       return {
-                        //         cubit.createComment(
-                        //           postId: postId,
-                        //           content: commentController.text,
-                        //           petId: CacheHelper.getData('isPet') == true
-                        //               ? CacheHelper.getData('activeId')
-                        //               : null,
-                        //           image:
-                        //               MainCubit.get(context).modelImage!.data!,
-                        //           parentId: isReplayCommentOpen
-                        //               ? CacheHelper.getData('replayCommentID')
-                        //               : null,
-                        //         )
-                        //       };
-                        //     });
-                        //   } else {
-                        //     cubit.createComment(
-                        //       postId: postId,
-                        //       content: commentController.text,
-                        //       petId: CacheHelper.getData('isPet') == true
-                        //           ? CacheHelper.getData('activeId')
-                        //           : null,
-                        //       image: MainCubit.get(context).modelImage == null
-                        //           ? ''
-                        //           : MainCubit.get(context).modelImage!.data!,
-                        //       parentId: isReplayCommentOpen
-                        //           ? CacheHelper.getData('replayCommentID')
-                        //           : null,
-                        //     );
-                        //   }
-                        // }
+                        if (commentController.text.isNotEmpty) {
+                          if (cubit.commentImage != null) {
+                            cubit.isLoading = true;
+                            cubit.emit(CreateCommentLoading());
+                            MainCubit.get(context)
+                                .getGlobalImage(
+                              file: cubit.commentImage!,
+                              uploadPlace: UploadPlace.commentImages.value,
+                            )
+                                .whenComplete(() {
+                              return {
+                                cubit.createComment(
+                                  postId: postId,
+                                  content: commentController.text,
+                                  petId: CacheHelper.getData('isPet') == true
+                                      ? CacheHelper.getData('activeId')
+                                      : null,
+                                  image:
+                                      MainCubit.get(context).modelImage!.data!,
+                                  parentId: isReplayCommentOpen
+                                      ? CacheHelper.getData('replayCommentID')
+                                      : null,
+                                )
+                              };
+                            });
+                          } else {
+                            cubit.createComment(
+                              postId: postId,
+                              content: commentController.text,
+                              petId: CacheHelper.getData('isPet') == true
+                                  ? CacheHelper.getData('activeId')
+                                  : null,
+                              image: MainCubit.get(context).modelImage == null
+                                  ? ''
+                                  : MainCubit.get(context).modelImage!.data!,
+                              parentId: isReplayCommentOpen
+                                  ? CacheHelper.getData('replayCommentID')
+                                  : null,
+                            );
+                          }
+                        }
                       },
                 icon: cubit.isLoading
                     ? const CircularProgressIndicator()

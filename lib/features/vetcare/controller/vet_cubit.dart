@@ -6,12 +6,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
+import 'package:squeak/core/helper/cache/cache_helper.dart';
+import 'package:squeak/core/helper/remotely/dio.dart';
+import 'package:squeak/core/helper/remotely/end-points.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:squeak/features/authentication/models/login.dart';
 import 'package:squeak/features/vetcare/models/vetIcare_client_model.dart';
-
+import '../../../core/constant/global_function/global_function.dart';
+import '../../../core/helper/image_helper/helper_model/response_model.dart';
+import '../../../core/helper/remotely/config_model.dart';
 import '../../layout/models/Notification_model.dart';
 import '../../layout/models/clinic_model.dart';
 
@@ -76,7 +79,7 @@ class VetCubit extends Cubit<VetState> {
       emit(SuccessRegisterState());
     } on DioException catch (e) {
       isRegister = false;
-      emit(ErrorRegisterState(ErrorMessageModel.fromJson(e.response?.data)));
+      emit(ErrorRegisterState(ResponseModel.fromJson(e.response?.data)));
     }
   }
 
@@ -141,7 +144,7 @@ class VetCubit extends Cubit<VetState> {
     } on DioException catch (e) {
       isRegister = false;
       print(e.response);
-      emit(ErrorLoginState(ErrorMessageModel.fromJson(e.response?.data)));
+      emit(ErrorLoginState(ResponseModel.fromJson(e.response?.data)));
     }
   }
 
@@ -328,7 +331,7 @@ class VetCubit extends Cubit<VetState> {
       );
     } on DioException catch (e) {
       isAccept = false;
-      emit(ErrorAcceptIvationState(ErrorMessageModel.fromJson(e.response?.data)));
+      emit(ErrorAcceptIvationState(ResponseModel.fromJson(e.response?.data)));
       print(e);
     }
   }
@@ -398,7 +401,7 @@ class VetCubit extends Cubit<VetState> {
       isAddInSqueakStatues = false;
       isAddInSqueakStatues = false;
       emit(ErrorAddInSqueakStatuesState(
-          ErrorMessageModel.fromJson(e.response?.data)));
+          ResponseModel.fromJson(e.response?.data)));
       print(e);
     }
   }

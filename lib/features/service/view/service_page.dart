@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/helper/cache/cache_helper.dart';
+import 'package:squeak/core/thames/styles.dart';
 import 'package:squeak/features/service/view/component/reminder_card.dart';
 
+import '../../../core/constant/global_function/global_function.dart';
 import '../../pets/models/pet_model.dart';
 import '../models/reminder.dart';
 import 'component/filter_bar.dart';
@@ -157,7 +157,7 @@ class _AllServiceScreenState extends State<AllServiceScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: ColorManager.primaryColor,
+        backgroundColor: ColorTheme.primaryColor,
         onPressed: () => _showReminderWizard(context),
         child: const Icon(Icons.add),
       ),

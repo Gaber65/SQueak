@@ -1,0 +1,10 @@
+
+<resources>
+    <color name="com_facebook_button_background_color_focused_disabled">#FF0000</color>
+    <color name="com_facebook_button_background_color_focused">#00FF00</color>
+    <color name="com_facebook_button_border_color_focused">#0000FF</color>
+    <string name="facebook_app_id">801213825008804</string>
+    <string name="facebook_client_token">55d1fa0383d1f08dceccf16012e41f26</string>
+<!--    <string name="facebook_client_token">56789</string>-->
+
+</resources>

@@ -8,8 +8,8 @@ import 'package:squeak/features/layout/view/feeds/widget/get_posts_when_user_fol
 
 import 'package:squeak/features/layout/view/search/search_screen.dart';
 
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
+import '../../../../core/constant/global_widget/toast.dart';
+import '../../../../core/thames/styles.dart';
 import '../../../vetcare/view/pet_merge_screen.dart';
 
 class HomeScreen extends StatelessWidget {

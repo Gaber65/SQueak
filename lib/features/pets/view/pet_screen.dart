@@ -4,9 +4,10 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
-
-import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/constant/global_widget/responsive_screen.dart';
+import 'package:squeak/core/helper/build_service/main_cubit/main_cubit.dart';
+import 'package:squeak/core/thames/decorations.dart';
+import 'package:squeak/core/thames/styles.dart';
 import 'package:squeak/features/appointments/view/supplier/get_supplier.dart';
 import 'package:squeak/features/layout/controller/layout_cubit.dart';
 import 'package:squeak/features/layout/layout.dart';
@@ -14,7 +15,10 @@ import 'package:squeak/features/pets/models/pet_model.dart';
 import 'package:squeak/features/pets/controller/pet_cubit.dart';
 import 'package:squeak/features/service/view/pet_vaccination.dart';
 
-
+import '../../../core/constant/global_function/global_function.dart';
+import '../../../core/constant/global_widget/offline_widget.dart';
+import '../../../core/helper/remotely/end-points.dart';
+import '../../../core/thames/color_manager.dart';
 import '../../../generated/l10n.dart';
 import '../../service/view/service_page.dart';
 import 'add_pet_detail.dart';
@@ -98,7 +102,7 @@ class PetScreen extends StatelessWidget {
               ),
         floatingActionButton: dataPet.isNotEmpty
             ? FloatingActionButton(
-                backgroundColor: ColorManager.primaryColor,
+                backgroundColor: ColorTheme.primaryColor,
                 foregroundColor: Colors.white,
                 onPressed: () {
                   if (isSnackBarVisible) {

@@ -31,8 +31,19 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        multiDexEnabled = true
+        ndk {
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86_64"))
+        }
     }
-
+    signingConfigs {
+        create("release") {
+            storeFile = file("android/keystore.jks")
+            storePassword = "squeak"
+            keyAlias = "keyalias"
+            keyPassword = "squeak"
+        }
+    }
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.

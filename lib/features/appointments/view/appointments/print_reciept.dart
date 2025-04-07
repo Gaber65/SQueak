@@ -2,7 +2,11 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/constant/global_function/global_function.dart';
+import 'package:squeak/core/helper/build_service/main_cubit/main_cubit.dart';
+import 'package:squeak/core/thames/styles.dart';
+import '../../../../core/helper/remotely/config_model.dart';
+import '../../../../core/thames/color_manager.dart';
 import '../../../../generated/l10n.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 import 'dart:typed_data';
@@ -446,7 +450,7 @@ class PrintScreen extends StatelessWidget {
                     ),
                   ),
             floatingActionButton: FloatingActionButton(
-              backgroundColor: ColorManager.primaryColor,
+              backgroundColor: ColorTheme.primaryColor,
               foregroundColor: Colors.white,
               onPressed: () async {
                 Uint8List imageBytes = await _capturePng();

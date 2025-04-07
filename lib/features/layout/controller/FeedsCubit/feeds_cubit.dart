@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/helper/cache/cache_helper.dart';
 import 'package:squeak/features/layout/models/post_model.dart';
 
+import '../../../../core/constant/global_function/global_function.dart';
+import '../../../../core/helper/remotely/dio.dart';
+import '../../../../core/helper/remotely/end-points.dart';
 import 'package:intl/intl.dart';
 
 part 'feeds_state.dart';
@@ -72,6 +75,7 @@ class FeedsCubit extends Cubit<FeedsState> {
   }
 
   void _handlePostSuccess(PostModel postModel) {
+    print(postModel.message);
 
     allPostUserPageNumber++;
 

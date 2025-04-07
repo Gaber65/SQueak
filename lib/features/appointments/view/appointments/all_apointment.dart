@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lottie/lottie.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
+import 'package:squeak/core/thames/decorations.dart';
+import 'package:squeak/core/thames/styles.dart';
 import 'package:squeak/features/appointments/models/get_appointment_model.dart';
 import 'package:squeak/features/appointments/view/appointments/book_again_screen.dart';
 import 'package:squeak/features/appointments/view/appointments/rate_appointment.dart';
@@ -13,6 +13,12 @@ import 'package:squeak/features/layout/controller/layout_cubit.dart';
 import 'package:squeak/features/layout/layout.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/constant/global_function/global_function.dart';
+import '../../../../core/constant/global_widget/offline_widget.dart';
+import '../../../../core/constant/global_widget/toast.dart';
+import '../../../../core/helper/build_service/main_cubit/main_cubit.dart';
+import '../../../../core/helper/remotely/config_model.dart';
+import '../../../../core/thames/color_manager.dart';
 import '../../../../generated/l10n.dart';
 import '../../../pets/models/pet_model.dart';
 import '../../controller/user/user_appointment_cubit.dart';
@@ -25,24 +31,19 @@ class AllAppointment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create:
-              (context) =>
-                  UserAppointmentCubit()
-                    ..getSupplier()
-                    ..getAppointment(false),
-        ),
-        BlocProvider(create: (context) => LayoutCubit()..getOwnerPet()),
-      ],
+    return BlocProvider(
+      create: (context) => UserAppointmentCubit()
+        ..getSupplier()
+        ..getAppointment(false),
       child: BlocConsumer<UserAppointmentCubit, UserAppointmentState>(
         listener: (context, state) {
           if (state is DeleteAppointmentSuccess) {
             UserAppointmentCubit.get(context).getAppointment(false);
           }
           if (state is EditAppointment) {
-            UserAppointmentCubit.get(context).deleteAppointments(state.model);
+            UserAppointmentCubit.get(context).deleteAppointments(
+              state.model,
+            );
           }
         },
         builder: (context, state) {
@@ -84,49 +85,50 @@ class AllAppointment extends StatelessWidget {
               ),
             ),
             floatingActionButton: FloatingActionButton(
-              backgroundColor: ColorManager.primaryColor,
+              backgroundColor: ColorTheme.primaryColor,
               onPressed: () {
                 LayoutCubit.get(context).changeBottomNav(1);
 
                 navigateAndFinish(context, LayoutScreen());
               },
-              child: const Icon(IconlyLight.calendar, color: Colors.white),
+              child: const Icon(
+                IconlyLight.calendar,
+                color: Colors.white,
+              ),
             ),
-            body:
-                cubit.appointments.isEmpty
-                    ? emptyAppointment(context)
-                    : (state is AppointmentFiltered)
+            body: cubit.appointments.isEmpty
+                ? emptyAppointment(context)
+                : (state is AppointmentFiltered)
                     ? ListView.builder(
-                      itemBuilder: (context, index) {
-                        return buildItem(
-                          state.appointments[index],
-                          context,
-                          cubit,
-                          index,
-                        );
-                      },
-                      itemCount: state.appointments.length,
-                      physics: const BouncingScrollPhysics(),
-                    )
-                    : RefreshIndicator(
-                      onRefresh: () async {
-                        await UserAppointmentCubit.get(
-                          context,
-                        ).getAppointment(false);
-                      },
-                      child: ListView.builder(
                         itemBuilder: (context, index) {
                           return buildItem(
-                            cubit.appointments[index],
+                            state.appointments[index],
                             context,
                             cubit,
                             index,
                           );
                         },
-                        itemCount: cubit.appointments.length,
+                        itemCount: state.appointments.length,
                         physics: const BouncingScrollPhysics(),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: () async {
+                          await UserAppointmentCubit.get(context)
+                              .getAppointment(false);
+                        },
+                        child: ListView.builder(
+                          itemBuilder: (context, index) {
+                            return buildItem(
+                              cubit.appointments[index],
+                              context,
+                              cubit,
+                              index,
+                            );
+                          },
+                          itemCount: cubit.appointments.length,
+                          physics: const BouncingScrollPhysics(),
+                        ),
                       ),
-                    ),
           );
         },
       ),
@@ -150,11 +152,10 @@ class AllAppointment extends StatelessWidget {
             /// data
             Container(
               decoration: const BoxDecoration(
-                borderRadius: BorderRadiusDirectional.only(
-                  topEnd: Radius.circular(14),
-                  topStart: Radius.circular(14),
-                ),
-              ),
+                  borderRadius: BorderRadiusDirectional.only(
+                topEnd: Radius.circular(14),
+                topStart: Radius.circular(14),
+              )),
               child: Padding(
                 padding: const EdgeInsets.all(14.0),
                 child: Column(
@@ -167,37 +168,39 @@ class AllAppointment extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             radius: MainCubit.get(context).isDark ? 8 : 7,
-                            backgroundColor:
-                                MainCubit.get(context).isDark
-                                    ? ColorManager.getAppointmentWhite
-                                    : null,
+                            backgroundColor: MainCubit.get(context).isDark
+                                ? ColorManager.getAppointmentWhite
+                                : null,
                             child: CircleAvatar(
                               radius: MainCubit.get(context).isDark ? 5 : 7,
                               backgroundColor: Colors.black,
                             ),
                           ),
-                          const SizedBox(width: 5),
-                          Text(
-                            S.of(context).appointmentReserved,
-                            style:
-                                MainCubit.get(context).isDark
-                                    ? GoogleFonts.readexPro().copyWith(
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Text(S.of(context).appointmentReserved,
+                              style: MainCubit.get(context).isDark
+                                  ? GoogleFonts.readexPro().copyWith(
                                       color: ColorManager.sWhite,
                                       fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                    )
-                                    : GoogleFonts.readexPro().copyWith(
+                                      fontWeight: FontWeight.w700)
+                                  : GoogleFonts.readexPro().copyWith(
                                       fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                    ),
+                                      fontWeight: FontWeight.w700)),
+                          SizedBox(
+                            width: 10,
                           ),
-                          SizedBox(width: 10),
                           Text(
                             ' ${formatDateString(appointments.date)}  ,  ',
                             maxLines: 2,
                           ),
-                          Text(formatTimeToAmPm(appointments.time)),
-                          SizedBox(width: 10),
+                          Text(
+                            formatTimeToAmPm(appointments.time),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
                           if (appointments.isPrint)
                             const CircularProgressIndicator(),
                           if (appointments.statues == 3)
@@ -212,26 +215,23 @@ class AllAppointment extends StatelessWidget {
                                     if (appointments.visitId != null &&
                                         appointments.isBillSqueakVisible)
                                       PopupMenuItem(
-                                        value: 1,
-                                        onTap: () {
-                                          cubit.printReceipt(
-                                            appointments,
-                                            context,
-                                          );
-                                        },
-                                        child: Row(
-                                          children: [
-                                            isArabic()
-                                                ? Text('الفاتورة')
-                                                : Text('Bill'),
-                                            Spacer(),
-                                            Icon(
-                                              Icons.receipt_long_sharp,
-                                              color: Color(0xff6096ba),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                          value: 1,
+                                          onTap: () {
+                                            cubit.printReceipt(
+                                                appointments, context);
+                                          },
+                                          child: Row(
+                                            children: [
+                                              isArabic()
+                                                  ? Text('الفاتورة')
+                                                  : Text('Bill'),
+                                              Spacer(),
+                                              Icon(
+                                                Icons.receipt_long_sharp,
+                                                color: Color(0xff6096ba),
+                                              )
+                                            ],
+                                          )),
                                     PopupMenuItem(
                                       value: 2,
                                       onTap: () {
@@ -252,7 +252,7 @@ class AllAppointment extends StatelessWidget {
                                           Icon(
                                             Icons.star_border_purple500,
                                             color: Colors.amber,
-                                          ),
+                                          )
                                         ],
                                       ),
                                     ),
@@ -275,7 +275,7 @@ class AllAppointment extends StatelessWidget {
                                           Icon(
                                             Icons.add_box_rounded,
                                             color: Colors.amber,
-                                          ),
+                                          )
                                         ],
                                       ),
                                     ),
@@ -298,13 +298,15 @@ class AllAppointment extends StatelessWidget {
                                           Icon(
                                             Icons.file_copy_rounded,
                                             color: Colors.amber,
-                                          ),
+                                          )
                                         ],
                                       ),
                                     ),
                                   ];
                                 },
-                                icon: const Icon(Icons.more_vert_outlined),
+                                icon: const Icon(
+                                  Icons.more_vert_outlined,
+                                ),
                                 offset: const Offset(0, 20),
                               ),
                         ],
@@ -317,22 +319,27 @@ class AllAppointment extends StatelessWidget {
                             radius: 7,
                             backgroundColor: Colors.red[400],
                           ),
-                          const SizedBox(width: 5),
-                          Text(
-                            S.of(context).appointmentCanceled,
-                            style: GoogleFonts.readexPro().copyWith(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.red[400],
-                            ),
+                          const SizedBox(
+                            width: 5,
                           ),
-                          SizedBox(width: 10),
+                          Text(S.of(context).appointmentCanceled,
+                              style: GoogleFonts.readexPro().copyWith(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.red[400])),
+                          SizedBox(
+                            width: 10,
+                          ),
                           Text(
                             ' ${formatDateString(appointments.date)}  ,  ',
                             maxLines: 2,
                           ),
-                          Text(formatTimeToAmPm(appointments.time)),
-                          SizedBox(width: 10),
+                          Text(
+                            formatTimeToAmPm(appointments.time),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
                           if (appointments.isPrint)
                             const CircularProgressIndicator(),
                           if (appointments.statues == 3)
@@ -347,26 +354,23 @@ class AllAppointment extends StatelessWidget {
                                     if (appointments.visitId != null &&
                                         appointments.isBillSqueakVisible)
                                       PopupMenuItem(
-                                        value: 1,
-                                        onTap: () {
-                                          cubit.printReceipt(
-                                            appointments,
-                                            context,
-                                          );
-                                        },
-                                        child: Row(
-                                          children: [
-                                            isArabic()
-                                                ? Text('الفاتورة')
-                                                : Text('Bill'),
-                                            Spacer(),
-                                            Icon(
-                                              Icons.receipt_long_sharp,
-                                              color: Color(0xff6096ba),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                          value: 1,
+                                          onTap: () {
+                                            cubit.printReceipt(
+                                                appointments, context);
+                                          },
+                                          child: Row(
+                                            children: [
+                                              isArabic()
+                                                  ? Text('الفاتورة')
+                                                  : Text('Bill'),
+                                              Spacer(),
+                                              Icon(
+                                                Icons.receipt_long_sharp,
+                                                color: Color(0xff6096ba),
+                                              )
+                                            ],
+                                          )),
                                     PopupMenuItem(
                                       value: 2,
                                       onTap: () {
@@ -387,7 +391,7 @@ class AllAppointment extends StatelessWidget {
                                           Icon(
                                             Icons.star_border_purple500,
                                             color: Colors.amber,
-                                          ),
+                                          )
                                         ],
                                       ),
                                     ),
@@ -410,7 +414,7 @@ class AllAppointment extends StatelessWidget {
                                           Icon(
                                             Icons.add_box_rounded,
                                             color: Colors.amber,
-                                          ),
+                                          )
                                         ],
                                       ),
                                     ),
@@ -433,13 +437,15 @@ class AllAppointment extends StatelessWidget {
                                           Icon(
                                             Icons.file_copy_rounded,
                                             color: Colors.amber,
-                                          ),
+                                          )
                                         ],
                                       ),
                                     ),
                                   ];
                                 },
-                                icon: const Icon(Icons.more_vert_outlined),
+                                icon: const Icon(
+                                  Icons.more_vert_outlined,
+                                ),
                                 offset: const Offset(0, 20),
                               ),
                         ],
@@ -452,14 +458,20 @@ class AllAppointment extends StatelessWidget {
                             radius: 7,
                             backgroundColor: Colors.green[600],
                           ),
-                          const SizedBox(width: 5),
-                          Text(S.of(context).appointmentDone),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            S.of(context).appointmentDone,
+                          ),
                           Spacer(),
                           Text(
                             ' ${formatDateString(appointments.date)}  ,  ',
                             maxLines: 2,
                           ),
-                          Text(formatTimeToAmPm(appointments.time)),
+                          Text(
+                            formatTimeToAmPm(appointments.time),
+                          ),
                           Spacer(),
                           if (appointments.isPrint)
                             const CircularProgressIndicator(),
@@ -475,26 +487,23 @@ class AllAppointment extends StatelessWidget {
                                     if (appointments.visitId != null &&
                                         appointments.isBillSqueakVisible)
                                       PopupMenuItem(
-                                        value: 1,
-                                        onTap: () {
-                                          cubit.printReceipt(
-                                            appointments,
-                                            context,
-                                          );
-                                        },
-                                        child: Row(
-                                          children: [
-                                            isArabic()
-                                                ? Text('الفاتورة')
-                                                : Text('Bill'),
-                                            Spacer(),
-                                            Icon(
-                                              Icons.receipt_long_sharp,
-                                              color: Color(0xff6096ba),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                          value: 1,
+                                          onTap: () {
+                                            cubit.printReceipt(
+                                                appointments, context);
+                                          },
+                                          child: Row(
+                                            children: [
+                                              isArabic()
+                                                  ? Text('الفاتورة')
+                                                  : Text('Bill'),
+                                              Spacer(),
+                                              Icon(
+                                                Icons.receipt_long_sharp,
+                                                color: Color(0xff6096ba),
+                                              )
+                                            ],
+                                          )),
                                     PopupMenuItem(
                                       value: 2,
                                       onTap: () {
@@ -515,7 +524,7 @@ class AllAppointment extends StatelessWidget {
                                           Icon(
                                             Icons.star_border_purple500,
                                             color: Colors.amber,
-                                          ),
+                                          )
                                         ],
                                       ),
                                     ),
@@ -538,7 +547,7 @@ class AllAppointment extends StatelessWidget {
                                           Icon(
                                             Icons.add_box_rounded,
                                             color: Colors.amber,
-                                          ),
+                                          )
                                         ],
                                       ),
                                     ),
@@ -561,18 +570,22 @@ class AllAppointment extends StatelessWidget {
                                           Icon(
                                             Icons.file_copy_rounded,
                                             color: Colors.amber,
-                                          ),
+                                          )
                                         ],
                                       ),
                                     ),
                                   ];
                                 },
-                                icon: const Icon(Icons.more_vert_outlined),
+                                icon: const Icon(
+                                  Icons.more_vert_outlined,
+                                ),
                                 offset: const Offset(0, 20),
                               ),
                         ],
                       ),
-                    const SizedBox(height: 5),
+                    const SizedBox(
+                      height: 5,
+                    ),
 
                     if (appointments.statues == 3 &&
                         appointments.doctorServiceRate != 0)
@@ -592,13 +605,13 @@ class AllAppointment extends StatelessWidget {
                                 (index) =>
                                     index < appointments.doctorServiceRate
                                         ? const Icon(
-                                          Icons.star,
-                                          color: Colors.amber,
-                                        )
+                                            Icons.star,
+                                            color: Colors.amber,
+                                          )
                                         : const Icon(
-                                          Icons.star_border,
-                                          color: Colors.amber,
-                                        ),
+                                            Icons.star_border,
+                                            color: Colors.amber,
+                                          ),
                               ),
                             ),
                           ],
@@ -621,7 +634,9 @@ class AllAppointment extends StatelessWidget {
                           (appointments.clinicLogo ?? ''),
                     ),
                   ),
-                  SizedBox(width: 20),
+                  SizedBox(
+                    width: 20,
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -637,7 +652,9 @@ class AllAppointment extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 7),
+                      SizedBox(
+                        height: 7,
+                      ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.5,
                         child: Text(
@@ -657,13 +674,16 @@ class AllAppointment extends StatelessWidget {
                     onTap: () {
                       if (appointments.clinicLocation.isEmpty) {
                         infoToast(
-                          context,
-                          isArabic()
-                              ? 'الموقع مفقود، يرجى مطالبة المشرف بإضافة موقعه'
-                              : 'the location is missing , please ask the admin to add his location',
-                        );
+                            context,
+                            isArabic()
+                                ? 'الموقع مفقود، يرجى مطالبة المشرف بإضافة موقعه'
+                                : 'the location is missing , please ask the admin to add his location');
                       } else {
-                        launchUrl((Uri.parse(appointments.clinicLocation)));
+                        launchUrl(
+                          (Uri.parse(
+                            appointments.clinicLocation,
+                          )),
+                        );
                       }
                     },
                     child: FastCachedImage(
@@ -691,9 +711,8 @@ class AllAppointment extends StatelessWidget {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text(
-                                  S.of(context).appointmentModalTitle,
-                                ),
+                                title:
+                                    Text(S.of(context).appointmentModalTitle),
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -710,9 +729,8 @@ class AllAppointment extends StatelessWidget {
                                           TextSpan(
                                             text: appointments.pet.name,
                                             style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                            ),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20),
                                           ),
                                           TextSpan(
                                             text:
@@ -726,8 +744,7 @@ class AllAppointment extends StatelessWidget {
                                     ),
                                     const CircleAvatar(
                                       backgroundImage: NetworkImage(
-                                        'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?w=740&t=st=1693530236~exp=1693530836~hmac=754f0eea1ad76b4cfe66e8f471927ff6d1d2c6625ff14e6cb2c81aa69ab9fc90',
-                                      ),
+                                          'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?w=740&t=st=1693530236~exp=1693530836~hmac=754f0eea1ad76b4cfe66e8f471927ff6d1d2c6625ff14e6cb2c81aa69ab9fc90'),
                                       radius: 75,
                                     ),
                                   ],
@@ -739,15 +756,13 @@ class AllAppointment extends StatelessWidget {
                                     child: ElevatedButton(
                                       onPressed: () async {
                                         cubit.emit(
-                                          EditAppointment(appointments),
-                                        );
+                                            EditAppointment(appointments));
 
                                         Navigator.of(context).pop(false);
                                         cubit.findClinic(
-                                          cubit.suppliers!.data,
-                                          appointments.clinicCode,
-                                          appointments.clinicId,
-                                        );
+                                            cubit.suppliers!.data,
+                                            appointments.clinicCode,
+                                            appointments.clinicId);
                                         navigateToScreen(
                                           context,
                                           BooKAgainScreen(
@@ -758,17 +773,15 @@ class AllAppointment extends StatelessWidget {
                                       },
                                       style: ElevatedButton.styleFrom(
                                         foregroundColor: Colors.red,
-                                        backgroundColor:
-                                            MainCubit.get(context).isDark
-                                                ? ColorManager
-                                                    .myPetsBaseBlackColor
-                                                : Colors.red.shade100
-                                                    .withOpacity(.4),
+                                        backgroundColor: MainCubit.get(context)
+                                                .isDark
+                                            ? ColorManager.myPetsBaseBlackColor
+                                            : Colors.red.shade100
+                                                .withOpacity(.4),
                                         elevation: 0,
                                         shape: (RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                         )),
                                       ),
                                       child: Text(
@@ -785,17 +798,15 @@ class AllAppointment extends StatelessWidget {
                                       },
                                       style: ElevatedButton.styleFrom(
                                         foregroundColor: Colors.green,
-                                        backgroundColor:
-                                            MainCubit.get(context).isDark
-                                                ? ColorManager
-                                                    .myPetsBaseBlackColor
-                                                : Colors.green.shade100
-                                                    .withOpacity(.4),
+                                        backgroundColor: MainCubit.get(context)
+                                                .isDark
+                                            ? ColorManager.myPetsBaseBlackColor
+                                            : Colors.green.shade100
+                                                .withOpacity(.4),
                                         elevation: 0,
                                         shape: (RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                         )),
                                       ),
                                       child: Text(
@@ -810,11 +821,8 @@ class AllAppointment extends StatelessWidget {
                         }
 
                         if (appointments.statues != 0) {
-                          cubit.findClinic(
-                            cubit.suppliers!.data,
-                            appointments.clinicCode,
-                            appointments.clinicId,
-                          );
+                          cubit.findClinic(cubit.suppliers!.data,
+                              appointments.clinicCode, appointments.clinicId);
 
                           navigateToScreen(
                             context,
@@ -827,10 +835,9 @@ class AllAppointment extends StatelessWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.green,
-                        backgroundColor:
-                            MainCubit.get(context).isDark
-                                ? ColorManager.myPetsBaseBlackColor
-                                : Colors.green.shade100.withOpacity(.4),
+                        backgroundColor: MainCubit.get(context).isDark
+                            ? ColorManager.myPetsBaseBlackColor
+                            : Colors.green.shade100.withOpacity(.4),
                         elevation: 0,
                         shape: (RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -844,28 +851,30 @@ class AllAppointment extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(width: 10),
+                  const SizedBox(
+                    width: 10,
+                  ),
                   //call button
                   Expanded(
                     child: OfflineWidget(
                       onlineChild: ElevatedButton(
                         onPressed: () {
                           launchUrl(
-                            Uri.parse('tel:${appointments.clinicPhone}'),
-                          );
+                              Uri.parse('tel:${appointments.clinicPhone}'));
                         },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.blue,
-                          backgroundColor:
-                              MainCubit.get(context).isDark
-                                  ? ColorManager.myPetsBaseBlackColor
-                                  : Colors.blue.shade100.withOpacity(.4),
+                          backgroundColor: MainCubit.get(context).isDark
+                              ? ColorManager.myPetsBaseBlackColor
+                              : Colors.blue.shade100.withOpacity(.4),
                           elevation: 0,
                           shape: (RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           )),
                         ),
-                        child: Text(S.of(context).appointmentButtonCall),
+                        child: Text(
+                          S.of(context).appointmentButtonCall,
+                        ),
                       ),
                       offlineChild: ElevatedButton(
                         onPressed: () {
@@ -873,168 +882,172 @@ class AllAppointment extends StatelessWidget {
                         },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.blue,
-                          backgroundColor:
-                              MainCubit.get(context).isDark
-                                  ? ColorManager.myPetsBaseBlackColor
-                                  : Colors.blue.shade100.withOpacity(.4),
+                          backgroundColor: MainCubit.get(context).isDark
+                              ? ColorManager.myPetsBaseBlackColor
+                              : Colors.blue.shade100.withOpacity(.4),
                           elevation: 0,
                           shape: (RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           )),
                         ),
-                        child: Text(S.of(context).appointmentButtonCall),
+                        child: Text(
+                          S.of(context).appointmentButtonCall,
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(
+                    width: 10,
+                  ),
                   appointments.statues == 0
                       ? OfflineWidget(
-                        onlineChild: Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text(
-                                      S.of(context).appointmentModalTitle,
-                                    ),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text:
-                                                    "${S.of(context).appointmentModalDescription} ",
-                                                style:
-                                                    Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium, // Use the existing theme for consistency
-                                              ),
-                                              TextSpan(
-                                                text: appointments.pet.name,
-                                                style: Theme.of(
-                                                  context,
-                                                ).textTheme.bodyMedium?.copyWith(
-                                                  fontWeight:
-                                                      FontWeight
-                                                          .bold, // Make the pet's name bold
+                          onlineChild: Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                          S.of(context).appointmentModalTitle),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text.rich(
+                                            TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text:
+                                                      "${S.of(context).appointmentModalDescription} ",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium, // Use the existing theme for consistency
                                                 ),
-                                              ),
-                                            ],
+                                                TextSpan(
+                                                  text: appointments.pet.name,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.copyWith(
+                                                        fontWeight: FontWeight
+                                                            .bold, // Make the pet's name bold
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                                'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?w=740&t=st=1693530236~exp=1693530836~hmac=754f0eea1ad76b4cfe66e8f471927ff6d1d2c6625ff14e6cb2c81aa69ab9fc90'),
+                                            radius: 75,
+                                          ),
+                                        ],
+                                      ),
+                                      actions: <Widget>[
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              3,
+                                          child: ElevatedButton(
+                                            onPressed: () async {
+                                              cubit.deleteAppointments(
+                                                appointments,
+                                              );
+                                              Navigator.of(context).pop(true);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              foregroundColor: Colors.red,
+                                              backgroundColor:
+                                                  MainCubit.get(context).isDark
+                                                      ? ColorManager
+                                                          .myPetsBaseBlackColor
+                                                      : Colors.red.shade100
+                                                          .withOpacity(.4),
+                                              elevation: 0,
+                                              shape: (RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              )),
+                                            ),
+                                            child: Text(
+                                              S
+                                                  .of(context)
+                                                  .appointmentModalButtonYes,
+                                            ),
                                           ),
                                         ),
-                                        const CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                            'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?w=740&t=st=1693530236~exp=1693530836~hmac=754f0eea1ad76b4cfe66e8f471927ff6d1d2c6625ff14e6cb2c81aa69ab9fc90',
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              3,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop(false);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              foregroundColor: Colors.green,
+                                              backgroundColor:
+                                                  MainCubit.get(context).isDark
+                                                      ? ColorManager
+                                                          .myPetsBaseBlackColor
+                                                      : Colors.green.shade100
+                                                          .withOpacity(.4),
+                                              elevation: 0,
+                                              shape: (RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              )),
+                                            ),
+                                            child: Text(
+                                              S
+                                                  .of(context)
+                                                  .appointmentModalButtonNo,
+                                            ),
                                           ),
-                                          radius: 75,
                                         ),
                                       ],
-                                    ),
-                                    actions: <Widget>[
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                            3,
-                                        child: ElevatedButton(
-                                          onPressed: () async {
-                                            cubit.deleteAppointments(
-                                              appointments,
-                                            );
-                                            Navigator.of(context).pop(true);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            foregroundColor: Colors.red,
-                                            backgroundColor:
-                                                MainCubit.get(context).isDark
-                                                    ? ColorManager
-                                                        .myPetsBaseBlackColor
-                                                    : Colors.red.shade100
-                                                        .withOpacity(.4),
-                                            elevation: 0,
-                                            shape: (RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            )),
-                                          ),
-                                          child: Text(
-                                            S
-                                                .of(context)
-                                                .appointmentModalButtonYes,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                            3,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop(false);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            foregroundColor: Colors.green,
-                                            backgroundColor:
-                                                MainCubit.get(context).isDark
-                                                    ? ColorManager
-                                                        .myPetsBaseBlackColor
-                                                    : Colors.green.shade100
-                                                        .withOpacity(.4),
-                                            elevation: 0,
-                                            shape: (RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            )),
-                                          ),
-                                          child: Text(
-                                            S
-                                                .of(context)
-                                                .appointmentModalButtonNo,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.red,
-                              backgroundColor:
-                                  MainCubit.get(context).isDark
-                                      ? ColorManager.myPetsBaseBlackColor
-                                      : Colors.red.shade100.withOpacity(.4),
-                              elevation: 0,
-                              shape: (RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              )),
+                                    );
+                                  },
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.red,
+                                backgroundColor: MainCubit.get(context).isDark
+                                    ? ColorManager.myPetsBaseBlackColor
+                                    : Colors.red.shade100.withOpacity(.4),
+                                elevation: 0,
+                                shape: (RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                )),
+                              ),
+                              child: Text(
+                                S.of(context).appointmentButtonCancel,
+                              ),
                             ),
-                            child: Text(S.of(context).appointmentButtonCancel),
                           ),
-                        ),
-                        offlineChild: Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              OfflineWidget.showOfflineWidget(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.red,
-                              backgroundColor:
-                                  MainCubit.get(context).isDark
-                                      ? ColorManager.myPetsBaseBlackColor
-                                      : Colors.red.shade100.withOpacity(.4),
-                              elevation: 0,
-                              shape: (RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              )),
+                          offlineChild: Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                OfflineWidget.showOfflineWidget(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.red,
+                                backgroundColor: MainCubit.get(context).isDark
+                                    ? ColorManager.myPetsBaseBlackColor
+                                    : Colors.red.shade100.withOpacity(.4),
+                                elevation: 0,
+                                shape: (RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                )),
+                              ),
+                              child: Text(
+                                S.of(context).appointmentButtonCancel,
+                              ),
                             ),
-                            child: Text(S.of(context).appointmentButtonCancel),
                           ),
-                        ),
-                      )
+                        )
                       : const SizedBox.shrink(),
                 ],
               ),
@@ -1071,7 +1084,7 @@ class AllAppointment extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: FontStyleThame.textStyle(
                     context: context,
-                    fontColor: ColorManager.secondColor,
+                    fontColor: ColorTheme.secondColor,
                   ),
                 ),
               ),

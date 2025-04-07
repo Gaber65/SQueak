@@ -3,15 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:shimmer/shimmer.dart';
-
-import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/constant/global_widget/toast.dart';
+import 'package:squeak/core/helper/build_service/main_cubit/main_cubit.dart';
+import 'package:squeak/core/thames/color_manager.dart';
+import 'package:squeak/core/thames/decorations.dart';
 import 'package:squeak/features/appointments/models/get_client_clinic_model.dart';
 import 'package:squeak/features/layout/controller/layout_cubit.dart';
 import 'package:squeak/features/layout/layout.dart';
 import 'package:squeak/features/pets/view/pet_screen.dart';
 
-
+import '../../../../core/constant/global_function/global_function.dart';
+import '../../../../core/helper/cache/cache_helper.dart';
+import '../../../../core/helper/remotely/end-points.dart';
+import '../../../../core/thames/styles.dart';
 import '../../../../generated/l10n.dart';
 import '../../../pets/models/pet_model.dart';
 import '../../controller/clinic/appointment_cubit.dart';
@@ -94,9 +98,9 @@ class _BookingScreenState extends State<BookingScreen> {
           if (state is CreateAppointmentsError) {
             errorToast(
               context,
-              state.errorMessageModel.errors.isNotEmpty
-                  ? state.errorMessageModel.errors.values.first.first
-                  : state.errorMessageModel.message,
+              state.responseModel.errors.isNotEmpty
+                  ? state.responseModel.errors.values.first.first
+                  : state.responseModel.message,
             );
           }
         },
@@ -163,7 +167,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       child: TextButton(
                         style: TextButton.styleFrom(
                           backgroundColor:
-                              ColorManager.primaryColor.withOpacity(.2),
+                              ColorTheme.primaryColor.withOpacity(.2),
                         ),
                         onPressed: cubit.isLoading
                             ? null
@@ -268,7 +272,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                   context: context,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
-                                  fontColor: ColorManager.primaryColor,
+                                  fontColor: ColorTheme.primaryColor,
                                 ),
                               ),
                       ),
@@ -815,8 +819,7 @@ class _BookingScreenState extends State<BookingScreen> {
     final appointmentDate = formatDate;
     final doctorId = this.doctorId;
     final appointmentCubit = AppointmentCubit.get(context);
-    final isPetFromCache = CacheHelper.getData('isPet') != null &&
-        CacheHelper.getData('isPet') == true;
+    final isPetFromCache = CacheHelper.getData('isPet') != null && CacheHelper.getData('isPet') == true;
     final petNameFromCache = CacheHelper.getData('activeId');
     final petGenderFromCache = CacheHelper.getData('gender');
 

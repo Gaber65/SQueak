@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:squeak/features/appointments/models/get_appointment_model.dart';
 import 'package:squeak/features/vetcare/view/pet_merge_screen.dart';
 
+import '../../core/helper/cache/cache_helper.dart';
 import '../appointments/view/appointments/rate_appointment.dart';
 import '../authentication/view/login_screen.dart';
 import '../vetcare/view/vetCareRegister.dart';
 import 'controller/layout_cubit.dart';
 import 'layout.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
 
 /// SplashScreen Widget
 class SplashScreen extends StatefulWidget {

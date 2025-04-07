@@ -5,6 +5,7 @@ import '../../../features/layout/view/feeds/post_notfication.dart';
 import '../../../features/layout/view/notifications/notificationPage.dart';
 import '../../../features/pets/view/pet_screen.dart';
 import '../../../features/vetcare/view/follow_request_screen.dart';
+import '../../helper/build_service/firebase_messaging_handler.dart';
 import '../../utils/enums/notification_type_enums.dart';
 import '../../utils/export_path/export_files.dart';
 import '../main_service/presentation/screens/app_view.dart';
@@ -15,7 +16,7 @@ void handleNavigation(String payload) {
   final String id = data['id'] ?? '';
   final String typeName = data['typeName'] ?? '';
 
-  final NotificationType? type = getNotificationType(typeName);
+  final NotificationType? type = FirebaseMessagingHandler.getNotificationType(typeName);
   final BuildContext? context = navigatorKey.currentContext;
 
   if (context == null || type == null) return;

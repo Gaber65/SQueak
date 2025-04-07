@@ -20,7 +20,7 @@ class FollowSuccess extends SearchState {
 }
 
 class FollowError extends SearchState {
-  final ErrorMessageModel error;
+  final ResponseModel error;
 
   FollowError(this.error);
 }

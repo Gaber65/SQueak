@@ -4,12 +4,17 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
+import 'package:squeak/core/helper/build_service/firebase_service.dart';
+import 'package:squeak/core/helper/image_helper/helper_model/response_model.dart';
+import 'package:squeak/core/helper/remotely/end-points.dart';
+import 'package:squeak/core/thames/styles.dart';
 import 'package:squeak/features/appointments/models/get_appointment_model.dart';
 import 'package:squeak/features/appointments/view/appointments/print_reciept.dart';
 import 'package:squeak/features/layout/models/clinic_model.dart';
 
+import '../../../../core/constant/global_function/global_function.dart';
+import '../../../../core/helper/cache/cache_helper.dart';
+import '../../../../core/helper/remotely/dio.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter/material.dart';
 
@@ -206,7 +211,7 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
       emit(FollowSuccess());
     } on DioError catch (e) {
       print(e.response!.data);
-      emit(FollowError(ErrorMessageModel.fromJson(e.response!.data)));
+      emit(FollowError(ResponseModel.fromJson(e.response!.data)));
     }
   }
 
@@ -238,7 +243,7 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
       emit(GetInvoicesSuccess());
     } on DioError catch (e) {
       print(e);
-      emit(GetInvoicesError(ErrorMessageModel.fromJson(e.response!.data)));
+      emit(GetInvoicesError(ResponseModel.fromJson(e.response!.data)));
     }
   }
 

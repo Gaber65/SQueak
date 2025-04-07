@@ -4,16 +4,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
-
+import 'package:squeak/core/helper/image_helper/helper_model/response_model.dart';
+import 'package:squeak/core/helper/remotely/dio.dart';
+import 'package:squeak/core/helper/remotely/end-points.dart';
 import 'package:squeak/features/appointments/models/availabilities_model.dart';
 import 'package:squeak/features/layout/models/clinic_model.dart';
 
-
-import '../../../../core/service/cache/shared_preferences/cache_helper.dart';
+import '../../../../core/constant/global_function/global_function.dart';
+import '../../../../core/helper/cache/cache_helper.dart';
 import '../../models/doctor_model.dart';
 import '../../models/get_client_clinic_model.dart';
 import 'appointment_state.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
 
 class AppointmentCubit extends Cubit<AppointmentState> {
   AppointmentCubit() : super(AppointmentInitial());
@@ -306,7 +307,7 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     } on DioException catch (e) {
       print(e.response!.data);
       isLoading = false;
-      emit(CreateAppointmentsError(ErrorMessageModel.fromJson(e.response!.data)));
+      emit(CreateAppointmentsError(ResponseModel.fromJson(e.response!.data)));
     }
   }
 
