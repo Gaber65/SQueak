@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
 import 'package:squeak/core/helper/cache/cache_helper.dart';
@@ -18,228 +19,248 @@ import '../models/pet_model.dart';
 part 'pet_state.dart';
 
 class PetCubit extends Cubit<PetState> {
-  PetCubit() : super(PetInitial()) {
-    if (CacheHelper.getData('usersPets') != null) {
-      String stringToJason = CacheHelper.getData('usersPets');
-      List<PetsData> usersPets = List<PetsData>.from(
-          json.decode(stringToJason).map((x) => PetsData.fromJson(x)));
-      pets = usersPets.where((element) {
-        return element.petId != CacheHelper.getData('clintId');
-      }).toList();
-    }
 
-    if (CacheHelper.getData('allBreeds') != null) {
-      String stringToJasonBreed = CacheHelper.getData('allBreeds');
-      List<BreadData> allBreedsCache = List<BreadData>.from(
-          json.decode(stringToJasonBreed).map((x) => BreadData.fromJson(x)));
-      allBreeds = allBreedsCache;
+  // init of the cubit get the cached pets and breeds
+  PetCubit() : super(PetInitial()) {
+    _loadCachedPets();
+    _loadCachedBreeds();
+  }
+
+  static PetCubit get(BuildContext context) => BlocProvider.of(context);
+
+  // List of pets and breeds
+  List<PetsData> pets = [];
+  List<BreadData> allBreeds = [];
+  List<BreadData> breedData = [];
+  List<BreadData> species = [];
+
+  // Controllers for the form fields
+  final formKey = GlobalKey<FormState>();
+  final breedIdController = TextEditingController();
+  final searchController = TextEditingController();
+  final birthdateController = TextEditingController(text: DateTime.now().toString().substring(0, 10));
+  final petNameController = TextEditingController();
+  final imageNameController = TextEditingController();
+
+  // Variables for the pet creation and editing
+  int gender = 1;
+  bool isLoading = false;
+  bool spayed = false;
+  File? pitsImage;
+
+  String dropdownValueBreed = '';
+  String dropdownValueSpecies = '';
+  String dropdownValueSpeciesId = '';
+  String petId = '';
+  String specieId = '';
+
+  final picker = ImagePicker();
+
+  // Cached pets and breeds
+  void _loadCachedPets() {
+    final cached = CacheHelper.getData('usersPets');
+    if (cached != null) {
+      pets = List<PetsData>.from(json.decode(cached).map((x) => PetsData.fromJson(x)))
+          .where((e) => e.petId != CacheHelper.getData('clintId'))
+          .toList();
+    }
+  }
+  void _loadCachedBreeds() {
+    final cached = CacheHelper.getData('allBreeds');
+    if (cached != null) {
+      allBreeds = List<BreadData>.from(json.decode(cached).map((x) => BreadData.fromJson(x)));
     }
   }
 
-  static PetCubit get(context) => BlocProvider.of(context);
-
-  List<PetsData> pets = [];
-
+  // API Call to get the owner's pets
   Future<void> getOwnerPet() async {
     emit(SqueakGetOwnerPetlaoding());
     try {
-      Response response = await DioFinalHelper.getData(
-        method: getOwnerPetEndPoint,
-        language: true,
-      );
-
-      pets = (response.data['data']['petsDto'] as List)
-          .map((e) => PetsData.fromJson(e))
-          .toList();
-      String jsonToString = json.encode(response.data['data']['petsDto']);
-
-      CacheHelper.saveData('usersPets', jsonToString);
-
+      final response = await DioFinalHelper.getData(method: getOwnerPetEndPoint, language: true);
+      pets = (response.data['data']['petsDto'] as List).map((e) => PetsData.fromJson(e)).toList();
+      CacheHelper.saveData('usersPets', json.encode(response.data['data']['petsDto']));
       emit(SqueakGetOwnerPetSuccess());
-    } on DioException catch (e) {
-      print(e.response!.data + '**********************');
+    } catch (e) {
+      _handleError(e);
       emit(SqueakGetOwnerPetError());
     }
   }
 
-  List<BreadData> allBreeds = [];
-
+  // API Call to get all breeds and species
   Future<void> getAllBreed() async {
     emit(GetAllBreedsLoadingState());
     try {
-      Response response = await DioFinalHelper.getData(
-        method: allBreed,
-        language: false,
-      );
-
-      breedData = List<BreadData>.from(
-          response.data['data']['breedDto'].map((x) => BreadData.fromJson(x)));
-      String jsonToString = json.encode(response.data['data']['breedDto']);
-      CacheHelper.saveData('allBreeds', jsonToString);
+      final response = await DioFinalHelper.getData(method: allBreed, language: false);
+      breedData = (response.data['data']['breedDto'] as List).map((x) => BreadData.fromJson(x)).toList();
+      // print("get all breeds");
+      // print('all breeds: ${response.data['data']['breedDto']}');
+      CacheHelper.saveData('allBreeds', json.encode(response.data['data']['breedDto']));
       emit(GetAllBreedsSuccessState());
-    } on DioException catch (e) {
-      print(e);
+    } catch (e) {
+      _handleError(e);
       emit(GetAllBreedsErrorState());
     }
   }
 
-  void init(species, speciesId) {
-    print(pets);
+  Future<void> getAllBreeds(String id) async {
+    emit(GetAllBreedsLoadingState());
+    try {
+      final response = await DioFinalHelper.getData(method: allBreedBySpeciesId + id, language: false);
+      breedData = (response.data['data']['breedDto'] as List).map((x) => BreadData.fromJson(x)).toList();
+      // print("get all breeds ${breedData}");
+      emit(GetAllBreedsSuccessState());
+    } catch (e) {
+      _handleError(e);
+      emit(GetAllBreedsErrorState());
+    }
+  }
+
+  Future<void> getAllSpecies() async {
+    emit(GetAllSpeciesLoadingState());
+    try {
+      final response = await DioFinalHelper.getData(method: allSpeciesEndPoint, language: false);
+      species = (response.data['data']['speciesDtos'] as List).map((x) => BreadData.fromJson(x)).toList();
+      // print("get all species ${species}");
+      emit(GetAllSpeciesSuccessState());
+    } catch (e) {
+      _handleError(e);
+      emit(GetAllSpeciesErrorState());
+    }
+  }
+
+  void init(String species, String speciesId) {
     dropdownValueSpecies = species;
     dropdownValueSpeciesId = speciesId;
     emit(PetCreateSuccessState());
   }
 
-  String petId = '';
-  String specieId = '';
-
   void initEdit(PetsData model) {
     petNameController.text = model.petName;
     breedIdController.text = model.breedId;
-    birthdateController.text =
-        model.birthdate.isEmpty ? '' : model.birthdate.substring(0, 10);
-    imageNameController.text =
-        (model.imageName.toString().contains('freepik')) ? '' : model.imageName;
+    birthdateController.text = model.birthdate.isEmpty ? '' : model.birthdate.substring(0, 10);
+    imageNameController.text = model.imageName.contains('freepik') ? '' : model.imageName;
     gender = model.gender;
     petId = model.petId;
     specieId = model.specieId;
     spayed = model.isSpayed;
     dropdownValueBreed = model.breedId;
-
-    model.breed == null
-        ? searchController.text = S.current.breed
-        : searchController.text = model.breed!.enType;
-
+    searchController.text = model.breed?.enType ?? S.current.breed;
     emit(PetCreateSuccessState());
   }
 
-  final formKey = GlobalKey<FormState>();
-  final TextEditingController breedIdController = TextEditingController();
-  final TextEditingController searchController = TextEditingController();
-  final TextEditingController birthdateController =
-      TextEditingController(text: DateTime.now().toString().substring(0, 10));
-  final TextEditingController petNameController = TextEditingController();
-  final TextEditingController imageNameController = TextEditingController();
-  int gender = 1;
-  String dropdownValueBreed = '';
-  String dropdownValueSpecies = '';
-  String dropdownValueSpeciesId = '';
-  bool isLoading = false;
+  Map<String, dynamic> _preparePetData({bool isEdit = false}) {
+    final data = {
+      'petName': petNameController.text,
+      'gender': gender,
+      'imageName': imageNameController.text == 'PetAvatar.png' ? '' : imageNameController.text,
+      'birthdate': birthdateController.text,
+      'specieId': dropdownValueSpeciesId,
+      'ownerId': CacheHelper.getData('clintId'),
+      'isSpayed': spayed
+    };
 
+    if (breedIdController.text.isNotEmpty) {
+      data['breedId'] = breedIdController.text;
+    } else if (isEdit) {
+      data['breedId'] = null;
+    }
+
+    return data;
+  }
+
+  // API Call to create
   void createPet() async {
     isLoading = true;
     emit(PetCreateLoadingState());
     try {
-      Response response = await DioFinalHelper.postData(
+      final response = await DioFinalHelper.postData(
         method: addPetEndPint,
-        data: breedIdController.text.isEmpty
-            ? {
-                'petName': petNameController.text,
-                'gender': gender,
-                'imageName': imageNameController.text,
-                'birthdate': birthdateController.text,
-                'ownerId': CacheHelper.getData('clintId'),
-                "specieId": dropdownValueSpeciesId,
-                "isSpayed": spayed
-              }
-            : {
-                'petName': petNameController.text,
-                'gender': gender,
-                'breedId': breedIdController.text,
-                'imageName': imageNameController.text,
-                'birthdate': birthdateController.text,
-                "specieId": dropdownValueSpeciesId,
-                'ownerId': CacheHelper.getData('clintId'),
-                "isSpayed": spayed
-              },
+        data: _preparePetData(),
       );
 
       pets.add(PetsData.fromJson(response.data['data']));
-      String petsJson = jsonEncode(pets.map((pet) => pet.toMap()).toList());
-      CacheHelper.saveData('usersPets', petsJson);
-
-      print(CacheHelper.getData('usersPets') + '*****************');
-      print(response.data);
-      print(pets.length);
+      _cacheUpdatedPets();
       isLoading = false;
       emit(PetCreateSuccessState());
-    } on DioException catch (e) {
+    } catch (e) {
       isLoading = false;
-      print(e.response!.data);
-      emit(PetCreateErrorState(ResponseModel.fromJson(e.response!.data)));
+      _handleError(e, emitError: (msg) => PetCreateErrorState(msg));
     }
   }
 
+  // API Call to edit
   void editPet() async {
     isLoading = true;
-
-    print("breedIdController.text");
-    print(breedIdController.text);
-
     emit(PetCreateLoadingState());
     try {
-      Response response = await DioFinalHelper.patchData(
+      final response = await DioFinalHelper.patchData(
         method: updatePetEndPint + petId,
-        data: {
-          'petName': petNameController.text,
-          'gender': gender,
-          'imageName': imageNameController.text == 'PetAvatar.png'
-              ? ''
-              : imageNameController.text,
-          'birthdate': birthdateController.text,
-          'specieId': dropdownValueSpeciesId,
-          'breedId':
-              breedIdController.text.isEmpty || breedIdController.text == ''
-                  ? null
-                  : breedIdController.text,
-          'ownerId': CacheHelper.getData('clintId'),
-          "isSpayed": spayed
-        },
+        data: _preparePetData(isEdit: true),
       );
 
       pets.add(PetsData.fromJson(response.data['data']));
-      String petsJson = jsonEncode(pets.map((pet) => pet.toMap()).toList());
-      CacheHelper.saveData('usersPets', petsJson);
+      _cacheUpdatedPets();
       isLoading = false;
       emit(PetCreateSuccessState());
-    } on DioException catch (e) {
+    } catch (e) {
       isLoading = false;
-      print(e.response!.data);
-      emit(PetCreateErrorState(ResponseModel.fromJson(e.response!.data)));
+      _handleError(e, emitError: (msg) => PetCreateErrorState(msg));
     }
   }
 
-  void changeGender(ChangeGender) {
-    gender = ChangeGender;
+
+  void _cacheUpdatedPets() {
+    final jsonPets = jsonEncode(pets.map((pet) => pet.toMap()).toList());
+    CacheHelper.saveData('usersPets', jsonPets);
+  }
+
+  Future<void> deletePet(String id) async {
+    emit(DeletePetLoadingState());
+    try {
+      await DioFinalHelper.deleteData(method: deletePetEndPint + id);
+      getOwnerPet();
+      emit(DeletePetSuccessState());
+    } catch (e) {
+      _handleError(e);
+      emit(DeletePetErrorState());
+    }
+
+  }
+
+  // functions to change the state of the form { gender , birthdate , image name , breed , species }
+  void changeGender(int newGender) {
+    gender = newGender;
     emit(ChangeGenderState());
   }
 
-  void changeBirthdate(ChangeBirthdate) {
-    birthdateController.text = ChangeBirthdate;
+  void changeBirthdate(String date) {
+    birthdateController.text = date;
     emit(ChangeBirthdateState());
   }
 
-  void changeImageName(ChangeImageName) {
-    imageNameController.text = ChangeImageName;
+  void changeImageName(String name) {
+    imageNameController.text = name;
     emit(ChangeImageNameState());
   }
 
-  /// TODO: Mohamed Elkerm -> fuunction run wrong the dropdownValueBreed need id and the oldd function give it just name
-  void changeBreed(name, id) {
+  void changeBreed(String name, String id) {
     breedIdController.text = id;
     dropdownValueBreed = name;
     emit(ChangeBreedState());
   }
 
-  void changeSpecies(name, id) {
+  void changeSpecies(String name, String id) {
     dropdownValueSpecies = name;
     dropdownValueSpeciesId = id;
     emit(ChangeSpeciesState());
   }
 
-  File? pitsImage;
-  var picker = ImagePicker();
+  void changeSpayed() {
+    spayed = !spayed;
+    emit(ChangeBreedState());
+  }
 
+  // function to pick image from gallery
   Future<void> getPitsImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -250,72 +271,28 @@ class PetCubit extends Cubit<PetState> {
     }
   }
 
-  List<BreadData> breedData = [];
 
-  Future<void> getAllBreeds(id) async {
-    emit(GetAllBreedsLoadingState());
-    try {
-      Response response = await DioFinalHelper.getData(
-        method: allBreedBySpeciesId + id.toString(),
-        language: false,
-      );
-
-      breedData = List<BreadData>.from(
-          response.data['data']['breedDto'].map((x) => BreadData.fromJson(x)));
-      emit(GetAllBreedsSuccessState());
-    } on DioException catch (e) {
-      print(e);
-      emit(GetAllBreedsErrorState());
-    }
-  }
-
-  List<BreadData> species = [];
-
-  Future<void> getAllSpecies() async {
-    emit(GetAllSpeciesLoadingState());
-    try {
-      Response response = await DioFinalHelper.getData(
-        language: false,
-        method: allSpeciesEndPoint,
-      );
-      species = List<BreadData>.from(response.data['data']['speciesDtos']
-          .map((x) => BreadData.fromJson(x)));
-      emit(GetAllSpeciesSuccessState());
-    } on DioException catch (e) {
-      print(e);
-
-      emit(GetAllSpeciesErrorState());
-    }
-  }
-
-  Future<void> deletePet(id) async {
-    print('id = $id');
-    emit(DeletePetLoadingState());
-    try {
-      Response response = await DioFinalHelper.deleteData(
-        method: deletePetEndPint + id.toString(),
-      );
-      getOwnerPet();
-      emit(DeletePetSuccessState());
-    } on DioException catch (e) {
-      print(e.response!.data + '************');
-      emit(DeletePetErrorState());
+  void _handleError(dynamic error, {Function(ResponseModel)? emitError}) {
+    if (error is DioException && error.response != null) {
+      final responseModel = ResponseModel.fromJson(error.response!.data);
+      if (emitError != null) {
+        emitError(responseModel);
+      } else {
+        print(responseModel.message);
+      }
+    } else {
+      print('Unexpected error: $error');
     }
   }
 
   @override
   Future<void> close() {
-    print('close Cubit');
     CacheHelper.removeData('NotificationId');
     CacheHelper.removeData('NotificationType');
-
     return super.close();
   }
-
-  bool spayed = false;
-
-  void changeSpayed() {
-    spayed = !spayed;
-    emit(ChangeBreedState());
-  }
 }
+
+
+
+

@@ -455,7 +455,7 @@ Widget buildDetailsContent(PetsData pet, context, PetCubit cubit) {
                             imageUrl:
                                 'https://img.freepik.com/premium-vector/sad-dog_161669-74.jpg?size=626&ext=jpg&uid=R78903714&ga=GA1.2.131510781.1692744483&semt=ais',
                             onConfirm: () async {
-                              await cubit.deletePet(pet.petId);
+                              await cubit.deletePet( pet.petId);
                               Navigator.of(context).pop(
                                   true); // You can pop with true to signal confirmation.
                             },
