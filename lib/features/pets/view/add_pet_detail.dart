@@ -94,51 +94,32 @@ class AddPet extends StatelessWidget {
   Widget _buildProfileImageSection(BuildContext context, PetCubit cubit) {
     return Center(
       child: Stack(
-        alignment: Alignment.bottomRight,
         children: [
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: ColorTheme.primaryColor.withOpacity(0.3),
-                width: 2,
-              ),
-            ),
-            child: ClipOval(
-              child: cubit.pitsImage == null
-                  ? Image.asset(
-                pathImage,
-                fit: BoxFit.cover,
-              )
-                  : Image.file(
-                cubit.pitsImage!,
-                fit: BoxFit.cover,
-              ),
-            ),
+          CircleAvatar(
+            radius: 50,
+            backgroundImage: cubit.pitsImage == null
+                ? AssetImage(pathImage) as ImageProvider
+                : FileImage(cubit.pitsImage!),
           ),
-          Container(
-            decoration: BoxDecoration(
-              color: ColorTheme.primaryColor,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.white,
-                width: 2,
-              ),
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: 15,
             ),
-            child: IconButton(
-              icon: const Icon(Icons.camera_alt, size: 20),
-              color: Colors.white,
-              onPressed: cubit.getPitsImage,
+            child: CircleAvatar(
+              radius: 15,
+              child: IconButton(
+                icon: const Icon(Icons.camera_alt_outlined),
+                iconSize: 15,
+                onPressed: () {
+                  cubit.getPitsImage();
+                },
+              ),
             ),
           ),
         ],
       ),
     );
-  }
-
-  Widget _buildGeneralInformationSection(
+  }  Widget _buildGeneralInformationSection(
       BuildContext context,
       PetCubit cubit,
       bool isDark,
@@ -149,25 +130,16 @@ class AddPet extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Spayed/Unspayed Toggle
           _buildSpayedToggle(context, cubit),
-          const SizedBox(height: 20),
-
-          // Pet Name Field
+          SizedBox(height: responsiveHeight(20, context)),
           _buildPetNameField(context, cubit, isDark),
-          const SizedBox(height: 20),
-
-          // Breed and Species Dropdowns
+          SizedBox(height: responsiveHeight(20, context)),
           _buildBreedAndSpeciesRow(context, cubit, isDark),
-          const SizedBox(height: 20),
-
-          // Gender Selection
+          SizedBox(height: responsiveHeight(20, context)),
           _buildGenderSelection(context, cubit),
-          const SizedBox(height: 20),
-
-          // Birthdate Picker
+          SizedBox(height: responsiveHeight(20, context)),
           _buildBirthdatePicker(context, cubit, isDark),
-          const SizedBox(height: 30),
+          SizedBox(height: responsiveHeight(30, context)),
         ],
       ),
     );
@@ -246,53 +218,68 @@ class AddPet extends StatelessWidget {
     );
   }
 
-  Widget _buildBreedAndSpeciesRow(
-      BuildContext context,
-      PetCubit cubit,
-      bool isDark,
-      ) {
+  Widget _buildBreedAndSpeciesRow(BuildContext context, PetCubit cubit, bool isDark) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isSmallScreen = constraints.maxWidth < 600;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (isSmallScreen) ...[
+              // Stack vertically on small screens
+              _buildBreedDropdown(context, cubit, isDark),
+              const SizedBox(height: 16),
+              _buildSpeciesDropdown(context, cubit, isDark),
+            ] else ...[
+              // Side by side on larger screens
+              Row(
+                children: [
+                  Expanded(child: _buildBreedDropdown(context, cubit, isDark)),
+                  const SizedBox(width: 16),
+                  Expanded(child: _buildSpeciesDropdown(context, cubit, isDark)),
+                ],
+              ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+
+// Add these helper methods
+  Widget _buildBreedDropdown(BuildContext context, PetCubit cubit, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    S.of(context).breed,
-                    style: FontStyleThame.textStyle(
-                      context: context,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  buildDropDownBreed(cubit.breedData, context, cubit),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    S.of(context).species,
-                    style: FontStyleThame.textStyle(
-                      context: context,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  buildDropDownSpecies(cubit.species, context, cubit),
-                ],
-              ),
-            ),
-          ],
+        Text(
+          S.of(context).breed,
+          style: FontStyleThame.textStyle(
+            context: context,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
         ),
+        const SizedBox(height: 8),
+        buildDropDownBreed(cubit.breedData, context, cubit),
+      ],
+    );
+  }
+
+  Widget _buildSpeciesDropdown(BuildContext context, PetCubit cubit, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          S.of(context).species,
+          style: FontStyleThame.textStyle(
+            context: context,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        buildDropDownSpecies(cubit.species, context, cubit),
       ],
     );
   }
@@ -619,4 +606,14 @@ class AddPet extends StatelessWidget {
 
 
 
+}
+
+double responsiveHeight(double height, BuildContext context) {
+  final screenHeight = MediaQuery.of(context).size.height;
+  return (height / 800) * screenHeight; // 800 is the design reference height
+}
+
+double responsiveWidth(double width, BuildContext context) {
+  final screenWidth = MediaQuery.of(context).size.width;
+  return (width / 360) * screenWidth; // 360 is the design reference width
 }
