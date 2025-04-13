@@ -227,6 +227,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "notEqualPassword": MessageLookupByLibrary.simpleMessage(
       "تأكيد كلمة المرور غير مطابق لكلمة المرور",
     ),
+    "notSpayed": MessageLookupByLibrary.simpleMessage("غير معقم"),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
     "offlineMessagesContent": MessageLookupByLibrary.simpleMessage(
       "أنت حاليا غير متصل بالإنترنت.  التحقق من اتصالك بالإنترنت.",
@@ -321,6 +322,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "signUp": MessageLookupByLibrary.simpleMessage("التسجيل"),
     "signUpAsADoctor": MessageLookupByLibrary.simpleMessage("التسجيل كطبيب"),
     "skip": MessageLookupByLibrary.simpleMessage("تخطي"),
+    "spayed": MessageLookupByLibrary.simpleMessage("معقم"),
     "speciality": MessageLookupByLibrary.simpleMessage("التخصص"),
     "species": MessageLookupByLibrary.simpleMessage("الأنواع"),
     "speciesOne": MessageLookupByLibrary.simpleMessage("النوع"),

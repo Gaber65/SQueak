@@ -228,5 +228,9 @@
 
   "reminderOtherHintText" : "Please enter your reminder type",
   "other_valid": "Please enter valid title",
-  "other_valid_more_than_30_char": "the range is from 1 - 30 char"
+  "other_valid_more_than_30_char": "the range is from 1 - 30 char",
+
+
+  "spayed": "Spayed",
+  "notSpayed": "Unspayed"
 }

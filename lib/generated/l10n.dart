@@ -1794,6 +1794,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Spayed`
+  String get spayed {
+    return Intl.message('Spayed', name: 'spayed', desc: '', args: []);
+  }
+
+  /// `Unspayed`
+  String get notSpayed {
+    return Intl.message('Unspayed', name: 'notSpayed', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

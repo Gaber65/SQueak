@@ -229,6 +229,9 @@
 
   "reminderOtherHintText" : "الرجاء ادخال عنوان الخدمه",
   "other_valid": "برجاء ادخال عنوان واضح",
-  "other_valid_more_than_30_char": "يجب الا يقل عن حرف او يزيد عن ٣٠ حرف"
+  "other_valid_more_than_30_char": "يجب الا يقل عن حرف او يزيد عن ٣٠ حرف",
+
+  "spayed": "معقم",
+  "notSpayed": "غير معقم"
 
 }

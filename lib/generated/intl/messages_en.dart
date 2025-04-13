@@ -242,6 +242,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "notEqualPassword": MessageLookupByLibrary.simpleMessage(
       "confirm password not equal password",
     ),
+    "notSpayed": MessageLookupByLibrary.simpleMessage("Unspayed"),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
     "offlineMessagesContent": MessageLookupByLibrary.simpleMessage(
       " check your internet connection and try again",
@@ -342,6 +343,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Sign up as a Doctor",
     ),
     "skip": MessageLookupByLibrary.simpleMessage("Skip"),
+    "spayed": MessageLookupByLibrary.simpleMessage("Spayed"),
     "speciality": MessageLookupByLibrary.simpleMessage("Speciality"),
     "species": MessageLookupByLibrary.simpleMessage("Species"),
     "speciesOne": MessageLookupByLibrary.simpleMessage("Species"),
