@@ -103,6 +103,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Start Examination",
     ),
     "bill": MessageLookupByLibrary.simpleMessage("Bill"),
+    "birthdate": MessageLookupByLibrary.simpleMessage("Date of birth"),
+    "birthdateValidation": MessageLookupByLibrary.simpleMessage(
+      "Please enter date of birth",
+    ),
     "birthdate_hint": MessageLookupByLibrary.simpleMessage(
       "Enter your birthdate",
     ),
@@ -113,6 +117,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "breed": MessageLookupByLibrary.simpleMessage("breed"),
     "cancelFollow": MessageLookupByLibrary.simpleMessage("Cancel"),
     "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
+    "changePhoto": MessageLookupByLibrary.simpleMessage("Change Photo"),
     "checkYourEmail": MessageLookupByLibrary.simpleMessage("Check Your Email"),
     "chosePet": MessageLookupByLibrary.simpleMessage("Choose Pet"),
     "city": MessageLookupByLibrary.simpleMessage("city"),
@@ -136,9 +141,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "darkMode": MessageLookupByLibrary.simpleMessage("Dark Mode"),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
     "deleteComment": MessageLookupByLibrary.simpleMessage("Delete Comment"),
+    "deletePhoto": MessageLookupByLibrary.simpleMessage("Delete Photo"),
     "doctorName": MessageLookupByLibrary.simpleMessage("Doctor Name"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editComment": MessageLookupByLibrary.simpleMessage("Edit Comment . . . ."),
+    "editPet": MessageLookupByLibrary.simpleMessage("Edit Pet"),
     "email": MessageLookupByLibrary.simpleMessage("Email Address"),
     "email_hint": MessageLookupByLibrary.simpleMessage(
       "Enter your email address",
@@ -165,6 +172,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterName": MessageLookupByLibrary.simpleMessage("Enter your Full Name"),
     "enterNewPassword": MessageLookupByLibrary.simpleMessage(
       "Enter your new password",
+    ),
+    "enterPetName": MessageLookupByLibrary.simpleMessage("Enter pet name"),
+    "enterPetNameValidation": MessageLookupByLibrary.simpleMessage(
+      "Please enter pet name",
     ),
     "enterPhone": MessageLookupByLibrary.simpleMessage("Enter your phone"),
     "enterUrAddress": MessageLookupByLibrary.simpleMessage(

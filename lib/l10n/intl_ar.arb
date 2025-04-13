@@ -232,6 +232,14 @@
   "other_valid_more_than_30_char": "يجب الا يقل عن حرف او يزيد عن ٣٠ حرف",
 
   "spayed": "معقم",
-  "notSpayed": "غير معقم"
+  "notSpayed": "غير معقم",
+
+  "editPet" : "تعديل الاليف",
+  "enterPetName" : "ادخل اسم الاليف",
+  "enterPetNameValidation" : "من فضلك ادخل الاسم الحيوان",
+  "birthdate" : "تاريخ الميلاد",
+  "birthdateValidation" : "من فضلك ادخل تاريخ الميلاد",
+  "deletePhoto" : "حذف الصورة",
+  "changePhoto" : "تغيير الصورة"
 
 }

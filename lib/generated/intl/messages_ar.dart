@@ -98,6 +98,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "بدء الفحص",
     ),
     "bill": MessageLookupByLibrary.simpleMessage("الفاتورة"),
+    "birthdate": MessageLookupByLibrary.simpleMessage("تاريخ الميلاد"),
+    "birthdateValidation": MessageLookupByLibrary.simpleMessage(
+      "من فضلك ادخل تاريخ الميلاد",
+    ),
     "birthdate_hint": MessageLookupByLibrary.simpleMessage("أدخل تاريخ ميلادك"),
     "birthdate_validation": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال تاريخ ميلادك",
@@ -106,6 +110,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "breed": MessageLookupByLibrary.simpleMessage("السلالة"),
     "cancelFollow": MessageLookupByLibrary.simpleMessage("إلغاء المتابعة"),
     "changePassword": MessageLookupByLibrary.simpleMessage("تغيير كلمة المرور"),
+    "changePhoto": MessageLookupByLibrary.simpleMessage("تغيير الصورة"),
     "checkYourEmail": MessageLookupByLibrary.simpleMessage(
       "تحقق من بريدك الإلكتروني",
     ),
@@ -133,9 +138,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "darkMode": MessageLookupByLibrary.simpleMessage("الوضع الداكن"),
     "date": MessageLookupByLibrary.simpleMessage("التاريخ"),
     "deleteComment": MessageLookupByLibrary.simpleMessage("حذف التعليق"),
+    "deletePhoto": MessageLookupByLibrary.simpleMessage("حذف الصورة"),
     "doctorName": MessageLookupByLibrary.simpleMessage("اسم الطبيب"),
     "edit": MessageLookupByLibrary.simpleMessage("تحرير"),
     "editComment": MessageLookupByLibrary.simpleMessage("تعديل التعليق ..."),
+    "editPet": MessageLookupByLibrary.simpleMessage("تعديل الاليف"),
     "email": MessageLookupByLibrary.simpleMessage("عنوان البريد الإلكتروني"),
     "email_hint": MessageLookupByLibrary.simpleMessage("أدخل بريدك الإلكتروني"),
     "email_valid": MessageLookupByLibrary.simpleMessage(
@@ -162,6 +169,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "enterNewPassword": MessageLookupByLibrary.simpleMessage(
       "أدخل كلمة المرور الجديدة",
+    ),
+    "enterPetName": MessageLookupByLibrary.simpleMessage("ادخل اسم الاليف"),
+    "enterPetNameValidation": MessageLookupByLibrary.simpleMessage(
+      "من فضلك ادخل الاسم الحيوان",
     ),
     "enterPhone": MessageLookupByLibrary.simpleMessage("أدخل رقم هاتفك"),
     "enterUrAddress": MessageLookupByLibrary.simpleMessage("أدخل عنوانك"),

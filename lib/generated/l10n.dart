@@ -1804,6 +1804,66 @@ class S {
   String get notSpayed {
     return Intl.message('Unspayed', name: 'notSpayed', desc: '', args: []);
   }
+
+  /// `Edit Pet`
+  String get editPet {
+    return Intl.message('Edit Pet', name: 'editPet', desc: '', args: []);
+  }
+
+  /// `Enter pet name`
+  String get enterPetName {
+    return Intl.message(
+      'Enter pet name',
+      name: 'enterPetName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter pet name`
+  String get enterPetNameValidation {
+    return Intl.message(
+      'Please enter pet name',
+      name: 'enterPetNameValidation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Date of birth`
+  String get birthdate {
+    return Intl.message('Date of birth', name: 'birthdate', desc: '', args: []);
+  }
+
+  /// `Please enter date of birth`
+  String get birthdateValidation {
+    return Intl.message(
+      'Please enter date of birth',
+      name: 'birthdateValidation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Photo`
+  String get deletePhoto {
+    return Intl.message(
+      'Delete Photo',
+      name: 'deletePhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Photo`
+  String get changePhoto {
+    return Intl.message(
+      'Change Photo',
+      name: 'changePhoto',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

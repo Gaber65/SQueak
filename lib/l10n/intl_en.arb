@@ -232,5 +232,14 @@
 
 
   "spayed": "Spayed",
-  "notSpayed": "Unspayed"
+  "notSpayed": "Unspayed",
+
+  "editPet" : "Edit Pet",
+  "enterPetName" : "Enter pet name",
+  "enterPetNameValidation" : "Please enter pet name",
+  "birthdate" : "Date of birth",
+  "birthdateValidation" : "Please enter date of birth",
+  "deletePhoto" : "Delete Photo",
+  "changePhoto" : "Change Photo"
+
 }

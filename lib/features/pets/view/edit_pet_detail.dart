@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:drop_down_search_field/drop_down_search_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:drop_down_search_field/drop_down_search_field.dart';
 import 'package:squeak/core/constant/global_function/custom_text_form_field.dart';
 import 'package:squeak/core/constant/global_function/global_function.dart';
 import 'package:squeak/core/constant/global_widget/toast.dart';
@@ -11,32 +11,9 @@ import 'package:squeak/core/helper/remotely/end-points.dart';
 import 'package:squeak/core/thames/styles.dart';
 import 'package:squeak/features/layout/controller/layout_cubit.dart';
 import 'package:squeak/features/pets/models/pet_model.dart';
-
 import 'package:squeak/features/pets/controller/pet_cubit.dart';
 import 'package:squeak/features/pets/view/pet_screen.dart';
-
-import '../../../core/thames/color_manager.dart';
-import '../../../generated/l10n.dart';
-
-///
-///
-///         Cat
-///         AddPet(
-//                     dropdownValueSpecies: isArabic() ? 'قطة' : 'Cat',
-//                     pathImage: 'assets/cat-with-gold.jpg',
-//                     species: 'f1131363-3b9f-40ee-9a89-0573ee274a10',
-//           ),
-///
-///         Dog
-///         AddPet(
-//                     dropdownValueSpecies: isArabic() ? 'كلب' : 'Dog',
-//                     pathImage: 'assets/dog.png',
-//                     species: 'bca48207-f05d-4e9f-a631-06f34eb5af39',
-//                   ),
-///
-///
-///
-///
+import 'package:squeak/generated/l10n.dart';
 
 class EditPet extends StatelessWidget {
   EditPet({
@@ -46,31 +23,14 @@ class EditPet extends StatelessWidget {
 
   final List<BreadData> breedData;
   final PetsData pets;
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  late String dropdownValueSpecies;
-  late String species;
-  bool initTheBreedOfThePet = false;
   @override
   Widget build(BuildContext context) {
-    species = pets.specieId;
-
-    /// Mohamed Elkerm  i create only 2 case s cat and dog
-    dropdownValueSpecies =
-        pets.specieId == 'f1131363-3b9f-40ee-9a89-0573ee274a10'
-            ? isArabic()
-                ? 'قطة'
-                : 'Cat'
-            : isArabic()
-                ? 'كلب'
-                : 'Dog';
-
-    print("12121212121212121212121212");
-
-    ///Categroy Id
-    print(pets.specieId);
-
-    ///TODO : Mohamed Elkerm  why you provide blocProvider multi times ???
+    final species = pets.specieId;
+    final dropdownValueSpecies = pets.specieId == 'f1131363-3b9f-40ee-9a89-0573ee274a10'
+        ? isArabic() ? 'قطة' : 'Cat'
+        : isArabic() ? 'كلب' : 'Dog';
 
     return BlocProvider(
       create: (context) => PetCubit()
@@ -85,7 +45,6 @@ class EditPet extends StatelessWidget {
             CacheHelper.removeData('usersPets');
             navigateAndFinish(context, const PetScreen());
           }
-
           if (state is PetCreateErrorState) {
             errorToast(
               context,
@@ -96,209 +55,38 @@ class EditPet extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          var cubit = PetCubit.get(context);
+          final cubit = PetCubit.get(context);
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+
           return Scaffold(
-            key: scaffoldKey,
+            key: _scaffoldKey,
             appBar: AppBar(
               elevation: 0,
               centerTitle: true,
-              title: Text(isArabic() ? 'تعديل الاليف ' : 'Edit Pet'),
+              title: Text(
+                S.of(context).editPet,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
             ),
             body: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Form(
                 key: cubit.formKey,
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Stack(
-                          children: [
-                            CircleAvatar(
-                              radius: 50,
-                              backgroundImage: cubit.pitsImage == null
-                                  ? NetworkImage((pets.imageName == null ||
-                                          pets.imageName == 'PetAvatar.png' ||
-                                          pets.imageName!.isEmpty)
-                                      ? AssetImageModel.defaultPetImage
-                                      : imageUrl +
-                                          pets.imageName) as ImageProvider
-                                  : FileImage(cubit.pitsImage!),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: 15,
-                              ),
-                              child: CircleAvatar(
-                                radius: 15,
-                                child: IconButton(
-                                  icon: const Icon(Icons.settings),
-                                  iconSize: 15,
-                                  onPressed: () {
-                                    scaffoldKey.currentState!.showBottomSheet(
-                                      backgroundColor:
-                                          Colors.white.withOpacity(0),
-                                      elevation: 0,
-                                      (context) {
-                                        return ImageOption(
-                                          context,
-                                          pets,
-                                          cubit,
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(S.of(context).generalInformation),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Text(
-                            cubit.spayed
-                                ? isArabic()
-                                    ? 'معقم'
-                                    : 'Spayed'
-                                : isArabic()
-                                    ? 'غير معقم'
-                                    : 'Unspayed',
-                            style: FontStyleThame.textStyle(
-                              context: context,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const Spacer(),
-                          Switch(
-                            value: cubit.spayed,
-                            activeColor: ColorTheme.primaryColor,
-                            onChanged: (value) {
-                              cubit.changeSpayed();
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Text(S.of(context).petName),
-                      const SizedBox(height: 8),
-                      MyTextForm(
-                        controller: cubit.petNameController,
-                        prefixIcon: const Icon(
-                          Icons.person,
-                          size: 14,
-                        ),
-                        enable: false,
-                        hintText: isArabic()
-                            ? 'ادخل الاسم الحيوان'
-                            : 'Enter pet name',
-                        validatorText: isArabic()
-                            ? " من فضلك ادخل الاسم الحيوان"
-                            : "Please enter pet name",
-                        obscureText: false,
-                      ),
-                      // if (pets.breed != null) const SizedBox(height: 20),
-                      // if (pets.breed != null) Text(S.of(context).breed),
-                      // if (pets.breed != null) const SizedBox(height: 8),
-                      // if (pets.breed != null)
-                      //   Container(
-                      //     decoration: BoxDecoration(
-                      //       color: MainCubit.get(context).isDark
-                      //           ? Colors.black26
-                      //           : Colors.grey.shade200,
-                      //       borderRadius: BorderRadius.circular(12),
-                      //     ),
-                      //     child: Padding(
-                      //       padding: const EdgeInsets.all(8.0),
-                      //       child: Text(pets.breed!.enType),
-                      //     ),
-                      //   ),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width / 2,
-                            child: buildDropDownBreed(
-                              cubit.breedData,
-                              context,
-                              cubit,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          SizedBox(
-                            width:
-                                (MediaQuery.of(context).size.width / 2.5) - 10,
-                            child: buildDropDownSpecies(
-                              cubit.species,
-                              context,
-                              cubit,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Text(S.of(context).gender),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Expanded(
-                              child: buildSelect(
-                                  isArabic() ? "ذكر" : 'Male', 1, cubit)),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                              child: buildSelect(
-                                  isArabic() ? 'أنثى' : 'Female', 2, cubit)),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(isArabic() ? 'تاريخ الميلاد' : 'date of birth'),
-                      const SizedBox(height: 20),
-                      buildSelectDate2(context, cubit),
-                      const SizedBox(height: 30),
-                      BlocConsumer<MainCubit, MainState>(
-                        listener: (context, state) {},
-                        builder: (context, state) {
-                          return CustomElevatedButton(
-                            isLoading: cubit.isLoading,
-                            formKey: cubit.formKey,
-                            onPressed: () {
-                              if (cubit.formKey.currentState!.validate()) {
-                                if (cubit.pitsImage == null) {
-                                  cubit.editPet();
-                                  return;
-                                } else {
-                                  cubit.isLoading = true;
-                                  MainCubit.get(context)
-                                      .getGlobalImage(
-                                    file: cubit.pitsImage!,
-                                    uploadPlace: UploadPlace.petsImages.value,
-                                  )
-                                      .then((value) {
-                                    cubit.imageNameController.text =
-                                        MainCubit.get(context).modelImage!.data
-                                            as String;
-                                    cubit.editPet();
-                                  });
-                                }
-                              }
-                            },
-                            buttonText: S.of(context).save,
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildProfileImageSection(context, cubit),
+                    const SizedBox(height: 24),
+                    _buildGeneralInformationSection(context, cubit, isDark),
+                    _buildBreedSpeciesSection(context, cubit, isDark),
+                    _buildGenderSection(context, cubit),
+                    _buildBirthdateSection(context, cubit, isDark),
+                    _buildSaveButton(context, cubit),
+                  ],
                 ),
               ),
             ),
@@ -308,65 +96,332 @@ class EditPet extends StatelessWidget {
     );
   }
 
-  Widget buildSelectDate2(context, cubit) {
-    return InkWell(
-      onTap: () => selectDate(context, cubit),
-      child: IgnorePointer(
-        child: MyTextForm(
-          controller: cubit.birthdateController,
-          enabled: true,
-          onTap: () => selectDate(context, cubit),
-          prefixIcon: const Icon(
-            Icons.calendar_month,
-            size: 14,
+  Widget _buildProfileImageSection(BuildContext context, PetCubit cubit) {
+    return Center(
+      child: Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+          Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: ColorTheme.primaryColor.withOpacity(0.3),
+                width: 2,
+              ),
+            ),
+            child: ClipOval(
+              child: cubit.pitsImage == null
+                  ? Image.network(
+                (pets.imageName == null ||
+                    pets.imageName == 'PetAvatar.png' ||
+                    pets.imageName!.isEmpty)
+                    ? AssetImageModel.defaultPetImage
+                    : imageUrl + pets.imageName!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Image.asset(
+                  pets.specieId == 'f1131363-3b9f-40ee-9a89-0573ee274a10'
+                      ? 'assets/cat-with-gold.jpg'
+                      : 'assets/dog.png',
+                  fit: BoxFit.cover,
+                ),
+              )
+                  : Image.file(cubit.pitsImage!, fit: BoxFit.cover),
+            ),
           ),
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: ColorTheme.primaryColor,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+            ),
+            child: IconButton(
+              icon: Icon(Icons.edit, size: 18),
+              color: Colors.white,
+              onPressed: () => _showImageOptions(context, cubit),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGeneralInformationSection(BuildContext context, PetCubit cubit, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          S.of(context).generalInformation,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: Colors.grey.withOpacity(0.2)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: [
+                Icon(
+                  cubit.spayed ? Icons.health_and_safety : Icons.pets,
+                  color: ColorTheme.primaryColor,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  cubit.spayed
+                      ? S.of(context).spayed
+                      : S.of(context).notSpayed,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const Spacer(),
+                Switch(
+                  value: cubit.spayed,
+                  activeColor: ColorTheme.primaryColor,
+                  onChanged: (_) => cubit.changeSpayed(),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          S.of(context).petName,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+        MyTextForm(
+          controller: cubit.petNameController,
+          prefixIcon: Icon(Icons.pets, size: 20),
           enable: false,
-          hintText: isArabic() ? 'ادخل تاريخ الميلاد' : 'Enter date of birth',
-          validatorText: isArabic()
-              ? 'من فضلك ادخل تاريخ الميلاد'
-              : 'Please enter date of birth',
+          hintText: S.of(context).enterPetName,
+          validatorText: S.of(context).enterPetNameValidation,
           obscureText: false,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBreedSpeciesSection(BuildContext context, PetCubit cubit, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    S.of(context).breed,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  buildDropDownBreed(cubit.breedData, context, cubit),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    S.of(context).species,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  buildDropDownSpecies(cubit.species, context, cubit),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGenderSection(BuildContext context, PetCubit cubit) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        Text(
+          S.of(context).gender,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: _buildGenderOption(
+                context,
+                S.of(context).male,
+                1,
+                cubit,
+                cubit.gender == 1,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildGenderOption(
+                context,
+                S.of(context).female,
+                2,
+                cubit,
+                cubit.gender == 2,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGenderOption(
+      BuildContext context,
+      String title,
+      int id,
+      PetCubit cubit,
+      bool isSelected,
+      ) {
+    return InkWell(
+      onTap: () => cubit.changeGender(id),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        height: 50,
+        decoration: BoxDecoration(
+          color: isSelected
+              ? ColorTheme.primaryColor
+              : ColorTheme.primaryColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected
+                ? ColorTheme.primaryColor
+                : Colors.grey.withOpacity(0.3),
+          ),
+        ),
+        child: Center(
+          child: Text(
+            title,
+            style: TextStyle(
+              color: isSelected ? Colors.white : ColorTheme.primaryColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Future<void> selectDate(BuildContext context, PetCubit cubit) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      keyboardType: TextInputType.text,
-      initialEntryMode: DatePickerEntryMode.calendarOnly,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
+  Widget _buildBirthdateSection(BuildContext context, PetCubit cubit, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        Text(
+          S.of(context).birthdate,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () => _selectDate(context, cubit),
+          child: MyTextForm(
+            controller: cubit.birthdateController,
+            enabled: false,
+            prefixIcon: Icon(Icons.calendar_today, size: 20),
+            enable: false,
+            hintText: S.of(context).birthdateValidation,
+            validatorText: S.of(context).birthdateValidation,
+            obscureText: false,
+          ),
+        ),
+        const SizedBox(height: 30),
+      ],
     );
-    if (pickedDate != null) {
-      cubit.changeBirthdate(pickedDate.toString().substring(0, 10));
-    }
   }
 
-  Widget buildSelect(title, id, PetCubit cubit) {
-    return GestureDetector(
-      onTap: () {
-        cubit.changeGender(id);
-      },
-      child: Container(
-        height: 50,
-        padding: const EdgeInsets.all(12),
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        decoration: BoxDecoration(
-          border: Border.all(style: BorderStyle.none),
-          color: cubit.gender == id
-              ? ColorTheme.primaryColor
-              : ColorTheme.primaryColor.withOpacity(.3),
-          borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+  Widget _buildSaveButton(BuildContext context, PetCubit cubit) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ColorTheme.primaryColor,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 0,
         ),
-        child: Text(
-          title,
-          textAlign: TextAlign.center,
+        onPressed: () {
+          if (cubit.formKey.currentState!.validate()) {
+            if (cubit.pitsImage == null) {
+              cubit.editPet();
+            } else {
+              cubit.isLoading = true;
+              MainCubit.get(context)
+                  .getGlobalImage(
+                file: cubit.pitsImage!,
+                uploadPlace: UploadPlace.petsImages.value,
+              )
+                  .then((value) {
+                cubit.imageNameController.text =
+                MainCubit.get(context).modelImage!.data as String;
+                cubit.editPet();
+              });
+            }
+          }
+        },
+        child: cubit.isLoading
+            ? const SizedBox(
+          width: 20,
+          height: 20,
+          child: CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 2,
+          ),
+        )
+            : Text(
+          S.of(context).save,
           style: const TextStyle(
-            fontFamily: 'medium',
-            fontSize: 14,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
         ),
@@ -374,28 +429,33 @@ class EditPet extends StatelessWidget {
     );
   }
 
-  Material ImageOption(BuildContext context, PetsData model, PetCubit cubit) {
-    return Material(
-      elevation: 12,
-      color: MainCubit.get(context).isDark
-          ? Colors.grey.shade800
-          : Colors.grey.shade200,
-      borderRadius: const BorderRadius.only(
-        topRight: Radius.circular(30),
-        topLeft: Radius.circular(30),
+  void _showImageOptions(BuildContext context, PetCubit cubit) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
+      backgroundColor: Theme.of(context).cardColor,
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.minimize),
-            const SizedBox(
-              height: 12,
+            Container(
+              width: 60,
+              height: 6,
+              decoration: BoxDecoration(
+                color: Colors.grey[400],
+                borderRadius: BorderRadius.circular(3),
+              ),
             ),
-            if (model.imageName.isNotEmpty)
-              MaterialButton(
-                onPressed: () {
+            const SizedBox(height: 20),
+            if (pets.imageName!.isNotEmpty)
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: Text(S.of(context).deletePhoto),
+                onTap: () {
+                  Navigator.pop(context);
                   if (cubit.pitsImage == null) {
                     pets.imageName = '';
                     cubit.imageNameController.text = '';
@@ -404,51 +464,59 @@ class EditPet extends StatelessWidget {
                     cubit.pitsImage = null;
                     cubit.emit(ChangeImageNameState());
                   }
-                  Navigator.of(scaffoldKey.currentContext!).pop();
                 },
-                child: Row(
-                  children: [
-                    Text(
-                      isArabic() ? 'حذف الصورة' : 'Delete Photo',
-                    ),
-                    Spacer(),
-                    Icon(Icons.delete),
-                  ],
-                ),
               ),
-            const SizedBox(
-              height: 30,
-            ),
-            MaterialButton(
-              onPressed: () {
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: Text(S.of(context).changePhoto),
+              onTap: () {
+                Navigator.pop(context);
                 cubit.getPitsImage();
-                Navigator.of(scaffoldKey.currentContext!).pop();
               },
-              child: Row(
-                children: [
-                  Text(
-                    isArabic() ? 'تغيير الصورة' : 'Change Photo',
-                  ),
-                  Spacer(),
-                  Icon(Icons.camera),
-                ],
-              ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
           ],
         ),
       ),
     );
   }
 
-  final suggestionBoxControllerSpecies = SuggestionsBoxController();
+  Future<void> _selectDate(BuildContext context, PetCubit cubit) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: ColorTheme.primaryColor,
+              onPrimary: Colors.white,
+              onSurface: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: ColorTheme.primaryColor,
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (pickedDate != null) {
+      cubit.changeBirthdate(pickedDate.toString().substring(0, 10));
+    }
+  }
 
-  /// TODO : Mohamed Elkerm the logic to make it public for shared now i have to copy the code and put it into edit screen
   Widget buildDropDownSpecies(
-    List<BreadData> speciesData,
-    context,
-    PetCubit cubit,
-  ) {
+      List<BreadData> speciesData,
+      BuildContext context,
+      PetCubit cubit,
+      ) {
     List<BreadData> getSpeciesSuggestions(String query) {
       return speciesData
           .where((s) => s.enType.toLowerCase().contains(query.toLowerCase()))
@@ -458,31 +526,21 @@ class EditPet extends StatelessWidget {
     return DropDownSearchFormField(
       textFieldConfiguration: TextFieldConfiguration(
         style: TextStyle(
-          color: MainCubit.get(context).isDark
-              ? ColorManager.sWhite
-              : ColorManager.black_87,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : Colors.black87,
         ),
         decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           hintText: cubit.dropdownValueSpecies.isEmpty
               ? 'Select species'
               : cubit.dropdownValueSpecies,
-          fillColor: MainCubit.get(context).isDark
+          fillColor: Theme.of(context).brightness == Brightness.dark
               ? Colors.black26
               : Colors.grey.shade200,
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
-          ),
-          labelText: cubit.dropdownValueSpecies.isEmpty
-              ? 'Select species'
-              : cubit.dropdownValueSpecies,
-          labelStyle: FontStyleThame.textStyle(
-            context: context,
-            fontColor: MainCubit.get(context).isDark
-                ? ColorManager.sWhite
-                : ColorManager.black_87,
-            fontSize: 18,
           ),
           filled: true,
         ),
@@ -495,8 +553,9 @@ class EditPet extends StatelessWidget {
           title: Text(
             suggestion.enType,
             style: TextStyle(
-              color:
-                  MainCubit.get(context).isDark ? Colors.white : Colors.black,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
             ),
           ),
         );
@@ -509,18 +568,16 @@ class EditPet extends StatelessWidget {
         cubit.searchController.clear();
         cubit.getAllBreeds(suggestion.id);
       },
-      suggestionsBoxController: suggestionBoxControllerSpecies,
+      suggestionsBoxController: SuggestionsBoxController(),
       displayAllSuggestionWhenTap: true,
     );
   }
 
-  final suggestionBoxController = SuggestionsBoxController();
-
   Widget buildDropDownBreed(
-    List<BreadData> breedData,
-    context,
-    PetCubit cubit,
-  ) {
+      List<BreadData> breedData,
+      BuildContext context,
+      PetCubit cubit,
+      ) {
     List<BreadData> getSuggestions(String query) {
       return breedData
           .where((s) => s.enType.toLowerCase().contains(query.toLowerCase()))
@@ -530,27 +587,20 @@ class EditPet extends StatelessWidget {
     return DropDownSearchFormField(
       textFieldConfiguration: TextFieldConfiguration(
         style: TextStyle(
-          color: MainCubit.get(context).isDark
-              ? ColorManager.sWhite
-              : ColorManager.black_87,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : Colors.black87,
         ),
         decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-          fillColor: MainCubit.get(context).isDark
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          fillColor: Theme.of(context).brightness == Brightness.dark
               ? Colors.black26
               : Colors.grey.shade200,
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
           ),
-          labelText: S.of(context).breed,
-          labelStyle: FontStyleThame.textStyle(
-            context: context,
-            fontColor: MainCubit.get(context).isDark
-                ? ColorManager.sWhite
-                : ColorManager.black_87,
-            fontSize: 18,
-          ),
+          hintText: S.of(context).breed,
           filled: true,
         ),
         controller: cubit.searchController,
@@ -563,8 +613,9 @@ class EditPet extends StatelessWidget {
           title: Text(
             suggestion.enType,
             style: TextStyle(
-              color:
-                  MainCubit.get(context).isDark ? Colors.white : Colors.black,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
             ),
           ),
         );
@@ -573,7 +624,7 @@ class EditPet extends StatelessWidget {
         cubit.searchController.text = suggestion.enType;
         cubit.changeBreed(suggestion.enType, suggestion.id);
       },
-      suggestionsBoxController: suggestionBoxController,
+      suggestionsBoxController: SuggestionsBoxController(),
       displayAllSuggestionWhenTap: true,
     );
   }

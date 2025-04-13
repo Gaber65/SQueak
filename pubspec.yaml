@@ -90,7 +90,7 @@ dependencies:
   fast_cached_network_image: ^1.3.3+5
   dartz: ^0.10.1
   get_it: ^8.0.3
-  intl_utils:
+#  intl_utils:
   intl:
 dev_dependencies:
   flutter_test:
