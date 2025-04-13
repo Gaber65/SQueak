@@ -240,6 +240,13 @@
   "birthdate" : "تاريخ الميلاد",
   "birthdateValidation" : "من فضلك ادخل تاريخ الميلاد",
   "deletePhoto" : "حذف الصورة",
-  "changePhoto" : "تغيير الصورة"
+  "changePhoto" : "تغيير الصورة",
+  "delete" : "حذف",
+  "cancel" : "الغاء",
+  "deleteConfirmation" : "تاكيد الحذف",
+  "petDeletedSuccessfully" : "تم حذف الاليف بنجاح",
+  "selectPetType" : "اختر نوع الاليف",
+  "noPetsFound" : "لا توجد حيوانات اليفه الان",
+  "addYourFirstPet" : "اضف اول حيوان اليف لك"
 
 }

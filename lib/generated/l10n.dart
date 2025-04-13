@@ -1864,6 +1864,66 @@ class S {
       args: [],
     );
   }
+
+  /// `Delete`
+  String get delete {
+    return Intl.message('Delete', name: 'delete', desc: '', args: []);
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message('Cancel', name: 'cancel', desc: '', args: []);
+  }
+
+  /// `Delete Confirmation`
+  String get deleteConfirmation {
+    return Intl.message(
+      'Delete Confirmation',
+      name: 'deleteConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pet Deleted Successfully`
+  String get petDeletedSuccessfully {
+    return Intl.message(
+      'Pet Deleted Successfully',
+      name: 'petDeletedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Pet Type`
+  String get selectPetType {
+    return Intl.message(
+      'Select Pet Type',
+      name: 'selectPetType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Pets Found`
+  String get noPetsFound {
+    return Intl.message(
+      'No Pets Found',
+      name: 'noPetsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Your First Pet`
+  String get addYourFirstPet {
+    return Intl.message(
+      'Add Your First Pet',
+      name: 'addYourFirstPet',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

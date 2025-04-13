@@ -240,6 +240,13 @@
   "birthdate" : "Date of birth",
   "birthdateValidation" : "Please enter date of birth",
   "deletePhoto" : "Delete Photo",
-  "changePhoto" : "Change Photo"
+  "changePhoto" : "Change Photo",
+  "delete" : "Delete",
+  "cancel" : "Cancel",
+  "deleteConfirmation" : "Delete Confirmation",
+  "petDeletedSuccessfully" : "Pet Deleted Successfully",
+  "selectPetType" : "Select Pet Type",
+  "noPetsFound" : "No Pets Found",
+  "addYourFirstPet" : "Add Your First Pet"
 
 }

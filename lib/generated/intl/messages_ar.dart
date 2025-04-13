@@ -56,6 +56,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "addPetService": MessageLookupByLibrary.simpleMessage("خدمات"),
     "addRecord": MessageLookupByLibrary.simpleMessage("إضافة تذكير"),
     "addReplayComment": MessageLookupByLibrary.simpleMessage("أضف رد ..."),
+    "addYourFirstPet": MessageLookupByLibrary.simpleMessage(
+      "اضف اول حيوان اليف لك",
+    ),
     "address": MessageLookupByLibrary.simpleMessage("عنوان"),
     "addressCity": MessageLookupByLibrary.simpleMessage("الموقع"),
     "address_hint": MessageLookupByLibrary.simpleMessage("أدخل عنوانك"),
@@ -108,6 +111,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "booking": MessageLookupByLibrary.simpleMessage("الحجز"),
     "breed": MessageLookupByLibrary.simpleMessage("السلالة"),
+    "cancel": MessageLookupByLibrary.simpleMessage("الغاء"),
     "cancelFollow": MessageLookupByLibrary.simpleMessage("إلغاء المتابعة"),
     "changePassword": MessageLookupByLibrary.simpleMessage("تغيير كلمة المرور"),
     "changePhoto": MessageLookupByLibrary.simpleMessage("تغيير الصورة"),
@@ -137,7 +141,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "createPost": MessageLookupByLibrary.simpleMessage("إنشاء منشور"),
     "darkMode": MessageLookupByLibrary.simpleMessage("الوضع الداكن"),
     "date": MessageLookupByLibrary.simpleMessage("التاريخ"),
+    "delete": MessageLookupByLibrary.simpleMessage("حذف"),
     "deleteComment": MessageLookupByLibrary.simpleMessage("حذف التعليق"),
+    "deleteConfirmation": MessageLookupByLibrary.simpleMessage("تاكيد الحذف"),
     "deletePhoto": MessageLookupByLibrary.simpleMessage("حذف الصورة"),
     "doctorName": MessageLookupByLibrary.simpleMessage("اسم الطبيب"),
     "edit": MessageLookupByLibrary.simpleMessage("تحرير"),
@@ -235,6 +241,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "name_validation": MessageLookupByLibrary.simpleMessage("يرجى إدخال اسمك"),
     "newPassword": MessageLookupByLibrary.simpleMessage("كلمة المرور الجديدة"),
     "noAppointment": MessageLookupByLibrary.simpleMessage("لا توجد مواعيد"),
+    "noPetsFound": MessageLookupByLibrary.simpleMessage(
+      "لا توجد حيوانات اليفه الان",
+    ),
     "notEqualPassword": MessageLookupByLibrary.simpleMessage(
       "تأكيد كلمة المرور غير مطابق لكلمة المرور",
     ),
@@ -263,6 +272,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "payment": MessageLookupByLibrary.simpleMessage("الدفع"),
     "paymentType": MessageLookupByLibrary.simpleMessage("النوع"),
     "pet": MessageLookupByLibrary.simpleMessage("الأليف"),
+    "petDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم حذف الاليف بنجاح",
+    ),
     "petDetails": MessageLookupByLibrary.simpleMessage("بيانات  الأليف"),
     "petName": MessageLookupByLibrary.simpleMessage("اسم الأليف"),
     "pet_birthdate_hint": MessageLookupByLibrary.simpleMessage(
@@ -318,6 +330,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "search": MessageLookupByLibrary.simpleMessage("بحث"),
     "searchFor": MessageLookupByLibrary.simpleMessage("البحث عن خدمة"),
     "searchValid": MessageLookupByLibrary.simpleMessage("إضافة خدمة"),
+    "selectPetType": MessageLookupByLibrary.simpleMessage("اختر نوع الاليف"),
     "send": MessageLookupByLibrary.simpleMessage("إرسال"),
     "sendMeNow": MessageLookupByLibrary.simpleMessage("أرسل لي الآن"),
     "sentVerification": MessageLookupByLibrary.simpleMessage(

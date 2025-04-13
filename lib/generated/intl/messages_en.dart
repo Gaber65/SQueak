@@ -61,6 +61,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "addReplayComment": MessageLookupByLibrary.simpleMessage(
       "Add  Reply  Comment . . . .",
     ),
+    "addYourFirstPet": MessageLookupByLibrary.simpleMessage(
+      "Add Your First Pet",
+    ),
     "address": MessageLookupByLibrary.simpleMessage("Address"),
     "addressCity": MessageLookupByLibrary.simpleMessage("Location"),
     "address_hint": MessageLookupByLibrary.simpleMessage("Enter your address"),
@@ -115,6 +118,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "booking": MessageLookupByLibrary.simpleMessage("Booking"),
     "breed": MessageLookupByLibrary.simpleMessage("breed"),
+    "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "cancelFollow": MessageLookupByLibrary.simpleMessage("Cancel"),
     "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
     "changePhoto": MessageLookupByLibrary.simpleMessage("Change Photo"),
@@ -140,7 +144,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "createPost": MessageLookupByLibrary.simpleMessage("Create Post "),
     "darkMode": MessageLookupByLibrary.simpleMessage("Dark Mode"),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
+    "delete": MessageLookupByLibrary.simpleMessage("Delete"),
     "deleteComment": MessageLookupByLibrary.simpleMessage("Delete Comment"),
+    "deleteConfirmation": MessageLookupByLibrary.simpleMessage(
+      "Delete Confirmation",
+    ),
     "deletePhoto": MessageLookupByLibrary.simpleMessage("Delete Photo"),
     "doctorName": MessageLookupByLibrary.simpleMessage("Doctor Name"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
@@ -250,6 +258,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "newPassword": MessageLookupByLibrary.simpleMessage("New Password"),
     "noAppointment": MessageLookupByLibrary.simpleMessage("No Appointments"),
+    "noPetsFound": MessageLookupByLibrary.simpleMessage("No Pets Found"),
     "notEqualPassword": MessageLookupByLibrary.simpleMessage(
       "confirm password not equal password",
     ),
@@ -280,6 +289,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "payment": MessageLookupByLibrary.simpleMessage("Payment"),
     "paymentType": MessageLookupByLibrary.simpleMessage("Type"),
     "pet": MessageLookupByLibrary.simpleMessage("Pet"),
+    "petDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Pet Deleted Successfully",
+    ),
     "petDetails": MessageLookupByLibrary.simpleMessage("Pet Details"),
     "petName": MessageLookupByLibrary.simpleMessage("Pet Name"),
     "pet_birthdate_hint": MessageLookupByLibrary.simpleMessage(
@@ -337,6 +349,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "searchFor": MessageLookupByLibrary.simpleMessage("Search For Service"),
     "searchValid": MessageLookupByLibrary.simpleMessage(" Add Service"),
+    "selectPetType": MessageLookupByLibrary.simpleMessage("Select Pet Type"),
     "send": MessageLookupByLibrary.simpleMessage("Send"),
     "sendMeNow": MessageLookupByLibrary.simpleMessage("Send me now"),
     "sentVerification": MessageLookupByLibrary.simpleMessage(
