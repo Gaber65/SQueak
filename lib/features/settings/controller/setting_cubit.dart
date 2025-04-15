@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
+
 import 'package:squeak/core/helper/image_helper/helper_model/response_model.dart';
 import 'package:squeak/core/helper/remotely/dio.dart';
 import 'package:squeak/core/helper/remotely/end-points.dart';
@@ -20,36 +21,39 @@ part 'setting_state.dart';
 class SettingCubit extends Cubit<SettingState> {
   SettingCubit() : super(SettingInitial());
 
-  static SettingCubit get(context) => BlocProvider.of(context);
-  TextEditingController nameController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
-  TextEditingController imageController = TextEditingController();
-  TextEditingController birthDateController = TextEditingController();
-  var formKey = GlobalKey<FormState>();
+  static SettingCubit get(BuildContext context) => BlocProvider.of(context);
+
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
+  final emailController = TextEditingController();
+  final addressController = TextEditingController();
+  final imageController = TextEditingController();
+  final birthDateController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
 
   int gender = 1;
   OwnerModel? profile;
 
-  init(context) {
-    LayoutCubit.get(context).getOwnerData();
-    OwnerModel model = LayoutCubit.get(context).profile;
-    print(model.toJson());
+  void init(BuildContext context) {
+    final model = LayoutCubit.get(context).profile;
     profile = model;
+
     nameController.text = model.fullName;
     phoneController.text = model.phone;
     addressController.text = model.address;
     emailController.text = model.email;
     imageController.text = model.imageName;
-    birthDateController.text = model.birthdate.isNotEmpty &&
-            model.birthdate != 'BirthDate' &&
-            model.birthdate.length >= 10
-        ? model.birthdate.substring(0, 10)
-        : '';
-
+    birthDateController.text = _formatBirthDate(model.birthdate);
     gender = model.gender;
+
     emit(SettingInitial());
+  }
+
+  String _formatBirthDate(String date) {
+    if (date.isNotEmpty && date != 'BirthDate' && date.length >= 10) {
+      return date.substring(0, 10);
+    }
+    return '';
   }
 
   void changeGender(int value) {
@@ -57,18 +61,18 @@ class SettingCubit extends Cubit<SettingState> {
     emit(ChangeGenderState());
   }
 
-  void changeBirthdate(ChangeBirthdate) {
-    birthDateController.text = ChangeBirthdate;
+  void changeBirthdate(String date) {
+    birthDateController.text = date;
     emit(ChangeBirthdateState());
   }
 
-  void changeImageName(ChangeImageName) {
-    imageController.text = ChangeImageName;
+  void changeImageName(String name) {
+    imageController.text = name;
     emit(ChangeImageNameState());
   }
 
   File? profileImage;
-  var picker = ImagePicker();
+  final picker = ImagePicker();
 
   Future<void> getPitsImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -82,11 +86,12 @@ class SettingCubit extends Cubit<SettingState> {
 
   bool isLoading = false;
 
-  Future updateProfile() async {
+  Future<void> updateProfile() async {
     isLoading = true;
     emit(UpdateProfileLoadingState());
+
     try {
-      Response response = await DioFinalHelper.putData(
+      final response = await DioFinalHelper.putData(
         method: updatemyprofileEndPoint,
         data: {
           "fullName": nameController.text,
@@ -97,17 +102,16 @@ class SettingCubit extends Cubit<SettingState> {
         },
       );
 
+      final updatedUser = OwnerModel.fromJson(response.data['data']);
       isLoading = false;
-      emit(UpdateProfileSuccessState(
-          OwnerModel.fromJson(response.data['data'])));
+      emit(UpdateProfileSuccessState(updatedUser));
     } on DioException catch (e) {
-      print(e.response!.data);
-
       isLoading = false;
-      ResponseModel responseModel = ResponseModel.fromJson(e.response!.data);
-      emit(UpdateProfileErrorState(responseModel.errors.isNotEmpty
+      final responseModel = ResponseModel.fromJson(e.response?.data);
+      final error = responseModel.errors.isNotEmpty
           ? responseModel.errors.values.first.first
-          : responseModel.message));
+          : responseModel.message;
+      emit(UpdateProfileErrorState(error));
     }
   }
 }
