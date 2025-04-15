@@ -4,85 +4,158 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:squeak/features/settings/controller/about_cubit.dart';
 import 'package:squeak/features/settings/controller/about_state.dart';
 import 'package:squeak/core/constant/global_function/global_function.dart';
-import 'dart:io'; // Import Platform class
-
-
+import 'dart:io';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({Key? key}) : super(key: key);
 
-  void _launchURL(String url, BuildContext context) async {
+  Future<void> _launchURL(String url, BuildContext context) async {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Could not open link")),
+        SnackBar(content: Text(isArabic() ? 'تعذر فتح الرابط' : "Could not open link")),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+    final textTheme = theme.textTheme;
+
     return BlocProvider(
       create: (context) => AboutCubit(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(isArabic() ? 'عن' : "About"),
-          backgroundColor: Theme.of(context).primaryColor,
+          title: Text(isArabic() ? 'عن التطبيق' : "About"),
+          centerTitle: true,
+          elevation: 0,
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 20),
-
-              // Company Logo
-              Image.network(
-                "https://quadinsight.com/share/Qilogo.png", // Replace with actual logo
-                height: 100,
+              // App Logo with Card
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Image.network(
+                    "https://quadinsight.com/share/Qilogo.png",
+                    height: 120,
+                    width: 120,
+                    fit: BoxFit.contain,
+                  ),
+                ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 24),
 
               // Company Name
               Text(
-                "Quad insight",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                "Quad Insight",
+                style: textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
               ),
+              const SizedBox(height: 8),
 
-              SizedBox(height: 10),
-
-              // App Version from Cubit
+              // App Version
               BlocBuilder<AboutCubit, AboutState>(
                 builder: (context, state) {
                   if (state is AboutLoading) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   } else if (state is AboutLoaded) {
-                    return Text(
-                      "Version: ${state.version} (${Platform.isAndroid ? "Android" : "iOS"})",
-                      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: isDarkMode
+                            ? Colors.grey[800]
+                            : Colors.grey[200],
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        "${isArabic() ? 'الإصدار' : 'Version'} ${state.version} (${Platform.isAndroid ? "Android" : "iOS"})",
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: isDarkMode
+                              ? Colors.white
+                              : Colors.grey[700],
+                        ),
+                      ),
                     );
                   } else {
-                    return Text("Failed to load version");
+                    return Text(
+                      isArabic() ? 'فشل تحميل الإصدار' : "Failed to load version",
+                      style: TextStyle(color: Colors.red),
+                    );
                   }
                 },
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 32),
 
-              // Trademark & Privacy Links
-              ListTile(
-                leading: Icon(Icons.verified),
-                title: Text(isArabic() ? 'معلومات العلامة التجارية' :"Trademark Information"),
-                onTap: () => _launchURL("https://quadinsight.com", context),
+              // Links Section
+              Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Column(
+                  children: [
+                    // Trademark Information
+                    _buildLinkTile(
+                      context,
+                      icon: Icons.branding_watermark,
+                      title: isArabic() ? 'معلومات العلامة التجارية' : "Trademark Information",
+                      url: "https://quadinsight.com",
+                    ),
+                    const Divider(height: 1, indent: 20, endIndent: 20),
+
+                    // Privacy Policy
+                    _buildLinkTile(
+                      context,
+                      icon: Icons.privacy_tip,
+                      title: isArabic() ? 'سياسة الخصوصية' : "Privacy Policy",
+                      url: "https://quadinsight.com/privacy",
+                    ),
+                  ],
+                ),
               ),
-              ListTile(
-                leading: Icon(Icons.privacy_tip),
-                title: Text(isArabic() ? 'سياسة الخصوصية' :"Privacy Policy"),
-                onTap: () => _launchURL("https://quadinsight.com/privacy", context),
+              const SizedBox(height: 24),
+
+              // Footer Text
+              Text(
+                isArabic() ? '© 2023 Quad Insight. جميع الحقوق محفوظة' : "© 2023 Quad Insight. All rights reserved",
+                style: textTheme.bodySmall?.copyWith(
+                  color: Colors.grey,
+                ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildLinkTile(BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String url,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: Theme.of(context).colorScheme.secondary),
+      title: Text(title),
+      trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+      onTap: () => _launchURL(url, context),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
       ),
     );
   }
