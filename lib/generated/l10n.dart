@@ -2299,6 +2299,121 @@ class S {
       args: [],
     );
   }
+
+  /// `Personalization`
+  String get personalization {
+    return Intl.message(
+      'Personalization',
+      name: 'personalization',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Language`
+  String get language {
+    return Intl.message('Language', name: 'language', desc: '', args: []);
+  }
+
+  /// `Set the app language`
+  String get setLanguage {
+    return Intl.message(
+      'Set the app language',
+      name: 'setLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose view mode`
+  String get chooseViewMode {
+    return Intl.message(
+      'Choose view mode',
+      name: 'chooseViewMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notifications Alert`
+  String get notificationsAlert {
+    return Intl.message(
+      'Notifications Alert',
+      name: 'notificationsAlert',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Other`
+  String get other {
+    return Intl.message('Other', name: 'other', desc: '', args: []);
+  }
+
+  /// `Share App`
+  String get shareApp {
+    return Intl.message('Share App', name: 'shareApp', desc: '', args: []);
+  }
+
+  /// `Help us to share the app`
+  String get helpShare {
+    return Intl.message(
+      'Help us to share the app',
+      name: 'helpShare',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Contact us in case of any problem`
+  String get contactProblem {
+    return Intl.message(
+      'Contact us in case of any problem',
+      name: 'contactProblem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Do you want to log out?`
+  String get logoutConfirm {
+    return Intl.message(
+      'Do you want to log out?',
+      name: 'logoutConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yes`
+  String get yes {
+    return Intl.message('Yes', name: 'yes', desc: '', args: []);
+  }
+
+  /// `No`
+  String get no {
+    return Intl.message('No', name: 'no', desc: '', args: []);
+  }
+
+  /// `Arabic`
+  String get arabic {
+    return Intl.message('Arabic', name: 'arabic', desc: '', args: []);
+  }
+
+  /// `English`
+  String get english {
+    return Intl.message('English', name: 'english', desc: '', args: []);
+  }
+
+  /// `Your profile`
+  String get yourProfile {
+    return Intl.message(
+      'Your profile',
+      name: 'yourProfile',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

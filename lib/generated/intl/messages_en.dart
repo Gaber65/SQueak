@@ -106,6 +106,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "appointmentsStartExamination": MessageLookupByLibrary.simpleMessage(
       "Start Examination",
     ),
+    "arabic": MessageLookupByLibrary.simpleMessage("Arabic"),
     "bill": MessageLookupByLibrary.simpleMessage("Bill"),
     "birthdate": MessageLookupByLibrary.simpleMessage("Date of birth"),
     "birthdateValidation": MessageLookupByLibrary.simpleMessage(
@@ -124,6 +125,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
     "changePhoto": MessageLookupByLibrary.simpleMessage("Change Photo"),
     "checkYourEmail": MessageLookupByLibrary.simpleMessage("Check Your Email"),
+    "chooseViewMode": MessageLookupByLibrary.simpleMessage("Choose view mode"),
     "chosePet": MessageLookupByLibrary.simpleMessage("Choose Pet"),
     "city": MessageLookupByLibrary.simpleMessage("city"),
     "clinic": MessageLookupByLibrary.simpleMessage("Clinic"),
@@ -152,6 +154,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "contactPrivacyDesc": MessageLookupByLibrary.simpleMessage(
       "If you have any concerns or questions about how we handle your data or if you would like to exercise your data rights, please contact our privacy team at support@veticare.com. We are here to ensure that you feel confident and secure in using our services.",
+    ),
+    "contactProblem": MessageLookupByLibrary.simpleMessage(
+      "Contact us in case of any problem",
     ),
     "contactUs": MessageLookupByLibrary.simpleMessage("Contact Us"),
     "contactUsDesc": MessageLookupByLibrary.simpleMessage(
@@ -209,6 +214,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "email_validation": MessageLookupByLibrary.simpleMessage(
       "Please enter a valid email address",
     ),
+    "english": MessageLookupByLibrary.simpleMessage("English"),
     "enterAValidEm": MessageLookupByLibrary.simpleMessage(
       "Enter a valid email",
     ),
@@ -282,6 +288,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Don\'t have an account?",
     ),
     "help": MessageLookupByLibrary.simpleMessage("Support"),
+    "helpShare": MessageLookupByLibrary.simpleMessage(
+      "Help us to share the app",
+    ),
     "howWeUse": MessageLookupByLibrary.simpleMessage(
       "How We Use Your Information",
     ),
@@ -307,10 +316,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "What\\\'s on your mind ?",
     ),
     "langMode": MessageLookupByLibrary.simpleMessage("language Mode"),
+    "language": MessageLookupByLibrary.simpleMessage("Language"),
     "lastUpdated": MessageLookupByLibrary.simpleMessage("Last updated"),
     "location": MessageLookupByLibrary.simpleMessage("location"),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
     "logout": MessageLookupByLibrary.simpleMessage("LogOut"),
+    "logoutConfirm": MessageLookupByLibrary.simpleMessage(
+      "Do you want to log out?",
+    ),
     "male": MessageLookupByLibrary.simpleMessage("Male"),
     "message_hint": MessageLookupByLibrary.simpleMessage("Enter your message"),
     "message_validation": MessageLookupByLibrary.simpleMessage(
@@ -324,6 +337,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please enter your name",
     ),
     "newPassword": MessageLookupByLibrary.simpleMessage("New Password"),
+    "no": MessageLookupByLibrary.simpleMessage("No"),
     "noAppointment": MessageLookupByLibrary.simpleMessage("No Appointments"),
     "noPetsFound": MessageLookupByLibrary.simpleMessage("No Pets Found"),
     "notEqualPassword": MessageLookupByLibrary.simpleMessage(
@@ -331,6 +345,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "notSpayed": MessageLookupByLibrary.simpleMessage("Unspayed"),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
+    "notificationsAlert": MessageLookupByLibrary.simpleMessage(
+      "Notifications Alert",
+    ),
     "offlineMessagesContent": MessageLookupByLibrary.simpleMessage(
       " check your internet connection and try again",
     ),
@@ -338,6 +355,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "No Internet Connection",
     ),
     "openAt": MessageLookupByLibrary.simpleMessage("Open At"),
+    "other": MessageLookupByLibrary.simpleMessage("Other"),
     "other_valid": MessageLookupByLibrary.simpleMessage(
       "Please enter valid title",
     ),
@@ -358,6 +376,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "personalInfo": MessageLookupByLibrary.simpleMessage(
       "Personal identification information (Name, email address, phone number, etc.)",
     ),
+    "personalization": MessageLookupByLibrary.simpleMessage("Personalization"),
     "pet": MessageLookupByLibrary.simpleMessage("Pet"),
     "petDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Pet Deleted Successfully",
@@ -436,8 +455,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_validation": MessageLookupByLibrary.simpleMessage(
       "Please select a service",
     ),
+    "setLanguage": MessageLookupByLibrary.simpleMessage("Set the app language"),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "sex": MessageLookupByLibrary.simpleMessage("Sex"),
+    "shareApp": MessageLookupByLibrary.simpleMessage("Share App"),
     "sharingInfo": MessageLookupByLibrary.simpleMessage(
       "Sharing Your Information",
     ),
@@ -519,12 +540,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "verification": MessageLookupByLibrary.simpleMessage("Verification"),
     "version": MessageLookupByLibrary.simpleMessage("Version"),
     "versionNumber": MessageLookupByLibrary.simpleMessage("Version"),
+    "yes": MessageLookupByLibrary.simpleMessage("Yes"),
     "yourAppointments": MessageLookupByLibrary.simpleMessage("Appointments"),
     "yourClinic": MessageLookupByLibrary.simpleMessage("Clinics"),
     "yourConsent": MessageLookupByLibrary.simpleMessage("Your Consent"),
     "yourConsentDesc": MessageLookupByLibrary.simpleMessage(
       "By using our app, you consent to our privacy policy.",
     ),
+    "yourProfile": MessageLookupByLibrary.simpleMessage("Your profile"),
     "yourUpcomingAppointments": MessageLookupByLibrary.simpleMessage(
       "Your Upcoming Appointments",
     ),

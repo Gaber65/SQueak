@@ -45,95 +45,96 @@ class SettingScreen extends StatelessWidget {
                 ///image + name + change
                 Container(
                   height: 69,
-                  decoration:
-                      Decorations.kDecorationBoxShadow(context: context),
+                  decoration: Decorations.kDecorationBoxShadow(
+                    context: context,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(.0),
                     child: Row(
                       children: [
                         (state is SqueakUpdateProfilelaodingUpdated)
                             ? WidgetCircularAnimator(
-                                size: 65,
-                                innerIconsSize: 3,
-                                outerIconsSize: 3,
-                                innerAnimation: Curves.easeInOutBack,
-                                outerAnimation: Curves.easeInOutBack,
-                                innerColor: Colors.deepPurple,
-                                outerColor: Colors.orangeAccent,
-                                innerAnimationSeconds: 10,
-                                outerAnimationSeconds: 10,
-                                child: Container(
-                                  height: 69,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.grey[200],
-                                  ),
-                                  child: Icon(
-                                    Icons.person_outline,
-                                    color: Colors.deepOrange[200],
-                                    size: 30,
-                                  ),
+                              size: 65,
+                              innerIconsSize: 3,
+                              outerIconsSize: 3,
+                              innerAnimation: Curves.easeInOutBack,
+                              outerAnimation: Curves.easeInOutBack,
+                              innerColor: Colors.deepPurple,
+                              outerColor: Colors.orangeAccent,
+                              innerAnimationSeconds: 10,
+                              outerAnimationSeconds: 10,
+                              child: Container(
+                                height: 69,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey[200],
                                 ),
-                              )
-                            : (CacheHelper.getData('ImageActive') == null)
-                                ? InkWell(
-                                    onTap: () {
-                                      // LayoutCubit.get(context).getOwnerPet().then(
-                                      //       (value) {
-                                      //     cubit.addUserToProfile();
-                                      //     ChangeActingPet(context, cubit);
-                                      //   },
-                                      // );
-                                    },
-                                    child: CircleAvatar(
-                                      radius: 37,
-                                      backgroundColor: Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                      backgroundImage: NetworkImage(
-                                        cubit.profile.imageName.isNotEmpty
-                                            ? '$imageUrl${cubit.profile.imageName}'
-                                            : AssetImageModel.defaultUserImage,
-                                      ),
-                                    ),
-                                  )
-                                : InkWell(
-                                    onTap: () {
-                                      // LayoutCubit.get(context).getOwnerPet().then(
-                                      //       (value) {
-                                      //     cubit.addUserToProfile();
-                                      //     ChangeActingPet(context, cubit);
-                                      //   },
-                                      // );
-                                    },
-                                    child: CircleAvatar(
-                                      radius: 37,
-                                      backgroundColor: Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                      backgroundImage: NetworkImage(CacheHelper
-                                                  .getData('ImageActive') ==
-                                              ''
-                                          ? CacheHelper.getBool('isPet')
-                                              ? AssetImageModel.defaultPetImage
-                                              : AssetImageModel.defaultUserImage
-                                          : '$imageUrl${CacheHelper.getData('ImageActive')}'),
-                                    ),
-                                  ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        (CacheHelper.getData('ImageActive') == null)
-                            ? Text(
-                                CacheHelper.getData('name'),
-                                style: FontStyleThame.textStyle(
-                                    context: context, fontSize: 18),
-                              )
-                            : Text(
-                                CacheHelper.getData('name'),
-                                style: FontStyleThame.textStyle(
-                                  context: context,
-                                  fontSize: 18,
+                                child: Icon(
+                                  Icons.person_outline,
+                                  color: Colors.deepOrange[200],
+                                  size: 30,
                                 ),
                               ),
+                            )
+                            : (CacheHelper.getData('ImageActive') == null)
+                            ? InkWell(
+                              onTap: () {
+                                // LayoutCubit.get(context).getOwnerPet().then(
+                                //       (value) {
+                                //     cubit.addUserToProfile();
+                                //     ChangeActingPet(context, cubit);
+                                //   },
+                                // );
+                              },
+                              child: CircleAvatar(
+                                radius: 37,
+                                backgroundColor:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                backgroundImage: NetworkImage(
+                                  cubit.profile.imageName.isNotEmpty
+                                      ? '$imageUrl${cubit.profile.imageName}'
+                                      : AssetImageModel.defaultUserImage,
+                                ),
+                              ),
+                            )
+                            : InkWell(
+                              onTap: () {
+                                // LayoutCubit.get(context).getOwnerPet().then(
+                                //       (value) {
+                                //     cubit.addUserToProfile();
+                                //     ChangeActingPet(context, cubit);
+                                //   },
+                                // );
+                              },
+                              child: CircleAvatar(
+                                radius: 37,
+                                backgroundColor:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                backgroundImage: NetworkImage(
+                                  CacheHelper.getData('ImageActive') == ''
+                                      ? CacheHelper.getBool('isPet')
+                                          ? AssetImageModel.defaultPetImage
+                                          : AssetImageModel.defaultUserImage
+                                      : '$imageUrl${CacheHelper.getData('ImageActive')}',
+                                ),
+                              ),
+                            ),
+                        SizedBox(width: 15),
+                        (CacheHelper.getData('ImageActive') == null)
+                            ? Text(
+                              CacheHelper.getData('name'),
+                              style: FontStyleThame.textStyle(
+                                context: context,
+                                fontSize: 18,
+                              ),
+                            )
+                            : Text(
+                              CacheHelper.getData('name'),
+                              style: FontStyleThame.textStyle(
+                                context: context,
+                                fontSize: 18,
+                              ),
+                            ),
                         Spacer(),
                         IconButton(
                           onPressed: () {
@@ -148,13 +149,11 @@ class SettingScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 25,
-                ),
+                SizedBox(height: 25),
 
                 ///personal
                 Text(
-                  isArabic() ? 'اعداد شخصية' : 'Personalisation',
+                  S.of(context).personalization,
                   style: FontStyleThame.textStyle(
                     context: context,
                     fontSize: 18,
@@ -162,20 +161,17 @@ class SettingScreen extends StatelessWidget {
                 ),
 
                 /// language
-                SizedBox(
-                  height: 12,
-                ),
+                SizedBox(height: 12),
                 Container(
                   height: 69,
-                  decoration:
-                      Decorations.kDecorationBoxShadow(context: context),
+                  decoration: Decorations.kDecorationBoxShadow(
+                    context: context,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        SizedBox(
-                          width: 10,
-                        ),
+                        SizedBox(width: 10),
                         FastCachedImage(
                           url:
                               'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(2).png?alt=media&token=a48427bd-caec-453f-8411-0101f86f97da',
@@ -183,28 +179,23 @@ class SettingScreen extends StatelessWidget {
                           width: 40,
                           fit: BoxFit.fill,
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
+                        const SizedBox(width: 20),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              isArabic() ? 'اللغه' : 'Language',
+                              S.of(context).personalization,
                               style: FontStyleThame.textStyle(
-                                  context: context,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14),
+                                context: context,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
                             ),
-                            const SizedBox(
-                              height: 5,
-                            ),
+                            const SizedBox(height: 5),
                             SizedBox(
                               width: MediaQuery.of(context).size.width * 0.5,
                               child: Text(
-                                isArabic()
-                                    ? 'ضبط لغة التطبيق'
-                                    : 'Set the app language',
+                                S.of(context).setLanguage,
                                 style: FontStyleThame.textStyle(
                                   context: context,
                                   fontWeight: FontWeight.w400,
@@ -229,55 +220,46 @@ class SettingScreen extends StatelessWidget {
                                   PopupMenuItem(
                                     value: 1,
                                     onTap: () {
-                                      MainCubit.get(context)
-                                          .changeAppLang(langMode: 'ar');
+                                      MainCubit.get(
+                                        context,
+                                      ).changeAppLang(langMode: 'ar');
                                     },
-                                    child: const Text(
-                                      'اللغة العربية',
-                                    ),
+                                    child: const Text('اللغة العربية'),
                                   ),
                                   PopupMenuItem(
                                     value: 2,
                                     onTap: () {
-                                      MainCubit.get(context)
-                                          .changeAppLang(langMode: 'en');
+                                      MainCubit.get(
+                                        context,
+                                      ).changeAppLang(langMode: 'en');
                                     },
-                                    child: const Text(
-                                      'English language',
-                                    ),
+                                    child: const Text('English language'),
                                   ),
                                 ];
                               },
-                              icon: const Icon(
-                                Icons.chevron_right,
-                              ),
+                              icon: const Icon(Icons.chevron_right),
                               offset: const Offset(0, 20),
                             );
                           },
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                        SizedBox(width: 10),
                       ],
                     ),
                   ),
                 ),
 
                 /// dark mode
-                SizedBox(
-                  height: 12,
-                ),
+                SizedBox(height: 12),
                 Container(
                   height: 69,
-                  decoration:
-                      Decorations.kDecorationBoxShadow(context: context),
+                  decoration: Decorations.kDecorationBoxShadow(
+                    context: context,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        SizedBox(
-                          width: 10,
-                        ),
+                        SizedBox(width: 10),
                         FastCachedImage(
                           url:
                               'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/Squeak__4_-removebg-preview.png?alt=media&token=eb3a7e47-fdd8-49b4-84a6-2f711c01b19d',
@@ -285,28 +267,23 @@ class SettingScreen extends StatelessWidget {
                           width: 40,
                           fit: BoxFit.fill,
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
+                        const SizedBox(width: 20),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              isArabic() ? 'الوضع المظلم' : 'Dark mode',
+                              S.of(context).darkMode,
                               style: FontStyleThame.textStyle(
-                                  context: context,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14),
+                                context: context,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
                             ),
-                            const SizedBox(
-                              height: 5,
-                            ),
+                            const SizedBox(height: 5),
                             SizedBox(
                               width: MediaQuery.of(context).size.width * 0.5,
                               child: Text(
-                                isArabic()
-                                    ? 'اختر وضع العرض'
-                                    : 'Choose view mode',
+                                S.of(context).chooseViewMode,
                                 style: FontStyleThame.textStyle(
                                   context: context,
                                   fontWeight: FontWeight.w400,
@@ -333,29 +310,24 @@ class SettingScreen extends StatelessWidget {
                             );
                           },
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                        SizedBox(width: 10),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 25,
-                ),
+                SizedBox(height: 25),
 
                 /// notifications Settings
                 Container(
                   height: 69,
-                  decoration:
-                      Decorations.kDecorationBoxShadow(context: context),
+                  decoration: Decorations.kDecorationBoxShadow(
+                    context: context,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        SizedBox(
-                          width: 10,
-                        ),
+                        SizedBox(width: 10),
                         FastCachedImage(
                           url:
                               'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/rb_6889.png?alt=media&token=092855b2-955e-40b6-b49f-e32f3c054560',
@@ -363,15 +335,14 @@ class SettingScreen extends StatelessWidget {
                           width: 40,
                           fit: BoxFit.fill,
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
+                        const SizedBox(width: 20),
                         Text(
-                          isArabic() ? 'تنبيهات' : 'Notifications Alert',
+                          S.of(context).notifications,
                           style: FontStyleThame.textStyle(
-                              context: context,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14),
+                            context: context,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
                         ),
                         const Spacer(),
                         BlocConsumer<MainCubit, MainState>(
@@ -395,20 +366,16 @@ class SettingScreen extends StatelessWidget {
                             );
                           },
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                        SizedBox(width: 10),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 25,
-                ),
+                SizedBox(height: 25),
 
                 ///personal
                 Text(
-                  isArabic() ? 'اخري' : 'Other',
+                  S.of(context).other,
                   style: FontStyleThame.textStyle(
                     context: context,
                     fontSize: 18,
@@ -416,13 +383,12 @@ class SettingScreen extends StatelessWidget {
                 ),
 
                 /// frindly mode
-                SizedBox(
-                  height: 12,
-                ),
+                SizedBox(height: 12),
                 Container(
                   height: 69,
-                  decoration:
-                      Decorations.kDecorationBoxShadow(context: context),
+                  decoration: Decorations.kDecorationBoxShadow(
+                    context: context,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
@@ -431,9 +397,7 @@ class SettingScreen extends StatelessWidget {
                       },
                       child: Row(
                         children: [
-                          SizedBox(
-                            width: 10,
-                          ),
+                          SizedBox(width: 10),
                           FastCachedImage(
                             url:
                                 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(3).png?alt=media&token=fa1e78d4-1c01-4c15-8420-6d78a51bbf3f',
@@ -441,28 +405,23 @@ class SettingScreen extends StatelessWidget {
                             width: 40,
                             fit: BoxFit.fill,
                           ),
-                          const SizedBox(
-                            width: 20,
-                          ),
+                          const SizedBox(width: 20),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                isArabic() ? 'مشاركة التطبيق' : 'Share App',
+                                S.of(context).shareApp,
                                 style: FontStyleThame.textStyle(
-                                    context: context,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14),
+                                  context: context,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
                               ),
-                              const SizedBox(
-                                height: 5,
-                              ),
+                              const SizedBox(height: 5),
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.5,
                                 child: Text(
-                                  isArabic()
-                                      ? "ساعدنا في مشاركة التطبيق"
-                                      : 'Help us to share the app',
+                                  S .of(context).helpShare,
                                   style: FontStyleThame.textStyle(
                                     context: context,
                                     fontWeight: FontWeight.w400,
@@ -474,9 +433,7 @@ class SettingScreen extends StatelessWidget {
                           ),
                           const Spacer(),
                           Icon(Icons.share),
-                          SizedBox(
-                            width: 10,
-                          ),
+                          SizedBox(width: 10),
                         ],
                       ),
                     ),
@@ -484,13 +441,12 @@ class SettingScreen extends StatelessWidget {
                 ),
 
                 /// Contact Us
-                SizedBox(
-                  height: 12,
-                ),
+                SizedBox(height: 12),
                 Container(
                   height: 69,
-                  decoration:
-                      Decorations.kDecorationBoxShadow(context: context),
+                  decoration: Decorations.kDecorationBoxShadow(
+                    context: context,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
@@ -499,9 +455,7 @@ class SettingScreen extends StatelessWidget {
                       },
                       child: Row(
                         children: [
-                          SizedBox(
-                            width: 10,
-                          ),
+                          SizedBox(width: 10),
                           FastCachedImage(
                             url:
                                 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/blue_email_with_bell_notification_icon_3d_background_illustration-removebg-preview.png?alt=media&token=50af2f5f-5cfe-4caf-b1b2-5914ce3c75bb',
@@ -509,28 +463,23 @@ class SettingScreen extends StatelessWidget {
                             width: 40,
                             fit: BoxFit.cover,
                           ),
-                          const SizedBox(
-                            width: 20,
-                          ),
+                          const SizedBox(width: 20),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                isArabic() ? 'اتصل بنا' : 'Contact Us',
+                                S.of(context).contactUs,
                                 style: FontStyleThame.textStyle(
-                                    context: context,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14),
+                                  context: context,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
                               ),
-                              const SizedBox(
-                                height: 5,
-                              ),
+                              const SizedBox(height: 5),
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.5,
                                 child: Text(
-                                  isArabic()
-                                      ? 'تواصل معانا في حالة حدوث اي مشكلة'
-                                      : 'Contact us in case of any problem',
+                                  S .of(context).contactProblem,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: FontStyleThame.textStyle(
@@ -544,22 +493,19 @@ class SettingScreen extends StatelessWidget {
                           ),
                           const Spacer(),
                           Icon(Icons.help_outline),
-                          SizedBox(
-                            width: 10,
-                          )
+                          SizedBox(width: 10),
                         ],
                       ),
                     ),
                   ),
                 ),
 
-                SizedBox(
-                  height: 12,
-                ),
+                SizedBox(height: 12),
                 Container(
                   height: 69,
-                  decoration:
-                      Decorations.kDecorationBoxShadow(context: context),
+                  decoration: Decorations.kDecorationBoxShadow(
+                    context: context,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
@@ -568,9 +514,7 @@ class SettingScreen extends StatelessWidget {
                       },
                       child: Row(
                         children: [
-                          SizedBox(
-                            width: 10,
-                          ),
+                          SizedBox(width: 10),
                           FastCachedImage(
                             url:
                                 'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/intellectual-property-concept.png?alt=media&token=e9e8c640-ebe1-43b2-af20-376c5b570878',
@@ -578,34 +522,30 @@ class SettingScreen extends StatelessWidget {
                             width: 40,
                             fit: BoxFit.cover,
                           ),
-                          const SizedBox(
-                            width: 20,
-                          ),
+                          const SizedBox(width: 20),
                           Text(
-                            isArabic() ? 'سياسة الخصوصية' : 'Privacy Policy',
+                            S.of(context).about,
                             style: FontStyleThame.textStyle(
-                                context: context,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14),
+                              context: context,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
                           ),
                           const Spacer(),
                           Icon(Icons.privacy_tip_outlined),
-                          SizedBox(
-                            width: 10,
-                          )
+                          SizedBox(width: 10),
                         ],
                       ),
                     ),
                   ),
                 ),
                 // About
-                SizedBox(
-                  height: 12,
-                ),
+                SizedBox(height: 12),
                 Container(
                   height: 69,
-                  decoration:
-                      Decorations.kDecorationBoxShadow(context: context),
+                  decoration: Decorations.kDecorationBoxShadow(
+                    context: context,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
@@ -617,9 +557,7 @@ class SettingScreen extends StatelessWidget {
                       },
                       child: Row(
                         children: [
-                          SizedBox(
-                            width: 10,
-                          ),
+                          SizedBox(width: 10),
                           FastCachedImage(
                             url:
                                 'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/information.png?alt=media&token=4fd9b59f-8399-4bc9-b48e-1095b7152b03',
@@ -627,34 +565,29 @@ class SettingScreen extends StatelessWidget {
                             width: 40,
                             fit: BoxFit.cover,
                           ),
-                          const SizedBox(
-                            width: 20,
-                          ),
+                          const SizedBox(width: 20),
                           Text(
-                            isArabic() ? 'عن' : 'About',
+                           S.of(context).about,
                             style: FontStyleThame.textStyle(
-                                context: context,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14),
+                              context: context,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
                           ),
                           const Spacer(),
                           Icon(Icons.info_outline),
-                          SizedBox(
-                            width: 10,
-                          )
+                          SizedBox(width: 10),
                         ],
                       ),
                     ),
                   ),
                 ),
 
-                SizedBox(
-                  height: 25,
-                ),
+                SizedBox(height: 25),
 
                 ///personal
                 Text(
-                  isArabic() ? 'تسجيل خروج' : 'Logout',
+                  S.of(context) .logout,
                   style: FontStyleThame.textStyle(
                     context: context,
                     fontSize: 18,
@@ -662,35 +595,35 @@ class SettingScreen extends StatelessWidget {
                 ),
 
                 /// logout
-                SizedBox(
-                  height: 12,
-                ),
+                SizedBox(height: 12),
                 Container(
                   height: 69,
-                  decoration:
-                      Decorations.kDecorationBoxShadow(context: context),
+                  decoration: Decorations.kDecorationBoxShadow(
+                    context: context,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: () {
                         QuickAlert.show(
                           context: context,
-                          backgroundColor: MainCubit.get(context).isDark
-                              ? ColorManager.myPetsBaseBlackColor
-                              : Colors.white,
+                          backgroundColor:
+                              MainCubit.get(context).isDark
+                                  ? ColorManager.myPetsBaseBlackColor
+                                  : Colors.white,
                           type: QuickAlertType.confirm,
-                          textColor: !MainCubit.get(context).isDark
-                              ? Colors.black
-                              : Colors.white,
-                          titleColor: !MainCubit.get(context).isDark
-                              ? Colors.black
-                              : Colors.white,
-                          title: isArabic() ? 'تسجيل خروج' : 'Logout',
-                          cancelBtnText: isArabic() ? 'لا' : 'No',
-                          confirmBtnText: isArabic() ? 'نعم' : 'Yes',
-                          text: isArabic()
-                              ? 'هل تريد تسجيل الخروج؟'
-                              : 'Do you want to log out?',
+                          textColor:
+                              !MainCubit.get(context).isDark
+                                  ? Colors.black
+                                  : Colors.white,
+                          titleColor:
+                              !MainCubit.get(context).isDark
+                                  ? Colors.black
+                                  : Colors.white,
+                          title: S.of(context).logout,
+                          cancelBtnText: S.of(context).no,
+                          confirmBtnText: S.of(context).yes,
+                          text: S.of(context).logoutConfirm,
                           showConfirmBtn: true,
                           onCancelBtnTap: () {
                             Navigator.pop(context);
@@ -706,9 +639,7 @@ class SettingScreen extends StatelessWidget {
                       },
                       child: Row(
                         children: [
-                          SizedBox(
-                            width: 10,
-                          ),
+                          SizedBox(width: 10),
                           FastCachedImage(
                             url:
                                 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/3599716.webp?alt=media&token=24213687-4927-4ab2-8d74-ecf2e23fe4d3',
@@ -716,14 +647,12 @@ class SettingScreen extends StatelessWidget {
                             width: 40,
                             fit: BoxFit.fill,
                           ),
-                          const SizedBox(
-                            width: 20,
-                          ),
+                          const SizedBox(width: 20),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                isArabic() ? 'تسجيل خروج' : 'Logout',
+                                S.of(context).logout,
                                 style: FontStyleThame.textStyle(
                                   context: context,
                                   fontWeight: FontWeight.w600,
@@ -734,9 +663,7 @@ class SettingScreen extends StatelessWidget {
                           ),
                           const Spacer(),
                           Icon(IconlyLight.logout),
-                          SizedBox(
-                            width: 10,
-                          )
+                          SizedBox(width: 10),
                         ],
                       ),
                     ),

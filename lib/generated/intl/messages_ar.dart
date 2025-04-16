@@ -101,6 +101,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "appointmentsStartExamination": MessageLookupByLibrary.simpleMessage(
       "بدء الفحص",
     ),
+    "arabic": MessageLookupByLibrary.simpleMessage("اللغة العربية"),
     "bill": MessageLookupByLibrary.simpleMessage("الفاتورة"),
     "birthdate": MessageLookupByLibrary.simpleMessage("تاريخ الميلاد"),
     "birthdateValidation": MessageLookupByLibrary.simpleMessage(
@@ -119,6 +120,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "checkYourEmail": MessageLookupByLibrary.simpleMessage(
       "تحقق من بريدك الإلكتروني",
     ),
+    "chooseViewMode": MessageLookupByLibrary.simpleMessage("اختر وضع العرض"),
     "chosePet": MessageLookupByLibrary.simpleMessage("اختر أليف"),
     "city": MessageLookupByLibrary.simpleMessage("المدينة"),
     "clinic": MessageLookupByLibrary.simpleMessage("العيادة"),
@@ -149,6 +151,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "contactPrivacyDesc": MessageLookupByLibrary.simpleMessage(
       "إذا كانت لديك أي مخاوف أو استفسارات حول كيفية تعاملنا مع بياناتك أو إذا كنت ترغب في ممارسة حقوقك المتعلقة بالبيانات، يرجى الاتصال بفريق الخصوصية الخاص بنا على support@veticare.com. نحن هنا لضمان شعورك بالثقة والأمان عند استخدام خدماتنا.",
+    ),
+    "contactProblem": MessageLookupByLibrary.simpleMessage(
+      "تواصل معانا في حالة حدوث اي مشكلة",
     ),
     "contactUs": MessageLookupByLibrary.simpleMessage("اتصل بنا"),
     "contactUsDesc": MessageLookupByLibrary.simpleMessage(
@@ -200,6 +205,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "email_validation": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال بريد إلكتروني صالح",
     ),
+    "english": MessageLookupByLibrary.simpleMessage("الإنجليزية"),
     "enterAValidEm": MessageLookupByLibrary.simpleMessage(
       "أدخل بريدًا إلكترونيًا صالحًا",
     ),
@@ -267,6 +273,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "haveNotAccount": MessageLookupByLibrary.simpleMessage("ليس لديك حساب؟"),
     "help": MessageLookupByLibrary.simpleMessage("الدعم"),
+    "helpShare": MessageLookupByLibrary.simpleMessage(
+      "ساعدنا في مشاركة التطبيق",
+    ),
     "howWeUse": MessageLookupByLibrary.simpleMessage("كيف نستخدم معلوماتك"),
     "howWeUseDesc": MessageLookupByLibrary.simpleMessage(
       "تُستخدم معلوماتك لتقديم وتحسين خدماتنا.",
@@ -286,10 +295,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "itemName": MessageLookupByLibrary.simpleMessage("اسم الصنف"),
     "labelPost": MessageLookupByLibrary.simpleMessage("بماذا تفكر؟"),
     "langMode": MessageLookupByLibrary.simpleMessage("وضع اللغة"),
+    "language": MessageLookupByLibrary.simpleMessage("اللغه"),
     "lastUpdated": MessageLookupByLibrary.simpleMessage("آخر تحديث"),
     "location": MessageLookupByLibrary.simpleMessage("الموقع"),
     "login": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
     "logout": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
+    "logoutConfirm": MessageLookupByLibrary.simpleMessage(
+      "هل تريد تسجيل الخروج؟",
+    ),
     "male": MessageLookupByLibrary.simpleMessage("ذكر"),
     "message_hint": MessageLookupByLibrary.simpleMessage("أدخل رسالتك"),
     "message_validation": MessageLookupByLibrary.simpleMessage(
@@ -301,6 +314,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "name_hint": MessageLookupByLibrary.simpleMessage("أدخل اسمك الكامل"),
     "name_validation": MessageLookupByLibrary.simpleMessage("يرجى إدخال اسمك"),
     "newPassword": MessageLookupByLibrary.simpleMessage("كلمة المرور الجديدة"),
+    "no": MessageLookupByLibrary.simpleMessage("لا"),
     "noAppointment": MessageLookupByLibrary.simpleMessage("لا توجد مواعيد"),
     "noPetsFound": MessageLookupByLibrary.simpleMessage(
       "لا توجد حيوانات اليفه الان",
@@ -317,6 +331,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "لا يوجد اتصال بالانترنت",
     ),
     "openAt": MessageLookupByLibrary.simpleMessage("يفتح في"),
+    "other": MessageLookupByLibrary.simpleMessage("اخري"),
     "other_valid": MessageLookupByLibrary.simpleMessage(
       "برجاء ادخال عنوان واضح",
     ),
@@ -335,6 +350,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "personalInfo": MessageLookupByLibrary.simpleMessage(
       "المعلومات الشخصية (الاسم، عنوان البريد الإلكتروني، رقم الهاتف، إلخ)",
     ),
+    "personalization": MessageLookupByLibrary.simpleMessage("اعداد شخصية"),
     "pet": MessageLookupByLibrary.simpleMessage("الأليف"),
     "petDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تم حذف الاليف بنجاح",
@@ -411,8 +427,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "service_validation": MessageLookupByLibrary.simpleMessage(
       "يرجى اختيار خدمة",
     ),
+    "setLanguage": MessageLookupByLibrary.simpleMessage("ضبط لغة التطبيق"),
     "settings": MessageLookupByLibrary.simpleMessage("الإعدادات"),
     "sex": MessageLookupByLibrary.simpleMessage("الجنس"),
+    "shareApp": MessageLookupByLibrary.simpleMessage("مشاركة التطبيق"),
     "sharingInfo": MessageLookupByLibrary.simpleMessage("مشاركة معلوماتك"),
     "sharingInfoDesc": MessageLookupByLibrary.simpleMessage(
       "لا نقوم ببيع أو تداول معلوماتك الشخصية. ومع ذلك، قد نشارك بعض المعلومات مع مزودي الخدمات الموثوق بهم لدعم وتحسين خدماتنا. يُطلب من هؤلاء المزودين الالتزام بمعايير حماية البيانات الصارمة ويُسمح لهم فقط باستخدام المعلومات للأغراض الموضحة في سياسة الخصوصية الخاصة بنا.",
@@ -483,12 +501,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "verification": MessageLookupByLibrary.simpleMessage("التحقق"),
     "version": MessageLookupByLibrary.simpleMessage("الإصدار"),
     "versionNumber": MessageLookupByLibrary.simpleMessage("الإصدار"),
+    "yes": MessageLookupByLibrary.simpleMessage("نعم"),
     "yourAppointments": MessageLookupByLibrary.simpleMessage("مواعيدك"),
     "yourClinic": MessageLookupByLibrary.simpleMessage("عيادات"),
     "yourConsent": MessageLookupByLibrary.simpleMessage("موافقتك"),
     "yourConsentDesc": MessageLookupByLibrary.simpleMessage(
       "باستخدام تطبيقنا، فإنك توافق على سياسة الخصوصية الخاصة بنا.",
     ),
+    "yourProfile": MessageLookupByLibrary.simpleMessage("حسابك الشخصي"),
     "yourUpcomingAppointments": MessageLookupByLibrary.simpleMessage(
       "مواعيدك القادمة",
     ),
