@@ -2414,6 +2414,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Update successfully`
+  String get updateSuccess {
+    return Intl.message(
+      'Update successfully',
+      name: 'updateSuccess',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

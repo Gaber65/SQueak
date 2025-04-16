@@ -255,10 +255,6 @@
   "trademarkInfo" : "معلومات العلامة التجارية",
   "privacyPolicy" : "سياسة الخصوصية",
   "copyright" : "© 2023 Quad Insight. جميع الحقوق محفوظة",
-
-
-
-
   "lastUpdated": "آخر تحديث",
   "infoWeCollect": "المعلومات التي نجمعها",
   "infoWeCollectDesc": "قد نجمع الأنواع التالية من المعلومات:",
@@ -304,6 +300,6 @@
   "no": "لا",
   "arabic": "اللغة العربية",
   "english": "الإنجليزية",
-  "yourProfile": "حسابك الشخصي"
-
+  "yourProfile": "حسابك الشخصي",
+  "updateSuccess": "تم التعديل بنجاح"
 }

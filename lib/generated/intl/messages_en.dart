@@ -511,6 +511,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "We may update our privacy policy from time to time. When we do, we will notify you by posting the new policy on this page. It is your responsibility to review this privacy policy periodically for any changes.",
     ),
     "updateProfile": MessageLookupByLibrary.simpleMessage("Update Profile"),
+    "updateSuccess": MessageLookupByLibrary.simpleMessage(
+      "Update successfully",
+    ),
     "updateVersionModuleButtonIgnore": MessageLookupByLibrary.simpleMessage(
       "IGNORE",
     ),

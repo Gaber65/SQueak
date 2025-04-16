@@ -26,7 +26,7 @@ class UpProfileScreen extends StatelessWidget {
         listener: (context, state) {
           if (state is UpdateProfileSuccessState) {
             successToast(context,
-                isArabic() ? 'تم التعديل بنجاح' : 'Update successfully');
+                S.of(context).updateSuccess);
             LayoutCubit.get(context).getOwnerData();
             LayoutCubit.get(context).getOwnerPet();
             CacheHelper.saveData('name', state.userModel.fullName);
@@ -192,13 +192,13 @@ class UpProfileScreen extends StatelessWidget {
                         children: [
                           Expanded(
                               child: buildSelect(
-                                  isArabic() ? "ذكر" : 'Male', 1, cubit)),
+                                  S.of(context).male, 1, cubit)),
                           const SizedBox(
                             width: 10,
                           ),
                           Expanded(
                               child: buildSelect(
-                                  isArabic() ? 'أنثى' : 'Female', 2, cubit)),
+                                  S.of(context).female, 2, cubit)),
                         ],
                       ),
 
@@ -281,7 +281,7 @@ class UpProfileScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      isArabic() ? 'حذف الصورة' : 'Delete Photo',
+                      S.of(context).deletePhoto,
                     ),
                     Spacer(),
                     Icon(Icons.delete),
@@ -299,7 +299,7 @@ class UpProfileScreen extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    isArabic() ? 'تغيير الصورة' : 'Change Photo',
+                    S.of(context).changePhoto,
                   ),
                   Spacer(),
                   Icon(Icons.camera),

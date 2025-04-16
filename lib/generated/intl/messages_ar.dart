@@ -473,6 +473,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "قد نقوم بتحديث سياسة الخصوصية الخاصة بنا من وقت لآخر. عندما نقوم بذلك، سنقوم بإبلاغك عن طريق نشر السياسة الجديدة على هذه الصفحة. تقع على عاتقك مسؤولية مراجعة هذه السياسة بشكل دوري للاطلاع على أي تغييرات.",
     ),
     "updateProfile": MessageLookupByLibrary.simpleMessage("تحديث"),
+    "updateSuccess": MessageLookupByLibrary.simpleMessage("تم التعديل بنجاح"),
     "updateVersionModuleButtonIgnore": MessageLookupByLibrary.simpleMessage(
       "تجاهل",
     ),

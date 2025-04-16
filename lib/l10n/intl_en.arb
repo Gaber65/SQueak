@@ -286,10 +286,6 @@
   "contactUs": "Contact Us",
   "contactUsDesc": "If you have any questions about this privacy policy, please contact us at support@veticare.com.",
   "copyright2": "© 2024 VetICare. All rights reserved.",
-
-
-
-
   "emailCopied": "Email copied to clipboard",
   "personalization": "Personalization",
   "language": "Language",
@@ -305,5 +301,6 @@
   "no": "No",
   "arabic": "Arabic",
   "english": "English",
-  "yourProfile": "Your profile"
+  "yourProfile": "Your profile",
+  "updateSuccess": "Update successfully"
 }
