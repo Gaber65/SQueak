@@ -47,6 +47,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ServicePhone": MessageLookupByLibrary.simpleMessage("Service Phone"),
     "TimeOfRecord": MessageLookupByLibrary.simpleMessage("Time"),
     "VerifyPhone": MessageLookupByLibrary.simpleMessage(" Verify Phone"),
+    "about": MessageLookupByLibrary.simpleMessage("About"),
     "addAppointment": MessageLookupByLibrary.simpleMessage("Add Appointment"),
     "addAvailabilities": MessageLookupByLibrary.simpleMessage(
       "Add available times",
@@ -136,13 +137,54 @@ class MessageLookup extends MessageLookupByLibrary {
     "comparePassword": MessageLookupByLibrary.simpleMessage(
       "Enter confirm your password",
     ),
+    "compliance": MessageLookupByLibrary.simpleMessage(
+      "Compliance with Data Protection Regulations",
+    ),
+    "complianceDesc": MessageLookupByLibrary.simpleMessage(
+      "We comply with relevant data protection laws and regulations.",
+    ),
     "confirmNewPassword": MessageLookupByLibrary.simpleMessage(
       "Confirm New Password",
     ),
     "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm Password"),
+    "contactPrivacy": MessageLookupByLibrary.simpleMessage(
+      "Contact Us About Privacy",
+    ),
+    "contactPrivacyDesc": MessageLookupByLibrary.simpleMessage(
+      "If you have any concerns or questions about how we handle your data or if you would like to exercise your data rights, please contact our privacy team at support@veticare.com. We are here to ensure that you feel confident and secure in using our services.",
+    ),
+    "contactUs": MessageLookupByLibrary.simpleMessage("Contact Us"),
+    "contactUsDesc": MessageLookupByLibrary.simpleMessage(
+      "If you have any questions about this privacy policy, please contact us at support@veticare.com.",
+    ),
+    "copyright": MessageLookupByLibrary.simpleMessage(
+      "© 2023 Quad Insight. All rights reserved",
+    ),
+    "copyright2": MessageLookupByLibrary.simpleMessage(
+      "© 2024 VetICare. All rights reserved.",
+    ),
+    "couldNotOpenLink": MessageLookupByLibrary.simpleMessage(
+      "Could not open link",
+    ),
     "crNumber": MessageLookupByLibrary.simpleMessage("CR"),
     "createPost": MessageLookupByLibrary.simpleMessage("Create Post "),
     "darkMode": MessageLookupByLibrary.simpleMessage("Dark Mode"),
+    "dataEncryption": MessageLookupByLibrary.simpleMessage("Data Encryption"),
+    "dataEncryptionDesc": MessageLookupByLibrary.simpleMessage(
+      "All data transmitted between our application and our servers is encrypted using secure protocols (such as HTTPS). Additionally, sensitive information, including your clinic\'s data and payment information, is encrypted and securely stored to prevent unauthorized access.",
+    ),
+    "dataRetention": MessageLookupByLibrary.simpleMessage(
+      "Data Retention Policy",
+    ),
+    "dataRetentionDesc": MessageLookupByLibrary.simpleMessage(
+      "We retain your data only for as long as necessary to provide you with our services and for legitimate business purposes, such as maintaining records for financial, legal, or compliance reasons. Once the data is no longer needed, we take steps to securely delete or anonymize it.",
+    ),
+    "dataSecurity": MessageLookupByLibrary.simpleMessage(
+      "Data Security and Privacy",
+    ),
+    "dataSecurityDesc": MessageLookupByLibrary.simpleMessage(
+      "Your privacy and the security of your clinic\'s data are of utmost importance to us. We implement industry-standard security measures to protect your data against unauthorized access, alteration, and disclosure. Our systems are regularly updated to address potential vulnerabilities and ensure the highest level of protection.",
+    ),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
     "deleteComment": MessageLookupByLibrary.simpleMessage("Delete Comment"),
@@ -155,6 +197,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "editComment": MessageLookupByLibrary.simpleMessage("Edit Comment . . . ."),
     "editPet": MessageLookupByLibrary.simpleMessage("Edit Pet"),
     "email": MessageLookupByLibrary.simpleMessage("Email Address"),
+    "emailCopied": MessageLookupByLibrary.simpleMessage(
+      "Email copied to clipboard",
+    ),
     "email_hint": MessageLookupByLibrary.simpleMessage(
       "Enter your email address",
     ),
@@ -207,6 +252,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterYourText": MessageLookupByLibrary.simpleMessage(
       "What are you thinking .... ?",
     ),
+    "failedToLoadVersion": MessageLookupByLibrary.simpleMessage(
+      "Failed to load version",
+    ),
     "female": MessageLookupByLibrary.simpleMessage("Female"),
     "files": MessageLookupByLibrary.simpleMessage("Files"),
     "filesAndPrescription": MessageLookupByLibrary.simpleMessage(
@@ -234,6 +282,24 @@ class MessageLookup extends MessageLookupByLibrary {
       "Don\'t have an account?",
     ),
     "help": MessageLookupByLibrary.simpleMessage("Support"),
+    "howWeUse": MessageLookupByLibrary.simpleMessage(
+      "How We Use Your Information",
+    ),
+    "howWeUseDesc": MessageLookupByLibrary.simpleMessage(
+      "Your information is used to provide and improve our services.",
+    ),
+    "infoProtection": MessageLookupByLibrary.simpleMessage(
+      "Information Protection",
+    ),
+    "infoProtectionDesc": MessageLookupByLibrary.simpleMessage(
+      "We take data security seriously and implement appropriate measures to safeguard your personal information against unauthorized access, alteration, or disclosure.",
+    ),
+    "infoWeCollect": MessageLookupByLibrary.simpleMessage(
+      "Information We Collect",
+    ),
+    "infoWeCollectDesc": MessageLookupByLibrary.simpleMessage(
+      "We may collect the following types of information:",
+    ),
     "inviteFriends": MessageLookupByLibrary.simpleMessage("Invite friends"),
     "invoiceNo": MessageLookupByLibrary.simpleMessage("Invoice No"),
     "itemName": MessageLookupByLibrary.simpleMessage("Item Name"),
@@ -241,6 +307,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "What\\\'s on your mind ?",
     ),
     "langMode": MessageLookupByLibrary.simpleMessage("language Mode"),
+    "lastUpdated": MessageLookupByLibrary.simpleMessage("Last updated"),
     "location": MessageLookupByLibrary.simpleMessage("location"),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
     "logout": MessageLookupByLibrary.simpleMessage("LogOut"),
@@ -288,6 +355,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "payment": MessageLookupByLibrary.simpleMessage("Payment"),
     "paymentType": MessageLookupByLibrary.simpleMessage("Type"),
+    "personalInfo": MessageLookupByLibrary.simpleMessage(
+      "Personal identification information (Name, email address, phone number, etc.)",
+    ),
     "pet": MessageLookupByLibrary.simpleMessage("Pet"),
     "petDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Pet Deleted Successfully",
@@ -315,6 +385,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "prescription": MessageLookupByLibrary.simpleMessage("Prescription"),
     "price": MessageLookupByLibrary.simpleMessage("price"),
+    "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
     "profile": MessageLookupByLibrary.simpleMessage("Your Profile"),
     "publish": MessageLookupByLibrary.simpleMessage("Publish"),
     "qty": MessageLookupByLibrary.simpleMessage("Qty"),
@@ -349,6 +420,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "searchFor": MessageLookupByLibrary.simpleMessage("Search For Service"),
     "searchValid": MessageLookupByLibrary.simpleMessage(" Add Service"),
+    "securityAudits": MessageLookupByLibrary.simpleMessage(
+      "Regular Security Audits",
+    ),
+    "securityAuditsDesc": MessageLookupByLibrary.simpleMessage(
+      "We conduct regular security audits to identify and address potential security risks. Our team is dedicated to continuously monitoring and enhancing our security measures to ensure the safety and privacy of your clinic\'s data.",
+    ),
     "selectPetType": MessageLookupByLibrary.simpleMessage("Select Pet Type"),
     "send": MessageLookupByLibrary.simpleMessage("Send"),
     "sendMeNow": MessageLookupByLibrary.simpleMessage("Send me now"),
@@ -361,6 +438,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "sex": MessageLookupByLibrary.simpleMessage("Sex"),
+    "sharingInfo": MessageLookupByLibrary.simpleMessage(
+      "Sharing Your Information",
+    ),
+    "sharingInfoDesc": MessageLookupByLibrary.simpleMessage(
+      "We do not sell or trade your personal information. However, we may share certain information with trusted third-party service providers to support and improve our services. These providers are required to adhere to strict data protection standards and are only permitted to use the information for the purposes outlined in our privacy policy.",
+    ),
     "signOut": MessageLookupByLibrary.simpleMessage("Sign Out"),
     "signUp": MessageLookupByLibrary.simpleMessage("Sign Up"),
     "signUpAsADoctor": MessageLookupByLibrary.simpleMessage(
@@ -389,6 +472,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "total": MessageLookupByLibrary.simpleMessage("Total"),
     "totalAmount": MessageLookupByLibrary.simpleMessage("Total Invoice"),
+    "trademarkInfo": MessageLookupByLibrary.simpleMessage(
+      "Trademark Information",
+    ),
     "unfollow": MessageLookupByLibrary.simpleMessage("Unfollow"),
     "unfollowConfirmation": MessageLookupByLibrary.simpleMessage(
       "Unfollow Confirmation",
@@ -396,6 +482,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "uniqueCode": MessageLookupByLibrary.simpleMessage("Unique Code"),
     "updateAppointment": MessageLookupByLibrary.simpleMessage(
       "Update Appointment",
+    ),
+    "updateNotification": MessageLookupByLibrary.simpleMessage(
+      "Update Notification",
+    ),
+    "updateNotificationDesc": MessageLookupByLibrary.simpleMessage(
+      "We may update our privacy policy from time to time. When we do, we will notify you by posting the new policy on this page. It is your responsibility to review this privacy policy periodically for any changes.",
     ),
     "updateProfile": MessageLookupByLibrary.simpleMessage("Update Profile"),
     "updateVersionModuleButtonIgnore": MessageLookupByLibrary.simpleMessage(
@@ -416,12 +508,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateVersionModuleTitle": MessageLookupByLibrary.simpleMessage(
       "Update App ?",
     ),
+    "userControl": MessageLookupByLibrary.simpleMessage(
+      "User Control Over Data",
+    ),
+    "userControlDesc": MessageLookupByLibrary.simpleMessage(
+      "You have full control over the data you share with us. You can update, modify, or delete your personal and clinic information at any time through our platform. We provide clear settings and options for managing your data to ensure you are always in control of what information is stored and shared.",
+    ),
     "value": MessageLookupByLibrary.simpleMessage("Value"),
     "vat": MessageLookupByLibrary.simpleMessage("vat"),
     "verification": MessageLookupByLibrary.simpleMessage("Verification"),
+    "version": MessageLookupByLibrary.simpleMessage("Version"),
     "versionNumber": MessageLookupByLibrary.simpleMessage("Version"),
     "yourAppointments": MessageLookupByLibrary.simpleMessage("Appointments"),
     "yourClinic": MessageLookupByLibrary.simpleMessage("Clinics"),
+    "yourConsent": MessageLookupByLibrary.simpleMessage("Your Consent"),
+    "yourConsentDesc": MessageLookupByLibrary.simpleMessage(
+      "By using our app, you consent to our privacy policy.",
+    ),
     "yourUpcomingAppointments": MessageLookupByLibrary.simpleMessage(
       "Your Upcoming Appointments",
     ),

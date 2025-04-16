@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:squeak/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:squeak/features/settings/controller/about_cubit.dart';
 import 'package:squeak/features/settings/controller/about_state.dart';
 import 'package:squeak/core/constant/global_function/global_function.dart';
 import 'dart:io';
+
 
 class AboutPage extends StatelessWidget {
   const AboutPage({Key? key}) : super(key: key);
@@ -14,7 +16,7 @@ class AboutPage extends StatelessWidget {
       await launch(url);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(isArabic() ? 'تعذر فتح الرابط' : "Could not open link")),
+        SnackBar(content: Text(S.of(context).couldNotOpenLink)),
       );
     }
   }
@@ -29,7 +31,7 @@ class AboutPage extends StatelessWidget {
       create: (context) => AboutCubit(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(isArabic() ? 'عن التطبيق' : "About"),
+          title: Text(S.of(context).about),
           centerTitle: true,
           elevation: 0,
         ),
@@ -82,7 +84,7 @@ class AboutPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        "${isArabic() ? 'الإصدار' : 'Version'} ${state.version} (${Platform.isAndroid ? "Android" : "iOS"})",
+                        "${S.of(context).version} ${state.version} (${Platform.isAndroid ? "Android" : "iOS"})",
                         style: textTheme.bodyMedium?.copyWith(
                           color: isDarkMode
                               ? Colors.white
@@ -92,7 +94,7 @@ class AboutPage extends StatelessWidget {
                     );
                   } else {
                     return Text(
-                      isArabic() ? 'فشل تحميل الإصدار' : "Failed to load version",
+                      S.of(context).failedToLoadVersion,
                       style: TextStyle(color: Colors.red),
                     );
                   }
@@ -112,7 +114,7 @@ class AboutPage extends StatelessWidget {
                     _buildLinkTile(
                       context,
                       icon: Icons.branding_watermark,
-                      title: isArabic() ? 'معلومات العلامة التجارية' : "Trademark Information",
+                      title: S.of(context).trademarkInfo,
                       url: "https://quadinsight.com",
                     ),
                     const Divider(height: 1, indent: 20, endIndent: 20),
@@ -121,7 +123,7 @@ class AboutPage extends StatelessWidget {
                     _buildLinkTile(
                       context,
                       icon: Icons.privacy_tip,
-                      title: isArabic() ? 'سياسة الخصوصية' : "Privacy Policy",
+                      title: S.of(context).privacyPolicy ,
                       url: "https://quadinsight.com/privacy",
                     ),
                   ],
@@ -131,7 +133,7 @@ class AboutPage extends StatelessWidget {
 
               // Footer Text
               Text(
-                isArabic() ? '© 2023 Quad Insight. جميع الحقوق محفوظة' : "© 2023 Quad Insight. All rights reserved",
+                S.of(context).copyright,
                 style: textTheme.bodySmall?.copyWith(
                   color: Colors.grey,
                 ),

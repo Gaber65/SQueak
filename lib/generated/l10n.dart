@@ -1924,6 +1924,381 @@ class S {
       args: [],
     );
   }
+
+  /// `About`
+  String get about {
+    return Intl.message('About', name: 'about', desc: '', args: []);
+  }
+
+  /// `Could not open link`
+  String get couldNotOpenLink {
+    return Intl.message(
+      'Could not open link',
+      name: 'couldNotOpenLink',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Version`
+  String get version {
+    return Intl.message('Version', name: 'version', desc: '', args: []);
+  }
+
+  /// `Failed to load version`
+  String get failedToLoadVersion {
+    return Intl.message(
+      'Failed to load version',
+      name: 'failedToLoadVersion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Trademark Information`
+  String get trademarkInfo {
+    return Intl.message(
+      'Trademark Information',
+      name: 'trademarkInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy Policy`
+  String get privacyPolicy {
+    return Intl.message(
+      'Privacy Policy',
+      name: 'privacyPolicy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `© 2023 Quad Insight. All rights reserved`
+  String get copyright {
+    return Intl.message(
+      '© 2023 Quad Insight. All rights reserved',
+      name: 'copyright',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last updated`
+  String get lastUpdated {
+    return Intl.message(
+      'Last updated',
+      name: 'lastUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Information We Collect`
+  String get infoWeCollect {
+    return Intl.message(
+      'Information We Collect',
+      name: 'infoWeCollect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We may collect the following types of information:`
+  String get infoWeCollectDesc {
+    return Intl.message(
+      'We may collect the following types of information:',
+      name: 'infoWeCollectDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Personal identification information (Name, email address, phone number, etc.)`
+  String get personalInfo {
+    return Intl.message(
+      'Personal identification information (Name, email address, phone number, etc.)',
+      name: 'personalInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How We Use Your Information`
+  String get howWeUse {
+    return Intl.message(
+      'How We Use Your Information',
+      name: 'howWeUse',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your information is used to provide and improve our services.`
+  String get howWeUseDesc {
+    return Intl.message(
+      'Your information is used to provide and improve our services.',
+      name: 'howWeUseDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Information Protection`
+  String get infoProtection {
+    return Intl.message(
+      'Information Protection',
+      name: 'infoProtection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We take data security seriously and implement appropriate measures to safeguard your personal information against unauthorized access, alteration, or disclosure.`
+  String get infoProtectionDesc {
+    return Intl.message(
+      'We take data security seriously and implement appropriate measures to safeguard your personal information against unauthorized access, alteration, or disclosure.',
+      name: 'infoProtectionDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sharing Your Information`
+  String get sharingInfo {
+    return Intl.message(
+      'Sharing Your Information',
+      name: 'sharingInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We do not sell or trade your personal information. However, we may share certain information with trusted third-party service providers to support and improve our services. These providers are required to adhere to strict data protection standards and are only permitted to use the information for the purposes outlined in our privacy policy.`
+  String get sharingInfoDesc {
+    return Intl.message(
+      'We do not sell or trade your personal information. However, we may share certain information with trusted third-party service providers to support and improve our services. These providers are required to adhere to strict data protection standards and are only permitted to use the information for the purposes outlined in our privacy policy.',
+      name: 'sharingInfoDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data Security and Privacy`
+  String get dataSecurity {
+    return Intl.message(
+      'Data Security and Privacy',
+      name: 'dataSecurity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your privacy and the security of your clinic's data are of utmost importance to us. We implement industry-standard security measures to protect your data against unauthorized access, alteration, and disclosure. Our systems are regularly updated to address potential vulnerabilities and ensure the highest level of protection.`
+  String get dataSecurityDesc {
+    return Intl.message(
+      'Your privacy and the security of your clinic\'s data are of utmost importance to us. We implement industry-standard security measures to protect your data against unauthorized access, alteration, and disclosure. Our systems are regularly updated to address potential vulnerabilities and ensure the highest level of protection.',
+      name: 'dataSecurityDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User Control Over Data`
+  String get userControl {
+    return Intl.message(
+      'User Control Over Data',
+      name: 'userControl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have full control over the data you share with us. You can update, modify, or delete your personal and clinic information at any time through our platform. We provide clear settings and options for managing your data to ensure you are always in control of what information is stored and shared.`
+  String get userControlDesc {
+    return Intl.message(
+      'You have full control over the data you share with us. You can update, modify, or delete your personal and clinic information at any time through our platform. We provide clear settings and options for managing your data to ensure you are always in control of what information is stored and shared.',
+      name: 'userControlDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data Encryption`
+  String get dataEncryption {
+    return Intl.message(
+      'Data Encryption',
+      name: 'dataEncryption',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All data transmitted between our application and our servers is encrypted using secure protocols (such as HTTPS). Additionally, sensitive information, including your clinic's data and payment information, is encrypted and securely stored to prevent unauthorized access.`
+  String get dataEncryptionDesc {
+    return Intl.message(
+      'All data transmitted between our application and our servers is encrypted using secure protocols (such as HTTPS). Additionally, sensitive information, including your clinic\'s data and payment information, is encrypted and securely stored to prevent unauthorized access.',
+      name: 'dataEncryptionDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Compliance with Data Protection Regulations`
+  String get compliance {
+    return Intl.message(
+      'Compliance with Data Protection Regulations',
+      name: 'compliance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We comply with relevant data protection laws and regulations.`
+  String get complianceDesc {
+    return Intl.message(
+      'We comply with relevant data protection laws and regulations.',
+      name: 'complianceDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data Retention Policy`
+  String get dataRetention {
+    return Intl.message(
+      'Data Retention Policy',
+      name: 'dataRetention',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We retain your data only for as long as necessary to provide you with our services and for legitimate business purposes, such as maintaining records for financial, legal, or compliance reasons. Once the data is no longer needed, we take steps to securely delete or anonymize it.`
+  String get dataRetentionDesc {
+    return Intl.message(
+      'We retain your data only for as long as necessary to provide you with our services and for legitimate business purposes, such as maintaining records for financial, legal, or compliance reasons. Once the data is no longer needed, we take steps to securely delete or anonymize it.',
+      name: 'dataRetentionDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Regular Security Audits`
+  String get securityAudits {
+    return Intl.message(
+      'Regular Security Audits',
+      name: 'securityAudits',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We conduct regular security audits to identify and address potential security risks. Our team is dedicated to continuously monitoring and enhancing our security measures to ensure the safety and privacy of your clinic's data.`
+  String get securityAuditsDesc {
+    return Intl.message(
+      'We conduct regular security audits to identify and address potential security risks. Our team is dedicated to continuously monitoring and enhancing our security measures to ensure the safety and privacy of your clinic\'s data.',
+      name: 'securityAuditsDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Contact Us About Privacy`
+  String get contactPrivacy {
+    return Intl.message(
+      'Contact Us About Privacy',
+      name: 'contactPrivacy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If you have any concerns or questions about how we handle your data or if you would like to exercise your data rights, please contact our privacy team at support@veticare.com. We are here to ensure that you feel confident and secure in using our services.`
+  String get contactPrivacyDesc {
+    return Intl.message(
+      'If you have any concerns or questions about how we handle your data or if you would like to exercise your data rights, please contact our privacy team at support@veticare.com. We are here to ensure that you feel confident and secure in using our services.',
+      name: 'contactPrivacyDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Notification`
+  String get updateNotification {
+    return Intl.message(
+      'Update Notification',
+      name: 'updateNotification',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We may update our privacy policy from time to time. When we do, we will notify you by posting the new policy on this page. It is your responsibility to review this privacy policy periodically for any changes.`
+  String get updateNotificationDesc {
+    return Intl.message(
+      'We may update our privacy policy from time to time. When we do, we will notify you by posting the new policy on this page. It is your responsibility to review this privacy policy periodically for any changes.',
+      name: 'updateNotificationDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your Consent`
+  String get yourConsent {
+    return Intl.message(
+      'Your Consent',
+      name: 'yourConsent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `By using our app, you consent to our privacy policy.`
+  String get yourConsentDesc {
+    return Intl.message(
+      'By using our app, you consent to our privacy policy.',
+      name: 'yourConsentDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Contact Us`
+  String get contactUs {
+    return Intl.message('Contact Us', name: 'contactUs', desc: '', args: []);
+  }
+
+  /// `If you have any questions about this privacy policy, please contact us at support@veticare.com.`
+  String get contactUsDesc {
+    return Intl.message(
+      'If you have any questions about this privacy policy, please contact us at support@veticare.com.',
+      name: 'contactUsDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `© 2024 VetICare. All rights reserved.`
+  String get copyright2 {
+    return Intl.message(
+      '© 2024 VetICare. All rights reserved.',
+      name: 'copyright2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email copied to clipboard`
+  String get emailCopied {
+    return Intl.message(
+      'Email copied to clipboard',
+      name: 'emailCopied',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -46,6 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ServiceName": MessageLookupByLibrary.simpleMessage("اسم الخدمة"),
     "ServicePhone": MessageLookupByLibrary.simpleMessage("هاتف الخدمة"),
     "TimeOfRecord": MessageLookupByLibrary.simpleMessage("الوقت"),
+    "about": MessageLookupByLibrary.simpleMessage("عن التطبيق"),
     "addAppointment": MessageLookupByLibrary.simpleMessage("إضافة موعد"),
     "addAvailabilities": MessageLookupByLibrary.simpleMessage(
       "إضافة الأوقات المتاحة",
@@ -131,15 +132,54 @@ class MessageLookup extends MessageLookupByLibrary {
     "comparePassword": MessageLookupByLibrary.simpleMessage(
       "أدخل تأكيد كلمة المرور الخاصة بك",
     ),
+    "compliance": MessageLookupByLibrary.simpleMessage(
+      "الامتثال للوائح حماية البيانات",
+    ),
+    "complianceDesc": MessageLookupByLibrary.simpleMessage(
+      "نحن نلتزم بالقوانين واللوائح ذات الصلة بحماية البيانات لضمان التعامل مع بياناتك بأقصى قدر من العناية ووفقًا للمتطلبات القانونية.",
+    ),
     "confirmNewPassword": MessageLookupByLibrary.simpleMessage(
       "تأكيد كلمة المرور الجديدة",
     ),
     "confirmPassword": MessageLookupByLibrary.simpleMessage(
       "تأكيد كلمة المرور",
     ),
+    "contactPrivacy": MessageLookupByLibrary.simpleMessage(
+      "اتصل بنا بخصوص الخصوصية",
+    ),
+    "contactPrivacyDesc": MessageLookupByLibrary.simpleMessage(
+      "إذا كانت لديك أي مخاوف أو استفسارات حول كيفية تعاملنا مع بياناتك أو إذا كنت ترغب في ممارسة حقوقك المتعلقة بالبيانات، يرجى الاتصال بفريق الخصوصية الخاص بنا على support@veticare.com. نحن هنا لضمان شعورك بالثقة والأمان عند استخدام خدماتنا.",
+    ),
+    "contactUs": MessageLookupByLibrary.simpleMessage("اتصل بنا"),
+    "contactUsDesc": MessageLookupByLibrary.simpleMessage(
+      "إذا كان لديك أي أسئلة حول سياسة الخصوصية هذه، يرجى الاتصال بنا على support@veticare.com.",
+    ),
+    "copyright": MessageLookupByLibrary.simpleMessage(
+      "© 2023 Quad Insight. جميع الحقوق محفوظة",
+    ),
+    "copyright2": MessageLookupByLibrary.simpleMessage(
+      "© 2024 فيتيكير. جميع الحقوق محفوظة.",
+    ),
+    "couldNotOpenLink": MessageLookupByLibrary.simpleMessage("تعذر فتح الرابط"),
     "crNumber": MessageLookupByLibrary.simpleMessage("بيانات الأليف"),
     "createPost": MessageLookupByLibrary.simpleMessage("إنشاء منشور"),
     "darkMode": MessageLookupByLibrary.simpleMessage("الوضع الداكن"),
+    "dataEncryption": MessageLookupByLibrary.simpleMessage("تشفير البيانات"),
+    "dataEncryptionDesc": MessageLookupByLibrary.simpleMessage(
+      "يتم تشفير جميع البيانات المرسلة بين تطبيقنا وخوادمنا باستخدام بروتوكولات آمنة (مثل HTTPS). بالإضافة إلى ذلك، يتم تشفير المعلومات الحساسة، بما في ذلك بيانات عيادتك ومعلومات الدفع، وتخزينها بأمان لمنع الوصول غير المصرح به.",
+    ),
+    "dataRetention": MessageLookupByLibrary.simpleMessage(
+      "سياسة الاحتفاظ بالبيانات",
+    ),
+    "dataRetentionDesc": MessageLookupByLibrary.simpleMessage(
+      "نحتفظ ببياناتك فقط طالما كانت ضرورية لتقديم خدماتنا ولأغراض أعمال مشروعة، مثل الاحتفاظ بالسجلات لأغراض مالية أو قانونية أو امتثال. بمجرد أن تصبح البيانات غير ضرورية، نتخذ خطوات لحذفها بأمان أو إخفاء هويتها.",
+    ),
+    "dataSecurity": MessageLookupByLibrary.simpleMessage(
+      "أمان البيانات والخصوصية",
+    ),
+    "dataSecurityDesc": MessageLookupByLibrary.simpleMessage(
+      "خصوصيتك وأمن بيانات عيادتك هما من أولوياتنا. نحن نطبق تدابير أمان وفقًا للمعايير الصناعية لحماية بياناتك من الوصول غير المصرح به أو التعديل أو الإفشاء. يتم تحديث أنظمتنا بانتظام لمعالجة الثغرات المحتملة وضمان أعلى مستوى من الحماية.",
+    ),
     "date": MessageLookupByLibrary.simpleMessage("التاريخ"),
     "delete": MessageLookupByLibrary.simpleMessage("حذف"),
     "deleteComment": MessageLookupByLibrary.simpleMessage("حذف التعليق"),
@@ -150,6 +190,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "editComment": MessageLookupByLibrary.simpleMessage("تعديل التعليق ..."),
     "editPet": MessageLookupByLibrary.simpleMessage("تعديل الاليف"),
     "email": MessageLookupByLibrary.simpleMessage("عنوان البريد الإلكتروني"),
+    "emailCopied": MessageLookupByLibrary.simpleMessage(
+      "تم نسخ البريد الإلكتروني إلى الحافظة",
+    ),
     "email_hint": MessageLookupByLibrary.simpleMessage("أدخل بريدك الإلكتروني"),
     "email_valid": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال بريد إلكتروني",
@@ -198,6 +241,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "أدخل كلمة المرور الخاصة بك",
     ),
     "enterYourText": MessageLookupByLibrary.simpleMessage("بماذا تفكر ....؟"),
+    "failedToLoadVersion": MessageLookupByLibrary.simpleMessage(
+      "فشل تحميل الإصدار",
+    ),
     "female": MessageLookupByLibrary.simpleMessage("أنثى"),
     "files": MessageLookupByLibrary.simpleMessage("الملفات"),
     "filesAndPrescription": MessageLookupByLibrary.simpleMessage(
@@ -221,11 +267,26 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "haveNotAccount": MessageLookupByLibrary.simpleMessage("ليس لديك حساب؟"),
     "help": MessageLookupByLibrary.simpleMessage("الدعم"),
+    "howWeUse": MessageLookupByLibrary.simpleMessage("كيف نستخدم معلوماتك"),
+    "howWeUseDesc": MessageLookupByLibrary.simpleMessage(
+      "تُستخدم معلوماتك لتقديم وتحسين خدماتنا.",
+    ),
+    "infoProtection": MessageLookupByLibrary.simpleMessage("حماية المعلومات"),
+    "infoProtectionDesc": MessageLookupByLibrary.simpleMessage(
+      "نحن نأخذ أمن البيانات على محمل الجد ونطبق تدابير مناسبة لحماية معلوماتك الشخصية من الوصول غير المصرح به أو التعديل أو الإفشاء.",
+    ),
+    "infoWeCollect": MessageLookupByLibrary.simpleMessage(
+      "المعلومات التي نجمعها",
+    ),
+    "infoWeCollectDesc": MessageLookupByLibrary.simpleMessage(
+      "قد نجمع الأنواع التالية من المعلومات:",
+    ),
     "inviteFriends": MessageLookupByLibrary.simpleMessage("دعوة الأصدقاء"),
     "invoiceNo": MessageLookupByLibrary.simpleMessage("رمز الفاتورة"),
     "itemName": MessageLookupByLibrary.simpleMessage("اسم الصنف"),
     "labelPost": MessageLookupByLibrary.simpleMessage("بماذا تفكر؟"),
     "langMode": MessageLookupByLibrary.simpleMessage("وضع اللغة"),
+    "lastUpdated": MessageLookupByLibrary.simpleMessage("آخر تحديث"),
     "location": MessageLookupByLibrary.simpleMessage("الموقع"),
     "login": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
     "logout": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
@@ -271,6 +332,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "payment": MessageLookupByLibrary.simpleMessage("الدفع"),
     "paymentType": MessageLookupByLibrary.simpleMessage("النوع"),
+    "personalInfo": MessageLookupByLibrary.simpleMessage(
+      "المعلومات الشخصية (الاسم، عنوان البريد الإلكتروني، رقم الهاتف، إلخ)",
+    ),
     "pet": MessageLookupByLibrary.simpleMessage("الأليف"),
     "petDeletedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تم حذف الاليف بنجاح",
@@ -296,6 +360,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "prescription": MessageLookupByLibrary.simpleMessage("الروشة"),
     "price": MessageLookupByLibrary.simpleMessage("السعر"),
+    "privacyPolicy": MessageLookupByLibrary.simpleMessage("سياسة الخصوصية"),
     "profile": MessageLookupByLibrary.simpleMessage("ملفك الشخصي"),
     "publish": MessageLookupByLibrary.simpleMessage("نشر"),
     "qty": MessageLookupByLibrary.simpleMessage("الكمية"),
@@ -330,6 +395,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "search": MessageLookupByLibrary.simpleMessage("بحث"),
     "searchFor": MessageLookupByLibrary.simpleMessage("البحث عن خدمة"),
     "searchValid": MessageLookupByLibrary.simpleMessage("إضافة خدمة"),
+    "securityAudits": MessageLookupByLibrary.simpleMessage(
+      "تدقيقات الأمان المنتظمة",
+    ),
+    "securityAuditsDesc": MessageLookupByLibrary.simpleMessage(
+      "نقوم بإجراء تدقيقات أمنية منتظمة لتحديد ومعالجة المخاطر الأمنية المحتملة. فريقنا مكرس لمراقبة وتعزيز تدابير الأمان باستمرار لضمان سلامة وخصوصية بيانات عيادتك.",
+    ),
     "selectPetType": MessageLookupByLibrary.simpleMessage("اختر نوع الاليف"),
     "send": MessageLookupByLibrary.simpleMessage("إرسال"),
     "sendMeNow": MessageLookupByLibrary.simpleMessage("أرسل لي الآن"),
@@ -342,6 +413,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "settings": MessageLookupByLibrary.simpleMessage("الإعدادات"),
     "sex": MessageLookupByLibrary.simpleMessage("الجنس"),
+    "sharingInfo": MessageLookupByLibrary.simpleMessage("مشاركة معلوماتك"),
+    "sharingInfoDesc": MessageLookupByLibrary.simpleMessage(
+      "لا نقوم ببيع أو تداول معلوماتك الشخصية. ومع ذلك، قد نشارك بعض المعلومات مع مزودي الخدمات الموثوق بهم لدعم وتحسين خدماتنا. يُطلب من هؤلاء المزودين الالتزام بمعايير حماية البيانات الصارمة ويُسمح لهم فقط باستخدام المعلومات للأغراض الموضحة في سياسة الخصوصية الخاصة بنا.",
+    ),
     "signOut": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
     "signUp": MessageLookupByLibrary.simpleMessage("التسجيل"),
     "signUpAsADoctor": MessageLookupByLibrary.simpleMessage("التسجيل كطبيب"),
@@ -366,12 +441,19 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "total": MessageLookupByLibrary.simpleMessage("المجموع"),
     "totalAmount": MessageLookupByLibrary.simpleMessage("المجموع"),
+    "trademarkInfo": MessageLookupByLibrary.simpleMessage(
+      "معلومات العلامة التجارية",
+    ),
     "unfollow": MessageLookupByLibrary.simpleMessage("الغاء المتابعة"),
     "unfollowConfirmation": MessageLookupByLibrary.simpleMessage(
       "تأكيد الغاء  المتابعة",
     ),
     "uniqueCode": MessageLookupByLibrary.simpleMessage("الرمز الفريد"),
     "updateAppointment": MessageLookupByLibrary.simpleMessage("تحديث الموعد"),
+    "updateNotification": MessageLookupByLibrary.simpleMessage("إشعار التحديث"),
+    "updateNotificationDesc": MessageLookupByLibrary.simpleMessage(
+      "قد نقوم بتحديث سياسة الخصوصية الخاصة بنا من وقت لآخر. عندما نقوم بذلك، سنقوم بإبلاغك عن طريق نشر السياسة الجديدة على هذه الصفحة. تقع على عاتقك مسؤولية مراجعة هذه السياسة بشكل دوري للاطلاع على أي تغييرات.",
+    ),
     "updateProfile": MessageLookupByLibrary.simpleMessage("تحديث"),
     "updateVersionModuleButtonIgnore": MessageLookupByLibrary.simpleMessage(
       "تجاهل",
@@ -391,11 +473,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateVersionModuleTitle": MessageLookupByLibrary.simpleMessage(
       "تحديث التطبيق",
     ),
+    "userControl": MessageLookupByLibrary.simpleMessage(
+      "تحكم المستخدم في البيانات",
+    ),
+    "userControlDesc": MessageLookupByLibrary.simpleMessage(
+      "لديك السيطرة الكاملة على البيانات التي تشاركها معنا. يمكنك تحديث أو تعديل أو حذف معلوماتك الشخصية ومعلومات العيادة في أي وقت من خلال منصتنا. نوفر لك إعدادات واضحة وخيارات لإدارة بياناتك لضمان أنك دائمًا تتحكم في المعلومات المخزنة والمشتركة.",
+    ),
     "value": MessageLookupByLibrary.simpleMessage("القيمة"),
     "verification": MessageLookupByLibrary.simpleMessage("التحقق"),
+    "version": MessageLookupByLibrary.simpleMessage("الإصدار"),
     "versionNumber": MessageLookupByLibrary.simpleMessage("الإصدار"),
     "yourAppointments": MessageLookupByLibrary.simpleMessage("مواعيدك"),
     "yourClinic": MessageLookupByLibrary.simpleMessage("عيادات"),
+    "yourConsent": MessageLookupByLibrary.simpleMessage("موافقتك"),
+    "yourConsentDesc": MessageLookupByLibrary.simpleMessage(
+      "باستخدام تطبيقنا، فإنك توافق على سياسة الخصوصية الخاصة بنا.",
+    ),
     "yourUpcomingAppointments": MessageLookupByLibrary.simpleMessage(
       "مواعيدك القادمة",
     ),
