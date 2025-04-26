@@ -1,9 +1,8 @@
-import 'package:squeak/core/helper/image_helper/helper_model/response_model.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 
-class VerSionModel extends ResponseModel {
-
+class VerSionModel extends ErrorMessageModel {
   final DataVersion data;
-  VerSionModel({
+  const VerSionModel({
     required super.errors,
     required super.message,
     required super.success,
@@ -12,20 +11,20 @@ class VerSionModel extends ResponseModel {
   });
 
   factory VerSionModel.fromJson(Map<String, dynamic> json) => VerSionModel(
-        success: json["success"],
-        errors:ResponseModel.convertJsonToMap(json),
-        message: json["message"],
-        statusCode: json["statusCode"],
-        data: DataVersion.fromJson(json["data"]),
-      );
+    success: json["success"],
+    errors: ErrorMessageModel.convertJsonToMap(json),
+    message: json["message"],
+    statusCode: json["statusCode"],
+    data: DataVersion.fromJson(json["data"]),
+  );
 
   Map<String, dynamic> toJson() => {
-        "success": success,
-        "errors": errors,
-        "message": message,
-        "statusCode": statusCode,
-        "data": data.toJson(),
-      };
+    "success": success,
+    "errors": errors,
+    "message": message,
+    "statusCode": statusCode,
+    "data": data.toJson(),
+  };
 }
 
 class DataVersion {
@@ -39,15 +38,14 @@ class DataVersion {
   });
 
   factory DataVersion.fromJson(Map<String, dynamic> json) => DataVersion(
-        version: json["version"],
-        link: json["link"],
-        forceUpdate: json["forceToUpdate"],
-      );
-
+    version: json["version"],
+    link: json["link"],
+    forceUpdate: json["forceToUpdate"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "version": version,
-        "link": link,
-        "forceToUpdate": forceUpdate,
-      };
+    "version": version,
+    "link": link,
+    "forceToUpdate": forceUpdate,
+  };
 }

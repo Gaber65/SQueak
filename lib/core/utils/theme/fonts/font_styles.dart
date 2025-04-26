@@ -12,7 +12,7 @@ class FontStyleThame {
     required context,
   }) {
     return GoogleFonts.notoSans(
-      color: fontColor ?? (sl<MainCubit>().isDark
+      color: fontColor ?? (MainCubit.get(context).isDark
               ? Colors.white
               : Colors.black),
       fontWeight: fontWeight,

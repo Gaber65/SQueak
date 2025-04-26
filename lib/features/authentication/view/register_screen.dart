@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/constant/global_widget/national_phone.dart';
 import 'package:squeak/features/authentication/controller/auth_cubit.dart';
 import 'package:squeak/features/authentication/view/verfiy_user_screen.dart';
 import 'package:squeak/features/authentication/view/widgets/authItem.dart';
 
-import '../../../core/constant/global_function/custom_text_form_field.dart';
-import '../../../core/constant/global_widget/toast.dart';
-import '../../../core/thames/styles.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
+
 import '../../../generated/l10n.dart';
 import 'login_screen.dart';
 
@@ -163,7 +161,7 @@ class RegisterView extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  backgroundColor: ColorTheme.primaryColor,
+                  backgroundColor: ColorManager.primaryColor,
                 ),
                 onPressed: cubit.isRegister
                     ? null
@@ -201,7 +199,7 @@ class RegisterView extends StatelessWidget {
                     style: FontStyleThame.textStyle(
                       context: context,
                       fontSize: 14,
-                      fontColor: ColorTheme.secondColor,
+                      fontColor: ColorManager.secondColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

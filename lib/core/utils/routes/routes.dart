@@ -5,7 +5,7 @@ import 'package:squeak/features/authentication/view/forgot_password.dart';
 import 'package:squeak/features/authentication/view/login_screen.dart';
 import 'package:squeak/features/authentication/view/register_screen.dart';
 import 'package:squeak/features/layout/layout.dart';
-import 'package:squeak/features/layout/view/feeds/post_notfication.dart';
+import 'package:squeak/features/layout/notification/NotificationAPI/presentation/screens/post_notfication.dart';
 import 'package:squeak/features/pets/view/pet_screen.dart';
 import 'package:squeak/features/vetcare/view/follow_request_screen.dart';
 
@@ -20,7 +20,7 @@ Map<String, WidgetBuilder> routes = {
   '/login': (context) => const LoginScreen(),
   '/register': (context) => const RegisterScreen(),
   '/forgotPassword': (context) => ForgotPasswordScreen(),
-  '/layout': (context) => const LayoutScreen(),
+  '/layout': (context) =>  LayoutScreen(),
   '/PetVacs': (context) => const PetScreen(),
   '/Rate': (context) => RateAppointment(
         model: ModalRoute.of(context)!.settings.arguments as AppointmentModel,

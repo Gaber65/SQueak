@@ -20,6 +20,8 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ar';
 
+  static String m0(count) => "عرض ${count} ردود";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "AddServiceSupplier": MessageLookupByLibrary.simpleMessage(
@@ -136,6 +138,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "doctorName": MessageLookupByLibrary.simpleMessage("اسم الطبيب"),
     "edit": MessageLookupByLibrary.simpleMessage("تحرير"),
     "editComment": MessageLookupByLibrary.simpleMessage("تعديل التعليق ..."),
+    "editCommentPost": MessageLookupByLibrary.simpleMessage("تعديل تعليق"),
+    "editReplyCommentPost": MessageLookupByLibrary.simpleMessage(
+      "تعديل رد على تعليق",
+    ),
     "email": MessageLookupByLibrary.simpleMessage("عنوان البريد الإلكتروني"),
     "email_hint": MessageLookupByLibrary.simpleMessage("أدخل بريدك الإلكتروني"),
     "email_valid": MessageLookupByLibrary.simpleMessage(
@@ -286,7 +292,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "removeClinic": MessageLookupByLibrary.simpleMessage("إزالة العيادة"),
     "removePost": MessageLookupByLibrary.simpleMessage("إزالة المنشور"),
-    "reply": MessageLookupByLibrary.simpleMessage("الرد"),
+    "replies": MessageLookupByLibrary.simpleMessage("الردود"),
+    "reply": MessageLookupByLibrary.simpleMessage("رد"),
     "returnPolicy": MessageLookupByLibrary.simpleMessage(
       "سياسة الإرجاع والاستبدال: يمكن إرجاع العناصر خلال 3 أيام من الشراء مع الإيصال. المنتجات الطبية غير قابلة للاسترداد.",
     ),
@@ -368,6 +375,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "value": MessageLookupByLibrary.simpleMessage("القيمة"),
     "verification": MessageLookupByLibrary.simpleMessage("التحقق"),
     "versionNumber": MessageLookupByLibrary.simpleMessage("الإصدار"),
+    "view1Reply": MessageLookupByLibrary.simpleMessage("عرض رد واحد"),
+    "viewReplies": m0,
     "yourAppointments": MessageLookupByLibrary.simpleMessage("مواعيدك"),
     "yourClinic": MessageLookupByLibrary.simpleMessage("عيادات"),
     "yourUpcomingAppointments": MessageLookupByLibrary.simpleMessage(

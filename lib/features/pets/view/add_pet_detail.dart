@@ -2,17 +2,13 @@ import 'dart:async';
 import 'package:drop_down_search_field/drop_down_search_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/constant/global_function/custom_text_form_field.dart';
-import 'package:squeak/core/constant/global_function/global_function.dart';
-import 'package:squeak/core/constant/global_widget/toast.dart';
-import 'package:squeak/core/helper/build_service/main_cubit/main_cubit.dart';
-import 'package:squeak/core/thames/styles.dart';
+
+import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/pets/models/pet_model.dart';
 
 import 'package:squeak/features/pets/controller/pet_cubit.dart';
 import 'package:squeak/features/pets/view/pet_screen.dart';
 
-import '../../../core/thames/color_manager.dart';
 import '../../../generated/l10n.dart';
 import '../../layout/controller/layout_cubit.dart';
 
@@ -128,7 +124,7 @@ class AddPet extends StatelessWidget {
                           const Spacer(),
                           Switch(
                             value: cubit.spayed,
-                            activeColor: ColorTheme.primaryColor,
+                            activeColor: ColorManager.primaryColor,
                             onChanged: (value) {
                               cubit.changeSpayed();
                             },
@@ -205,42 +201,42 @@ class AddPet extends StatelessWidget {
                             isLoading: cubit.isLoading,
                             formKey: cubit.formKey,
                             onPressed: () {
-                              if (cubit.formKey.currentState!.validate()) {
-                                if (cubit.pitsImage != null) {
-                                  cubit.isLoading = true;
-                                  MainCubit.get(context)
-                                      .getGlobalImage(
-                                    file: cubit.pitsImage!,
-                                    uploadPlace: UploadPlace.petsImages.value,
-                                  )
-                                      .then((value) {
-                                    cubit.imageNameController.text =
-                                        MainCubit.get(context).modelImage!.data
-                                            as String;
-                                    cubit.createPet();
-                                  });
-                                } else {
-                                  if (cubit.searchController.text.isEmpty) {
-                                    cubit.createPet();
-                                  } else {
-                                    if (cubit.breedData.any((BreadData data) =>
-                                        data.enType ==
-                                        cubit.searchController.text)) {
-                                      cubit.createPet();
-                                    } else {
-                                      cubit.dropdownValueBreed = '';
-                                      cubit.breedIdController.clear();
-                                      cubit.searchController.clear();
-                                      cubit.emit(ChangeBreedState());
-                                      errorToast(
-                                          context,
-                                          isArabic()
-                                              ? "هذه السلاله غير موجوده"
-                                              : 'this breed doesn\'t exist');
-                                    }
-                                  }
-                                }
-                              }
+                              // if (cubit.formKey.currentState!.validate()) {
+                              //   if (cubit.pitsImage != null) {
+                              //     cubit.isLoading = true;
+                              //     MainCubit.get(context)
+                              //         .getGlobalImage(
+                              //       file: cubit.pitsImage!,
+                              //       uploadPlace: UploadPlace.petsImages.value,
+                              //     )
+                              //         .then((value) {
+                              //       cubit.imageNameController.text =
+                              //           MainCubit.get(context).modelImage!.data
+                              //               as String;
+                              //       cubit.createPet();
+                              //     });
+                              //   } else {
+                              //     if (cubit.searchController.text.isEmpty) {
+                              //       cubit.createPet();
+                              //     } else {
+                              //       if (cubit.breedData.any((BreadData data) =>
+                              //           data.enType ==
+                              //           cubit.searchController.text)) {
+                              //         cubit.createPet();
+                              //       } else {
+                              //         cubit.dropdownValueBreed = '';
+                              //         cubit.breedIdController.clear();
+                              //         cubit.searchController.clear();
+                              //         cubit.emit(ChangeBreedState());
+                              //         errorToast(
+                              //             context,
+                              //             isArabic()
+                              //                 ? "هذه السلاله غير موجوده"
+                              //                 : 'this breed doesn\'t exist');
+                              //       }
+                              //     }
+                              //   }
+                              // }
                             },
                             buttonText: S.of(context).save,
                           );
@@ -303,8 +299,8 @@ class AddPet extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(style: BorderStyle.none),
           color: cubit.gender == id
-              ? ColorTheme.primaryColor
-              : ColorTheme.primaryColor.withOpacity(.3),
+              ? ColorManager.primaryColor
+              : ColorManager.primaryColor.withOpacity(.3),
           borderRadius: const BorderRadius.all(Radius.circular(12.0)),
         ),
         child: Text(

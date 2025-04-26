@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:squeak/core/thames/decorations.dart';
-import 'package:squeak/core/thames/styles.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/models/availabilities_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../../../../core/helper/build_service/main_cubit/main_cubit.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 
 class CalendarScreen extends StatefulWidget {
   final bool isShowTime;
@@ -178,7 +178,7 @@ class _CalendarScreenState extends State<CalendarScreen>
   Color _getDayColor(DateTime day) {
     DayOfWeek dayOfWeek = DayOfWeek.values[(day.weekday - 1 + 7) % 7];
     return _timeSlots.containsKey(dayOfWeek)
-        ? ColorTheme.primaryColor
+        ? ColorManager.primaryColor
         : Colors.grey;
   }
 
@@ -218,7 +218,7 @@ class _CalendarScreenState extends State<CalendarScreen>
                   decoration: Decorations.kDecorationBoxShadow(
                     context: context,
                     color: isActive
-                        ? ColorTheme.primaryColor
+                        ? ColorManager.primaryColor
                         : MainCubit.get(context).isDark
                             ? Colors.black54
                             : Colors.white,
@@ -230,7 +230,7 @@ class _CalendarScreenState extends State<CalendarScreen>
                       style: TextStyle(
                         fontSize: 12,
                         color:
-                            !isActive ? ColorTheme.primaryColor : Colors.white,
+                            !isActive ? ColorManager.primaryColor : Colors.white,
                       ),
                     ),
                   ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void navigateToScreen(
     BuildContext context,
@@ -58,4 +59,10 @@ void navigateAndFinish(context, widget) {
     ),
         (route) => false,
   );
+}
+Future<void> navigateToReference({required url}) async {
+  final Uri _urla = Uri.parse(url);
+  if (!await launchUrl(_urla)) {
+    throw Exception('Could not launch $_urla');
+  }
 }

@@ -6,17 +6,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:squeak/core/helper/cache/cache_helper.dart';
-import 'package:squeak/core/helper/remotely/dio.dart';
-import 'package:squeak/core/helper/remotely/end-points.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:squeak/features/authentication/models/login.dart';
 import 'package:squeak/features/vetcare/models/vetIcare_client_model.dart';
-import '../../../core/constant/global_function/global_function.dart';
-import '../../../core/helper/image_helper/helper_model/response_model.dart';
-import '../../../core/helper/remotely/config_model.dart';
-import '../../layout/models/Notification_model.dart';
 import '../../layout/models/clinic_model.dart';
+import '../../layout/notification/NotificationAPI/data/model/Notification_model.dart';
 
 part 'vet_state.dart';
 
@@ -79,7 +75,7 @@ class VetCubit extends Cubit<VetState> {
       emit(SuccessRegisterState());
     } on DioException catch (e) {
       isRegister = false;
-      emit(ErrorRegisterState(ResponseModel.fromJson(e.response?.data)));
+      emit(ErrorRegisterState(ErrorMessageModel.fromJson(e.response?.data)));
     }
   }
 
@@ -144,7 +140,7 @@ class VetCubit extends Cubit<VetState> {
     } on DioException catch (e) {
       isRegister = false;
       print(e.response);
-      emit(ErrorLoginState(ResponseModel.fromJson(e.response?.data)));
+      emit(ErrorLoginState(ErrorMessageModel.fromJson(e.response?.data)));
     }
   }
 
@@ -159,7 +155,7 @@ class VetCubit extends Cubit<VetState> {
       String username = Username ?? 'Ahmed.Omar@Veticare.com';
       String passwordBasic = password ?? 'Password@123';
       String basicAuth =
-          'Basic ' + base64Encode(utf8.encode('$username:$passwordBasic'));
+          'Basic ${base64Encode(utf8.encode('$username:$passwordBasic'))}';
       var dio = Dio();
       Response response = await dio.request(
         '${ConfigModel.baseApiUrlSqueak}$version/vetcare/client/$invitationCode',
@@ -176,7 +172,7 @@ class VetCubit extends Cubit<VetState> {
       print(vetClientModelOne!.toJson());
       phoneController.text = vetClientModelOne!.phone;
       emailController.text = vetClientModelOne!.email;
-      print(emailController.text + '***********************');
+      print('${emailController.text}***********************');
       emit(SuccessGetClientState());
     } on DioException catch (e) {
       print(e.response);
@@ -219,7 +215,7 @@ class VetCubit extends Cubit<VetState> {
 
     try {
       Response response = await DioFinalHelper.getData(
-        method: addClinicEndPoint + '/' + id,
+        method: '$addClinicEndPoint/' + id,
         language: true,
       );
 
@@ -275,7 +271,7 @@ class VetCubit extends Cubit<VetState> {
       String username = Username ?? 'Ahmed.Omar@Veticare.com';
       String passwordBasic = password ?? 'Password@123';
       String basicAuth =
-          'Basic ' + base64Encode(utf8.encode('$username:$passwordBasic'));
+          'Basic ${base64Encode(utf8.encode('$username:$passwordBasic'))}';
       var dio = Dio();
       Response response = await dio.request(
         '${ConfigModel.baseApiUrlSqueak}$version/vetcare/client/${CacheHelper.getData('phone')}/$Code',
@@ -291,7 +287,7 @@ class VetCubit extends Cubit<VetState> {
       vetClientModelOne = DataVet.fromJson(response.data['data']);
       phoneController.text = vetClientModelOne!.phone;
       emailController.text = vetClientModelOne!.email;
-      print(emailController.text + '***********************');
+      print('${emailController.text}***********************');
       emit(SuccessGetClientState());
     } on DioException catch (e) {
       print(e.response);
@@ -331,7 +327,7 @@ class VetCubit extends Cubit<VetState> {
       );
     } on DioException catch (e) {
       isAccept = false;
-      emit(ErrorAcceptIvationState(ResponseModel.fromJson(e.response?.data)));
+      emit(ErrorAcceptIvationState(ErrorMessageModel.fromJson(e.response?.data)));
       print(e);
     }
   }
@@ -401,7 +397,7 @@ class VetCubit extends Cubit<VetState> {
       isAddInSqueakStatues = false;
       isAddInSqueakStatues = false;
       emit(ErrorAddInSqueakStatuesState(
-          ResponseModel.fromJson(e.response?.data)));
+          ErrorMessageModel.fromJson(e.response?.data)));
       print(e);
     }
   }

@@ -63,7 +63,7 @@ class _MyTextFormState extends State<MyTextForm> {
         onTap: widget.onTap,
         onFieldSubmitted: widget.onFieldSubmitted,
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        keyboardAppearance: sl<MainCubit>().isDark ? Brightness.dark : Brightness.light,
+        keyboardAppearance: MainCubit.get(context).isDark ? Brightness.dark : Brightness.light,
         style: FontStyleThame.textStyle(context: context, fontSize: 15),
         onChanged: (value) {
           widget.onChanged?.call(value);
@@ -81,7 +81,7 @@ class _MyTextFormState extends State<MyTextForm> {
   }
 
   InputDecoration _buildInputDecoration(BuildContext context) {
-    final isDark = sl<MainCubit>().isDark;
+    final isDark = MainCubit.get(context).isDark;
     return InputDecoration(
       hintText: widget.hintText,
       prefixIcon: widget.prefixIcon,

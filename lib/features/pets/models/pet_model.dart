@@ -1,7 +1,7 @@
-import 'package:squeak/core/constant/global_function/global_function.dart';
-import 'package:squeak/core/helper/image_helper/helper_model/response_model.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 
-class PetModel extends ResponseModel {
+
+class PetModel extends ErrorMessageModel {
   final List<PetsData> pets;
 
   PetModel({
@@ -14,7 +14,7 @@ class PetModel extends ResponseModel {
 
   factory PetModel.fromJson(Map<String, dynamic> json) {
     return PetModel(
-      errors: ResponseModel.convertJsonToMap(json['errors']),
+      errors: ErrorMessageModel.convertJsonToMap(json['errors']),
       message: json['message'],
       statusCode: json['statusCode'],
       success: json['success'],

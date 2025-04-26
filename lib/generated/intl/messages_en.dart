@@ -20,6 +20,8 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
+  static String m0(count) => "View ${count} replies";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "AddServiceSupplier": MessageLookupByLibrary.simpleMessage(
@@ -139,6 +141,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "doctorName": MessageLookupByLibrary.simpleMessage("Doctor Name"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editComment": MessageLookupByLibrary.simpleMessage("Edit Comment . . . ."),
+    "editCommentPost": MessageLookupByLibrary.simpleMessage("Edit Comment"),
+    "editReplyCommentPost": MessageLookupByLibrary.simpleMessage(
+      "Edit Reply Comment",
+    ),
     "email": MessageLookupByLibrary.simpleMessage("Email Address"),
     "email_hint": MessageLookupByLibrary.simpleMessage(
       "Enter your email address",
@@ -307,7 +313,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "removeClinic": MessageLookupByLibrary.simpleMessage("Remove Clinic"),
     "removePost": MessageLookupByLibrary.simpleMessage("Remove post"),
-    "reply": MessageLookupByLibrary.simpleMessage("reply"),
+    "replies": MessageLookupByLibrary.simpleMessage("replies"),
+    "reply": MessageLookupByLibrary.simpleMessage("Reply"),
     "returnPolicy": MessageLookupByLibrary.simpleMessage(
       "Return & Exchange Policy: Items can be returned within 3 days of purchase with receipt. Medical products are non-refundable.",
     ),
@@ -394,6 +401,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "vat": MessageLookupByLibrary.simpleMessage("vat"),
     "verification": MessageLookupByLibrary.simpleMessage("Verification"),
     "versionNumber": MessageLookupByLibrary.simpleMessage("Version"),
+    "view1Reply": MessageLookupByLibrary.simpleMessage("View 1 reply"),
+    "viewReplies": m0,
     "yourAppointments": MessageLookupByLibrary.simpleMessage("Appointments"),
     "yourClinic": MessageLookupByLibrary.simpleMessage("Clinics"),
     "yourUpcomingAppointments": MessageLookupByLibrary.simpleMessage(

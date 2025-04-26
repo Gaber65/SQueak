@@ -840,9 +840,49 @@ class S {
     );
   }
 
-  /// `reply`
+  /// `Edit Comment`
+  String get editCommentPost {
+    return Intl.message(
+      'Edit Comment',
+      name: 'editCommentPost',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Reply Comment`
+  String get editReplyCommentPost {
+    return Intl.message(
+      'Edit Reply Comment',
+      name: 'editReplyCommentPost',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reply`
   String get reply {
-    return Intl.message('reply', name: 'reply', desc: '', args: []);
+    return Intl.message('Reply', name: 'reply', desc: '', args: []);
+  }
+
+  /// `View 1 reply`
+  String get view1Reply {
+    return Intl.message('View 1 reply', name: 'view1Reply', desc: '', args: []);
+  }
+
+  /// `View {count} replies`
+  String viewReplies(Object count) {
+    return Intl.message(
+      'View $count replies',
+      name: 'viewReplies',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `replies`
+  String get replies {
+    return Intl.message('replies', name: 'replies', desc: '', args: []);
   }
 
   /// `Comments`

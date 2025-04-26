@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:squeak/features/settings/controller/about_cubit.dart';
 import 'package:squeak/features/settings/controller/about_state.dart';
-import 'package:squeak/core/constant/global_function/global_function.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'dart:io'; // Import Platform class
 
 

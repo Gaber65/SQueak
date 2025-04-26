@@ -21,10 +21,10 @@ export 'package:squeak/core/service/global_widget/toast.dart';
 export 'package:squeak/core/service/global_widget/video_detail.dart';
 
 // local_notifications
-export 'package:squeak/core/service/local_notifications/local_notification_handler.dart';
-export 'package:squeak/core/service/local_notifications/notification_initializer.dart';
-export 'package:squeak/core/service/local_notifications/notification_navigation.dart';
-export 'package:squeak/core/service/local_notifications/notification_scheduler.dart';
+export 'package:squeak/features/layout/notification/NotificationFCM/local_notification_handler.dart';
+export 'package:squeak/features/layout/notification/NotificationFCM/notification_initializer.dart';
+export 'package:squeak/features/layout/notification/NotificationFCM/notification_navigation.dart';
+export 'package:squeak/features/layout/notification/NotificationFCM/notification_scheduler.dart';
 
 // main_service/data
 export 'package:squeak/core/service/main_service/data/datasources/remote_data_source.dart';

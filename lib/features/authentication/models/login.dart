@@ -1,12 +1,12 @@
-import '../../../core/helper/image_helper/helper_model/response_model.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 
 
 
 
-class AuthModel extends ResponseModel {
+class AuthModel extends ErrorMessageModel {
   final LoginData? data;
 
-  AuthModel({
+  const AuthModel({
     required this.data,
     required super.errors,
     required super.message,

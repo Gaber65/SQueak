@@ -7,11 +7,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
-import 'package:squeak/core/helper/cache/cache_helper.dart';
-import 'package:squeak/core/helper/image_helper/helper_model/response_model.dart';
-import 'package:squeak/core/helper/remotely/end-points.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 
-import '../../../core/helper/remotely/dio.dart';
+
 import '../../../generated/l10n.dart';
 import '../models/pet_model.dart';
 
@@ -166,7 +164,7 @@ class PetCubit extends Cubit<PetState> {
     } on DioException catch (e) {
       isLoading = false;
       print(e.response!.data);
-      emit(PetCreateErrorState(ResponseModel.fromJson(e.response!.data)));
+      emit(PetCreateErrorState(ErrorMessageModel.fromJson(e.response!.data)));
     }
   }
 
@@ -205,7 +203,7 @@ class PetCubit extends Cubit<PetState> {
     } on DioException catch (e) {
       isLoading = false;
       print(e.response!.data);
-      emit(PetCreateErrorState(ResponseModel.fromJson(e.response!.data)));
+      emit(PetCreateErrorState(ErrorMessageModel.fromJson(e.response!.data)));
     }
   }
 

@@ -1,6 +1,6 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:squeak/core/thames/styles.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../layout/layout.dart';
 import '../contact_us.dart';
@@ -27,6 +27,8 @@ class AuthItem extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(
+                width: double.infinity,
+                height: 310,
                 child: Stack(
                   children: [
                     Stack(
@@ -60,6 +62,14 @@ class AuthItem extends StatelessWidget {
                       ],
                     ),
                     Positioned(
+                      left: logo == null
+                          ? MediaQuery.of(context).size.width * .42
+                          : (MediaQuery.of(context).size.width * .42) - 10,
+                      top: 130,
+                      right: logo == null
+                          ? MediaQuery.of(context).size.width * .42
+                          : (MediaQuery.of(context).size.width * .42) - 10,
+                      bottom: -100,
                       child: Card(
                         shape: CircleBorder(),
                         child: Padding(
@@ -78,19 +88,9 @@ class AuthItem extends StatelessWidget {
                           ),
                         ),
                       ),
-                      left: logo == null
-                          ? MediaQuery.of(context).size.width * .42
-                          : (MediaQuery.of(context).size.width * .42) - 10,
-                      top: 130,
-                      right: logo == null
-                          ? MediaQuery.of(context).size.width * .42
-                          : (MediaQuery.of(context).size.width * .42) - 10,
-                      bottom: -100,
                     ),
                   ],
                 ),
-                width: double.infinity,
-                height: 310,
               ),
               SizedBox(
                 height: 15,

@@ -23,3 +23,10 @@ Workmanager().registerPeriodicTask(
   initialDelay: Duration(seconds: 10),
   constraints: Constraints(networkType: NetworkType.connected),
 );
+
+
+📍 File: pubspec.yaml
+Uncomment the following lines in the pubspec.yaml file:
+
+dependencies:
+  workmanager: ^0.5.0
