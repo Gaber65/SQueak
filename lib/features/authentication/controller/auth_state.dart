@@ -13,7 +13,7 @@ class SuccessLoginState extends AuthState {
 }
 
 class ErrorLoginState extends AuthState {
-  final ResponseModel error;
+  final ErrorMessageModel error;
 
   ErrorLoginState(this.error);
 }
@@ -25,7 +25,7 @@ class ChangePasswordLoadingState extends AuthState {}
 class ChangePasswordSuccessState extends AuthState {}
 
 class ChangePasswordErrorState extends AuthState {
-  final ResponseModel error;
+  final ErrorMessageModel error;
 
   ChangePasswordErrorState(this.error);
 }
@@ -35,7 +35,7 @@ class ForgetPasswordLoadingState extends AuthState {}
 class ForgetPasswordSuccessState extends AuthState {}
 
 class ForgetPasswordErrorState extends AuthState {
-  final ResponseModel error;
+  final ErrorMessageModel error;
 
   ForgetPasswordErrorState(this.error);
 }
@@ -45,7 +45,7 @@ class LoadingRegisterState extends AuthState {}
 class SuccessRegisterState extends AuthState {}
 
 class ErrorRegisterState extends AuthState {
-  ResponseModel error;
+  ErrorMessageModel error;
 
   ErrorRegisterState(this.error);
 }
@@ -53,13 +53,13 @@ class ErrorRegisterState extends AuthState {
 class RestPasswordLoadingState extends AuthState {}
 
 class RestPasswordSuccessState extends AuthState {
-  final ResponseModel error;
+  final ErrorMessageModel error;
 
   RestPasswordSuccessState(this.error);
 }
 
 class RestPasswordErrorState extends AuthState {
-  final ResponseModel error;
+  final ErrorMessageModel error;
 
   RestPasswordErrorState(this.error);
 }
@@ -69,7 +69,7 @@ class VerifyUserLoadingState extends AuthState {}
 class VerifyUserSuccessState extends AuthState {}
 
 class VerifyUserErrorState extends AuthState {
-  final ResponseModel error;
+  final ErrorMessageModel error;
   VerifyUserErrorState(this.error);
 }
 class ContactUsLoadingState extends AuthState {}
@@ -78,7 +78,7 @@ class ContactUsSuccessState extends AuthState {}
 class GetCountrySuccessState extends AuthState {}
 
 class ContactUsErrorState extends AuthState {
-  final ResponseModel error;
+  final ErrorMessageModel error;
   ContactUsErrorState(this.error);
 }
 

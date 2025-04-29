@@ -9,14 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:phone_text_field/model/phone_number.dart';
-import 'package:squeak/core/constant/global_function/global_function.dart';
-import 'package:squeak/core/helper/cache/cache_helper.dart';
-import 'package:squeak/core/helper/image_helper/helper_model/response_model.dart';
-import 'package:squeak/core/helper/remotely/dio.dart';
-import 'package:squeak/core/helper/remotely/end-points.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 
-import '../../../core/helper/build_service/main_cubit/main_cubit.dart';
-import '../../../core/helper/remotely/config_model.dart';
 import '../../layout/controller/layout_cubit.dart';
 import '../../vetcare/models/vetIcare_client_model.dart';
 import '../models/country_model.dart';
@@ -104,7 +98,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(SuccessLoginState(model));
     } on DioException catch (e) {
       isLoggedIn = false;
-      emit(ErrorLoginState(ResponseModel.fromJson(e.response?.data)));
+      emit(ErrorLoginState(ErrorMessageModel.fromJson(e.response?.data)));
     }
   }
 
@@ -145,7 +139,7 @@ class AuthCubit extends Cubit<AuthState> {
     } on DioException catch (e) {
       isRegister = false;
       print(e.response?.data);
-      emit(ErrorRegisterState(ResponseModel.fromJson(e.response?.data)));
+      emit(ErrorRegisterState(ErrorMessageModel.fromJson(e.response?.data)));
     }
   }
 
@@ -179,7 +173,7 @@ class AuthCubit extends Cubit<AuthState> {
     } on DioException catch (e) {
       isLoggedIn = false;
       print(e.response?.data);
-      emit(ErrorRegisterState(ResponseModel.fromJson(e.response?.data)));
+      emit(ErrorRegisterState(ErrorMessageModel.fromJson(e.response?.data)));
     }
   }
 
@@ -199,7 +193,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(ForgetPasswordSuccessState());
     } on DioException catch (e) {
       isForgetPassword = false;
-      emit(ForgetPasswordErrorState(ResponseModel.fromJson(e.response?.data)));
+      emit(ForgetPasswordErrorState(ErrorMessageModel.fromJson(e.response?.data)));
     }
   }
 
@@ -219,11 +213,11 @@ class AuthCubit extends Cubit<AuthState> {
         },
       );
       isRestPassword = false;
-      emit(RestPasswordSuccessState(ResponseModel.fromJson(e.data)));
+      emit(RestPasswordSuccessState(ErrorMessageModel.fromJson(e.data)));
     } on DioException catch (e) {
       isRestPassword = false;
       print(e.response?.data);
-      emit(RestPasswordErrorState(ResponseModel.fromJson(e.response?.data)));
+      emit(RestPasswordErrorState(ErrorMessageModel.fromJson(e.response?.data)));
     }
   }
 
@@ -247,7 +241,7 @@ class AuthCubit extends Cubit<AuthState> {
       isVerifyUser = false;
       print(e.response?.data);
       print("Elkerm status code ${e.response?.statusCode}");
-      emit(VerifyUserErrorState(ResponseModel.fromJson(e.response?.data)));
+      emit(VerifyUserErrorState(ErrorMessageModel.fromJson(e.response?.data)));
     }
   }
 
@@ -273,7 +267,7 @@ class AuthCubit extends Cubit<AuthState> {
     } on DioException catch (e) {
       isContactUs = false;
       print(e.response?.data);
-      emit(ContactUsErrorState(ResponseModel.fromJson(e.response?.data)));
+      emit(ContactUsErrorState(ErrorMessageModel.fromJson(e.response?.data)));
     }
   }
 

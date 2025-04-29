@@ -97,7 +97,7 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
                     context: context,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    fontColor: sl<MainCubit>().isDark
+                    fontColor: MainCubit.get(context).isDark
                         ? Colors.white54
                         : Color.fromRGBO(0, 0, 0, .3),
                   ),
@@ -118,11 +118,11 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
           context: context,
           fontSize: 14,
           fontWeight: FontWeight.w700,
-          fontColor: sl<MainCubit>().isDark
+          fontColor: MainCubit.get(context).isDark
               ? Colors.white54
               : Color.fromRGBO(0, 0, 0, .3),
         ),
-        fillColor: sl<MainCubit>().isDark
+        fillColor: MainCubit.get(context).isDark
             ? Colors.black26
             : Colors.grey.shade200,
         enabledBorder: OutlineInputBorder(

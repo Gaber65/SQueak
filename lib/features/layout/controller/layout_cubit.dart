@@ -6,16 +6,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:squeak/core/helper/remotely/dio.dart';
 import 'package:squeak/features/appointments/view/appointments/get_user_appointment.dart';
 import 'package:squeak/features/appointments/view/supplier/get_supplier.dart';
 import 'package:squeak/features/pets/models/pet_model.dart';
 import 'package:squeak/features/layout/models/version_model.dart';
-import 'package:squeak/features/layout/view/feeds/home_screen.dart';
+import 'package:squeak/features/layout/post/presentation/screens/home_screen.dart';
 import 'package:squeak/features/settings/view/setting_screen.dart';
-
-import '../../../core/helper/cache/cache_helper.dart';
-import '../../../core/helper/remotely/end-points.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 import '../models/owner_model.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -189,7 +186,7 @@ class LayoutCubit extends Cubit<LayoutState> {
   Future<void> getAppVersion() async {
     emit(GetCurrentVersionLoading());
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    currentVersion = '${packageInfo.version}';
+    currentVersion = packageInfo.version;
     print("!!!");
     print("current Version $currentVersion");
     emit(GetCurrentVersionSuccess());

@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import '../../../../../features/layout/notification/NotificationFCM/notification_initializer.dart';
 import '../../../../../firebase_options.dart';
 
 

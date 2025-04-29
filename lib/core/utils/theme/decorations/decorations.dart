@@ -85,14 +85,14 @@ class Decorations {
   }) {
     return BoxDecoration(
       color: color ??
-          (sl<MainCubit>().isDark
+          (MainCubit.get(context).isDark
               ? Colors.black26
               : Colors.white),
       borderRadius: borderRadius ?? BorderRadius.circular(radius),
       boxShadow: [
         BoxShadow(
           color: colorShadow ??
-              (sl<MainCubit>().isDark
+              (MainCubit.get(context).isDark
                   ? Colors.black.withOpacity(0)
                   : Color(0xff000000).withOpacity(0.05)),
           blurRadius: blurRadius,
@@ -102,7 +102,7 @@ class Decorations {
       ],
       border: Border.all(
         color: borderColor ??
-            (sl<MainCubit>().isDark ? Colors.black45 : Colors.white),
+            (MainCubit.get(context).isDark ? Colors.black45 : Colors.white),
         width: borderWidth ?? 0,
         style: BorderStyle.solid,
       ),

@@ -2,10 +2,9 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:squeak/core/constant/global_function/global_function.dart';
-import 'package:squeak/core/helper/build_service/main_cubit/main_cubit.dart';
-import 'package:squeak/core/thames/decorations.dart';
-import 'package:squeak/core/thames/styles.dart';
+import 'dart:io'; // Import Platform class
+
+import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../generated/l10n.dart';

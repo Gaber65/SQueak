@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/helper/remotely/config_model.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/view/files_and_prescription_for_pet/file_card_widget.dart';
 
-import '../../../../core/constant/global_function/global_function.dart';
-import '../../../../core/thames/styles.dart';
-import '../../../layout/view/search/search_screen.dart';
+
+import '../../../layout/search/presentation/screens/search_screen.dart';
 import '../../controller/files_and_prescription_for_pet/files_and_prescription_for_pet_cubit.dart';
 
 class FilesForPetScreen extends StatelessWidget {

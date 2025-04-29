@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../../core/constant/global_function/global_function.dart';
-import '../../../core/helper/remotely/end-points.dart';
-import '../../../core/thames/styles.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
+
 import '../../../generated/l10n.dart';
 import '../../layout/layout.dart';
 import '../../vetcare/view/pet_merge_screen.dart';
@@ -110,7 +109,7 @@ class ConfirmationScreen extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          backgroundColor: ColorTheme.primaryColor,
+                          backgroundColor: ColorManager.primaryColor,
                         ),
                         child: Text(
                           isArabic()

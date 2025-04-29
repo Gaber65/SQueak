@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/constant/global_widget/toast.dart';
-import 'package:squeak/core/helper/build_service/main_cubit/main_cubit.dart';
+
 import 'package:squeak/features/layout/controller/layout_cubit.dart';
 import 'package:squeak/features/layout/layout.dart';
 import 'package:squeak/features/settings/controller/setting_cubit.dart';
 
-import '../../../core/constant/global_function/custom_text_form_field.dart';
-import '../../../core/constant/global_function/global_function.dart';
-import '../../../core/helper/cache/cache_helper.dart';
-import '../../../core/helper/remotely/end-points.dart';
-import '../../../core/thames/color_manager.dart';
-import '../../../core/thames/styles.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 import '../../../generated/l10n.dart';
 import '../../layout/models/owner_model.dart';
 
@@ -215,21 +209,21 @@ class UpProfileScreen extends StatelessWidget {
                             isLoading: cubit.isLoading,
                             formKey: cubit.formKey,
                             onPressed: () {
-                              if (cubit.profileImage == null) {
-                                cubit.updateProfile();
-                              } else {
-                                cubit.isLoading = true;
-                                MainCubit.get(context)
-                                    .getGlobalImage(
-                                  file: cubit.profileImage!,
-                                  uploadPlace: UploadPlace.usersImages.value,
-                                )
-                                    .whenComplete(() {
-                                  cubit.imageController.text =
-                                      MainCubit.get(context).modelImage!.data!;
-                                  cubit.updateProfile();
-                                });
-                              }
+                              // if (cubit.profileImage == null) {
+                              //   cubit.updateProfile();
+                              // } else {
+                              //   cubit.isLoading = true;
+                              //   MainCubit.get(context)
+                              //       .getGlobalImage(
+                              //     file: cubit.profileImage!,
+                              //     uploadPlace: UploadPlace.usersImages.value,
+                              //   )
+                              //       .whenComplete(() {
+                              //     cubit.imageController.text =
+                              //         MainCubit.get(context).modelImage!.data!;
+                              //     cubit.updateProfile();
+                              //   });
+                              // }
                             },
                             buttonText: S.of(context).save,
                           );
@@ -325,8 +319,8 @@ class UpProfileScreen extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(style: BorderStyle.none),
           color: cubit.gender == id
-              ? ColorTheme.primaryColor
-              : ColorTheme.primaryColor.withOpacity(.3),
+              ? ColorManager.primaryColor
+              : ColorManager.primaryColor.withOpacity(.3),
           borderRadius: const BorderRadius.all(Radius.circular(12.0)),
         ),
         child: Text(

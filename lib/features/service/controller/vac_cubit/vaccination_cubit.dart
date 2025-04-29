@@ -1,19 +1,14 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/constant/global_function/global_function.dart';
-import 'package:squeak/core/constant/global_widget/toast.dart';
-import 'package:squeak/core/helper/build_service/main_cubit/main_cubit.dart';
-import 'package:squeak/core/helper/local_db/local_database.dart';
-import 'package:squeak/core/helper/remotely/end-points.dart';
 import 'package:squeak/features/service/models/vaccination_entities.dart';
 
-import '../../../../../core/helper/remotely/dio.dart';
-import '../../../../core/helper/build_service/notification_service.dart';
-import '../../../../core/thames/color_manager.dart';
-import '../../../../core/thames/styles.dart';
+
 import '../../../settings/view/update_profile_screen.dart';
 import '../../models/reminder_model.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 
 part 'vaccination_state.dart';
 
@@ -204,7 +199,7 @@ class VaccinationCubit extends Cubit<VaccinationState> {
         isLoading = false;
         return;
       } else {
-        int _notificationId = NotificationService.generateNotificationId();
+        int _notificationId = Random().nextInt(1000000);
 
 
         print("********************** : ${valueVacItem}");
@@ -245,23 +240,23 @@ class VaccinationCubit extends Cubit<VaccinationState> {
         int month = int.parse(dateParts[1]);
         int day = int.parse(dateParts[2]);
 
-        NotificationService.scheduleNotification(
-          id: _notificationId,
-          title: reminder.reminderType.toString() == "other" ||
-              reminder.reminderType.toString() == "أخرى"
-              ? "${reminder.otherTitle.toString()}"
-              : "${reminder.reminderType.toString()}",          // body: reminder.notes.toString() == null ||
-          //         reminder.notes.toString() == ""d
-          //     ? ""
-          //     : reminder.notes.toString(),
-          body: handleTheNotificationBodyBasedOnType(
-            type: reminder.reminderType.toString(),
-            petName: reminder.petName,
-          ),
-          startDate: DateTime(year, month, day),
-          startTime: TimeOfDay(hour: picked!.hour, minute: picked!.minute),
-          frequency: reminder.reminderFreq,
-        );
+        // NotificationService.scheduleNotification(
+        //   id: _notificationId,
+        //   title: reminder.reminderType.toString() == "other" ||
+        //       reminder.reminderType.toString() == "أخرى"
+        //       ? "${reminder.otherTitle.toString()}"
+        //       : "${reminder.reminderType.toString()}",          // body: reminder.notes.toString() == null ||
+        //   //         reminder.notes.toString() == ""d
+        //   //     ? ""
+        //   //     : reminder.notes.toString(),
+        //   body: handleTheNotificationBodyBasedOnType(
+        //     type: reminder.reminderType.toString(),
+        //     petName: reminder.petName,
+        //   ),
+        //   startDate: DateTime(year, month, day),
+        //   startTime: TimeOfDay(hour: picked!.hour, minute: picked!.minute),
+        //   frequency: reminder.reminderFreq,
+        // );
 
         isLoading = false;
         isButtonSheetShown = false;
@@ -467,20 +462,20 @@ class VaccinationCubit extends Cubit<VaccinationState> {
       // print("minute ${minute}");
       // print( TimeOfDay(hour: picked!.hour, minute: picked!.minute));
 
-      NotificationService.editScheduledNotification(
-        notificationId: int.parse(reminder.notificationID),
-        newTitle: reminder.reminderType.toString() == "other" ||
-                reminder.reminderType.toString() == "أخرى"
-            ? "${reminder.otherTitle.toString()}"
-            : "${reminder.reminderType.toString()}",
-        newBody: handleTheNotificationBodyBasedOnType(
-          type: reminder.reminderType.toString(),
-          petName: reminder.petName,
-        ),
-        newStartDate: DateTime(year, month, day),
-        newStartTime: TimeOfDay(hour: hour, minute: minute),
-        newFrequency: reminder.reminderFreq,
-      );
+      // NotificationService.editScheduledNotification(
+      //   notificationId: int.parse(reminder.notificationID),
+      //   newTitle: reminder.reminderType.toString() == "other" ||
+      //           reminder.reminderType.toString() == "أخرى"
+      //       ? "${reminder.otherTitle.toString()}"
+      //       : "${reminder.reminderType.toString()}",
+      //   newBody: handleTheNotificationBodyBasedOnType(
+      //     type: reminder.reminderType.toString(),
+      //     petName: reminder.petName,
+      //   ),
+      //   newStartDate: DateTime(year, month, day),
+      //   newStartTime: TimeOfDay(hour: hour, minute: minute),
+      //   newFrequency: reminder.reminderFreq,
+      // );
     } on DioError catch (error) {
       print(error.response!.data);
       emit(AddVaccinationErrorState(error.response!.data['message']));

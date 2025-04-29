@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
-import 'package:squeak/core/constant/global_function/global_function.dart';
-import 'package:squeak/core/helper/build_service/main_cubit/main_cubit.dart';
-import 'package:squeak/core/helper/remotely/end-points.dart';
-import 'package:squeak/core/thames/styles.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
+
+import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/controller/clinic/appointment_cubit.dart';
 import 'package:squeak/features/appointments/view/availability/availability_screen.dart';
-import 'package:squeak/features/layout/controller/SearchCubit/search_cubit.dart';
 
-import '../../../../core/constant/global_widget/toast.dart';
-import '../../../../core/thames/decorations.dart';
+
 import '../../../../generated/l10n.dart';
-import '../../../layout/view/search/search_screen.dart';
+import '../../../layout/search/presentation/controller/search_cubit.dart';
+import '../../../layout/search/presentation/screens/search_screen.dart';
+import '../../../layout/search/presentation/widget/build_column_search_body.dart';
 import '../../../vetcare/view/pet_merge_screen.dart';
 import '../../controller/clinic/appointment_state.dart';
 import 'dart:io'; // Import for Platform and exit()
@@ -65,15 +64,13 @@ class MySupplierScreen extends StatelessWidget {
                   ? Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: BlocProvider(
-                        create: (context) => SearchCubit(),
+                        create: (context) => sl<SearchCubit>(),
                         child: BlocConsumer<SearchCubit, SearchState>(
                           listener: (context, state) {
                             if (state is FollowError) {
                               errorToast(
                                 context,
-                                state.error.errors.isNotEmpty
-                                    ? state.error.errors.values.first.first
-                                    : state.error.message,
+                                state.error.message
                               );
                             }
                             if (state is FollowSuccess) {
@@ -225,7 +222,7 @@ class MySupplierScreen extends StatelessWidget {
                                                   Icon(
                                                     IconlyBold.location,
                                                     color:
-                                                        ColorTheme.secondColor,
+                                                        ColorManager.secondColor,
                                                     size: 18,
                                                   ),
                                                   SizedBox(width: 10),

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:squeak/features/authentication/view/login_screen.dart';
 import 'package:squeak/features/layout/layout.dart';
 import 'package:squeak/features/vetcare/view/pet_merge_screen.dart';
-import 'package:squeak/features/layout/controller/layout_cubit.dart';
 
+import '../../../../../features/layout/controller/layout_cubit.dart';
 import '../../../cache/shared_preferences/cache_helper.dart';
 
 Future<Widget> determineStartPoint(BuildContext context) async {

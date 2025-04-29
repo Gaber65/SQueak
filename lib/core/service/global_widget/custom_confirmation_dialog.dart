@@ -32,7 +32,7 @@ void showCustomConfirmationDialog({
             context: context,
             fontSize: 14,
             fontColor:
-            sl<MainCubit>().isDark ? Colors.white : Colors.black,
+            MainCubit.get(context).isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -45,7 +45,7 @@ void showCustomConfirmationDialog({
                 style: FontStyleThame.textStyle(
                   context: context,
                   fontSize: 14,
-                  fontColor: sl<MainCubit>().isDark
+                  fontColor: MainCubit.get(context).isDark
                       ? Colors.white
                       : Colors.black,
                 ),
@@ -68,7 +68,7 @@ void showCustomConfirmationDialog({
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: noButtonColor,
-                backgroundColor: sl<MainCubit>().isDark
+                backgroundColor: MainCubit.get(context).isDark
                     ? ColorManager.myPetsBaseBlackColor
                     : noButtonColor.withOpacity(.4),
                 elevation: 0,
@@ -81,7 +81,7 @@ void showCustomConfirmationDialog({
                 style: FontStyleThame.textStyle(
                   context: context,
                   fontSize: 14,
-                  fontColor: sl<MainCubit>().isDark
+                  fontColor: MainCubit.get(context).isDark
                       ? noButtonColor
                       : Colors.black,
                 ),
@@ -94,7 +94,7 @@ void showCustomConfirmationDialog({
               onPressed: onConfirm,
               style: ElevatedButton.styleFrom(
                 foregroundColor: yesButtonColor,
-                backgroundColor: sl<MainCubit>().isDark
+                backgroundColor: MainCubit.get(context).isDark
                     ? ColorManager.myPetsBaseBlackColor
                     : yesButtonColor.withOpacity(.4),
                 elevation: 0,
@@ -107,7 +107,7 @@ void showCustomConfirmationDialog({
                 style: FontStyleThame.textStyle(
                   context: context,
                   fontSize: 14,
-                  fontColor: sl<MainCubit>().isDark
+                  fontColor: MainCubit.get(context).isDark
                       ? yesButtonColor
                       : Colors.black,
                 ),

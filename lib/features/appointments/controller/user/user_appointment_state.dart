@@ -61,7 +61,7 @@ class FollowLoading extends UserAppointmentState {}
 class FollowSuccess extends UserAppointmentState {}
 
 class FollowError extends UserAppointmentState {
-  final ResponseModel error;
+  final ErrorMessageModel error;
 
   FollowError(this.error);
 }
@@ -71,7 +71,7 @@ class GetInvoicesLoading extends UserAppointmentState {}
 class GetInvoicesSuccess extends UserAppointmentState {}
 
 class GetInvoicesError extends UserAppointmentState {
-  final ResponseModel error;
+  final ErrorMessageModel error;
 
   GetInvoicesError(this.error);
 }
