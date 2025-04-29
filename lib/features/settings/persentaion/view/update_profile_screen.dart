@@ -18,8 +18,9 @@ class UpProfileScreen extends StatelessWidget {
           if (state is UpdateProfileSuccessState) {
             successToast(context, S.of(context).updateSuccess);
             CacheHelper.saveData('name', state.owner.fullName);
-            navigateAndFinish(context, LayoutScreen());
+            SettingCubit.get(context).getOwnerData();
             LayoutCubit.get(context).changeBottomNav(3);
+            navigateAndFinish(context, LayoutScreen());
           }
           if (state is UpdateProfileErrorState) {
             errorToast(context, state.message);
@@ -174,21 +175,31 @@ class UpProfileScreen extends StatelessWidget {
 
                       // Save Button
                       SizedBox(height: 30),
-                      // CustomElevatedButton(
-                      //   isLoading:
-                      //       state is ProfileUpdateLoading ||
-                      //       state is ProfileImageUploadLoading,
-                      //   formKey: cubit.formKey,
-                      //   onPressed: () async {
-                      //     if (cubit.formKey.currentState!.validate()) {
-                      //       if (cubit.profileImage != null) {
-                      //         await cubit.uploadProfileImage();
-                      //       }
-                      //       await cubit.updateProfile();
-                      //     }
-                      //   },
-                      //   buttonText: S.of(context).save,
-                      // ),
+                      CustomElevatedButton(
+                        isLoading: cubit.isLoading,
+                        formKey: cubit.formKey,
+                        onPressed: () async {
+                          if (cubit.formKey.currentState!.validate()) {
+                            if (cubit.profileImage == null) {
+                              await cubit.updateProfile();
+                            } else {
+                              cubit.isLoading = true;
+                              cubit.emit(ChangeBirthdateState());
+                              MainCubit.get(context)
+                                  .getGlobalImage(
+                                    cubit.profileImage!,
+                                    UploadPlace.petsImages,
+                                  )
+                                  .then((value) {
+                                    cubit.imageController.text =
+                                        MainCubit.get(context).modelImage!.data;
+                                    cubit.updateProfile();
+                                  });
+                            }
+                          }
+                        },
+                        buttonText: S.of(context).save,
+                      ),
                     ],
                   ),
                 ),
@@ -327,7 +338,7 @@ class UpProfileScreen extends StatelessWidget {
 
             MaterialButton(
               onPressed: () {
-                // cubit.getPitsImage();
+                cubit.getProfileImage();
                 Navigator.of(scaffoldKey.currentContext!).pop();
               },
               child: Row(

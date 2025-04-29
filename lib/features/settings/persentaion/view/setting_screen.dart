@@ -22,12 +22,8 @@ class SettingScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => sl<SettingCubit>()..getOwnerData(),
       child: BlocConsumer<SettingCubit, SettingState>(
-        listener: (context, state) {
-
-        },
+        listener: (context, state) {},
         builder: (context, state) {
-
-
           return Scaffold(
             appBar: AppBar(
               title: Text(S.of(context).settings),
@@ -73,20 +69,7 @@ class SettingScreen extends StatelessWidget {
                           //       ),
                           //     )
                           //     :
-                          CircleAvatar(
-                                radius: 37,
-                                backgroundColor:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                backgroundImage: NetworkImage(
-                                  CacheHelper.getData('ImageActive') == null ||
-                                          CacheHelper.getData('ImageActive') ==
-                                              ''
-                                      ? CacheHelper.getBool('isPet') ?? false
-                                          ? AssetImageModel.defaultPetImage
-                                          : AssetImageModel.defaultUserImage
-                                      : '$imageUrl${CacheHelper.getData('ImageActive')}',
-                                ),
-                              ),
+                          buildImage(context),
                           SizedBox(width: 15),
                           Text(
                             CacheHelper.getData('name') ?? '',
@@ -346,7 +329,30 @@ class SettingScreen extends StatelessWidget {
       ),
     );
   }
+  Widget buildImage(BuildContext context) {
+    final profile = SettingCubit.get(context).profile;
+    final imageActive = CacheHelper.getData('ImageActive');
+    final isPet = CacheHelper.getBool('isPet') ?? false;
 
+    ImageProvider backgroundImage;
+
+    if (imageActive != null && imageActive != '') {
+      backgroundImage = NetworkImage('$imageUrl$imageActive');
+    } else if (profile != null && profile.imageName !=  '') {
+      backgroundImage = NetworkImage('$imageUrl${profile.imageName}');
+    } else {
+      backgroundImage = AssetImage(
+        isPet ? AssetImageModel.defaultPetImage : AssetImageModel.defaultUserImage,
+      );
+    }
+
+    return CircleAvatar(
+      radius: 37,
+      backgroundColor:
+      Theme.of(context).scaffoldBackgroundColor,
+      backgroundImage: backgroundImage,
+    );
+  }
   Widget _buildSettingItem({
     required BuildContext context,
     required String icon,
