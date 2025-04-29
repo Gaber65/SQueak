@@ -1,10 +1,10 @@
+import '../../domain/entities/pet_entity.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-
 class PetModel extends ErrorMessageModel {
-  final List<PetsData> pets;
+  final List<PetData> pets;
 
-  PetModel({
+  const PetModel({
     required super.errors,
     required super.message,
     required super.success,
@@ -18,15 +18,15 @@ class PetModel extends ErrorMessageModel {
       message: json['message'],
       statusCode: json['statusCode'],
       success: json['success'],
-      pets: List<PetsData>.from(json['pets'].map((x) => PetsData.fromJson(x))),
+      pets: List<PetData>.from(json['pets'].map((x) => PetData.fromJson(x))),
     );
   }
 }
 
-class PetsData {
+class PetData {
   final dynamic petId;
   final dynamic specieId;
-  Bread? breed;
+  BreedData? breed;
   final String petName;
   final String breedId;
   final bool isSpayed;
@@ -35,7 +35,7 @@ class PetsData {
   dynamic imageName;
   final String birthdate;
 
-  PetsData({
+  PetData({
     required this.petId,
     required this.petName,
     this.isSelected = false,
@@ -48,11 +48,11 @@ class PetsData {
     required this.birthdate,
   });
 
-  factory PetsData.fromJson(Map<String, dynamic> json) {
-    return PetsData(
+  factory PetData.fromJson(Map<String, dynamic> json) {
+    return PetData(
       petId: json['id'],
       petName: json['petName'],
-      breed: json['breed'] == null ? null : Bread.fromJson(json['breed']),
+      breed: json['breed'] == null ? null : BreedData.fromJson(json['breed']),
       breedId: json['breedId'] ?? '',
       gender: json['gender'],
       isSpayed: json['isSpayed'] ?? false,
@@ -66,50 +66,54 @@ class PetsData {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
-      'petId': petId,
       'petName': petName,
       'breedId': breedId,
       'gender': gender,
+      'isSpayed': isSpayed,
+      'specieId': specieId,
       'imageName': imageName,
       'birthdate': birthdate,
     };
   }
-}
 
-class Bread {
-  final String enType;
-
-  const Bread({
-    required this.enType,
-  });
-
-  factory Bread.fromJson(Map<String, dynamic> json) {
-    return Bread(
-      enType: isArabic() ? json['arBreed'] : json['enBreed'],
+  PetEntity toEntity() {
+    return PetEntity(
+      id: petId,
+      name: petName,
+      breedId: breedId,
+      isSpayed: isSpayed,
+      gender: gender,
+      specieId: specieId,
+      imageName: imageName,
+      birthdate: birthdate,
+      breed: breed,
+      isSelected: isSelected,
     );
   }
 }
 
-class BreadData {
-  final String enType;
-  final String id;
-  final String specieId;
-
-  const BreadData({
-    required this.enType,
-    required this.id,
-    required this.specieId,
+class BreedData extends BreedEntity {
+  BreedData({
+    required super.enType,
+    required super.id,
+    required super.specieId,
   });
 
-  factory BreadData.fromJson(Map<String, dynamic> json) {
-    return BreadData(
+  factory BreedData.fromJson(Map<String, dynamic> json) {
+    return BreedData(
       specieId: json['specieId'] ?? '',
-      enType: json['arType'] != null
-          ? (isArabic() ? json['arType'] : json['enType']) ?? 'Unknown Type'
-          : (isArabic() ? json['arBreed'] : json['enBreed']) ?? 'Unknown Breed',
+      enType:
+          json['arType'] != null
+              ? (isArabic() ? json['arType'] : json['enType']) ?? 'Unknown Type'
+              : (isArabic() ? json['arBreed'] : json['enBreed']) ??
+                  'Unknown Breed',
       id: json['id'],
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {'enType': enType, 'id': id, 'specieId': specieId};
   }
 }

@@ -9,7 +9,7 @@ class PostEntity {
   final String? specieId;
   final String? clinicId;
   final ClinicEntity clinic;
-  final SpecieEntity? specie;
+  final SpecieEntityPost? specie;
 
   const PostEntity({
     required this.title,
@@ -37,7 +37,7 @@ class PostEntity {
       specieId: json['specieId'],
       clinicId: json['clinicId'],
       clinic: ClinicEntity.fromJson(json['clinic']),
-      specie: json['specie'] != null ? SpecieEntity.fromJson(json['specie']) : null,
+      specie: json['specie'] != null ? SpecieEntityPost.fromJson(json['specie']) : null,
     );
   }
 
@@ -102,17 +102,17 @@ class ClinicEntity {
   }
 
 }
-class SpecieEntity {
+class SpecieEntityPost {
   final String arType;
   final String enType;
 
-  const SpecieEntity({
+  const SpecieEntityPost({
     required this.arType,
     required this.enType,
   });
 
-  factory SpecieEntity.fromJson(Map<String, dynamic> json) {
-    return SpecieEntity(
+  factory SpecieEntityPost.fromJson(Map<String, dynamic> json) {
+    return SpecieEntityPost(
       arType: json['arType'],
       enType: json['enType'],
     );

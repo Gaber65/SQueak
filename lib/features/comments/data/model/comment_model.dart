@@ -77,7 +77,7 @@ class UserModel extends UserEntity {
   };
 }
 
-class PetModel extends PetEntity {
+class PetModel extends PetEntityComment {
   const PetModel({
     required super.petName,
     required super.gender,

@@ -4,6 +4,7 @@ export 'package:squeak/core/error/exception.dart';
 export 'package:squeak/core/error/failure.dart';
 export 'package:squeak/core/network/config_model.dart';
 export 'package:squeak/core/network/dio.dart';
+export 'package:squeak/core/network/network_info.dart';
 export 'package:squeak/core/network/end-points.dart';
 export 'package:squeak/core/network/error_message_model.dart';
 export 'package:squeak/core/service/cache/local_database/local_database.dart';

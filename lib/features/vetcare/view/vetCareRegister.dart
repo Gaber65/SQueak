@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
-import 'package:squeak/core/constant/global_widget/toast.dart';
-import 'package:squeak/core/helper/cache/cache_helper.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/vetcare/view/pet_merge_screen.dart';
-import '../../../core/constant/global_function/custom_text_form_field.dart';
-import '../../../core/constant/global_function/global_function.dart';
-import '../../../core/thames/styles.dart';
+
 import '../../../generated/l10n.dart';
 import '../../authentication/models/login.dart';
 import '../../authentication/view/widgets/authItem.dart';
@@ -14,10 +11,7 @@ import '../../layout/layout.dart';
 import '../controller/vet_cubit.dart';
 
 class VetCareRegister extends StatelessWidget {
-  const VetCareRegister({
-    super.key,
-    required this.invitationCode,
-  });
+  const VetCareRegister({super.key, required this.invitationCode});
   final String invitationCode;
 
   @override
@@ -36,9 +30,7 @@ class _VetCareRegisterContent extends StatelessWidget {
       listener: _handleStateChanges,
       builder: (context, state) {
         final cubit = VetCubit.get(context);
-        return AuthItem(
-          widget: RegisterView(cubit: cubit),
-        );
+        return AuthItem(widget: RegisterView(cubit: cubit));
       },
     );
   }
@@ -80,12 +72,13 @@ class _VetCareRegisterContent extends StatelessWidget {
   }
 
   void _navigateAfterLogin(BuildContext context, SuccessLoginState state) {
-    final nextScreen = state.isHavePet
-        ? PetMergeScreen(
-      Code: VetCubit.get(context).vetClientModelOne!.clinicCode,
-      isNavigation: false,
-    )
-        : LayoutScreen();
+    final nextScreen =
+        state.isHavePet
+            ? PetMergeScreen(
+              Code: VetCubit.get(context).vetClientModelOne!.clinicCode,
+              isNavigation: false,
+            )
+            : LayoutScreen();
     navigateAndFinish(context, nextScreen);
   }
 
@@ -100,10 +93,7 @@ class _VetCareRegisterContent extends StatelessWidget {
 }
 
 class RegisterView extends StatelessWidget {
-  const RegisterView({
-    super.key,
-    required this.cubit,
-  });
+  const RegisterView({super.key, required this.cubit});
 
   final VetCubit cubit;
 

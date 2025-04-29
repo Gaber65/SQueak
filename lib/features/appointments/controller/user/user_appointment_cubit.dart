@@ -211,7 +211,7 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
   }
 
   InvoicesModel? invoices;
-  PetModel? pet;
+  PetModelPrint? pet;
   OwnerModel? owner;
   bool isLoadingInvoice = false;
   Future getInvoives(id) async {
@@ -228,7 +228,7 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
         'species': invoices!.species,
         'sex': invoices!.sex,
       };
-      pet = PetModel.fromJson(petMap);
+      pet = PetModelPrint.fromJson(petMap);
 
       var ownerMap = {
         'ownerName': invoices!.ownerName,

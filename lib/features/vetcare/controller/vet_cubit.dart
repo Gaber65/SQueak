@@ -5,17 +5,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:squeak/core/helper/cache/cache_helper.dart';
-import 'package:squeak/core/helper/remotely/dio.dart';
-import 'package:squeak/core/helper/remotely/end-points.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:squeak/features/authentication/models/login.dart';
 import 'package:squeak/features/vetcare/models/vetIcare_client_model.dart';
-import '../../../core/constant/global_function/global_function.dart';
-import '../../../core/helper/image_helper/helper_model/response_model.dart';
-import '../../../core/helper/remotely/config_model.dart';
-import '../../layout/models/Notification_model.dart';
+
 import '../../layout/models/clinic_model.dart';
+import '../../layout/notification/NotificationAPI/data/model/Notification_model.dart';
 
 part 'vet_state.dart';
 
@@ -33,7 +30,8 @@ class VetCubit extends Cubit<VetState> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController birthDateController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   // State variables
@@ -70,9 +68,10 @@ class VetCubit extends Cubit<VetState> {
         data: _buildRegistrationData(phone),
       );
 
-      final clients = List<VetClientModel>.from(
-          response.data["data"].map((x) => VetClientModel.fromJson(x))
-      ).toList();
+      final clients =
+          List<VetClientModel>.from(
+            response.data["data"].map((x) => VetClientModel.fromJson(x)),
+          ).toList();
 
       CacheHelper.removeData('invitationCode');
 
@@ -86,7 +85,7 @@ class VetCubit extends Cubit<VetState> {
       emit(SuccessRegisterState());
     } on DioException catch (e) {
       isRegister = false;
-      emit(ErrorRegisterState(ResponseModel.fromJson(e.response?.data)));
+      emit(ErrorRegisterState(ErrorMessageModel.fromJson(e.response?.data)));
     }
   }
 
@@ -125,7 +124,7 @@ class VetCubit extends Cubit<VetState> {
     } on DioException catch (e) {
       isRegister = false;
       debugPrint(e.response.toString());
-      emit(ErrorLoginState(ResponseModel.fromJson(e.response?.data)));
+      emit(ErrorLoginState(ErrorMessageModel.fromJson(e.response?.data)));
     }
   }
 
@@ -151,9 +150,9 @@ class VetCubit extends Cubit<VetState> {
 
     if (response.data['data']['notificationDtos'] != null) {
       notifications.addAll(
-          (response.data['data']['notificationDtos'] as List)
-              .map((e) => NotificationModel.fromJson(e))
-              .toList()
+        (response.data['data']['notificationDtos'] as List)
+            .map((e) => NotificationModel.fromJson(e))
+            .toList(),
       );
 
       CacheHelper.saveData('notificationsNum', notifications.length);
@@ -211,10 +210,7 @@ class VetCubit extends Cubit<VetState> {
   }
 
   Map<String, String> _createAuthHeaders(String auth) {
-    return {
-      'accept': '*/*',
-      'Authorization': auth,
-    };
+    return {'accept': '*/*', 'Authorization': auth};
   }
 
   void _processClientResponse(Response response) {
@@ -231,10 +227,10 @@ class VetCubit extends Cubit<VetState> {
           .doc('Is0fJjcbMCqOrWmQdKoj')
           .snapshots()
           .listen((event) {
-        debugPrint(event.data().toString());
-        Username = event.data()!['Username'];
-        password = event.data()!['password'];
-      });
+            debugPrint(event.data().toString());
+            Username = event.data()!['Username'];
+            password = event.data()!['password'];
+          });
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -291,13 +287,15 @@ class VetCubit extends Cubit<VetState> {
   void _processVetClients(Response response, bool isFilter) {
     vetClientModel.clear();
     vetClientModel.addAll(
-        List<VetClientModel>.from(
-            response.data["data"].map((x) => VetClientModel.fromJson(x))
-        )
+      List<VetClientModel>.from(
+        response.data["data"].map((x) => VetClientModel.fromJson(x)),
+      ),
     );
 
     if (isFilter) {
-      vetClientModel.removeWhere((element) => element.addedInSqueakStatues == true);
+      vetClientModel.removeWhere(
+        (element) => element.addedInSqueakStatues == true,
+      );
     }
 
     isGetVet = true;
@@ -354,11 +352,14 @@ class VetCubit extends Cubit<VetState> {
     } on DioException catch (e) {
       isAccept = false;
       debugPrint(e.toString());
-      emit(ErrorAcceptIvationState(ResponseModel.fromJson(e.response?.data)));
+      emit(ErrorAcceptIvationState(ErrorMessageModel.fromJson(e.response?.data)));
     }
   }
 
-  Future<List<VetClientModel>> getClintFormVetVoidT(String code, bool isFilter) async {
+  Future<List<VetClientModel>> getClintFormVetVoidT(
+    String code,
+    bool isFilter,
+  ) async {
     try {
       final response = await DioFinalHelper.getData(
         method: getClientClinicEndPoint(code, CacheHelper.getData('phone')),
@@ -390,7 +391,11 @@ class VetCubit extends Cubit<VetState> {
     try {
       await DioFinalHelper.postData(
         method: mergePetFormVet,
-        data: _buildSqueakStatusData(vetCarePetId, squeakPetId, statuesOfAddingPetToSqueak),
+        data: _buildSqueakStatusData(
+          vetCarePetId,
+          squeakPetId,
+          statuesOfAddingPetToSqueak,
+        ),
       );
 
       isAddInSqueakStatues = false;
@@ -400,25 +405,24 @@ class VetCubit extends Cubit<VetState> {
       isAddInSqueakStatues = false;
       isLinkInSqueakStatues = false;
       debugPrint(e.toString());
-      emit(ErrorAddInSqueakStatuesState(ResponseModel.fromJson(e.response?.data)));
+      emit(
+        ErrorAddInSqueakStatuesState(ErrorMessageModel.fromJson(e.response?.data)),
+      );
     }
   }
 
   Map<String, dynamic> _buildSqueakStatusData(
-      String vetCarePetId,
-      String? squeakPetId,
-      int status
-      ) {
+    String vetCarePetId,
+    String? squeakPetId,
+    int status,
+  ) {
     return status == 2
         ? {
-      "vetCarePetId": vetCarePetId,
-      "squeakPetId": squeakPetId,
-      "statuesOfAddingPetToSqueak": 2
-    }
-        : {
-      "vetCarePetId": vetCarePetId,
-      "statuesOfAddingPetToSqueak": 1,
-    };
+          "vetCarePetId": vetCarePetId,
+          "squeakPetId": squeakPetId,
+          "statuesOfAddingPetToSqueak": 2,
+        }
+        : {"vetCarePetId": vetCarePetId, "statuesOfAddingPetToSqueak": 1};
   }
 
   @override

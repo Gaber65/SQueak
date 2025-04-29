@@ -62,7 +62,7 @@ class ClinicModel extends ClinicEntity {
   }
 }
 
-class SpecieModel extends SpecieEntity {
+class SpecieModel extends SpecieEntityPost {
   SpecieModel({required super.arType, required super.enType});
 
   factory SpecieModel.fromJson(Map<String, dynamic> json) {

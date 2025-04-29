@@ -54,7 +54,7 @@ class ClientModel extends ClientEntity {
   Map<String, dynamic> toJson() => {"name": name, "description": description};
 }
 
-class SpecieModel extends SpecieEntity {
+class SpecieModel extends SpecieEntitySearch {
   SpecieModel({required super.arType, required super.enType});
 
   factory SpecieModel.fromJson(Map<String, dynamic> json) {

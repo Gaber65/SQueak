@@ -6,8 +6,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:squeak/features/appointments/models/print_model.dart';
 import 'package:squeak/features/appointments/view/appointments/get_user_appointment.dart';
 import 'package:squeak/features/appointments/view/supplier/get_supplier.dart';
+import 'package:squeak/features/comments/data/model/comment_model.dart';
 import 'package:squeak/features/pets/models/pet_model.dart';
 import 'package:squeak/features/layout/models/version_model.dart';
 import 'package:squeak/features/layout/post/presentation/screens/home_screen.dart';
@@ -63,7 +65,7 @@ class LayoutCubit extends Cubit<LayoutState> {
     });
   }
 
-  List<PetsData> pets = [];
+  List<PetModel> pets = [];
 
   Future<void> getOwnerPet() async {
     emit(SqueakGetOwnerPetlaoding());
@@ -74,7 +76,7 @@ class LayoutCubit extends Cubit<LayoutState> {
       );
 
       pets = (response.data['data']['petsDto'] as List)
-          .map((e) => PetsData.fromJson(e))
+          .map((e) => PetModel.fromJson(e))
           .toList();
       String jsonToString = json.encode(response.data['data']['petsDto']);
 
@@ -116,7 +118,7 @@ class LayoutCubit extends Cubit<LayoutState> {
   }
 
   void addUserToProfile() {
-    PetsData petsData = PetsData(
+    PetModel petsData = PetModel(
       petId: profile.id,
       specieId: '',
       petName: profile.fullName,
@@ -127,7 +129,7 @@ class LayoutCubit extends Cubit<LayoutState> {
       isSpayed: true,
     );
 
-    List<PetsData> updatedList = List.from(pets);
+    List<PetModel> updatedList = List.from(pets);
 
     bool petExists = false;
 

@@ -6,9 +6,9 @@ import 'package:squeak/features/authentication/view/login_screen.dart';
 import 'package:squeak/features/authentication/view/register_screen.dart';
 import 'package:squeak/features/layout/layout.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/screens/post_notfication.dart';
-import 'package:squeak/features/pets/view/pet_screen.dart';
 import 'package:squeak/features/vetcare/view/follow_request_screen.dart';
 
+import '../../../features/pets/presentation/view/pet_screen.dart';
 import '../../../features/vetcare/view/vetCareRegister.dart';
 
 Map<String, WidgetBuilder> routes = {

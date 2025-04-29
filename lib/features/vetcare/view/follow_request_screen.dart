@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/constant/global_widget/toast.dart';
-import 'package:squeak/core/helper/cache/cache_helper.dart';
-import 'package:squeak/core/helper/remotely/end-points.dart';
-import 'package:squeak/core/thames/decorations.dart';
-import 'package:squeak/core/thames/styles.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
+
 import 'package:squeak/features/service/view/pet_vaccination.dart';
 import 'package:squeak/features/vetcare/controller/vet_cubit.dart';
 import 'package:squeak/features/vetcare/view/pet_merge_screen.dart';
-import '../../../core/constant/global_function/global_function.dart';
 import '../../../generated/l10n.dart';
 import '../../layout/layout.dart';
 
@@ -193,7 +189,7 @@ class _FollowRequestContent extends StatelessWidget {
       child: ElevatedButton(
         onPressed: !cubit.isAccept ? () => _handleAcceptRequest(cubit) : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: ColorTheme.primaryColor,
+          backgroundColor: ColorManager.primaryColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: Padding(

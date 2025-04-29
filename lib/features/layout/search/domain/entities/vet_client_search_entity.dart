@@ -11,7 +11,7 @@ class VetSearchClientEntity {
   final ClientEntity client;
   final dynamic color;
   final dynamic breed;
-  final SpecieEntity? specie;
+  final SpecieEntitySearch? specie;
   final bool addedInSqueakStatues;
   final String squeakPetId;
 
@@ -41,11 +41,11 @@ class ClientEntity {
   ClientEntity({required this.name, required this.description});
 }
 
-class SpecieEntity {
+class SpecieEntitySearch {
   final String arType;
   final String enType;
 
-  SpecieEntity({required this.arType, required this.enType});
+  SpecieEntitySearch({required this.arType, required this.enType});
 }
 
 class DataVetEntity {

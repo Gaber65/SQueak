@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart' show InternetConnectionChecker;
 import 'package:squeak/core/network/dio.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/controller/notifications_cubit.dart';
 import 'package:squeak/features/layout/post/domain/usecase/get_user_posts_use_case.dart';
@@ -32,6 +33,19 @@ import '../../../features/layout/search/domain/usecase/get_supplier_use_case.dar
 import '../../../features/layout/search/domain/usecase/unfollow_clinic_use_case.dart'
     show UnfollowClinicUseCase;
 import '../../../features/layout/search/presentation/controller/search_cubit.dart';
+import '../../../features/pets/data/data_source/pet_local_data_source.dart';
+import '../../../features/pets/data/data_source/pet_remote_data_source.dart';
+import '../../../features/pets/data/repo/pet_repository_impl.dart';
+import '../../../features/pets/domain/base_repo/pet_base_repository.dart';
+import '../../../features/pets/domain/use_case/get_all_breeds_usecase.dart';
+import '../../../features/pets/domain/use_case/get_owner_pets_usecase.dart';
+import '../../../features/pets/domain/use_case/delete_pet_usecase.dart';
+import '../../../features/pets/domain/use_case/create_pet_usecase.dart';
+import '../../../features/pets/domain/use_case/get_all_species_usecase.dart';
+import '../../../features/pets/domain/use_case/get_breeds_by_species_usecase.dart';
+import '../../../features/pets/domain/use_case/update_pet_usecase.dart';
+import '../../../features/pets/presentation/controller/pet_cubit.dart';
+import '../../network/network_info.dart';
 import '../main_service/data/datasources/remote_data_source.dart';
 import '../main_service/data/repositories/app_repository_impl.dart';
 import '../main_service/domain/repositories/app_repository.dart';
@@ -52,6 +66,17 @@ class ServiceLocator {
     sl.registerFactory(() => PostCubit(sl()));
     sl.registerFactory(() => SearchCubit(sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => NotificationsCubit(sl(), sl(), sl()));
+    sl.registerFactory(
+      () => PetCubit(
+        getOwnerPetsUseCase: sl(),
+        getAllBreedsUseCase: sl(),
+        getBreedsBySpeciesUseCase: sl(),
+        getAllSpeciesUseCase: sl(),
+        createPetUseCase: sl(),
+        updatePetUseCase: sl(),
+        deletePetUseCase: sl(),
+      ),
+    );
 
     // Register Data sources
     sl.registerLazySingleton<MainRemoteDataSource>(
@@ -69,7 +94,12 @@ class ServiceLocator {
     sl.registerLazySingleton<BaseNotificationRemoteDataSource>(
       () => NotificationRemoteDataSource(),
     );
-
+    sl.registerLazySingleton<PetRemoteDataSource>(
+      () => PetRemoteDataSourceImpl(),
+    );
+    sl.registerLazySingleton<PetLocalDataSource>(
+      () => PetLocalDataSourceImpl(),
+    );
     // Register Repositories
     sl.registerLazySingleton<AppRepository>(() => AppRepositoryImpl(sl()));
     sl.registerLazySingleton<BaseCommentRepository>(
@@ -81,6 +111,13 @@ class ServiceLocator {
     );
     sl.registerLazySingleton<BaseNotificationRepository>(
       () => NotificationRepository(sl()),
+    );
+    sl.registerLazySingleton<PetRepository>(
+      () => PetRepositoryImpl(
+        remoteDataSource: sl(),
+        localDataSource: sl(),
+        networkInfo: sl(),
+      ),
     );
 
     // Register Use Cases
@@ -115,6 +152,17 @@ class ServiceLocator {
     sl.registerLazySingleton(() => GetAllNotificationsUseCase(sl()));
     sl.registerLazySingleton(() => GetPostNotificationUseCase(sl()));
 
+    sl.registerLazySingleton(() => GetOwnerPetsUseCase(sl()));
+    sl.registerLazySingleton(() => GetAllBreedsUseCase(sl()));
+    sl.registerLazySingleton(() => GetBreedsBySpeciesUseCase(sl()));
+    sl.registerLazySingleton(() => GetAllSpeciesUseCase(sl()));
+    sl.registerLazySingleton(() => CreatePetUseCase(sl()));
+    sl.registerLazySingleton(() => UpdatePetUseCase(sl()));
+    sl.registerLazySingleton(() => DeletePetUseCase(sl()));
+
     sl.registerLazySingleton<DioFinalHelper>(() => DioFinalHelper());
+    sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
+
+
   }
 }

@@ -7,12 +7,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
 
-import 'package:squeak/core/helper/image_helper/helper_model/response_model.dart';
-import 'package:squeak/core/helper/remotely/dio.dart';
-import 'package:squeak/core/helper/remotely/end-points.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
+
 import 'package:squeak/features/layout/controller/layout_cubit.dart';
 
-import '../../../core/helper/cache/cache_helper.dart';
 import '../../authentication/models/login.dart';
 import '../../layout/models/owner_model.dart';
 
@@ -107,10 +105,10 @@ class SettingCubit extends Cubit<SettingState> {
       emit(UpdateProfileSuccessState(updatedUser));
     } on DioException catch (e) {
       isLoading = false;
-      final responseModel = ResponseModel.fromJson(e.response?.data);
-      final error = responseModel.errors.isNotEmpty
-          ? responseModel.errors.values.first.first
-          : responseModel.message;
+      final errorMessageModel = ErrorMessageModel.fromJson(e.response?.data);
+      final error = errorMessageModel.errors.isNotEmpty
+          ? errorMessageModel.errors.values.first.first
+          : errorMessageModel.message;
       emit(UpdateProfileErrorState(error));
     }
   }

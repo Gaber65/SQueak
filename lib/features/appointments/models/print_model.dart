@@ -230,15 +230,15 @@ class InvoicesModel {
   }
 }
 
-class PetModel {
+class PetModelPrint {
   String petName;
   String species;
   String sex;
 
-  PetModel({required this.petName, required this.species, required this.sex});
+  PetModelPrint({required this.petName, required this.species, required this.sex});
 
-  factory PetModel.fromJson(Map<String, dynamic> json) {
-    return PetModel(
+  factory PetModelPrint.fromJson(Map<String, dynamic> json) {
+    return PetModelPrint(
       petName: json['petName'] ?? '',
       species: json['species'] ?? '',
       sex: json['sex'] ?? '',

@@ -1,0 +1,46 @@
+import 'package:flutter/material.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
+
+import '../../../controller/pet_cubit.dart';
+
+class PetProfileImage extends StatelessWidget {
+  const PetProfileImage({
+    super.key,
+    required this.cubit,
+    required this.pathImage,
+  });
+
+  final PetCubit cubit;
+  final String pathImage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Stack(
+        children: [
+          CircleAvatar(
+            radius: 50,
+            backgroundImage:
+                cubit.petImage == null
+                    ? AssetImage(pathImage) as ImageProvider
+                    : FileImage(cubit.petImage!),
+          ),
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: CircleAvatar(
+              radius: 15,
+              child: IconButton(
+                icon: const Icon(Icons.camera_alt_outlined),
+                iconSize: 15,
+                onPressed: () {
+                  cubit.getPetImage();
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

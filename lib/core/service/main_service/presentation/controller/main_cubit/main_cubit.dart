@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/enums/upload_place.dart';
 
 import '../../../../cache/shared_preferences/cache_helper.dart';
+import '../../../domain/entities/image_entity.dart';
 import '../../../domain/entities/language_entity.dart';
 import '../../../domain/repositories/app_repository.dart';
 import '../../../domain/usecases/change_language_use_case.dart';
@@ -115,6 +116,7 @@ class MainCubit extends Cubit<MainState> {
     }
   }
 
+  ImageEntity? modelImage;
   // File Upload methods
   Future<void> getGlobalImage(File file, UploadPlace uploadPlace) async {
     emit(ImageHelperLoading());
@@ -123,7 +125,10 @@ class MainCubit extends Cubit<MainState> {
     );
     result.fold(
       (l) => emit(ImageHelperError()),
-      (r) => emit(ImageHelperSuccess()),
+      (r) {
+        emit(ImageHelperSuccess());
+        modelImage = r;
+      },
     );
   }
 

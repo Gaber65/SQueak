@@ -14,7 +14,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../generated/l10n.dart';
 import '../../../layout/layout.dart';
-import '../../../pets/models/pet_model.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 import '../component/filter_component.dart';
 import '../files_and_prescription_for_pet/files_for_pet_screen.dart';
@@ -58,7 +57,7 @@ class AllAppointment extends StatelessWidget {
                     Expanded(
                       child: BlocConsumer<LayoutCubit, LayoutState>(
                         builder: (context, state) {
-                          List<PetsData> pets = LayoutCubit.get(context).pets;
+                          List<Pet> pets = LayoutCubit.get(context).pets;
                           return buildPetFilter(context, pets);
                         },
                         listener: (context, state) {},

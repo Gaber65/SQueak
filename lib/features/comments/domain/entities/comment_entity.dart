@@ -24,7 +24,7 @@ class CommentEntity extends Equatable {
   final dynamic createdAt;
   final String userId;
   final String postId;
-  final PetEntity? pet;
+  final PetEntityComment? pet;
   final UserEntity? user;
   List<CommentEntity> replies;
   bool isSelected;
@@ -78,8 +78,8 @@ class UserEntity extends Equatable {
   List<Object?> get props => [fullName, address, imageName, birthDate];
 }
 
-class PetEntity extends Equatable {
-  const PetEntity({
+class PetEntityComment extends Equatable {
+  const PetEntityComment({
     required this.petName,
     required this.gender,
     required this.breedId,
