@@ -26,7 +26,7 @@ class CommentModel extends CommentEntity {
       userId: json['userId'] ?? '',
       postId: json['postId'] ?? '',
       parentId: json['parentId'],
-      pet: json['pet'] != null ? PetModel.fromJson(json['pet']) : null,
+      pet: json['pet'] != null ? PetModelComment.fromJson(json['pet']) : null,
       user: json['user'] != null ? UserModel.fromJson(json['user']) : null,
       replies:
           json['replies'] == null
@@ -46,7 +46,7 @@ class CommentModel extends CommentEntity {
     'userId': userId,
     'postId': postId,
     'parentId': parentId,
-    'pet': pet is PetModel ? (pet as PetModel).toJson() : null,
+    'pet': pet is PetModelComment ? (pet as PetModelComment).toJson() : null,
     'user': (user as UserModel).toJson(),
     'replies': replies.map((e) => (e as CommentModel).toJson()).toList(),
   };
@@ -77,16 +77,16 @@ class UserModel extends UserEntity {
   };
 }
 
-class PetModel extends PetEntityComment {
-  const PetModel({
+class PetModelComment extends PetEntityComment {
+  const PetModelComment({
     required super.petName,
     required super.gender,
     required super.breedId,
     required super.imageName,
   });
 
-  factory PetModel.fromJson(Map<String, dynamic> json) {
-    return PetModel(
+  factory PetModelComment.fromJson(Map<String, dynamic> json) {
+    return PetModelComment(
       petName: json['petName'],
       gender: json['gender'],
       breedId: json['breedId'],

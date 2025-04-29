@@ -3,21 +3,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/pets/data/models/pet_model.dart';
+import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/service/controller/vac_cubit/vaccination_cubit.dart';
 import 'package:squeak/features/service/models/vaccination_entities.dart';
 
 
 import '../../../generated/l10n.dart';
-import '../../pets/models/pet_model.dart';
 import 'component/record_components.dart';
 
 class PetVaccination extends StatelessWidget {
   PetVaccination({
-    Key? key,
+    super.key,
     required this.petModel,
-  }) : super(key: key);
+  });
 
-  final PetsData petModel;
+  final PetEntity petModel;
 
   final formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();

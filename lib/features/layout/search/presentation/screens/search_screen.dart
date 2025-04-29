@@ -1,11 +1,10 @@
-// search_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/features/vetcare/view/pet_merge_screen.dart';
+import '../../../../vetcare/presenation/view/pet_merge_screen.dart';
 import '../controller/search_cubit.dart';
 import '../widget/build_column_search_body.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/layout/layout.dart';
+import 'package:squeak/features/layout/layout/view/layout.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
@@ -26,7 +25,7 @@ class SearchScreen extends StatelessWidget {
               navigateAndFinish(
                 context,
                 PetMergeScreen(
-                  Code: SearchCubit.get(context).searchController.text,
+                  code: SearchCubit.get(context).searchController.text,
                   isNavigation: true,
                 ),
               );

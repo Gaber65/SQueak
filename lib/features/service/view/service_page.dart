@@ -3,21 +3,19 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/pets/data/models/pet_model.dart';
 import 'package:squeak/features/service/view/component/reminder_card.dart';
 
-import '../../pets/models/pet_model.dart';
 import '../models/reminder.dart';
 import 'component/filter_bar.dart';
 import 'component/reminder_wizard.dart';
 
 class AllServiceScreen extends StatefulWidget {
   const AllServiceScreen({
-    Key? key,
+    super.key,
     required this.petModel,
-  }) : super(key: key);
-  final PetsData petModel;
+  });
+  final PetData petModel;
 
   @override
   _AllServiceScreenState createState() => _AllServiceScreenState();

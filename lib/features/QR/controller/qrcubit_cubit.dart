@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/features/vetcare/models/vetIcare_client_model.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-import '../../layout/models/clinic_model.dart';
+import '../../layout/layout/models/clinic_model.dart';
+import '../../vetcare/data/models/vet_client_model.dart';
 import 'qrcubit_state.dart';
 
 class QRCubit extends Cubit<QRState> {

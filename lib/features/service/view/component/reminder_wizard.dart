@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
-
-import '../../../pets/models/pet_model.dart';
+import 'package:squeak/features/pets/data/models/pet_model.dart';
 import '../../models/reminder.dart';
 
 class ReminderWizard extends StatefulWidget {
   final Function(Reminder) onReminderAdded;
   final Function(Reminder) onReminderEdited;
-  final PetsData petModel;
+  final PetData petModel;
   final Reminder? existingReminder; // To check if it's editing or adding.
 
   const ReminderWizard({

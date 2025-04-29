@@ -4,12 +4,12 @@ import 'package:squeak/features/appointments/view/appointments/rate_appointment.
 import 'package:squeak/features/authentication/view/forgot_password.dart';
 import 'package:squeak/features/authentication/view/login_screen.dart';
 import 'package:squeak/features/authentication/view/register_screen.dart';
-import 'package:squeak/features/layout/layout.dart';
+import 'package:squeak/features/layout/layout/view/layout.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/screens/post_notfication.dart';
-import 'package:squeak/features/vetcare/view/follow_request_screen.dart';
 
 import '../../../features/pets/presentation/view/pet_screen.dart';
-import '../../../features/vetcare/view/vetCareRegister.dart';
+import '../../../features/vetcare/presenation/view/follow_request_screen.dart';
+import '../../../features/vetcare/presenation/view/vetCareRegister.dart';
 
 Map<String, WidgetBuilder> routes = {
   '/vetRegister': (context) {
@@ -27,7 +27,7 @@ Map<String, WidgetBuilder> routes = {
         isNav: true,
       ),
   '/followedClinic': (context) => FollowRequestScreen(
-        ClinicID: ModalRoute.of(context)!.settings.arguments as String,
+        clinicID: ModalRoute.of(context)!.settings.arguments as String,
       ),
   '/postNotification': (context) => PostNotification(
         id: ModalRoute.of(context)!.settings.arguments as String,

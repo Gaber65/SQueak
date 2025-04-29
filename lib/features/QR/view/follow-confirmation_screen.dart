@@ -5,8 +5,8 @@ import 'package:shimmer/shimmer.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../generated/l10n.dart';
-import '../../layout/layout.dart';
-import '../../vetcare/view/pet_merge_screen.dart';
+import '../../layout/layout/view/layout.dart';
+import '../../vetcare/presenation/view/pet_merge_screen.dart';
 import '../controller/qrcubit_cubit.dart';
 import '../controller/qrcubit_state.dart';
 
@@ -45,7 +45,7 @@ class ConfirmationScreen extends StatelessWidget {
                 navigateAndFinish(
                   context,
                   PetMergeScreen(
-                    Code: clinicCode,
+                    code: clinicCode,
                     isNavigation: false,
                   ),
                 );
@@ -236,7 +236,7 @@ class ConfirmationScreen extends StatelessWidget {
                     onPressed: () => navigateAndFinish(
                       context,
                       PetMergeScreen(
-                        Code: clinicCode,
+                        code: clinicCode,
                         isNavigation: false,
                       ),
                     ),

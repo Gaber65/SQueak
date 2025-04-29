@@ -1,11 +1,14 @@
 import 'package:get_it/get_it.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart' show InternetConnectionChecker;
+import 'package:internet_connection_checker/internet_connection_checker.dart'
+    show InternetConnectionChecker;
 import 'package:squeak/core/network/dio.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/controller/notifications_cubit.dart';
 import 'package:squeak/features/layout/post/domain/usecase/get_user_posts_use_case.dart';
 import 'package:squeak/features/layout/post/presentation/controller/post_cubit.dart';
 import 'package:squeak/features/layout/search/domain/usecase/follow_clinic_use_case.dart';
 import 'package:squeak/features/layout/search/domain/usecase/get_client_form_vet_use_case.dart';
+import 'package:squeak/features/settings/domain/use_case/get_owner_data_usecase.dart';
+import 'package:squeak/features/settings/domain/use_case/update_profile_usecase.dart';
 
 import '../../../features/comments/data/data_source/comment_data_source.dart';
 import '../../../features/comments/data/repository/comment_repository.dart';
@@ -45,6 +48,21 @@ import '../../../features/pets/domain/use_case/get_all_species_usecase.dart';
 import '../../../features/pets/domain/use_case/get_breeds_by_species_usecase.dart';
 import '../../../features/pets/domain/use_case/update_pet_usecase.dart';
 import '../../../features/pets/presentation/controller/pet_cubit.dart';
+import '../../../features/settings/data/data_source/profile_local_data_source.dart';
+import '../../../features/settings/data/data_source/profile_remote_data_source.dart';
+import '../../../features/settings/data/repo/profile_repository_impl.dart';
+import '../../../features/settings/domain/base_repo/profile_repository.dart';
+import '../../../features/settings/persentaion/controller/setting_cubit.dart';
+import '../../../features/vetcare/data/data_sorce/base_vet_data_source.dart';
+import '../../../features/vetcare/data/data_sorce/vet_remote_data_source.dart';
+import '../../../features/vetcare/data/repo/vet_repository_impl.dart';
+import '../../../features/vetcare/domain/base_repo/base_vet_repository.dart';
+import '../../../features/vetcare/domain/use_case/follow_request_usecase.dart';
+import '../../../features/vetcare/domain/use_case/pet_async_usecase.dart';
+import '../../../features/vetcare/domain/use_case/register_vet_usecase.dart';
+import '../../../features/vetcare/presenation/controllers/follow_request/follow_request_cubit.dart';
+import '../../../features/vetcare/presenation/controllers/pet_async/pet_async_cubit.dart';
+import '../../../features/vetcare/presenation/controllers/vet_register/vet_register_cubit.dart';
 import '../../network/network_info.dart';
 import '../main_service/data/datasources/remote_data_source.dart';
 import '../main_service/data/repositories/app_repository_impl.dart';
@@ -77,6 +95,9 @@ class ServiceLocator {
         deletePetUseCase: sl(),
       ),
     );
+    sl.registerFactory(
+      () => SettingCubit(getOwnerDataUseCase: sl(), updateProfileUseCase: sl()),
+    );
 
     // Register Data sources
     sl.registerLazySingleton<MainRemoteDataSource>(
@@ -100,6 +121,14 @@ class ServiceLocator {
     sl.registerLazySingleton<PetLocalDataSource>(
       () => PetLocalDataSourceImpl(),
     );
+
+    sl.registerLazySingleton<ProfileRemoteDataSource>(
+      () => ProfileRemoteDataSourceImpl(),
+    );
+    sl.registerLazySingleton<ProfileLocalDataSource>(
+      () => ProfileLocalDataSourceImpl(),
+    );
+
     // Register Repositories
     sl.registerLazySingleton<AppRepository>(() => AppRepositoryImpl(sl()));
     sl.registerLazySingleton<BaseCommentRepository>(
@@ -119,7 +148,13 @@ class ServiceLocator {
         networkInfo: sl(),
       ),
     );
-
+    sl.registerLazySingleton<ProfileRepository>(
+      () => ProfileRepositoryImpl(
+        remoteDataSource: sl(),
+        localDataSource: sl(),
+        networkInfo: sl(),
+      ),
+    );
     // Register Use Cases
     sl.registerLazySingleton<ChangeLanguageUseCase>(
       () => ChangeLanguageUseCase(sl()),
@@ -160,9 +195,56 @@ class ServiceLocator {
     sl.registerLazySingleton(() => UpdatePetUseCase(sl()));
     sl.registerLazySingleton(() => DeletePetUseCase(sl()));
 
+    sl.registerLazySingleton(() => GetOwnerDataUseCase(sl()));
+    sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
+
     sl.registerLazySingleton<DioFinalHelper>(() => DioFinalHelper());
     sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
+    sl.registerLazySingleton<InternetConnectionChecker>(
+      () => InternetConnectionChecker.createInstance(),
+    );
 
+    sl.registerFactory(
+      () => VetRegisterCubit(
+        registerUseCase: sl(),
+        loginUseCase: sl(),
+        getClientUseCase: sl(),
+      ),
+    );
 
+    sl.registerFactory(
+      () => FollowRequestCubit(
+        acceptInvitationUseCase: sl(),
+        getNotificationsUseCase: sl(),
+        updateNotificationStateUseCase: sl(),
+      ),
+    );
+
+    sl.registerFactory(
+      () => PetAsyncCubit(
+        getClientsFromVetUseCase: sl(),
+        addInSqueakStatusUseCase: sl(),
+      ),
+    );
+
+    // Use cases
+    sl.registerLazySingleton(() => RegisterVetUseCase(sl()));
+    sl.registerLazySingleton(() => LoginUseCase(sl()));
+    sl.registerLazySingleton(() => GetClientUseCase(sl()));
+
+    sl.registerLazySingleton(() => AcceptInvitationUseCase(sl()));
+    sl.registerLazySingleton(() => GetNotificationsUseCase(sl()));
+    sl.registerLazySingleton(() => UpdateNotificationToVetStateUseCase(sl()));
+
+    sl.registerLazySingleton(() => GetClientsFromVetUseCase(sl()));
+    sl.registerLazySingleton(() => AddInSqueakStatusUseCase(sl()));
+
+    // Repository
+    sl.registerLazySingleton<BaseVetRepository>(() => VetRepository(sl()));
+
+    // Data sources
+    sl.registerLazySingleton<BaseVetRemoteDataSource>(
+      () => VetRemoteDataSource(),
+    );
   }
 }

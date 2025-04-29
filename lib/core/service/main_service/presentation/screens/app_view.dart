@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:chucker_flutter/chucker_flutter.dart';
-import '../../../../../features/vetcare/view/vetCareRegister.dart';
+import 'package:squeak/features/layout/layout/controller/layout_cubit.dart';
+import '../../../../../features/vetcare/presenation/view/vetCareRegister.dart';
 import '../../../../utils/export_path/export_files.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -23,8 +24,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    initDeepLinkHandler(navigatorKey, _sub, (uri) => handleDeepLink(uri, navigatorKey));
-    determineStartPoint(context).then((screen) => setState(() => appStartPoint = screen));
+    initDeepLinkHandler(
+      navigatorKey,
+      _sub,
+      (uri) => handleDeepLink(uri, navigatorKey),
+    );
+    determineStartPoint(
+      context,
+    ).then((screen) => setState(() => appStartPoint = screen));
   }
 
   @override
@@ -45,14 +52,22 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context) {
-        return sl<MainCubit>()
-          ..changeAppMode(fromShared: CacheHelper.getData('isDark') ?? false)
-          ..changeAppLang(
-            fromSharedLang: CacheHelper.getData('language') ?? 'en',
-          )..requestNotificationPermissions();
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (BuildContext context) {
+            return sl<MainCubit>()
+              ..changeAppMode(
+                fromShared: CacheHelper.getData('isDark') ?? false,
+              )
+              ..changeAppLang(
+                fromSharedLang: CacheHelper.getData('language') ?? 'en',
+              )
+              ..requestNotificationPermissions();
+          },
+        ),
+        BlocProvider(create: (context) => LayoutCubit()),
+      ],
       child: BlocBuilder<MainCubit, MainState>(
         builder: (context, state) {
           final cubit = MainCubit.get(context);
@@ -63,20 +78,28 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             routes: routes,
             onGenerateRoute: (settings) {
               final uri = Uri.parse(settings.name!);
-              final invitationCode = uri.pathSegments.length > 1 ? uri.pathSegments[1] : '';
+              final invitationCode =
+                  uri.pathSegments.length > 1 ? uri.pathSegments[1] : '';
               CacheHelper.saveData('invitationCode', invitationCode);
 
               if (invitationCode.isNotEmpty) {
                 return MaterialPageRoute(
-                  builder: (context) => VetCareRegister(invitationCode: invitationCode),
+                  builder:
+                      (context) =>
+                          VetCareRegister(invitationCode: invitationCode),
                 );
               }
-              return MaterialPageRoute(builder: (context) => appStartPoint ?? const SizedBox());
+              return MaterialPageRoute(
+                builder: (context) => appStartPoint ?? const SizedBox(),
+              );
             },
             themeMode: cubit.isDark ? ThemeMode.dark : ThemeMode.light,
             darkTheme: buildThemeData(),
             debugShowCheckedModeBanner: false,
-            locale: cubit.language == 'en' ? const Locale('en') : const Locale('ar'),
+            locale:
+                cubit.language == 'en'
+                    ? const Locale('en')
+                    : const Locale('ar'),
             localizationsDelegates: const [
               S.delegate,
               GlobalMaterialLocalizations.delegate,

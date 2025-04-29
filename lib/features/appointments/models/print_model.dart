@@ -246,14 +246,14 @@ class PetModelPrint {
   }
 }
 
-class OwnerModel {
+class OwnerModelPrint {
   String ownerName;
   String phone;
 
-  OwnerModel({required this.ownerName, required this.phone});
+  OwnerModelPrint({required this.ownerName, required this.phone});
 
-  factory OwnerModel.fromJson(Map<String, dynamic> json) {
-    return OwnerModel(
+  factory OwnerModelPrint.fromJson(Map<String, dynamic> json) {
+    return OwnerModelPrint(
       ownerName: json['ownerName'] ?? '-',
       phone: json['phone'] ?? '-',
     );

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 
 import '../../../../../core/utils/export_path/export_files.dart';
-import '../../../../layout/layout.dart';
+import '../../../../layout/layout/view/layout.dart';
 import '../../controller/comment_cubit.dart';
 
 AppBar buildAppBar(BuildContext context, CommentState state) {

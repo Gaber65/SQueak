@@ -12,8 +12,6 @@ import 'package:intl/intl.dart';
 
 
 import '../../../../generated/l10n.dart';
-import '../../../layout/controller/layout_cubit.dart';
-import '../../../layout/layout.dart';
 
 /// Booking again Screen melkerm
 class BooKAgainScreen extends StatelessWidget {
@@ -45,13 +43,13 @@ class BooKAgainScreen extends StatelessWidget {
         ..getDoctor(clinicCode),
       child: BlocConsumer<AppointmentCubit, AppointmentState>(
         listener: (context, state) {
-          if (state is CreateAppointmentsSuccess) {
-            LayoutCubit.get(context).changeBottomNav(2);
-            LayoutCubit.get(context).pets.forEach((element) {
-              element.isSelected = false;
-            });
-            navigateAndFinish(context, LayoutScreen());
-          }
+          // if (state is CreateAppointmentsSuccess) {
+          //   LayoutCubit.get(context).changeBottomNav(2);
+          //   LayoutCubit.get(context).pets.forEach((element) {
+          //     element.isSelected = false;
+          //   });
+          //   navigateAndFinish(context, LayoutScreen());
+          // }
           if (state is CreateAppointmentsError) {
             errorToast(
               context,

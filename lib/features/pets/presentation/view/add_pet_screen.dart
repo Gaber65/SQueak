@@ -4,9 +4,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/add_pet/pet_form_section.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/add_pet/pet_profile_image.dart';
-import '../../../layout/controller/layout_cubit.dart';
 import '../controller/pet_cubit.dart';
-
 
 class AddPetScreen extends StatelessWidget {
   const AddPetScreen({
@@ -26,13 +24,12 @@ class AddPetScreen extends StatelessWidget {
       create:
           (context) =>
               sl<PetCubit>()
-                ..getAllBreeds()
                 ..init(dropdownValueSpecies, species)
-                ..getAllSpecies(),
+                ..getAllSpecies()
+                ..getBreedsBySpecies(species),
       child: BlocConsumer<PetCubit, PetState>(
         listener: (context, state) {
           if (state is PetCreateSuccessState) {
-            LayoutCubit.get(context).getOwnerPet();
             navigateAndFinish(context, const PetScreen());
           }
 

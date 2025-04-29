@@ -8,11 +8,11 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import 'package:squeak/features/appointments/models/get_appointment_model.dart';
 import 'package:squeak/features/appointments/view/appointments/print_reciept.dart';
-import 'package:squeak/features/layout/models/clinic_model.dart';
 
 import 'package:printing/printing.dart';
 import 'package:flutter/material.dart';
 
+import '../../../layout/layout/models/clinic_model.dart';
 import '../../models/print_model.dart';
 
 part 'user_appointment_state.dart';
@@ -212,7 +212,7 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
 
   InvoicesModel? invoices;
   PetModelPrint? pet;
-  OwnerModel? owner;
+  OwnerModelPrint? owner;
   bool isLoadingInvoice = false;
   Future getInvoives(id) async {
     emit(GetInvoicesLoading());
@@ -234,7 +234,7 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
         'ownerName': invoices!.ownerName,
         'phone': invoices!.clientPhone,
       };
-      owner = OwnerModel.fromJson(ownerMap);
+      owner = OwnerModelPrint.fromJson(ownerMap);
       emit(GetInvoicesSuccess());
     } on DioError catch (e) {
       print(e);

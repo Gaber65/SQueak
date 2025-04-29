@@ -49,6 +49,8 @@ class SaveButton extends StatelessWidget {
     if (cubit.formKey.currentState!.validate()) {
       if (cubit.petImage != null) {
         cubit.isLoading = true;
+        cubit.emit(ChangeBreedState());
+
         MainCubit.get(
           context,
         ).getGlobalImage(cubit.petImage!, UploadPlace.petsImages).then((value) {

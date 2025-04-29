@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../../../core/utils/export_path/export_files.dart';
-import '../../../pets/view/pet_screen.dart';
-import '../../../vetcare/view/follow_request_screen.dart';
+import '../../../pets/presentation/view/pet_screen.dart';
+import '../../../vetcare/presenation/view/follow_request_screen.dart';
 import '../NotificationAPI/presentation/screens/post_notfication.dart';
 import '../NotificationAPI/presentation/widget/get_appoiment_function.dart';
 
@@ -32,7 +32,7 @@ void handleNavigation(String payload) {
       navigateToScreen(context, PostNotification(id: id));
       break;
     case NotificationType.FollowRequest:
-      navigateToScreen(context, FollowRequestScreen(ClinicID: id));
+      navigateToScreen(context, FollowRequestScreen(clinicID: id));
       break;
     default:
       break;

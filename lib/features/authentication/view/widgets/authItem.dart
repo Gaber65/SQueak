@@ -2,7 +2,7 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-import '../../../layout/layout.dart';
+import '../../../layout/layout/view/layout.dart';
 import '../contact_us.dart';
 
 class AuthItem extends StatelessWidget {

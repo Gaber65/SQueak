@@ -6,13 +6,14 @@ import 'package:shimmer/shimmer.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/models/get_client_clinic_model.dart';
-import 'package:squeak/features/layout/controller/layout_cubit.dart';
-import 'package:squeak/features/pets/view/pet_screen.dart';
-
+import 'package:squeak/features/layout/layout/controller/layout_cubit.dart';
+import 'package:squeak/features/pets/data/models/pet_model.dart';
+import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
+import 'package:squeak/features/pets/presentation/view/widgets/get_pet/empty_state.dart';
 
 import '../../../../generated/l10n.dart';
-import '../../../layout/layout.dart';
-import '../../../pets/models/pet_model.dart';
+import '../../../layout/layout/view/layout.dart';
+import '../../../pets/presentation/view/widgets/get_pet/pet_screen_content.dart';
 import '../../controller/clinic/appointment_cubit.dart';
 import '../../controller/clinic/appointment_state.dart';
 import '../../models/availabilities_model.dart';
@@ -53,7 +54,6 @@ class _BookingScreenState extends State<BookingScreen> {
   void initState() {
     super.initState();
     print('Get pets' + '-----------------');
-    LayoutCubit.get(context).getOwnerPet();
   }
 
   String? doctorId;
@@ -78,15 +78,15 @@ class _BookingScreenState extends State<BookingScreen> {
     print(widget.petId);
     print("Pet id");
     return BlocProvider(
-      create: (context) =>
-          AppointmentCubit()..getClientINClinic(widget.clinicCode),
+      create:
+          (context) => AppointmentCubit()..getClientINClinic(widget.clinicCode),
       child: BlocConsumer<AppointmentCubit, AppointmentState>(
         listener: (context, state) {
           if (state is CreateAppointmentsSuccess) {
-            LayoutCubit.get(context).changeBottomNav(2);
-            LayoutCubit.get(context).pets.forEach((element) {
-              element.isSelected = false;
-            });
+            // LayoutCubit.get(context).changeBottomNav(2);
+            // LayoutCubit.get(context).pets.forEach((element) {
+            //   element.isSelected = false;
+            // });
             navigateAndFinish(context, LayoutScreen());
           }
           print("If CreateAppointmentsError");
@@ -101,34 +101,42 @@ class _BookingScreenState extends State<BookingScreen> {
         },
         builder: (context, state) {
           var cubit = AppointmentCubit.get(context);
-          var pets = LayoutCubit.get(context).pets;
+          // var pets = LayoutCubit.get(context).pets;
+          var pets = [];
 
           if (pets.isEmpty) {
             Future.delayed(Duration.zero, () {
               showDialog(
                 context: context,
-                builder: (context) => AlertDialog(
-                  title: Text(isArabic() ? 'خطأ' : "Error"),
-                  content: Text(isArabic()
-                      ? 'يجب أن يكون لديك  أليف واحد على الأقل للمتابعة'
-                      : "You must have at least one pet to proceed."),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context); // Close the dialog
+                builder:
+                    (context) => AlertDialog(
+                      title: Text(isArabic() ? 'خطأ' : "Error"),
+                      content: Text(
+                        isArabic()
+                            ? 'يجب أن يكون لديك  أليف واحد على الأقل للمتابعة'
+                            : "You must have at least one pet to proceed.",
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context); // Close the dialog
 
-                        // Navigate to PetScreen after closing the dialog
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => PetScreen()),
-                        );
-                      },
-                      child: Text(isArabic()
-                          ? 'اذهب إلى الحيوانات الأليفة'
-                          : "Go to Pets."),
+                            // Navigate to PetScreen after closing the dialog
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PetScreen(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            isArabic()
+                                ? 'اذهب إلى الحيوانات الأليفة'
+                                : "Go to Pets.",
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
               );
             });
             return SizedBox(); // Prevents further UI rendering
@@ -136,9 +144,9 @@ class _BookingScreenState extends State<BookingScreen> {
 
           return WillPopScope(
             onWillPop: () async {
-              LayoutCubit.get(context).pets.forEach((element) {
-                element.isSelected = false;
-              });
+              // LayoutCubit.get(context).pets.forEach((element) {
+              //   element.isSelected = false;
+              // });
               Navigator.pop(context);
               return false;
             },
@@ -149,9 +157,9 @@ class _BookingScreenState extends State<BookingScreen> {
                   icon: Icon(Icons.arrow_back),
                   onPressed: () {
                     Navigator.pop(context);
-                    LayoutCubit.get(context).pets.forEach((element) {
-                      element.isSelected = false;
-                    });
+                    // LayoutCubit.get(context).pets.forEach((element) {
+                    //   element.isSelected = false;
+                    // });
                   },
                 ),
                 actions: [
@@ -161,118 +169,131 @@ class _BookingScreenState extends State<BookingScreen> {
                       width: 100,
                       child: TextButton(
                         style: TextButton.styleFrom(
-                          backgroundColor:
-                              ColorManager.primaryColor.withOpacity(.2),
+                          backgroundColor: ColorManager.primaryColor
+                              .withOpacity(.2),
                         ),
-                        onPressed: cubit.isLoading
-                            ? null
-                            : () {
-                                if (time == null) {
-                                  infoToast(
-                                    context,
-                                    isArabic()
-                                        ? 'الوقت مطلوب'
-                                        : 'Please select time',
-                                  );
-                                } else {
-                                  showCustomConfirmationDialog(
-                                    yesButtonColor: Colors.green,
-                                    noButtonColor: Colors.red,
-                                    titleOfAlertAR: 'تأكيد الحجز',
-                                    titleOfAlertEN: 'Confirm Appointment',
+                        onPressed:
+                            cubit.isLoading
+                                ? null
+                                : () {
+                                  if (time == null) {
+                                    infoToast(
+                                      context,
+                                      isArabic()
+                                          ? 'الوقت مطلوب'
+                                          : 'Please select time',
+                                    );
+                                  } else {
+                                    showCustomConfirmationDialog(
+                                      yesButtonColor: Colors.green,
+                                      noButtonColor: Colors.red,
+                                      titleOfAlertAR: 'تأكيد الحجز',
+                                      titleOfAlertEN: 'Confirm Appointment',
+                                      context: context,
+                                      description:
+                                          isArabic()
+                                              ? Text.rich(
+                                                TextSpan(
+                                                  text: 'هل تريد حجز موعد لـ ',
+                                                  children: [
+                                                    TextSpan(
+                                                      text:
+                                                          widget.petNameFromAppoinmentIcon ==
+                                                                      null ||
+                                                                  widget.petNameFromAppoinmentIcon ==
+                                                                      ""
+                                                              ? petName
+                                                                  .toString()
+                                                              : widget
+                                                                  .petNameFromAppoinmentIcon
+                                                                  .toString(),
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    TextSpan(
+                                                      text: " في تاريخ ",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
+                                                    ),
+                                                    TextSpan(
+                                                      text:
+                                                          "${DateFormat('yyyy-MM-dd', 'en_US').format(widget.selectedDate)}",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
+                                                    ),
+                                                    TextSpan(text: '?'),
+                                                  ],
+                                                ),
+                                              )
+                                              : Text.rich(
+                                                TextSpan(
+                                                  text:
+                                                      'Do you want to book an appointment for ',
+                                                  children: [
+                                                    TextSpan(
+                                                      text:
+                                                          widget.petNameFromAppoinmentIcon ==
+                                                                      null ||
+                                                                  widget.petNameFromAppoinmentIcon ==
+                                                                      ""
+                                                              ? petName
+                                                                  .toString()
+                                                              : widget
+                                                                  .petNameFromAppoinmentIcon
+                                                                  .toString(),
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    TextSpan(
+                                                      text: " on ",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
+                                                    ),
+                                                    TextSpan(
+                                                      text:
+                                                          "${DateFormat('yyyy-MM-dd', 'en_US').format(widget.selectedDate)}",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
+                                                    ),
+                                                    TextSpan(text: '?'),
+                                                  ],
+                                                ),
+                                              ),
+                                      imageUrl:
+                                          'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?t=st=1729767092~exp=1729770692~hmac=fe206337cc285fa3e223ab4e0326cd478bbb1497ff9a0b37543f9a46f4f23325&w=826',
+                                      onConfirm: () async {
+                                        handleCreateAppointment(context);
+                                      },
+                                    );
+                                  }
+                                },
+                        child:
+                            cubit.isLoading
+                                ? const CircularProgressIndicator()
+                                : Text(
+                                  S.of(context).booking,
+                                  style: FontStyleThame.textStyle(
                                     context: context,
-                                    description: isArabic()
-                                        ? Text.rich(
-                                            TextSpan(
-                                              text: 'هل تريد حجز موعد لـ ',
-                                              children: [
-                                                TextSpan(
-                                                  text: widget.petNameFromAppoinmentIcon ==
-                                                              null ||
-                                                          widget.petNameFromAppoinmentIcon ==
-                                                              ""
-                                                      ? petName.toString()
-                                                      : widget
-                                                          .petNameFromAppoinmentIcon
-                                                          .toString(),
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                TextSpan(
-                                                  text: " في تاريخ ",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.normal),
-                                                ),
-                                                TextSpan(
-                                                  text:
-                                                      "${DateFormat('yyyy-MM-dd', 'en_US').format(widget.selectedDate)}",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.normal),
-                                                ),
-                                                TextSpan(text: '?'),
-                                              ],
-                                            ),
-                                          )
-                                        : Text.rich(
-                                            TextSpan(
-                                              text:
-                                                  'Do you want to book an appointment for ',
-                                              children: [
-                                                TextSpan(
-                                                  text: widget.petNameFromAppoinmentIcon ==
-                                                              null ||
-                                                          widget.petNameFromAppoinmentIcon ==
-                                                              ""
-                                                      ? petName.toString()
-                                                      : widget
-                                                          .petNameFromAppoinmentIcon
-                                                          .toString(),
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                TextSpan(
-                                                  text: " on ",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.normal),
-                                                ),
-                                                TextSpan(
-                                                  text:
-                                                      "${DateFormat('yyyy-MM-dd', 'en_US').format(widget.selectedDate)}",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.normal),
-                                                ),
-                                                TextSpan(text: '?'),
-                                              ],
-                                            ),
-                                          ),
-                                    imageUrl:
-                                        'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?t=st=1729767092~exp=1729770692~hmac=fe206337cc285fa3e223ab4e0326cd478bbb1497ff9a0b37543f9a46f4f23325&w=826',
-                                    onConfirm: () async {
-                                      handleCreateAppointment(context);
-                                    },
-                                  );
-                                }
-                              },
-                        child: cubit.isLoading
-                            ? const CircularProgressIndicator()
-                            : Text(
-                                S.of(context).booking,
-                                style: FontStyleThame.textStyle(
-                                  context: context,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  fontColor: ColorManager.primaryColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    fontColor: ColorManager.primaryColor,
+                                  ),
                                 ),
-                              ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
               floatingActionButtonLocation:
@@ -288,9 +309,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   maxLines: 1,
                   decoration: InputDecoration(
                     hintText: S.of(context).addComment,
-                    contentPadding: EdgeInsetsDirectional.only(
-                      start: 10,
-                    ),
+                    contentPadding: EdgeInsetsDirectional.only(start: 10),
                     counterStyle: FontStyleThame.textStyle(
                       context: context,
                       fontSize: 13,
@@ -299,73 +318,77 @@ class _BookingScreenState extends State<BookingScreen> {
                       context: context,
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      fontColor: MainCubit.get(context).isDark
-                          ? Colors.white54
-                          : Colors.black54,
+                      fontColor:
+                          MainCubit.get(context).isDark
+                              ? Colors.white54
+                              : Colors.black54,
                     ),
                     suffixIcon: IconButton(
-                      onPressed: cubit.isLoading
-                          ? null
-                          : () {
-                              if (dropDownId == null || time == null) {
-                                infoToast(
-                                  context,
-                                  dropDownId == null
-                                      ? isArabic()
-                                          ? 'الحيوان مطلوب'
-                                          : 'Please select a pet'
-                                      : isArabic()
-                                          ? 'الوقت مطلوب'
-                                          : 'Please select time',
-                                );
-                              } else {
-                                showCustomConfirmationDialog(
-                                  yesButtonColor: Colors.green,
-                                  noButtonColor: Colors.red,
-                                  titleOfAlertAR: 'حجز الموعد',
-                                  titleOfAlertEN: 'Confirm Appointment',
-                                  context: context,
-                                  description: isArabic()
-                                      ? Text.rich(
-                                          TextSpan(
-                                            text:
-                                                'هل أنت متأكد أنك تريد اضافه موعد ',
-                                            children: [
+                      onPressed:
+                          cubit.isLoading
+                              ? null
+                              : () {
+                                if (dropDownId == null || time == null) {
+                                  infoToast(
+                                    context,
+                                    dropDownId == null
+                                        ? isArabic()
+                                            ? 'الحيوان مطلوب'
+                                            : 'Please select a pet'
+                                        : isArabic()
+                                        ? 'الوقت مطلوب'
+                                        : 'Please select time',
+                                  );
+                                } else {
+                                  showCustomConfirmationDialog(
+                                    yesButtonColor: Colors.green,
+                                    noButtonColor: Colors.red,
+                                    titleOfAlertAR: 'حجز الموعد',
+                                    titleOfAlertEN: 'Confirm Appointment',
+                                    context: context,
+                                    description:
+                                        isArabic()
+                                            ? Text.rich(
                                               TextSpan(
-                                                text: petName.toString(),
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                text:
+                                                    'هل أنت متأكد أنك تريد اضافه موعد ',
+                                                children: [
+                                                  TextSpan(
+                                                    text: petName.toString(),
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  TextSpan(text: '?'),
+                                                ],
                                               ),
-                                              TextSpan(text: '?'),
-                                            ],
-                                          ),
-                                        )
-                                      : Text.rich(
-                                          TextSpan(
-                                            text:
-                                                'Are you sure you want to book  appointment',
-                                            children: [
-                                              TextSpan(text: '?'),
-                                            ],
-                                          ),
-                                        ),
-                                  imageUrl:
-                                      'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?t=st=1729767092~exp=1729770692~hmac=fe206337cc285fa3e223ab4e0326cd478bbb1497ff9a0b37543f9a46f4f23325&w=826',
-                                  onConfirm: () async {
-                                    handleCreateAppointment(context);
-                                  },
-                                );
-                              }
-                            },
-                      icon: cubit.isLoading
-                          ? const CircularProgressIndicator()
-                          : const Icon(IconlyLight.send),
+                                            )
+                                            : Text.rich(
+                                              TextSpan(
+                                                text:
+                                                    'Are you sure you want to book  appointment',
+                                                children: [TextSpan(text: '?')],
+                                              ),
+                                            ),
+                                    imageUrl:
+                                        'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?t=st=1729767092~exp=1729770692~hmac=fe206337cc285fa3e223ab4e0326cd478bbb1497ff9a0b37543f9a46f4f23325&w=826',
+                                    onConfirm: () async {
+                                      handleCreateAppointment(context);
+                                    },
+                                  );
+                                }
+                              },
+                      icon:
+                          cubit.isLoading
+                              ? const CircularProgressIndicator()
+                              : const Icon(IconlyLight.send),
                     ),
                     filled: true,
-                    fillColor: MainCubit.get(context).isDark
-                        ? ColorManager.myPetsBaseBlackColor
-                        : Colors.grey.shade200,
+                    fillColor:
+                        MainCubit.get(context).isDark
+                            ? ColorManager.myPetsBaseBlackColor
+                            : Colors.grey.shade200,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide.none,
@@ -402,140 +425,129 @@ class _BookingScreenState extends State<BookingScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       /// Pets
-                      widget.petId == '' || widget.petId.isEmpty
-                          ? (LayoutCubit.get(context).pets.isNotEmpty)
-                              ? Text(isArabic() ? 'أحد أليف' : 'Your Pets',
-                                  style: FontStyleThame.textStyle(
-                                    context: context,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ))
-                              : Center(
-                                  child: Text(
-                                      isArabic()
-                                          ? 'يرجى إضافة أليف لبدء الحجز'
-                                          : 'Please add pets to start reservation',
-                                      style: FontStyleThame.textStyle(
-                                        context: context,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      )),
-                                )
-                          : SizedBox(),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      widget.petId == '' || widget.petId.isEmpty
-                          ? BlocConsumer<LayoutCubit, LayoutState>(
-                              listener: (context, state) {
-                                // TODO: implement listener
-                              },
-
-                              /// TODO : Mohamed Elkerm -> bad practise logic code in UI
-                              builder: (context, state) {
-                                List<PetsData> petsData =
-                                    LayoutCubit.get(context)
-                                        .pets
-                                        .where(
-                                          (element) =>
-                                              element.petId !=
-                                              CacheHelper.getData('clintId'),
-                                        )
-                                        .toList();
-                                if (!initTheSelectedPetValue) {
-                                  dropDownId = petsData[0].petId;
-                                  petName = petsData[0].petName;
-                                  petGender = petsData[0].gender;
-                                  breedId = petsData[0].breedId;
-                                  isSpayed = petsData[0].isSpayed;
-                                  petsData[0].isSelected = true;
-                                }
-                                return petsData.isNotEmpty
-                                    ? CarouselSlider.builder(
-                                        itemCount: petsData.length,
-                                        itemBuilder:
-                                            (context, index, realIndex) {
-                                          return InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                dropDownId =
-                                                    petsData[index].petId;
-                                                petName =
-                                                    petsData[index].petName;
-                                                petGender =
-                                                    petsData[index].gender;
-                                                breedId =
-                                                    petsData[index].breedId;
-                                                isSpayed =
-                                                    petsData[index].isSpayed;
-
-                                                print(dropDownId);
-                                              });
-                                              petsData.forEach((element) {
-                                                element.isSelected = false;
-                                              });
-                                              petsData[index].isSelected = true;
-                                              setState(() {});
-                                            },
-                                            child: buildPetItem(
-                                              petsData[index],
-                                              cubit,
-                                              context,
-                                            ),
-                                          );
-                                        },
-                                        options: CarouselOptions(
-                                          onPageChanged: (index, reason) {
-                                            setState(
-                                              () {
-                                                initTheSelectedPetValue = true;
-                                                petsData.forEach((element) {
-                                                  element.isSelected = false;
-                                                });
-                                                petsData[0].isSelected = false;
-
-                                                dropDownId =
-                                                    petsData[index].petId;
-                                                petName =
-                                                    petsData[index].petName;
-                                                petGender =
-                                                    petsData[index].gender;
-                                                breedId =
-                                                    petsData[index].breedId;
-                                                isSpayed =
-                                                    petsData[index].isSpayed;
-
-                                                petsData.forEach((element) {
-                                                  element.isSelected = false;
-                                                });
-                                                petsData[index].isSelected =
-                                                    true;
-                                                print(dropDownId);
-                                              },
-                                            );
-                                          },
-                                          height: 80,
-                                          aspectRatio: 1.5,
-                                          viewportFraction: 1,
-                                          initialPage: 0,
-                                          enableInfiniteScroll: false,
-                                          reverse: false,
-                                          autoPlay: false,
-                                          autoPlayInterval:
-                                              const Duration(seconds: 3),
-                                          autoPlayAnimationDuration:
-                                              const Duration(milliseconds: 800),
-                                          autoPlayCurve: Curves.fastOutSlowIn,
-                                          enlargeCenterPage: true,
-                                          scrollDirection: Axis.horizontal,
-                                        ),
-                                      )
-                                    : buildEmptyPetsContent(
-                                        context,
-                                      );
-                              },
-                            )
-                          : SizedBox(),
+                      // widget.petId == '' || widget.petId.isEmpty
+                      //     ? (LayoutCubit.get(context).pets.isNotEmpty)
+                      //         ? Text(
+                      //           isArabic() ? 'أحد أليف' : 'Your Pets',
+                      //           style: FontStyleThame.textStyle(
+                      //             context: context,
+                      //             fontSize: 14,
+                      //             fontWeight: FontWeight.bold,
+                      //           ),
+                      //         )
+                      //         : Center(
+                      //           child: Text(
+                      //             isArabic()
+                      //                 ? 'يرجى إضافة أليف لبدء الحجز'
+                      //                 : 'Please add pets to start reservation',
+                      //             style: FontStyleThame.textStyle(
+                      //               context: context,
+                      //               fontSize: 14,
+                      //               fontWeight: FontWeight.bold,
+                      //             ),
+                      //           ),
+                      //         )
+                      //     : SizedBox(),
+                      // SizedBox(height: 5),
+                      // widget.petId == '' || widget.petId.isEmpty
+                      //     ? BlocConsumer<LayoutCubit, LayoutState>(
+                      //       listener: (context, state) {
+                      //         // TODO: implement listener
+                      //       },
+                      //
+                      //       /// TODO : Mohamed Elkerm -> bad practise logic code in UI
+                      //       builder: (context, state) {
+                      //         List<PetData> petsData =
+                      //             LayoutCubit.get(context).pets
+                      //                 .where(
+                      //                   (element) =>
+                      //                       element.petId !=
+                      //                       CacheHelper.getData('clintId'),
+                      //                 )
+                      //                 .toList();
+                      //         if (!initTheSelectedPetValue) {
+                      //           dropDownId = petsData[0].petId;
+                      //           petName = petsData[0].petName;
+                      //           petGender = petsData[0].gender;
+                      //           breedId = petsData[0].breedId;
+                      //           isSpayed = petsData[0].isSpayed;
+                      //           petsData[0].isSelected = true;
+                      //         }
+                      //         return petsData.isNotEmpty
+                      //             ? CarouselSlider.builder(
+                      //               itemCount: petsData.length,
+                      //               itemBuilder: (context, index, realIndex) {
+                      //                 return InkWell(
+                      //                   onTap: () {
+                      //                     setState(() {
+                      //                       dropDownId = petsData[index].petId;
+                      //                       petName = petsData[index].petName;
+                      //                       petGender = petsData[index].gender;
+                      //                       breedId = petsData[index].breedId;
+                      //                       isSpayed = petsData[index].isSpayed;
+                      //
+                      //                       print(dropDownId);
+                      //                     });
+                      //                     petsData.forEach((element) {
+                      //                       element.isSelected = false;
+                      //                     });
+                      //                     petsData[index].isSelected = true;
+                      //                     setState(() {});
+                      //                   },
+                      //                   child: buildPetItem(
+                      //                     petsData[index],
+                      //                     cubit,
+                      //                     context,
+                      //                   ),
+                      //                 );
+                      //               },
+                      //               options: CarouselOptions(
+                      //                 onPageChanged: (index, reason) {
+                      //                   setState(() {
+                      //                     initTheSelectedPetValue = true;
+                      //                     petsData.forEach((element) {
+                      //                       element.isSelected = false;
+                      //                     });
+                      //                     petsData[0].isSelected = false;
+                      //
+                      //                     dropDownId = petsData[index].petId;
+                      //                     petName = petsData[index].petName;
+                      //                     petGender = petsData[index].gender;
+                      //                     breedId = petsData[index].breedId;
+                      //                     isSpayed = petsData[index].isSpayed;
+                      //
+                      //                     petsData.forEach((element) {
+                      //                       element.isSelected = false;
+                      //                     });
+                      //                     petsData[index].isSelected = true;
+                      //                     print(dropDownId);
+                      //                   });
+                      //                 },
+                      //                 height: 80,
+                      //                 aspectRatio: 1.5,
+                      //                 viewportFraction: 1,
+                      //                 initialPage: 0,
+                      //                 enableInfiniteScroll: false,
+                      //                 reverse: false,
+                      //                 autoPlay: false,
+                      //                 autoPlayInterval: const Duration(
+                      //                   seconds: 3,
+                      //                 ),
+                      //                 autoPlayAnimationDuration: const Duration(
+                      //                   milliseconds: 800,
+                      //                 ),
+                      //                 autoPlayCurve: Curves.fastOutSlowIn,
+                      //                 enlargeCenterPage: true,
+                      //                 scrollDirection: Axis.horizontal,
+                      //               ),
+                      //             )
+                      //             : EmptyState(
+                      //               onAddPetPressed:
+                      //                   () => showPetTypeSelection(context),
+                      //             );
+                      //       },
+                      //     )
+                      //     : SizedBox(),
                       // if (LayoutCubit.get(context).pets.isNotEmpty &&
                       //     LayoutCubit.get(context).pets.length > 1)
                       //   Text(
@@ -550,28 +562,25 @@ class _BookingScreenState extends State<BookingScreen> {
                       //   ),
 
                       ///Doctor
-                      SizedBox(
-                        height: 15,
-                      ),
+                      SizedBox(height: 15),
                       buildDropDownDoctor(),
 
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                            isArabic()
-                                ? 'من فضلك اختار وقت الحجز'
-                                : 'Please select time for reservation',
-                            style: FontStyleThame.textStyle(
-                              context: context,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            )),
+                          isArabic()
+                              ? 'من فضلك اختار وقت الحجز'
+                              : 'Please select time for reservation',
+                          style: FontStyleThame.textStyle(
+                            context: context,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
 
                       /// Calendar Date Picker
-                      SizedBox(
-                        height: 5,
-                      ),
+                      SizedBox(height: 5),
                       CalendarScreen(
                         isShowTime: true,
                         isShowDate: false,
@@ -601,9 +610,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           setState(() {});
                         },
                       ),
-                      SizedBox(
-                        height: 80,
-                      ),
+                      SizedBox(height: 80),
                     ],
                   ),
                 ),
@@ -615,7 +622,7 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget buildPetItem(PetsData doctor, AppointmentCubit cubit, context) {
+  Widget buildPetItem(PetData doctor, AppointmentCubit cubit, context) {
     return Stack(
       alignment: AlignmentDirectional.centerEnd,
       children: [
@@ -625,11 +632,12 @@ class _BookingScreenState extends State<BookingScreen> {
             width: double.infinity,
             decoration: Decorations.kDecorationBoxShadow(
               context: context,
-              color: doctor.isSelected
-                  ? MainCubit.get(context).isDark
-                      ? Colors.grey[800]
-                      : Colors.grey[300]
-                  : MainCubit.get(context).isDark
+              color:
+                  doctor.isSelected
+                      ? MainCubit.get(context).isDark
+                          ? Colors.grey[800]
+                          : Colors.grey[300]
+                      : MainCubit.get(context).isDark
                       ? Colors.black38
                       : Colors.white,
             ),
@@ -659,37 +667,29 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
           ),
         ),
-        if (LayoutCubit.get(context).pets.length > 1)
-          Shimmer.fromColors(
-            baseColor: Colors.grey.shade400,
-            highlightColor: Colors.grey.shade200,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Align(
-                  widthFactor: .4,
-                  child: Icon(
-                    Icons.keyboard_arrow_right_outlined,
-                  ),
-                ),
-                Align(
-                  widthFactor: .4,
-                  child: Icon(
-                    Icons.keyboard_arrow_right_outlined,
-                  ),
-                ),
-                Align(
-                  widthFactor: .4,
-                  child: Icon(
-                    Icons.keyboard_arrow_right_outlined,
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                )
-              ],
-            ),
-          )
+        // if (LayoutCubit.get(context).pets.length > 1)
+        //   Shimmer.fromColors(
+        //     baseColor: Colors.grey.shade400,
+        //     highlightColor: Colors.grey.shade200,
+        //     child: Row(
+        //       mainAxisAlignment: MainAxisAlignment.end,
+        //       children: [
+        //         Align(
+        //           widthFactor: .4,
+        //           child: Icon(Icons.keyboard_arrow_right_outlined),
+        //         ),
+        //         Align(
+        //           widthFactor: .4,
+        //           child: Icon(Icons.keyboard_arrow_right_outlined),
+        //         ),
+        //         Align(
+        //           widthFactor: .4,
+        //           child: Icon(Icons.keyboard_arrow_right_outlined),
+        //         ),
+        //         SizedBox(width: 10),
+        //       ],
+        //     ),
+        //   ),
       ],
     );
   }
@@ -722,13 +722,13 @@ class _BookingScreenState extends State<BookingScreen> {
             child: Row(
               children: [
                 Text(
-                    doctorName ??
-                        (isArabic() ? 'اختر الطبيب' : 'Select doctor'),
-                    style: FontStyleThame.textStyle(
-                      context: context,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    )),
+                  doctorName ?? (isArabic() ? 'اختر الطبيب' : 'Select doctor'),
+                  style: FontStyleThame.textStyle(
+                    context: context,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 Spacer(),
                 CircleAvatar(
                   radius: 20,
@@ -741,23 +741,22 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
           ),
           borderRadius: const BorderRadius.all(Radius.circular(12)),
-          items: widget.doctors.map((DoctorModel value) {
-            return DropdownMenuItem<DoctorModel>(
-              value: value,
-              child: Row(
-                children: [
-                  Text(value.name),
-                  Spacer(),
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundImage: NetworkImage(
-                      value.image,
-                    ),
+          items:
+              widget.doctors.map((DoctorModel value) {
+                return DropdownMenuItem<DoctorModel>(
+                  value: value,
+                  child: Row(
+                    children: [
+                      Text(value.name),
+                      Spacer(),
+                      CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(value.image),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            );
-          }).toList(),
+                );
+              }).toList(),
         ),
       ),
     );
@@ -807,14 +806,17 @@ class _BookingScreenState extends State<BookingScreen> {
   /// TODO : Mohamed Elkerm -> bad practise logic code in UI
   void handleCreateAppointment(BuildContext context) {
     print("start handleCreateAppointment!!!!!!!!");
-    String formatDate =
-        DateFormat('yyyy-MM-dd', 'en_US').format(widget.selectedDate);
+    String formatDate = DateFormat(
+      'yyyy-MM-dd',
+      'en_US',
+    ).format(widget.selectedDate);
     final clinicCode = widget.clinicCode;
     final appointmentTime = time! + ':00';
     final appointmentDate = formatDate;
     final doctorId = this.doctorId;
     final appointmentCubit = AppointmentCubit.get(context);
-    final isPetFromCache = CacheHelper.getData('isPet') != null &&
+    final isPetFromCache =
+        CacheHelper.getData('isPet') != null &&
         CacheHelper.getData('isPet') == true;
     final petNameFromCache = CacheHelper.getData('activeId');
     final petGenderFromCache = CacheHelper.getData('gender');
@@ -855,14 +857,16 @@ class _BookingScreenState extends State<BookingScreen> {
           petSqueakId: dropDownId!,
           appointmentTime: appointmentTime,
           appointmentDate: appointmentDate,
-          petGender: isPetFromCache
-              ? petGenderFromCache
-              : widget.genderForPetFromAppoinmentScreen == null
+          petGender:
+              isPetFromCache
+                  ? petGenderFromCache
+                  : widget.genderForPetFromAppoinmentScreen == null
                   ? 1
                   : widget.genderForPetFromAppoinmentScreen,
-          petName: isPetFromCache
-              ? petNameFromCache
-              : widget.petNameFromAppoinmentIcon,
+          petName:
+              isPetFromCache
+                  ? petNameFromCache
+                  : widget.petNameFromAppoinmentIcon,
           clientId: appointmentCubit.petListInVet.firstOrNull?.clientId ?? '',
           isExisted: false,
           notExistedOrPet: false,
@@ -927,11 +931,7 @@ class _ShimmerArrowAnimationState extends State<ShimmerArrowAnimation>
         return ShaderMask(
           shaderCallback: (Rect bounds) {
             return LinearGradient(
-              colors: [
-                Colors.white10,
-                Colors.white,
-                Colors.white10,
-              ],
+              colors: [Colors.white10, Colors.white, Colors.white10],
               stops: const [0.0, 0.5, 1.0],
               begin: Alignment(-1 + _animation.value, 0), // Moves gradient
               end: Alignment(1 + _animation.value, 0),

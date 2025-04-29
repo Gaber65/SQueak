@@ -5,10 +5,10 @@ import 'package:squeak/features/appointments/models/get_appointment_model.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../../generated/l10n.dart';
-import '../../../pets/models/pet_model.dart';
+import '../../../pets/data/models/pet_model.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 
-Widget buildPetFilter(BuildContext context, List<PetsData> pets) {
+Widget buildPetFilter(BuildContext context, List<PetData> pets) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Container(
@@ -20,16 +20,11 @@ Widget buildPetFilter(BuildContext context, List<PetsData> pets) {
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: PopupMenuButton<PetsData>(
+        child: PopupMenuButton<PetData>(
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height,
           ),
           offset: Offset(0, 40),
-          child: buildPopupButtonChild(
-              context,
-              UserAppointmentCubit.get(context).petName ??
-                  S.of(context).filter_hint_pets,
-              UserAppointmentCubit.get(context).selectedPetId != null),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -39,7 +34,7 @@ Widget buildPetFilter(BuildContext context, List<PetsData> pets) {
             UserAppointmentCubit.get(context).filterAppointments();
           },
           itemBuilder: (context) => pets.map((e) {
-            return PopupMenuItem<PetsData>(
+            return PopupMenuItem<PetData>(
               value: e,
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * .32,
@@ -47,6 +42,11 @@ Widget buildPetFilter(BuildContext context, List<PetsData> pets) {
               ),
             );
           }).toList(),
+          child: buildPopupButtonChild(
+              context,
+              UserAppointmentCubit.get(context).petName ??
+                  S.of(context).filter_hint_pets,
+              UserAppointmentCubit.get(context).selectedPetId != null),
         ),
       ),
     ),
@@ -70,11 +70,6 @@ Widget buildStateFilter(BuildContext context) {
             maxHeight: MediaQuery.of(context).size.height,
           ),
           offset: Offset(0, 40),
-          child: buildPopupButtonChild(
-              context,
-              UserAppointmentCubit.get(context).selectedStateValue ??
-                  S.of(context).filter_hint_State,
-              UserAppointmentCubit.get(context).selectedStateValue != null),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -89,6 +84,11 @@ Widget buildStateFilter(BuildContext context) {
               child: Text(e.key),
             );
           }).toList(),
+          child: buildPopupButtonChild(
+              context,
+              UserAppointmentCubit.get(context).selectedStateValue ??
+                  S.of(context).filter_hint_State,
+              UserAppointmentCubit.get(context).selectedStateValue != null),
         ),
       ),
     ),

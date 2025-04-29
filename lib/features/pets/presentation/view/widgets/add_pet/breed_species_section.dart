@@ -131,6 +131,7 @@ class BreedSpeciesSection extends StatelessWidget {
         cubit.breedData.clear();
         cubit.breedIdController.clear();
         cubit.searchController.clear();
+        cubit.getBreedsBySpecies(suggestion.id);
       },
       suggestionsBoxController: suggestionBoxControllerSpecies,
       displayAllSuggestionWhenTap: true,
@@ -139,7 +140,10 @@ class BreedSpeciesSection extends StatelessWidget {
 
   final suggestionBoxController = SuggestionsBoxController();
 
-  Widget _buildDropDownBreed(List<BreedEntity> breedData, BuildContext context) {
+  Widget _buildDropDownBreed(
+    List<BreedEntity> breedData,
+    BuildContext context,
+  ) {
     List<BreedEntity> getSuggestions(String query) {
       return breedData
           .where((s) => s.enType.toLowerCase().contains(query.toLowerCase()))

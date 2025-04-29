@@ -3,9 +3,9 @@ import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/pets/data/models/pet_model.dart';
 import 'package:squeak/features/service/models/vaccination_entities.dart';
 import '../../../../generated/l10n.dart';
-import '../../../pets/models/pet_model.dart';
 import '../../controller/vac_cubit/vaccination_cubit.dart';
 
 class editMethod4 extends StatefulWidget {
@@ -24,7 +24,7 @@ class editMethod4 extends StatefulWidget {
 
   final TextEditingController commentController;
 
-  final PetsData petModel;
+  final PetData petModel;
 
   @override
   State<editMethod4> createState() => _editMethod4State();

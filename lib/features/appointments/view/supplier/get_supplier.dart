@@ -12,7 +12,7 @@ import '../../../../generated/l10n.dart';
 import '../../../layout/search/presentation/controller/search_cubit.dart';
 import '../../../layout/search/presentation/screens/search_screen.dart';
 import '../../../layout/search/presentation/widget/build_column_search_body.dart';
-import '../../../vetcare/view/pet_merge_screen.dart';
+import '../../../vetcare/presenation/view/pet_merge_screen.dart';
 import '../../controller/clinic/appointment_state.dart';
 import 'dart:io'; // Import for Platform and exit()
 import 'package:flutter/services.dart'; // Import for SystemNavigator.pop()
@@ -78,7 +78,7 @@ class MySupplierScreen extends StatelessWidget {
                                 navigateAndFinish(
                                   context,
                                   PetMergeScreen(
-                                    Code: SearchCubit.get(context)
+                                    code: SearchCubit.get(context)
                                         .searchController
                                         .text,
                                     isNavigation: true,

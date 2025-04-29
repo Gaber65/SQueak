@@ -5,8 +5,8 @@ import 'package:app_links/app_links.dart';
 
 import 'package:squeak/features/QR/view/follow-confirmation_screen.dart';
 import 'package:squeak/features/QR/view/qr_register_screen.dart';
-import 'package:squeak/features/vetcare/view/vetCareRegister.dart';
 
+import '../../../../../features/vetcare/presenation/view/vetCareRegister.dart';
 import '../../../../utils/export_path/export_files.dart';
 
 void initDeepLinkHandler(

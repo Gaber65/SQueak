@@ -10,9 +10,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:phone_text_field/model/phone_number.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-
-import '../../layout/controller/layout_cubit.dart';
-import '../../vetcare/models/vetIcare_client_model.dart';
+import '../../vetcare/data/models/vet_client_model.dart';
 import '../models/country_model.dart';
 import '../models/login.dart';
 
@@ -43,12 +41,12 @@ class AuthCubit extends Cubit<AuthState> {
   bool isLoggedIn = false;
 
   void init(context) {
-    if (CacheHelper.getData('phone') != null) {
-      var c = LayoutCubit.get(context);
-      emailController.text = c.profile.email;
-      nameController.text = c.profile.fullName;
-      phoneController.text = c.profile.phone;
-    }
+    // if (CacheHelper.getData('phone') != null) {
+    //   var c = LayoutCubit.get(context);
+    //   emailController.text = c.profile.email;
+    //   nameController.text = c.profile.fullName;
+    //   phoneController.text = c.profile.phone;
+    // }
   }
 
   PhoneNumber? phoneNumber;

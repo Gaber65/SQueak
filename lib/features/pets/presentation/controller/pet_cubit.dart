@@ -33,9 +33,7 @@ class PetCubit extends Cubit<PetState> {
     required this.createPetUseCase,
     required this.updatePetUseCase,
     required this.deletePetUseCase,
-  }) : super(PetInitial()) {
-    _loadCachedData();
-  }
+  }) : super(PetInitial()) {}
 
   static PetCubit get(context) => BlocProvider.of(context);
 
@@ -70,10 +68,7 @@ class PetCubit extends Cubit<PetState> {
   final picker = ImagePicker();
 
   // Load cached data on initialization
-  Future<void> _loadCachedData() async {
-    await getOwnerPets();
-    await getAllBreeds();
-  }
+
 
   // Get owner's pets
   Future<void> getOwnerPets() async {
@@ -85,6 +80,7 @@ class PetCubit extends Cubit<PetState> {
       petsList,
     ) {
       pets = petsList;
+      pets.forEach((element) => print(element.toJson()));
       emit(GetOwnerPetsSuccessState());
     });
   }
@@ -140,7 +136,7 @@ class PetCubit extends Cubit<PetState> {
 
   // Initialize form for editing an existing pet
   void initEdit(PetEntity pet) {
-    petNameController.text = pet.name;
+    petNameController.text = pet.petName;
     breedIdController.text = pet.breedId;
     birthdateController.text =
         pet.birthdate.isEmpty ? '' : pet.birthdate.substring(0, 10);
@@ -149,7 +145,7 @@ class PetCubit extends Cubit<PetState> {
             ? ''
             : pet.imageName.toString();
     gender = pet.gender;
-    petId = pet.id.toString();
+    petId = pet.petId.toString();
     specieId = pet.specieId.toString();
     spayed = pet.isSpayed;
     dropdownValueBreed = pet.breedId;
@@ -163,8 +159,8 @@ class PetCubit extends Cubit<PetState> {
     emit(PetCreateLoadingState());
 
     final pet = PetEntity(
-      id: null,
-      name: petNameController.text,
+      petId: '',
+      petName: petNameController.text,
       breedId: breedIdController.text,
       isSpayed: spayed,
       gender: gender,
@@ -193,8 +189,8 @@ class PetCubit extends Cubit<PetState> {
     emit(PetCreateLoadingState());
 
     final pet = PetEntity(
-      id: petId,
-      name: petNameController.text,
+      petId: petId,
+      petName: petNameController.text,
       breedId: breedIdController.text,
       isSpayed: spayed,
       gender: gender,
@@ -212,7 +208,7 @@ class PetCubit extends Cubit<PetState> {
     result.fold((error) => emit(PetCreateErrorState(error.message)), (
       updatedPet,
     ) {
-      final index = pets.indexWhere((p) => p.id.toString() == petId);
+      final index = pets.indexWhere((p) => p.petId.toString() == petId);
       if (index != -1) {
         pets[index] = updatedPet;
       }
@@ -227,7 +223,7 @@ class PetCubit extends Cubit<PetState> {
     final result = await deletePetUseCase(id);
 
     result.fold((error) => emit(DeletePetErrorState(error.message)), (_) {
-      pets.removeWhere((pet) => pet.id.toString() == id);
+      pets.removeWhere((pet) => pet.petId.toString() == id);
       emit(DeletePetSuccessState());
     });
   }

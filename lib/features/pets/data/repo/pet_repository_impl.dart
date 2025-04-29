@@ -19,21 +19,23 @@ class PetRepositoryImpl implements PetRepository {
 
   @override
   Future<Either<Failure, List<PetEntity>>> getOwnerPets() async {
-    if (await networkInfo.isConnected) {
-      try {
-        final remotePets = await remoteDataSource.getOwnerPets();
+    try {
+      final remotePets = await remoteDataSource.getOwnerPets();
+
+      remotePets.forEach((pet) {
+        print(pet.toJson());
+      });
+      if (CacheHelper.getData('usersPets') != null) {
         await localDataSource.cachePets(remotePets);
-        return Right(remotePets.map((pet) => pet.toEntity()).toList());
-      } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
-      }
-    } else {
-      try {
         final localPets = await localDataSource.getCachedPets();
-        return Right(localPets.map((pet) => pet.toEntity()).toList());
-      } on LocalDatabaseFailure catch (failure) {
-        return Left(LocalDatabaseFailure(failure.message));
+
+        return Right(localPets.map((pet) => pet).toList());
+      } else {
+        await localDataSource.cachePets(remotePets);
+        return Right(remotePets.map((pet) => pet).toList());
       }
+    } on ServerException catch (failure) {
+      return Left(ServerFailure(failure.errorMessageModel.message));
     }
   }
 
@@ -101,8 +103,8 @@ class PetRepositoryImpl implements PetRepository {
     if (await networkInfo.isConnected) {
       try {
         final petData = PetData(
-          petId: pet.id,
-          petName: pet.name,
+          petId: pet.petId,
+          petName: pet.petName,
           breedId: pet.breedId,
           isSpayed: pet.isSpayed,
           gender: pet.gender,
@@ -116,7 +118,7 @@ class PetRepositoryImpl implements PetRepository {
         pets.add(remotePet);
         await localDataSource.cachePets(pets);
 
-        return Right(remotePet.toEntity());
+        return Right(remotePet);
       } on ServerException catch (failure) {
         return Left(ServerFailure(failure.errorMessageModel.message));
       }
@@ -130,8 +132,8 @@ class PetRepositoryImpl implements PetRepository {
     if (await networkInfo.isConnected) {
       try {
         final petData = PetData(
-          petId: pet.id,
-          petName: pet.name,
+          petId: pet.petId,
+          petName: pet.petName,
           breedId: pet.breedId,
           isSpayed: pet.isSpayed,
           gender: pet.gender,
@@ -141,17 +143,17 @@ class PetRepositoryImpl implements PetRepository {
         );
 
         final remotePet = await remoteDataSource.updatePet(
-          pet.id.toString(),
+          pet.petId.toString(),
           petData,
         );
         final pets = await localDataSource.getCachedPets();
-        final index = pets.indexWhere((p) => p.petId == pet.id);
+        final index = pets.indexWhere((p) => p.petId == pet.petId);
         if (index != -1) {
           pets[index] = remotePet;
           await localDataSource.cachePets(pets);
         }
 
-        return Right(remotePet.toEntity());
+        return Right(remotePet);
       } on ServerException catch (failure) {
         return Left(ServerFailure(failure.errorMessageModel.message));
       }

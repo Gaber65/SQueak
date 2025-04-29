@@ -34,11 +34,11 @@ class PetNameField extends StatelessWidget {
             size: 20,
             color: isDark ? ColorManager.sWhite : ColorManager.black_87,
           ),
-          enable: true,
-          hintText: isArabic() ? 'ادخل الاسم الحيوان' : 'Enter pet name',
+          enable: false,
+          hintText: isArabic() ? 'ادخل الاسم الاليف' : 'Enter pet name',
           validatorText:
               isArabic()
-                  ? "من فضلك ادخل الاسم الحيوان"
+                  ? "من فضلك ادخل الاسم الاليف"
                   : "Please enter pet name",
           obscureText: false,
         ),

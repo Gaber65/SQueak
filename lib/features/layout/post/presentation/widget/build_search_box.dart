@@ -4,9 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/service/global_widget/toast.dart';
 import '../../../../../core/service/service_locator/service_locator.dart';
 import '../../../../../core/utils/theme/navigation_helper/navigation.dart';
-import '../../../../vetcare/view/pet_merge_screen.dart';
+import '../../../../vetcare/presenation/view/pet_merge_screen.dart';
 import '../../../search/presentation/controller/search_cubit.dart';
-import '../../../search/presentation/screens/search_screen.dart';
 import '../../../search/presentation/widget/build_column_search_body.dart';
 import '../controller/post_cubit.dart';
 
@@ -26,7 +25,7 @@ Padding buildSearchBox(PostCubit cubit) {
               navigateAndFinish(
                 context,
                 PetMergeScreen(
-                  Code: SearchCubit.get(context).searchController.text,
+                  code: SearchCubit.get(context).searchController.text,
                   isNavigation: true,
                 ),
               );

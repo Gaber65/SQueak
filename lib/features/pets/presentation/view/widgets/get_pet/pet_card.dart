@@ -57,7 +57,7 @@ class PetCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                pet.name,
+                pet.petName,
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -88,9 +88,9 @@ class PetCard extends StatelessWidget {
             () => navigateToScreen(
               context,
               MySupplierScreen(
-                petId: pet.id,
+                petId: pet.petId,
                 isSpayed: pet.isSpayed,
-                petNameFromAppoinmentIcon: pet.name,
+                petNameFromAppoinmentIcon: pet.petName,
                 genderForPetFromAppoinmentScreen: pet.gender,
               ),
             ),
@@ -150,7 +150,7 @@ class PetCard extends StatelessWidget {
                   text: 'هل أنت متأكد أنك تريد حذف ',
                   children: [
                     TextSpan(
-                      text: pet.name,
+                      text: pet.petName,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const TextSpan(text: '?'),
@@ -162,7 +162,7 @@ class PetCard extends StatelessWidget {
                   text: 'Are you sure you want to delete ',
                   children: [
                     TextSpan(
-                      text: pet.name,
+                      text: pet.petName,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const TextSpan(text: '?'),
@@ -172,7 +172,10 @@ class PetCard extends StatelessWidget {
       imageUrl:
           'https://img.freepik.com/premium-vector/sad-dog_161669-74.jpg?size=626&ext=jpg&uid=R78903714&ga=GA1.2.131510781.1692744483&semt=ais',
       onConfirm: () async {
-        await cubit.deletePet(pet.id.toString());
+
+        print('pet id ${pet.petId.toString()}');
+        print('pet id ${pet.toJson()}');
+        await cubit.deletePet(pet.petId.toString());
         Navigator.of(context).pop(true);
       },
     );

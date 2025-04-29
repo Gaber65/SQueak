@@ -9,11 +9,12 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/models/get_appointment_model.dart';
 import 'package:squeak/features/appointments/view/appointments/book_again_screen.dart';
 import 'package:squeak/features/appointments/view/appointments/rate_appointment.dart';
-import 'package:squeak/features/layout/controller/layout_cubit.dart';
+import 'package:squeak/features/layout/layout/controller/layout_cubit.dart';
+import 'package:squeak/features/pets/data/models/pet_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../generated/l10n.dart';
-import '../../../layout/layout.dart';
+import '../../../layout/layout/view/layout.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 import '../component/filter_component.dart';
 import '../files_and_prescription_for_pet/files_for_pet_screen.dart';
@@ -33,7 +34,6 @@ class AllAppointment extends StatelessWidget {
                     ..getSupplier()
                     ..getAppointment(false),
         ),
-        BlocProvider(create: (context) => LayoutCubit()..getOwnerPet()),
       ],
       child: BlocConsumer<UserAppointmentCubit, UserAppointmentState>(
         listener: (context, state) {
@@ -54,15 +54,15 @@ class AllAppointment extends StatelessWidget {
                 preferredSize: const Size.fromHeight(50),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: BlocConsumer<LayoutCubit, LayoutState>(
-                        builder: (context, state) {
-                          List<Pet> pets = LayoutCubit.get(context).pets;
-                          return buildPetFilter(context, pets);
-                        },
-                        listener: (context, state) {},
-                      ),
-                    ),
+                    // Expanded(
+                    //   child: BlocConsumer<LayoutCubit, LayoutState>(
+                    //     builder: (context, state) {
+                    //       // List<PetData> pets = LayoutCubit.get(context).pets;
+                    //       // return buildPetFilter(context, pets);
+                    //     },
+                    //     listener: (context, state) {},
+                    //   ),
+                    // ),
                     Expanded(
                       child: BlocConsumer<LayoutCubit, LayoutState>(
                         builder: (context, state) {

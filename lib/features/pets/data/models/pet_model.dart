@@ -1,51 +1,18 @@
 import '../../domain/entities/pet_entity.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-class PetModel extends ErrorMessageModel {
-  final List<PetData> pets;
-
-  const PetModel({
-    required super.errors,
-    required super.message,
-    required super.success,
-    required super.statusCode,
-    required this.pets,
-  });
-
-  factory PetModel.fromJson(Map<String, dynamic> json) {
-    return PetModel(
-      errors: ErrorMessageModel.convertJsonToMap(json['errors']),
-      message: json['message'],
-      statusCode: json['statusCode'],
-      success: json['success'],
-      pets: List<PetData>.from(json['pets'].map((x) => PetData.fromJson(x))),
-    );
-  }
-}
-
-class PetData {
-  final dynamic petId;
-  final dynamic specieId;
-  BreedData? breed;
-  final String petName;
-  final String breedId;
-  final bool isSpayed;
-  bool isSelected;
-  final int gender;
-  dynamic imageName;
-  final String birthdate;
-
+class PetData extends PetEntity {
   PetData({
-    required this.petId,
-    required this.petName,
-    this.isSelected = false,
-    required this.breedId,
-    required this.isSpayed,
-    required this.gender,
-    this.breed,
-    required this.specieId,
-    required this.imageName,
-    required this.birthdate,
+    required super.petId,
+    required super.petName,
+    required super.breedId,
+    required super.isSpayed,
+    required super.gender,
+    required super.specieId,
+    required super.imageName,
+    required super.birthdate,
+    super.breed,
+    super.isSelected,
   });
 
   factory PetData.fromJson(Map<String, dynamic> json) {
@@ -69,28 +36,14 @@ class PetData {
   Map<String, dynamic> toJson() {
     return {
       'petName': petName,
-      'breedId': breedId,
+      'id': petId,
+      'breedId': breedId.isEmpty ? null : breedId,
       'gender': gender,
       'isSpayed': isSpayed,
       'specieId': specieId,
       'imageName': imageName,
       'birthdate': birthdate,
     };
-  }
-
-  PetEntity toEntity() {
-    return PetEntity(
-      id: petId,
-      name: petName,
-      breedId: breedId,
-      isSpayed: isSpayed,
-      gender: gender,
-      specieId: specieId,
-      imageName: imageName,
-      birthdate: birthdate,
-      breed: breed,
-      isSelected: isSelected,
-    );
   }
 }
 
@@ -109,7 +62,7 @@ class BreedData extends BreedEntity {
               ? (isArabic() ? json['arType'] : json['enType']) ?? 'Unknown Type'
               : (isArabic() ? json['arBreed'] : json['enBreed']) ??
                   'Unknown Breed',
-      id: json['id'],
+      id: json['id'] ?? '',
     );
   }
 

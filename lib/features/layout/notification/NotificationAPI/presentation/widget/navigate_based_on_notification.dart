@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/controller/notifications_cubit.dart';
-import 'package:squeak/features/pets/view/pet_screen.dart';
-import 'package:squeak/features/vetcare/view/follow_request_screen.dart';
+import 'package:squeak/features/vetcare/presenation/view/follow_request_screen.dart';
 
+import '../../../../../pets/presentation/view/pet_screen.dart';
 import '../../domain/entities/notification_entities.dart';
 import '../screens/post_notfication.dart';
 import 'get_appoiment_function.dart';
@@ -30,7 +30,7 @@ void navigateBasedOnNotification(
       ).updateNotification(notification.notificationEvents[0].id);
       navigateToScreen(
         context,
-        FollowRequestScreen(ClinicID: notification.eventTypeId),
+        FollowRequestScreen(clinicID: notification.eventTypeId),
       );
       break;
 

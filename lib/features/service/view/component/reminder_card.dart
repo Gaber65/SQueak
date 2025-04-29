@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/pets/data/models/pet_model.dart';
 
 import 'package:squeak/features/service/view/component/reminder_wizard.dart';
-import '../../../pets/models/pet_model.dart';
 import '../../models/reminder.dart';
 import 'package:intl/intl.dart';
 
@@ -12,7 +12,7 @@ class ReminderCard extends StatelessWidget {
   final Reminder reminder;
   final Function remove;
 
-  final PetsData petModel;
+  final PetData petModel;
 
   const ReminderCard({
     Key? key,

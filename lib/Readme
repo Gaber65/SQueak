@@ -30,3 +30,17 @@ Uncomment the following lines in the pubspec.yaml file:
 
 dependencies:
   workmanager: ^0.5.0
+
+
+on  Booking Screen we need to solce this code in this path lib/features/appointments/view/appointments/booking_screen.dart same prlem lib/features/appointments/view/appointments/book_again_screen.dart
+
+          if (state is CreateAppointmentsSuccess) {
+            LayoutCubit.get(context).changeBottomNav(2);
+            LayoutCubit.get(context).pets.forEach((element) {
+              element.isSelected = false;
+            });
+            navigateAndFinish(context, LayoutScreen());
+          }
+
+
+auth cubit

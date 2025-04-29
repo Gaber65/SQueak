@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/service/models/vaccination_entities.dart';
 
-
-import '../../../settings/view/update_profile_screen.dart';
+import '../../../settings/persentaion/view/update_profile_screen.dart';
 import '../../models/reminder_model.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
@@ -17,18 +16,12 @@ class VaccinationCubit extends Cubit<VaccinationState> {
 
   String feedSubTypeValue =
       isArabic() ? 'نوع معين الطعام' : 'select feed sub type';
-  List<String> feedSubType = [
-    "Dry food",
-    "wet food",
-    "snacks",
-  ];
+  List<String> feedSubType = ["Dry food", "wet food", "snacks"];
 
   static VaccinationCubit get(context) => BlocProvider.of(context);
   bool isButtonSheetShown = false;
 
-  void changeBottomSheetShow({
-    required bool isShow,
-  }) {
+  void changeBottomSheetShow({required bool isShow}) {
     isButtonSheetShown = !isShow;
     emit(AppChangeBottomSheetState());
   }
@@ -52,9 +45,10 @@ class VaccinationCubit extends Cubit<VaccinationState> {
         print("/");
       });
 
-      vaccinationName = (object.data['data']['_vaccinations'] as List)
-          .map((e) => VaccinationNameModel.fromJson(e))
-          .toList();
+      vaccinationName =
+          (object.data['data']['_vaccinations'] as List)
+              .map((e) => VaccinationNameModel.fromJson(e))
+              .toList();
       emit(GetVaccinationSuccessState());
     } on DioError catch (error) {
       print(error.response!.data);
@@ -68,9 +62,7 @@ class VaccinationCubit extends Cubit<VaccinationState> {
 
   var listOfServices = [];
 
-  Future<void> getVacPet({
-    required String petId,
-  }) async {
+  Future<void> getVacPet({required String petId}) async {
     isVacLoading = true;
     listOfServices = [];
     emit(GetVaccinationLoadingState());
@@ -140,10 +132,7 @@ class VaccinationCubit extends Cubit<VaccinationState> {
     }
   }
 
-  Future<void> deleteDate({
-    required dynamic id,
-    required dynamic petId,
-  }) async {
+  Future<void> deleteDate({required dynamic id, required dynamic petId}) async {
     emit(DeleteVacPetsLoadingState());
     try {
       // Response object = await DioFinalHelper.deleteData(
@@ -155,9 +144,7 @@ class VaccinationCubit extends Cubit<VaccinationState> {
       //     return element.id == id;
       //   },
       // );
-      await LocalDatabaseHelper.deleteReminder(
-        id,
-      );
+      await LocalDatabaseHelper.deleteReminder(id);
 
       await getVacPet(petId: petId);
 
@@ -194,13 +181,14 @@ class VaccinationCubit extends Cubit<VaccinationState> {
 
     try {
       if (picked == null) {
-        errorToast(context,
-            isArabic() ? "الرجاء اختيار الوقت" : "Please select the time");
+        errorToast(
+          context,
+          isArabic() ? "الرجاء اختيار الوقت" : "Please select the time",
+        );
         isLoading = false;
         return;
       } else {
         int _notificationId = Random().nextInt(1000000);
-
 
         print("********************** : ${valueVacItem}");
         ReminderModel reminder = ReminderModel(
@@ -213,14 +201,16 @@ class VaccinationCubit extends Cubit<VaccinationState> {
           notes: comments,
           petId: petId,
           notificationID: _notificationId.toString(),
-          subTypeFeed: feedSubTypeValue.isEmpty ||
-                  feedSubTypeValue.toString() == "نوع معين الطعام" ||
-                  feedSubTypeValue.toString() == 'select feed sub type'
-              ? ""
-              : feedSubTypeValue.toString().trim(),
-          otherTitle: valueVacItem == "other" || valueVacItem == "أخرى"
-              ? otherController.text.trim()
-              : "",
+          subTypeFeed:
+              feedSubTypeValue.isEmpty ||
+                      feedSubTypeValue.toString() == "نوع معين الطعام" ||
+                      feedSubTypeValue.toString() == 'select feed sub type'
+                  ? ""
+                  : feedSubTypeValue.toString().trim(),
+          otherTitle:
+              valueVacItem == "other" || valueVacItem == "أخرى"
+                  ? otherController.text.trim()
+                  : "",
         );
 
         // print("Reminder Model");
@@ -299,7 +289,7 @@ class VaccinationCubit extends Cubit<VaccinationState> {
       "Flea":
           "🥟 Tiny invaders detected! Time to protect $petName from unwanted guests. Flea treatment time!",
       "Deworming":
-          "💊 Health check! $petName needs deworming to stay happy and healthy!"
+          "💊 Health check! $petName needs deworming to stay happy and healthy!",
     };
 
     Map<String, String> messagesAr = {
@@ -318,7 +308,7 @@ class VaccinationCubit extends Cubit<VaccinationState> {
       "Flea":
           "🥟 الغزاة الصغار وصلوا! حان وقت حماية $petName من الضيوف غير المرغوب فيهم!",
       "Deworming":
-          "💊 وقت العناية الصحية! $petName يحتاج جرعة التخلص من الديدان ليبقى بصحة وسعادة!"
+          "💊 وقت العناية الصحية! $petName يحتاج جرعة التخلص من الديدان ليبقى بصحة وسعادة!",
     };
 
     return isArabicLang
@@ -349,9 +339,7 @@ class VaccinationCubit extends Cubit<VaccinationState> {
   bool isSelectedTime = false;
   bool isSelectedVac = false;
 
-  Future<void> selectDate(
-    BuildContext context,
-  ) async {
+  Future<void> selectDate(BuildContext context) async {
     DateTime tomorrowDateItem = currentDateItem.add(const Duration(days: 0));
 
     final DateTime? pickedDate = await showDatePicker(
@@ -363,12 +351,42 @@ class VaccinationCubit extends Cubit<VaccinationState> {
     );
     if (pickedDate != null && pickedDate != currentDateItem) {
       currentDateItem;
-      String formattedDate =
-          pickedDate.toString().substring(0, 10); // 'yyyy-MM-dd'
+      String formattedDate = pickedDate.toString().substring(
+        0,
+        10,
+      ); // 'yyyy-MM-dd'
       parseDateFromInput(formattedDate);
       currentDateItem = DateTime.parse(formattedDate);
       emit(ChangeStateVacState());
     }
+  }
+
+  DateTime? parseDateFromInput(String input) {
+    try {
+      // Convert Arabic to English numbers
+
+      String englishInput = convertArabicToEnglishNumbers(input);
+
+      return DateTime.parse(englishInput);
+
+      // Parse the date
+    } catch (e) {
+      return null;
+
+      // Return null if parsing fails
+    }
+  }
+
+  String convertArabicToEnglishNumbers(String input) {
+    const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+
+    const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+    for (int i = 0; i < arabicNumbers.length; i++) {
+      input = input.replaceAll(arabicNumbers[i], englishNumbers[i]);
+    }
+
+    return input;
   }
 
   void changeSelectedTime() {
@@ -402,7 +420,10 @@ class VaccinationCubit extends Cubit<VaccinationState> {
 
   late TimeOfDay? pickedFromEdit = null;
 
-  Future<void> selectTimeFromEdit(BuildContext context, TimeOfDay initTime) async {
+  Future<void> selectTimeFromEdit(
+    BuildContext context,
+    TimeOfDay initTime,
+  ) async {
     emit(TimeSelectedLoading());
 
     final picked = await showTimePicker(
@@ -419,10 +440,7 @@ class VaccinationCubit extends Cubit<VaccinationState> {
     }
   }
 
-
-  Future<void> updateTheService({
-    required ReminderModel reminder,
-  }) async {
+  Future<void> updateTheService({required ReminderModel reminder}) async {
     emit(AddVaccinationLoadingState());
 
     try {
@@ -452,8 +470,10 @@ class VaccinationCubit extends Cubit<VaccinationState> {
       // print("***********");
       // print(reminder.time);
 
-      reminder.time =
-          reminder.time.replaceAll(RegExp(r'\s+'), ''); // Remove all spaces
+      reminder.time = reminder.time.replaceAll(
+        RegExp(r'\s+'),
+        '',
+      ); // Remove all spaces
 
       List<String> parts = reminder.time.split(":");
       int hour = int.parse(parts[0]);
@@ -500,21 +520,20 @@ class VaccinationCubit extends Cubit<VaccinationState> {
 
   DateTime? newValueForDateInEdit = null;
 
-  Future<void> selectDateOnEdit(
-    BuildContext context,
-    DateTime initDate,
-  ) async {
+  Future<void> selectDateOnEdit(BuildContext context, DateTime initDate) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialEntryMode: DatePickerEntryMode.calendarOnly,
       initialDate: initDate,
-      firstDate: initDate.isAfter(DateTime.now())? DateTime.now() : initDate,
+      firstDate: initDate.isAfter(DateTime.now()) ? DateTime.now() : initDate,
       lastDate: DateTime(2050),
     );
     if (pickedDate != null && pickedDate != newValueForDateInEdit) {
       newValueForDateInEdit;
-      String formattedDate =
-          pickedDate.toString().substring(0, 10); // 'yyyy-MM-dd'
+      String formattedDate = pickedDate.toString().substring(
+        0,
+        10,
+      ); // 'yyyy-MM-dd'
       parseDateFromInput(formattedDate);
       newValueForDateInEdit = DateTime.parse(formattedDate);
       emit(ChangeStateVacState());
@@ -543,4 +562,3 @@ class VaccinationCubit extends Cubit<VaccinationState> {
     emit(ChangeTheFreqValue());
   }
 }
-

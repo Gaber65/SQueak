@@ -42,7 +42,7 @@ String allClinicFollowerEndPoint(String clinicId) =>
 
 /// Vet Care (Clinic Tools)
 const String getClintFormVet = '$version/vetcare/clientpet/';
-const String acceptInvitation = '$version/vetcare/acceptinivitation/';
+const String acceptInvitationEndPoint = '$version/vetcare/acceptinivitation/';
 const String mergePetFormVet = '$version/vetcare/Pet/Add';
 
 /// Vaccination

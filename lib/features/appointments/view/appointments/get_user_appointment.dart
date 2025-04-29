@@ -12,12 +12,12 @@ import 'package:squeak/features/appointments/view/appointments/book_again_screen
 import 'package:squeak/features/appointments/view/appointments/rate_appointment.dart';
 import 'package:squeak/features/appointments/view/files_and_prescription_for_pet/files_for_pet_screen.dart';
 import 'package:squeak/features/appointments/view/files_and_prescription_for_pet/prescription_for_pet_screen.dart';
-import 'package:squeak/features/layout/controller/layout_cubit.dart';
+import 'package:squeak/features/layout/layout/controller/layout_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
 import '../../../../generated/l10n.dart';
-import '../../../pets/models/pet_model.dart';
+import '../../../pets/data/models/pet_model.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 import '../component/filter_component.dart';
 
@@ -63,15 +63,15 @@ class GetUserAppointment extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Expanded(
-                      child: BlocConsumer<LayoutCubit, LayoutState>(
-                        builder: (context, state) {
-                          List<PetsData> pets = LayoutCubit.get(context).pets;
-                          return buildPetFilter(context, pets);
-                        },
-                        listener: (context, state) {},
-                      ),
-                    ),
+                    // Expanded(
+                    //   child: BlocConsumer<LayoutCubit, LayoutState>(
+                    //     builder: (context, state) {
+                    //       List<PetData> pets = LayoutCubit.get(context).pets;
+                    //       return buildPetFilter(context, pets);
+                    //     },
+                    //     listener: (context, state) {},
+                    //   ),
+                    // ),
                     Expanded(
                       child: BlocConsumer<LayoutCubit, LayoutState>(
                         builder: (context, state) {

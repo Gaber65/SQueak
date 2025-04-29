@@ -1,0 +1,62 @@
+import 'dart:io';
+import 'package:dartz/dartz.dart';
+
+import '../../../../core/error/failure.dart';
+import '../../../../core/network/network_info.dart';
+import '../../domain/base_repo/profile_repository.dart';
+import '../../domain/entities/owner_entite.dart';
+import '../data_source/profile_local_data_source.dart';
+import '../data_source/profile_remote_data_source.dart';
+
+class ProfileRepositoryImpl implements ProfileRepository {
+  final ProfileRemoteDataSource remoteDataSource;
+  final ProfileLocalDataSource localDataSource;
+  final NetworkInfo networkInfo;
+
+  ProfileRepositoryImpl({
+    required this.remoteDataSource,
+    required this.localDataSource,
+    required this.networkInfo,
+  });
+
+  @override
+  Future<Either<Failure, Owner>> getOwnerData() async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteOwner = await remoteDataSource.getOwnerData();
+        await localDataSource.cacheCountryId(remoteOwner.countryId);
+        return Right(remoteOwner);
+      } on Exception catch (e) {
+        return Left(ServerFailure(e.toString()));
+      }
+    } else {
+      return Left(ServerFailure('No Internet Connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Owner>> updateProfile({
+    required String fullName,
+    required String address,
+    required String imageName,
+    required String birthDate,
+    required int gender,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final updatedOwner = await remoteDataSource.updateProfile(
+          fullName: fullName,
+          address: address,
+          imageName: imageName,
+          birthDate: birthDate,
+          gender: gender,
+        );
+        return Right(updatedOwner);
+      } on Exception catch (e) {
+        return Left(ServerFailure(e.toString()));
+      }
+    } else {
+      return Left(ServerFailure('No Internet Connection'));
+    }
+  }
+}

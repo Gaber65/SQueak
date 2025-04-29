@@ -5,10 +5,11 @@ import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/pets/data/models/pet_model.dart';
+import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/service/models/reminder_model.dart';
 import 'package:squeak/features/service/models/vaccination_entities.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import '../../../pets/models/pet_model.dart';
 import '../../controller/vac_cubit/vaccination_cubit.dart';
 import '../pet_vaccination.dart';
 import 'edit_vac.dart';
@@ -550,7 +551,7 @@ Widget buildConditional({
   required context,
   required BuildContext contextBloc,
   required VaccinationCubit cubit,
-  required PetsData petModel,
+  required PetEntity petModel,
   required listOfServices,
   required vacEntitiesData,
 }) {

@@ -1,6 +1,6 @@
 class PetEntity {
-  final dynamic id;
-  final String name;
+  final String petId;
+  final String petName;
   final String breedId;
   final bool isSpayed;
   final int gender;
@@ -8,11 +8,11 @@ class PetEntity {
   final dynamic imageName;
   final String birthdate;
   final BreedEntity? breed;
-  final bool isSelected;
+  bool isSelected;
 
-  const PetEntity({
-    required this.id,
-    required this.name,
+  PetEntity({
+    required this.petId,
+    required this.petName,
     required this.breedId,
     required this.isSpayed,
     required this.gender,
@@ -22,6 +22,16 @@ class PetEntity {
     this.breed,
     this.isSelected = false,
   });
+  Map<String, dynamic> toJson() => {
+    'petId': petId,
+    'petName': petName,
+    'breedId': breedId.isEmpty ? null : breedId,
+    'gender': gender,
+    'isSpayed': isSpayed,
+    'specieId': specieId,
+    'imageName': imageName,
+    'birthdate': birthdate,
+  };
 }
 
 class BreedEntity {
@@ -40,8 +50,5 @@ class SpeciesEntity {
   final String id;
   final String type;
 
-  const SpeciesEntity({
-    required this.id,
-    required this.type,
-  });
+  const SpeciesEntity({required this.id, required this.type});
 }

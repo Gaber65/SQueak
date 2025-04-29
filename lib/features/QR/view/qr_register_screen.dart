@@ -7,9 +7,8 @@ import 'package:squeak/features/authentication/view/widgets/authItem.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../generated/l10n.dart';
-import '../../layout/controller/layout_cubit.dart';
-import '../../layout/layout.dart';
-import '../../vetcare/view/pet_merge_screen.dart';
+import '../../layout/layout/view/layout.dart';
+import '../../vetcare/presenation/view/pet_merge_screen.dart';
 
 class RegisterQrScreen extends StatelessWidget {
   const RegisterQrScreen({
@@ -61,7 +60,7 @@ class RegisterQrScreen extends StatelessWidget {
                       navigateAndFinish(
                         context,
                         PetMergeScreen(
-                          Code: clinicCode,
+                          code: clinicCode,
                           isNavigation: false,
                         ),
                       );
@@ -74,9 +73,6 @@ class RegisterQrScreen extends StatelessWidget {
             } else {
               navigateAndFinish(context, LayoutScreen());
             }
-
-            LayoutCubit.get(context).getOwnerPet();
-            LayoutCubit.get(context).getOwnerData();
           }
         },
         builder: (context, state) {
