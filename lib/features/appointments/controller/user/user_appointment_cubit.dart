@@ -12,7 +12,7 @@ import 'package:squeak/features/appointments/view/appointments/print_reciept.dar
 import 'package:printing/printing.dart';
 import 'package:flutter/material.dart';
 
-import '../../../layout/layout/models/clinic_model.dart';
+import '../../../layout/layout/data/models/clinic_model.dart';
 import '../../models/print_model.dart';
 
 part 'user_appointment_state.dart';

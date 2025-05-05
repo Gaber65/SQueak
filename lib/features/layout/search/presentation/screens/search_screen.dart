@@ -4,7 +4,7 @@ import '../../../../vetcare/presenation/view/pet_merge_screen.dart';
 import '../controller/search_cubit.dart';
 import '../widget/build_column_search_body.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/layout/layout/view/layout.dart';
+import 'package:squeak/features/layout/layout/presentation/screens/layout_screen.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});

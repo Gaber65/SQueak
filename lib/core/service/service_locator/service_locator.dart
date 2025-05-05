@@ -2,6 +2,13 @@ import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart'
     show InternetConnectionChecker;
 import 'package:squeak/core/network/dio.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/layout/layout/data/datasources/layout_local_data_source.dart';
+import 'package:squeak/features/layout/layout/data/datasources/layout_remote_data_source.dart';
+import 'package:squeak/features/layout/layout/data/repositories/layout_repository_impl.dart';
+import 'package:squeak/features/layout/layout/domain/repositories/layout_repository.dart';
+import 'package:squeak/features/layout/layout/domain/usecases/get_current_app_version_usecase.dart';
+import 'package:squeak/features/layout/layout/domain/usecases/get_version_usecase.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/controller/notifications_cubit.dart';
 import 'package:squeak/features/layout/post/domain/usecase/get_user_posts_use_case.dart';
 import 'package:squeak/features/layout/post/presentation/controller/post_cubit.dart';
@@ -241,6 +248,33 @@ class ServiceLocator {
 
     // Repository
     sl.registerLazySingleton<BaseVetRepository>(() => VetRepository(sl()));
+
+    sl.registerFactory(
+          () => LayoutCubit(
+        getVersionUseCase: sl(),
+        getCurrentAppVersionUseCase: sl(),
+      ),
+    );
+
+    // Use cases
+    sl.registerLazySingleton(() => GetVersionUseCase(sl()));
+    sl.registerLazySingleton(() => GetCurrentAppVersionUseCase(sl()));
+
+    // Repository
+    sl.registerLazySingleton<LayoutRepository>(
+          () => LayoutRepositoryImpl(
+        remoteDataSource: sl(),
+        localDataSource: sl(),
+      ),
+    );
+
+    // Data sources
+    sl.registerLazySingleton<LayoutRemoteDataSource>(
+          () => LayoutRemoteDataSourceImpl(),
+    );
+    sl.registerLazySingleton<LayoutLocalDataSource>(
+          () => LayoutLocalDataSourceImpl(),
+    );
 
     // Data sources
     sl.registerLazySingleton<BaseVetRemoteDataSource>(

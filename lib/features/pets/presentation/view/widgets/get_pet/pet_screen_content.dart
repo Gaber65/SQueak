@@ -4,7 +4,6 @@ import 'package:squeak/features/pets/presentation/view/widgets/get_pet/pet_card.
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/pet_type_option.dart';
 
 import '../../../../../../core/utils/export_path/export_files.dart';
-import '../../../../../layout/layout/view/layout.dart';
 import '../../../../domain/entities/pet_entity.dart';
 import '../../../controller/pet_cubit.dart';
 import 'empty_state.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/features/authentication/view/login_screen.dart';
-import 'package:squeak/features/layout/layout/view/layout.dart';
+import 'package:squeak/features/layout/layout/presentation/screens/layout_screen.dart';
 import '../../../../../features/vetcare/presenation/view/pet_merge_screen.dart';
 import '../../../cache/shared_preferences/cache_helper.dart';
 

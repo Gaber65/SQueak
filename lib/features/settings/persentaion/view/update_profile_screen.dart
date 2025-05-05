@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/utils/export_path/export_files.dart';
-import '../../../layout/layout/controller/layout_cubit.dart';
-import '../../../layout/layout/view/layout.dart';
 import '../controller/setting_cubit.dart';
 
 class UpProfileScreen extends StatelessWidget {

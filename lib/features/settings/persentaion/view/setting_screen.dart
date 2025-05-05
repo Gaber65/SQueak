@@ -8,7 +8,6 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../core/utils/export_path/export_files.dart';
 import '../../../authentication/view/contact_us.dart';
 import '../../../authentication/view/login_screen.dart';
-import '../../../layout/layout/controller/layout_cubit.dart';
 import '../../../settings/persentaion/view/privacy_policy_screen.dart';
 import '../../../settings/persentaion/view/update_profile_screen.dart';
 import '../controller/setting_cubit.dart';

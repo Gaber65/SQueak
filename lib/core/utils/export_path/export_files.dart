@@ -82,3 +82,5 @@ export 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
 
 //lang
 export 'package:squeak/generated/l10n.dart';
+export 'package:squeak/features/layout/layout/presentation/cubit/layout_cubit.dart';
+export 'package:squeak/features/layout/layout/presentation/screens/layout_screen.dart';

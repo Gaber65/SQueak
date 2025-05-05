@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/layout/layout/controller/layout_cubit.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/pet_screen_content.dart';
 import 'package:squeak/generated/l10n.dart';
 

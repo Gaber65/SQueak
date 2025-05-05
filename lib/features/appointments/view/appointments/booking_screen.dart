@@ -6,13 +6,11 @@ import 'package:shimmer/shimmer.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/models/get_client_clinic_model.dart';
-import 'package:squeak/features/layout/layout/controller/layout_cubit.dart';
 import 'package:squeak/features/pets/data/models/pet_model.dart';
 import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/empty_state.dart';
 
 import '../../../../generated/l10n.dart';
-import '../../../layout/layout/view/layout.dart';
 import '../../../pets/presentation/view/widgets/get_pet/pet_screen_content.dart';
 import '../../controller/clinic/appointment_cubit.dart';
 import '../../controller/clinic/appointment_state.dart';

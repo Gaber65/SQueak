@@ -121,7 +121,7 @@ class BreedSpeciesSection extends StatelessWidget {
         return ListTile(
           title: Text(
             suggestion.type,
-            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+              style: TextStyle(color: isDark ? Colors.white : Colors.black),
           ),
         );
       },

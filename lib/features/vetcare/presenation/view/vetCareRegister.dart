@@ -8,7 +8,6 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import '../../../../generated/l10n.dart';
 import '../../../authentication/models/login.dart';
 import '../../../authentication/view/widgets/authItem.dart';
-import '../../../layout/layout/view/layout.dart';
 import '../../domain/entities/data_vet.dart';
 import '../controllers/vet_register/vet_register_cubit.dart';
 import 'pet_merge_screen.dart';

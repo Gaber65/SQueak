@@ -6,12 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/controller/user/user_appointment_cubit.dart';
-import 'package:squeak/features/layout/layout/controller/layout_cubit.dart';
 
 import 'package:squeak/generated/l10n.dart';
 
 
-import '../../../layout/layout/view/layout.dart';
 import '../../models/get_appointment_model.dart';
 
 class RateAppointment extends StatefulWidget {

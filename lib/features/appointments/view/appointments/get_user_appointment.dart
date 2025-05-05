@@ -12,7 +12,6 @@ import 'package:squeak/features/appointments/view/appointments/book_again_screen
 import 'package:squeak/features/appointments/view/appointments/rate_appointment.dart';
 import 'package:squeak/features/appointments/view/files_and_prescription_for_pet/files_for_pet_screen.dart';
 import 'package:squeak/features/appointments/view/files_and_prescription_for_pet/prescription_for_pet_screen.dart';
-import 'package:squeak/features/layout/layout/controller/layout_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 

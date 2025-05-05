@@ -6,8 +6,7 @@ import 'package:squeak/features/authentication/view/forgot_password.dart';
 import 'package:squeak/features/authentication/view/register_screen.dart';
 import 'package:squeak/features/authentication/view/widgets/authItem.dart';
 import 'package:squeak/features/authentication/view/widgets/phone_or_email_form.dart';
-import 'package:squeak/features/layout/layout/controller/layout_cubit.dart';
-import 'package:squeak/features/layout/layout/view/layout.dart';
+import 'package:squeak/features/layout/layout/presentation/screens/layout_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';

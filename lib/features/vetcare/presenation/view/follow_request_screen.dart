@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../../generated/l10n.dart';
-import '../../../layout/layout/view/layout.dart';
 import '../../../service/view/pet_vaccination.dart';
 import '../controllers/follow_request/follow_request_cubit.dart';
 import 'pet_merge_screen.dart';

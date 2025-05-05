@@ -7,8 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../../generated/l10n.dart';
-import '../../../layout/layout/controller/layout_cubit.dart';
-import '../../../layout/layout/view/layout.dart';
 import '../../../pets/presentation/view/pet_screen.dart';
 import '../../../service/view/pet_vaccination.dart';
 import '../../domain/entities/vet_client.dart';

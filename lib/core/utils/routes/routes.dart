@@ -4,7 +4,7 @@ import 'package:squeak/features/appointments/view/appointments/rate_appointment.
 import 'package:squeak/features/authentication/view/forgot_password.dart';
 import 'package:squeak/features/authentication/view/login_screen.dart';
 import 'package:squeak/features/authentication/view/register_screen.dart';
-import 'package:squeak/features/layout/layout/view/layout.dart';
+import 'package:squeak/features/layout/layout/presentation/screens/layout_screen.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/screens/post_notfication.dart';
 
 import '../../../features/pets/presentation/view/pet_screen.dart';
