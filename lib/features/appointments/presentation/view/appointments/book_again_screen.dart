@@ -6,10 +6,12 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:intl/intl.dart';
 
 
-import '../../../data/models/get_appointment_model.dart';
+import '../../../data/models/get_appointment_model.dart' as appointment_model;
 import '../../../data/models/get_client_clinic_model.dart';
+import '../../../data/models/doctor_model.dart';
 import '../../controller/clinic/appointment_cubit.dart';
 import '../../controller/clinic/appointment_state.dart';
+import '../component/CustomCalendarDatePicker.dart';
 
 /// Booking again Screen melkerm
 class BooKAgainScreen extends StatelessWidget {
