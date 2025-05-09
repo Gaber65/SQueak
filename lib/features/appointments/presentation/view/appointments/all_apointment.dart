@@ -5,18 +5,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lottie/lottie.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/appointments/presentation/view/appointments/rate_appointment.dart';
 
-import 'package:squeak/features/appointments/models/get_appointment_model.dart';
-import 'package:squeak/features/appointments/view/appointments/book_again_screen.dart';
-import 'package:squeak/features/appointments/view/appointments/rate_appointment.dart';
 import 'package:squeak/features/pets/data/models/pet_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../generated/l10n.dart';
+import '../../../data/models/get_appointment_model.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 import '../component/filter_component.dart';
 import '../files_and_prescription_for_pet/files_for_pet_screen.dart';
 import '../files_and_prescription_for_pet/prescription_for_pet_screen.dart';
+import 'book_again_screen.dart';
 
 class AllAppointment extends StatelessWidget {
   const AllAppointment({super.key});

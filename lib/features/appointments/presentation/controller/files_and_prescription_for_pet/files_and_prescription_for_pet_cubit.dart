@@ -4,7 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 
-import '../../models/files_and_prescription_for_pet_model.dart';
+import '../../../data/models/files_and_prescription_for_pet_model.dart';
 
 part 'files_and_prescription_for_pet_state.dart';
 

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import '../../../../layout/layout/data/models/clinic_model.dart';
 import '../../../layout/layout/data/models/clinic_model.dart';
 import '../../controller/clinic/appointment_cubit.dart';
 

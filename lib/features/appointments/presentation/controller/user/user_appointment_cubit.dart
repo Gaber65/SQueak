@@ -6,14 +6,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-import 'package:squeak/features/appointments/models/get_appointment_model.dart';
-import 'package:squeak/features/appointments/view/appointments/print_reciept.dart';
 
 import 'package:printing/printing.dart';
 import 'package:flutter/material.dart';
 
-import '../../../layout/layout/data/models/clinic_model.dart';
-import '../../models/print_model.dart';
+import '../../../../layout/layout/data/models/clinic_model.dart';
+import '../../../data/models/get_appointment_model.dart';
+import '../../../data/models/print_model.dart';
+import '../../view/appointments/print_reciept.dart';
 
 part 'user_appointment_state.dart';
 

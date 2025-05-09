@@ -3,15 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/appointments/controller/clinic/appointment_cubit.dart';
-import 'package:squeak/features/appointments/controller/clinic/appointment_state.dart';
-import 'package:squeak/features/appointments/models/doctor_model.dart';
-import 'package:squeak/features/appointments/models/get_client_clinic_model.dart';
-import 'package:squeak/features/appointments/view/component/CustomCalendarDatePicker.dart';
 import 'package:intl/intl.dart';
 
 
-import '../../../../generated/l10n.dart';
+import '../../../data/models/get_appointment_model.dart';
+import '../../../data/models/get_client_clinic_model.dart';
+import '../../controller/clinic/appointment_cubit.dart';
+import '../../controller/clinic/appointment_state.dart';
 
 /// Booking again Screen melkerm
 class BooKAgainScreen extends StatelessWidget {

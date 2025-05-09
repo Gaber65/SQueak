@@ -1,4 +1,4 @@
-import '../../../generated/l10n.dart';
+import 'package:squeak/generated/l10n.dart';
 
 class AppointmentModel {
   final String id;

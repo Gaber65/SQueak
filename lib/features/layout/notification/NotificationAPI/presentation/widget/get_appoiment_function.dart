@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/appointments/models/get_appointment_model.dart';
-import 'package:squeak/features/appointments/view/appointments/rate_appointment.dart';
+import 'package:squeak/features/appointments/data/models/get_appointment_model.dart';
+import 'package:squeak/features/appointments/presentation/view/appointments/rate_appointment.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/controller/notifications_cubit.dart';
 
 import '../../domain/entities/notification_entities.dart';

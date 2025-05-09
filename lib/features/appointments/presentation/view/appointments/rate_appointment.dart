@@ -5,12 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/appointments/controller/user/user_appointment_cubit.dart';
+import 'package:squeak/features/appointments/presentation/controller/user/user_appointment_cubit.dart';
 
 import 'package:squeak/generated/l10n.dart';
 
 
-import '../../models/get_appointment_model.dart';
+import 'package:squeak/features/appointments/data/models/get_appointment_model.dart';
 
 class RateAppointment extends StatefulWidget {
   final AppointmentModel model;

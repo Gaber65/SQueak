@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/appointments/models/availabilities_model.dart';
+import 'package:squeak/features/appointments/data/models/availabilities_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';

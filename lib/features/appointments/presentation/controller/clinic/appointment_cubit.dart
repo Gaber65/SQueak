@@ -5,13 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
-import 'package:squeak/features/appointments/models/availabilities_model.dart';
-
-
-import '../../../../core/service/cache/shared_preferences/cache_helper.dart';
-import '../../../layout/layout/data/models/clinic_model.dart';
-import '../../models/doctor_model.dart';
-import '../../models/get_client_clinic_model.dart';
+import '../../../../layout/layout/data/models/clinic_model.dart';
+import '../../../data/models/availabilities_model.dart';
+import '../../../data/models/doctor_model.dart';
+import '../../../data/models/get_client_clinic_model.dart';
 import 'appointment_state.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 

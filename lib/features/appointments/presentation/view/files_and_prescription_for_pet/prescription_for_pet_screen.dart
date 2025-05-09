@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
+import '../../../data/models/files_and_prescription_for_pet_model.dart';
 import '../../controller/files_and_prescription_for_pet/files_and_prescription_for_pet_cubit.dart';
-import '../../models/files_and_prescription_for_pet_model.dart';
 
 class PrescriptionForPetScreen extends StatelessWidget {
   const PrescriptionForPetScreen({

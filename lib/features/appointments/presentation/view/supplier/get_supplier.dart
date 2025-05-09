@@ -4,18 +4,17 @@ import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/appointments/controller/clinic/appointment_cubit.dart';
-import 'package:squeak/features/appointments/view/availability/availability_screen.dart';
 
 
-import '../../../../generated/l10n.dart';
-import '../../../layout/search/presentation/controller/search_cubit.dart';
-import '../../../layout/search/presentation/screens/search_screen.dart';
-import '../../../layout/search/presentation/widget/build_column_search_body.dart';
-import '../../../vetcare/presenation/view/pet_merge_screen.dart';
+import '../../../../layout/search/presentation/controller/search_cubit.dart';
+import '../../../../layout/search/presentation/widget/build_column_search_body.dart';
+import '../../../../vetcare/presenation/view/pet_merge_screen.dart';
+import '../../controller/clinic/appointment_cubit.dart';
 import '../../controller/clinic/appointment_state.dart';
 import 'dart:io'; // Import for Platform and exit()
-import 'package:flutter/services.dart'; // Import for SystemNavigator.pop()
+import 'package:flutter/services.dart';
+
+import '../availability/availability_screen.dart'; // Import for SystemNavigator.pop()
 
 class MySupplierScreen extends StatelessWidget {
   const MySupplierScreen({

@@ -5,17 +5,17 @@ import 'package:iconly/iconly.dart';
 import 'package:shimmer/shimmer.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/appointments/models/get_client_clinic_model.dart';
+import 'package:squeak/features/appointments/data/models/get_client_clinic_model.dart';
 import 'package:squeak/features/pets/data/models/pet_model.dart';
 import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/empty_state.dart';
 
 import '../../../../generated/l10n.dart';
-import '../../../pets/presentation/view/widgets/get_pet/pet_screen_content.dart';
+import '../../../../pets/presentation/view/widgets/get_pet/pet_screen_content.dart';
 import '../../controller/clinic/appointment_cubit.dart';
 import '../../controller/clinic/appointment_state.dart';
-import '../../models/availabilities_model.dart';
-import '../../models/doctor_model.dart';
+import '../../models/availabilities_model.dart' as appointment_models;
+import '../../models/doctor_model.dart' as appointment_models;
 import '../component/CustomCalendarDatePicker.dart';
 import 'package:intl/intl.dart';
 
@@ -35,9 +35,9 @@ class BookingScreen extends StatefulWidget {
   });
 
   final DateTime selectedDate;
-  final List<AvailabilityModel> timeSlotData;
+  final List<appointment_models.AvailabilityModel> timeSlotData;
   final String clinicCode;
-  final List<DoctorModel> doctors;
+  final List<appointment_models.DoctorModel> doctors;
   final String petId;
   final bool? isSpayed;
   String? petNameFromAppoinmentIcon;
@@ -701,7 +701,7 @@ class _BookingScreenState extends State<BookingScreen> {
       child: Container(
         decoration: Decorations.kDecorationBoxShadow(context: context),
         padding: const EdgeInsets.all(8.0),
-        child: DropdownButton<DoctorModel>(
+        child: DropdownButton<appointment_models.DoctorModel>(
           onChanged: (newValue) {
             setState(() {
               doctorImage = newValue!.image;
@@ -740,8 +740,8 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           borderRadius: const BorderRadius.all(Radius.circular(12)),
           items:
-              widget.doctors.map((DoctorModel value) {
-                return DropdownMenuItem<DoctorModel>(
+              widget.doctors.map((appointment_models.DoctorModel value) {
+                return DropdownMenuItem<appointment_models.DoctorModel>(
                   value: value,
                   child: Row(
                     children: [
