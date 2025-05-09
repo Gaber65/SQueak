@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/presentation/view/component/CustomCalendarDatePicker.dart';
 import 'package:squeak/features/layout/layout/presentation/screens/layout_screen.dart';
-import '../../../layout/layout/data/models/clinic_model.dart';
+import '../../../../layout/layout/data/models/clinic_model.dart';
 import '../../controller/clinic/appointment_cubit.dart';
 import '../../controller/clinic/appointment_state.dart';
 import '../appointments/book_again_screen.dart';

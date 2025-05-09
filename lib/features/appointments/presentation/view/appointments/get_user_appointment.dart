@@ -15,8 +15,6 @@ import 'package:squeak/features/appointments/presentation/view/files_and_prescri
 import 'package:url_launcher/url_launcher.dart';
 
 
-import '../../../../generated/l10n.dart';
-import '../../../../pets/data/models/pet_model.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 import '../component/filter_component.dart';
 

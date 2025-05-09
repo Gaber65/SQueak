@@ -10,14 +10,33 @@ import 'package:squeak/features/pets/data/models/pet_model.dart';
 import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/empty_state.dart';
 
-import '../../../../generated/l10n.dart';
 import '../../../../pets/presentation/view/widgets/get_pet/pet_screen_content.dart';
+import '../../../data/models/availabilities_model.dart';
+import '../../../data/models/doctor_model.dart' as appointment_models;
+import '../../../data/models/doctor_model.dart';
 import '../../controller/clinic/appointment_cubit.dart';
 import '../../controller/clinic/appointment_state.dart';
-import '../../models/availabilities_model.dart' as appointment_models;
-import '../../models/doctor_model.dart' as appointment_models;
 import '../component/CustomCalendarDatePicker.dart';
 import 'package:intl/intl.dart';
+
+// Extension to add isSelected property to ClientClinicModel
+extension ClientClinicModelExtension on ClientClinicModel {
+  bool get isSelected => _selectedPetIds.contains(petSqueakId);
+  set isSelected(bool value) {
+    if (value) {
+      _selectedPetIds.add(petSqueakId);
+    } else {
+      _selectedPetIds.remove(petSqueakId);
+    }
+  }
+  
+  // Add missing properties
+  bool get isSpayed => false; // Default value since API doesn't provide it
+  String get imageName => ''; // Default value since API doesn't provide it
+}
+
+// Global set to track selected pet IDs
+final Set<String> _selectedPetIds = {};
 
 /// Booking Screen melkerm
 class BookingScreen extends StatefulWidget {
@@ -35,7 +54,7 @@ class BookingScreen extends StatefulWidget {
   });
 
   final DateTime selectedDate;
-  final List<appointment_models.AvailabilityModel> timeSlotData;
+  final List<AvailabilityModel> timeSlotData;
   final String clinicCode;
   final List<appointment_models.DoctorModel> doctors;
   final String petId;
@@ -52,6 +71,15 @@ class _BookingScreenState extends State<BookingScreen> {
   void initState() {
     super.initState();
     print('Get pets' + '-----------------');
+    // Initialize pet name from the parameter if provided
+    if (widget.petNameFromAppoinmentIcon != null && widget.petNameFromAppoinmentIcon!.isNotEmpty) {
+      petName = widget.petNameFromAppoinmentIcon;
+    }
+    
+    // Initialize pet gender from the parameter if provided
+    if (widget.genderForPetFromAppoinmentScreen != null) {
+      petGender = widget.genderForPetFromAppoinmentScreen;
+    }
   }
 
   String? doctorId;
@@ -76,8 +104,7 @@ class _BookingScreenState extends State<BookingScreen> {
     print(widget.petId);
     print("Pet id");
     return BlocProvider(
-      create:
-          (context) => AppointmentCubit()..getClientINClinic(widget.clinicCode),
+      create: (context) => AppointmentCubit()..getClientINClinic(widget.clinicCode),
       child: BlocConsumer<AppointmentCubit, AppointmentState>(
         listener: (context, state) {
           if (state is CreateAppointmentsSuccess) {
@@ -85,6 +112,10 @@ class _BookingScreenState extends State<BookingScreen> {
             // LayoutCubit.get(context).pets.forEach((element) {
             //   element.isSelected = false;
             // });
+            successToast(
+              context,
+              isArabic() ? 'تم حجز الموعد بنجاح' : 'Appointment booked successfully',
+            );
             navigateAndFinish(context, LayoutScreen());
           }
           print("If CreateAppointmentsError");
@@ -99,9 +130,9 @@ class _BookingScreenState extends State<BookingScreen> {
         },
         builder: (context, state) {
           var cubit = AppointmentCubit.get(context);
-          // var pets = LayoutCubit.get(context).pets;
           var pets = [];
 
+          /* Comment out the entire error dialog for empty pets
           if (pets.isEmpty) {
             Future.delayed(Duration.zero, () {
               showDialog(
@@ -139,6 +170,7 @@ class _BookingScreenState extends State<BookingScreen> {
             });
             return SizedBox(); // Prevents further UI rendering
           }
+          */
 
           return WillPopScope(
             onWillPop: () async {
@@ -196,15 +228,9 @@ class _BookingScreenState extends State<BookingScreen> {
                                                   children: [
                                                     TextSpan(
                                                       text:
-                                                          widget.petNameFromAppoinmentIcon ==
-                                                                      null ||
-                                                                  widget.petNameFromAppoinmentIcon ==
-                                                                      ""
-                                                              ? petName
-                                                                  .toString()
-                                                              : widget
-                                                                  .petNameFromAppoinmentIcon
-                                                                  .toString(),
+                                                          petName ??
+                                                          widget.petNameFromAppoinmentIcon ??
+                                                          "My Pet",
                                                       style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -236,15 +262,9 @@ class _BookingScreenState extends State<BookingScreen> {
                                                   children: [
                                                     TextSpan(
                                                       text:
-                                                          widget.petNameFromAppoinmentIcon ==
-                                                                      null ||
-                                                                  widget.petNameFromAppoinmentIcon ==
-                                                                      ""
-                                                              ? petName
-                                                                  .toString()
-                                                              : widget
-                                                                  .petNameFromAppoinmentIcon
-                                                                  .toString(),
+                                                          petName ??
+                                                          widget.petNameFromAppoinmentIcon ??
+                                                          "My Pet",
                                                       style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -352,7 +372,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                                     'هل أنت متأكد أنك تريد اضافه موعد ',
                                                 children: [
                                                   TextSpan(
-                                                    text: petName.toString(),
+                                                    text: petName ?? "My Pet",
                                                     style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -365,8 +385,17 @@ class _BookingScreenState extends State<BookingScreen> {
                                             : Text.rich(
                                               TextSpan(
                                                 text:
-                                                    'Are you sure you want to book  appointment',
-                                                children: [TextSpan(text: '?')],
+                                                    'Are you sure you want to book appointment for ',
+                                                children: [
+                                                  TextSpan(
+                                                    text: petName ?? "My Pet",
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  TextSpan(text: '?')
+                                                ],
                                               ),
                                             ),
                                     imageUrl:
@@ -423,141 +452,162 @@ class _BookingScreenState extends State<BookingScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       /// Pets
-                      // widget.petId == '' || widget.petId.isEmpty
-                      //     ? (LayoutCubit.get(context).pets.isNotEmpty)
-                      //         ? Text(
-                      //           isArabic() ? 'أحد أليف' : 'Your Pets',
-                      //           style: FontStyleThame.textStyle(
-                      //             context: context,
-                      //             fontSize: 14,
-                      //             fontWeight: FontWeight.bold,
-                      //           ),
-                      //         )
-                      //         : Center(
-                      //           child: Text(
-                      //             isArabic()
-                      //                 ? 'يرجى إضافة أليف لبدء الحجز'
-                      //                 : 'Please add pets to start reservation',
-                      //             style: FontStyleThame.textStyle(
-                      //               context: context,
-                      //               fontSize: 14,
-                      //               fontWeight: FontWeight.bold,
-                      //             ),
-                      //           ),
-                      //         )
-                      //     : SizedBox(),
-                      // SizedBox(height: 5),
-                      // widget.petId == '' || widget.petId.isEmpty
-                      //     ? BlocConsumer<LayoutCubit, LayoutState>(
-                      //       listener: (context, state) {
-                      //         // TODO: implement listener
-                      //       },
-                      //
-                      //       /// TODO : Mohamed Elkerm -> bad practise logic code in UI
-                      //       builder: (context, state) {
-                      //         List<PetData> petsData =
-                      //             LayoutCubit.get(context).pets
-                      //                 .where(
-                      //                   (element) =>
-                      //                       element.petId !=
-                      //                       CacheHelper.getData('clintId'),
-                      //                 )
-                      //                 .toList();
-                      //         if (!initTheSelectedPetValue) {
-                      //           dropDownId = petsData[0].petId;
-                      //           petName = petsData[0].petName;
-                      //           petGender = petsData[0].gender;
-                      //           breedId = petsData[0].breedId;
-                      //           isSpayed = petsData[0].isSpayed;
-                      //           petsData[0].isSelected = true;
-                      //         }
-                      //         return petsData.isNotEmpty
-                      //             ? CarouselSlider.builder(
-                      //               itemCount: petsData.length,
-                      //               itemBuilder: (context, index, realIndex) {
-                      //                 return InkWell(
-                      //                   onTap: () {
-                      //                     setState(() {
-                      //                       dropDownId = petsData[index].petId;
-                      //                       petName = petsData[index].petName;
-                      //                       petGender = petsData[index].gender;
-                      //                       breedId = petsData[index].breedId;
-                      //                       isSpayed = petsData[index].isSpayed;
-                      //
-                      //                       print(dropDownId);
-                      //                     });
-                      //                     petsData.forEach((element) {
-                      //                       element.isSelected = false;
-                      //                     });
-                      //                     petsData[index].isSelected = true;
-                      //                     setState(() {});
-                      //                   },
-                      //                   child: buildPetItem(
-                      //                     petsData[index],
-                      //                     cubit,
-                      //                     context,
-                      //                   ),
-                      //                 );
-                      //               },
-                      //               options: CarouselOptions(
-                      //                 onPageChanged: (index, reason) {
-                      //                   setState(() {
-                      //                     initTheSelectedPetValue = true;
-                      //                     petsData.forEach((element) {
-                      //                       element.isSelected = false;
-                      //                     });
-                      //                     petsData[0].isSelected = false;
-                      //
-                      //                     dropDownId = petsData[index].petId;
-                      //                     petName = petsData[index].petName;
-                      //                     petGender = petsData[index].gender;
-                      //                     breedId = petsData[index].breedId;
-                      //                     isSpayed = petsData[index].isSpayed;
-                      //
-                      //                     petsData.forEach((element) {
-                      //                       element.isSelected = false;
-                      //                     });
-                      //                     petsData[index].isSelected = true;
-                      //                     print(dropDownId);
-                      //                   });
-                      //                 },
-                      //                 height: 80,
-                      //                 aspectRatio: 1.5,
-                      //                 viewportFraction: 1,
-                      //                 initialPage: 0,
-                      //                 enableInfiniteScroll: false,
-                      //                 reverse: false,
-                      //                 autoPlay: false,
-                      //                 autoPlayInterval: const Duration(
-                      //                   seconds: 3,
-                      //                 ),
-                      //                 autoPlayAnimationDuration: const Duration(
-                      //                   milliseconds: 800,
-                      //                 ),
-                      //                 autoPlayCurve: Curves.fastOutSlowIn,
-                      //                 enlargeCenterPage: true,
-                      //                 scrollDirection: Axis.horizontal,
-                      //               ),
-                      //             )
-                      //             : EmptyState(
-                      //               onAddPetPressed:
-                      //                   () => showPetTypeSelection(context),
-                      //             );
-                      //       },
-                      //     )
-                      //     : SizedBox(),
-                      // if (LayoutCubit.get(context).pets.isNotEmpty &&
-                      //     LayoutCubit.get(context).pets.length > 1)
-                      //   Text(
-                      //     S.of(context).swapPet,
-                      //     textAlign: TextAlign.center,
-                      //     style: FontStyleThame.textStyle(
-                      //       context: context,
-                      //       fontSize: 14,
-                      //       fontColor: Colors.grey,
-                      //       fontWeight: FontWeight.bold,
-                      //     ),
-                      //   ),
+                      widget.petId == '' || widget.petId.isEmpty
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  isArabic() ? 'اختر حيوانك الأليف' : 'Select Your Pet',
+                                  style: FontStyleThame.textStyle(
+                                    context: context,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Builder(
+                                  builder: (context) {
+                                    // Get pet list from the appointments cubit
+                                    List<ClientClinicModel> petsData = AppointmentCubit.get(context).petListInVet;
+                                    
+                                    print("DEBUG: Loaded ${petsData.length} pets from AppointmentCubit");
+                                    petsData.forEach((pet) {
+                                      print("DEBUG: Pet - Name: ${pet.petName}, ID: ${pet.petSqueakId}, Gender: ${pet.petGender}");
+                                    });
+                                    
+                                    if (petsData.isEmpty) {
+                                      return Center(
+                                        child: Text(
+                                          isArabic()
+                                              ? 'لا توجد حيوانات أليفة متاحة. ستتم إضافة حيوان أليف جديد.'
+                                              : 'No pets available. A new pet will be added.',
+                                          style: FontStyleThame.textStyle(
+                                            context: context,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    
+                                    if (!initTheSelectedPetValue && petsData.isNotEmpty) {
+                                      dropDownId = petsData[0].petSqueakId;
+                                      petName = petsData[0].petName;
+                                      petGender = petsData[0].petGender;
+                                      // Default isSpayed to false since API doesn't provide it
+                                      isSpayed = false;
+                                      
+                                      // Mark first pet as selected
+                                      petsData[0].isSelected = true;
+                                      initTheSelectedPetValue = true;
+                                    }
+                                    
+                                    return CarouselSlider.builder(
+                                      itemCount: petsData.length,
+                                      itemBuilder: (context, index, realIndex) {
+                                        return InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              dropDownId = petsData[index].petSqueakId;
+                                              petName = petsData[index].petName;
+                                              petGender = petsData[index].petGender;
+                                              // Default isSpayed to false since API doesn't provide it
+                                              isSpayed = false;
+                                              print("Selected pet: ${petsData[index].petName}, ID: ${petsData[index].petSqueakId}");
+                                            });
+                                            petsData.forEach((element) {
+                                              element.isSelected = false;
+                                            });
+                                            petsData[index].isSelected = true;
+                                            setState(() {});
+                                          },
+                                          child: Container(
+                                            width: double.infinity,
+                                            margin: EdgeInsets.symmetric(horizontal: 5),
+                                            decoration: Decorations.kDecorationBoxShadow(
+                                              context: context,
+                                              color: petsData[index].isSelected
+                                                  ? MainCubit.get(context).isDark
+                                                      ? Colors.grey[800]!
+                                                      : Colors.grey[300]!
+                                                  : MainCubit.get(context).isDark
+                                                      ? Colors.black38
+                                                      : Colors.white,
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: CircleAvatar(
+                                                    radius: 30,
+                                                    backgroundImage: NetworkImage(
+                                                      AssetImageModel.defaultPetImage // Always use default image since API doesn't provide it
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context).size.width * 0.5,
+                                                  child: Text(
+                                                    petsData[index].petName,
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      options: CarouselOptions(
+                                        onPageChanged: (index, reason) {
+                                          setState(() {
+                                            initTheSelectedPetValue = true;
+                                            petsData.forEach((element) {
+                                              element.isSelected = false;
+                                            });
+                                            
+                                            dropDownId = petsData[index].petSqueakId;
+                                            petName = petsData[index].petName;
+                                            petGender = petsData[index].petGender;
+                                            // Default isSpayed to false since API doesn't provide it
+                                            isSpayed = false;
+                                            
+                                            petsData[index].isSelected = true;
+                                            print("Selected pet (carousel): ${petsData[index].petName}, ID: ${petsData[index].petSqueakId}");
+                                          });
+                                        },
+                                        height: 80,
+                                        aspectRatio: 1.5,
+                                        viewportFraction: 1,
+                                        initialPage: 0,
+                                        enableInfiniteScroll: false,
+                                        reverse: false,
+                                        autoPlay: false,
+                                        enlargeCenterPage: true,
+                                        scrollDirection: Axis.horizontal,
+                                      ),
+                                    );
+                                  },
+                                ),
+                                if (AppointmentCubit.get(context).petListInVet.length > 1)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 5),
+                                    child: Text(
+                                      S.of(context).swapPet,
+                                      textAlign: TextAlign.center,
+                                      style: FontStyleThame.textStyle(
+                                        context: context,
+                                        fontSize: 14,
+                                        fontColor: Colors.grey,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            )
+                          : SizedBox(),
+                      SizedBox(height: 15),
 
                       ///Doctor
                       SizedBox(height: 15),
@@ -620,7 +670,8 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget buildPetItem(PetData doctor, AppointmentCubit cubit, context) {
+  /*
+  Widget buildPetItem(PetData pet, AppointmentCubit cubit, context) {
     return Stack(
       alignment: AlignmentDirectional.centerEnd,
       children: [
@@ -631,7 +682,7 @@ class _BookingScreenState extends State<BookingScreen> {
             decoration: Decorations.kDecorationBoxShadow(
               context: context,
               color:
-                  doctor.isSelected
+                  pet.isSelected
                       ? MainCubit.get(context).isDark
                           ? Colors.grey[800]
                           : Colors.grey[300]
@@ -646,16 +697,16 @@ class _BookingScreenState extends State<BookingScreen> {
                   child: CircleAvatar(
                     radius: 30,
                     backgroundImage: NetworkImage(
-                      doctor.imageName.isEmpty
+                      pet.imageName.isEmpty
                           ? AssetImageModel.defaultPetImage
-                          : '$imageUrl${doctor.imageName}',
+                          : '$imageUrl${pet.imageName}',
                     ),
                   ),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.5,
                   child: Text(
-                    doctor.petName,
+                    pet.petName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontWeight: FontWeight.bold),
@@ -665,7 +716,7 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
           ),
         ),
-        // if (LayoutCubit.get(context).pets.length > 1)
+        // if (PetCubit.get(context).pets.length > 1)
         //   Shimmer.fromColors(
         //     baseColor: Colors.grey.shade400,
         //     highlightColor: Colors.grey.shade200,
@@ -691,6 +742,7 @@ class _BookingScreenState extends State<BookingScreen> {
       ],
     );
   }
+  */
 
   String? doctorImage;
   String? doctorName;
@@ -701,7 +753,7 @@ class _BookingScreenState extends State<BookingScreen> {
       child: Container(
         decoration: Decorations.kDecorationBoxShadow(context: context),
         padding: const EdgeInsets.all(8.0),
-        child: DropdownButton<appointment_models.DoctorModel>(
+        child: DropdownButton<DoctorModel>(
           onChanged: (newValue) {
             setState(() {
               doctorImage = newValue!.image;
@@ -784,6 +836,48 @@ class _BookingScreenState extends State<BookingScreen> {
     required BuildContext context,
     required String petSqueakId,
   }) {
+    // Generate a valid GUID if petSqueakId is empty
+    // The server expects a valid GUID format - but also requires valid pet-owner relationship
+    if (petSqueakId.isEmpty || petId.isEmpty) {
+      print("ERROR: Empty petId or petSqueakId is not allowed. Please select a valid pet.");
+      errorToast(
+        context,
+        isArabic()
+            ? "معرف الحيوان الأليف فارغ. يرجى اختيار حيوان أليف صالح."
+            : "Pet ID is empty. Please select a valid pet.",
+      );
+      return;
+    }
+    
+    // Make sure we have the current user ID
+    String squeakClientId = CacheHelper.getData('clintId') ?? '';
+    if (squeakClientId.isEmpty) {
+      print("ERROR: Client ID is empty. User might not be logged in properly.");
+      errorToast(
+        context,
+        isArabic()
+            ? "معرف المستخدم غير متوفر. يرجى إعادة تسجيل الدخول."
+            : "User ID not available. Please log in again.",
+      );
+      return;
+    }
+    
+    // Detailed logging of all parameters with swapped IDs indicated
+    print("DEBUG: Creating appointment with the following parameters (IDs SWAPPED TO MATCH API):");
+    print("  - petId (SqueakID in our model): $petId");
+    print("  - clinicCode: $clinicCode");
+    print("  - petSqueakId (PetID in our model): $petSqueakId");
+    print("  - appointmentTime: $appointmentTime");
+    print("  - appointmentDate: $appointmentDate");
+    print("  - petGender: $petGender");
+    print("  - petName: $petName");
+    print("  - clientId: $clientId");
+    print("  - isExisted: $isExisted");
+    print("  - notExistedOrPet: $notExistedOrPet");
+    print("  - isExistedNoPet: $isExistedNoPet");
+    print("  - doctorId: $doctorId");
+    print("  - squeakClientId: $squeakClientId");
+    
     AppointmentCubit.get(context).createAppointment(
       petId: petId,
       petSqueakId: petSqueakId,
@@ -797,7 +891,7 @@ class _BookingScreenState extends State<BookingScreen> {
       notExistedOrPet: notExistedOrPet,
       isExistedNoPet: isExistedNoPet,
       doctorId: doctorId,
-      isSpayed: isSpayed!,
+      isSpayed: isSpayed ?? false,
     );
   }
 
@@ -812,35 +906,89 @@ class _BookingScreenState extends State<BookingScreen> {
     final appointmentTime = time! + ':00';
     final appointmentDate = formatDate;
     final doctorId = this.doctorId;
+    
+    // Check if doctorId is selected
+    if (doctorId == null || doctorId.isEmpty) {
+      errorToast(
+        context,
+        isArabic()
+            ? "يرجى اختيار طبيب من القائمة."
+            : "Please select a doctor from the list.",
+      );
+      return;
+    }
+    
+    // Check if time is selected
+    if (time == null) {
+      errorToast(
+        context,
+        isArabic()
+            ? "يرجى اختيار وقت للموعد."
+            : "Please select an appointment time.",
+      );
+      return;
+    }
+    
+    // Check if user ID is available
+    String squeakClientId = CacheHelper.getData('clintId') ?? '';
+    if (squeakClientId.isEmpty) {
+      errorToast(
+        context,
+        isArabic()
+            ? "معرف المستخدم غير متوفر. يرجى إعادة تسجيل الدخول."
+            : "User ID not available. Please log in again.",
+      );
+      return;
+    }
+    
     final appointmentCubit = AppointmentCubit.get(context);
-    final isPetFromCache =
-        CacheHelper.getData('isPet') != null &&
-        CacheHelper.getData('isPet') == true;
-    final petNameFromCache = CacheHelper.getData('activeId');
-    final petGenderFromCache = CacheHelper.getData('gender');
-
-    if (appointmentCubit.clientINClinic) {
-      ClientClinicModel? matchedPet;
-
-      if (isPetFromCache) {
-        print("yes the pet from cached");
-        matchedPet = findPet(appointmentCubit.petListInVet, petNameFromCache);
-      } else {
-        print("no the pet not from cached");
-        matchedPet = findPet(appointmentCubit.petListInVet, dropDownId!);
+    
+    print("DEBUG: Selected Time: $appointmentTime");
+    print("DEBUG: Selected Date: $appointmentDate");
+    print("DEBUG: Selected Doctor ID: $doctorId");
+    print("DEBUG: Clinic Code: $clinicCode");
+    print("DEBUG: Selected PetID: $dropDownId");
+    print("DEBUG: Selected Pet Name: $petName");
+    print("DEBUG: Client in clinic: ${appointmentCubit.clientINClinic}");
+    print("DEBUG: Available pets in clinic: ${appointmentCubit.petListInVet.length}");
+    
+    // Find the selected pet in the petListInVet
+    ClientClinicModel? selectedPet;
+    if (dropDownId != null) {
+      print("DEBUG: Looking for pet with ID: $dropDownId");
+      
+      for (var pet in appointmentCubit.petListInVet) {
+        // Important: in the API logs, the pet ID and squeakPetId seem to be swapped compared to our ClientClinicModel
+        // So we're searching by both fields to ensure we find the right pet
+        if (pet.petSqueakId == dropDownId || pet.petId == dropDownId) {
+          selectedPet = pet;
+          break;
+        }
       }
-
-      if (matchedPet != null) {
+      
+      if (selectedPet != null) {
+        print("DEBUG: Found selected pet: ${selectedPet.petName}, ID: ${selectedPet.petId}, SqueakID: ${selectedPet.petSqueakId}");
+      } else {
+        print("DEBUG: Selected pet not found in petListInVet");
+      }
+    }
+    
+    if (appointmentCubit.clientINClinic) {
+      if (selectedPet != null) {
         print("matchedPet != null  NORMAL CASE");
+        print("Creating appointment for existing pet: ${selectedPet.petName}, ID: ${selectedPet.petId}, SqueakID: ${selectedPet.petSqueakId}");
+        
+        // IMPORTANT: Based on the API error, it looks like the API expects petId to be the SqueakID
+        // and petSqueakId to be the vetcare system ID
         createAppointmentForPet(
-          petId: matchedPet.petId,
+          petId: selectedPet.petSqueakId, // Use the petSqueakId as petId
           clinicCode: clinicCode,
-          petSqueakId: matchedPet.petSqueakId,
+          petSqueakId: selectedPet.petId, // Use the petId as petSqueakId
           appointmentTime: appointmentTime,
           appointmentDate: appointmentDate,
-          petGender: matchedPet.petGender,
-          petName: matchedPet.petName,
-          clientId: matchedPet.clientId,
+          petGender: selectedPet.petGender,
+          petName: selectedPet.petName,
+          clientId: selectedPet.clientId,
           isExisted: true,
           notExistedOrPet: false,
           isExistedNoPet: false,
@@ -848,47 +996,19 @@ class _BookingScreenState extends State<BookingScreen> {
           context: context,
         );
       } else {
-        print("matchedPet == null");
-        createAppointmentForPet(
-          petId: '',
-          clinicCode: clinicCode,
-          petSqueakId: dropDownId!,
-          appointmentTime: appointmentTime,
-          appointmentDate: appointmentDate,
-          petGender:
-              isPetFromCache
-                  ? petGenderFromCache
-                  : widget.genderForPetFromAppoinmentScreen == null
-                  ? 1
-                  : widget.genderForPetFromAppoinmentScreen,
-          petName:
-              isPetFromCache
-                  ? petNameFromCache
-                  : widget.petNameFromAppoinmentIcon,
-          clientId: appointmentCubit.petListInVet.firstOrNull?.clientId ?? '',
-          isExisted: false,
-          notExistedOrPet: false,
-          isExistedNoPet: true,
-          doctorId: doctorId,
-          context: context,
+        errorToast(
+          context,
+          isArabic()
+              ? "يرجى اختيار حيوان أليف صالح من القائمة."
+              : "Please select a valid pet from the list.",
         );
       }
     } else {
-      print("this default case");
-      createAppointmentForPet(
-        petId: '',
-        clinicCode: clinicCode,
-        petSqueakId: dropDownId!,
-        appointmentTime: appointmentTime,
-        appointmentDate: appointmentDate,
-        petGender: isPetFromCache ? petGenderFromCache : petGender!,
-        petName: isPetFromCache ? petNameFromCache : petName!,
-        clientId: '',
-        isExisted: false,
-        notExistedOrPet: true,
-        isExistedNoPet: false,
-        doctorId: doctorId,
-        context: context,
+      errorToast(
+        context,
+        isArabic()
+            ? "لم يتم العثور على حيوانات أليفة في هذه العيادة. يرجى الاتصال بالعيادة."
+            : "No pets found in this clinic. Please contact the clinic.",
       );
     }
   }

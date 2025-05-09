@@ -4,7 +4,6 @@ import 'package:squeak/features/appointments/data/models/get_appointment_model.d
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-import '../../../../generated/l10n.dart';
 import '../../../../pets/data/models/pet_model.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 

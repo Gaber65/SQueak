@@ -4,6 +4,7 @@ import 'package:iconly/iconly.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:intl/intl.dart';
+import 'package:dio/dio.dart';
 
 
 import '../../../data/models/get_appointment_model.dart' as appointment_model;
@@ -12,304 +13,341 @@ import '../../../data/models/doctor_model.dart';
 import '../../controller/clinic/appointment_cubit.dart';
 import '../../controller/clinic/appointment_state.dart';
 import '../component/CustomCalendarDatePicker.dart';
+import '../debug_appointment_api.dart';
+import '../../../data/models/availabilities_model.dart';
 
 /// Booking again Screen melkerm
-class BooKAgainScreen extends StatelessWidget {
-  BooKAgainScreen({
-    super.key,
-    required this.clinicCode,
-    required this.petId,
-  });
+class BooKAgainScreen extends StatefulWidget {
   final String clinicCode;
   final String petId;
+
+  const BooKAgainScreen({
+    Key? key,
+    required this.clinicCode,
+    required this.petId,
+  }) : super(key: key);
+
+  @override
+  _BooKAgainScreenState createState() => _BooKAgainScreenState();
+}
+
+class _BooKAgainScreenState extends State<BooKAgainScreen> {
   var dateController = TextEditingController();
   String? time;
+  bool isCreatingAppointment = false;
+  String? doctorImage;
+  String? doctorName;
+  String? doctorId;
+  bool areDataLoaded = false; // Combined loading state
 
-  ClientClinicModel? findPet(List<ClientClinicModel> data, String petId) {
+  // Local data stores
+  List<ClientClinicModel> _localPetList = [];
+  List<AvailabilityModel> _localAvailabilities = [];
+  List<DoctorModel> _localDoctors = [];
+  TextEditingController _commentController = TextEditingController(); // Local comment controller
+
+  @override
+  void initState() {
+    super.initState();
+    _initData();
+  }
+
+  Future<void> _initData() async {
+    try {
+      // Fetch pets
+      print("DEBUG: Fetching pets directly for clinic: ${widget.clinicCode}");
+      Response petResponse = await DioFinalHelper.getData(
+        method: getClientClinicEndPoint(widget.clinicCode, CacheHelper.getData('phone')),
+        language: false,
+      );
+      if (petResponse.data['success'] == true) {
+        _localPetList = (petResponse.data['data'] as List)
+            .map((e) => ClientClinicModel.fromJson(e))
+            .toList();
+        print("DEBUG: Loaded ${_localPetList.length} pets directly.");
+      } else {
+        print("DEBUG: Failed to load pets directly: ${petResponse.data['message']}");
+      }
+
+      // Fetch availability
+      print("DEBUG: Fetching availability directly for clinic: ${widget.clinicCode}");
+      Response availabilityResponse = await DioFinalHelper.getData(
+        method: getAvailabilitiesEndPoint(widget.clinicCode),
+        language: false,
+      );
+       _localAvailabilities = (availabilityResponse.data['data'] as List)
+          .map((e) => AvailabilityModel.fromJson(e))
+          .toList();
+      _localAvailabilities = _localAvailabilities.where((element) => element.isActive == true).toList(); // Assuming removeDuplicatesByDayOfWeek was important, it would need to be reimplemented here or moved to a utility.
+      print("DEBUG: Loaded ${_localAvailabilities.length} availabilities directly.");
+
+      // Fetch doctors
+      print("DEBUG: Fetching doctors directly for clinic: ${widget.clinicCode}");
+      Response doctorResponse = await DioFinalHelper.getData(
+        method: getDoctorAppointmentsEndPoint(widget.clinicCode),
+        language: false,
+      );
+      if (doctorResponse.data['success'] == true && doctorResponse.data['data'] != null) {
+         _localDoctors = (doctorResponse.data['data'] as List)
+            .map((e) => DoctorModel.fromJson(e))
+            .toList();
+        print("DEBUG: Loaded ${_localDoctors.length} doctors directly.");
+      } else {
+         print("DEBUG: Failed to load doctors directly or no data: ${doctorResponse.data['message']}");
+      }
+
+    } catch (e) {
+      print("DEBUG: Error during _initData: $e");
+      // Optionally show an error toast here if data loading fails critically
+       errorToast(context, isArabic() ? 'فشل تحميل البيانات' : 'Failed to load data');
+    } finally {
+      if (mounted) {
+        setState(() {
+          areDataLoaded = true;
+        });
+      }
+    }
+  }
+
+  ClientClinicModel? findPet(List<ClientClinicModel> data, String petIdToFind) {
+    print("DEBUG: Looking for petId: $petIdToFind in ${data.length} pets");
     for (var element in data) {
-      if (element.petId == petId) {
+      print("DEBUG: Checking pet - ID: ${element.petId}, Name: ${element.petName}, SqueakID: ${element.petSqueakId}");
+      if (element.petId == petIdToFind || element.petSqueakId == petIdToFind) {
+        print("DEBUG: Found exact match for pet: ${element.petName}");
         return element;
       }
     }
+    if (data.isNotEmpty) {
+      print("DEBUG: No exact match found, using first pet: ${data.first.petName}");
+      return data.first;
+    }
+    print("DEBUG: No pets found in list");
     return null;
+  }
+
+  Future<void> _handleBooking() async {
+    print("DEBUG: handleBooking called");
+    if (dateController.text.isEmpty || time == null) {
+      print("DEBUG: Missing date or time - Date: ${dateController.text}, Time: $time");
+      infoToast(context, dateController.text.isEmpty ? (isArabic() ? 'الرجاء تحديد التاريخ ' : 'Please select date') : (isArabic() ? "الرجاء تحديد الوقت" : 'Please select time'));
+      return;
+    }
+    print("DEBUG: Date: ${dateController.text}, Time: $time");
+    if (_localPetList.isEmpty) {
+      print("DEBUG: _localPetList is empty");
+      errorToast(context, isArabic() ? 'لم يتم العثور على حيوانات أليفة في هذه العيادة' : 'No pets found in this clinic');
+      return;
+    }
+    if (mounted) {
+      setState(() {
+        isCreatingAppointment = true;
+      });
+    }
+    try {
+      print("DEBUG: _localPetList has ${_localPetList.length} pets");
+      ClientClinicModel? matchedPet = findPet(_localPetList, widget.petId);
+      if (matchedPet == null) {
+        print("DEBUG: No matching pet found for ID: ${widget.petId}");
+        errorToast(context, isArabic() ? 'لم يتم العثور على الحيوانات الأليفة' : 'No pets found');
+        if (mounted) setState(() => isCreatingAppointment = false);
+        return;
+      }
+      String fixedTimeFormat = "10:00:00";
+      try {
+        String formattedTime = time!;
+        if (formattedTime.toUpperCase().contains('AM') || formattedTime.toUpperCase().contains('PM')) {
+          formattedTime = convertTo24Hour(formattedTime);
+        }
+        if (formattedTime.split(':').length == 2) {
+          formattedTime = "$formattedTime:00";
+        }
+        fixedTimeFormat = formattedTime;
+      } catch (e) {
+        print("DEBUG: Error formatting time: $e, using default time");
+      }
+      print("DEBUG: Selected pet: ${matchedPet.petName} with ID: ${matchedPet.petId}, doctorId: $doctorId");
+      print("DEBUG: Using appointment time: $fixedTimeFormat");
+      Map<String, dynamic> requestData = {
+        "date": dateController.text,
+        "time": fixedTimeFormat,
+        "petId": matchedPet.petId,
+        "clinicCode": widget.clinicCode,
+        "clientId": matchedPet.clientId,
+        "petSqueakId": matchedPet.petSqueakId,
+        "notes": _commentController.text, 
+      };
+      if (doctorId != null && doctorId!.isNotEmpty) {
+        requestData["doctorUserId"] = doctorId;
+      }
+      print("DEBUG: Direct API call with payload: $requestData");
+      Response response = await DioFinalHelper.postData(
+        method: '$version/vetcare/reservation/existedClient',
+        data: requestData,
+      );
+      print("DEBUG: API response: ${response.data}");
+      if (mounted) Navigator.pop(context);
+      successToast(context, isArabic() ? 'تم حجز الموعد بنجاح' : 'Appointment booked successfully');
+    } on DioException catch (e) {
+      print("DEBUG: API Error: ${e.response?.data}");
+      String errorMessage = isArabic() ? 'حدث خطأ أثناء إنشاء الموعد' : 'Error creating appointment';
+      if (e.response?.data != null && e.response!.data['message'] != null) {
+        errorMessage = e.response!.data['message'];
+      } else if (e.response?.data != null && e.response!.data['errors'] != null) {
+         final errors = e.response!.data['errors'];
+         if (errors is Map && errors.isNotEmpty) {
+           errorMessage = errors.values.first.first;
+         }
+      }
+      errorToast(context, errorMessage);
+    } catch (e) {
+      print("DEBUG: General error: $e");
+      errorToast(context, isArabic() ? 'حدث خطأ غير متوقع' : 'An unexpected error occurred');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isCreatingAppointment = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AppointmentCubit()
-        ..getAvailability(clinicCode)
-        ..getClientINClinic(clinicCode)
-        ..getDoctor(clinicCode),
-      child: BlocConsumer<AppointmentCubit, AppointmentState>(
-        listener: (context, state) {
-          // if (state is CreateAppointmentsSuccess) {
-          //   LayoutCubit.get(context).changeBottomNav(2);
-          //   LayoutCubit.get(context).pets.forEach((element) {
-          //     element.isSelected = false;
-          //   });
-          //   navigateAndFinish(context, LayoutScreen());
-          // }
-          if (state is CreateAppointmentsError) {
-            errorToast(
-              context,
-              state.errorMessageModel.errors.isNotEmpty
-                  ? state.errorMessageModel.errors.values.first.first
-                  : state.errorMessageModel.message,
-            );
-          }
-        },
-        builder: (context, state) {
-          var cubit = AppointmentCubit.get(context);
-
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(S.of(context).appointmentButtonBooking),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    width: 100,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor:
-                            ColorManager.primaryColor.withOpacity(.2),
-                      ),
-                      onPressed: cubit.isLoading
-                          ? null
-                          : () {
-                              if (dateController.text.isEmpty || time == null) {
-                                infoToast(
-                                  context,
-                                  dateController.text.isEmpty
-                                      ? isArabic()
-                                          ? 'الرجاء تحديد التاريخ '
-                                          : 'Please select date'
-                                      : isArabic()
-                                          ? "الرجاء تحديد الوقت"
-                                          : 'Please select time',
-                                );
-                              } else {
-                                ClientClinicModel? matchedPet;
-                                matchedPet = findPet(cubit.petListInVet, petId);
-                                if (matchedPet == null) {
-                                  infoToast(
-                                    context,
-                                    isArabic()
-                                        ? 'الحيوان غير موجود'
-                                        : 'The pet is not found',
-                                  );
-                                  return;
-                                } else {
-                                  cubit.createAppointment(
-                                    petId: petId,
-                                    isSpayed: true,
-                                    petSqueakId: matchedPet.petSqueakId,
-                                    clinicCode: clinicCode,
-                                    appointmentTime: time! + ':00',
-                                    appointmentDate: dateController.text,
-                                    petGender: matchedPet.petGender,
-                                    petName: matchedPet.petName,
-                                    clientId: matchedPet.clientId,
-                                    isExisted: true,
-                                    notExistedOrPet: false,
-                                    isExistedNoPet: false,
-                                    doctorId: doctorId,
-                                  );
-                                }
-                              }
-                            },
-                      child: cubit.isLoading
-                          ? const CircularProgressIndicator()
-                          : Text(
-                              S.of(context).booking,
-                              style: FontStyleThame.textStyle(
-                                context: context,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                fontColor: ColorManager.primaryColor,
-                              ),
-                            ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            floatingActionButton: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                controller: cubit.commentController,
-                style: FontStyleThame.textStyle(
-                  context: context,
-                  fontSize: 15,
+    print("DEBUG: Book Again Screen building. Data loaded: $areDataLoaded");
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(S.of(context).appointmentButtonBooking),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.bug_report),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DebugAppointmentAPI(clinicCode: widget.clinicCode),
                 ),
-                maxLines: 1,
-                decoration: InputDecoration(
-                  hintText: S.of(context).addComment,
-                  contentPadding: EdgeInsetsDirectional.only(
-                    start: 10,
-                  ),
-                  counterStyle: FontStyleThame.textStyle(
-                    context: context,
-                    fontSize: 13,
-                  ),
-                  hintStyle: FontStyleThame.textStyle(
-                    context: context,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    fontColor: MainCubit.get(context).isDark
-                        ? Colors.white54
-                        : Colors.black54,
-                  ),
-                  suffixIcon: IconButton(
-                    onPressed: cubit.isLoading
-                        ? null
-                        : () {
-                            if (dateController.text.isEmpty || time == null) {
-                              infoToast(
-                                context,
-                                dateController.text.isEmpty
-                                    ? isArabic()
-                                        ? 'الرجاء تحديد التاريخ '
-                                        : 'Please select date'
-                                    : isArabic()
-                                        ? "الرجاء تحديد الوقت"
-                                        : 'Please select time',
-                              );
-                            } else {
-                              ClientClinicModel? matchedPet;
-                              matchedPet = findPet(cubit.petListInVet, petId);
-                              if (matchedPet == null) {
-                                infoToast(
-                                  context,
-                                  isArabic()
-                                      ? 'الحيوان غير موجود'
-                                      : 'The pet is not found',
-                                );
-                                return;
-                              } else {
-                                cubit.createAppointment(
-                                  petId: petId,
-                                  petSqueakId: matchedPet.petSqueakId,
-                                  isSpayed: true,
-                                  clinicCode: clinicCode,
-                                  appointmentTime: time! + ':00',
-                                  appointmentDate: dateController.text,
-                                  petGender: matchedPet.petGender,
-                                  petName: matchedPet.petName,
-                                  clientId: matchedPet.clientId,
-                                  isExisted: true,
-                                  notExistedOrPet: false,
-                                  isExistedNoPet: false,
-                                  doctorId: doctorId,
-                                );
-                              }
-                            }
-                          },
-                    icon: cubit.isLoading
-                        ? const CircularProgressIndicator()
-                        : const Icon(IconlyLight.send),
-                  ),
-                  filled: true,
-                  fillColor: MainCubit.get(context).isDark
-                      ? ColorManager.myPetsBaseBlackColor
-                      : Colors.grey.shade200,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusColor: Colors.grey.shade200,
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  disabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
+              );
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: 100,
+              child: TextButton(
+                style: TextButton.styleFrom(backgroundColor: ColorManager.primaryColor.withOpacity(.2)),
+                onPressed: (isCreatingAppointment || !areDataLoaded) ? null : _handleBooking,
+                child: isCreatingAppointment ? const CircularProgressIndicator() : Text(S.of(context).booking, style: FontStyleThame.textStyle(context: context, fontSize: 16, fontWeight: FontWeight.w700, fontColor: ColorManager.primaryColor)),
               ),
             ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            body: SingleChildScrollView(
+          )
+        ],
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextFormField(
+          controller: _commentController, // Use local controller
+          style: FontStyleThame.textStyle(context: context, fontSize: 15),
+          maxLines: 1,
+          decoration: InputDecoration(
+            hintText: S.of(context).addComment,
+            contentPadding: EdgeInsetsDirectional.only(start: 10),
+            counterStyle: FontStyleThame.textStyle(context: context, fontSize: 13),
+            hintStyle: FontStyleThame.textStyle(context: context, fontSize: 14, fontWeight: FontWeight.w700, fontColor: MainCubit.get(context).isDark ? Colors.white54 : Colors.black54),
+            suffixIcon: IconButton(
+              onPressed: (isCreatingAppointment || !areDataLoaded) ? null : _handleBooking,
+              icon: isCreatingAppointment ? const CircularProgressIndicator() : const Icon(IconlyLight.send),
+            ),
+            filled: true,
+            fillColor: MainCubit.get(context).isDark ? ColorManager.myPetsBaseBlackColor : Colors.grey.shade200,
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+            focusColor: Colors.grey.shade200,
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+            disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+            errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+            focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: !areDataLoaded
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text(isArabic() ? 'جاري تحميل البيانات...' : 'Loading your data...', style: TextStyle(fontSize: 16)),
+                ],
+              ),
+            )
+          : SingleChildScrollView(
               physics: BouncingScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    buildDropDownDoctor(cubit, context),
-                    (AppointmentCubit.get(context).availabilities.isNotEmpty)
+                    buildDropDownDoctor(context),
+                    (_localAvailabilities.isNotEmpty)
                         ? CalendarScreen(
                             isShowTime: true,
                             isShowDate: true,
-                            timeSlotData: cubit.availabilities,
+                            timeSlotData: _localAvailabilities,
                             onDaySelected: (selectedDay, focusedDay) {
-                              String formatDate =
-                                  DateFormat('yyyy-MM-dd', 'en_US')
-                                      .format(selectedDay);
-                              dateController.text = formatDate;
-                              cubit.emit(GetAvailabilitySuccess());
+                              String formatDate = DateFormat('yyyy-MM-dd', 'en_US').format(selectedDay);
+                              if (mounted) setState(() => dateController.text = formatDate);
                             },
                             onIntervalSelected: (p0) {
+                              print("DEBUG: Original time selection: $p0");
                               p0 = convertTo24Hour(p0);
-                              if (DateTime.now().isBefore(
-                                  DateTime.parse(dateController.text))) {
-                                time = p0;
-                              } else {
-                                if (int.parse(p0.split(':')[0]) <
-                                        DateTime.now().hour ||
-                                    (int.parse(p0.split(':')[0]) ==
-                                            DateTime.now().hour &&
-                                        int.parse(p0.split(':')[1]) <
-                                            DateTime.now().minute)) {
-                                  infoToast(
-                                    context,
-                                    isArabic()
-                                        ? 'الساعة المحددة قبل الساعة الحالية'
-                                        : 'Selected time is before current time',
-                                  );
-                                } else {
-                                  time = p0;
-                                }
+                              print("DEBUG: After conversion to 24-hour format: $p0");
+                              if (dateController.text.isEmpty) { // Ensure date is selected first
+                                infoToast(context, isArabic() ? 'الرجاء تحديد التاريخ أولاً' : 'Please select a date first');
+                                return;
                               }
-                              cubit.emit(GetAvailabilitySuccess());
+                              DateTime selectedDateForCheck = DateTime.parse(dateController.text);
+                              if (DateTime.now().isBefore(selectedDateForCheck) || 
+                                  (DateTime.now().year == selectedDateForCheck.year && 
+                                   DateTime.now().month == selectedDateForCheck.month && 
+                                   DateTime.now().day == selectedDateForCheck.day)) {
+                                try {
+                                  final parts = p0.split(':');
+                                  int hours = int.parse(parts[0]);
+                                  int minutes = parts.length > 1 ? int.parse(parts[1]) : 0;
+                                  DateTime selectedDateTime = DateTime(selectedDateForCheck.year, selectedDateForCheck.month, selectedDateForCheck.day, hours, minutes);
+                                  DateTime nowForCompare = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, DateTime.now().hour, DateTime.now().minute);
+
+                                  if (selectedDateForCheck.isAfter(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)) || selectedDateTime.isAfter(nowForCompare)) {
+                                    if (mounted) setState(() => time = p0);
+                                    print("DEBUG: Time set to: $time");
+                                  } else {
+                                    print("DEBUG: Selected time is before current time");
+                                    infoToast(context, isArabic() ? 'الساعة المحددة قبل الساعة الحالية' : 'Selected time is before current time');
+                                  }
+                                } catch (e) {
+                                  print("DEBUG: Error parsing time: $e");
+                                  infoToast(context, isArabic() ? 'خطأ في تنسيق الوقت' : 'Error in time format');
+                                }
+                              } else {
+                                 print("DEBUG: Selected date is in the past.");
+                                 infoToast(context, isArabic() ? 'لا يمكن تحديد تاريخ في الماضي' : 'Cannot select a past date');
+                              }
                             },
                           )
                         : Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: CalendarShimmer(),
                           ),
-                    SizedBox(
-                      height: 80,
-                    )
+                    SizedBox(height: 80)
                   ],
                 ),
               ),
             ),
-          );
-        },
-      ),
     );
   }
 
-  String? doctorImage;
-  String? doctorName;
-  String? doctorId;
-
-  Widget buildDropDownDoctor(AppointmentCubit cubit, BuildContext context) {
+  Widget buildDropDownDoctor(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -318,10 +356,13 @@ class BooKAgainScreen extends StatelessWidget {
           padding: const EdgeInsets.all(4.0),
           child: DropdownButton<DoctorModel>(
             onChanged: (newValue) {
-              doctorImage = newValue!.image;
-              doctorId = newValue.id;
-              doctorName = newValue.name;
-              cubit.emit(GetDoctorSuccess());
+              if (mounted) {
+                setState(() {
+                  doctorImage = newValue!.image;
+                  doctorId = newValue.id;
+                  doctorName = newValue.name;
+                });
+              }
             },
             isExpanded: true,
             iconSize: 0.0,
@@ -331,43 +372,22 @@ class BooKAgainScreen extends StatelessWidget {
             underline: const SizedBox(),
             hint: Row(
               children: [
-                Text(
-                  doctorName ?? (isArabic() ? 'اختر الطبيب' : 'Select doctor'),
-                  style: FontStyleThame.textStyle(
-                    context: context,
-                  ),
-                ),
+                Text(doctorName ?? (isArabic() ? 'اختر الطبيب' : 'Select doctor'), style: FontStyleThame.textStyle(context: context)),
                 Spacer(),
-                CircleAvatar(
-                  radius: 20,
-                  backgroundImage: NetworkImage(
-                    doctorImage ??
-                        'https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&uid=R78903714&ga=GA1.1.798062041.1678310296&semt=ais',
-                  ),
-                ),
+                CircleAvatar(radius: 20, backgroundImage: NetworkImage(doctorImage ?? 'https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&uid=R78903714&ga=GA1.1.798062041.1678310296&semt=ais')),
               ],
             ),
             borderRadius: const BorderRadius.all(Radius.circular(20)),
-            items: cubit.doctors.map((DoctorModel value) {
+            items: _localDoctors.map((DoctorModel value) {
               return DropdownMenuItem<DoctorModel>(
                 value: value,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
-                      Text(
-                        value.name,
-                        style: FontStyleThame.textStyle(
-                          context: context,
-                        ),
-                      ),
+                      Text(value.name, style: FontStyleThame.textStyle(context: context)),
                       Spacer(),
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundImage: NetworkImage(
-                          value.image,
-                        ),
-                      ),
+                      CircleAvatar(radius: 20, backgroundImage: NetworkImage(value.image)),
                     ],
                   ),
                 ),

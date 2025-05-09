@@ -168,20 +168,28 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   Future getClientINClinic(ClinicCode) async {
     emit(GetDoctorLoading());
     try {
+      print("DEBUG: Fetching client pets for clinic code: $ClinicCode with phone: ${CacheHelper.getData('phone')}");
       Response response = await DioFinalHelper.getData(
         method:
             getClientClinicEndPoint(ClinicCode, CacheHelper.getData('phone')),
         language: false,
       );
-      print(response.data);
+      print("DEBUG: Client API response: ${response.data}");
       clientINClinic = true;
 
       petListInVet = (response.data['data'] as List).map((e) {
+        print("DEBUG: Processing pet from API: ${e}");
         return ClientClinicModel.fromJson(e);
       }).toList();
+      
+      print("DEBUG: Retrieved ${petListInVet.length} pets for client in clinic");
+      for (var pet in petListInVet) {
+        print("DEBUG: Pet - ID: ${pet.petId}, Name: ${pet.petName}, SqueakID: ${pet.petSqueakId}");
+      }
+      
       emit(GetDoctorSuccess());
     } on DioException catch (e) {
-      print(e.response!.data);
+      print("DEBUG: Error fetching client in clinic: ${e.response?.data}");
       emit(GetDoctorError());
     }
   }
@@ -193,25 +201,67 @@ class AppointmentCubit extends Cubit<AppointmentState> {
       return '';
     }
 
-    // Split the time string into hours, minutes, and seconds
-    final parts = time.split(':');
-    final hours = int.parse(parts[0]);
-    final minutes = int.parse(parts[1]);
-    final seconds = int.parse(parts[2]);
-
-    // Create a DateTime object with the provided time in local time zone
-    DateTime localDate = DateTime(DateTime.now().year, DateTime.now().month,
-        DateTime.now().day, hours, minutes, seconds);
-
-    // Convert local time to UTC
-    DateTime utcDate = localDate.toUtc();
-
-    // Format the UTC hours, minutes, and seconds to always have two digits
-    String utcHours = utcDate.hour.toString().padLeft(2, '0');
-    String utcMinutes = utcDate.minute.toString().padLeft(2, '0');
-    String utcSeconds = utcDate.second.toString().padLeft(2, '0');
-
-    return '$utcHours:$utcMinutes:$utcSeconds';
+    print("DEBUG: Converting time to UTC: $time");
+    
+    try {
+      // Handle AM/PM format if present
+      bool isPM = false;
+      if (time.toUpperCase().contains('PM')) {
+        isPM = true;
+        time = time.replaceAll(RegExp(r'[pP][mM]'), '').trim();
+      } else if (time.toUpperCase().contains('AM')) {
+        time = time.replaceAll(RegExp(r'[aA][mM]'), '').trim();
+      }
+      
+      // Split the time string into hours, minutes, and seconds
+      final parts = time.split(':');
+      
+      if (parts.length < 2) {
+        print("DEBUG: Invalid time format: $time");
+        return time; // Return as is if invalid format
+      }
+      
+      // Parse the time components
+      int hours = int.parse(parts[0]);
+      int minutes = int.parse(parts[1]);
+      int seconds = parts.length > 2 ? int.parse(parts[2]) : 0;
+      
+      // Adjust for PM time
+      if (isPM && hours < 12) {
+        hours += 12;
+      }
+      // Adjust for 12 AM
+      if (!isPM && hours == 12) {
+        hours = 0;
+      }
+      
+      print("DEBUG: Parsed time - Hours: $hours, Minutes: $minutes, Seconds: $seconds");
+      
+      // Create a DateTime object with the provided time in local time zone
+      DateTime localDate = DateTime(
+        DateTime.now().year, 
+        DateTime.now().month,
+        DateTime.now().day, 
+        hours, 
+        minutes, 
+        seconds
+      );
+      
+      // Convert local time to UTC
+      DateTime utcDate = localDate.toUtc();
+      
+      // Format the UTC hours, minutes, and seconds to always have two digits
+      String utcHours = utcDate.hour.toString().padLeft(2, '0');
+      String utcMinutes = utcDate.minute.toString().padLeft(2, '0');
+      String utcSeconds = utcDate.second.toString().padLeft(2, '0');
+      
+      String result = '$utcHours:$utcMinutes:$utcSeconds';
+      print("DEBUG: Converted UTC time: $result");
+      return result;
+    } catch (e) {
+      print("DEBUG: Error converting time to UTC: $e");
+      return time; // Return original if there's an error
+    }
   }
 
   Future createAppointment({
@@ -232,24 +282,110 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     // String? specieId,
   }) async {
     isLoading = true;
-    appointmentTime = convertLocalTimeToUTC(appointmentTime);
-    emit(CreateAppointmentsLoading());
     try {
+      // Simplified time handling - ensure format is HH:MM:SS
+      print("DEBUG: Original appointment time: $appointmentTime");
+      
+      // Directly format the time without complex conversion
+      // Just ensure it has seconds
+      if (!appointmentTime.contains(':')) {
+        appointmentTime = "$appointmentTime:00:00"; // Handle case where only hour is provided
+      } else if (appointmentTime.split(':').length == 2) {
+        appointmentTime = "$appointmentTime:00"; // Add seconds if only HH:MM format
+      }
+      
+      print("DEBUG: Formatted time: $appointmentTime");
+      
+      emit(CreateAppointmentsLoading());
+      
+      print("DEBUG: Creating appointment with params:");
+      print("DEBUG: petId: $petId");
+      print("DEBUG: doctorId: $doctorId");
+      print("DEBUG: clinicCode: $clinicCode");
+      print("DEBUG: appointmentTime: $appointmentTime");
+      print("DEBUG: appointmentDate: $appointmentDate");
+      print("DEBUG: clientId: $clientId");
+      print("DEBUG: petSqueakId: $petSqueakId");
+      
       if (isExisted) {
-        print('isExisted');
-        await _createAppointment(
-          method: '$version/vetcare/reservation/existedClient',
-          data: {
-            "date": appointmentDate,
-            "time": appointmentTime,
-            "petId": petId,
-            "clinicCode": clinicCode,
-            'doctorUserId': doctorId,
-            "clientId": petListInVet.first.clientId,
-            "petSqueakId": petSqueakId,
-          },
-          successEmit: CreateExistedClientAppointment(),
-        );
+        print('DEBUG: Using existedClient endpoint');
+        
+        // Make sure petListInVet is not empty before proceeding
+        if (petListInVet.isEmpty) {
+          print("DEBUG: petListInVet is empty, cannot proceed");
+          throw DioException(
+            requestOptions: RequestOptions(path: ''),
+            error: 'No pets found in this clinic',
+            response: Response(
+              requestOptions: RequestOptions(path: ''),
+              data: {
+                'message': 'No pets found in this clinic',
+                'errors': {}
+              },
+              statusCode: 400,
+            ),
+          );
+        }
+        
+        // Create the request payload - SIMPLIFIED and DIRECT approach
+        Map<String, dynamic> requestData = {
+          "date": appointmentDate,
+          "time": appointmentTime,
+          "petId": petId,
+          "clinicCode": clinicCode,
+          "clientId": clientId,
+          "petSqueakId": petSqueakId,
+          "squeakClientId": CacheHelper.getData('clintId'),
+        };
+        
+        // Only add doctorId if it's not null and not empty
+        if (doctorId != null && doctorId.isNotEmpty) {
+          requestData["doctorUserId"] = doctorId;
+        }
+        
+        // Add notes/comments if not empty
+        if (commentController.text.isNotEmpty) {
+          requestData["notes"] = commentController.text;
+        }
+        
+        print("DEBUG: Request payload for existedClient: $requestData");
+        
+        // Make the API call
+        try {
+          print("DEBUG: Sending direct API request");
+          Response response;
+          try {
+            // First attempt with IDs as provided
+            response = await DioFinalHelper.postData(
+              method: '$version/vetcare/reservation/existedClient',
+              data: requestData,
+            );
+            print("DEBUG: API response: ${response.data}");
+          } catch (e) {
+            print("DEBUG: First attempt failed, trying with swapped IDs: $e");
+            
+            // Create a new request with swapped IDs
+            Map<String, dynamic> swappedData = Map.from(requestData);
+            String tempId = swappedData['petId'];
+            swappedData['petId'] = swappedData['petSqueakId'];
+            swappedData['petSqueakId'] = tempId;
+            
+            print("DEBUG: Trying with swapped IDs: $swappedData");
+            response = await DioFinalHelper.postData(
+              method: '$version/vetcare/reservation/existedClient',
+              data: swappedData,
+            );
+            print("DEBUG: Swapped IDs API response: ${response.data}");
+          }
+          
+          emit(CreateExistedClientAppointment());
+          isLoading = false;
+          emit(CreateAppointmentsSuccess());
+          return;
+        } catch (e) {
+          print("DEBUG: Direct API error: $e");
+          rethrow; // Let the outer catch block handle this
+        }
       } else if (isExistedNoPet) {
         await _createAppointment(
           method: '$version/vetcare/reservation/newPet',
@@ -312,12 +448,65 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     required Map<String, dynamic> data,
     required successEmit,
   }) async {
-    Response response = await DioFinalHelper.postData(
-      method: method,
-      data: data,
-    );
+    try {
+      print("DEBUG: Sending request to: $method");
+      print("DEBUG: Request data: $data");
+      
+      Response response = await DioFinalHelper.postData(
+        method: method,
+        data: data,
+      );
 
-    print(response.data);
-    emit(successEmit);
+      print("DEBUG: Response data: ${response.data}");
+      emit(successEmit);
+    } catch (error) {
+      print("DEBUG: Error in _createAppointment: $error");
+      if (error is DioException) {
+        print("DEBUG: DioException details:");
+        print("DEBUG: - Status code: ${error.response?.statusCode}");
+        print("DEBUG: - Response data: ${error.response?.data}");
+        print("DEBUG: - Error message: ${error.message}");
+        if (error.response?.data is Map) {
+          Map<String, dynamic> errorData = error.response?.data;
+          print("DEBUG: - Error details: ${errorData['errors']}");
+          print("DEBUG: - Error message: ${errorData['message']}");
+          
+          // Check if the error is related to the pet ID or owner
+          if (method == '$version/vetcare/reservation/existedClient' && 
+              errorData['errors'] != null && 
+              errorData['errors']['Squeak Pet Id'] != null &&
+              (errorData['errors']['Squeak Pet Id'].contains('Looks like this pet isn\'t around anymore.') || 
+               errorData['errors']['Squeak Pet Id'].contains('Owner Required'))) {
+              
+            // Try swapping the IDs as a fallback
+            if (data.containsKey('petId') && data.containsKey('petSqueakId')) {
+              String tempId = data['petId'];
+              print("DEBUG: Trying with swapped IDs as fallback");
+              
+              // Create a copy of the data with swapped IDs
+              Map<String, dynamic> swappedData = Map.from(data);
+              swappedData['petId'] = data['petSqueakId'];
+              swappedData['petSqueakId'] = tempId;
+              
+              print("DEBUG: Fallback request with swapped IDs: $swappedData");
+              
+              try {
+                Response swappedResponse = await DioFinalHelper.postData(
+                  method: method,
+                  data: swappedData,
+                );
+                print("DEBUG: Fallback succeeded! Response: ${swappedResponse.data}");
+                emit(successEmit);
+                return; // Return if successful to avoid rethrowing
+              } catch (swappedError) {
+                print("DEBUG: Fallback also failed: $swappedError");
+                // Fall through to rethrow the original error
+              }
+            }
+          }
+        }
+      }
+      rethrow;
+    }
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import '../../../../generated/l10n.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
