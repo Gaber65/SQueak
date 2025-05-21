@@ -1,7 +1,7 @@
 import '../../domain/entities/pet_entity.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-class PetData extends PetEntity {
+class PetData extends PetEntities {
   PetData({
     required super.petId,
     required super.petName,

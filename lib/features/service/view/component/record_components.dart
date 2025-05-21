@@ -551,7 +551,7 @@ Widget buildConditional({
   required context,
   required BuildContext contextBloc,
   required VaccinationCubit cubit,
-  required PetEntity petModel,
+  required PetEntities petModel,
   required listOfServices,
   required vacEntitiesData,
 }) {

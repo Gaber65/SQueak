@@ -62,6 +62,27 @@
                     android:host="web.app"
                     android:pathPrefix="/vetRegister" />
             </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                        android:scheme="https"
+                        android:host="squeakvetcare.web.app"
+                        android:pathPrefix="/QrRegister" />
+            </intent-filter>
+
+            <!-- Deep link intent filter for custom scheme -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                        android:scheme="squeakvetcare"
+                        android:host="web.app"
+                        android:pathPrefix="/QrRegister" />
+            </intent-filter>
         </activity>
 
         <meta-data

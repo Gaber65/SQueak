@@ -12,7 +12,7 @@ class ProfileImageSection extends StatelessWidget {
     required this.cubit,
   });
 
-  final PetEntity pets;
+  final PetEntities pets;
   final PetCubit cubit;
 
   @override

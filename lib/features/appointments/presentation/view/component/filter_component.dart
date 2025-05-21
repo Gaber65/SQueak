@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
-import 'package:squeak/features/appointments/data/models/get_appointment_model.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
+import '../../../../../core/utils/enums/dayOfWeek_enum.dart';
 import '../../../../pets/data/models/pet_model.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 

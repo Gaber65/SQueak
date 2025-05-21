@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../core/error/failure.dart';
+import '../../../../core/network/error_message_model.dart';
 import '../../domain/base_repo/base_vet_repository.dart';
 import '../../domain/entities/data_vet.dart';
 import '../../domain/entities/vet_client.dart';
@@ -42,7 +43,16 @@ class VetRepository implements BaseVetRepository {
     } on DioException catch (e) {
       return Left(ServerFailure(e.response?.data['message'] ?? 'Server error'));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: e.toString(),
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 
@@ -60,31 +70,63 @@ class VetRepository implements BaseVetRepository {
     } on DioException catch (e) {
       return Left(ServerFailure(e.response?.data['message'] ?? 'Server error'));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: e.toString(),
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 
   @override
-  Future<Either<Failure, DataVetEntity>> getClient(String invitationCode) async {
+  Future<Either<Failure, DataVetEntity>> getClient(
+    String invitationCode,
+  ) async {
     try {
       final result = await remoteDataSource.getClient(invitationCode);
       return Right(result);
     } on DioException catch (e) {
-      return Left(ServerFailure(e.response?.data['message'] ?? 'Server error'));
+      return Left(ServerFailure(ErrorMessageModel.fromJson(e.response?.data)));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: e.toString(),
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 
   @override
-  Future<Either<Failure, DataVetEntity>> getClientInApp(String code, String phone) async {
+  Future<Either<Failure, DataVetEntity>> getClientInApp(
+    String code,
+    String phone,
+  ) async {
     try {
       final result = await remoteDataSource.getClientInApp(code, phone);
       return Right(result);
     } on DioException catch (e) {
       return Left(ServerFailure(e.response?.data['message'] ?? 'Server error'));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: e.toString(),
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 
@@ -96,7 +138,16 @@ class VetRepository implements BaseVetRepository {
     } on DioException catch (e) {
       return Left(ServerFailure(e.response?.data['message'] ?? 'Server error'));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: e.toString(),
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 
@@ -107,12 +158,25 @@ class VetRepository implements BaseVetRepository {
     bool isFilter,
   ) async {
     try {
-      final result = await remoteDataSource.getClientsFromVet(code, phone, isFilter);
+      final result = await remoteDataSource.getClientsFromVet(
+        code,
+        phone,
+        isFilter,
+      );
       return Right(result);
     } on DioException catch (e) {
       return Left(ServerFailure(e.response?.data['message'] ?? 'Server error'));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: e.toString(),
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 
@@ -132,7 +196,16 @@ class VetRepository implements BaseVetRepository {
     } on DioException catch (e) {
       return Left(ServerFailure(e.response?.data['message'] ?? 'Server error'));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: e.toString(),
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 
@@ -152,7 +225,16 @@ class VetRepository implements BaseVetRepository {
     } on DioException catch (e) {
       return Left(ServerFailure(e.response?.data['message'] ?? 'Server error'));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: e.toString(),
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 
@@ -164,7 +246,16 @@ class VetRepository implements BaseVetRepository {
     } on DioException catch (e) {
       return Left(ServerFailure(e.response?.data['message'] ?? 'Server error'));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: e.toString(),
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 
@@ -176,9 +267,16 @@ class VetRepository implements BaseVetRepository {
     } on DioException catch (e) {
       return Left(ServerFailure(e.response?.data['message'] ?? 'Server error'));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: e.toString(),
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
-
-
 }

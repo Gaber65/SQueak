@@ -7,7 +7,6 @@ import 'package:squeak/features/appointments/presentation/view/appointments/get_
 import 'package:squeak/features/appointments/presentation/view/supplier/get_supplier.dart';
 import 'package:squeak/features/layout/post/presentation/screens/home_screen.dart';
 import 'package:squeak/features/settings/persentaion/view/setting_screen.dart';
-import 'package:squeak/test.dart';
 
 import '../../domain/entities/version_entity.dart';
 import '../../domain/usecases/get_current_app_version_usecase.dart';
@@ -26,15 +25,9 @@ class LayoutCubit extends Cubit<LayoutState> {
 
   static LayoutCubit get(context) => BlocProvider.of(context);
 
-
   List<Widget> screens = [
     HomeScreen(),
-    MySupplierScreen(
-      petId: '',
-      isSpayed: null,
-      petNameFromAppoinmentIcon: null,
-      genderForPetFromAppoinmentScreen: null,
-    ),
+    MySupplierScreen(petSelectFromIcon: null),
     GetUserAppointment(),
     SettingScreen(),
   ];
@@ -52,13 +45,18 @@ class LayoutCubit extends Cubit<LayoutState> {
   Future<void> getVersion() async {
     getVersionFromBackLoading = true;
     emit(GetVersionLoadingState());
-    
+
     final result = await getVersionUseCase(const NoParameters());
-    
+
     result.fold(
       (failure) {
         getVersionFromBackLoading = false;
-        emit(GetVersionErrorState(failure.message));
+        emit(
+          GetVersionErrorState(
+            failure.error.errors.entries.first.value.first ??
+                failure.error.message,
+          ),
+        );
       },
       (version) {
         versionEntity = version;
@@ -70,12 +68,17 @@ class LayoutCubit extends Cubit<LayoutState> {
 
   Future<void> getAppVersion() async {
     emit(GetCurrentVersionLoadingState());
-    
+
     final result = await getCurrentAppVersionUseCase(const NoParameters());
-    
+
     result.fold(
       (failure) {
-        emit(GetCurrentVersionErrorState(failure.message));
+        emit(
+          GetCurrentVersionErrorState(
+            failure.error.errors.entries.first.value.first ??
+                failure.error.message,
+          ),
+        );
       },
       (version) {
         currentVersion = version;

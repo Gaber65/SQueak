@@ -5,22 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:squeak/features/appointments/presentation/controller/user/user_appointment_cubit.dart';
 
 import 'package:squeak/generated/l10n.dart';
 
-
-import 'package:squeak/features/appointments/data/models/get_appointment_model.dart';
-
 class RateAppointment extends StatefulWidget {
-  final AppointmentModel model;
+  final AppointmentEntity model;
   final bool isNav;
 
-  RateAppointment({
-    required this.model,
-    required this.isNav,
-    super.key,
-  });
+  const RateAppointment({required this.model, required this.isNav, super.key});
 
   @override
   State<RateAppointment> createState() => _RateAppointmentState();
@@ -48,15 +42,22 @@ class _RateAppointmentState extends State<RateAppointment> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => UserAppointmentCubit()..init(widget.model),
+      create: (context) => sl<UserAppointmentCubit>()..initRating(widget.model),
       child: BlocConsumer<UserAppointmentCubit, UserAppointmentState>(
         listener: (context, state) {
-          if (state is RateAppointmentSuccessFunction) {
+          if (state is RateAppointmentSuccess) {
             LayoutCubit.get(context).changeBottomNav(2);
             navigateAndFinish(context, LayoutScreen());
           }
         },
         builder: (context, state) {
+          if (widget.model.isRating) {
+            UserAppointmentCubit.get(context).ratingDoctor =
+                widget.model.doctorServiceRate;
+            UserAppointmentCubit.get(context).ratingCleanliness =
+                widget.model.cleanlinessRate;
+          }
+
           var cubit = UserAppointmentCubit.get(context);
           return WillPopScope(
             onWillPop: () async {
@@ -67,81 +68,87 @@ class _RateAppointmentState extends State<RateAppointment> {
               }
             },
             child: Scaffold(
-              floatingActionButton: (!widget.model.isRating)
-                  ? Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: TextFormField(
-                        controller: cubit.rateController,
-                        style: FontStyleThame.textStyle(
-                          context: context,
-                          fontSize: 15,
-                        ),
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          hintText: isArabic()
-                              ? "الرجاء إدخال ملاحظاتك"
-                              : 'Please enter your feedback',
-                          contentPadding: EdgeInsetsDirectional.only(
-                            start: 10,
-                          ),
-                          counterStyle: FontStyleThame.textStyle(
+              floatingActionButton:
+                  (!widget.model.isRating)
+                      ? Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: TextFormField(
+                          controller: cubit.rateController,
+                          style: FontStyleThame.textStyle(
                             context: context,
-                            fontSize: 13,
+                            fontSize: 15,
                           ),
-                          hintStyle: FontStyleThame.textStyle(
-                            context: context,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            fontColor: MainCubit.get(context).isDark
-                                ? Colors.white54
-                                : Colors.black54,
-                          ),
-                          suffixIcon: IconButton(
-                            onPressed: (cubit.ratingCleanliness == 0 ||
-                                    cubit.ratingDoctor == 0)
-                                ? null
-                                : cubit.isLoadingRate
-                                    ? null
-                                    : () {
-                                        cubit.rateAppointment(widget.model);
+                          maxLines: 1,
+                          decoration: InputDecoration(
+                            hintText:
+                                isArabic()
+                                    ? "الرجاء إدخال ملاحظاتك"
+                                    : 'Please enter your feedback',
+                            contentPadding: EdgeInsetsDirectional.only(
+                              start: 10,
+                            ),
+                            counterStyle: FontStyleThame.textStyle(
+                              context: context,
+                              fontSize: 13,
+                            ),
+                            hintStyle: FontStyleThame.textStyle(
+                              context: context,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              fontColor:
+                                  MainCubit.get(context).isDark
+                                      ? Colors.white54
+                                      : Colors.black54,
+                            ),
+                            suffixIcon: IconButton(
+                              onPressed:
+                                  (cubit.ratingCleanliness == 0 ||
+                                          cubit.ratingDoctor == 0)
+                                      ? null
+                                      : cubit.isLoadingRate
+                                      ? null
+                                      : () {
+                                        cubit.rateUserAppointment(widget.model);
                                       },
-                            icon: cubit.isLoadingRate
-                                ? const CircularProgressIndicator()
-                                : const Icon(IconlyLight.send),
-                          ),
-                          filled: true,
-                          fillColor: MainCubit.get(context).isDark
-                              ? ColorManager.myPetsBaseBlackColor
-                              : Colors.grey.shade200,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusColor: Colors.grey.shade200,
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          disabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                              icon:
+                                  cubit.isLoadingRate
+                                      ? const CircularProgressIndicator()
+                                      : const Icon(IconlyLight.send),
+                            ),
+                            filled: true,
+                            fillColor:
+                                MainCubit.get(context).isDark
+                                    ? ColorManager.myPetsBaseBlackColor
+                                    : Colors.grey.shade200,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusColor: Colors.grey.shade200,
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            disabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                  : null,
+                      )
+                      : null,
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerFloat,
               body: Padding(
@@ -157,26 +164,23 @@ class _RateAppointmentState extends State<RateAppointment> {
                         fit: BoxFit.fill,
                       ),
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
+                    SizedBox(height: 20),
 
                     ///title
                     Center(
                       child: Text(
                         isArabic() ? 'ردود فعل الجلسة' : 'Session feedback',
                         style: GoogleFonts.inter(
-                          color: MainCubit.get(context).isDark
-                              ? Colors.white
-                              : Colors.black,
+                          color:
+                              MainCubit.get(context).isDark
+                                  ? Colors.white
+                                  : Colors.black,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 10),
 
                     /// description
                     Center(
@@ -184,13 +188,15 @@ class _RateAppointmentState extends State<RateAppointment> {
                         TextSpan(
                           children: [
                             TextSpan(
-                              text: isArabic()
-                                  ? 'يرجى تقييم تجربتك مع '
-                                  : 'Please rate your experience with ',
+                              text:
+                                  isArabic()
+                                      ? 'يرجى تقييم تجربتك مع '
+                                      : 'Please rate your experience with ',
                               style: GoogleFonts.inter(
-                                color: MainCubit.get(context).isDark
-                                    ? Colors.white
-                                    : Colors.grey.shade600,
+                                color:
+                                    MainCubit.get(context).isDark
+                                        ? Colors.white
+                                        : Colors.grey.shade600,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -198,12 +204,14 @@ class _RateAppointmentState extends State<RateAppointment> {
                             TextSpan(
                               text: widget.model.clinicName,
                               style: GoogleFonts.inter(
-                                color: MainCubit.get(context).isDark
-                                    ? Colors.white
-                                    : Colors.grey.shade600,
+                                color:
+                                    MainCubit.get(context).isDark
+                                        ? Colors.white
+                                        : Colors.grey.shade600,
                                 fontSize: 14,
-                                fontWeight: FontWeight
-                                    .bold, // Make the clinic name bold
+                                fontWeight:
+                                    FontWeight
+                                        .bold, // Make the clinic name bold
                               ),
                             ),
                           ],
@@ -212,9 +220,7 @@ class _RateAppointmentState extends State<RateAppointment> {
                       ),
                     ),
 
-                    SizedBox(
-                      height: 50,
-                    ),
+                    SizedBox(height: 50),
 
                     /// rating service
                     Row(
@@ -231,40 +237,39 @@ class _RateAppointmentState extends State<RateAppointment> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(5, (index) {
                             return InkWell(
-                              onTap: !widget.model.isRating
-                                  ? () {
-                                      cubit.ratingDoctor = index + 1;
+                              onTap:
+                                  !widget.model.isRating
+                                      ? () {
+                                        cubit.ratingDoctor = index + 1;
 
-                                      cubit.emit(RateAppointmentSuccess());
-                                    }
-                                  : null,
-                              child: widget.model.isRating
-                                  ? FastCachedImage(
-                                      url: index >= cubit.ratingDoctor
-                                          ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
-                                          : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
-                                      width: 20,
-                                    )
-                                  : Image.network(
-                                      index >= cubit.ratingDoctor
-                                          ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
-                                          : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
-                                      width: 20,
-                                    ),
+                                        setState(() {});
+                                      }
+                                      : null,
+                              child:
+                                  widget.model.isRating
+                                      ? FastCachedImage(
+                                        url:
+                                            index >= cubit.ratingDoctor
+                                                ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
+                                                : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
+                                        width: 20,
+                                      )
+                                      : Image.network(
+                                        index >= cubit.ratingDoctor
+                                            ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
+                                            : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
+                                        width: 20,
+                                      ),
                             );
                           }),
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
+                    SizedBox(height: 20),
 
                     Divider(),
 
-                    SizedBox(
-                      height: 20,
-                    ),
+                    SizedBox(height: 20),
 
                     /// rating cleanliness
                     Row(
@@ -281,51 +286,52 @@ class _RateAppointmentState extends State<RateAppointment> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(5, (index) {
                             return InkWell(
-                              onTap: !widget.model.isRating
-                                  ? () {
-                                      cubit.ratingCleanliness = index + 1;
-                                      cubit.emit(RateAppointmentSuccess());
-                                    }
-                                  : null,
-                              child: widget.model.isRating
-                                  ? FastCachedImage(
-                                      url: index >= cubit.ratingCleanliness
-                                          ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
-                                          : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
-                                      width: 20,
-                                    )
-                                  : Image.network(
-                                      index >= cubit.ratingCleanliness
-                                          ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
-                                          : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
-                                      width: 20,
-                                    ),
+                              onTap:
+                                  !widget.model.isRating
+                                      ? () {
+                                        cubit.ratingCleanliness = index + 1;
+
+                                        setState(() {});
+                                      }
+                                      : null,
+                              child:
+                                  widget.model.isRating
+                                      ? FastCachedImage(
+                                        url:
+                                            index >= cubit.ratingCleanliness
+                                                ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
+                                                : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
+                                        width: 20,
+                                      )
+                                      : Image.network(
+                                        index >= cubit.ratingCleanliness
+                                            ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
+                                            : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
+                                        width: 20,
+                                      ),
                             );
                           }),
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
+                    SizedBox(height: 20),
                     if (widget.model.isRating)
                       MyTextForm(
                         controller: cubit.rateController,
                         prefixIcon: SizedBox(),
                         maxLines: 5,
                         enable: false,
-                        hintText: widget.model.isRating
-                            ? widget.model.feedbackComment ?? ''
-                            : isArabic()
+                        hintText:
+                            widget.model.isRating
+                                ? widget.model.feedbackComment ?? ''
+                                : isArabic()
                                 ? "الرجاء إدخال ملاحظاتك"
                                 : 'Please enter your feedback',
                         validatorText: '',
                         enabled: !widget.model.isRating,
                         obscureText: false,
                       ),
-                    SizedBox(
-                      height: 20,
-                    ),
+                    SizedBox(height: 20),
                   ],
                 ),
               ),

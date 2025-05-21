@@ -1,139 +1,170 @@
-import '../../domain/entities/appointment_entity.dart';
+import 'package:squeak/features/appointments/domain/entities/appointment_entity.dart';
 
-class AppointmentData extends AppointmentEntity {
-  AppointmentData({
+
+class AppointmentModel extends AppointmentEntity {
+  const AppointmentModel({
     required super.id,
-    required super.petId,
-    required super.clientId,
-    required super.doctorId,
-    required super.clinicId,
-    required super.startTime,
-    required super.endTime,
-    required super.appointmentDate,
-    required super.note,
+    required super.date,
+    required super.time,
+    super.doctorUserId,
+    required super.visitId,
+    required super.isRating,
+    required super.cleanlinessRate,
+    required super.doctorServiceRate,
+    super.feedbackComment,
     required super.status,
-    required super.reason,
-    required super.isPetCheckIn,
-    required super.createDate,
-    super.doctor,
-    super.pet,
-    super.clinic,
+    required super.clientId,
+    required super.petId,
+    required super.clinicPhone,
+    required super.clinicLocation,
+    super.clinicLogo,
+    required super.clinicCode,
+    required super.isBillSqueakVisible,
+    required super.clinicId,
+    required super.clinicName,
+    required super.source,
+    required super.client,
+    required super.pet,
+    required super.temperature,
+    required super.weight,
+    super.doctorUser,
   });
 
-  factory AppointmentData.fromJson(Map<String, dynamic> json) {
-    return AppointmentData(
-      id: json['id'] ?? '',
-      petId: json['petId'] ?? '',
-      clientId: json['clientId'] ?? '',
-      doctorId: json['doctorId'] ?? '',
-      clinicId: json['clinicId'] ?? '',
-      startTime: json['startTime'] ?? '',
-      endTime: json['endTime'] ?? '',
-      appointmentDate: json['appointmentDate'] ?? '',
-      note: json['note'] ?? '',
-      status: json['status'] ?? 0,
-      reason: json['reason'] ?? '',
-      isPetCheckIn: json['isPetCheckIn'] ?? false,
-      createDate: json['createDate'] ?? '',
-      doctor: json['doctor'] != null ? DoctorData.fromJson(json['doctor']) : null,
-      pet: json['pet'] != null ? PetData.fromJson(json['pet']) : null,
-      clinic: json['clinic'] != null ? ClinicData.fromJson(json['clinic']) : null,
+  factory AppointmentModel.fromJson(Map<String, dynamic> json) {
+    return AppointmentModel(
+      id: json['id'],
+      date: json['date'],
+      time: json['time'],
+      isBillSqueakVisible: json['isBillSqueakVisible'] ?? false,
+      doctorUserId: json['doctorUserId'],
+      visitId: json['visitId'].toString().contains('00000000')
+          ? null
+          : json['visitId'],
+      isRating: json['isRating'] == null
+          ? (json['cleanlinessRate'] > 0 || json['doctorServiceRate'] > 0)
+              ? true
+              : (json['cleanlinessRate'] == 0 && json['doctorServiceRate'] == 0)
+                  ? false
+                  : false
+          : json['isRating'],
+      cleanlinessRate: json['cleanlinessRate'],
+      doctorServiceRate: json['doctorServiceRate'],
+      feedbackComment: json['feedbackComment'],
+      status: json['statues'],
+      clientId: json['clientId'],
+      petId: json['petId'],
+      clinicPhone: json['clinicPhone'],
+      clinicLocation: json['clinicLocation'],
+      clinicLogo: json['clinicLogo'],
+      clinicCode: json['clinicCode'],
+      clinicId: json['clinicId'],
+      clinicName: json['clinicName'],
+      source: json['source'] ?? 0,
+      client: ClientModel.fromJson(json['client']),
+      pet: PetModel.fromJson(json['pet']),
+      doctorUser: json['doctorUser'] != null
+          ? DoctorUserModel.fromJson(json['doctorUser'])
+          : null,
+      temperature: json['temprature'] == null ? 0 : json['temprature'],
+      weight: json['wieght'] == null ? 0 : json['wieght'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'petId': petId,
+      'date': date,
+      'time': time,
+      'doctorUserId': doctorUserId,
+      'visitId': visitId,
+      'isRating': isRating,
+      'cleanlinessRate': cleanlinessRate,
+      'doctorServiceRate': doctorServiceRate,
+      'feedbackComment': feedbackComment,
+      'statues': status,
       'clientId': clientId,
-      'doctorId': doctorId,
+      'petId': petId,
+      'clinicPhone': clinicPhone,
+      'clinicLocation': clinicLocation,
+      'clinicLogo': clinicLogo,
+      'clinicCode': clinicCode,
       'clinicId': clinicId,
-      'startTime': startTime,
-      'endTime': endTime,
-      'appointmentDate': appointmentDate,
-      'note': note,
-      'status': status,
-      'reason': reason,
-      'isPetCheckIn': isPetCheckIn,
-      'createDate': createDate,
+      'clinicName': clinicName,
+      'source': source,
+      'client': (client as ClientModel).toJson(),
+      'pet': (pet as PetModel).toJson(),
+      'doctorUser': doctorUser != null ? (doctorUser as DoctorUserModel).toJson() : null,
+      'wieght': weight,
+      'temprature': temperature,
     };
   }
 }
 
-class DoctorData extends DoctorEntity {
-  DoctorData({
-    required super.id,
-    required super.fullName,
-    required super.email,
-    required super.phoneNumber,
-    required super.imageName,
+class ClientModel extends ClientEntity {
+  const ClientModel({
+    super.name,
+    super.phone,
+    super.gender,
   });
 
-  factory DoctorData.fromJson(Map<String, dynamic> json) {
-    return DoctorData(
-      id: json['id'] ?? '',
-      fullName: json['fullName'] ?? '',
-      email: json['email'] ?? '',
-      phoneNumber: json['phoneNumber'] ?? '',
-      imageName: json['imageName'] ?? '',
+  factory ClientModel.fromJson(Map<String, dynamic> json) {
+    return ClientModel(
+      name: json['name'],
+      phone: json['phone'],
+      gender: json['gender'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'fullName': fullName,
-      'email': email,
-      'phoneNumber': phoneNumber,
-      'imageName': imageName,
-    };
-  }
-}
-
-class PetData extends PetEntity {
-  PetData({
-    required super.id,
-    required super.petName,
-    required super.imageName,
-  });
-
-  factory PetData.fromJson(Map<String, dynamic> json) {
-    return PetData(
-      id: json['id'] ?? '',
-      petName: json['petName'] ?? '',
-      imageName: json['imageName'] ?? '',
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'petName': petName,
-      'imageName': imageName,
-    };
-  }
-}
-
-class ClinicData extends ClinicEntity {
-  ClinicData({
-    required super.id,
-    required super.name,
-    required super.address,
-  });
-
-  factory ClinicData.fromJson(Map<String, dynamic> json) {
-    return ClinicData(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      address: json['address'] ?? '',
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
       'name': name,
-      'address': address,
+      'phone': phone,
+      'gender': gender,
     };
   }
-} 
+}
+
+class PetModel extends PetEntity {
+  const PetModel({
+    super.name,
+    super.gender,
+    super.squeakPetId,
+  });
+
+  factory PetModel.fromJson(Map<String, dynamic> json) {
+    return PetModel(
+      name: json['name'],
+      gender: json['gender'],
+      squeakPetId: json['squeakPetId'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'squeakPetId': squeakPetId,
+      'gender': gender,
+    };
+  }
+}
+
+class DoctorUserModel extends DoctorUserEntity {
+  const DoctorUserModel({
+    super.fullName,
+    super.imageName,
+  });
+
+  factory DoctorUserModel.fromJson(Map<String, dynamic> json) {
+    return DoctorUserModel(
+      fullName: json['fullName'],
+      imageName: json['imageName'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'fullName': fullName,
+      'imageName': imageName,
+    };
+  }
+}

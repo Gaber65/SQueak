@@ -48,12 +48,20 @@ class SettingCubit extends Cubit<SettingState> {
   Future<void> getOwnerData() async {
     emit(GetOwnerDataLoading());
     final result = await getOwnerDataUseCase(const NoParameters());
-    result.fold((failure) => emit(GetOwnerDataError(failure.message)), (owner) {
-      profile = owner;
-      var toJson = owner.toMap();
-      CacheHelper.saveData('Owner', jsonEncode(toJson));
-      emit(GetOwnerDataSuccess());
-    });
+    result.fold(
+      (failure) => emit(
+        GetOwnerDataError(
+          failure.error.errors.entries.first.value.first ??
+              failure.error.message,
+        ),
+      ),
+      (owner) {
+        profile = owner;
+        var toJson = owner.toMap();
+        CacheHelper.saveData('Owner', jsonEncode(toJson));
+        emit(GetOwnerDataSuccess());
+      },
+    );
   }
 
   void init(BuildContext context) async {
@@ -122,11 +130,17 @@ class SettingCubit extends Cubit<SettingState> {
 
     isLoading = false;
 
-    result.fold((failure) => emit(UpdateProfileErrorState(failure.message)), (
-      owner,
-    ) {
-      profile = owner;
-      emit(UpdateProfileSuccessState(owner));
-    });
+    result.fold(
+      (failure) => emit(
+        UpdateProfileErrorState(
+          failure.error.errors.entries.first.value.first ??
+              failure.error.message,
+        ),
+      ),
+      (owner) {
+        profile = owner;
+        emit(UpdateProfileSuccessState(owner));
+      },
+    );
   }
 }

@@ -26,7 +26,7 @@ class PrintScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => UserAppointmentCubit()..getInvoives(id),
+      create: (context) => sl<UserAppointmentCubit>()..fetchInvoice(id),
       child: BlocConsumer<UserAppointmentCubit, UserAppointmentState>(
         listener: (context, state) {
           // TODO: implement listener
@@ -34,416 +34,419 @@ class PrintScreen extends StatelessWidget {
         builder: (context, state) {
           var cubit = UserAppointmentCubit.get(context);
           return Scaffold(
-            appBar: AppBar(
-              title: Text(
-                isArabic() ? "الفاتورة" : 'Invoice',
-              ),
-            ),
-            body: cubit.invoices == null
-                ? (state is GetInvoicesError)
-                    ? Center(
-                        child: Text(
-                        state.error.errors.values.first.first,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                        ),
-                      ))
-                    : Center(child: CircularProgressIndicator())
-                : SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: RepaintBoundary(
-                      key: _globalKey,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 20),
-                        decoration: BoxDecoration(
-                          color: MainCubit.get(context).isDark
-                              ? ColorManager.myPetsBaseBlackColor
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0xff000000).withOpacity(0.05),
-                              blurRadius: 5,
-                              spreadRadius: 4,
-                              offset: Offset(0, 0),
-                            ),
-                          ],
-                          border: Border.all(
-                            color: MainCubit.get(context).isDark
-                                ? ColorManager.myPetsBaseBlackColor
-                                : Colors.white,
-                            width: 0,
-                            style: BorderStyle.solid,
+            appBar: AppBar(title: Text(isArabic() ? "الفاتورة" : 'Invoice')),
+            body:
+                cubit.invoice == null
+                    ? (state is GetInvoicesError)
+                        ? Center(
+                          child: Text(
+                            state.message,
+                            style: TextStyle(color: Colors.black, fontSize: 20),
                           ),
-                        ),
-
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        // elevation: 5.0,
-                        margin: const EdgeInsets.symmetric(
-                          vertical: 8,
-                          horizontal: 8.0,
-                        ),
-
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Header with Logo and QR Code
-                            Row(
-                              mainAxisAlignment: cubit.invoices!.isNeedSaQrCode
-                                  ? MainAxisAlignment.spaceBetween
-                                  : MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 100,
-                                  child: FastCachedImage(
-                                    url: ConfigModel.serverFirstHalfOfImageUrl +
-                                        clinicImage,
-                                    width: 150,
-                                    height: 100,
-                                  ),
-                                ),
-                                if (cubit.invoices!.isNeedSaQrCode)
-                                  QrImageView(
-                                    data: cubit.invoices!.saCode!,
-                                    version: QrVersions.auto,
-                                    size: 100.0,
-                                  ),
-                              ],
+                        )
+                        : Center(child: CircularProgressIndicator())
+                    : SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: RepaintBoundary(
+                        key: _globalKey,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 20,
+                          ),
+                          decoration: BoxDecoration(
+                            color:
+                                MainCubit.get(context).isDark
+                                    ? ColorManager.myPetsBaseBlackColor
+                                    : Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0xff000000).withOpacity(0.05),
+                                blurRadius: 5,
+                                spreadRadius: 4,
+                                offset: Offset(0, 0),
+                              ),
+                            ],
+                            border: Border.all(
+                              color:
+                                  MainCubit.get(context).isDark
+                                      ? ColorManager.myPetsBaseBlackColor
+                                      : Colors.white,
+                              width: 0,
+                              style: BorderStyle.solid,
                             ),
-                            SizedBox(height: 20),
-                            // Clinic Info
-                            _buildClinicInfo(context, cubit),
+                          ),
 
-                            if (cubit.invoices!.zatcaNumber != '-')
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          // elevation: 5.0,
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 8.0,
+                          ),
+
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Header with Logo and QR Code
                               Row(
+                                mainAxisAlignment:
+                                    cubit.invoice!.isNeedSaQrCode
+                                        ? MainAxisAlignment.spaceBetween
+                                        : MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    S.of(context).crNumber,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                  SizedBox(
+                                    width: 100,
+                                    child: FastCachedImage(
+                                      url:
+                                          ConfigModel
+                                              .serverFirstHalfOfImageUrl +
+                                          clinicImage,
+                                      width: 150,
+                                      height: 100,
                                     ),
                                   ),
-                                  Spacer(),
-                                  Text(
-                                    cubit.invoices!.zatcaNumber!,
-                                  ),
-                                ],
-                              ),
-                            if (cubit.invoices!.zatcaNumber != '-')
-                              SizedBox(
-                                height: 8,
-                              ),
-                            if (cubit.invoices!.crNumber != '-')
-                              Row(
-                                children: [
-                                  Text(
-                                    S.of(context).vat,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                  if (cubit.invoice!.isNeedSaQrCode)
+                                    QrImageView(
+                                      data: cubit.invoice!.saCode!,
+                                      version: QrVersions.auto,
+                                      size: 100.0,
                                     ),
-                                  ),
-                                  Spacer(),
-                                  Text(
-                                    cubit.invoices!.crNumber!,
-                                  ),
                                 ],
                               ),
-                            SizedBox(height: 10),
-                            // Pet Data
-                            Text(
-                              S.of(context).petDetails,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
+                              SizedBox(height: 20),
+                              // Clinic Info
+                              _buildClinicInfo(context, cubit),
 
-                            ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: cubit.pet!.species == '' ? 2 : 3,
-                              itemBuilder: (context, index) {
-                                return Row(
+                              if (cubit.invoice!.zatcaNumber != '-')
+                                Row(
                                   children: [
-                                    Expanded(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: MainCubit.get(context).isDark
-                                              ? ThemeData.dark()
-                                                  .scaffoldBackgroundColor
-                                              : Color(0xFFF7F7F7),
-                                          border: Border.all(
-                                            color: Colors.grey,
-                                            width: .5,
-                                          ),
-                                          borderRadius: (index == 0)
-                                              ? BorderRadiusDirectional.only(
-                                                  topStart: Radius.circular(8),
-                                                )
-                                              : (index == 2)
-                                                  ? BorderRadiusDirectional
-                                                      .only(
+                                    Text(
+                                      S.of(context).crNumber,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Text(cubit.invoice!.zatcaNumber!),
+                                  ],
+                                ),
+                              if (cubit.invoice!.zatcaNumber != '-')
+                                SizedBox(height: 8),
+                              if (cubit.invoice!.crNumber != '-')
+                                Row(
+                                  children: [
+                                    Text(
+                                      S.of(context).vat,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Text(cubit.invoice!.crNumber!),
+                                  ],
+                                ),
+                              SizedBox(height: 10),
+                              // Pet Data
+                              Text(
+                                S.of(context).petDetails,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+
+                              ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: cubit.pet!.species == '' ? 2 : 3,
+                                itemBuilder: (context, index) {
+                                  return Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color:
+                                                MainCubit.get(context).isDark
+                                                    ? ThemeData.dark()
+                                                        .scaffoldBackgroundColor
+                                                    : Color(0xFFF7F7F7),
+                                            border: Border.all(
+                                              color: Colors.grey,
+                                              width: .5,
+                                            ),
+                                            borderRadius:
+                                                (index == 0)
+                                                    ? BorderRadiusDirectional.only(
+                                                      topStart: Radius.circular(
+                                                        8,
+                                                      ),
+                                                    )
+                                                    : (index == 2)
+                                                    ? BorderRadiusDirectional.only(
                                                       bottomStart:
                                                           Radius.circular(8),
                                                     )
-                                                  : null,
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: Text(
-                                            index == 0
-                                                ? S.of(context).petName
-                                                : index == 1 &&
-                                                        cubit.pet!.species != ''
-                                                    ? S.of(context).species
-                                                    : S.of(context).sex,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                                    : null,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Text(
+                                              index == 0
+                                                  ? S.of(context).petName
+                                                  : index == 1 &&
+                                                      cubit.pet!.species != ''
+                                                  ? S.of(context).species
+                                                  : S.of(context).sex,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: Colors.grey,
-                                            width: .5,
-                                          ),
-                                          borderRadius: (index == 0)
-                                              ? BorderRadiusDirectional.only(
-                                                  topEnd: Radius.circular(8),
-                                                )
-                                              : (index == 2)
-                                                  ? BorderRadiusDirectional
-                                                      .only(
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.grey,
+                                              width: .5,
+                                            ),
+                                            borderRadius:
+                                                (index == 0)
+                                                    ? BorderRadiusDirectional.only(
+                                                      topEnd: Radius.circular(
+                                                        8,
+                                                      ),
+                                                    )
+                                                    : (index == 2)
+                                                    ? BorderRadiusDirectional.only(
                                                       bottomEnd:
                                                           Radius.circular(8),
                                                     )
-                                                  : null,
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: Text(
-                                            index == 0
-                                                ? cubit.pet!.petName
-                                                : index == 1 &&
-                                                        cubit.pet!.species != ''
-                                                    ? cubit.pet!.species
-                                                    : cubit.pet!.sex,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                                    : null,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Text(
+                                              index == 0
+                                                  ? cubit.pet!.petName
+                                                  : index == 1 &&
+                                                      cubit.pet!.species != ''
+                                                  ? cubit.pet!.species
+                                                  : cubit.pet!.sex,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-
-                            ///Owner
-                            Text(
-                              S.of(context).ownerDetails,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
+                                    ],
+                                  );
+                                },
                               ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: 2,
-                              itemBuilder: (context, index) {
-                                return Row(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: MainCubit.get(context).isDark
-                                              ? ThemeData.dark()
-                                                  .scaffoldBackgroundColor
-                                              : Color(0xFFF7F7F7),
-                                          border: Border.all(
-                                            color: Colors.grey,
-                                            width: .5,
-                                          ),
-                                          borderRadius: (index == 0)
-                                              ? BorderRadiusDirectional.only(
-                                                  topStart: Radius.circular(8),
-                                                )
-                                              : (index == 1)
-                                                  ? BorderRadiusDirectional
-                                                      .only(
+                              SizedBox(height: 10),
+
+                              ///Owner
+                              Text(
+                                S.of(context).ownerDetails,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: 2,
+                                itemBuilder: (context, index) {
+                                  return Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color:
+                                                MainCubit.get(context).isDark
+                                                    ? ThemeData.dark()
+                                                        .scaffoldBackgroundColor
+                                                    : Color(0xFFF7F7F7),
+                                            border: Border.all(
+                                              color: Colors.grey,
+                                              width: .5,
+                                            ),
+                                            borderRadius:
+                                                (index == 0)
+                                                    ? BorderRadiusDirectional.only(
+                                                      topStart: Radius.circular(
+                                                        8,
+                                                      ),
+                                                    )
+                                                    : (index == 1)
+                                                    ? BorderRadiusDirectional.only(
                                                       bottomStart:
                                                           Radius.circular(8),
                                                     )
-                                                  : null,
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: Text(
-                                            index == 0
-                                                ? S.of(context).name
-                                                : S.of(context).phone,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                                    : null,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Text(
+                                              index == 0
+                                                  ? S.of(context).name
+                                                  : S.of(context).phone,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: Colors.grey,
-                                            width: .5,
-                                          ),
-                                          borderRadius: (index == 0)
-                                              ? BorderRadiusDirectional.only(
-                                                  topEnd: Radius.circular(8),
-                                                )
-                                              : (index == 1)
-                                                  ? BorderRadiusDirectional
-                                                      .only(
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.grey,
+                                              width: .5,
+                                            ),
+                                            borderRadius:
+                                                (index == 0)
+                                                    ? BorderRadiusDirectional.only(
+                                                      topEnd: Radius.circular(
+                                                        8,
+                                                      ),
+                                                    )
+                                                    : (index == 1)
+                                                    ? BorderRadiusDirectional.only(
                                                       bottomEnd:
                                                           Radius.circular(8),
                                                     )
-                                                  : null,
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: Text(
-                                            index == 0
-                                                ? cubit.owner!.ownerName
-                                                : cubit.owner!.phone,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                                    : null,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Text(
+                                              index == 0
+                                                  ? cubit.owner!.ownerName
+                                                  : cubit.owner!.phone,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-
-                            SizedBox(height: 10),
-                            // Invoice Details
-                            if (cubit.invoices!.items.isNotEmpty)
-                              _buildSectionTitle(isArabic()
-                                  ? 'تفاصيل الفاتورة'
-                                  : 'Item Details'),
-                            if (cubit.invoices!.items.isNotEmpty)
-                              SizedBox(height: 5),
-                            if (cubit.invoices!.items.isNotEmpty)
-                              _buildTableWithHeaders(
-                                [
-                                  [
-                                    S.of(context).itemName,
-                                    S.of(context).price,
-                                    S.of(context).qty,
-                                    S.of(context).total,
-                                  ],
-                                  ...cubit.invoices!.items.map((e) {
-                                    return [
-                                      e.itemName,
-                                      e.price.toString(),
-                                      e.quantity.toString(),
-                                      e.total.toString(),
-                                    ];
-                                  })
-                                ],
-                                3,
-                                context,
+                                    ],
+                                  );
+                                },
                               ),
-                            SizedBox(height: 10),
-                            // Total and Paid Amount
-                            Text(
-                              '${S.of(context).total}: ${cubit.invoices!.receiptTotal}',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            if (cubit.invoices!.vat != 0) SizedBox(height: 5),
-                            if (cubit.invoices!.vat != 0)
+
+                              SizedBox(height: 10),
+                              // Invoice Details
+                              if (cubit.invoice!.items.isNotEmpty)
+                                _buildSectionTitle(
+                                  isArabic()
+                                      ? 'تفاصيل الفاتورة'
+                                      : 'Item Details',
+                                ),
+                              if (cubit.invoice!.items.isNotEmpty)
+                                SizedBox(height: 5),
+                              if (cubit.invoice!.items.isNotEmpty)
+                                _buildTableWithHeaders(
+                                  [
+                                    [
+                                      S.of(context).itemName,
+                                      S.of(context).price,
+                                      S.of(context).qty,
+                                      S.of(context).total,
+                                    ],
+                                    ...cubit.invoice!.items.map((e) {
+                                      return [
+                                        e.itemName,
+                                        e.price.toString(),
+                                        e.quantity.toString(),
+                                        e.total.toString(),
+                                      ];
+                                    }),
+                                  ],
+                                  3,
+                                  context,
+                                ),
+                              SizedBox(height: 10),
+                              // Total and Paid Amount
                               Text(
-                                '${S.of(context).vat}: ${cubit.invoices!.vat}',
+                                '${S.of(context).total}: ${cubit.invoice!.receiptTotal}',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                            if (cubit.invoices!.vat != 0) SizedBox(height: 5),
-                            if (cubit.invoices!.vat != 0)
+                              if (cubit.invoice!.vat != 0) SizedBox(height: 5),
+                              if (cubit.invoice!.vat != 0)
+                                Text(
+                                  '${S.of(context).vat}: ${cubit.invoice!.vat}',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              if (cubit.invoice!.vat != 0) SizedBox(height: 5),
+                              if (cubit.invoice!.vat != 0)
+                                Text(
+                                  '${S.of(context).totalAmount}: ${cubit.invoice!.totalAfterVatAndDiscount}',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              SizedBox(height: 5),
                               Text(
-                                '${S.of(context).totalAmount}: ${cubit.invoices!.totalAfterVatAndDiscount}',
+                                '${S.of(context).paid}: ${cubit.invoice!.paid}',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                            SizedBox(height: 5),
-                            Text(
-                              '${S.of(context).paid}: ${cubit.invoices!.paid}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 10),
+                              SizedBox(height: 10),
 
-                            // Footer with Payment Details
-                            if (cubit.invoices!.paymentHistories.isNotEmpty)
-                              _buildSectionTitle(isArabic()
-                                  ? 'تفاصيل الدفع'
-                                  : 'Payment Details'),
-                            if (cubit.invoices!.paymentHistories.isNotEmpty)
-                              SizedBox(height: 5),
+                              // Footer with Payment Details
+                              if (cubit.invoice!.paymentHistories.isNotEmpty)
+                                _buildSectionTitle(
+                                  isArabic()
+                                      ? 'تفاصيل الدفع'
+                                      : 'Payment Details',
+                                ),
+                              if (cubit.invoice!.paymentHistories.isNotEmpty)
+                                SizedBox(height: 5),
 
-                            if (cubit.invoices!.paymentHistories.isNotEmpty)
-                              _buildTableWithHeaders(
-                                [
+                              if (cubit.invoice!.paymentHistories.isNotEmpty)
+                                _buildTableWithHeaders(
                                   [
-                                    S.of(context).date,
-                                    S.of(context).payment,
-                                    S.of(context).value,
-                                    S.of(context).paymentType,
+                                    [
+                                      S.of(context).date,
+                                      S.of(context).payment,
+                                      S.of(context).value,
+                                      S.of(context).paymentType,
+                                    ],
+                                    ...cubit.invoice!.paymentHistories.map((
+                                      e,
+                                    ) {
+                                      return [
+                                        e.paymentDate,
+                                        e.paymentName.toString(),
+                                        e.value.toString(),
+                                        e.type.toString(),
+                                      ];
+                                    }),
                                   ],
-                                  ...cubit.invoices!.paymentHistories.map((e) {
-                                    return [
-                                      e.paymentDate,
-                                      e.paymentName.toString(),
-                                      e.value.toString(),
-                                      e.type.toString(),
-                                    ];
-                                  })
-                                ],
-                                1,
-                                context,
-                              ),
-                            SizedBox(height: 10),
-                            if (cubit.invoices!.returnAndExchangePolicy != null)
-                              Center(
-                                child: Text(
-                                  cubit.invoices!.returnAndExchangePolicy!,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 12,
+                                  1,
+                                  context,
+                                ),
+                              SizedBox(height: 10),
+                              if (cubit.invoice!.returnAndExchangePolicy !=
+                                  null)
+                                Center(
+                                  child: Text(
+                                    cubit.invoice!.returnAndExchangePolicy!,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 12),
                                   ),
                                 ),
-                              ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
             floatingActionButton: FloatingActionButton(
               backgroundColor: ColorManager.primaryColor,
               foregroundColor: Colors.white,
@@ -461,11 +464,13 @@ class PrintScreen extends StatelessWidget {
 
   Future<Uint8List> _capturePng() async {
     try {
-      RenderRepaintBoundary boundary = _globalKey.currentContext
-          ?.findRenderObject() as RenderRepaintBoundary;
+      RenderRepaintBoundary boundary =
+          _globalKey.currentContext?.findRenderObject()
+              as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-      ByteData? byteData =
-          await image.toByteData(format: ui.ImageByteFormat.png);
+      ByteData? byteData = await image.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
       if (byteData != null) {
         Uint8List pngBytes = byteData.buffer.asUint8List();
         return pngBytes;
@@ -486,16 +491,16 @@ class PrintScreen extends StatelessWidget {
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
-          return pw.Center(
-            child: pw.Image(image),
-          );
+          return pw.Center(child: pw.Image(image));
         },
       ),
     );
 
     // Save PDF or share it using the `Printing` package
     await Printing.sharePdf(
-        bytes: await pdf.save(), filename: 'widget_image.pdf');
+      bytes: await pdf.save(),
+      filename: 'widget_image.pdf',
+    );
   }
 
   Widget _buildClinicInfo(context, UserAppointmentCubit cubit) {
@@ -511,26 +516,28 @@ class PrintScreen extends StatelessWidget {
           clinicPhone = '0' + clinicPhone;
         }
         return Padding(
-          padding: const EdgeInsets.only(
-            bottom: 8.0,
-          ),
+          padding: const EdgeInsets.only(bottom: 8.0),
           child: Row(
             children: [
               Text(
                 index == 0
                     ? S.of(context).clinic
                     : index == 1
-                        ? S.of(context).phone
-                        : index == 2
-                            ? S.of(context).invoiceNo
-                            : S.of(context).date,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                    ? S.of(context).phone
+                    : index == 2
+                    ? S.of(context).invoiceNo
+                    : S.of(context).date,
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Spacer(),
               Text(
-                "${index == 0 ? cubit.invoices!.clinicName : index == 1 ? clinicPhone : index == 2 ? cubit.invoices!.invoiceCode : (formatBILL(cubit.invoices!.issueDate))}",
+                "${index == 0
+                    ? cubit.invoice!.clinicName
+                    : index == 1
+                    ? clinicPhone
+                    : index == 2
+                    ? cubit.invoice!.invoiceCode
+                    : (formatBILL(cubit.invoice!.issueDate))}",
               ),
             ],
           ),
@@ -547,7 +554,10 @@ class PrintScreen extends StatelessWidget {
   }
 
   Widget _buildTableWithHeaders(
-      List<List<String>> data, double width, context) {
+    List<List<String>> data,
+    double width,
+    context,
+  ) {
     return Table(
       border: TableBorder.all(
         color: MainCubit.get(context).isDark ? Colors.black : Colors.grey,
@@ -563,28 +573,31 @@ class PrintScreen extends StatelessWidget {
       children: [
         TableRow(
           decoration: BoxDecoration(
-            color: MainCubit.get(context).isDark
-                ? ThemeData.dark().scaffoldBackgroundColor
-                : Color(0xFFF7F7F7),
+            color:
+                MainCubit.get(context).isDark
+                    ? ThemeData.dark().scaffoldBackgroundColor
+                    : Color(0xFFF7F7F7),
           ),
-          children: data.first.map((cell) {
-            return Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Text(
-                cell,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            );
-          }).toList(),
+          children:
+              data.first.map((cell) {
+                return Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text(
+                    cell,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                );
+              }).toList(),
         ),
         ...data.skip(1).map((row) {
           return TableRow(
-            children: row.map((cell) {
-              return Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Text(cell),
-              );
-            }).toList(),
+            children:
+                row.map((cell) {
+                  return Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(cell),
+                  );
+                }).toList(),
           );
         }).toList(),
       ],

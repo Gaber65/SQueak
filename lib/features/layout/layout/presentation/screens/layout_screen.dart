@@ -37,105 +37,107 @@ class _LayoutScreenState extends State<LayoutScreen> {
     ).setLangInAPI(CacheHelper.getData('language') == 'ar' ? 1 : 0);
   }
 
+  int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<LayoutCubit>()
-        ..getVersion()
-        ..getAppVersion(),
-      child: BlocConsumer<LayoutCubit, LayoutState>(
-        listener: (context, state) async {
-          if (CacheHelper.getBool('isExpiredToken')) {
-            await showExpiredTokenDialog(context).whenComplete(() {
-              CacheHelper.clearData();
-              navigateAndFinish(context, const LoginScreen());
-            });
-          }
-          
-          // Check for version updates when both version states are successful
-          if (state is GetVersionSuccessState || state is GetCurrentVersionSuccessState) {
-            final cubit = context.read<LayoutCubit>();
-            if (!_isDialogShown && 
-                cubit.versionEntity != null && 
-                cubit.currentVersion.isNotEmpty) {
-              if (cubit.versionEntity!.version != cubit.currentVersion) {
-                _isDialogShown = true;
-                await showUpdateDialog(
-                  context,
-                  cubit.versionEntity!,
-                ).whenComplete(() {
-                  _isDialogShown = false;
-                });
-              }
+    return BlocConsumer<LayoutCubit, LayoutState>(
+      listener: (context, state) async {
+        if (CacheHelper.getBool('isExpiredToken')) {
+          await showExpiredTokenDialog(context).whenComplete(() {
+            CacheHelper.clearData();
+            navigateAndFinish(context, const LoginScreen());
+          });
+        }
+
+        // Check for version updates when both version states are successful
+        if (state is GetVersionSuccessState ||
+            state is GetCurrentVersionSuccessState) {
+          final cubit = context.read<LayoutCubit>();
+          if (!_isDialogShown &&
+              cubit.versionEntity != null &&
+              cubit.currentVersion.isNotEmpty) {
+            if (cubit.versionEntity!.version != cubit.currentVersion) {
+              _isDialogShown = true;
+              await showUpdateDialog(
+                context,
+                cubit.versionEntity!,
+              ).whenComplete(() {
+                _isDialogShown = false;
+              });
             }
           }
-        },
-        builder: (context, state) {
-          final cubit = context.read<LayoutCubit>();
-
-          return Scaffold(
-            extendBody: false,
-            resizeToAvoidBottomInset: false,
-            body: PopScope(
-              canPop: false,
-              onPopInvokedWithResult: (didPop, result) => showExitConfirmationDialog(context),
-              child: cubit.screens[cubit.selectedIndex],
-            ),
-            floatingActionButton: SizedBox(
-              width: 70,
-              height: 70,
-              child: BlocConsumer<MainCubit, MainState>(
-                listener: (context, state) {
-                  // TODO: implement listener
-                },
-                builder: (context, state) {
-                  return FloatingActionButton(
-                    backgroundColor:
-                        MainCubit.get(context).isDark
-                            ? ThemeData.dark().scaffoldBackgroundColor
-                            : Colors.white,
-                    foregroundColor: ColorManager.primaryColor,
-                    onPressed: () {
-                      navigateToScreen(context, PetScreen());
-                    },
-                    child: Icon(Icons.pets, size: 30),
-                  );
-                },
-              ),
-            ),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-            bottomNavigationBar: BlocConsumer<MainCubit, MainState>(
+        }
+      },
+      builder: (context, state) {
+        final cubit = LayoutCubit.get(context);
+        selectedIndex = cubit.selectedIndex;
+        return Scaffold(
+          extendBody: false,
+          resizeToAvoidBottomInset: false,
+          body: PopScope(
+            canPop: false,
+            onPopInvokedWithResult:
+                (didPop, result) => showExitConfirmationDialog(context),
+            child: cubit.screens[selectedIndex],
+          ),
+          floatingActionButton: SizedBox(
+            width: 70,
+            height: 70,
+            child: BlocConsumer<MainCubit, MainState>(
               listener: (context, state) {
                 // TODO: implement listener
               },
               builder: (context, state) {
-                return AnimatedBottomNavigationBar(
-                  activeColor: ColorManager.primaryColor,
+                return FloatingActionButton(
                   backgroundColor:
                       MainCubit.get(context).isDark
                           ? ThemeData.dark().scaffoldBackgroundColor
                           : Colors.white,
-                  inactiveColor: Colors.grey,
-                  splashSpeedInMilliseconds: 300,
-                  gapWidth: 100,
-                  activeIndex: cubit.selectedIndex,
-                  onTap: (index) {
-                    context.read<LayoutCubit>().changeBottomNav(index);
+                  foregroundColor: ColorManager.primaryColor,
+                  onPressed: () {
+                    navigateToScreen(context, PetScreen());
                   },
-                  gapLocation: GapLocation.center,
-                  notchSmoothness: NotchSmoothness.softEdge,
-                  icons: [
-                    IconlyLight.home,
-                    IconlyLight.add_user,
-                    IconlyLight.time_circle,
-                    IconlyLight.setting,
-                  ],
+                  child: Icon(Icons.pets, size: 30),
                 );
               },
             ),
-          );
-        },
-      ),
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          bottomNavigationBar: BlocConsumer<MainCubit, MainState>(
+            listener: (context, state) {
+              // TODO: implement listener
+            },
+            builder: (context, state) {
+              return AnimatedBottomNavigationBar(
+                activeColor: ColorManager.primaryColor,
+                backgroundColor:
+                    MainCubit.get(context).isDark
+                        ? ThemeData.dark().scaffoldBackgroundColor
+                        : Colors.white,
+                inactiveColor: Colors.grey,
+                splashSpeedInMilliseconds: 300,
+                gapWidth: 100,
+                activeIndex: selectedIndex,
+                onTap: (index) {
+                  cubit.changeBottomNav(index);
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+                gapLocation: GapLocation.center,
+                notchSmoothness: NotchSmoothness.softEdge,
+                icons: [
+                  IconlyLight.home,
+                  IconlyLight.add_user,
+                  IconlyLight.time_circle,
+                  IconlyLight.setting,
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

@@ -53,10 +53,10 @@ class SearchRemoteDataSource extends BaseSearchRemoteDataSource {
   Future<ClinicModelSearch> followClinic(String clinicId) async {
     try {
       Response result = await DioFinalHelper.postData(
-        method: unfollowClinicEndPoint,
+        method: followClinicEndPoint,
         data: {"clinicId": clinicId},
       );
-      return ClinicModelSearch.fromJson(result.data['data']['result']);
+      return ClinicModelSearch.fromJson(result.data['data']);
     } on DioException catch (e) {
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
@@ -71,7 +71,7 @@ class SearchRemoteDataSource extends BaseSearchRemoteDataSource {
         method: unfollowClinicEndPoint,
         data: {"clinicId": clinicId},
       );
-      return ClinicModelSearch.fromJson(result.data['data']['result']);
+      return ClinicModelSearch.fromJson(result.data['data']);
     } on DioException catch (e) {
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),

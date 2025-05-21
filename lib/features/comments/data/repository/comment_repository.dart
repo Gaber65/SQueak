@@ -23,7 +23,7 @@ class CommentRepository extends BaseCommentRepository {
     try {
       return Right(result);
     } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel.message));
+      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 
@@ -38,7 +38,7 @@ class CommentRepository extends BaseCommentRepository {
     try {
       return Right(result);
     } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel.message));
+      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 
@@ -53,7 +53,7 @@ class CommentRepository extends BaseCommentRepository {
     try {
       return Right(result);
     } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel.message));
+      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 
@@ -68,7 +68,7 @@ class CommentRepository extends BaseCommentRepository {
     try {
       return Right(result);
     } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel.message));
+      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 }

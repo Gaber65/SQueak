@@ -1,66 +1,88 @@
 import 'dart:convert';
-import '../../../../core/utils/export_path/export_files.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 import '../models/appointment_model.dart';
+import '../models/clinic_model.dart';
 
 abstract class AppointmentLocalDataSource {
-  Future<List<AppointmentData>> getCachedAppointments();
-  Future<void> cacheAppointments(List<AppointmentData> appointments);
-  Future<List<DoctorData>> getCachedDoctors();
-  Future<void> cacheDoctors(List<DoctorData> doctors);
+  Future<List<AppointmentModel>> getCachedAppointments();
+  Future<void> cacheAppointments(List<AppointmentModel> appointments);
+  Future<MySupplierModel?> getCachedSuppliers();
+  Future<void> cacheSuppliers(MySupplierModel suppliers);
+  Future<void> clearCache(String key);
 }
 
 class AppointmentLocalDataSourceImpl implements AppointmentLocalDataSource {
+  AppointmentLocalDataSourceImpl();
+
   @override
-  Future<List<AppointmentData>> getCachedAppointments() async {
+  Future<List<AppointmentModel>> getCachedAppointments() async {
     try {
-      final jsonString = CacheHelper.getData('userAppointments');
+      final jsonString = CacheHelper.getData('appointments');
       if (jsonString != null) {
-        return List<AppointmentData>.from(
-          json.decode(jsonString).map((x) => AppointmentData.fromJson(x)),
+        final jsonMap = json.decode(jsonString);
+        return List<AppointmentModel>.from(
+          jsonMap.map((x) => AppointmentModel.fromJson(x)),
+        );
+      } else {
+        throw LocalDatabaseFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
         );
       }
-      return [];
     } catch (e) {
-      throw LocalDatabaseException(errorMessage: e.toString());
-    }
-  }
-
-  @override
-  Future<void> cacheAppointments(List<AppointmentData> appointments) async {
-    try {
-      final jsonString = json.encode(
-        appointments.map((appointment) => appointment.toJson()).toList(),
+      throw LocalDatabaseFailure(
+        ErrorMessageModel(
+          message: 'No internet connection',
+          statusCode: 0,
+          errors: {},
+          success: false,
+        ),
       );
-      await CacheHelper.saveData('userAppointments', jsonString);
-    } catch (e) {
-      throw LocalDatabaseException(errorMessage: e.toString());
     }
   }
 
   @override
-  Future<List<DoctorData>> getCachedDoctors() async {
+  Future<void> cacheAppointments(List<AppointmentModel> appointments) async {
+    final jsonString = json.encode(
+      appointments.map((appointment) => appointment.toJson()).toList(),
+    );
+    await CacheHelper.saveData('appointments', jsonString);
+  }
+
+  @override
+  Future<MySupplierModel?> getCachedSuppliers() async {
     try {
-      final jsonString = CacheHelper.getData('clinicDoctors');
+      final jsonString = CacheHelper.getData('suppliers');
       if (jsonString != null) {
-        return List<DoctorData>.from(
-          json.decode(jsonString).map((x) => DoctorData.fromJson(x)),
-        );
+        final jsonMap = json.decode(jsonString);
+        return MySupplierModel.fromJson(jsonMap);
+      } else {
+        return null;
       }
-      return [];
     } catch (e) {
-      throw LocalDatabaseException(errorMessage: e.toString());
+      throw LocalDatabaseFailure(
+        ErrorMessageModel(
+          message: 'No internet connection',
+          statusCode: 0,
+          errors: {},
+          success: false,
+        ),
+      );
     }
   }
 
   @override
-  Future<void> cacheDoctors(List<DoctorData> doctors) async {
-    try {
-      final jsonString = json.encode(
-        doctors.map((doctor) => doctor.toJson()).toList(),
-      );
-      await CacheHelper.saveData('clinicDoctors', jsonString);
-    } catch (e) {
-      throw LocalDatabaseException(errorMessage: e.toString());
-    }
+  Future<void> cacheSuppliers(MySupplierModel suppliers) async {
+    final jsonString = json.encode(suppliers.toJson());
+    await CacheHelper.saveData('suppliers', jsonString);
   }
-} 
+
+  @override
+  Future<void> clearCache(String key) async {
+    await CacheHelper.removeData(key);
+  }
+}

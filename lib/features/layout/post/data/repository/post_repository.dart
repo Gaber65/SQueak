@@ -23,7 +23,7 @@ class PostRepository extends BasePostRepository {
     try {
       return Right(result);
     } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel.message));
+      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 

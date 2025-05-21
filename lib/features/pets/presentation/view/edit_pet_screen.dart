@@ -18,7 +18,7 @@ class EditPet extends StatelessWidget {
   EditPet({super.key, required this.pets, required this.breedData});
 
   final List<BreedEntity> breedData;
-  final PetEntity pets;
+  final PetEntities pets;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override

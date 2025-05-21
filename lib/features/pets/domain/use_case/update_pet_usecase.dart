@@ -5,13 +5,13 @@ import '../entities/pet_entity.dart';
 
 import 'create_pet_usecase.dart'; // Reusing PetParams
 
-class UpdatePetUseCase extends BaseUseCase<PetEntity, PetParams> {
+class UpdatePetUseCase extends BaseUseCase<PetEntities, PetParams> {
   final PetRepository repository;
 
   UpdatePetUseCase(this.repository);
 
   @override
-  Future<Either<Failure, PetEntity>> call(PetParams parameters) {
+  Future<Either<Failure, PetEntities>> call(PetParams parameters) {
     return repository.updatePet(parameters.pet);
   }
 }

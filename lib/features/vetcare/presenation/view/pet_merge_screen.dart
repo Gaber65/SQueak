@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/pets/presentation/controller/pet_cubit.dart';
 
 import '../../../../generated/l10n.dart';
 import '../../../pets/presentation/view/pet_screen.dart';
@@ -31,6 +32,7 @@ class PetMergeScreen extends StatelessWidget {
                 CacheHelper.getData('phone') ?? '',
                 false,
               ),
+
       child: _PetMergeContent(isNavigation: isNavigation),
     );
   }
@@ -44,7 +46,23 @@ class _PetMergeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<PetAsyncCubit, PetAsyncState>(
-      listener: _handleStateChanges,
+      listener: (context, state) {
+        var cubit = PetAsyncCubit.get(context);
+        if (state is SuccessAddInSqueakStatuesState) {
+          if (cubit.vetClientModel.isNotEmpty) {
+            cubit.vetClientModel.removeWhere((element) {
+              return element.id == state.petId;
+            });
+
+            if (cubit.vetClientModel.isEmpty) {
+              _completeMergeProcess(context);
+            }
+          }
+        }
+        if (state is ErrorAddInSqueakStatuesState) {
+          _showErrorToast(context, state);
+        }
+      },
       builder: (context, state) {
         final cubit = PetAsyncCubit.get(context);
         return WillPopScope(
@@ -56,33 +74,6 @@ class _PetMergeContent extends StatelessWidget {
         );
       },
     );
-  }
-
-  void _handleStateChanges(BuildContext context, PetAsyncState state) {
-    if (state is SuccessAddInSqueakStatuesState) {
-      _handleMergeSuccess(context, state);
-    }
-    if (state is ErrorAddInSqueakStatuesState) {
-      _showErrorToast(context, state);
-    }
-  }
-
-  void _handleMergeSuccess(
-    BuildContext context,
-    SuccessAddInSqueakStatuesState state,
-  ) {
-    final cubit = PetAsyncCubit.get(context);
-    if (cubit.vetClientModel.isNotEmpty) {
-      // Remove the pet that was successfully added
-      final updatedList = List<VetClient>.from(cubit.vetClientModel);
-      updatedList.removeWhere((element) => element.id == state.petId);
-
-      // Update the cubit's list (this would typically be done in the cubit itself)
-      // For now, we'll just check if the list is empty
-      if (updatedList.isEmpty) {
-        _completeMergeProcess(context);
-      }
-    }
   }
 
   void _completeMergeProcess(BuildContext context) {
@@ -155,10 +146,8 @@ class _PetMergeContent extends StatelessWidget {
 
   Future<bool> _handleEmptyStateBackNavigation(BuildContext context) async {
     if (isNavigation) {
-      // LayoutCubit.get(context).getOwnerPet();
       navigateAndFinish(context, LayoutScreen());
     } else {
-      // LayoutCubit.get(context).getOwnerPet();
       navigateAndFinish(context, PetScreen());
     }
     return true;
@@ -270,7 +259,6 @@ class _PetMergeContent extends StatelessWidget {
       children: [
         _buildAddToSqueakButton(context, model, cubit),
         const SizedBox(width: 5),
-        // if (LayoutCubit.get(context).pets.isNotEmpty)
         _buildLinkPetButton(context, model, cubit),
       ],
     );
@@ -351,77 +339,72 @@ class _PetMergeContent extends StatelessWidget {
   Widget _buildPetSelectionDialog(
     BuildContext context,
     VetClient model,
-    PetAsyncCubit cubit,
+    PetAsyncCubit cubitVet,
   ) {
-    return BlocBuilder<LayoutCubit, LayoutState>(
-      builder: (context, state) {
-        final layoutCubit = context.read<LayoutCubit>();
-        return CupertinoActionSheet(
-          title: Text(
-            S.of(context).yourPets,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color:
-                  MainCubit.get(context).isDark ? Colors.white : Colors.black87,
+    return BlocProvider(
+      create: (context) => sl<PetCubit>()..getOwnerPets(),
+      child: BlocConsumer<PetCubit, PetState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          final cubit = context.read<PetCubit>();
+          return CupertinoActionSheet(
+            title: Text(
+              S.of(context).yourPets,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color:
+                    MainCubit.get(context).isDark
+                        ? Colors.white
+                        : Colors.black87,
+              ),
+              textAlign: TextAlign.start,
             ),
-            textAlign: TextAlign.start,
-          ),
-          // actions: layoutCubit.pets.map((pet) {
-          //   return CupertinoActionSheetAction(
-          //     onPressed: () {
-          //       _handlePetLink(cubit, model, pet.petId);
-          //       Navigator.pop(context);
-          //     },
-          //     child: Padding(
-          //       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-          //       child: Row(
-          //         children: [
-          //           _buildDialogPetAvatar(pet),
-          //           const SizedBox(width: 12),
-          //           _buildDialogPetName(context, pet),
-          //         ],
-          //       ),
-          //     ),
-          //   );
-          // }).toList(),
-          cancelButton: CupertinoActionSheetAction(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildDialogPetAvatar(dynamic pet) {
-    return CircleAvatar(
-      radius: 15,
-      backgroundImage: NetworkImage(
-        pet.imageName.isNotEmpty
-            ? imageUrl + pet.imageName
-            : 'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/painting-cat-with-gold-medallion-its-collar.jpg?alt=media&token=2fbc1736-9ee5-4feb-8ba8-c670fd1ecc57',
+            actions:
+                cubit.pets.map((pet) {
+                  return CupertinoActionSheetAction(
+                    onPressed: () {
+                      cubitVet.addInSqueakStatues(
+                        vetCarePetId: model.id,
+                        statuesOfAddingPetToSqueak: 2,
+                        squeakPetId: pet.petId,
+                      );
+                      Navigator.pop(context);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 15,
+                            backgroundImage: NetworkImage(
+                              pet.imageName.isNotEmpty
+                                  ? imageUrl + pet.imageName
+                                  : 'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/painting-cat-with-gold-medallion-its-collar.jpg?alt=media&token=2fbc1736-9ee5-4feb-8ba8-c670fd1ecc57',
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.7,
+                            child: Text(
+                              pet.petName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: FontStyleThame.textStyle(context: context),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+            cancelButton: CupertinoActionSheetAction(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+          );
+        },
       ),
-    );
-  }
-
-  Widget _buildDialogPetName(BuildContext context, dynamic pet) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.7,
-      child: Text(
-        pet.petName,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: FontStyleThame.textStyle(context: context),
-      ),
-    );
-  }
-
-  void _handlePetLink(PetAsyncCubit cubit, VetClient model, String petId) {
-    cubit.addInSqueakStatues(
-      vetCarePetId: model.id,
-      statuesOfAddingPetToSqueak: 2,
-      squeakPetId: petId,
     );
   }
 }

@@ -1,18 +1,19 @@
 import 'package:equatable/equatable.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 
 abstract class Failure extends Equatable {
-  final String message;
+  final ErrorMessageModel error;
 
-  const Failure(this.message);
+  const Failure(this.error);
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [error];
 }
 
 class ServerFailure extends Failure {
-  const ServerFailure(super.message);
+  const ServerFailure(super.error);
 }
 
 class LocalDatabaseFailure extends Failure {
-  const LocalDatabaseFailure(super.message);
+  const LocalDatabaseFailure(super.error);
 }

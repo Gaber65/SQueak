@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failure.dart';
+import '../../../../core/network/error_message_model.dart';
 import '../../../../core/network/network_info.dart';
 import '../../domain/base_repo/profile_repository.dart';
 import '../../domain/entities/owner_entite.dart';
@@ -27,10 +28,28 @@ class ProfileRepositoryImpl implements ProfileRepository {
         await localDataSource.cacheCountryId(remoteOwner.countryId);
         return Right(remoteOwner);
       } on Exception catch (e) {
-        return Left(ServerFailure(e.toString()));
+        return Left(
+          ServerFailure(
+            ErrorMessageModel(
+              message: e.toString(),
+              statusCode: 0,
+              errors: {},
+              success: false,
+            ),
+          ),
+        );
       }
     } else {
-      return Left(ServerFailure('No Internet Connection'));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 
@@ -53,10 +72,28 @@ class ProfileRepositoryImpl implements ProfileRepository {
         );
         return Right(updatedOwner);
       } on Exception catch (e) {
-        return Left(ServerFailure(e.toString()));
+        return Left(
+          ServerFailure(
+            ErrorMessageModel(
+              message: e.toString(),
+              statusCode: 0,
+              errors: {},
+              success: false,
+            ),
+          ),
+        );
       }
     } else {
-      return Left(ServerFailure('No Internet Connection'));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 }

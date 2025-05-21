@@ -18,7 +18,7 @@ class SearchRepository extends BaseSearchRepository {
       final result = await baseSearchRemoteDataSource.getSearchList(clinicCode);
       return Right(result);
     } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel.message));
+      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 
@@ -28,7 +28,7 @@ class SearchRepository extends BaseSearchRepository {
       final result = await baseSearchRemoteDataSource.getClientFormVet(clinicCode);
       return Right(result);
     } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel.message));
+      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 
@@ -38,7 +38,7 @@ class SearchRepository extends BaseSearchRepository {
       final result = await baseSearchRemoteDataSource.followClinic(clinicId);
       return Right(result);
     } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel.message));
+      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 
@@ -48,7 +48,7 @@ class SearchRepository extends BaseSearchRepository {
       final result = await baseSearchRemoteDataSource.unfollowClinic(clinicId);
       return Right(result);
     } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel.message));
+      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 
@@ -58,7 +58,7 @@ class SearchRepository extends BaseSearchRepository {
       final result = await baseSearchRemoteDataSource.getSupplier();
       return Right(result);
     } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel.message));
+      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 }

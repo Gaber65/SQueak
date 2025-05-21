@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:squeak/features/appointments/data/models/get_appointment_model.dart';
+import 'package:squeak/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:squeak/features/appointments/presentation/view/appointments/rate_appointment.dart';
 import 'package:squeak/features/authentication/view/forgot_password.dart';
 import 'package:squeak/features/authentication/view/login_screen.dart';
@@ -22,10 +22,7 @@ Map<String, WidgetBuilder> routes = {
   '/forgotPassword': (context) => ForgotPasswordScreen(),
   '/layout': (context) =>  LayoutScreen(),
   '/PetVacs': (context) => const PetScreen(),
-  '/Rate': (context) => RateAppointment(
-        model: ModalRoute.of(context)!.settings.arguments as AppointmentModel,
-        isNav: true,
-      ),
+  '/Rate': (context) => RateAppointment(model: ModalRoute.of(context)!.settings.arguments as AppointmentEntity, isNav: true,),
   '/followedClinic': (context) => FollowRequestScreen(
         clinicID: ModalRoute.of(context)!.settings.arguments as String,
       ),

@@ -42,7 +42,7 @@ class FollowRequestCubit extends Cubit<FollowRequestState> {
     result.fold(
       (failure) {
         isAccept = false;
-        emit(ErrorAcceptIvationState(failure.message));
+        emit(ErrorAcceptIvationState(failure.error));
       },
       (hasValidPets) {
         isAccept = false;

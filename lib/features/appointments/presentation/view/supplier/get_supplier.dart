@@ -3,37 +3,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
-
 import '../../../../layout/search/presentation/controller/search_cubit.dart';
 import '../../../../layout/search/presentation/widget/build_column_search_body.dart';
+import '../../../../pets/domain/entities/pet_entity.dart';
 import '../../../../vetcare/presenation/view/pet_merge_screen.dart';
 import '../../controller/clinic/appointment_cubit.dart';
-import '../../controller/clinic/appointment_state.dart';
 import 'dart:io'; // Import for Platform and exit()
 import 'package:flutter/services.dart';
 
 import '../availability/availability_screen.dart'; // Import for SystemNavigator.pop()
 
 class MySupplierScreen extends StatelessWidget {
-  const MySupplierScreen({
-    super.key,
-    required this.petId,
-    required this.isSpayed,
-    required this.petNameFromAppoinmentIcon,
-    required this.genderForPetFromAppoinmentScreen,
-  });
+  const MySupplierScreen({super.key, required this.petSelectFromIcon});
 
-  final String petId;
-  final bool? isSpayed;
-  final String? petNameFromAppoinmentIcon;
-  final int? genderForPetFromAppoinmentScreen;
+  final PetEntities? petSelectFromIcon;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AppointmentCubit()..init(),
+      create: (context) => sl<AppointmentCubit>()..getSuppliersList(),
       child: BlocConsumer<AppointmentCubit, AppointmentState>(
         listener: (context, state) {
           // TODO: implement listener
@@ -41,26 +29,30 @@ class MySupplierScreen extends StatelessWidget {
         builder: (context, state) {
           var cubit = AppointmentCubit.get(context);
           return Scaffold(
-              appBar: AppBar(
-                title: Text(S.of(context).yourClinic),
-                automaticallyImplyLeading: false,
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back), // Back button
-                  onPressed: () {
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context); // Go back if possible
-                    } else {
-                      if (Platform.isAndroid) {
-                        SystemNavigator.pop(); // Close app on Android
-                      } else if (Platform.isIOS) {
-                        exit(0); // Close app on iOS
-                      }
-                    }
-                  },
-                ),
-              ),
-              body: cubit.suppliers == null || cubit.suppliers!.data.isEmpty
-                  ? Padding(
+            appBar: AppBar(
+              title: Text(S.of(context).yourClinic),
+              automaticallyImplyLeading: false,
+              leading:
+                  petSelectFromIcon == null
+                      ? null
+                      : IconButton(
+                        icon: Icon(Icons.arrow_back), // Back button
+                        onPressed: () {
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context); // Go back if possible
+                          } else {
+                            if (Platform.isAndroid) {
+                              SystemNavigator.pop(); // Close app on Android
+                            } else if (Platform.isIOS) {
+                              exit(0); // Close app on iOS
+                            }
+                          }
+                        },
+                      ),
+            ),
+            body:
+                cubit.suppliers == null || cubit.suppliers!.data.isEmpty
+                    ? Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: BlocProvider(
                         create: (context) => sl<SearchCubit>(),
@@ -69,7 +61,16 @@ class MySupplierScreen extends StatelessWidget {
                             if (state is FollowError) {
                               errorToast(
                                 context,
-                                state.error.message
+                                state
+                                        .error
+                                        .error
+                                        .errors
+                                        .entries
+                                        .first
+                                        .value
+                                        .first ??
+                                    state.error.error.message,
+
                               );
                             }
                             if (state is FollowSuccess) {
@@ -77,14 +78,15 @@ class MySupplierScreen extends StatelessWidget {
                                 navigateAndFinish(
                                   context,
                                   PetMergeScreen(
-                                    code: SearchCubit.get(context)
-                                        .searchController
-                                        .text,
+                                    code:
+                                        SearchCubit.get(
+                                          context,
+                                        ).searchController.text,
                                     isNavigation: true,
                                   ),
                                 );
                               } else {
-                                cubit.init();
+                                cubit.getSuppliersList();
                               }
                             }
                           },
@@ -100,7 +102,7 @@ class MySupplierScreen extends StatelessWidget {
                         ),
                       ),
                     )
-                  : Column(
+                    : Column(
                       children: [
                         // Search TextField
                         Padding(
@@ -110,9 +112,10 @@ class MySupplierScreen extends StatelessWidget {
                             onChanged: cubit.filterSuppliers,
                             decoration: InputDecoration(
                               prefixIcon: Icon(Icons.search),
-                              hintText: isArabic()
-                                  ? 'ابحث بالاسم او الكود'
-                                  : 'Search by name or code',
+                              hintText:
+                                  isArabic()
+                                      ? 'ابحث بالاسم او الكود'
+                                      : 'Search by name or code',
                               contentPadding: EdgeInsets.all(0),
                               filled: true,
                               counterStyle: FontStyleThame.textStyle(
@@ -120,15 +123,18 @@ class MySupplierScreen extends StatelessWidget {
                                 fontSize: 13,
                               ),
                               hintStyle: FontStyleThame.textStyle(
-                                  context: context,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  fontColor: MainCubit.get(context).isDark
-                                      ? Colors.white54
-                                      : Color.fromRGBO(0, 0, 0, .3)),
-                              fillColor: MainCubit.get(context).isDark
-                                  ? Colors.black26
-                                  : Colors.grey.shade200,
+                                context: context,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                fontColor:
+                                    MainCubit.get(context).isDark
+                                        ? Colors.white54
+                                        : Color.fromRGBO(0, 0, 0, .3),
+                              ),
+                              fillColor:
+                                  MainCubit.get(context).isDark
+                                      ? Colors.black26
+                                      : Colors.grey.shade200,
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide.none,
@@ -176,12 +182,7 @@ class MySupplierScreen extends StatelessWidget {
                                         AvailabilityScreen(
                                           clinicInfo:
                                               cubit.filteredSuppliers[index],
-                                          petId: petId,
-                                          isSpayed: isSpayed,
-                                          petNameFromAppoinmentIcon:
-                                              petNameFromAppoinmentIcon,
-                                          genderForPetFromAppoinmentScreen:
-                                              genderForPetFromAppoinmentScreen,
+                                          petSelectFromIcon: petSelectFromIcon,
                                         ),
                                       );
                                     },
@@ -197,8 +198,10 @@ class MySupplierScreen extends StatelessWidget {
                                                     : Colors.white,
                                             backgroundImage: NetworkImage(
                                               imageUrl +
-                                                  cubit.filteredSuppliers[index]
-                                                      .data.image,
+                                                  cubit
+                                                      .filteredSuppliers[index]
+                                                      .data
+                                                      .image,
                                             ),
                                           ),
                                           SizedBox(width: 10),
@@ -209,8 +212,10 @@ class MySupplierScreen extends StatelessWidget {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                cubit.filteredSuppliers[index]
-                                                    .data.name,
+                                                cubit
+                                                    .filteredSuppliers[index]
+                                                    .data
+                                                    .name,
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -221,14 +226,16 @@ class MySupplierScreen extends StatelessWidget {
                                                   Icon(
                                                     IconlyBold.location,
                                                     color:
-                                                        ColorManager.secondColor,
+                                                        ColorManager
+                                                            .secondColor,
                                                     size: 18,
                                                   ),
                                                   SizedBox(width: 10),
                                                   SizedBox(
-                                                    width: MediaQuery.sizeOf(
-                                                                context)
-                                                            .width *
+                                                    width:
+                                                        MediaQuery.sizeOf(
+                                                          context,
+                                                        ).width *
                                                         .5,
                                                     child: Text(
                                                       '${cubit.filteredSuppliers[index].data.address}, ${cubit.filteredSuppliers[index].data.city}',
@@ -236,7 +243,8 @@ class MySupplierScreen extends StatelessWidget {
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                          color: Colors.grey),
+                                                        color: Colors.grey,
+                                                      ),
                                                     ),
                                                   ),
                                                 ],
@@ -261,7 +269,8 @@ class MySupplierScreen extends StatelessWidget {
                           ),
                         ),
                       ],
-                    ));
+                    ),
+          );
         },
       ),
     );

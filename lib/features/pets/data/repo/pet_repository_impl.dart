@@ -18,7 +18,7 @@ class PetRepositoryImpl implements PetRepository {
   });
 
   @override
-  Future<Either<Failure, List<PetEntity>>> getOwnerPets() async {
+  Future<Either<Failure, List<PetEntities>>> getOwnerPets() async {
     try {
       final remotePets = await remoteDataSource.getOwnerPets();
 
@@ -35,7 +35,7 @@ class PetRepositoryImpl implements PetRepository {
         return Right(remotePets.map((pet) => pet).toList());
       }
     } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel.message));
+      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 
@@ -47,14 +47,14 @@ class PetRepositoryImpl implements PetRepository {
         await localDataSource.cacheBreeds(remoteBreeds);
         return Right(remoteBreeds.map((breed) => breed).toList());
       } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
+        return Left(ServerFailure(failure.errorMessageModel));
       }
     } else {
       try {
         final localBreeds = await localDataSource.getCachedBreeds();
         return Right(localBreeds.map((breed) => breed).toList());
       } on LocalDatabaseFailure catch (failure) {
-        return Left(LocalDatabaseFailure(failure.message));
+        return Left(LocalDatabaseFailure(failure.error));
       }
     }
   }
@@ -70,10 +70,17 @@ class PetRepositoryImpl implements PetRepository {
         );
         return Right(remoteBreeds.map((breed) => breed).toList());
       } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
+        return Left(ServerFailure(failure.errorMessageModel));
       }
     } else {
-      return const Left(ServerFailure('No internet connection'));
+      return const Left(ServerFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),);
     }
   }
 
@@ -91,15 +98,22 @@ class PetRepositoryImpl implements PetRepository {
               .toList(),
         );
       } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
+        return Left(ServerFailure(failure.errorMessageModel));
       }
     } else {
-      return const Left(ServerFailure('No internet connection'));
+      return const Left(ServerFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),);
     }
   }
 
   @override
-  Future<Either<Failure, PetEntity>> createPet(PetEntity pet) async {
+  Future<Either<Failure, PetEntities>> createPet(PetEntities pet) async {
     if (await networkInfo.isConnected) {
       try {
         final petData = PetData(
@@ -120,15 +134,22 @@ class PetRepositoryImpl implements PetRepository {
 
         return Right(remotePet);
       } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
+        return Left(ServerFailure(failure.errorMessageModel));
       }
     } else {
-      return const Left(ServerFailure('No internet connection'));
+      return const Left(ServerFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),);
     }
   }
 
   @override
-  Future<Either<Failure, PetEntity>> updatePet(PetEntity pet) async {
+  Future<Either<Failure, PetEntities>> updatePet(PetEntities pet) async {
     if (await networkInfo.isConnected) {
       try {
         final petData = PetData(
@@ -155,10 +176,17 @@ class PetRepositoryImpl implements PetRepository {
 
         return Right(remotePet);
       } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
+        return Left(ServerFailure(failure.errorMessageModel));
       }
     } else {
-      return const Left(ServerFailure('No internet connection'));
+      return const Left(ServerFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),);
     }
   }
 
@@ -173,10 +201,17 @@ class PetRepositoryImpl implements PetRepository {
 
         return const Right(null);
       } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
+        return Left(ServerFailure(failure.errorMessageModel));
       }
     } else {
-      return const Left(ServerFailure('No internet connection'));
+      return const Left(ServerFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),);
     }
   }
 }

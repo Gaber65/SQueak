@@ -81,7 +81,7 @@ class PetAsyncCubit extends Cubit<PetAsyncState> {
       (failure) {
         isAddInSqueakStatues = false;
         isLinkInSqueakStatues = false;
-        emit(ErrorAddInSqueakStatuesState(failure.message));
+        emit(ErrorAddInSqueakStatuesState(failure.error));
       },
       (petId) {
         isAddInSqueakStatues = false;

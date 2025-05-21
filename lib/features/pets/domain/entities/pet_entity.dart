@@ -1,4 +1,4 @@
-class PetEntity {
+class PetEntities {
   final String petId;
   final String petName;
   final String breedId;
@@ -10,7 +10,7 @@ class PetEntity {
   final BreedEntity? breed;
   bool isSelected;
 
-  PetEntity({
+  PetEntities({
     required this.petId,
     required this.petName,
     required this.breedId,

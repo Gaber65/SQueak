@@ -4,19 +4,19 @@ import '../../../../core/utils/export_path/export_files.dart';
 import '../base_repo/pet_base_repository.dart';
 import '../entities/pet_entity.dart';
 
-class CreatePetUseCase extends BaseUseCase<PetEntity, PetParams> {
+class CreatePetUseCase extends BaseUseCase<PetEntities, PetParams> {
   final PetRepository repository;
 
   CreatePetUseCase(this.repository);
 
   @override
-  Future<Either<Failure, PetEntity>> call(PetParams parameters) {
+  Future<Either<Failure, PetEntities>> call(PetParams parameters) {
     return repository.createPet(parameters.pet);
   }
 }
 
 class PetParams extends Equatable {
-  final PetEntity pet;
+  final PetEntities pet;
 
   const PetParams({required this.pet});
 

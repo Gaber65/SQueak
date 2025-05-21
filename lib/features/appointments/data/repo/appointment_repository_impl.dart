@@ -1,10 +1,15 @@
 import 'package:dartz/dartz.dart';
+import 'package:squeak/features/appointments/data/data_source/appointment_local_data_source.dart';
+import 'package:squeak/features/appointments/data/data_source/appointment_remote_data_source.dart';
+import 'package:squeak/features/appointments/domain/base_repo/appointment_base_repository.dart';
+import 'package:squeak/features/appointments/domain/entities/appointment_entity.dart';
+import 'package:squeak/features/appointments/domain/entities/availability_entities.dart';
+import 'package:squeak/features/appointments/domain/entities/clinic_entity.dart';
+import 'package:squeak/features/appointments/domain/entities/doctor_entity.dart';
+import 'package:squeak/features/appointments/domain/use_case/create_appointment.dart';
 import '../../../../core/utils/export_path/export_files.dart';
-import '../../domain/base_repo/appointment_base_repository.dart';
-import '../../domain/entities/appointment_entity.dart';
-import '../data_source/appointment_local_data_source.dart';
-import '../data_source/appointment_remote_data_source.dart';
-import '../models/appointment_model.dart';
+import '../../domain/entities/client_clinic.dart';
+import '../../domain/entities/invoice.dart';
 
 class AppointmentRepositoryImpl implements AppointmentRepository {
   final AppointmentRemoteDataSource remoteDataSource;
@@ -18,221 +23,302 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
   });
 
   @override
-  Future<Either<Failure, List<AppointmentEntity>>> getAllAppointments() async {
+  Future<Either<Failure, List<Availability>>> getAvailabilities(
+    String clinicCode,
+  ) async {
     if (await networkInfo.isConnected) {
       try {
-        final remoteAppointments = await remoteDataSource.getAllAppointments();
-        await localDataSource.cacheAppointments(remoteAppointments);
-        return Right(remoteAppointments.map((e) => e).toList());
-      } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
-      }
-    } else {
-      try {
-        final localAppointments = await localDataSource.getCachedAppointments();
-        return Right(localAppointments.map((e) => e).toList());
-      } on LocalDatabaseException catch (failure) {
-        return Left(LocalDatabaseFailure(failure.errorMessage));
-      }
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<AppointmentEntity>>> getAppointmentsByStatus(int status) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final remoteAppointments = await remoteDataSource.getAppointmentsByStatus(status);
-        return Right(remoteAppointments.map((e) => e).toList());
-      } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
-      }
-    } else {
-      try {
-        final localAppointments = await localDataSource.getCachedAppointments();
-        final filteredAppointments = localAppointments.where((e) => e.status == status).toList();
-        return Right(filteredAppointments.map((e) => e).toList());
-      } on LocalDatabaseException catch (failure) {
-        return Left(LocalDatabaseFailure(failure.errorMessage));
-      }
-    }
-  }
-
-  @override
-  Future<Either<Failure, AppointmentEntity>> getAppointmentById(String id) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final remoteAppointment = await remoteDataSource.getAppointmentById(id);
-        return Right(remoteAppointment);
-      } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
-      }
-    } else {
-      try {
-        final localAppointments = await localDataSource.getCachedAppointments();
-        final appointment = localAppointments.firstWhere((e) => e.id == id);
-        return Right(appointment);
-      } on LocalDatabaseException catch (failure) {
-        return Left(LocalDatabaseFailure(failure.errorMessage));
-      } catch (e) {
-        return Left(LocalDatabaseFailure('Appointment not found'));
-      }
-    }
-  }
-
-  @override
-  Future<Either<Failure, AppointmentEntity>> createAppointment(AppointmentEntity appointment) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final appointmentData = AppointmentData(
-          id: appointment.id,
-          petId: appointment.petId,
-          clientId: appointment.clientId,
-          doctorId: appointment.doctorId,
-          clinicId: appointment.clinicId,
-          startTime: appointment.startTime,
-          endTime: appointment.endTime,
-          appointmentDate: appointment.appointmentDate,
-          note: appointment.note,
-          status: appointment.status,
-          reason: appointment.reason,
-          isPetCheckIn: appointment.isPetCheckIn,
-          createDate: appointment.createDate,
-          doctor: appointment.doctor,
-          pet: appointment.pet,
-          clinic: appointment.clinic,
+        final remoteAvailabilities = await remoteDataSource.getAvailabilities(
+          clinicCode,
         );
-
-        final remoteAppointment = await remoteDataSource.createAppointment(appointmentData);
-        final appointments = await localDataSource.getCachedAppointments();
-        appointments.add(remoteAppointment);
-        await localDataSource.cacheAppointments(appointments);
-
-        return Right(remoteAppointment);
+        return Right(remoteAvailabilities);
       } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
+        return Left(ServerFailure(failure.errorMessageModel));
       }
     } else {
-      return const Left(ServerFailure('No internet connection'));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 
   @override
-  Future<Either<Failure, AppointmentEntity>> updateAppointment(AppointmentEntity appointment) async {
+  Future<Either<Failure, MySupplier>> getSuppliers() async {
     if (await networkInfo.isConnected) {
       try {
-        final appointmentData = AppointmentData(
-          id: appointment.id,
-          petId: appointment.petId,
-          clientId: appointment.clientId,
-          doctorId: appointment.doctorId,
-          clinicId: appointment.clinicId,
-          startTime: appointment.startTime,
-          endTime: appointment.endTime,
-          appointmentDate: appointment.appointmentDate,
-          note: appointment.note,
-          status: appointment.status,
-          reason: appointment.reason,
-          isPetCheckIn: appointment.isPetCheckIn,
-          createDate: appointment.createDate,
-          doctor: appointment.doctor,
-          pet: appointment.pet,
-          clinic: appointment.clinic,
-        );
-
-        final remoteAppointment = await remoteDataSource.updateAppointment(appointmentData);
-        final appointments = await localDataSource.getCachedAppointments();
-        final index = appointments.indexWhere((a) => a.id == appointment.id);
-        
-        if (index != -1) {
-          appointments[index] = remoteAppointment;
-          await localDataSource.cacheAppointments(appointments);
-        }
-
-        return Right(remoteAppointment);
+        final remoteSuppliers = await remoteDataSource.getSuppliers();
+        await localDataSource.cacheSuppliers(remoteSuppliers);
+        return Right(remoteSuppliers);
       } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
-      }
-    } else {
-      return const Left(ServerFailure('No internet connection'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> deleteAppointment(String id) async {
-    if (await networkInfo.isConnected) {
-      try {
-        await remoteDataSource.deleteAppointment(id);
-        final appointments = await localDataSource.getCachedAppointments();
-        appointments.removeWhere((a) => a.id == id);
-        await localDataSource.cacheAppointments(appointments);
-
-        return const Right(null);
-      } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
-      }
-    } else {
-      return const Left(ServerFailure('No internet connection'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> checkInPet(String appointmentId, bool isCheckedIn) async {
-    if (await networkInfo.isConnected) {
-      try {
-        await remoteDataSource.checkInPet(appointmentId, isCheckedIn);
-        final appointments = await localDataSource.getCachedAppointments();
-        final index = appointments.indexWhere((a) => a.id == appointmentId);
-        
-        if (index != -1) {
-          final updatedAppointment = AppointmentData(
-            id: appointments[index].id,
-            petId: appointments[index].petId,
-            clientId: appointments[index].clientId,
-            doctorId: appointments[index].doctorId,
-            clinicId: appointments[index].clinicId,
-            startTime: appointments[index].startTime,
-            endTime: appointments[index].endTime,
-            appointmentDate: appointments[index].appointmentDate,
-            note: appointments[index].note,
-            status: appointments[index].status,
-            reason: appointments[index].reason,
-            isPetCheckIn: isCheckedIn,
-            createDate: appointments[index].createDate,
-            doctor: appointments[index].doctor,
-            pet: appointments[index].pet,
-            clinic: appointments[index].clinic,
+        try {
+          final localSuppliers = await localDataSource.getCachedSuppliers();
+          if (localSuppliers != null) {
+            return Right(localSuppliers);
+          } else {
+            return Left(LocalDatabaseFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),);
+          }
+        } on LocalDatabaseFailure {
+          return Left(
+            LocalDatabaseFailure(
+              ErrorMessageModel(
+                message: 'No internet connection',
+                statusCode: 0,
+                errors: {},
+                success: false,
+              ),
+            ),
           );
-          
-          appointments[index] = updatedAppointment;
-          await localDataSource.cacheAppointments(appointments);
         }
-
-        return const Right(null);
-      } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
       }
     } else {
-      return const Left(ServerFailure('No internet connection'));
+      try {
+        final localSuppliers = await localDataSource.getCachedSuppliers();
+        if (localSuppliers != null) {
+          return Right(localSuppliers);
+        } else {
+          return Left(
+            LocalDatabaseFailure(
+              ErrorMessageModel(
+                message: 'No internet connection',
+                statusCode: 0,
+                errors: {},
+                success: false,
+              ),
+            ),
+          );
+        }
+      } on LocalDatabaseFailure {
+        return Left(
+          LocalDatabaseFailure(
+            ErrorMessageModel(
+              message: 'No internet connection',
+              statusCode: 0,
+              errors: {},
+              success: false,
+            ),
+          ),
+        );
+      }
     }
   }
 
   @override
-  Future<Either<Failure, List<DoctorEntity>>> getClinicDoctors(String clinicId) async {
+  Future<Either<Failure, List<Doctor>>> getDoctors(String clinicCode) async {
     if (await networkInfo.isConnected) {
       try {
-        final remoteDoctors = await remoteDataSource.getClinicDoctors(clinicId);
-        await localDataSource.cacheDoctors(remoteDoctors);
-        return Right(remoteDoctors.map((e) => e).toList());
+        final remoteDoctors = await remoteDataSource.getDoctors(clinicCode);
+        return Right(remoteDoctors);
       } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel.message));
+        return Left(ServerFailure(failure.errorMessageModel));
+      }
+    } else {
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<PetClinic>>> getClientInClinic(
+    String clinicCode,
+    String phone,
+  ) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteClientClinic = await remoteDataSource.getClientInClinic(
+          clinicCode,
+          phone,
+        );
+        return Right(remoteClientClinic);
+      } on ServerException catch (failure) {
+        return Left(ServerFailure(failure.errorMessageModel));
+      }
+    } else {
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> createAppointment(
+    CreateAppointmentParams pram,
+  ) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.createAppointment(pram);
+        return const Right(unit);
+      } on ServerException catch (failure) {
+        return Left(ServerFailure(failure.errorMessageModel));
+      }
+    } else {
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<AppointmentEntity>>> getUserAppointments(
+    String phone,
+    bool applyFilter,
+  ) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteAppointments = await remoteDataSource.getUserAppointments(
+          phone,
+          applyFilter,
+        );
+        await localDataSource.cacheAppointments(remoteAppointments);
+        return Right(remoteAppointments);
+      } on ServerException catch (failure) {
+        try {
+          final localAppointments =
+              await localDataSource.getCachedAppointments();
+          return Right(localAppointments);
+        } on LocalDatabaseFailure {
+          return Left(
+            LocalDatabaseFailure(
+              ErrorMessageModel(
+                message: 'No internet connection',
+                statusCode: 0,
+                errors: {},
+                success: false,
+              ),
+            ),
+          );
+        }
       }
     } else {
       try {
-        final localDoctors = await localDataSource.getCachedDoctors();
-        return Right(localDoctors.map((e) => e).toList());
-      } on LocalDatabaseException catch (failure) {
-        return Left(LocalDatabaseFailure(failure.errorMessage));
+        final localAppointments = await localDataSource.getCachedAppointments();
+        return Right(localAppointments);
+      } on LocalDatabaseFailure {
+        return Left(
+          LocalDatabaseFailure(
+            ErrorMessageModel(
+              message: 'No internet connection',
+              statusCode: 0,
+              errors: {},
+              success: false,
+            ),
+          ),
+        );
       }
     }
   }
-} 
+
+  @override
+  Future<Either<Failure, Unit>> deleteAppointment(String appointmentId) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.deleteAppointment(appointmentId);
+        return const Right(unit);
+      } on ServerException catch (failure) {
+        return Left(ServerFailure(failure.errorMessageModel));
+      }
+    } else {
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> rateAppointment({
+    required String appointmentId,
+    required int cleanlinessRate,
+    required int doctorServiceRate,
+    required String feedbackComment,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.rateAppointment(
+          appointmentId: appointmentId,
+          cleanlinessRate: cleanlinessRate,
+          doctorServiceRate: doctorServiceRate,
+          feedbackComment: feedbackComment,
+        );
+        return const Right(unit);
+      } on ServerException catch (failure) {
+        return Left(ServerFailure(failure.errorMessageModel));
+      }
+    } else {
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, Invoice>> getInvoice(String id) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteInvoice = await remoteDataSource.getInvoice(id);
+        return Right(remoteInvoice);
+      } on ServerException catch (failure) {
+        return Left(ServerFailure(failure.errorMessageModel));
+      }
+    } else {
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
+    }
+  }
+}

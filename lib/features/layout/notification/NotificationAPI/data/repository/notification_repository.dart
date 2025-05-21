@@ -19,7 +19,7 @@ class NotificationRepository extends BaseNotificationRepository {
       final result = await baseNotificationRemoteDataSource.getNotifications();
       return Right(result);
     } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel.message));
+      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 
@@ -29,7 +29,7 @@ class NotificationRepository extends BaseNotificationRepository {
       await baseNotificationRemoteDataSource.updateNotificationState(id);
       return const Right(null);
     } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel.message));
+      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 
@@ -43,7 +43,7 @@ class NotificationRepository extends BaseNotificationRepository {
       );
       return Right(result);
     } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel.message));
+      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 }

@@ -1,263 +1,172 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
-import 'package:dio/dio.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
-
-
-import 'package:printing/printing.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../layout/layout/data/models/clinic_model.dart';
-import '../../../data/models/get_appointment_model.dart';
-import '../../../data/models/print_model.dart';
-import '../../view/appointments/print_reciept.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:printing/printing.dart';
+import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/appointments/domain/entities/appointment_entity.dart';
+import 'package:squeak/features/appointments/domain/entities/clinic_entity.dart';
+import 'package:squeak/features/appointments/domain/use_case/delete_appointment.dart';
+import 'package:squeak/features/appointments/domain/use_case/get_invoice.dart';
+import 'package:squeak/features/appointments/domain/use_case/get_suppliers.dart';
+import 'package:squeak/features/appointments/domain/use_case/get_user_appointments.dart';
+import 'package:squeak/features/appointments/domain/use_case/rate_appointment.dart';
+import 'package:squeak/features/appointments/presentation/view/appointments/print_reciept.dart';
+import 'package:squeak/features/layout/search/domain/usecase/follow_clinic_use_case.dart';
+import 'dart:typed_data';
+import '../../../../../core/base_usecase/base_usecase.dart';
+import '../../../domain/entities/invoice.dart';
 
 part 'user_appointment_state.dart';
 
 class UserAppointmentCubit extends Cubit<UserAppointmentState> {
-  UserAppointmentCubit() : super(UserAppointmentInitial()) {}
+  final GetUserAppointmentsUseCase getUserAppointments;
+  final DeleteAppointmentUseCase deleteAppointment;
+  final RateAppointmentUseCase rateAppointment;
+  final GetSuppliersUseCase getSuppliers;
+  final FollowClinicUseCase followClinic;
+  final GetInvoiceUseCase getInvoice;
+
+  UserAppointmentCubit({
+    required this.getUserAppointments,
+    required this.deleteAppointment,
+    required this.rateAppointment,
+    required this.getSuppliers,
+    required this.followClinic,
+    required this.getInvoice,
+  }) : super(UserAppointmentInitial());
 
   static UserAppointmentCubit get(context) => BlocProvider.of(context);
 
-  List<AppointmentModel> appointments = [];
-  int appointmentsCount = 0;
-  Future<void> getAppointment(bool applyFilter) async {
-    if (CacheHelper.getData('appointments') != null) {
-      String stringToJason = CacheHelper.getData('appointments')!;
-      var jsonToMap = json.decode(stringToJason);
-      appointmentsCount = jsonToMap.length;
-      appointments = List<AppointmentModel>.from(
-          jsonToMap.map((x) => AppointmentModel.fromJson(x))).where((element) {
-        DateTime appointmentDate = DateTime.parse(element.date);
-        return appointmentDate
-            .isAfter(DateTime.now().subtract(const Duration(days: 1)));
-      }).toList();
-
-      appointments.sort((a, b) => a.date.compareTo(b.date));
-      emit(GetAppointmentSuccess());
-    }
-    emit(GetAppointmentLoading());
-
-    try {
-      Response response = await DioFinalHelper.getData(
-        method: createAndGetAppointmentsEndPoint(CacheHelper.getData('phone')),
-        language: true,
-      );
-      // print(response.data['data'][0]['id'].toString());
-      // print("////////////////////////");
-      // print(response.data['data']);
-      // print("////////////////////////");
-      //
-      // print(response.data['data']['result'][0]['wieght']);
-      // print("////////////////////////");
-      //
-      // response.data['data']['result'].forEach((e){
-      //   print('wieght');
-      //   print(e['wieght']);
-      //   print('temprature');
-      //   print(e['temprature']);
-      // });
-      // print("////////////////////////");
-      //
-
-      String jasonToString = json.encode(response.data['data']['result']);
-      appointmentsCount = response.data['data']['result'].length;
-      CacheHelper.saveData('appointments', jasonToString);
-      appointments = (response.data['data']['result'] as List)
-          .map((e) => AppointmentModel.fromJson(e))
-          .toList();
-      appointments.sort((a, b) => a.date.compareTo(b.date));
-      if (applyFilter) {
-        appointments.removeWhere((element) {
-          DateTime appointmentDate = DateTime.parse(element.date);
-          return appointmentDate
-              .isBefore(DateTime.now().subtract(const Duration(days: 1)));
-        });
-      }
-
-      emit(GetAppointmentSuccess());
-    } on DioError catch (e) {
-      print(e);
-      emit(GetAppointmentError());
-    }
-  }
-
-  void deleteAppointments(AppointmentModel model) async {
-    emit(DeleteAppointmentLoading());
-    try {
-      await DioFinalHelper.postData(
-        method: deleteAppointmentsEndPoint,
-        data: {
-          "reservationId": model.id,
-        },
-      );
-
-      emit(DeleteAppointmentSuccess());
-    } on DioError catch (e) {
-      print(e);
-      emit(DeleteAppointmentError());
-      throw e;
-    }
-  }
-
-  void printReceipt(AppointmentModel model, context) async {
-    navigateToScreen(
-      context,
-      PrintScreen(
-        id: model.id,
-        clinicPhone: model.clinicPhone,
-        clinicImage: model.clinicLogo ?? '',
-      ),
-    );
-  }
-
-  Future<void> printPdf(Response response) async {
-    try {
-      await Printing.layoutPdf(
-        onLayout: (format) {
-          return Uint8List.fromList(response.data);
-        },
-      );
-    } catch (e) {
-      print(e);
-    }
-  }
-
+  List<AppointmentEntity> appointments = [];
+  MySupplier? suppliers;
+  Invoice? invoice;
+  PetPrint? pet;
+  OwnerPrint? owner;
+  bool isLoadingInvoice = false;
+  List<AppointmentEntity> filteredList = [];
+  String? selectedPetId;
+  String? petName;
+  int? selectedState;
+  String? selectedStateValue;
   int ratingCleanliness = 0;
   int ratingDoctor = 0;
   TextEditingController rateController = TextEditingController();
   bool isLoadingRate = false;
 
-  Future rateAppointment(AppointmentModel model) async {
+  Future<void> getAppointment(bool applyFilter) async {
+    emit(GetAppointmentLoading());
+    final result = await getUserAppointments(
+      GetUserAppointmentsParams(
+        phone: CacheHelper.getData('phone'),
+        applyFilter: applyFilter,
+      ),
+    );
+    result.fold((failure) => emit(GetAppointmentError()), (appointmentsList) {
+      appointments = appointmentsList;
+
+      filteredList = List.from(appointments);
+      emit(GetAppointmentSuccess());
+    });
+  }
+
+  Future<void> deleteAppointments(String appointmentId) async {
+    emit(DeleteAppointmentLoading());
+    final result = await deleteAppointment(
+      DeleteAppointmentParams(appointmentId: appointmentId),
+    );
+    result.fold(
+      (failure) => emit(DeleteAppointmentError()),
+      (_) => emit(DeleteAppointmentSuccess(appointmentId)),
+    );
+  }
+
+  Future<void> rateUserAppointment(AppointmentEntity model) async {
     isLoadingRate = true;
     emit(RateAppointmentLoading());
-    try {
-      await DioFinalHelper.postData(
-        method: rateAppointmentEndPoint,
-        data: {
-          "reservationId": model.id,
-          "cleanlinessRate": ratingCleanliness,
-          "doctorServiceRate": ratingDoctor,
-          "feedbackComment": rateController.text,
-        },
-      );
-      isLoadingRate = false;
-      CacheHelper.saveData('IsForceRate', false);
-      CacheHelper.removeData('RateModel');
-      emit(RateAppointmentSuccessFunction());
-    } on DioError catch (e) {
-      isLoadingRate = false;
-      emit(RateAppointmentError());
-      throw e;
-    }
+    final result = await rateAppointment(
+      RateAppointmentParams(
+        appointmentId: model.id,
+        cleanlinessRate: ratingCleanliness,
+        doctorServiceRate: ratingDoctor,
+        feedbackComment: model.feedbackComment ?? '',
+      ),
+    );
+    isLoadingRate = false;
+    result.fold(
+      (failure) => emit(RateAppointmentError()),
+      (_) => emit(RateAppointmentSuccess()),
+    );
   }
 
-  init(AppointmentModel model) {
-    ratingCleanliness = model.cleanlinessRate;
-    ratingDoctor = model.doctorServiceRate;
-    rateController.text = model.feedbackComment ?? '';
-
-    emit(RateAppointmentError());
-  }
-
-  MySupplierModel? suppliers;
-
-  Future<void> getSupplier() async {
+  Future<void> fetchSuppliers() async {
     emit(GetSupplierLoading());
-    try {
-      Response response = await DioFinalHelper.getData(
-        method: getFollowerClinicEndPoint,
-        language: false,
-      );
-      suppliers = MySupplierModel.fromJson(response.data['data']);
+    final result = await getSuppliers(const NoParameters());
+    result.fold((failure) => emit(GetSupplierError()), (suppliersData) {
+      suppliers = suppliersData;
       emit(GetSupplierSuccess());
-    } on DioError catch (e) {
-      print(e);
-      emit(GetSupplierError());
-    }
+    });
   }
 
-  ClinicInfo? findClinic(
-      List<ClinicInfo> data, String clinicCode, String clinicId) {
-    for (var element in data) {
-      if (element.data.code == clinicCode) {
-        print('clinic found');
-        return element;
-      } else {
-        print('clinic not found');
-        followClinic(clinicId);
-      }
-    }
-    return null;
-  }
-
-  Future followClinic(clinicId) async {
+  Future<void> followClinicById(String clinicId) async {
     emit(FollowLoading());
-    try {
-      await DioFinalHelper.postData(
-        method: followClinicEndPoint,
-        data: {
-          "clinicId": clinicId,
-        },
-      );
-      emit(FollowSuccess());
-    } on DioError catch (e) {
-      print(e.response!.data);
-      emit(FollowError(ErrorMessageModel.fromJson(e.response!.data)));
-    }
+    final result = await followClinic(clinicId);
+    result.fold((failure) => emit(FollowError()), (_) => emit(FollowSuccess()));
   }
 
-  InvoicesModel? invoices;
-  PetModelPrint? pet;
-  OwnerModelPrint? owner;
-  bool isLoadingInvoice = false;
-  Future getInvoives(id) async {
+  Future<void> fetchInvoice(String id) async {
+    isLoadingInvoice = true;
     emit(GetInvoicesLoading());
-    try {
-      Response response = await DioFinalHelper.getData(
-        method: invoiveEndPoint + id,
-        language: false,
-      );
-      invoices = InvoicesModel.fromJson(response.data['data']);
-      print("${invoices!.species} =====================");
-      var petMap = {
-        'petName': invoices!.petName,
-        'species': invoices!.species,
-        'sex': invoices!.sex,
-      };
-      pet = PetModelPrint.fromJson(petMap);
+    final result = await getInvoice(GetInvoiceParams(id: id));
+    isLoadingInvoice = false;
+    result.fold(
+      (failure) => emit(
+        GetInvoicesError(
+          failure.error.errors.entries.first.value.first ??
+              failure.error.message,
+        ),
+      ),
+      (invoiceData) {
+        invoice = invoiceData;
 
-      var ownerMap = {
-        'ownerName': invoices!.ownerName,
-        'phone': invoices!.clientPhone,
-      };
-      owner = OwnerModelPrint.fromJson(ownerMap);
-      emit(GetInvoicesSuccess());
-    } on DioError catch (e) {
-      print(e);
-      emit(GetInvoicesError(ErrorMessageModel.fromJson(e.response!.data)));
-    }
+        // Create pet and owner models from invoice data
+        pet = PetPrint(
+          petName: invoiceData.petName,
+          species: invoiceData.species,
+          sex: invoiceData.sex,
+        );
+
+        owner = OwnerPrint(
+          ownerName: invoiceData.ownerName,
+          phone: invoiceData.clientPhone,
+        );
+
+        emit(GetInvoicesSuccess());
+      },
+    );
   }
 
-  List<AppointmentModel> filteredList = []; // Store filtered appointments
+  void filterAppointments({
+    String? petId,
+    String? petName,
+    int? state,
+    String? stateValue,
+  }) {
+    selectedPetId = petId;
+    selectedState = state;
+    this.petName = petName;
+    selectedStateValue = stateValue;
 
-  String? selectedPetId;
-  String? petName;
-  int? selectedState;
+    filteredList =
+        appointments.where((appointment) {
+          final matchesPet =
+              selectedPetId == null ||
+              appointment.pet.squeakPetId == selectedPetId;
+          final matchesState =
+              selectedState == null || appointment.status == selectedState;
+          return matchesPet && matchesState;
+        }).toList();
 
-  String? selectedStateValue;
-
-  void filterAppointments() {
-    filteredList = appointments.where((appointment) {
-      final matchesPet =
-          selectedPetId == null || appointment.pet.squeakPetId == selectedPetId;
-      final matchesState =
-          selectedState == null || appointment.statues == selectedState;
-      return matchesPet && matchesState;
-    }).toList();
     emit(AppointmentFiltered(filteredList));
   }
 
@@ -266,16 +175,55 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
     selectedState = null;
     selectedStateValue = null;
     petName = null;
-    filteredList = List.from(appointments); // Reset to original list
-    emit(AppointmentFilteredClear(filteredList));
+    filteredList = List.from(appointments);
+    emit(AppointmentFilterCleared());
   }
 
-  @override
-  Future<void> close() {
-    print('close Cubit');
-    CacheHelper.removeData('NotificationId');
-    CacheHelper.removeData('NotificationType');
+  void initRating(AppointmentEntity appointment) {
+    ratingCleanliness = appointment.cleanlinessRate;
+    ratingDoctor = appointment.doctorServiceRate;
+    rateController.text = appointment.feedbackComment ?? '';
+    emit(RatingInitialized());
+  }
 
-    return super.close();
+  Future<void> printPdf(Uint8List pdfData) async {
+    try {
+      await Printing.layoutPdf(
+        onLayout: (format) {
+          return pdfData;
+        },
+      );
+    } catch (e) {
+      // Handle printing error
+    }
+  }
+
+  ClinicInfo? findClinic(
+    List<ClinicInfo> data,
+    String clinicCode,
+    String clinicId,
+  ) {
+    for (var element in data) {
+      if (element.data.code == clinicCode) {
+        return element;
+      }
+    }
+    // If clinic not found, follow it
+    followClinicById(clinicId);
+    return null;
+  }
+
+  void printReceipt(AppointmentEntity model, context) async {
+    navigateToScreen(
+      context,
+
+      PrintScreen(
+        id: model.id,
+
+        clinicPhone: model.clinicPhone,
+
+        clinicImage: model.clinicLogo ?? '',
+      ),
+    );
   }
 }

@@ -58,7 +58,7 @@ class VetRegisterCubit extends Cubit<VetRegisterState> {
     result.fold(
       (failure) {
         isRegister = false;
-        emit(ErrorRegisterState(failure.message));
+        emit(ErrorRegisterState(failure.error));
       },
       (clients) {
         // Check if registration was successful
@@ -85,7 +85,7 @@ class VetRegisterCubit extends Cubit<VetRegisterState> {
     result.fold(
       (failure) {
         isRegister = false;
-        emit(ErrorLoginState(failure.message));
+        emit(ErrorLoginState(failure.error));
       },
       (authToken) {
         isRegister = false;

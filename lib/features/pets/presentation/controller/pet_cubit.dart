@@ -38,7 +38,7 @@ class PetCubit extends Cubit<PetState> {
   static PetCubit get(context) => BlocProvider.of(context);
 
   // Lists to store data
-  List<PetEntity> pets = [];
+  List<PetEntities> pets = [];
   List<BreedEntity> allBreeds = [];
   List<BreedEntity> breedData = [];
   List<SpeciesEntity> species = [];
@@ -69,20 +69,24 @@ class PetCubit extends Cubit<PetState> {
 
   // Load cached data on initialization
 
-
   // Get owner's pets
   Future<void> getOwnerPets() async {
     emit(GetOwnerPetsLoadingState());
 
     final result = await getOwnerPetsUseCase(NoParameters());
 
-    result.fold((error) => emit(GetOwnerPetsErrorState(error.message)), (
-      petsList,
-    ) {
-      pets = petsList;
-      pets.forEach((element) => print(element.toJson()));
-      emit(GetOwnerPetsSuccessState());
-    });
+    result.fold(
+      (error) => emit(
+        GetOwnerPetsErrorState(
+          error.error.errors.entries.first.value.first ?? error.error.message,
+        ),
+      ),
+      (petsList) {
+        pets = petsList;
+        pets.forEach((element) => print(element.toJson()));
+        emit(GetOwnerPetsSuccessState());
+      },
+    );
   }
 
   // Get all breeds
@@ -91,12 +95,17 @@ class PetCubit extends Cubit<PetState> {
 
     final result = await getAllBreedsUseCase(NoParameters());
 
-    result.fold((error) => emit(GetAllBreedsErrorState(error.message)), (
-      breedsList,
-    ) {
-      allBreeds = breedsList;
-      emit(GetAllBreedsSuccessState());
-    });
+    result.fold(
+      (error) => emit(
+        GetAllBreedsErrorState(
+          error.error.errors.entries.first.value.first ?? error.error.message,
+        ),
+      ),
+      (breedsList) {
+        allBreeds = breedsList;
+        emit(GetAllBreedsSuccessState());
+      },
+    );
   }
 
   // Get breeds by species ID
@@ -105,12 +114,17 @@ class PetCubit extends Cubit<PetState> {
 
     final result = await getBreedsBySpeciesUseCase(speciesId);
 
-    result.fold((error) => emit(GetAllBreedsErrorState(error.message)), (
-      breedsList,
-    ) {
-      breedData = breedsList;
-      emit(GetAllBreedsSuccessState());
-    });
+    result.fold(
+      (error) => emit(
+        GetAllBreedsErrorState(
+          error.error.errors.entries.first.value.first ?? error.error.message,
+        ),
+      ),
+      (breedsList) {
+        breedData = breedsList;
+        emit(GetAllBreedsSuccessState());
+      },
+    );
   }
 
   // Get all species
@@ -119,12 +133,17 @@ class PetCubit extends Cubit<PetState> {
 
     final result = await getAllSpeciesUseCase(NoParameters());
 
-    result.fold((error) => emit(GetAllSpeciesErrorState(error.message)), (
-      speciesList,
-    ) {
-      species = speciesList;
-      emit(GetAllSpeciesSuccessState());
-    });
+    result.fold(
+      (error) => emit(
+        GetAllSpeciesErrorState(
+          error.error.errors.entries.first.value.first ?? error.error.message,
+        ),
+      ),
+      (speciesList) {
+        species = speciesList;
+        emit(GetAllSpeciesSuccessState());
+      },
+    );
   }
 
   // Initialize form for creating a new pet
@@ -135,7 +154,7 @@ class PetCubit extends Cubit<PetState> {
   }
 
   // Initialize form for editing an existing pet
-  void initEdit(PetEntity pet) {
+  void initEdit(PetEntities pet) {
     petNameController.text = pet.petName;
     breedIdController.text = pet.breedId;
     birthdateController.text =
@@ -158,7 +177,7 @@ class PetCubit extends Cubit<PetState> {
     isLoading = true;
     emit(PetCreateLoadingState());
 
-    final pet = PetEntity(
+    final pet = PetEntities(
       petId: '',
       petName: petNameController.text,
       breedId: breedIdController.text,
@@ -175,12 +194,17 @@ class PetCubit extends Cubit<PetState> {
     final result = await createPetUseCase(PetParams(pet: pet));
 
     isLoading = false;
-    result.fold((error) => emit(PetCreateErrorState(error.message)), (
-      createdPet,
-    ) {
-      pets.add(createdPet);
-      emit(PetCreateSuccessState());
-    });
+    result.fold(
+      (error) => emit(
+        PetCreateErrorState(
+          error.error.errors.entries.first.value.first ?? error.error.message,
+        ),
+      ),
+      (createdPet) {
+        pets.add(createdPet);
+        emit(PetCreateSuccessState());
+      },
+    );
   }
 
   // Update an existing pet
@@ -188,7 +212,7 @@ class PetCubit extends Cubit<PetState> {
     isLoading = true;
     emit(PetCreateLoadingState());
 
-    final pet = PetEntity(
+    final pet = PetEntities(
       petId: petId,
       petName: petNameController.text,
       breedId: breedIdController.text,
@@ -205,15 +229,20 @@ class PetCubit extends Cubit<PetState> {
     final result = await updatePetUseCase(PetParams(pet: pet));
 
     isLoading = false;
-    result.fold((error) => emit(PetCreateErrorState(error.message)), (
-      updatedPet,
-    ) {
-      final index = pets.indexWhere((p) => p.petId.toString() == petId);
-      if (index != -1) {
-        pets[index] = updatedPet;
-      }
-      emit(PetCreateSuccessState());
-    });
+    result.fold(
+      (error) => emit(
+        PetCreateErrorState(
+          error.error.errors.entries.first.value.first ?? error.error.message,
+        ),
+      ),
+      (updatedPet) {
+        final index = pets.indexWhere((p) => p.petId.toString() == petId);
+        if (index != -1) {
+          pets[index] = updatedPet;
+        }
+        emit(PetCreateSuccessState());
+      },
+    );
   }
 
   // Delete a pet
@@ -222,10 +251,17 @@ class PetCubit extends Cubit<PetState> {
 
     final result = await deletePetUseCase(id);
 
-    result.fold((error) => emit(DeletePetErrorState(error.message)), (_) {
-      pets.removeWhere((pet) => pet.petId.toString() == id);
-      emit(DeletePetSuccessState());
-    });
+    result.fold(
+      (error) => emit(
+        DeletePetErrorState(
+          error.error.errors.entries.first.value.first ?? error.error.message,
+        ),
+      ),
+      (_) {
+        pets.removeWhere((pet) => pet.petId.toString() == id);
+        emit(DeletePetSuccessState());
+      },
+    );
   }
 
   // Form field update methods

@@ -9,7 +9,7 @@ import '../../../controller/pet_cubit.dart';
 import 'empty_state.dart';
 
 class PetScreenContent extends StatefulWidget {
-  final List<PetEntity> pets;
+  final List<PetEntities> pets;
   final PetCubit cubit;
 
   const PetScreenContent({super.key, required this.pets, required this.cubit});

@@ -13,7 +13,7 @@ import 'action_button.dart';
 import 'icon_circle.dart';
 
 class PetCard extends StatelessWidget {
-  final PetEntity pet;
+  final PetEntities pet;
   final PetCubit cubit;
 
   const PetCard({super.key, required this.pet, required this.cubit});
@@ -77,24 +77,13 @@ class PetCard extends StatelessWidget {
   }
 
   Widget _buildCalendarButton(BuildContext context) {
-    return OfflineWidget(
-      offlineChild: IconCircle(
-        icon: IconlyLight.calendar,
-        onPressed: () => OfflineWidget.showOfflineWidget(context),
-      ),
-      onlineChild: IconCircle(
-        icon: IconlyLight.calendar,
-        onPressed:
-            () => navigateToScreen(
-              context,
-              MySupplierScreen(
-                petId: pet.petId,
-                isSpayed: pet.isSpayed,
-                petNameFromAppoinmentIcon: pet.petName,
-                genderForPetFromAppoinmentScreen: pet.gender,
-              ),
-            ),
-      ),
+    return IconCircle(
+      icon: IconlyLight.calendar,
+      onPressed:
+          () => navigateToScreen(
+            context,
+            MySupplierScreen(petSelectFromIcon: pet),
+          ),
     );
   }
 
@@ -102,34 +91,19 @@ class PetCard extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: OfflineWidget(
-            offlineChild: ActionButton(
-              text: S.of(context).addPetService,
-              color: Colors.green,
-              onPressed: () => OfflineWidget.showOfflineWidget(context),
-            ),
-            onlineChild: ActionButton(
-              text: isArabic() ? "تذكيرات" : "Reminders",
-              color: Colors.green,
-              onPressed:
-                  () =>
-                      navigateToScreen(context, PetVaccination(petModel: pet)),
-            ),
+          child: ActionButton(
+            text: isArabic() ? "تذكيرات" : "Reminders",
+            color: Colors.green,
+            onPressed:
+                () => navigateToScreen(context, PetVaccination(petModel: pet)),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: OfflineWidget(
-            offlineChild: ActionButton(
-              text: isArabic() ? 'حذف' : 'Delete',
-              color: Colors.red,
-              onPressed: () => OfflineWidget.showOfflineWidget(context),
-            ),
-            onlineChild: ActionButton(
-              text: isArabic() ? 'حذف' : 'Delete',
-              color: Colors.red,
-              onPressed: () => _showDeleteConfirmation(context),
-            ),
+          child: ActionButton(
+            text: isArabic() ? 'حذف' : 'Delete',
+            color: Colors.red,
+            onPressed: () => _showDeleteConfirmation(context),
           ),
         ),
       ],
@@ -172,7 +146,6 @@ class PetCard extends StatelessWidget {
       imageUrl:
           'https://img.freepik.com/premium-vector/sad-dog_161669-74.jpg?size=626&ext=jpg&uid=R78903714&ga=GA1.2.131510781.1692744483&semt=ais',
       onConfirm: () async {
-
         print('pet id ${pet.petId.toString()}');
         print('pet id ${pet.toJson()}');
         await cubit.deletePet(pet.petId.toString());

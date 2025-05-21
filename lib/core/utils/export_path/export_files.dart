@@ -16,7 +16,6 @@ export 'package:squeak/core/service/global_widget/custom_elevated_button.dart';
 export 'package:squeak/core/service/global_widget/custom_text_form_field.dart';
 export 'package:squeak/core/service/global_widget/global_Image.dart';
 export 'package:squeak/core/service/global_widget/national_phone.dart';
-export 'package:squeak/core/service/global_widget/offline_widget.dart';
 export 'package:squeak/core/service/global_widget/responsive_screen.dart';
 export 'package:squeak/core/service/global_widget/toast.dart';
 export 'package:squeak/core/service/global_widget/video_detail.dart';

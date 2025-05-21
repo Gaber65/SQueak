@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/appointments/data/models/availabilities_model.dart';
+import 'package:squeak/features/appointments/domain/entities/availability_entities.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
+import '../../../../../core/utils/enums/dayOfWeek_enum.dart';
+
 class CalendarScreen extends StatefulWidget {
   final bool isShowTime;
   final bool isShowDate;
-  final List<AvailabilityModel> timeSlotData;
+  final List<Availability> timeSlotData;
   final OnDaySelected? onDaySelected;
   final DateTime? selectedDate;
   final Function(String)? onIntervalSelected;
@@ -31,7 +33,7 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen>
     with TickerProviderStateMixin {
   DateTime? _selectedDate;
-  Map<DayOfWeek, List<AvailabilityModel>> _timeSlots = {};
+  Map<DayOfWeek, List<Availability>> _timeSlots = {};
   int? _selectedIntervalIndex;
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -69,13 +71,13 @@ class _CalendarScreenState extends State<CalendarScreen>
     super.dispose();
   }
 
-  Future<void> _fetchData(List<AvailabilityModel> list) async {
+  Future<void> _fetchData(List<Availability> list) async {
     // Simulate API call
 
-    final Map<DayOfWeek, List<AvailabilityModel>> timeSlots = {};
+    final Map<DayOfWeek, List<Availability>> timeSlots = {};
     for (var item in list) {
       final dayOfWeek = DayOfWeek.values[(item.dayOfWeek.index + 6) % 7];
-      final timeSlot = AvailabilityModel(
+      final timeSlot = Availability(
         id: item.id,
         startTime: item.startTime,
         endTime: item.endTime,

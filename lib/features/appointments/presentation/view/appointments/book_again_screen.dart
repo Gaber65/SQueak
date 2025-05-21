@@ -5,16 +5,12 @@ import 'package:shimmer/shimmer.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
-
-
-import '../../../data/models/get_appointment_model.dart' as appointment_model;
-import '../../../data/models/get_client_clinic_model.dart';
+import 'package:squeak/features/appointments/data/models/availability_model.dart';
+import 'package:squeak/features/appointments/data/models/client_clinic_model.dart';
 import '../../../data/models/doctor_model.dart';
 import '../../controller/clinic/appointment_cubit.dart';
-import '../../controller/clinic/appointment_state.dart';
 import '../component/CustomCalendarDatePicker.dart';
 import '../debug_appointment_api.dart';
-import '../../../data/models/availabilities_model.dart';
 
 /// Booking again Screen melkerm
 class BooKAgainScreen extends StatefulWidget {
@@ -22,10 +18,10 @@ class BooKAgainScreen extends StatefulWidget {
   final String petId;
 
   const BooKAgainScreen({
-    Key? key,
+    super.key,
     required this.clinicCode,
     required this.petId,
-  }) : super(key: key);
+  });
 
   @override
   _BooKAgainScreenState createState() => _BooKAgainScreenState();
@@ -41,7 +37,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
   bool areDataLoaded = false; // Combined loading state
 
   // Local data stores
-  List<ClientClinicModel> _localPetList = [];
+  List<PetClinicModel> _localPetList = [];
   List<AvailabilityModel> _localAvailabilities = [];
   List<DoctorModel> _localDoctors = [];
   TextEditingController _commentController = TextEditingController(); // Local comment controller
@@ -62,7 +58,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       );
       if (petResponse.data['success'] == true) {
         _localPetList = (petResponse.data['data'] as List)
-            .map((e) => ClientClinicModel.fromJson(e))
+            .map((e) => PetClinicModel.fromJson(e))
             .toList();
         print("DEBUG: Loaded ${_localPetList.length} pets directly.");
       } else {
@@ -109,7 +105,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
     }
   }
 
-  ClientClinicModel? findPet(List<ClientClinicModel> data, String petIdToFind) {
+  PetClinicModel? findPet(List<PetClinicModel> data, String petIdToFind) {
     print("DEBUG: Looking for petId: $petIdToFind in ${data.length} pets");
     for (var element in data) {
       print("DEBUG: Checking pet - ID: ${element.petId}, Name: ${element.petName}, SqueakID: ${element.petSqueakId}");
@@ -146,7 +142,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
     }
     try {
       print("DEBUG: _localPetList has ${_localPetList.length} pets");
-      ClientClinicModel? matchedPet = findPet(_localPetList, widget.petId);
+      PetClinicModel? matchedPet = findPet(_localPetList, widget.petId);
       if (matchedPet == null) {
         print("DEBUG: No matching pet found for ID: ${widget.petId}");
         errorToast(context, isArabic() ? 'لم يتم العثور على الحيوانات الأليفة' : 'No pets found');
@@ -186,7 +182,10 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
         data: requestData,
       );
       print("DEBUG: API response: ${response.data}");
-      if (mounted) Navigator.pop(context);
+      if (mounted) {
+        LayoutCubit.get(context).selectedIndex = 2;
+        navigateAndFinish(context, const LayoutScreen());
+      };
       successToast(context, isArabic() ? 'تم حجز الموعد بنجاح' : 'Appointment booked successfully');
     } on DioException catch (e) {
       print("DEBUG: API Error: ${e.response?.data}");

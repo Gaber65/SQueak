@@ -1,15 +1,12 @@
-import 'package:squeak/core/utils/export_path/export_files.dart';
+import '../../../../core/network/end-points.dart';
+import '../../domain/entities/doctor_entity.dart';
 
-class DoctorModel {
+class DoctorModel extends Doctor {
   const DoctorModel({
-    required this.id,
-    required this.name,
-    required this.image,
+    required super.id,
+    required super.name,
+    required super.image,
   });
-
-  final String id;
-  final String name;
-  final String image;
 
   factory DoctorModel.fromJson(Map<String, dynamic> json) {
     return DoctorModel(
@@ -22,10 +19,10 @@ class DoctorModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['fullName'] = name;
-    data['image'] = image;
-    return data;
+    return {
+      'id': id,
+      'fullName': name,
+      'image': image,
+    };
   }
 }

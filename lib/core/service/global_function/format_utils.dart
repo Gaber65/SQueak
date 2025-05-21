@@ -20,10 +20,12 @@ bool isArabic() {
 Map<String, String?> extractQueryParams(String url) {
   String? queryStart;
 
-  if (url.contains('/vetRegister/')) {
-    queryStart = '/vetRegister/';
-  } else if (url.contains('/QrRegister/')) {
+  if (url.contains('qrClinicCode')) {
     queryStart = '/QrRegister/';
+
+  } else if (url.contains('vetRegister')) {
+    queryStart = '/vetRegister/';
+
   }
 
   if (queryStart == null) {

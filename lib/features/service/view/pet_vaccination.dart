@@ -18,7 +18,7 @@ class PetVaccination extends StatelessWidget {
     required this.petModel,
   });
 
-  final PetEntity petModel;
+  final PetEntities petModel;
 
   final formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();

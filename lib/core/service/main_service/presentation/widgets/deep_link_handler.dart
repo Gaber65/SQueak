@@ -33,6 +33,8 @@ void initDeepLinkHandler(
 }
 
 void handleDeepLink(Uri uri, GlobalKey<NavigatorState> navigatorKey) {
+  print(uri.toString());
+  print('***********************************');
   final extractedParams = extractQueryParams(uri.toString());
   String? clinicCode = extractedParams['qrClinicCode'];
   String? clinicName = extractedParams['clinicName'];

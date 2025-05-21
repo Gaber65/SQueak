@@ -20,6 +20,7 @@ class PostRemoteDataSource extends BasePostRemoteDataSource {
           .map((e) => PostDataModel.fromJson(e))
           .toList();
     } on DioException catch (e) {
+      print(e.response?.data);
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

@@ -5,8 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/appointments/data/models/clinic_model.dart';
 
-import '../../layout/layout/data/models/clinic_model.dart';
 import '../../vetcare/data/models/vet_client_model.dart';
 import 'qrcubit_state.dart';
 

@@ -3,6 +3,21 @@ import 'package:internet_connection_checker/internet_connection_checker.dart'
     show InternetConnectionChecker;
 import 'package:squeak/core/network/dio.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/appointments/data/data_source/appointment_local_data_source.dart';
+import 'package:squeak/features/appointments/data/data_source/appointment_remote_data_source.dart';
+import 'package:squeak/features/appointments/data/repo/appointment_repository_impl.dart';
+import 'package:squeak/features/appointments/domain/base_repo/appointment_base_repository.dart';
+import 'package:squeak/features/appointments/domain/use_case/create_appointment.dart';
+import 'package:squeak/features/appointments/domain/use_case/delete_appointment.dart';
+import 'package:squeak/features/appointments/domain/use_case/get_availabilities.dart';
+import 'package:squeak/features/appointments/domain/use_case/get_client_in_clinic.dart';
+import 'package:squeak/features/appointments/domain/use_case/get_doctors.dart';
+import 'package:squeak/features/appointments/domain/use_case/get_invoice.dart';
+import 'package:squeak/features/appointments/domain/use_case/get_suppliers.dart';
+import 'package:squeak/features/appointments/domain/use_case/get_user_appointments.dart';
+import 'package:squeak/features/appointments/domain/use_case/rate_appointment.dart';
+import 'package:squeak/features/appointments/presentation/controller/clinic/appointment_cubit.dart';
+import 'package:squeak/features/appointments/presentation/controller/user/user_appointment_cubit.dart';
 import 'package:squeak/features/layout/layout/data/datasources/layout_local_data_source.dart';
 import 'package:squeak/features/layout/layout/data/datasources/layout_remote_data_source.dart';
 import 'package:squeak/features/layout/layout/data/repositories/layout_repository_impl.dart';
@@ -250,7 +265,7 @@ class ServiceLocator {
     sl.registerLazySingleton<BaseVetRepository>(() => VetRepository(sl()));
 
     sl.registerFactory(
-          () => LayoutCubit(
+      () => LayoutCubit(
         getVersionUseCase: sl(),
         getCurrentAppVersionUseCase: sl(),
       ),
@@ -262,23 +277,72 @@ class ServiceLocator {
 
     // Repository
     sl.registerLazySingleton<LayoutRepository>(
-          () => LayoutRepositoryImpl(
-        remoteDataSource: sl(),
-        localDataSource: sl(),
-      ),
+      () => LayoutRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()),
     );
 
     // Data sources
     sl.registerLazySingleton<LayoutRemoteDataSource>(
-          () => LayoutRemoteDataSourceImpl(),
+      () => LayoutRemoteDataSourceImpl(),
     );
     sl.registerLazySingleton<LayoutLocalDataSource>(
-          () => LayoutLocalDataSourceImpl(),
+      () => LayoutLocalDataSourceImpl(),
     );
 
     // Data sources
     sl.registerLazySingleton<BaseVetRemoteDataSource>(
       () => VetRemoteDataSource(),
+    );
+    // Cubits
+    sl.registerFactory(
+      () => AppointmentCubit(
+        getAvailabilitiesUseCase: sl(),
+        getSuppliersUseCase: sl(),
+        getDoctorsUseCase: sl(),
+        getClientInClinicUseCase: sl(),
+        createAppointmentUseCase: sl(),
+        unfollowClinicUseCase: sl(),
+        followClinicUseCase: sl(),
+      ),
+    );
+
+    sl.registerFactory(
+      () => UserAppointmentCubit(
+        getUserAppointments: sl(),
+        deleteAppointment: sl(),
+        rateAppointment: sl(),
+        getSuppliers: sl(),
+        followClinic: sl(),
+        getInvoice: sl(),
+      ),
+    );
+
+    // Use cases
+    sl.registerLazySingleton(() => GetAvailabilitiesUseCase(sl()));
+    sl.registerLazySingleton(() => GetSuppliersUseCase(sl()));
+    sl.registerLazySingleton(() => GetDoctorsUseCase(sl()));
+    sl.registerLazySingleton(() => GetClientInClinicUseCase(sl()));
+    sl.registerLazySingleton(() => CreateAppointmentUseCase(sl()));
+    sl.registerLazySingleton(() => GetUserAppointmentsUseCase(sl()));
+    sl.registerLazySingleton(() => DeleteAppointmentUseCase(sl()));
+    sl.registerLazySingleton(() => RateAppointmentUseCase(sl()));
+    sl.registerLazySingleton(() => GetInvoiceUseCase(sl()));
+
+    // Repository
+    sl.registerLazySingleton<AppointmentRepository>(
+      () => AppointmentRepositoryImpl(
+        remoteDataSource: sl(),
+        localDataSource: sl(),
+        networkInfo: sl(),
+      ),
+    );
+
+    // Data sources
+    sl.registerLazySingleton<AppointmentRemoteDataSource>(
+      () => AppointmentRemoteDataSourceImpl(),
+    );
+
+    sl.registerLazySingleton<AppointmentLocalDataSource>(
+      () => AppointmentLocalDataSourceImpl(),
     );
   }
 }

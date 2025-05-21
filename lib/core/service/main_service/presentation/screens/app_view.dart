@@ -65,7 +65,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               ..requestNotificationPermissions();
           },
         ),
-        BlocProvider(create: (context) => sl<LayoutCubit>()),
+        BlocProvider(
+          create:
+              (context) =>
+                  sl<LayoutCubit>()
+                    ..getAppVersion()
+                    ..getVersion(),
+        ),
       ],
       child: BlocBuilder<MainCubit, MainState>(
         builder: (context, state) {

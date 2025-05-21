@@ -5,12 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lottie/lottie.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:squeak/features/appointments/presentation/view/appointments/rate_appointment.dart';
-
-import 'package:squeak/features/pets/data/models/pet_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../data/models/get_appointment_model.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 import '../component/filter_component.dart';
 import '../files_and_prescription_for_pet/files_for_pet_screen.dart';
@@ -22,23 +20,22 @@ class AllAppointment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create:
-              (context) =>
-                  UserAppointmentCubit()
-                    ..getSupplier()
-                    ..getAppointment(false),
-        ),
-      ],
+    return BlocProvider(
+      create:
+          (context) =>
+              sl<UserAppointmentCubit>()
+                ..fetchSuppliers()
+                ..getAppointment(true),
+
       child: BlocConsumer<UserAppointmentCubit, UserAppointmentState>(
         listener: (context, state) {
           if (state is DeleteAppointmentSuccess) {
             UserAppointmentCubit.get(context).getAppointment(false);
           }
           if (state is EditAppointment) {
-            UserAppointmentCubit.get(context).deleteAppointments(state.model);
+            UserAppointmentCubit.get(
+              context,
+            ).deleteAppointments(state.model.id);
           }
         },
         builder: (context, state) {
@@ -51,15 +48,6 @@ class AllAppointment extends StatelessWidget {
                 preferredSize: const Size.fromHeight(50),
                 child: Row(
                   children: [
-                    // Expanded(
-                    //   child: BlocConsumer<LayoutCubit, LayoutState>(
-                    //     builder: (context, state) {
-                    //       // List<PetData> pets = LayoutCubit.get(context).pets;
-                    //       // return buildPetFilter(context, pets);
-                    //     },
-                    //     listener: (context, state) {},
-                    //   ),
-                    // ),
                     Expanded(
                       child: BlocConsumer<LayoutCubit, LayoutState>(
                         builder: (context, state) {
@@ -130,12 +118,11 @@ class AllAppointment extends StatelessWidget {
   }
 
   Widget buildItem(
-    AppointmentModel appointments,
+    AppointmentEntity appointments,
     BuildContext context,
     UserAppointmentCubit cubit,
     int index,
   ) {
-    print(appointments.statues);
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Container(
@@ -157,7 +144,7 @@ class AllAppointment extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // reserved status
-                    if (appointments.statues == 0)
+                    if (appointments.status == 0)
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -194,119 +181,116 @@ class AllAppointment extends StatelessWidget {
                           ),
                           Text(formatTimeToAmPm(appointments.time)),
                           SizedBox(width: 10),
-                          if (appointments.isPrint)
-                            const CircularProgressIndicator(),
-                          if (appointments.statues == 3)
-                            if (!appointments.isPrint)
-                              PopupMenuButton<int>(
-                                padding: EdgeInsets.zero,
-                                onCanceled: () {
-                                  Navigator.of(context);
-                                },
-                                itemBuilder: (context) {
-                                  return [
-                                    if (appointments.visitId != null &&
-                                        appointments.isBillSqueakVisible)
-                                      PopupMenuItem(
-                                        value: 1,
-                                        onTap: () {
-                                          cubit.printReceipt(
-                                            appointments,
-                                            context,
-                                          );
-                                        },
-                                        child: Row(
-                                          children: [
-                                            isArabic()
-                                                ? Text('الفاتورة')
-                                                : Text('Bill'),
-                                            Spacer(),
-                                            Icon(
-                                              Icons.receipt_long_sharp,
-                                              color: Color(0xff6096ba),
-                                            ),
-                                          ],
+                          if (appointments.status == 3)
+                            PopupMenuButton<int>(
+                              padding: EdgeInsets.zero,
+                              onCanceled: () {
+                                Navigator.of(context);
+                              },
+                              itemBuilder: (context) {
+                                return [
+                                  if (appointments.visitId != null &&
+                                      appointments.isBillSqueakVisible)
+                                    PopupMenuItem(
+                                      value: 1,
+                                      onTap: () {
+                                        cubit.printReceipt(
+                                          appointments,
+                                          context,
+                                        );
+                                      },
+                                      child: Row(
+                                        children: [
+                                          isArabic()
+                                              ? Text('الفاتورة')
+                                              : Text('Bill'),
+                                          Spacer(),
+                                          Icon(
+                                            Icons.receipt_long_sharp,
+                                            color: Color(0xff6096ba),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  PopupMenuItem(
+                                    value: 2,
+                                    onTap: () {
+                                      navigateToScreen(
+                                        context,
+                                        RateAppointment(
+                                          model: appointments,
+                                          isNav: true,
                                         ),
-                                      ),
-                                    PopupMenuItem(
-                                      value: 2,
-                                      onTap: () {
-                                        navigateToScreen(
-                                          context,
-                                          RateAppointment(
-                                            model: appointments,
-                                            isNav: true,
-                                          ),
-                                        );
-                                      },
-                                      child: Row(
-                                        children: [
-                                          isArabic()
-                                              ? Text("التقييم")
-                                              : Text('Rate'),
-                                          Spacer(),
-                                          Icon(
-                                            Icons.star_border_purple500,
-                                            color: Colors.amber,
-                                          ),
-                                        ],
-                                      ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        isArabic()
+                                            ? Text("التقييم")
+                                            : Text('Rate'),
+                                        Spacer(),
+                                        Icon(
+                                          Icons.star_border_purple500,
+                                          color: Colors.amber,
+                                        ),
+                                      ],
                                     ),
-                                    PopupMenuItem(
-                                      value: 3,
-                                      onTap: () {
-                                        navigateToScreen(
-                                          context,
-                                          PrescriptionForPetScreen(
-                                            reservationid: appointments.id,
-                                          ),
-                                        );
-                                      },
-                                      child: Row(
-                                        children: [
-                                          isArabic()
-                                              ? Text("الروشتة")
-                                              : Text("Prescription"),
-                                          Spacer(),
-                                          Icon(
-                                            Icons.add_box_rounded,
-                                            color: Colors.amber,
-                                          ),
-                                        ],
-                                      ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 3,
+                                    onTap: () {
+                                      navigateToScreen(
+                                        context,
+                                        PrescriptionForPetScreen(
+                                          reservationid: appointments.id,
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        isArabic()
+                                            ? Text("الروشتة")
+                                            : Text("Prescription"),
+                                        Spacer(),
+                                        Icon(
+                                          Icons.add_box_rounded,
+                                          color: Colors.amber,
+                                        ),
+                                      ],
                                     ),
-                                    PopupMenuItem(
-                                      value: 4,
-                                      onTap: () {
-                                        navigateToScreen(
-                                          context,
-                                          FilesForPetScreen(
-                                            reservationid: appointments.id,
-                                          ),
-                                        );
-                                      },
-                                      child: Row(
-                                        children: [
-                                          isArabic()
-                                              ? Text("الملفات")
-                                              : Text("Files"),
-                                          Spacer(),
-                                          Icon(
-                                            Icons.file_copy_rounded,
-                                            color: Colors.amber,
-                                          ),
-                                        ],
-                                      ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 4,
+                                    onTap: () {
+                                      navigateToScreen(
+                                        context,
+                                        FilesForPetScreen(
+                                          reservationid: appointments.id,
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        isArabic()
+                                            ? Text("الملفات")
+                                            : Text("Files"),
+                                        Spacer(),
+                                        Icon(
+                                          Icons.file_copy_rounded,
+                                          color: Colors.amber,
+                                        ),
+                                      ],
                                     ),
-                                  ];
-                                },
-                                icon: const Icon(Icons.more_vert_outlined),
-                                offset: const Offset(0, 20),
-                              ),
+                                  ),
+                                ];
+                              },
+                              icon: const Icon(Icons.more_vert_outlined),
+                              offset: const Offset(0, 20),
+                            ),
                         ],
                       )
                     // canceled status
-                    else if (appointments.statues == 5)
+                    else if (appointments.status == 5)
                       Row(
                         children: [
                           CircleAvatar(
@@ -329,119 +313,117 @@ class AllAppointment extends StatelessWidget {
                           ),
                           Text(formatTimeToAmPm(appointments.time)),
                           SizedBox(width: 10),
-                          if (appointments.isPrint)
-                            const CircularProgressIndicator(),
-                          if (appointments.statues == 3)
-                            if (!appointments.isPrint)
-                              PopupMenuButton<int>(
-                                padding: EdgeInsets.zero,
-                                onCanceled: () {
-                                  Navigator.of(context);
-                                },
-                                itemBuilder: (context) {
-                                  return [
-                                    if (appointments.visitId != null &&
-                                        appointments.isBillSqueakVisible)
-                                      PopupMenuItem(
-                                        value: 1,
-                                        onTap: () {
-                                          cubit.printReceipt(
-                                            appointments,
-                                            context,
-                                          );
-                                        },
-                                        child: Row(
-                                          children: [
-                                            isArabic()
-                                                ? Text('الفاتورة')
-                                                : Text('Bill'),
-                                            Spacer(),
-                                            Icon(
-                                              Icons.receipt_long_sharp,
-                                              color: Color(0xff6096ba),
-                                            ),
-                                          ],
+
+                          if (appointments.status == 3)
+                            PopupMenuButton<int>(
+                              padding: EdgeInsets.zero,
+                              onCanceled: () {
+                                Navigator.of(context);
+                              },
+                              itemBuilder: (context) {
+                                return [
+                                  if (appointments.visitId != null &&
+                                      appointments.isBillSqueakVisible)
+                                    PopupMenuItem(
+                                      value: 1,
+                                      onTap: () {
+                                        cubit.printReceipt(
+                                          appointments,
+                                          context,
+                                        );
+                                      },
+                                      child: Row(
+                                        children: [
+                                          isArabic()
+                                              ? Text('الفاتورة')
+                                              : Text('Bill'),
+                                          Spacer(),
+                                          Icon(
+                                            Icons.receipt_long_sharp,
+                                            color: Color(0xff6096ba),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  PopupMenuItem(
+                                    value: 2,
+                                    onTap: () {
+                                      navigateToScreen(
+                                        context,
+                                        RateAppointment(
+                                          isNav: true,
+                                          model: appointments,
                                         ),
-                                      ),
-                                    PopupMenuItem(
-                                      value: 2,
-                                      onTap: () {
-                                        navigateToScreen(
-                                          context,
-                                          RateAppointment(
-                                            isNav: true,
-                                            model: appointments,
-                                          ),
-                                        );
-                                      },
-                                      child: Row(
-                                        children: [
-                                          isArabic()
-                                              ? Text("التقييم")
-                                              : Text('Rate'),
-                                          Spacer(),
-                                          Icon(
-                                            Icons.star_border_purple500,
-                                            color: Colors.amber,
-                                          ),
-                                        ],
-                                      ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        isArabic()
+                                            ? Text("التقييم")
+                                            : Text('Rate'),
+                                        Spacer(),
+                                        Icon(
+                                          Icons.star_border_purple500,
+                                          color: Colors.amber,
+                                        ),
+                                      ],
                                     ),
-                                    PopupMenuItem(
-                                      value: 3,
-                                      onTap: () {
-                                        navigateToScreen(
-                                          context,
-                                          PrescriptionForPetScreen(
-                                            reservationid: appointments.id,
-                                          ),
-                                        );
-                                      },
-                                      child: Row(
-                                        children: [
-                                          isArabic()
-                                              ? Text("الروشتة")
-                                              : Text("Prescription"),
-                                          Spacer(),
-                                          Icon(
-                                            Icons.add_box_rounded,
-                                            color: Colors.amber,
-                                          ),
-                                        ],
-                                      ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 3,
+                                    onTap: () {
+                                      navigateToScreen(
+                                        context,
+                                        PrescriptionForPetScreen(
+                                          reservationid: appointments.id,
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        isArabic()
+                                            ? Text("الروشتة")
+                                            : Text("Prescription"),
+                                        Spacer(),
+                                        Icon(
+                                          Icons.add_box_rounded,
+                                          color: Colors.amber,
+                                        ),
+                                      ],
                                     ),
-                                    PopupMenuItem(
-                                      value: 4,
-                                      onTap: () {
-                                        navigateToScreen(
-                                          context,
-                                          FilesForPetScreen(
-                                            reservationid: appointments.id,
-                                          ),
-                                        );
-                                      },
-                                      child: Row(
-                                        children: [
-                                          isArabic()
-                                              ? Text("الملفات")
-                                              : Text("Files"),
-                                          Spacer(),
-                                          Icon(
-                                            Icons.file_copy_rounded,
-                                            color: Colors.amber,
-                                          ),
-                                        ],
-                                      ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 4,
+                                    onTap: () {
+                                      navigateToScreen(
+                                        context,
+                                        FilesForPetScreen(
+                                          reservationid: appointments.id,
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        isArabic()
+                                            ? Text("الملفات")
+                                            : Text("Files"),
+                                        Spacer(),
+                                        Icon(
+                                          Icons.file_copy_rounded,
+                                          color: Colors.amber,
+                                        ),
+                                      ],
                                     ),
-                                  ];
-                                },
-                                icon: const Icon(Icons.more_vert_outlined),
-                                offset: const Offset(0, 20),
-                              ),
+                                  ),
+                                ];
+                              },
+                              icon: const Icon(Icons.more_vert_outlined),
+                              offset: const Offset(0, 20),
+                            ),
                         ],
                       )
                     // done status
-                    else if (appointments.statues == 3)
+                    else if (appointments.status == 3)
                       Row(
                         children: [
                           CircleAvatar(
@@ -457,120 +439,118 @@ class AllAppointment extends StatelessWidget {
                           ),
                           Text(formatTimeToAmPm(appointments.time)),
                           Spacer(),
-                          if (appointments.isPrint)
-                            const CircularProgressIndicator(),
-                          if (appointments.statues == 3)
-                            if (!appointments.isPrint)
-                              PopupMenuButton<int>(
-                                padding: EdgeInsets.zero,
-                                onCanceled: () {
-                                  Navigator.of(context);
-                                },
-                                itemBuilder: (context) {
-                                  return [
-                                    if (appointments.visitId != null &&
-                                        appointments.isBillSqueakVisible)
-                                      PopupMenuItem(
-                                        value: 1,
-                                        onTap: () {
-                                          cubit.printReceipt(
-                                            appointments,
-                                            context,
-                                          );
-                                        },
-                                        child: Row(
-                                          children: [
-                                            isArabic()
-                                                ? Text('الفاتورة')
-                                                : Text('Bill'),
-                                            Spacer(),
-                                            Icon(
-                                              Icons.receipt_long_sharp,
-                                              color: Color(0xff6096ba),
-                                            ),
-                                          ],
+
+                          if (appointments.status == 3)
+                            PopupMenuButton<int>(
+                              padding: EdgeInsets.zero,
+                              onCanceled: () {
+                                Navigator.of(context);
+                              },
+                              itemBuilder: (context) {
+                                return [
+                                  if (appointments.visitId != null &&
+                                      appointments.isBillSqueakVisible)
+                                    PopupMenuItem(
+                                      value: 1,
+                                      onTap: () {
+                                        cubit.printReceipt(
+                                          appointments,
+                                          context,
+                                        );
+                                      },
+                                      child: Row(
+                                        children: [
+                                          isArabic()
+                                              ? Text('الفاتورة')
+                                              : Text('Bill'),
+                                          Spacer(),
+                                          Icon(
+                                            Icons.receipt_long_sharp,
+                                            color: Color(0xff6096ba),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  PopupMenuItem(
+                                    value: 2,
+                                    onTap: () {
+                                      navigateToScreen(
+                                        context,
+                                        RateAppointment(
+                                          isNav: true,
+                                          model: appointments,
                                         ),
-                                      ),
-                                    PopupMenuItem(
-                                      value: 2,
-                                      onTap: () {
-                                        navigateToScreen(
-                                          context,
-                                          RateAppointment(
-                                            isNav: true,
-                                            model: appointments,
-                                          ),
-                                        );
-                                      },
-                                      child: Row(
-                                        children: [
-                                          isArabic()
-                                              ? Text("التقييم")
-                                              : Text('Rate'),
-                                          Spacer(),
-                                          Icon(
-                                            Icons.star_border_purple500,
-                                            color: Colors.amber,
-                                          ),
-                                        ],
-                                      ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        isArabic()
+                                            ? Text("التقييم")
+                                            : Text('Rate'),
+                                        Spacer(),
+                                        Icon(
+                                          Icons.star_border_purple500,
+                                          color: Colors.amber,
+                                        ),
+                                      ],
                                     ),
-                                    PopupMenuItem(
-                                      value: 3,
-                                      onTap: () {
-                                        navigateToScreen(
-                                          context,
-                                          PrescriptionForPetScreen(
-                                            reservationid: appointments.id,
-                                          ),
-                                        );
-                                      },
-                                      child: Row(
-                                        children: [
-                                          isArabic()
-                                              ? Text("الروشتة")
-                                              : Text("Prescription"),
-                                          Spacer(),
-                                          Icon(
-                                            Icons.add_box_rounded,
-                                            color: Colors.amber,
-                                          ),
-                                        ],
-                                      ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 3,
+                                    onTap: () {
+                                      navigateToScreen(
+                                        context,
+                                        PrescriptionForPetScreen(
+                                          reservationid: appointments.id,
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        isArabic()
+                                            ? Text("الروشتة")
+                                            : Text("Prescription"),
+                                        Spacer(),
+                                        Icon(
+                                          Icons.add_box_rounded,
+                                          color: Colors.amber,
+                                        ),
+                                      ],
                                     ),
-                                    PopupMenuItem(
-                                      value: 4,
-                                      onTap: () {
-                                        navigateToScreen(
-                                          context,
-                                          FilesForPetScreen(
-                                            reservationid: appointments.id,
-                                          ),
-                                        );
-                                      },
-                                      child: Row(
-                                        children: [
-                                          isArabic()
-                                              ? Text("الملفات")
-                                              : Text("Files"),
-                                          Spacer(),
-                                          Icon(
-                                            Icons.file_copy_rounded,
-                                            color: Colors.amber,
-                                          ),
-                                        ],
-                                      ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 4,
+                                    onTap: () {
+                                      navigateToScreen(
+                                        context,
+                                        FilesForPetScreen(
+                                          reservationid: appointments.id,
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        isArabic()
+                                            ? Text("الملفات")
+                                            : Text("Files"),
+                                        Spacer(),
+                                        Icon(
+                                          Icons.file_copy_rounded,
+                                          color: Colors.amber,
+                                        ),
+                                      ],
                                     ),
-                                  ];
-                                },
-                                icon: const Icon(Icons.more_vert_outlined),
-                                offset: const Offset(0, 20),
-                              ),
+                                  ),
+                                ];
+                              },
+                              icon: const Icon(Icons.more_vert_outlined),
+                              offset: const Offset(0, 20),
+                            ),
                         ],
                       ),
                     const SizedBox(height: 5),
 
-                    if (appointments.statues == 3 &&
+                    if (appointments.status == 3 &&
                         appointments.doctorServiceRate != 0)
                       Center(
                         child: Row(
@@ -682,7 +662,7 @@ class AllAppointment extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        if (appointments.statues == 0) {
+                        if (appointments.status == 0) {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -805,7 +785,7 @@ class AllAppointment extends StatelessWidget {
                           );
                         }
 
-                        if (appointments.statues != 0) {
+                        if (appointments.status != 0) {
                           cubit.findClinic(
                             cubit.suppliers!.data,
                             appointments.clinicCode,
@@ -833,7 +813,7 @@ class AllAppointment extends StatelessWidget {
                         )),
                       ),
                       child: Text(
-                        appointments.statues == 0
+                        appointments.status == 0
                             ? S.of(context).appointmentButtonEdit
                             : S.of(context).appointmentButtonBooking,
                       ),
@@ -843,192 +823,150 @@ class AllAppointment extends StatelessWidget {
                   const SizedBox(width: 10),
                   //call button
                   Expanded(
-                    child: OfflineWidget(
-                      onlineChild: ElevatedButton(
-                        onPressed: () {
-                          launchUrl(
-                            Uri.parse('tel:${appointments.clinicPhone}'),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.blue,
-                          backgroundColor:
-                              MainCubit.get(context).isDark
-                                  ? ColorManager.myPetsBaseBlackColor
-                                  : Colors.blue.shade100.withOpacity(.4),
-                          elevation: 0,
-                          shape: (RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          )),
-                        ),
-                        child: Text(S.of(context).appointmentButtonCall),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        launchUrl(Uri.parse('tel:${appointments.clinicPhone}'));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.blue,
+                        backgroundColor:
+                            MainCubit.get(context).isDark
+                                ? ColorManager.myPetsBaseBlackColor
+                                : Colors.blue.shade100.withOpacity(.4),
+                        elevation: 0,
+                        shape: (RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        )),
                       ),
-                      offlineChild: ElevatedButton(
-                        onPressed: () {
-                          launchUrl(Uri.parse('tel:+2${1000927095}'));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.blue,
-                          backgroundColor:
-                              MainCubit.get(context).isDark
-                                  ? ColorManager.myPetsBaseBlackColor
-                                  : Colors.blue.shade100.withOpacity(.4),
-                          elevation: 0,
-                          shape: (RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          )),
-                        ),
-                        child: Text(S.of(context).appointmentButtonCall),
-                      ),
+                      child: Text(S.of(context).appointmentButtonCall),
                     ),
                   ),
                   const SizedBox(width: 10),
-                  appointments.statues == 0
-                      ? OfflineWidget(
-                        onlineChild: Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text(
-                                      S.of(context).appointmentModalTitle,
-                                    ),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text.rich(
-                                          TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text:
-                                                    "${S.of(context).appointmentModalDescription} ",
-                                                style:
-                                                    Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium, // Use the existing theme for consistency
+                  appointments.status == 0
+                      ? Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    S.of(context).appointmentModalTitle,
+                                  ),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                                  "${S.of(context).appointmentModalDescription} ",
+                                              style:
+                                                  Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium, // Use the existing theme for consistency
+                                            ),
+                                            TextSpan(
+                                              text: appointments.pet.name,
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.bodyMedium?.copyWith(
+                                                fontWeight:
+                                                    FontWeight
+                                                        .bold, // Make the pet's name bold
                                               ),
-                                              TextSpan(
-                                                text: appointments.pet.name,
-                                                style: Theme.of(
-                                                  context,
-                                                ).textTheme.bodyMedium?.copyWith(
-                                                  fontWeight:
-                                                      FontWeight
-                                                          .bold, // Make the pet's name bold
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                            'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?w=740&t=st=1693530236~exp=1693530836~hmac=754f0eea1ad76b4cfe66e8f471927ff6d1d2c6625ff14e6cb2c81aa69ab9fc90',
-                                          ),
-                                          radius: 75,
-                                        ),
-                                      ],
-                                    ),
-                                    actions: <Widget>[
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                            3,
-                                        child: ElevatedButton(
-                                          onPressed: () async {
-                                            cubit.deleteAppointments(
-                                              appointments,
-                                            );
-                                            Navigator.of(context).pop(true);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            foregroundColor: Colors.red,
-                                            backgroundColor:
-                                                MainCubit.get(context).isDark
-                                                    ? ColorManager
-                                                        .myPetsBaseBlackColor
-                                                    : Colors.red.shade100
-                                                        .withOpacity(.4),
-                                            elevation: 0,
-                                            shape: (RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            )),
-                                          ),
-                                          child: Text(
-                                            S
-                                                .of(context)
-                                                .appointmentModalButtonYes,
-                                          ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                            3,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop(false);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            foregroundColor: Colors.green,
-                                            backgroundColor:
-                                                MainCubit.get(context).isDark
-                                                    ? ColorManager
-                                                        .myPetsBaseBlackColor
-                                                    : Colors.green.shade100
-                                                        .withOpacity(.4),
-                                            elevation: 0,
-                                            shape: (RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            )),
-                                          ),
-                                          child: Text(
-                                            S
-                                                .of(context)
-                                                .appointmentModalButtonNo,
-                                          ),
+                                      const CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                          'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?w=740&t=st=1693530236~exp=1693530836~hmac=754f0eea1ad76b4cfe66e8f471927ff6d1d2c6625ff14e6cb2c81aa69ab9fc90',
                                         ),
+                                        radius: 75,
                                       ),
                                     ],
-                                  );
-                                },
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.red,
-                              backgroundColor:
-                                  MainCubit.get(context).isDark
-                                      ? ColorManager.myPetsBaseBlackColor
-                                      : Colors.red.shade100.withOpacity(.4),
-                              elevation: 0,
-                              shape: (RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              )),
-                            ),
-                            child: Text(S.of(context).appointmentButtonCancel),
+                                  ),
+                                  actions: <Widget>[
+                                    SizedBox(
+                                      width:
+                                          MediaQuery.of(context).size.width / 3,
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          cubit.deleteAppointments(
+                                            appointments.id,
+                                          );
+                                          Navigator.of(context).pop(true);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor: Colors.red,
+                                          backgroundColor:
+                                              MainCubit.get(context).isDark
+                                                  ? ColorManager
+                                                      .myPetsBaseBlackColor
+                                                  : Colors.red.shade100
+                                                      .withOpacity(.4),
+                                          elevation: 0,
+                                          shape: (RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                          )),
+                                        ),
+                                        child: Text(
+                                          S
+                                              .of(context)
+                                              .appointmentModalButtonYes,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width:
+                                          MediaQuery.of(context).size.width / 3,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop(false);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor: Colors.green,
+                                          backgroundColor:
+                                              MainCubit.get(context).isDark
+                                                  ? ColorManager
+                                                      .myPetsBaseBlackColor
+                                                  : Colors.green.shade100
+                                                      .withOpacity(.4),
+                                          elevation: 0,
+                                          shape: (RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                          )),
+                                        ),
+                                        child: Text(
+                                          S
+                                              .of(context)
+                                              .appointmentModalButtonNo,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.red,
+                            backgroundColor:
+                                MainCubit.get(context).isDark
+                                    ? ColorManager.myPetsBaseBlackColor
+                                    : Colors.red.shade100.withOpacity(.4),
+                            elevation: 0,
+                            shape: (RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            )),
                           ),
-                        ),
-                        offlineChild: Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              OfflineWidget.showOfflineWidget(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.red,
-                              backgroundColor:
-                                  MainCubit.get(context).isDark
-                                      ? ColorManager.myPetsBaseBlackColor
-                                      : Colors.red.shade100.withOpacity(.4),
-                              elevation: 0,
-                              shape: (RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              )),
-                            ),
-                            child: Text(S.of(context).appointmentButtonCancel),
-                          ),
+                          child: Text(S.of(context).appointmentButtonCancel),
                         ),
                       )
                       : const SizedBox.shrink(),

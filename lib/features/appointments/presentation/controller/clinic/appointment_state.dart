@@ -1,51 +1,56 @@
-import 'package:squeak/core/utils/export_path/export_files.dart';
+part of 'appointment_cubit.dart';
 
+abstract class AppointmentState extends Equatable {
+  const AppointmentState();
 
-sealed class AppointmentState {}
+  @override
+  List<Object?> get props => [];
+}
 
-final class AppointmentInitial extends AppointmentState {}
+class AppointmentInitial extends AppointmentState {}
 
-final class GetAvailabilityLoading extends AppointmentState {}
+// Availability States
+class GetAvailabilityLoading extends AppointmentState {}
+class GetAvailabilitySuccess extends AppointmentState {}
+class GetAvailabilityError extends AppointmentState {}
 
-final class GetAvailabilitySuccess extends AppointmentState {}
+// Supplier States
+class GetSupplierLoading extends AppointmentState {}
+class GetSupplierSuccess extends AppointmentState {}
+class GetSupplierError extends AppointmentState {}
+class SuppliersFiltered extends AppointmentState {}
 
-final class GetAvailabilityError extends AppointmentState {}
+// Unfollow Clinic States
+class UnFollowLoading extends AppointmentState {}
+class UnFollowSuccess extends AppointmentState {}
+class UnFollowError extends AppointmentState {}
 
-final class GetSupplierLoading extends AppointmentState {}
+// Doctor States
+class GetDoctorLoading extends AppointmentState {}
+class GetDoctorSuccess extends AppointmentState {}
+class GetDoctorError extends AppointmentState {}
 
-final class GetSupplierSuccess extends AppointmentState {}
+// Client in Clinic States
+class GetClientInClinicLoading extends AppointmentState {}
+class GetClientInClinicSuccess extends AppointmentState {}
+class GetClientInClinicError extends AppointmentState {}
 
-final class GetSupplierError extends AppointmentState {}
-
-final class GetDoctorLoading extends AppointmentState {}
-
-final class GetDoctorSuccess extends AppointmentState {}
-
-final class GetDoctorError extends AppointmentState {}
-
-final class UnFollowLoading extends AppointmentState {}
-
-final class UnFollowSuccess extends AppointmentState {}
-
-final class UnFollowError extends AppointmentState {}
-
-final class isNoSelectStatue extends AppointmentState {}
-
-///todo Create Appointments
+// Create Appointment States
 class CreateAppointmentsLoading extends AppointmentState {}
-
-class CreateAppointmentsToVetICareSuccess extends AppointmentState {}
-
+class CreateAppointmentsSuccess extends AppointmentState {}
+class CreateAppointmentsError extends AppointmentState {
+  final String errorMessageModel;
+  const CreateAppointmentsError(this.errorMessageModel);
+}
 class CreateExistedClientAppointment extends AppointmentState {}
-
 class CreateNewPetAppointment extends AppointmentState {}
-
 class CreateNewPetAndClientAppointment extends AppointmentState {}
 
-class CreateAppointmentsSuccess extends AppointmentState {}
+// Time Selection State
+class TimeSelected extends AppointmentState {}
 
-class CreateAppointmentsError extends AppointmentState {
-  final ErrorMessageModel errorMessageModel;
+// No Select State
+class NoSelectState extends AppointmentState {}
 
-  CreateAppointmentsError(this.errorMessageModel);
-}
+
+class UnfollowSuccess extends AppointmentState {}

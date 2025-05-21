@@ -55,7 +55,7 @@ class ClinicModelSearch extends ClinicEntitySearch {
       image: json['image'] ?? '',
       code: json['code'] ?? '',
       admin: json['admin'] == null ? null : AdminModelSearch.fromJson(json['admin']),
-      specialities: (json['specialities'] as List)
+      specialities:json['specialities'] == null ? [] : (json['specialities'] as List)
           .map((e) => SpecialityModelSearch.fromJson(e))
           .toList(),
     );

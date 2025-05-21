@@ -23,7 +23,7 @@ class LayoutRepositoryImpl implements LayoutRepository {
       final remoteVersion = await remoteDataSource.getVersion();
       return Right(remoteVersion.toEntity());
     } on ServerException catch (e) {
-      return Left(ServerFailure(e.errorMessageModel.message));
+      return Left(ServerFailure(e.errorMessageModel));
     }
   }
 
@@ -33,7 +33,16 @@ class LayoutRepositoryImpl implements LayoutRepository {
       final currentVersion = await localDataSource.getCurrentAppVersion();
       return Right(currentVersion);
     } on LocalDatabaseException catch (e) {
-      return Left(ServerFailure(e.errorMessage));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: e.errorMessage,
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 }

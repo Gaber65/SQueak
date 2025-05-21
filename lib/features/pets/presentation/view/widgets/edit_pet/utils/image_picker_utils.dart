@@ -4,7 +4,7 @@ import 'package:squeak/generated/l10n.dart';
 
 import '../../../../controller/pet_cubit.dart';
 
-void showImageOptions(BuildContext context, PetCubit cubit, PetEntity pets) {
+void showImageOptions(BuildContext context, PetCubit cubit, PetEntities pets) {
   showModalBottomSheet(
     context: context,
     shape: const RoundedRectangleBorder(

@@ -1,77 +1,76 @@
 part of 'user_appointment_cubit.dart';
 
-@immutable
-sealed class UserAppointmentState {}
+abstract class UserAppointmentState extends Equatable {
+  const UserAppointmentState();
 
-final class UserAppointmentInitial extends UserAppointmentState {}
-
-final class GetAppointmentLoading extends UserAppointmentState {}
-
-final class RateAppointmentLoading extends UserAppointmentState {}
-
-final class RateAppointmentSuccess extends UserAppointmentState {}
-
-final class RateAppointmentSuccessFunction extends UserAppointmentState {}
-
-final class RateAppointmentError extends UserAppointmentState {}
-
-final class GetAppointmentSuccess extends UserAppointmentState {}
-
-final class GetAppointmentError extends UserAppointmentState {}
-
-final class DeleteAppointmentLoading extends UserAppointmentState {}
-
-final class DeleteAppointmentSuccess extends UserAppointmentState {}
-
-final class DeleteAppointmentError extends UserAppointmentState {}
-
-final class EditAppointment extends UserAppointmentState {
-  final AppointmentModel model;
-
-  EditAppointment(this.model);
+  @override
+  List<Object?> get props => [];
 }
 
-final class AppointmentFiltered extends UserAppointmentState {
-  final List<AppointmentModel> appointments;
+class UserAppointmentInitial extends UserAppointmentState {}
 
-  AppointmentFiltered(this.appointments);
+// Appointment States
+class GetAppointmentLoading extends UserAppointmentState {}
+
+class GetAppointmentSuccess extends UserAppointmentState {}
+
+class GetAppointmentError extends UserAppointmentState {}
+
+// Delete Appointment States
+class DeleteAppointmentLoading extends UserAppointmentState {}
+
+class DeleteAppointmentSuccess extends UserAppointmentState {
+  final String id;
+
+  const DeleteAppointmentSuccess(this.id);
 }
 
-final class AppointmentFilteredClear extends UserAppointmentState {
-  final List<AppointmentModel> appointments;
+class DeleteAppointmentError extends UserAppointmentState {}
 
-  AppointmentFilteredClear(this.appointments);
-}
+// Rate Appointment States
+class RateAppointmentLoading extends UserAppointmentState {}
 
+class RateAppointmentSuccess extends UserAppointmentState {}
 
-final class ReceiptLoading extends UserAppointmentState {}
+class RateAppointmentError extends UserAppointmentState {}
 
-final class ReceiptSuccess extends UserAppointmentState {}
+class RatingInitialized extends UserAppointmentState {}
 
-final class ReceiptError extends UserAppointmentState {}
+// Supplier States
+class GetSupplierLoading extends UserAppointmentState {}
 
-final class GetSupplierLoading extends UserAppointmentState {}
+class GetSupplierSuccess extends UserAppointmentState {}
 
-final class GetSupplierSuccess extends UserAppointmentState {}
+class GetSupplierError extends UserAppointmentState {}
 
-final class GetSupplierError extends UserAppointmentState {}
-
+// Follow Clinic States
 class FollowLoading extends UserAppointmentState {}
 
 class FollowSuccess extends UserAppointmentState {}
 
-class FollowError extends UserAppointmentState {
-  final ErrorMessageModel error;
+class FollowError extends UserAppointmentState {}
 
-  FollowError(this.error);
-}
-
+// Invoice States
 class GetInvoicesLoading extends UserAppointmentState {}
 
 class GetInvoicesSuccess extends UserAppointmentState {}
 
 class GetInvoicesError extends UserAppointmentState {
-  final ErrorMessageModel error;
+  final String message;
 
-  GetInvoicesError(this.error);
+  const GetInvoicesError(this.message);
+}
+
+// Filter States
+class AppointmentFiltered extends UserAppointmentState {
+  final List<AppointmentEntity> appointments;
+
+  const AppointmentFiltered(this.appointments);
+}
+
+class AppointmentFilterCleared extends UserAppointmentState {}
+
+class EditAppointment extends UserAppointmentState {
+  final AppointmentEntity model;
+  const EditAppointment(this.model);
 }

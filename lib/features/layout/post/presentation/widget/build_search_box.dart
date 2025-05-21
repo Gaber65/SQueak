@@ -17,7 +17,11 @@ Padding buildSearchBox(PostCubit cubit) {
       child: BlocConsumer<SearchCubit, SearchState>(
         listener: (context, state) {
           if (state is FollowError) {
-            errorToast(context, state.error.message);
+            errorToast(
+              context,
+              state.error.error.errors.entries.first.value.first ??
+                  state.error.error.message,
+            );
           }
 
           if (state is FollowSuccess) {
