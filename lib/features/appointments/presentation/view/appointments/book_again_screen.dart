@@ -40,7 +40,8 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
   List<PetClinicModel> _localPetList = [];
   List<AvailabilityModel> _localAvailabilities = [];
   List<DoctorModel> _localDoctors = [];
-  TextEditingController _commentController = TextEditingController(); // Local comment controller
+  TextEditingController _commentController =
+      TextEditingController(); // Local comment controller
 
   @override
   void initState() {
@@ -53,49 +54,71 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       // Fetch pets
       print("DEBUG: Fetching pets directly for clinic: ${widget.clinicCode}");
       Response petResponse = await DioFinalHelper.getData(
-        method: getClientClinicEndPoint(widget.clinicCode, CacheHelper.getData('phone')),
+        method: getClientClinicEndPoint(
+          widget.clinicCode,
+          CacheHelper.getData('phone'),
+        ),
         language: false,
       );
       if (petResponse.data['success'] == true) {
-        _localPetList = (petResponse.data['data'] as List)
-            .map((e) => PetClinicModel.fromJson(e))
-            .toList();
+        _localPetList =
+            (petResponse.data['data'] as List)
+                .map((e) => PetClinicModel.fromJson(e))
+                .toList();
         print("DEBUG: Loaded ${_localPetList.length} pets directly.");
       } else {
-        print("DEBUG: Failed to load pets directly: ${petResponse.data['message']}");
+        print(
+          "DEBUG: Failed to load pets directly: ${petResponse.data['message']}",
+        );
       }
 
       // Fetch availability
-      print("DEBUG: Fetching availability directly for clinic: ${widget.clinicCode}");
+      print(
+        "DEBUG: Fetching availability directly for clinic: ${widget.clinicCode}",
+      );
       Response availabilityResponse = await DioFinalHelper.getData(
         method: getAvailabilitiesEndPoint(widget.clinicCode),
         language: false,
       );
-       _localAvailabilities = (availabilityResponse.data['data'] as List)
-          .map((e) => AvailabilityModel.fromJson(e))
-          .toList();
-      _localAvailabilities = _localAvailabilities.where((element) => element.isActive == true).toList(); // Assuming removeDuplicatesByDayOfWeek was important, it would need to be reimplemented here or moved to a utility.
-      print("DEBUG: Loaded ${_localAvailabilities.length} availabilities directly.");
+      _localAvailabilities =
+          (availabilityResponse.data['data'] as List)
+              .map((e) => AvailabilityModel.fromJson(e))
+              .toList();
+      _localAvailabilities =
+          _localAvailabilities
+              .where((element) => element.isActive == true)
+              .toList(); // Assuming removeDuplicatesByDayOfWeek was important, it would need to be reimplemented here or moved to a utility.
+      print(
+        "DEBUG: Loaded ${_localAvailabilities.length} availabilities directly.",
+      );
 
       // Fetch doctors
-      print("DEBUG: Fetching doctors directly for clinic: ${widget.clinicCode}");
+      print(
+        "DEBUG: Fetching doctors directly for clinic: ${widget.clinicCode}",
+      );
       Response doctorResponse = await DioFinalHelper.getData(
         method: getDoctorAppointmentsEndPoint(widget.clinicCode),
         language: false,
       );
-      if (doctorResponse.data['success'] == true && doctorResponse.data['data'] != null) {
-         _localDoctors = (doctorResponse.data['data'] as List)
-            .map((e) => DoctorModel.fromJson(e))
-            .toList();
+      if (doctorResponse.data['success'] == true &&
+          doctorResponse.data['data'] != null) {
+        _localDoctors =
+            (doctorResponse.data['data'] as List)
+                .map((e) => DoctorModel.fromJson(e))
+                .toList();
         print("DEBUG: Loaded ${_localDoctors.length} doctors directly.");
       } else {
-         print("DEBUG: Failed to load doctors directly or no data: ${doctorResponse.data['message']}");
+        print(
+          "DEBUG: Failed to load doctors directly or no data: ${doctorResponse.data['message']}",
+        );
       }
-
     } catch (e) {
       print("DEBUG: Error during _initData: $e");
       // Optionally show an error toast here if data loading fails critically
-       errorToast(context, isArabic() ? 'فشل تحميل البيانات' : 'Failed to load data');
+      errorToast(
+        context,
+        isArabic() ? 'فشل تحميل البيانات' : 'Failed to load data',
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -108,14 +131,18 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
   PetClinicModel? findPet(List<PetClinicModel> data, String petIdToFind) {
     print("DEBUG: Looking for petId: $petIdToFind in ${data.length} pets");
     for (var element in data) {
-      print("DEBUG: Checking pet - ID: ${element.petId}, Name: ${element.petName}, SqueakID: ${element.petSqueakId}");
+      print(
+        "DEBUG: Checking pet - ID: ${element.petId}, Name: ${element.petName}, SqueakID: ${element.petSqueakId}",
+      );
       if (element.petId == petIdToFind || element.petSqueakId == petIdToFind) {
         print("DEBUG: Found exact match for pet: ${element.petName}");
         return element;
       }
     }
     if (data.isNotEmpty) {
-      print("DEBUG: No exact match found, using first pet: ${data.first.petName}");
+      print(
+        "DEBUG: No exact match found, using first pet: ${data.first.petName}",
+      );
       return data.first;
     }
     print("DEBUG: No pets found in list");
@@ -125,14 +152,26 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
   Future<void> _handleBooking() async {
     print("DEBUG: handleBooking called");
     if (dateController.text.isEmpty || time == null) {
-      print("DEBUG: Missing date or time - Date: ${dateController.text}, Time: $time");
-      infoToast(context, dateController.text.isEmpty ? (isArabic() ? 'الرجاء تحديد التاريخ ' : 'Please select date') : (isArabic() ? "الرجاء تحديد الوقت" : 'Please select time'));
+      print(
+        "DEBUG: Missing date or time - Date: ${dateController.text}, Time: $time",
+      );
+      infoToast(
+        context,
+        dateController.text.isEmpty
+            ? (isArabic() ? 'الرجاء تحديد التاريخ ' : 'Please select date')
+            : (isArabic() ? "الرجاء تحديد الوقت" : 'Please select time'),
+      );
       return;
     }
     print("DEBUG: Date: ${dateController.text}, Time: $time");
     if (_localPetList.isEmpty) {
       print("DEBUG: _localPetList is empty");
-      errorToast(context, isArabic() ? 'لم يتم العثور على حيوانات أليفة في هذه العيادة' : 'No pets found in this clinic');
+      errorToast(
+        context,
+        isArabic()
+            ? 'لم يتم العثور على حيوانات أليفة في هذه العيادة'
+            : 'No pets found in this clinic',
+      );
       return;
     }
     if (mounted) {
@@ -145,14 +184,18 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       PetClinicModel? matchedPet = findPet(_localPetList, widget.petId);
       if (matchedPet == null) {
         print("DEBUG: No matching pet found for ID: ${widget.petId}");
-        errorToast(context, isArabic() ? 'لم يتم العثور على الحيوانات الأليفة' : 'No pets found');
+        errorToast(
+          context,
+          isArabic() ? 'لم يتم العثور على الحيوانات الأليفة' : 'No pets found',
+        );
         if (mounted) setState(() => isCreatingAppointment = false);
         return;
       }
       String fixedTimeFormat = "10:00:00";
       try {
         String formattedTime = time!;
-        if (formattedTime.toUpperCase().contains('AM') || formattedTime.toUpperCase().contains('PM')) {
+        if (formattedTime.toUpperCase().contains('AM') ||
+            formattedTime.toUpperCase().contains('PM')) {
           formattedTime = convertTo24Hour(formattedTime);
         }
         if (formattedTime.split(':').length == 2) {
@@ -162,7 +205,9 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       } catch (e) {
         print("DEBUG: Error formatting time: $e, using default time");
       }
-      print("DEBUG: Selected pet: ${matchedPet.petName} with ID: ${matchedPet.petId}, doctorId: $doctorId");
+      print(
+        "DEBUG: Selected pet: ${matchedPet.petName} with ID: ${matchedPet.petId}, doctorId: $doctorId",
+      );
       print("DEBUG: Using appointment time: $fixedTimeFormat");
       Map<String, dynamic> requestData = {
         "date": dateController.text,
@@ -171,7 +216,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
         "clinicCode": widget.clinicCode,
         "clientId": matchedPet.clientId,
         "petSqueakId": matchedPet.petSqueakId,
-        "notes": _commentController.text, 
+        "notes": _commentController.text,
       };
       if (doctorId != null && doctorId!.isNotEmpty) {
         requestData["doctorUserId"] = doctorId;
@@ -185,23 +230,39 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       if (mounted) {
         LayoutCubit.get(context).selectedIndex = 2;
         navigateAndFinish(context, const LayoutScreen());
-      };
-      successToast(context, isArabic() ? 'تم حجز الموعد بنجاح' : 'Appointment booked successfully');
-    } on DioException catch (e) {
-      print("DEBUG: API Error: ${e.response?.data}");
-      String errorMessage = isArabic() ? 'حدث خطأ أثناء إنشاء الموعد' : 'Error creating appointment';
-      if (e.response?.data != null && e.response!.data['message'] != null) {
-        errorMessage = e.response!.data['message'];
-      } else if (e.response?.data != null && e.response!.data['errors'] != null) {
-         final errors = e.response!.data['errors'];
-         if (errors is Map && errors.isNotEmpty) {
-           errorMessage = errors.values.first.first;
-         }
       }
-      errorToast(context, errorMessage);
+      ;
+      successToast(
+        context,
+        isArabic() ? 'تم حجز الموعد بنجاح' : 'Appointment booked successfully',
+      );
+    } on DioException catch (e) {
+      print("DEBUG: Dio error: ${e.response!.data}");
+      String extractFirstErrorTO(dynamic error) {
+        try {
+          final entries = error.errors?.entries;
+          if (entries != null && entries.isNotEmpty) {
+            final firstValues = entries.first.value;
+            if (firstValues != null && firstValues.isNotEmpty) {
+              return firstValues.first;
+            }
+          }
+          return error.error.message ?? "Unknown error";
+        } catch (_) {
+          return "Unknown error";
+        }
+      }
+
+      errorToast(
+        context,
+        extractFirstErrorTO(ErrorMessageModel.fromJson(e.response!.data)),
+      );
     } catch (e) {
       print("DEBUG: General error: $e");
-      errorToast(context, isArabic() ? 'حدث خطأ غير متوقع' : 'An unexpected error occurred');
+      errorToast(
+        context,
+        isArabic() ? 'حدث خطأ غير متوقع' : 'An unexpected error occurred',
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -218,28 +279,44 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       appBar: AppBar(
         title: Text(S.of(context).appointmentButtonBooking),
         actions: [
-          IconButton(
-            icon: Icon(Icons.bug_report),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DebugAppointmentAPI(clinicCode: widget.clinicCode),
-                ),
-              );
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.bug_report),
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => DebugAppointmentAPI(clinicCode: widget.clinicCode),
+          //       ),
+          //     );
+          //   },
+          // ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
               width: 100,
               child: TextButton(
-                style: TextButton.styleFrom(backgroundColor: ColorManager.primaryColor.withOpacity(.2)),
-                onPressed: (isCreatingAppointment || !areDataLoaded) ? null : _handleBooking,
-                child: isCreatingAppointment ? const CircularProgressIndicator() : Text(S.of(context).booking, style: FontStyleThame.textStyle(context: context, fontSize: 16, fontWeight: FontWeight.w700, fontColor: ColorManager.primaryColor)),
+                style: TextButton.styleFrom(
+                  backgroundColor: ColorManager.primaryColor.withOpacity(.2),
+                ),
+                onPressed:
+                    (isCreatingAppointment || !areDataLoaded)
+                        ? null
+                        : _handleBooking,
+                child:
+                    isCreatingAppointment
+                        ? const CircularProgressIndicator()
+                        : Text(
+                          S.of(context).booking,
+                          style: FontStyleThame.textStyle(
+                            context: context,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            fontColor: ColorManager.primaryColor,
+                          ),
+                        ),
               ),
             ),
-          )
+          ),
         ],
       ),
       floatingActionButton: Padding(
@@ -251,98 +328,202 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
           decoration: InputDecoration(
             hintText: S.of(context).addComment,
             contentPadding: EdgeInsetsDirectional.only(start: 10),
-            counterStyle: FontStyleThame.textStyle(context: context, fontSize: 13),
-            hintStyle: FontStyleThame.textStyle(context: context, fontSize: 14, fontWeight: FontWeight.w700, fontColor: MainCubit.get(context).isDark ? Colors.white54 : Colors.black54),
+            counterStyle: FontStyleThame.textStyle(
+              context: context,
+              fontSize: 13,
+            ),
+            hintStyle: FontStyleThame.textStyle(
+              context: context,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              fontColor:
+                  MainCubit.get(context).isDark
+                      ? Colors.white54
+                      : Colors.black54,
+            ),
             suffixIcon: IconButton(
-              onPressed: (isCreatingAppointment || !areDataLoaded) ? null : _handleBooking,
-              icon: isCreatingAppointment ? const CircularProgressIndicator() : const Icon(IconlyLight.send),
+              onPressed:
+                  (isCreatingAppointment || !areDataLoaded)
+                      ? null
+                      : _handleBooking,
+              icon:
+                  isCreatingAppointment
+                      ? const CircularProgressIndicator()
+                      : const Icon(IconlyLight.send),
             ),
             filled: true,
-            fillColor: MainCubit.get(context).isDark ? ColorManager.myPetsBaseBlackColor : Colors.grey.shade200,
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+            fillColor:
+                MainCubit.get(context).isDark
+                    ? ColorManager.myPetsBaseBlackColor
+                    : Colors.grey.shade200,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
             focusColor: Colors.grey.shade200,
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-            disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-            errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-            focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
           ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: !areDataLoaded
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text(isArabic() ? 'جاري تحميل البيانات...' : 'Loading your data...', style: TextStyle(fontSize: 16)),
-                ],
-              ),
-            )
-          : SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
+      body:
+          !areDataLoaded
+              ? Center(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    buildDropDownDoctor(context),
-                    (_localAvailabilities.isNotEmpty)
-                        ? CalendarScreen(
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text(
+                      isArabic()
+                          ? 'جاري تحميل البيانات...'
+                          : 'Loading your data...',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+              )
+              : SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      buildDropDownDoctor(context),
+                      (_localAvailabilities.isNotEmpty)
+                          ? CalendarScreen(
                             isShowTime: true,
                             isShowDate: true,
                             timeSlotData: _localAvailabilities,
                             onDaySelected: (selectedDay, focusedDay) {
-                              String formatDate = DateFormat('yyyy-MM-dd', 'en_US').format(selectedDay);
-                              if (mounted) setState(() => dateController.text = formatDate);
+                              String formatDate = DateFormat(
+                                'yyyy-MM-dd',
+                                'en_US',
+                              ).format(selectedDay);
+                              if (mounted)
+                                setState(
+                                  () => dateController.text = formatDate,
+                                );
                             },
                             onIntervalSelected: (p0) {
                               print("DEBUG: Original time selection: $p0");
                               p0 = convertTo24Hour(p0);
-                              print("DEBUG: After conversion to 24-hour format: $p0");
-                              if (dateController.text.isEmpty) { // Ensure date is selected first
-                                infoToast(context, isArabic() ? 'الرجاء تحديد التاريخ أولاً' : 'Please select a date first');
+                              print(
+                                "DEBUG: After conversion to 24-hour format: $p0",
+                              );
+                              if (dateController.text.isEmpty) {
+                                // Ensure date is selected first
+                                infoToast(
+                                  context,
+                                  isArabic()
+                                      ? 'الرجاء تحديد التاريخ أولاً'
+                                      : 'Please select a date first',
+                                );
                                 return;
                               }
-                              DateTime selectedDateForCheck = DateTime.parse(dateController.text);
-                              if (DateTime.now().isBefore(selectedDateForCheck) || 
-                                  (DateTime.now().year == selectedDateForCheck.year && 
-                                   DateTime.now().month == selectedDateForCheck.month && 
-                                   DateTime.now().day == selectedDateForCheck.day)) {
+                              DateTime selectedDateForCheck = DateTime.parse(
+                                dateController.text,
+                              );
+                              if (DateTime.now().isBefore(
+                                    selectedDateForCheck,
+                                  ) ||
+                                  (DateTime.now().year ==
+                                          selectedDateForCheck.year &&
+                                      DateTime.now().month ==
+                                          selectedDateForCheck.month &&
+                                      DateTime.now().day ==
+                                          selectedDateForCheck.day)) {
                                 try {
                                   final parts = p0.split(':');
                                   int hours = int.parse(parts[0]);
-                                  int minutes = parts.length > 1 ? int.parse(parts[1]) : 0;
-                                  DateTime selectedDateTime = DateTime(selectedDateForCheck.year, selectedDateForCheck.month, selectedDateForCheck.day, hours, minutes);
-                                  DateTime nowForCompare = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, DateTime.now().hour, DateTime.now().minute);
+                                  int minutes =
+                                      parts.length > 1
+                                          ? int.parse(parts[1])
+                                          : 0;
+                                  DateTime selectedDateTime = DateTime(
+                                    selectedDateForCheck.year,
+                                    selectedDateForCheck.month,
+                                    selectedDateForCheck.day,
+                                    hours,
+                                    minutes,
+                                  );
+                                  DateTime nowForCompare = DateTime(
+                                    DateTime.now().year,
+                                    DateTime.now().month,
+                                    DateTime.now().day,
+                                    DateTime.now().hour,
+                                    DateTime.now().minute,
+                                  );
 
-                                  if (selectedDateForCheck.isAfter(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)) || selectedDateTime.isAfter(nowForCompare)) {
+                                  if (selectedDateForCheck.isAfter(
+                                        DateTime(
+                                          DateTime.now().year,
+                                          DateTime.now().month,
+                                          DateTime.now().day,
+                                        ),
+                                      ) ||
+                                      selectedDateTime.isAfter(nowForCompare)) {
                                     if (mounted) setState(() => time = p0);
                                     print("DEBUG: Time set to: $time");
                                   } else {
-                                    print("DEBUG: Selected time is before current time");
-                                    infoToast(context, isArabic() ? 'الساعة المحددة قبل الساعة الحالية' : 'Selected time is before current time');
+                                    print(
+                                      "DEBUG: Selected time is before current time",
+                                    );
+                                    infoToast(
+                                      context,
+                                      isArabic()
+                                          ? 'الساعة المحددة قبل الساعة الحالية'
+                                          : 'Selected time is before current time',
+                                    );
                                   }
                                 } catch (e) {
                                   print("DEBUG: Error parsing time: $e");
-                                  infoToast(context, isArabic() ? 'خطأ في تنسيق الوقت' : 'Error in time format');
+                                  infoToast(
+                                    context,
+                                    isArabic()
+                                        ? 'خطأ في تنسيق الوقت'
+                                        : 'Error in time format',
+                                  );
                                 }
                               } else {
-                                 print("DEBUG: Selected date is in the past.");
-                                 infoToast(context, isArabic() ? 'لا يمكن تحديد تاريخ في الماضي' : 'Cannot select a past date');
+                                print("DEBUG: Selected date is in the past.");
+                                infoToast(
+                                  context,
+                                  isArabic()
+                                      ? 'لا يمكن تحديد تاريخ في الماضي'
+                                      : 'Cannot select a past date',
+                                );
                               }
                             },
                           )
-                        : Padding(
+                          : Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: CalendarShimmer(),
                           ),
-                    SizedBox(height: 80)
-                  ],
+                      SizedBox(height: 80),
+                    ],
+                  ),
                 ),
               ),
-            ),
     );
   }
 
@@ -371,27 +552,43 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
             underline: const SizedBox(),
             hint: Row(
               children: [
-                Text(doctorName ?? (isArabic() ? 'اختر الطبيب' : 'Select doctor'), style: FontStyleThame.textStyle(context: context)),
+                Text(
+                  doctorName ?? (isArabic() ? 'اختر الطبيب' : 'Select doctor'),
+                  style: FontStyleThame.textStyle(context: context),
+                ),
                 Spacer(),
-                CircleAvatar(radius: 20, backgroundImage: NetworkImage(doctorImage ?? 'https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&uid=R78903714&ga=GA1.1.798062041.1678310296&semt=ais')),
+                CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage(
+                    doctorImage ??
+                        'https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&uid=R78903714&ga=GA1.1.798062041.1678310296&semt=ais',
+                  ),
+                ),
               ],
             ),
             borderRadius: const BorderRadius.all(Radius.circular(20)),
-            items: _localDoctors.map((DoctorModel value) {
-              return DropdownMenuItem<DoctorModel>(
-                value: value,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Text(value.name, style: FontStyleThame.textStyle(context: context)),
-                      Spacer(),
-                      CircleAvatar(radius: 20, backgroundImage: NetworkImage(value.image)),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
+            items:
+                _localDoctors.map((DoctorModel value) {
+                  return DropdownMenuItem<DoctorModel>(
+                    value: value,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            value.name,
+                            style: FontStyleThame.textStyle(context: context),
+                          ),
+                          Spacer(),
+                          CircleAvatar(
+                            radius: 20,
+                            backgroundImage: NetworkImage(value.image),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
           ),
         ),
       ),

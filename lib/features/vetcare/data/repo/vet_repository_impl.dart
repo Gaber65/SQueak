@@ -165,7 +165,8 @@ class VetRepository implements BaseVetRepository {
       );
       return Right(result);
     } on DioException catch (e) {
-      return Left(ServerFailure(e.response?.data['message'] ?? 'Server error'));
+      print(e.response?.data);
+      return Left(ServerFailure(e.response?.data));
     } catch (e) {
       return Left(
         ServerFailure(

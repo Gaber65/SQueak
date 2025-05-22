@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:squeak/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:squeak/features/appointments/presentation/view/appointments/rate_appointment.dart';
-import 'package:squeak/features/authentication/view/forgot_password.dart';
-import 'package:squeak/features/authentication/view/login_screen.dart';
-import 'package:squeak/features/authentication/view/register_screen.dart';
 import 'package:squeak/features/layout/layout/presentation/screens/layout_screen.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/screens/post_notfication.dart';
-
+import '../../../features/auth/login/presentation/pages/login_screen.dart';
+import '../../../features/auth/password/presentation/pages/forgot_password.dart';
+import '../../../features/auth/register/presentation/pages/register_screen.dart';
 import '../../../features/pets/presentation/view/pet_screen.dart';
 import '../../../features/vetcare/presenation/view/follow_request_screen.dart';
 import '../../../features/vetcare/presenation/view/vetCareRegister.dart';

@@ -8,6 +8,7 @@ import 'package:squeak/features/appointments/presentation/view/supplier/get_supp
 import 'package:squeak/features/layout/post/presentation/screens/home_screen.dart';
 import 'package:squeak/features/settings/persentaion/view/setting_screen.dart';
 
+import '../../../../../core/network/dio.dart';
 import '../../domain/entities/version_entity.dart';
 import '../../domain/usecases/get_current_app_version_usecase.dart';
 import '../../domain/usecases/get_version_usecase.dart';
@@ -51,12 +52,7 @@ class LayoutCubit extends Cubit<LayoutState> {
     result.fold(
       (failure) {
         getVersionFromBackLoading = false;
-        emit(
-          GetVersionErrorState(
-            failure.error.errors.entries.first.value.first ??
-                failure.error.message,
-          ),
-        );
+        emit(GetVersionErrorState(extractFirstError(failure)));
       },
       (version) {
         versionEntity = version;
@@ -73,12 +69,7 @@ class LayoutCubit extends Cubit<LayoutState> {
 
     result.fold(
       (failure) {
-        emit(
-          GetCurrentVersionErrorState(
-            failure.error.errors.entries.first.value.first ??
-                failure.error.message,
-          ),
-        );
+        emit(GetCurrentVersionErrorState(extractFirstError(failure)));
       },
       (version) {
         currentVersion = version;

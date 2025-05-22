@@ -1,19 +1,13 @@
-import 'dart:async';
-import 'dart:io';
+
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
-import 'package:lottie/lottie.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
+
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/authentication/view/login_screen.dart';
 import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../../../../auth/login/presentation/pages/login_screen.dart';
 import '../cubit/layout_cubit.dart';
-import '../../domain/entities/version_entity.dart';
 import '../widgets/exit_confirmation_dialog.dart';
 import '../widgets/expired_token_dialog.dart';
 import '../widgets/update_dialog.dart';

@@ -63,13 +63,13 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
             return Right(localSuppliers);
           } else {
             return Left(LocalDatabaseFailure(
-          ErrorMessageModel(
-            message: 'No internet connection',
-            statusCode: 0,
-            errors: {},
-            success: false,
-          ),
-        ),);
+              ErrorMessageModel(
+                message: 'No internet connection',
+                statusCode: 0,
+                errors: {},
+                success: false,
+              ),
+            ),);
           }
         } on LocalDatabaseFailure {
           return Left(
@@ -115,6 +115,18 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
       }
     }
   }
+  /// Silent background remote update
+  Future<void> _updateFromRemote() async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteSuppliers = await remoteDataSource.getSuppliers();
+        await localDataSource.cacheSuppliers(remoteSuppliers);
+      } catch (_) {
+        // Optional: log error or ignore
+      }
+    }
+  }
+
 
   @override
   Future<Either<Failure, List<Doctor>>> getDoctors(String clinicCode) async {
@@ -195,9 +207,47 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
 
   @override
   Future<Either<Failure, List<AppointmentEntity>>> getUserAppointments(
-    String phone,
-    bool applyFilter,
-  ) async {
+      String phone,
+      bool applyFilter,
+      ) async {
+    try {
+      final localAppointments = await localDataSource.getCachedAppointments();
+      if (localAppointments != null && localAppointments.isNotEmpty) {
+        // Fire and forget remote update
+        _updateAppointmentsFromRemote(phone, applyFilter);
+        return Right(localAppointments);
+      }
+    } catch (_) {
+      // Ignore local failure and try remote
+    }
+
+    // Local is empty or failed — fetch from remote directly
+    return await _fetchAppointmentsFromRemote(phone, applyFilter);
+  }
+
+  /// Background update of appointments from remote
+  Future<void> _updateAppointmentsFromRemote(
+      String phone,
+      bool applyFilter,
+      ) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remoteAppointments = await remoteDataSource.getUserAppointments(
+          phone,
+          applyFilter,
+        );
+        await localDataSource.cacheAppointments(remoteAppointments);
+      } catch (_) {
+        // Silent fail/log
+      }
+    }
+  }
+
+  /// Fallback: fetch from remote and cache, or return failure
+  Future<Either<Failure, List<AppointmentEntity>>> _fetchAppointmentsFromRemote(
+      String phone,
+      bool applyFilter,
+      ) async {
     if (await networkInfo.isConnected) {
       try {
         final remoteAppointments = await remoteDataSource.getUserAppointments(
@@ -207,41 +257,22 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
         await localDataSource.cacheAppointments(remoteAppointments);
         return Right(remoteAppointments);
       } on ServerException catch (failure) {
-        try {
-          final localAppointments =
-              await localDataSource.getCachedAppointments();
-          return Right(localAppointments);
-        } on LocalDatabaseFailure {
-          return Left(
-            LocalDatabaseFailure(
-              ErrorMessageModel(
-                message: 'No internet connection',
-                statusCode: 0,
-                errors: {},
-                success: false,
-              ),
-            ),
-          );
-        }
+        return Left(ServerFailure(failure.errorMessageModel));
       }
     } else {
-      try {
-        final localAppointments = await localDataSource.getCachedAppointments();
-        return Right(localAppointments);
-      } on LocalDatabaseFailure {
-        return Left(
-          LocalDatabaseFailure(
-            ErrorMessageModel(
-              message: 'No internet connection',
-              statusCode: 0,
-              errors: {},
-              success: false,
-            ),
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
           ),
-        );
-      }
+        ),
+      );
     }
   }
+
 
   @override
   Future<Either<Failure, Unit>> deleteAppointment(String appointmentId) async {

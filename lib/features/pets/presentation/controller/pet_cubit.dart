@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:squeak/core/base_usecase/base_usecase.dart';
+import 'package:squeak/core/network/dio.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import '../../../../features/pets/domain/entities/pet_entity.dart';
 import '../../../../features/pets/domain/use_case/get_owner_pets_usecase.dart';
@@ -77,11 +78,7 @@ class PetCubit extends Cubit<PetState> {
     final result = await getOwnerPetsUseCase(NoParameters());
 
     result.fold(
-      (error) => emit(
-        GetOwnerPetsErrorState(
-          error.error.errors.entries.first.value.first ?? error.error.message,
-        ),
-      ),
+      (error) => emit(GetOwnerPetsErrorState(extractFirstError(error))),
       (petsList) {
         pets = petsList;
         CacheHelper.saveData('havePets', pets.length);
@@ -97,11 +94,7 @@ class PetCubit extends Cubit<PetState> {
     final result = await getAllBreedsUseCase(NoParameters());
 
     result.fold(
-      (error) => emit(
-        GetAllBreedsErrorState(
-          error.error.errors.entries.first.value.first ?? error.error.message,
-        ),
-      ),
+      (error) => emit(GetAllBreedsErrorState(extractFirstError(error))),
       (breedsList) {
         allBreeds = breedsList;
         emit(GetAllBreedsSuccessState());
@@ -116,11 +109,7 @@ class PetCubit extends Cubit<PetState> {
     final result = await getBreedsBySpeciesUseCase(speciesId);
 
     result.fold(
-      (error) => emit(
-        GetAllBreedsErrorState(
-          error.error.errors.entries.first.value.first ?? error.error.message,
-        ),
-      ),
+      (error) => emit(GetAllBreedsErrorState(extractFirstError(error))),
       (breedsList) {
         breedData = breedsList;
         emit(GetAllBreedsSuccessState());
@@ -135,11 +124,7 @@ class PetCubit extends Cubit<PetState> {
     final result = await getAllSpeciesUseCase(NoParameters());
 
     result.fold(
-      (error) => emit(
-        GetAllSpeciesErrorState(
-          error.error.errors.entries.first.value.first ?? error.error.message,
-        ),
-      ),
+      (error) => emit(GetAllSpeciesErrorState(extractFirstError(error))),
       (speciesList) {
         species = speciesList;
         emit(GetAllSpeciesSuccessState());
@@ -196,11 +181,7 @@ class PetCubit extends Cubit<PetState> {
 
     isLoading = false;
     result.fold(
-      (error) => emit(
-        PetCreateErrorState(
-          error.error.errors.entries.first.value.first ?? error.error.message,
-        ),
-      ),
+      (error) => emit(PetCreateErrorState(extractFirstError(error))),
       (createdPet) {
         pets.add(createdPet);
         emit(PetCreateSuccessState());
@@ -231,11 +212,7 @@ class PetCubit extends Cubit<PetState> {
 
     isLoading = false;
     result.fold(
-      (error) => emit(
-        PetCreateErrorState(
-          error.error.errors.entries.first.value.first ?? error.error.message,
-        ),
-      ),
+      (error) => emit(PetCreateErrorState(extractFirstError(error))),
       (updatedPet) {
         final index = pets.indexWhere((p) => p.petId.toString() == petId);
         if (index != -1) {
@@ -253,11 +230,7 @@ class PetCubit extends Cubit<PetState> {
     final result = await deletePetUseCase(id);
 
     result.fold(
-      (error) => emit(
-        DeletePetErrorState(
-          error.error.errors.entries.first.value.first ?? error.error.message,
-        ),
-      ),
+      (error) => emit(DeletePetErrorState(extractFirstError(error))),
       (_) {
         pets.removeWhere((pet) => pet.petId.toString() == id);
         emit(DeletePetSuccessState());

@@ -14,7 +14,8 @@ void showNotificationDialog(BuildContext contextNav, NotificationEntities model)
 
   // Retrieve username from cache
   String userName = CacheHelper.getData('name') ?? "Pet Lover";
-
+print( model.message);
+print( '***********************');
   // Extract clinic name from the notification title (assuming "Clinic XYZ: Message")
   String extractedClinicName = model.title.split(":").first.trim();
   // Remove the word "Notification" if it appears
@@ -130,18 +131,13 @@ void showNotificationDialog(BuildContext contextNav, NotificationEntities model)
                                 textAlign: TextAlign.center,
                               ),
                               SizedBox(height: 10),
-                              SizedBox(
-                                height: 100,
-                                child: SingleChildScrollView(
-                                  child: Text(
-                                    model.message,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black87,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
+                              Text(
+                                model.message,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black87,
                                 ),
+                                textAlign: TextAlign.center,
                               ),
                             ],
                           ),

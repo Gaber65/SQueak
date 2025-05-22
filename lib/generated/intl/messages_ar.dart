@@ -62,7 +62,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "addReplayComment": MessageLookupByLibrary.simpleMessage("أضف رد ..."),
     "addToSqueak": MessageLookupByLibrary.simpleMessage("اضافة الى Squeak"),
     "addYourFirstPet": MessageLookupByLibrary.simpleMessage(
-      "اضف اول حيوان اليف لك",
+      "اضف اول صديق اليف لك",
     ),
     "address": MessageLookupByLibrary.simpleMessage("عنوان"),
     "addressCity": MessageLookupByLibrary.simpleMessage("الموقع"),
@@ -238,7 +238,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "enterPetName": MessageLookupByLibrary.simpleMessage("ادخل اسم الاليف"),
     "enterPetNameValidation": MessageLookupByLibrary.simpleMessage(
-      "من فضلك ادخل الاسم الحيوان",
+      "من فضلك ادخل الاسم الأليف",
     ),
     "enterPhone": MessageLookupByLibrary.simpleMessage("أدخل رقم هاتفك"),
     "enterUrAddress": MessageLookupByLibrary.simpleMessage("أدخل عنوانك"),
@@ -337,10 +337,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "no": MessageLookupByLibrary.simpleMessage("لا"),
     "noAppointment": MessageLookupByLibrary.simpleMessage("لا توجد مواعيد"),
     "noPetsFound": MessageLookupByLibrary.simpleMessage(
-      "لا توجد حيوانات اليفه الان",
+      "لا توجد اصدقاء اليفه الان",
     ),
     "noPetsInVetICare": MessageLookupByLibrary.simpleMessage(
-      "لا توجد حيوانات أليفة في هذه العيادة، أو قد تم إضافتها بالفعل على SQueak",
+      "لا يوجد اصدقاء أليفة في هذه العيادة، أو قد تم إضافتها بالفعل على SQueak",
     ),
     "notEqualPassword": MessageLookupByLibrary.simpleMessage(
       "تأكيد كلمة المرور غير مطابق لكلمة المرور",
@@ -381,13 +381,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "petDetails": MessageLookupByLibrary.simpleMessage("بيانات  الأليف"),
     "petName": MessageLookupByLibrary.simpleMessage("اسم الأليف"),
     "pet_birthdate_hint": MessageLookupByLibrary.simpleMessage(
-      "أدخل تاريخ ميلاد حيوانك الأليف",
+      "أدخل تاريخ ميلاد لصديقك الأليف",
     ),
     "pet_birthdate_validation": MessageLookupByLibrary.simpleMessage(
-      "يرجى إدخال تاريخ ميلاد حيوانك الأليف",
+      "يرجى إدخال تاريخ ميلاد لصديقك الأليف",
     ),
     "petsVetICare": MessageLookupByLibrary.simpleMessage(
-      "الحيوانات في vetIcare",
+      " أصدقائك الصغار في vetIcare",
     ),
     "phone": MessageLookupByLibrary.simpleMessage("الهاتف"),
     "phone_hint": MessageLookupByLibrary.simpleMessage("أدخل رقم هاتفك"),
@@ -423,7 +423,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "سياسة الإرجاع والاستبدال: يمكن إرجاع العناصر خلال 3 أيام من الشراء مع الإيصال. المنتجات الطبية غير قابلة للاسترداد.",
     ),
     "reviewDescription": MessageLookupByLibrary.simpleMessage(
-      "ساعدنا في توفير أفضل رعاية لحيواناتك الأليفة.",
+      "ساعدنا في توفير أفضل رعاية لأصدقائك الصغار .",
     ),
     "reviewMessage": MessageLookupByLibrary.simpleMessage(
       "تم إرسال مراجعتك بنجاح.",
@@ -538,7 +538,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "yourConsentDesc": MessageLookupByLibrary.simpleMessage(
       "باستخدام تطبيقنا، فإنك توافق على سياسة الخصوصية الخاصة بنا.",
     ),
-    "yourPets": MessageLookupByLibrary.simpleMessage("حيوانتك"),
+    "yourPets": MessageLookupByLibrary.simpleMessage("اصدقاءك الصغار"),
     "yourProfile": MessageLookupByLibrary.simpleMessage("حسابك الشخصي"),
     "yourUpcomingAppointments": MessageLookupByLibrary.simpleMessage(
       "مواعيدك القادمة",

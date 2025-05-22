@@ -64,15 +64,7 @@ class MainCubit extends Cubit<MainState> {
   }
 
   // Token methods
-  Future<void> deleteToken() async {
-    emit(DeleteTokenLoading());
-    try {
-      await manageTokenUseCase.deleteToken();
-      emit(DeleteTokenSuccess());
-    } catch (e) {
-      emit(DeleteTokenError());
-    }
-  }
+
 
   // Change language method
   void setLangInAPI(int langMode) async {
@@ -96,6 +88,33 @@ class MainCubit extends Cubit<MainState> {
     }
   }
 
+
+
+  bool isNotificationEnabled = false;
+  Future<void> requestNotificationPermissions() async {
+    emit(RequestNotificationPermissionsLoading());
+    try {
+      isNotificationEnabled = true;
+      await manageTokenUseCase.requestNotificationPermissions();
+      emit(RequestNotificationPermissionsSuccess());
+    } catch (e) {
+      isNotificationEnabled = false;
+      emit(RequestNotificationPermissionsError());
+    }
+  }
+
+  Future<void> deleteToken() async {
+    emit(DeleteTokenLoading());
+    try {
+      isNotificationEnabled = false;
+      await manageTokenUseCase.deleteToken();
+      emit(DeleteTokenSuccess());
+    } catch (e) {
+      isNotificationEnabled = true;
+      emit(DeleteTokenError());
+    }
+  }
+
   Future<void> removeToken() async {
     emit(SaveTokenLoading());
     try {
@@ -105,17 +124,6 @@ class MainCubit extends Cubit<MainState> {
       emit(SaveTokenError());
     }
   }
-
-  Future<void> requestNotificationPermissions() async {
-    emit(RequestNotificationPermissionsLoading());
-    try {
-      await manageTokenUseCase.requestNotificationPermissions();
-      emit(RequestNotificationPermissionsSuccess());
-    } catch (e) {
-      emit(RequestNotificationPermissionsError());
-    }
-  }
-
   ImageEntity? modelImage;
   // File Upload methods
   Future<void> getGlobalImage(File file, UploadPlace uploadPlace) async {

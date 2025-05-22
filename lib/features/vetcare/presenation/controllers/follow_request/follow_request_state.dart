@@ -15,7 +15,12 @@ class ErrorAcceptIvationState extends FollowRequestState {
   ErrorAcceptIvationState(this.error);
 }
 
+
 // Notification states
 class NotificationsLoadingState extends FollowRequestState {}
 class NotificationsSuccessState extends FollowRequestState {}
 class NotificationsErrorState extends FollowRequestState {}
+
+class LoadingGetClientState extends FollowRequestState {}
+class SuccessGetClientState extends FollowRequestState {}
+class ErrorGetClientState extends FollowRequestState {}

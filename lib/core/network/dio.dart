@@ -91,3 +91,18 @@ class DioFinalHelper {
     return await dio.delete(method, data: data);
   }
 }
+
+String extractFirstError(dynamic error) {
+  try {
+    final entries = error.error.errors?.entries;
+    if (entries != null && entries.isNotEmpty) {
+      final firstValues = entries.first.value;
+      if (firstValues != null && firstValues.isNotEmpty) {
+        return firstValues.first;
+      }
+    }
+    return error.error.message ?? "Unknown error";
+  } catch (_) {
+    return "Unknown error";
+  }
+}

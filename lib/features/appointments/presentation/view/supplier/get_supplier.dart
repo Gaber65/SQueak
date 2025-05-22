@@ -61,15 +61,7 @@ class MySupplierScreen extends StatelessWidget {
                             if (state is FollowError) {
                               errorToast(
                                 context,
-                                state
-                                        .error
-                                        .error
-                                        .errors
-                                        .entries
-                                        .first
-                                        .value
-                                        .first ??
-                                    state.error.error.message,
+                                  extractFirstError(state.error),
 
                               );
                             }

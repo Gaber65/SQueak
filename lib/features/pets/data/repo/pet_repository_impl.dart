@@ -20,22 +20,38 @@ class PetRepositoryImpl implements PetRepository {
   @override
   Future<Either<Failure, List<PetEntities>>> getOwnerPets() async {
     try {
-      final remotePets = await remoteDataSource.getOwnerPets();
-
-      remotePets.forEach((pet) {
-        print(pet.toJson());
-      });
-      if (CacheHelper.getData('usersPets') != null) {
-        await localDataSource.cachePets(remotePets);
-        final localPets = await localDataSource.getCachedPets();
-
-        return Right(localPets.map((pet) => pet).toList());
-      } else {
-        await localDataSource.cachePets(remotePets);
-        return Right(remotePets.map((pet) => pet).toList());
+      final localPets = await localDataSource.getCachedPets();
+      if (localPets != null && localPets.isNotEmpty) {
+        // Fire and forget remote update
+        _updatePetsFromRemote();
+        return Right(localPets);
       }
+    } catch (_) {
+      // Ignore local cache failure
+    }
+
+    // If local failed or was empty, fetch from remote
+    return await _fetchPetsFromRemote();
+  }
+
+  /// Fetch from remote and cache
+  Future<Either<Failure, List<PetEntities>>> _fetchPetsFromRemote() async {
+    try {
+      final remotePets = await remoteDataSource.getOwnerPets();
+      await localDataSource.cachePets(remotePets);
+      return Right(remotePets);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));
+    }
+  }
+
+  /// Background refresh of pet data
+  Future<void> _updatePetsFromRemote() async {
+    try {
+      final remotePets = await remoteDataSource.getOwnerPets();
+      await localDataSource.cachePets(remotePets);
+    } catch (_) {
+      // Silent failure/logging if needed
     }
   }
 

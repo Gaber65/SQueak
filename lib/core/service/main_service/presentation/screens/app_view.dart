@@ -1,8 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:chucker_flutter/chucker_flutter.dart';
+import 'package:squeak/features/appointments/data/models/appointment_model.dart';
+import 'package:squeak/features/appointments/presentation/view/appointments/rate_appointment.dart';
+import '../../../../../features/auth/login/presentation/pages/login_screen.dart';
+import '../../../../../features/vetcare/presenation/view/pet_merge_screen.dart';
 import '../../../../../features/vetcare/presenation/view/vetCareRegister.dart';
 import '../../../../utils/export_path/export_files.dart';
 
@@ -28,9 +33,30 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       _sub,
       (uri) => handleDeepLink(uri, navigatorKey),
     );
-    determineStartPoint(
-      context,
-    ).then((screen) => setState(() => appStartPoint = screen));
+
+    determineStartState().then((state) async {
+      Widget startWidget;
+
+      switch (state) {
+        case AppStartState.login:
+          startWidget = LoginScreen();
+          break;
+        case AppStartState.forceMerge:
+          final String code = CacheHelper.getData('CodeForce');
+          startWidget = PetMergeScreen(code: code, isNavigation: false);
+          break;
+        case AppStartState.forceRate:
+          String dataJson = await CacheHelper.getData('RateModel');
+          final model = AppointmentModel.fromJson(json.decode(dataJson));
+          startWidget = RateAppointment(isNav: false, model: model);
+          break;
+        case AppStartState.home:
+          startWidget = LayoutScreen();
+          break;
+      }
+
+      setState(() => appStartPoint = startWidget);
+    });
   }
 
   @override
@@ -82,18 +108,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             navigatorKey: navigatorKey,
             routes: routes,
             onGenerateRoute: (settings) {
-              final uri = Uri.parse(settings.name!);
-              final invitationCode =
-                  uri.pathSegments.length > 1 ? uri.pathSegments[1] : '';
-              CacheHelper.saveData('invitationCode', invitationCode);
-
-              if (invitationCode.isNotEmpty) {
-                return MaterialPageRoute(
-                  builder:
-                      (context) =>
-                          VetCareRegister(invitationCode: invitationCode),
-                );
-              }
               return MaterialPageRoute(
                 builder: (context) => appStartPoint ?? const SizedBox(),
               );

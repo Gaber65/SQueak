@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/service/global_widget/toast.dart';
 import '../../../../../core/service/service_locator/service_locator.dart';
+import '../../../../../core/utils/export_path/export_files.dart';
 import '../../../../../core/utils/theme/navigation_helper/navigation.dart';
 import '../../../../vetcare/presenation/view/pet_merge_screen.dart';
 import '../../../search/presentation/controller/search_cubit.dart';
@@ -19,8 +20,7 @@ Padding buildSearchBox(PostCubit cubit) {
           if (state is FollowError) {
             errorToast(
               context,
-              state.error.error.errors.entries.first.value.first ??
-                  state.error.error.message,
+              extractFirstError(state.error),
             );
           }
 

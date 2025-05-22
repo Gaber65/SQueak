@@ -40,6 +40,7 @@ extension NotificationTypeExtension on NotificationType {
     }
   }
 }
+
 NotificationType? getNotificationType(String typeName) {
   for (NotificationType type in NotificationType.values) {
     if (type.typeName == typeName) {

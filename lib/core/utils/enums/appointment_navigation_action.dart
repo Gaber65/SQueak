@@ -1,0 +1,4 @@
+enum AppointmentNavigationAction {
+  goToHome,
+  goToRate,
+}

@@ -122,8 +122,8 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
     result.fold(
       (failure) => emit(
         GetInvoicesError(
-          failure.error.errors.entries.first.value.first ??
-              failure.error.message,
+          extractFirstError(failure)
+,
         ),
       ),
       (invoiceData) {

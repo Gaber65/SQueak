@@ -3,9 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:app_links/app_links.dart';
 
-import 'package:squeak/features/QR/view/follow-confirmation_screen.dart';
-import 'package:squeak/features/QR/view/qr_register_screen.dart';
 
+import '../../../../../features/auth/register/presentation/widgets/register_qr_screen.dart';
 import '../../../../../features/vetcare/presenation/view/vetCareRegister.dart';
 import '../../../../utils/export_path/export_files.dart';
 
@@ -41,22 +40,22 @@ void handleDeepLink(Uri uri, GlobalKey<NavigatorState> navigatorKey) {
   String? clinicLogo = extractedParams['clinicLogo'];
 
   if (clinicCode != null && clinicName != null && clinicLogo != null) {
-    final route = CacheHelper.getData('token') == null
-        ? RegisterQrScreen(
-      clinicCode: clinicCode,
-      clinicName: clinicName,
-      clinicLogo: clinicLogo,
-    )
-        : ConfirmationScreen(
-      clinicCode: clinicCode,
-      clinicName: clinicName,
-      clinicLogo: clinicLogo,
-    );
-
-    navigatorKey.currentState?.pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => route),
-          (route) => false,
-    );
+    // final route = CacheHelper.getData('token') == null
+    //     ? RegisterQrScreen(
+    //   clinicCode: clinicCode,
+    //   clinicName: clinicName,
+    //   clinicLogo: clinicLogo,
+    // )
+    //     : ConfirmationScreen(
+    //   clinicCode: clinicCode,
+    //   clinicName: clinicName,
+    //   clinicLogo: clinicLogo,
+    // );
+    //
+    // navigatorKey.currentState?.pushAndRemoveUntil(
+    //   MaterialPageRoute(builder: (context) => route),
+    //       (route) => false,
+    // );
   } else {
     final pathSegments = uri.pathSegments;
     if (pathSegments.isNotEmpty && pathSegments[0] == 'vetRegister') {

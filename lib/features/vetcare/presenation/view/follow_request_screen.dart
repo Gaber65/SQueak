@@ -19,7 +19,11 @@ class FollowRequestScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => sl<FollowRequestCubit>()..getNotifications(clinicID),
+          create:
+              (context) =>
+                  sl<FollowRequestCubit>()
+                    ..getClinicInfo(clinicID)
+                    ..getNotifications(clinicID),
         ),
       ],
       child: _FollowRequestContent(clinicID: clinicID),
@@ -59,25 +63,29 @@ class _FollowRequestContent extends StatelessWidget {
   }
 
   void _showErrorToast(BuildContext context, ErrorAcceptIvationState state) {
-    final errorMessage = state.error is Map && state.error['errors'] != null && state.error['errors'].isNotEmpty
-        ? state.error['errors'].values.first.first
-        : state.error.toString();
+    final errorMessage =
+        state.error is Map &&
+                state.error['errors'] != null &&
+                state.error['errors'].isNotEmpty
+            ? state.error['errors'].values.first.first
+            : state.error.toString();
     errorToast(context, errorMessage);
   }
 
   void _handleAcceptanceSuccess(
-      BuildContext context,
-      SuccessAcceptIvationState state,
-      ) {
+    BuildContext context,
+    SuccessAcceptIvationState state,
+  ) {
     // Get the clinic code from the repository or state
-    final clinicCode = ""; // This should be retrieved from the repository or state
+    // This should be retrieved from the repository or state
 
-    final nextScreen = state.hasValidPets
-        ? PetMergeScreen(
-      code: clinicCode,
-      isNavigation: false,
-    )
-        : LayoutScreen();
+    final nextScreen =
+        state.hasValidPets
+            ? PetMergeScreen(
+              code: FollowRequestCubit.get(context).entities!.code,
+              isNavigation: false,
+            )
+            : LayoutScreen();
     navigateToScreen(context, nextScreen);
   }
 
@@ -96,12 +104,16 @@ class _FollowRequestContent extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context, FollowRequestCubit cubit, FollowRequestState state) {
+  Widget _buildBody(
+    BuildContext context,
+    FollowRequestCubit cubit,
+    FollowRequestState state,
+  ) {
     // This is a simplified version - you'll need to adapt this based on your actual data structure
-    if (state is NotificationsLoadingState) return VacShimmer();
+    if (cubit.entities == null) return VacShimmer();
 
     // Check if clinic data is available
-    final hasClinicData = cubit.notifications.isNotEmpty;
+    final hasClinicData = cubit.entities != null;
     if (!hasClinicData) return _buildUnavailableRequestView(context);
 
     return _buildRequestCard(context, cubit);
@@ -141,10 +153,6 @@ class _FollowRequestContent extends StatelessWidget {
   }
 
   Widget _buildRequestCard(BuildContext context, FollowRequestCubit cubit) {
-    // This is a simplified version - you'll need to adapt based on your actual data structure
-    final clinicName = "Clinic Name"; // Replace with actual data
-    final clinicImage = "clinic_image.jpg"; // Replace with actual data
-
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -152,9 +160,9 @@ class _FollowRequestContent extends StatelessWidget {
         decoration: Decorations.kDecorationBoxShadow(context: context),
         child: Row(
           children: [
-            _buildClinicAvatar(clinicImage),
+            _buildClinicAvatar(cubit.entities!.image),
             const SizedBox(width: 10),
-            _buildClinicInfoAndButtons(context, cubit, clinicName),
+            _buildClinicInfoAndButtons(context, cubit, cubit.entities!.name),
           ],
         ),
       ),
@@ -164,13 +172,15 @@ class _FollowRequestContent extends StatelessWidget {
   Widget _buildClinicAvatar(String imagePath) {
     return CircleAvatar(
       radius: 30,
-      backgroundImage: NetworkImage(
-        imageUrl + imagePath,
-      ),
+      backgroundImage: NetworkImage(imageUrl + imagePath),
     );
   }
 
-  Widget _buildClinicInfoAndButtons(BuildContext context, FollowRequestCubit cubit, String clinicName) {
+  Widget _buildClinicInfoAndButtons(
+    BuildContext context,
+    FollowRequestCubit cubit,
+    String clinicName,
+  ) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,18 +218,18 @@ class _FollowRequestContent extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(4.0),
-          child: cubit.isAccept
-              ? const CircularProgressIndicator()
-              : Text(S.of(context).accept),
+          child:
+              cubit.isAccept
+                  ? const CircularProgressIndicator()
+                  : Text(S.of(context).accept),
         ),
       ),
     );
   }
 
   void _handleAcceptRequest(FollowRequestCubit cubit) {
-    // You'll need to adapt this based on your actual data structure
-    final clinicCode = "clinic_code"; // Replace with actual data
-    final clientId = "client_id"; // Replace with actual data
+    final clinicCode = cubit.entities!.code; // Replace with actual data
+    final clientId = cubit.clintId;
     final squeakUserId = CacheHelper.getData('clintId');
 
     cubit.acceptInvitation(

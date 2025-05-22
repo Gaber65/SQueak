@@ -61,6 +61,8 @@ export  'package:squeak/core/service/service_locator/service_locator.dart';
 
 // utils
 export 'package:squeak/core/utils/enums/env_enums.dart';
+export 'package:squeak/core/utils/enums/app_start_state.dart';
+export 'package:squeak/core/utils/enums/appointment_navigation_action.dart';
 export 'package:squeak/core/utils/enums/notification_type_enums.dart';
 export 'package:squeak/core/utils/enums/upload_place.dart';
 
@@ -83,3 +85,4 @@ export 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
 export 'package:squeak/generated/l10n.dart';
 export 'package:squeak/features/layout/layout/presentation/cubit/layout_cubit.dart';
 export 'package:squeak/features/layout/layout/presentation/screens/layout_screen.dart';
+

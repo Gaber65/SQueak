@@ -71,7 +71,6 @@ class SearchCubit extends Cubit<SearchState> {
           emit(FollowSuccess(false));
         }
       });
-      emit(FollowSuccess(true));
     });
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/authentication/view/login_screen.dart';
+
+import '../../../../auth/login/presentation/pages/login_screen.dart';
 
 Future<dynamic> showExpiredTokenDialog(BuildContext context) {
   return showDialog(

@@ -1,18 +1,17 @@
-import 'package:flutter/material.dart';
-import 'package:squeak/features/authentication/view/login_screen.dart';
-import 'package:squeak/features/layout/layout/presentation/screens/layout_screen.dart';
-import '../../../../../features/vetcare/presenation/view/pet_merge_screen.dart';
-import '../../../cache/shared_preferences/cache_helper.dart';
+import '../../../../utils/export_path/export_files.dart';
 
-Future<Widget> determineStartPoint(BuildContext context) async {
+Future<AppStartState> determineStartState() async {
   final String? token = CacheHelper.getData('token');
   final String? codeForce = CacheHelper.getData('CodeForce');
+  final bool? forceRate = CacheHelper.getData('IsForceRate');
 
   if (token == null) {
-    return LoginScreen();
+    return AppStartState.login;
   } else if (codeForce != null) {
-    return PetMergeScreen(code: codeForce, isNavigation: false);
+    return AppStartState.forceMerge;
+  } else if (forceRate != null && forceRate) {
+    return AppStartState.forceRate;
   } else {
-    return LayoutScreen();
+    return AppStartState.home;
   }
 }

@@ -15,46 +15,57 @@ Future<void> getAppointment({
   NotificationEntities? notification,
   bool? isMainRunning,
 }) async {
-  print('Handling appointment/reservation: ${notification?.eventType}');
-  List<AppointmentModel> appointments = [];
   try {
-    Response response = await DioFinalHelper.getData(
+    final response = await DioFinalHelper.getData(
       method: createAndGetAppointmentsEndPoint(CacheHelper.getData('phone')),
       language: true,
     );
 
-    appointments =
+    final appointments =
         (response.data['data']['result'] as List)
             .map((e) => AppointmentModel.fromJson(e))
             .toList();
 
-    AppointmentModel? model;
+    final model = appointments.firstWhere((e) => e.id == id);
 
-    // Print the IDs for debugging purposes
-    appointments.forEach((element) {
-      if (element.id == id) {
-        model = element;
-        return;
-      }
-    });
+    final action = _determineNavigationAction(type);
 
-    if (type == NotificationType.NewAppointmentOrReservation ||
-        type == NotificationType.ReservationReminder) {
-      LayoutCubit.get(context).changeBottomNav(2);
-      navigateAndFinish(context, LayoutScreen());
-    } else if (type == NotificationType.AppointmentCompleted) {
-      navigateToScreen(context, RateAppointment(model: model!, isNav: isNav));
-      CacheHelper.saveData('RateModel', model!.toMap());
-      NotificationsCubit.get(
-        context,
-      ).updateNotification(notification!.notificationEvents[0].id);
+    switch (action) {
+      case AppointmentNavigationAction.goToHome:
+        LayoutCubit.get(context).changeBottomNav(2);
+        navigateAndFinish(context, LayoutScreen());
+        break;
+
+      case AppointmentNavigationAction.goToRate:
+        if (model.id == null) {
+          throw Exception('Appointment model not found for rating.');
+        }
+        navigateToScreen(context, RateAppointment(model: model, isNav: isNav));
+        CacheHelper.saveData('RateModel', model.toMap());
+        if (notification != null) {
+          final notificationId = notification.notificationEvents.first.id;
+          NotificationsCubit.get(context).updateNotification(notificationId);
+        }
+        break;
     }
   } on DioException catch (e) {
-    // Handle DioError
     if (isMainRunning == true) {
       navigateAndFinish(context, LayoutScreen());
     }
-    print('DioError: ${e.response}');
-    // You might want to show an error message to the user or handle it accordingly
+    debugPrint('DioException: ${e.response}');
+  } catch (e) {
+    debugPrint('Unexpected error: $e');
+  }
+}
+
+AppointmentNavigationAction _determineNavigationAction(NotificationType type) {
+  switch (type) {
+    case NotificationType.NewAppointmentOrReservation:
+    case NotificationType.ReservationReminder:
+      return AppointmentNavigationAction.goToHome;
+    case NotificationType.AppointmentCompleted:
+      return AppointmentNavigationAction.goToRate;
+    default:
+      return AppointmentNavigationAction.goToHome;
   }
 }

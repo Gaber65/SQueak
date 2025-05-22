@@ -51,8 +51,8 @@ class SettingCubit extends Cubit<SettingState> {
     result.fold(
       (failure) => emit(
         GetOwnerDataError(
-          failure.error.errors.entries.first.value.first ??
-              failure.error.message,
+          extractFirstError(failure)
+,
         ),
       ),
       (owner) {
@@ -133,8 +133,8 @@ class SettingCubit extends Cubit<SettingState> {
     result.fold(
       (failure) => emit(
         UpdateProfileErrorState(
-          failure.error.errors.entries.first.value.first ??
-              failure.error.message,
+          extractFirstError(failure)
+,
         ),
       ),
       (owner) {

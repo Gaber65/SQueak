@@ -25,16 +25,20 @@ class BreedSpeciesSection extends StatelessWidget {
           children: [
             if (isSmallScreen) ...[
               // Stack vertically on small screens
-              _buildBreedDropdown(context),
-              const SizedBox(height: 16),
               _buildSpeciesDropdown(context),
+              const SizedBox(height: 16),
+
+              _buildBreedDropdown(context),
+
             ] else ...[
               // Side by side on larger screens
               Row(
                 children: [
-                  Expanded(child: _buildBreedDropdown(context)),
-                  const SizedBox(width: 16),
                   Expanded(child: _buildSpeciesDropdown(context)),
+                  const SizedBox(width: 16),
+
+                  Expanded(child: _buildBreedDropdown(context)),
+
                 ],
               ),
             ],

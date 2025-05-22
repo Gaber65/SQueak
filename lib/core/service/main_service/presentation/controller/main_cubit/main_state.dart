@@ -5,7 +5,11 @@ class MainInitial extends MainState {}
 class AppChangeModeState extends MainState {}
 class AppChangeModeError extends MainState {}
 class AppChangeModeFromSharedState extends MainState {}
+class NotificationChanged extends MainState {
+  final bool isNotificationEnabled;
 
+  NotificationChanged(this.isNotificationEnabled);
+}
 class DeleteTokenLoading extends MainState {}
 class DeleteTokenSuccess extends MainState {}
 class DeleteTokenError extends MainState {}

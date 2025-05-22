@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 
 import '../../../domain/entities/vet_client.dart';
 import '../../../domain/use_case/pet_async_usecase.dart';
@@ -24,9 +25,14 @@ class PetAsyncCubit extends Cubit<PetAsyncState> {
   dynamic entities;
   final List<VetClient> vetClientModel = [];
 
-  Future<void> getClientsFromVet(String code, String phone, bool isFilter) async {
+  Future<void> getClientsFromVet(
+    String code,
+    String phone,
+    bool isFilter,
+  ) async {
     emit(LoadingGetClinicState());
 
+    CacheHelper.saveData('CodeForce', code);
     final params = GetClientsParams(
       code: code,
       phone: phone,
@@ -43,13 +49,13 @@ class PetAsyncCubit extends Cubit<PetAsyncState> {
       (clients) {
         vetClientModel.clear();
         vetClientModel.addAll(clients);
-        
+
         if (isFilter) {
           vetClientModel.removeWhere(
             (element) => element.addedInSqueakStatues == true,
           );
         }
-        
+
         isGetVet = true;
         emit(SuccessGetClinicState());
       },

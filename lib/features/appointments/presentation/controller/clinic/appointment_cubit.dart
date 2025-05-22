@@ -147,8 +147,8 @@ class AppointmentCubit extends Cubit<AppointmentState> {
       (failure) {
         emit(
           CreateAppointmentsError(
-            failure.error.errors.entries.first.value.first ??
-                failure.error.message,
+            extractFirstError(failure)
+,
           ),
         );
       },

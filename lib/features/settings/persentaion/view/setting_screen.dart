@@ -6,8 +6,9 @@ import 'package:iconly/iconly.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
-import '../../../authentication/view/contact_us.dart';
-import '../../../authentication/view/login_screen.dart';
+
+import '../../../auth/contactus/presentation/pages/contact_us.dart';
+import '../../../auth/login/presentation/pages/login_screen.dart';
 import '../../../settings/persentaion/view/privacy_policy_screen.dart';
 import '../../../settings/persentaion/view/update_profile_screen.dart';
 import '../controller/setting_cubit.dart';
@@ -185,13 +186,13 @@ class SettingScreen extends StatelessWidget {
                         return Switch(
                           activeTrackColor: ColorManager.profileBaseBlueColors,
                           activeColor: ColorManager.sWhite,
-                          value: false,
+                          value: cubit.isNotificationEnabled,
                           onChanged: (value) async {
                             if (value) {
                               await cubit.requestNotificationPermissions();
-                              cubit.saveToken();
+                              await cubit.saveToken(); // Optional
                             } else {
-                              cubit.deleteToken();
+                              await cubit.deleteToken();
                             }
                           },
                         );
@@ -243,7 +244,7 @@ class SettingScreen extends StatelessWidget {
                     context: context,
                     icon:
                         'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/intellectual-property-concept.png?alt=media&token=e9e8c640-ebe1-43b2-af20-376c5b570878',
-                    title: S.of(context).about,
+                    title: S.of(context).privacyPolicy,
                     subtitle: '',
                     onTap: () {
                       navigateToScreen(context, PrivacyPolicyScreen());
