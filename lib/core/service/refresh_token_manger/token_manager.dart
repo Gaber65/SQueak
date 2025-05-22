@@ -1,25 +1,13 @@
 import 'package:dio/dio.dart';
-
-
-import '../../network/config_model.dart';
-import '../../network/end-points.dart';
-import '../cache/shared_preferences/cache_helper.dart';
-
-void callbackDispatcher() {
-  // Workmanager().executeTask((task, inputData) async {
-  //   print('Executing refresh token task');
-  //   TokenManager tokenManager = TokenManager();
-  //   await CacheHelper.init();
-  //   await tokenManager.refreshToken();
-  //   return Future.value(true);
-  // });
-}
+import 'package:squeak/core/network/config_model.dart';
+import 'package:squeak/core/network/end-points.dart';
+import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 
 class DataToken {
-  String token;
-  String tokenType;
-  DateTime expiresIn;
-  String refreshToken;
+  final String token;
+  final String tokenType;
+  final DateTime expiresIn;
+  final String refreshToken;
 
   DataToken({
     required this.token,
@@ -44,18 +32,30 @@ class DataToken {
 }
 
 class TokenManager {
-  Future<void> saveToken(
+  static Future<void> saveToken(
     String token,
     DateTime expiry,
     String refreshToken,
   ) async {
-    CacheHelper.saveData('token', token);
-    CacheHelper.saveData('refreshToken', refreshToken);
-    CacheHelper.saveData('expiry', expiry.millisecondsSinceEpoch);
+    await CacheHelper.saveData('token', token);
+    await CacheHelper.saveData('refreshToken', refreshToken);
+    await CacheHelper.saveData('expiry', expiry.toIso8601String());
   }
 
-  Future<void> refreshToken() async {
-    CacheHelper.init();
+  static Future<bool> isAccessTokenExpired() async {
+    await CacheHelper.init();
+    final expiryString = CacheHelper.getData('expiry');
+    if (expiryString == null) return true;
+    try {
+      final expiry = DateTime.parse(expiryString);
+      return DateTime.now().isAfter(expiry);
+    } catch (_) {
+      return true;
+    }
+  }
+
+  static Future<void> refreshToken() async {
+    await CacheHelper.init();
     try {
       var dio = Dio();
       Response response = await dio.request(
@@ -67,13 +67,14 @@ class TokenManager {
         data: {"token": CacheHelper.getData('refreshToken')},
       );
       DataToken jsonResponse = DataToken.fromJson(response.data["data"]);
-      String newToken = jsonResponse.token;
-      String newRefreshToken = jsonResponse.refreshToken;
-      DateTime newExpiry = DateTime.now().add(Duration(hours: 6));
-      await saveToken(newToken, newExpiry, newRefreshToken);
+      await saveToken(
+        jsonResponse.token,
+        jsonResponse.expiresIn,
+        jsonResponse.refreshToken,
+      );
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
-        CacheHelper.saveData('isExpiredToken', true);
+        await CacheHelper.saveData('isExpiredToken', true);
       }
     }
   }

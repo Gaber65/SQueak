@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:squeak/core/base_usecase/base_usecase.dart';
+import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import '../../../../features/pets/domain/entities/pet_entity.dart';
 import '../../../../features/pets/domain/use_case/get_owner_pets_usecase.dart';
 import '../../../../features/pets/domain/use_case/get_all_breeds_usecase.dart';
@@ -83,7 +84,7 @@ class PetCubit extends Cubit<PetState> {
       ),
       (petsList) {
         pets = petsList;
-        pets.forEach((element) => print(element.toJson()));
+        CacheHelper.saveData('havePets', pets.length);
         emit(GetOwnerPetsSuccessState());
       },
     );

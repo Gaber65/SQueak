@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -7,10 +9,12 @@ import 'package:squeak/features/appointments/data/models/availability_model.dart
 import 'package:squeak/features/appointments/domain/entities/appointment_entity.dart';
 import 'package:squeak/features/appointments/domain/entities/availability_entities.dart';
 import 'package:squeak/features/appointments/domain/entities/doctor_entity.dart';
+import 'package:squeak/features/appointments/presentation/view/appointments/booking/widget/no_have_pet.dart';
 import 'package:squeak/features/appointments/presentation/view/appointments/booking/widget/pet_carousel.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/pets/presentation/controller/pet_cubit.dart';
 import 'package:squeak/features/appointments/presentation/controller/clinic/appointment_cubit.dart';
+import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
 
 import '../../../component/CustomCalendarDatePicker.dart';
 import '../logic/appointment_handler.dart';
@@ -51,6 +55,43 @@ class _BookingContentState extends State<BookingContent> {
     if (widget.petSelectFromIcon != null) {
       petSelect = widget.petSelectFromIcon;
     }
+
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (CacheHelper.getInt('havePets') == 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showInfoNoPetDialog(navigatorKey.currentContext);
+      });
+    }
+  }
+
+
+  void _showInfoNoPetDialog(context) async {
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          contentPadding: EdgeInsets.zero,
+          insetPadding: EdgeInsets.all(12),
+          titlePadding: EdgeInsets.zero,
+          backgroundColor: Colors.white.withOpacity(0.05),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          content: SizedBox(
+            width: MediaQuery.of(context).size.height * 20,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: NoHavePetAlert(),
+            ),
+          ),
+        );
+      },
+    ).whenComplete(() {
+      navigateToScreen(context, PetScreen());
+    });
   }
 
   void handleCreateAppointment(BuildContext context) {
@@ -74,6 +115,7 @@ class _BookingContentState extends State<BookingContent> {
   Widget build(BuildContext context) {
     return BlocConsumer<AppointmentCubit, AppointmentState>(
       listener: (context, state) {
+
         if (state is CreateAppointmentsSuccess) {
           successToast(
             context,
@@ -91,6 +133,7 @@ class _BookingContentState extends State<BookingContent> {
         final cubit = AppointmentCubit.get(context);
         final petCubit = PetCubit.get(context);
         final pets = petCubit.pets;
+
 
         return WillPopScope(
           onWillPop: () async {

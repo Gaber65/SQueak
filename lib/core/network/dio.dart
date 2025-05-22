@@ -1,22 +1,22 @@
 import 'package:dio/dio.dart';
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
-import '../service/global_function/format_utils.dart';
+import 'package:squeak/core/service/global_function/format_utils.dart';
+import '../service/refresh_token_manger/token_manager.dart';
 import 'config_model.dart';
 
 class DioFinalHelper {
   static late Dio dio;
 
-
-  static Map<String, String> _buildHeaders({String? token, bool includeCookie = true}) {
+  static Map<String, String> _buildHeaders({String? token}) {
     return {
       "Content-Type": "application/json",
       "Accept-Language": isArabic() ? 'ar' : 'en',
-      'Authorization': 'Bearer ${token ?? CacheHelper.getData('refreshToken')}',
+      "Authorization": "Bearer ${token ?? CacheHelper.getData('token')}",
     };
   }
 
-  static  init() {
+  static Future<void> init() async {
     dio = Dio(
       BaseOptions(
         baseUrl: ConfigModel.baseApiUrlSqueak,
@@ -24,17 +24,14 @@ class DioFinalHelper {
         headers: _buildHeaders(),
       ),
     );
-
     dio.interceptors.add(ChuckerDioInterceptor());
   }
 
-  static Future<Response> postData({
-    required String method,
-    required dynamic data,
-    String? token,
-  }) async {
-    dio.options.headers = _buildHeaders(token: token);
-    return await dio.post(method, data: data);
+  static Future<void> _ensureValidToken() async {
+    final isExpired = await TokenManager.isAccessTokenExpired();
+    if (isExpired) {
+      await TokenManager.refreshToken();
+    }
   }
 
   static Future<Response> getData({
@@ -42,8 +39,9 @@ class DioFinalHelper {
     String? token,
     required bool language,
   }) async {
+    await _ensureValidToken();
     dio.options.headers = {
-      'Authorization': 'Bearer ${token ?? CacheHelper.getData('refreshToken')}',
+      'Authorization': 'Bearer ${token ?? CacheHelper.getData('token')}',
       'Accept-Language': language
           ? 'en'
           : isArabic()
@@ -53,12 +51,23 @@ class DioFinalHelper {
     return await dio.get(method);
   }
 
+  static Future<Response> postData({
+    required String method,
+    required dynamic data,
+    String? token,
+  }) async {
+    await _ensureValidToken();
+    dio.options.headers = _buildHeaders(token: token);
+    return await dio.post(method, data: data);
+  }
+
   static Future<Response> putData({
     required String method,
     required Map<String, dynamic> data,
     String? token,
   }) async {
-    dio.options.headers = _buildHeaders(token: token, includeCookie: false);
+    await _ensureValidToken();
+    dio.options.headers = _buildHeaders(token: token);
     return await dio.put(method, data: data);
   }
 
@@ -67,6 +76,7 @@ class DioFinalHelper {
     required Map<String, dynamic> data,
     String? token,
   }) async {
+    await _ensureValidToken();
     dio.options.headers = _buildHeaders(token: token);
     return await dio.patch(method, data: data);
   }
@@ -76,6 +86,7 @@ class DioFinalHelper {
     String? token,
     Map<String, dynamic>? data,
   }) async {
+    await _ensureValidToken();
     dio.options.headers = _buildHeaders(token: token);
     return await dio.delete(method, data: data);
   }

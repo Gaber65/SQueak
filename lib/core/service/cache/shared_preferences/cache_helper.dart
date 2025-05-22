@@ -69,6 +69,8 @@ class CacheHelper {
 
   static bool getBool(String key) => sharedPreferences.getBool(key) ?? false;
 
+  static int getInt(String key) => sharedPreferences.getInt(key) ?? 0;
+
   static Future<bool> removeData(String key) async =>
       await sharedPreferences.remove(key);
 
