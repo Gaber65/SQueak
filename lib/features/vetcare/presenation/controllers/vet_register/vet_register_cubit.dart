@@ -112,16 +112,7 @@ class VetRegisterCubit extends Cubit<VetRegisterState> {
     );
   }
 
-  Future<void> getProfileImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    if (pickedFile != null) {
-      profileImage = File(pickedFile.path);
-      emit(ProfileImagePickedSuccessState());
-    } else {
-      emit(ProfileImagePickedErrorState());
-    }
-  }
 
   @override
   Future<void> close() {
