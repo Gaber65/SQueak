@@ -1,23 +1,19 @@
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
-import 'package:squeak/generated/l10n.dart';
-
-import '../../../../../core/service/service_locator/locatore_export_path.dart';
-import '../../domain/entities/boarding_entry.dart';
+import '../../domain/entities/boarding_entry_entity.dart';
 import '../cubit/boarding_cubit.dart';
-
+import '../cubit/boarding_state.dart';
 
 class RateBoarding extends StatefulWidget {
-  final BoardingEntry model;
+  final BoardingEntryEntity boardingEntryEntity;
   final bool isNav;
 
   const RateBoarding({
-    required this.model,
-    required this.isNav,
     super.key,
+    required this.boardingEntryEntity,
+    required this.isNav,
   });
 
   @override
@@ -25,327 +21,234 @@ class RateBoarding extends StatefulWidget {
 }
 
 class _RateBoardingState extends State<RateBoarding> {
+  final TextEditingController _feedbackController = TextEditingController();
+  int _cleanlinessRating = 0;
+  int _doctorRating = 0;
+
   @override
   void initState() {
     super.initState();
-    if (!widget.model.isRating) {
-      CacheHelper.saveData('RateModelBoarding', widget.model.toMap());
-      CacheHelper.saveData('IsForceRateBoarding', true);
-    } else {
-      CacheHelper.saveData('IsForceRateBoarding', false);
+    _initializeRatings();
+  }
+
+  void _initializeRatings() {
+    if (widget.boardingEntryEntity.isRating) {
+      _cleanlinessRating = widget.boardingEntryEntity.cleanlinessRate;
+      _doctorRating = widget.boardingEntryEntity.doctorServiceRate;
+      _feedbackController.text = widget.boardingEntryEntity.feedbackComment ?? '';
     }
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    CacheHelper.removeData('NotificationId');
-    CacheHelper.removeData('NotificationType');
+  Widget build(BuildContext context) {
+    return BlocConsumer<BoardingCubit, BoardingState>(
+      listener: (context, state) {
+        if (state is RateBoardingSuccess) {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Rating submitted successfully')),
+          );
+        } else if (state is RateBoardingError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Rate Boarding'),
+            automaticallyImplyLeading: widget.boardingEntryEntity.isRating,
+          ),
+          floatingActionButton: !widget.boardingEntryEntity.isRating
+              ? _buildSubmitButton(context, state)
+              : null,
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          body: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildHeaderImage(),
+                  const SizedBox(height: 20),
+                  _buildTitle(),
+                  const SizedBox(height: 10),
+                  _buildDescription(),
+                  const SizedBox(height: 50),
+                  _buildDoctorRating(),
+                  const SizedBox(height: 20),
+                  const Divider(),
+                  const SizedBox(height: 20),
+                  _buildCleanlinessRating(),
+                  const SizedBox(height: 20),
+                  if (widget.boardingEntryEntity.isRating) _buildFeedbackField(),
+                  const SizedBox(height: 100),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildHeaderImage() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * 0.35,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        image: const DecorationImage(
+          image: NetworkImage(
+            'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/dog-breeding-buying-puppy-pet-store-domestic-animal-couple-adopting-puppy-breed-club-top-breed-standard-buy-your-purebred-pet-here-concept-bright-vibrant-violet-isolated-illustration.png?alt=media&token=249eb91a-008a-4c52-b87b-433b1c4eb256',
+          ),
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return Text(
+      'Session Feedback',
+      style: GoogleFonts.inter(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget _buildDescription() {
+    return Text.rich(
+      TextSpan(
+        children: [
+          const TextSpan(text: 'Please rate your experience with '),
+          TextSpan(
+            text: widget.boardingEntryEntity.clinicName,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+      textAlign: TextAlign.center,
+      style: GoogleFonts.inter(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: Colors.grey.shade600,
+      ),
+    );
+  }
+
+  Widget _buildDoctorRating() {
+    return _buildRatingRow(
+      'Doctor Service:',
+      _doctorRating,
+      (rating) {
+        if (!widget.boardingEntryEntity.isRating) {
+          setState(() {
+            _doctorRating = rating;
+          });
+        }
+      },
+    );
+  }
+
+  Widget _buildCleanlinessRating() {
+    return _buildRatingRow(
+      'Cleanliness of Clinic:',
+      _cleanlinessRating,
+      (rating) {
+        if (!widget.boardingEntryEntity.isRating) {
+          setState(() {
+            _cleanlinessRating = rating;
+          });
+        }
+      },
+    );
+  }
+
+  Widget _buildRatingRow(String title, int rating, Function(int) onRatingChanged) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontSize: 14),
+        ),
+        Row(
+          children: List.generate(5, (index) {
+            return GestureDetector(
+              onTap: () => onRatingChanged(index + 1),
+              child: Icon(
+                index < rating ? Icons.star : Icons.star_border,
+                color: Colors.amber,
+                size: 24,
+              ),
+            );
+          }),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFeedbackField() {
+    return TextFormField(
+      controller: _feedbackController,
+      enabled: !widget.boardingEntryEntity.isRating,
+      maxLines: 5,
+      decoration: InputDecoration(
+        hintText: widget.boardingEntryEntity.isRating
+            ? widget.boardingEntryEntity.feedbackComment ?? ''
+            : 'Please enter your feedback',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        filled: true,
+        fillColor: Colors.grey.shade100,
+      ),
+    );
+  }
+
+  Widget _buildSubmitButton(BuildContext context, BoardingState state) {
+    final isLoading = state is RateBoardingLoading;
+    final canSubmit = _cleanlinessRating > 0 && _doctorRating > 0;
+
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextFormField(
+              controller: _feedbackController,
+              decoration: InputDecoration(
+                hintText: 'Please enter your feedback',
+                filled: true,
+                fillColor: Colors.grey.shade200,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          FloatingActionButton(
+            onPressed: (canSubmit && !isLoading) ? _submitRating : null,
+            child: isLoading
+                ? const CircularProgressIndicator()
+                : const Icon(IconlyLight.send),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _submitRating() {
+    context.read<BoardingCubit>().rateBoarding(widget.boardingEntryEntity);
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => BoardingCubit()..init(widget.model),
-      child: BlocConsumer<BoardingCubit, BoardingState>(
-        listener: (context, state) {
-          if (state is RateBoardingSuccess) {
-            LayoutCubit.get(context).changeBottomNav(3);
-            navigateAndFinish(context, LayoutScreen());
-          }
-        },
-        builder: (context, state) {
-          var cubit = BoardingCubit.get(context);
-          return WillPopScope(
-            onWillPop: () async {
-              if (widget.model.isRating) {
-                navigateAndFinish(context, LayoutScreen());
-                return true;
-              } else {
-                return false;
-              }
-            },
-            child: Scaffold(
-              floatingActionButton: (!widget.model.isRating)
-                  ? Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: TextFormField(
-                        controller: cubit.rateController,
-                        style: FontStyleThame.textStyle(
-                          context: context,
-                          fontSize: 15,
-                        ),
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          hintText: isArabic()
-                              ? "الرجاء إدخال ملاحظاتك"
-                              : 'Please enter your feedback',
-                          contentPadding: EdgeInsetsDirectional.only(
-                            start: 10,
-                          ),
-                          counterStyle: FontStyleThame.textStyle(
-                            context: context,
-                            fontSize: 13,
-                          ),
-                          hintStyle: FontStyleThame.textStyle(
-                            context: context,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            fontColor: MainCubit.get(context).isDark
-                                ? Colors.white54
-                                : Colors.black54,
-                          ),
-                          suffixIcon: IconButton(
-                            onPressed: (cubit.ratingCleanliness == 0 ||
-                                    cubit.ratingDoctor == 0)
-                                ? null
-                                : cubit.isLoadingRate
-                                    ? null
-                                    : () {
-                                        cubit.rateBoarding(widget.model);
-                                      },
-                            icon: cubit.isLoadingRate
-                                ? const CircularProgressIndicator()
-                                : const Icon(IconlyLight.send),
-                          ),
-                          filled: true,
-                          fillColor: MainCubit.get(context).isDark
-                              ? ColorManager.myPetsBaseBlackColor
-                              : Colors.grey.shade200,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusColor: Colors.grey.shade200,
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          disabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
-                    )
-                  : null,
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerFloat,
-              body: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: ListView(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.35,
-                      child: FastCachedImage(
-                        url:
-                            'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/dog-breeding-buying-puppy-pet-store-domestic-animal-couple-adopting-puppy-breed-club-top-breed-standard-buy-your-purebred-pet-here-concept-bright-vibrant-violet-isolated-illustration.png?alt=media&token=249eb91a-008a-4c52-b87b-433b1c4eb256',
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-
-                    ///title
-                    Center(
-                      child: Text(
-                        isArabic() ? 'ردود فعل الجلسة' : 'Session feedback',
-                        style: GoogleFonts.inter(
-                          color: MainCubit.get(context).isDark
-                              ? Colors.white
-                              : Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-
-                    /// description
-                    Center(
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: isArabic()
-                                  ? 'يرجى تقييم تجربتك مع '
-                                  : 'Please rate your experience with ',
-                              style: GoogleFonts.inter(
-                                color: MainCubit.get(context).isDark
-                                    ? Colors.white
-                                    : Colors.grey.shade600,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            TextSpan(
-                              text: widget.model.clinicName,
-                              style: GoogleFonts.inter(
-                                color: MainCubit.get(context).isDark
-                                    ? Colors.white
-                                    : Colors.grey.shade600,
-                                fontSize: 14,
-                                fontWeight: FontWeight
-                                    .bold, // Make the clinic name bold
-                              ),
-                            ),
-                          ],
-                        ),
-                        textAlign: TextAlign.center, // Center-align the text
-                      ),
-                    ),
-
-                    SizedBox(
-                      height: 50,
-                    ),
-
-                    /// rating service
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '${S.of(context).DoctorService}:',
-                          style: FontStyleThame.textStyle(
-                            context: context,
-                            fontSize: 14,
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(5, (index) {
-                            return InkWell(
-                              onTap: !widget.model.isRating
-                                  ? () {
-                                      cubit.ratingDoctor = index + 1;
-
-                                      cubit.emit(RateBoardingLoading());
-                                    }
-                                  : null,
-                              child: widget.model.isRating
-                                  ? FastCachedImage(
-                                      url: index >= cubit.ratingDoctor
-                                          ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
-                                          : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
-                                      width: 20,
-                                    )
-                                  : Image.network(
-                                      index >= cubit.ratingDoctor
-                                          ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
-                                          : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
-                                      width: 20,
-                                    ),
-                            );
-                          }),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-
-                    Divider(),
-
-                    SizedBox(
-                      height: 20,
-                    ),
-
-                    /// rating cleanliness
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '${S.of(context).CleanlinessOfClinic}:',
-                          style: FontStyleThame.textStyle(
-                            context: context,
-                            fontSize: 14,
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(5, (index) {
-                            return InkWell(
-                              onTap: !widget.model.isRating
-                                  ? () {
-                                      cubit.ratingCleanliness = index + 1;
-                                      cubit.emit(RateBoardingLoading());
-                                    }
-                                  : null,
-                              child: widget.model.isRating
-                                  ? FastCachedImage(
-                                      url: index >= cubit.ratingCleanliness
-                                          ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
-                                          : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
-                                      width: 20,
-                                    )
-                                  : Image.network(
-                                      index >= cubit.ratingCleanliness
-                                          ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
-                                          : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
-                                      width: 20,
-                                    ),
-                            );
-                          }),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    if (widget.model.isRating)
-                      MyTextForm(
-                        controller: cubit.rateController,
-                        prefixIcon: SizedBox(),
-                        maxLines: 5,
-                        enable: false,
-                        hintText: widget.model.isRating
-                            ? widget.model.feedbackComment ?? ''
-                            : isArabic()
-                                ? "الرجاء إدخال ملاحظاتك"
-                                : 'Please enter your feedback',
-                        validatorText: '',
-                        enabled: !widget.model.isRating,
-                        obscureText: false,
-                      ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ),
-              ),
-              appBar: AppBar(
-                automaticallyImplyLeading: widget.model.isRating,
-                leading: widget.model.isRating
-                    ? IconButton(
-                        onPressed: () {
-                          navigateAndFinish(context, LayoutScreen());
-                        },
-                        icon: Icon(
-                          !isArabic()
-                              ? Icons.arrow_back_ios
-                              : Icons.arrow_forward_ios,
-                        ))
-                    : null,
-              ),
-            ),
-          );
-        },
-      ),
-    );
+  void dispose() {
+    _feedbackController.dispose();
+    super.dispose();
   }
 }

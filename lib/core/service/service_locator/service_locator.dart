@@ -1,4 +1,15 @@
 import 'package:get_it/get_it.dart';
+import 'package:squeak/features/appointments/boarding/data/repositories/boarding_repository_impl.dart';
+import 'package:squeak/features/appointments/boarding/domain/usecases/get_boarding_types_usecase.dart';
+import 'package:squeak/features/appointments/boarding/presentation/cubit/boarding_cubit.dart';
+import '../../../features/appointments/boarding/data/datasources/boarding_local_data_source.dart';
+import '../../../features/appointments/boarding/data/datasources/boarding_remote_data_source.dart';
+import '../../../features/appointments/boarding/domain/repositories/boarding_repository.dart';
+import '../../../features/appointments/boarding/domain/usecases/create_boarding_usecase.dart';
+import '../../../features/appointments/boarding/domain/usecases/edit_boarding_usecase.dart';
+import '../../../features/appointments/boarding/domain/usecases/get_boarding_entries_usecase.dart';
+import '../../../features/appointments/boarding/domain/usecases/rate_boarding_usecase.dart';
+import '../../../features/appointments/boarding/domain/usecases/share_image_usecase.dart';
 import '../../../features/appointments/exam/presentation/controller/user/user_appointment_cubit.dart';
 import '../../../features/layout/search/presentation/controller/search_cubit.dart';
 import '../../../features/settings/persentaion/controller/setting_cubit.dart';
@@ -202,6 +213,7 @@ class ServiceLocator {
     sl.registerLazySingleton<BaseVetRemoteDataSource>(
       () => VetRemoteDataSource(),
     );
+
     // Cubits
     sl.registerFactory(
       () => AppointmentCubit(
@@ -292,5 +304,39 @@ class ServiceLocator {
 
     // UI Cubit
     sl.registerFactory(() => VaccinationUiCubit(dataCubit: sl()));
+
+    // Cubits
+    sl.registerFactory(
+      () => BoardingCubit(
+        getBoardingTypesUseCase: sl(),
+        createBoardingUseCase: sl(),
+        editBoardingUseCase: sl(),
+        getBoardingEntriesUseCase: sl(),
+        rateBoardingUseCase: sl(),
+        shareImageEntriesUseCase: sl(),
+      ),
+    );
+
+    // Use cases
+    sl.registerLazySingleton(() => GetBoardingTypesUseCase(sl()));
+    sl.registerLazySingleton(() => CreateBoardingUseCase(sl()));
+    sl.registerLazySingleton(() => EditBoardingUseCase(sl()));
+    sl.registerLazySingleton(() => GetBoardingEntriesUseCase(sl()));
+    sl.registerLazySingleton(() => RateBoardingUseCase(sl()));
+    sl.registerLazySingleton(() => ShareImageEntriesUseCase(sl()));
+
+    // Repository
+    sl.registerLazySingleton<BoardingRepository>(
+      () =>
+          BoardingRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()),
+    );
+
+    // Data sources
+    sl.registerLazySingleton<BoardingLocalDataSource>(
+      () => BoardingLocalDataSourceImpl(),
+    );
+    sl.registerLazySingleton<BoardingRemoteDataSource>(
+          () => BoardingRemoteDataSourceImpl(),
+    );
   }
 }

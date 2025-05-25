@@ -18,8 +18,8 @@ class LoginRemoteDataSource {
       data: {
         'emailOrPhoneNumber': emailOrPhoneNumber,
         'password': password,
-        'FbToken': fbToken,
-        'IOSDevice': Platform.isIOS,
+        // 'FbToken': fbToken,
+        // 'IOSDevice': Platform.isIOS,
         'Androidevice': Platform.isAndroid,
       },
     );

@@ -135,27 +135,12 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
     );
   }
 
-  void filterAppointments({
-    String? petId,
-    String? petName,
-    int? state,
-    String? stateValue,
-  }) {
-    selectedPetId = petId;
-    selectedState = state;
-    this.petName = petName;
-    selectedStateValue = stateValue;
-
-    filteredList =
-        appointments.where((appointment) {
-          final matchesPet =
-              selectedPetId == null ||
-              appointment.pet.squeakPetId == selectedPetId;
-          final matchesState =
-              selectedState == null || appointment.status == selectedState;
+  void filterAppointments() {
+    filteredList = appointments.where((appointment) {
+          final matchesPet = selectedPetId == null || appointment.pet.squeakPetId == selectedPetId;
+          final matchesState = selectedState == null || appointment.status == selectedState;
           return matchesPet && matchesState;
         }).toList();
-
     emit(AppointmentFiltered(filteredList));
   }
 
@@ -215,4 +200,5 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
       ),
     );
   }
+
 }

@@ -67,7 +67,7 @@ const String audioHelperEndPoint = '/audio';
 String createPostEndPoint(String postId) => '$version/posts?Id=$postId';
 const String getUserPostsEndPoint = '$version/posts/user';
 String getPostEndPoint(int pageNumber) =>
-    '$version/posts/user/paggination?pageSize=100&pageNumber=$pageNumber';
+    '$version/posts/user/paggination?pageSize=30&pageNumber=$pageNumber';
 String getDoctorPostEndPoint(int pageNumber) =>
     '$version/posts/doctor/paggination?pageSize=15&pageNumber=$pageNumber';
 const String deletePostEndPoint = '$version/posts';
@@ -142,8 +142,7 @@ String getFilesAndPrescriptionForPetEndPoint({
 }) =>
     '$version/vetcare/PrescriptionAndMedicalTests/$reservationid';
 ///todo boarding
-String boardingTypeEndPoint(String ClinicCode) =>
-    '$version/vetcare/BoardingType?ClinicCode=$ClinicCode';
+String boardingTypeEndPoint(String ClinicCode) => '$version/vetcare/BoardingType?ClinicCode=$ClinicCode';
 String createBoardingEndPoint  = '$version/vetcare/boarding';
 String editBoardingEndPoint  = '$version/vetcare/updateboarding';
 String getAllBoardingEndPoint(String phone) =>

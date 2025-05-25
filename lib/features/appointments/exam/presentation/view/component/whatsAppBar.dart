@@ -226,6 +226,7 @@ class ProfileIconButtons extends StatelessWidget {
                   return ElevatedButton(
                     onPressed: () {
                       SearchCubit.get(context).unfollowClinic(clinics.id);
+
                       AppointmentCubit.get(context).emit(UnfollowSuccess());
                     },
                     style: ElevatedButton.styleFrom(

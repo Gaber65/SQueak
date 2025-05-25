@@ -141,6 +141,55 @@ class _BookingContentState extends State<BookingContent> {
             return false;
           },
           child: Scaffold(
+            appBar: AppBar(
+              title: Text(
+                S.of(context).booking,
+              ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: 100,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: ColorManager.primaryColor.withOpacity(
+                          .2,
+                        ),
+                      ),
+                      onPressed:
+                      cubit.isLoading
+                          ? null
+                          : () {
+                        if (time == null) {
+                          infoToast(
+                            context,
+                            isArabic()
+                                ? 'الوقت مطلوب'
+                                : 'Please select time',
+                          );
+                        } else {
+                          handleCreateAppointment(context);
+                        }
+                      },
+                      child:
+                      cubit.isLoading
+                          ? const CircularProgressIndicator()
+                          : Text(
+                        S.of(context).booking,
+                        style: FontStyleThame.textStyle(
+                          context: context,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          fontColor: ColorManager.primaryColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
             floatingActionButton: Padding(

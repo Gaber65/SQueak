@@ -106,13 +106,11 @@ String formatTimeToAmPmReminder(String time) {
 String formatBoarding(String createdAt) {
   print("Input date string: $createdAt");
 
-  // Define the expected format based on actual date string
-  DateFormat backendFormat =
-  DateFormat("yyyy-MM-dd'T'HH:mm:ss", 'en_US'); // Adjust as needed
+  // Adjusted format to match actual input
+  DateFormat backendFormat = DateFormat("yyyy-MM-dd HH:mm:ss.SSS", 'en_US');
 
-  DateTime utcTime = backendFormat.parse(createdAt, true);
-
-  DateTime localTime = utcTime.toLocal();
+  DateTime utcTime = backendFormat.parse(createdAt, true); // Treat as UTC
+  DateTime localTime = utcTime.toLocal(); // Convert to local time
 
   return DateFormat('MMM dd yyyy, hh:mm a', 'en_US').format(localTime);
 }

@@ -124,7 +124,7 @@ class ClientModel extends ClientEntity {
   }
 }
 
-class PetModel extends PetEntity {
+class PetModel extends PetEntityAppointment {
   const PetModel({
     super.name,
     super.gender,

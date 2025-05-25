@@ -42,8 +42,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
 
   final List<Map> services = [
     // {'en': 'Grooming', 'ar': 'تجميل'},
-    {'en': 'Boarding', 'ar': 'الاقامة'},
     {'en': 'Examination', 'ar': 'الاختبار'},
+
+    {'en': 'Boarding', 'ar': 'الاقامة'},
   ];
 
   @override
@@ -58,7 +59,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
         BlocProvider(create: (_) => sl<PetCubit>()..getOwnerPets()),
         BlocProvider(
           create:
-              (context) => BoardingCubit()..getBoardingType(widget.clinicCode),
+              (context) =>
+                  sl<BoardingCubit>()..getBoardingTypes(widget.clinicCode),
         ),
       ],
       child: BlocConsumer<AppointmentCubit, AppointmentState>(
@@ -66,13 +68,27 @@ class _ServiceScreenState extends State<ServiceScreen> {
           // TODO: implement listener
         },
         builder: (context, state) {
+          return BookingScreen(
+            doctors: widget.doctors,
+            clinicCode: widget.clinicCode,
+            selectedDate: widget.selectedDate,
+            timeSlotData: widget.timeSlotData,
+            petSelectFromIcon: widget.petSelectFromIcon,
+          );
           return DefaultTabController(
             length: services.length,
             child: Scaffold(
               appBar: AppBar(
-                automaticallyImplyLeading: false,
+                automaticallyImplyLeading: true,
+                title: Text(
+                  isArabic() ? 'الخدمات' : 'Services',
+                  style: FontStyleThame.textStyle(
+                    context: context,
+                    fontSize: 20,
+                  ),
+                ),
                 bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(15),
+                  preferredSize: const Size.fromHeight(40),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(

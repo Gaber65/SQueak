@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
+import 'package:squeak/features/appointments/boarding/presentation/cubit/boarding_state.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 import '../../../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart' show MainCubit;
 import '../../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../../../../generated/l10n.dart';
-import '../../../domain/entities/boarding_state.dart';
+import '../../../domain/entities/boarding_status.dart';
 import '../../cubit/boarding_cubit.dart';
 
 Widget buildPetFilterBoarding(BuildContext context, List<PetEntities> pets) {
@@ -65,7 +66,7 @@ Widget buildStateFilterBoarding(BuildContext context) {
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: PopupMenuButton<StateBoarding>(
+        child: PopupMenuButton<StateBoardingEnums>(
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height,
           ),
@@ -76,11 +77,12 @@ Widget buildStateFilterBoarding(BuildContext context) {
           onSelected: (value) {
             BoardingCubit.get(context).selectedState = value.state.index;
             BoardingCubit.get(context).selectedStateValue = value.key;
+            BoardingCubit.get(context).emit(FilterState());
             BoardingCubit.get(context).filterBoardings();
           },
           itemBuilder: (context) =>
               generateDummyDataStateForBoarding(context).map((e) {
-            return PopupMenuItem<StateBoarding>(
+            return PopupMenuItem<StateBoardingEnums>(
               value: e,
               child: Text(e.key),
             );
