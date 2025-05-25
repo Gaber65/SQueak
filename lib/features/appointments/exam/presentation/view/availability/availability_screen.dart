@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/component/CustomCalendarDatePicker.dart';
 import '../../../../../pets/domain/entities/pet_entity.dart';
-import '../../../../service_screen.dart';
 import '../../../domain/entities/clinic_entity.dart';
 import '../../controller/clinic/appointment_cubit.dart';
 import '../appointments/book_again_screen.dart';
@@ -111,7 +110,7 @@ class AvailabilityScreen extends StatelessWidget {
                                     cubit.selectedDate = selectedDay;
                                     navigateToScreen(
                                       context,
-                                      ServiceScreen(
+                                      BookingScreen(
                                         timeSlotData: cubit.availabilities,
                                         selectedDate: selectedDay,
                                         doctors: cubit.doctors,
