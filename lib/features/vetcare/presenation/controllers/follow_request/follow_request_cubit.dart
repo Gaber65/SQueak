@@ -5,8 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/utils/export_path/export_files.dart';
-import '../../../../appointments/data/models/clinic_model.dart';
-import '../../../../appointments/domain/entities/clinic_entity.dart';
+import '../../../../appointments/exam/data/models/clinic_model.dart';
+import '../../../../appointments/exam/domain/entities/clinic_entity.dart';
 import '../../../domain/use_case/follow_request_usecase.dart';
 
 part 'follow_request_state.dart';

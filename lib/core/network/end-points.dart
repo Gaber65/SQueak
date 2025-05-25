@@ -141,6 +141,15 @@ String getFilesAndPrescriptionForPetEndPoint({
   required String reservationid,
 }) =>
     '$version/vetcare/PrescriptionAndMedicalTests/$reservationid';
+///todo boarding
+String boardingTypeEndPoint(String ClinicCode) =>
+    '$version/vetcare/BoardingType?ClinicCode=$ClinicCode';
+String createBoardingEndPoint  = '$version/vetcare/boarding';
+String editBoardingEndPoint  = '$version/vetcare/updateboarding';
+String getAllBoardingEndPoint(String phone) =>
+    '$version/vetcare/boarding?ClientPhone=$phone';
+String rateBoardingEndPoint  = '$version/vetcare/reviewboarding';
+
 
 /// App State
 String? clintId;

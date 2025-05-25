@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/appointments/presentation/view/supplier/get_supplier.dart';
-import 'package:squeak/features/service/view/pet_vaccination.dart';
-import 'package:squeak/generated/l10n.dart';
+import 'package:squeak/features/appointments/exam/presentation/view/supplier/get_supplier.dart';
+import 'package:squeak/features/vaccination/presentation/pages/pet_vaccination_page.dart';
 
 import '../../../../domain/entities/pet_entity.dart';
 import '../../../controller/pet_cubit.dart';
@@ -95,7 +94,7 @@ class PetCard extends StatelessWidget {
             text: isArabic() ? "تذكيرات" : "Reminders",
             color: Colors.green,
             onPressed:
-                () => navigateToScreen(context, PetVaccination(petModel: pet)),
+                () => navigateToScreen(context, PetVaccinationPage(petModel: pet)),
           ),
         ),
         const SizedBox(width: 12),

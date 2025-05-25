@@ -299,6 +299,21 @@
   "addToSqueak" : "اضافة الى Squeak",
   "linkAnotherPet" : "الارتباط أليف آخر",
   "yourPets" : "اصدقاءك الصغار",
-  "compeleteSqueakRegister" : "أكمل نموذج التسجيل دعوة vetIcare"
-
+  "compeleteSqueakRegister" : "أكمل نموذج التسجيل دعوة vetIcare",
+  "selectPet": "يرجى اختيار أليف لبدء الخدمة",
+  "pleaseSelectBoarding": "يرجى اختيار نوع الإقامة",
+  "pleaseSelectCage": "يرجى اختيار القفص",
+  "boardingType": "نوع الإقامة",
+  "selectBoarding": "اختر نوع الإقامة",
+  "boardingTypeNoteHour": "يرجى ملاحظة أنك اخترت تكلفة الإقامة بالساعات",
+  "boardingTypeNoteDay": "يرجى ملاحظة أنك اخترت تكلفة الإقامة بالأيام",
+  "boardingCage": "القفص",
+  "cageSelect": "اختر قفصًا",
+  "entryDate": "تاريخ الدخول",
+  "exitDate": "تاريخ الخروج",
+  "boardingPrice": "التكلفة الأولية",
+  "boardingBy": "الإقامة بواسطة",
+  "selectBoardingBy": "اختر طبيبًا",
+  "ShareImagesPet": "شارك صور الالأليف",
+  "findPotentialMates": "ابحث عن صديقك الاليف..."
 }

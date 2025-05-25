@@ -300,5 +300,21 @@
   "addToSqueak" : "Add to squeak",
   "linkAnotherPet": "Link another pet",
   "yourPets": "Your SQueak Pet",
-  "compeleteSqueakRegister" : "Complete the register from vetIcare invitation"
+  "compeleteSqueakRegister" : "Complete the register from vetIcare invitation",
+  "selectPet":"Please select a pet to start service",
+  "pleaseSelectBoarding":"Please select boarding Type name",
+  "pleaseSelectCage":"Please select Cage",
+  "boardingType": "Boarding Type",
+  "selectBoarding": "Select Boarding Type name",
+  "boardingTypeNoteHour": "Note that you select boarding price in hours",
+  "boardingTypeNoteDay": "Note that you select boarding price in days",
+  "boardingCage": "Cage",
+  "cageSelect": "Select Cage",
+  "entryDate": "Entry Date",
+  "exitDate": "Exit Date",
+  "boardingPrice": "Initial cost",
+  "boardingBy":"Boarding By",
+  "selectBoardingBy": "Select Doctor",
+  "ShareImagesPet": "Share Images Pet",
+  "findPotentialMates": "Search for pets..."
 }

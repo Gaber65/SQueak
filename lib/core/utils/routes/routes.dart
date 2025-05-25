@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:squeak/features/appointments/domain/entities/appointment_entity.dart';
-import 'package:squeak/features/appointments/presentation/view/appointments/rate_appointment.dart';
+import 'package:squeak/features/appointments/exam/domain/entities/appointment_entity.dart';
+import 'package:squeak/features/appointments/exam/presentation/view/appointments/rate_appointment.dart';
 import 'package:squeak/features/layout/layout/presentation/screens/layout_screen.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/screens/post_notfication.dart';
 import '../../../features/auth/login/presentation/pages/login_screen.dart';

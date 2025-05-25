@@ -47,6 +47,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ServiceLocation": MessageLookupByLibrary.simpleMessage("موقع الخدمة"),
     "ServiceName": MessageLookupByLibrary.simpleMessage("اسم الخدمة"),
     "ServicePhone": MessageLookupByLibrary.simpleMessage("هاتف الخدمة"),
+    "ShareImagesPet": MessageLookupByLibrary.simpleMessage("شارك صور الالأليف"),
     "TimeOfRecord": MessageLookupByLibrary.simpleMessage("الوقت"),
     "about": MessageLookupByLibrary.simpleMessage("عن التطبيق"),
     "accept": MessageLookupByLibrary.simpleMessage("قبول"),
@@ -115,8 +116,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "birthdate_validation": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال تاريخ ميلادك",
     ),
+    "boardingBy": MessageLookupByLibrary.simpleMessage("الإقامة بواسطة"),
+    "boardingCage": MessageLookupByLibrary.simpleMessage("القفص"),
+    "boardingPrice": MessageLookupByLibrary.simpleMessage("التكلفة الأولية"),
+    "boardingType": MessageLookupByLibrary.simpleMessage("نوع الإقامة"),
+    "boardingTypeNoteDay": MessageLookupByLibrary.simpleMessage(
+      "يرجى ملاحظة أنك اخترت تكلفة الإقامة بالأيام",
+    ),
+    "boardingTypeNoteHour": MessageLookupByLibrary.simpleMessage(
+      "يرجى ملاحظة أنك اخترت تكلفة الإقامة بالساعات",
+    ),
     "booking": MessageLookupByLibrary.simpleMessage("الحجز"),
     "breed": MessageLookupByLibrary.simpleMessage("السلالة"),
+    "cageSelect": MessageLookupByLibrary.simpleMessage("اختر قفصًا"),
     "cancel": MessageLookupByLibrary.simpleMessage("الغاء"),
     "cancelFollow": MessageLookupByLibrary.simpleMessage("إلغاء المتابعة"),
     "changePassword": MessageLookupByLibrary.simpleMessage("تغيير كلمة المرور"),
@@ -258,6 +270,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "أدخل كلمة المرور الخاصة بك",
     ),
     "enterYourText": MessageLookupByLibrary.simpleMessage("بماذا تفكر ....؟"),
+    "entryDate": MessageLookupByLibrary.simpleMessage("تاريخ الدخول"),
+    "exitDate": MessageLookupByLibrary.simpleMessage("تاريخ الخروج"),
     "expiredRequest": MessageLookupByLibrary.simpleMessage(
       "طلب المتابعة الذي تبحث عنه لم يعد متوفرًا. قد يكون قد تم إلغاؤه، أو انتهت صلاحيته، أو تم قبوله بالفعل.",
     ),
@@ -272,6 +286,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "filter_hint_State": MessageLookupByLibrary.simpleMessage("فرز حسب الحالة"),
     "filter_hint_pets": MessageLookupByLibrary.simpleMessage(
       "فرز حسب اسم الأليف",
+    ),
+    "findPotentialMates": MessageLookupByLibrary.simpleMessage(
+      "ابحث عن صديقك الاليف...",
     ),
     "followCode": MessageLookupByLibrary.simpleMessage("كود العياده"),
     "followConfirmation": MessageLookupByLibrary.simpleMessage(
@@ -400,6 +417,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "phone_validation": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال رقم هاتفك",
     ),
+    "pleaseSelectBoarding": MessageLookupByLibrary.simpleMessage(
+      "يرجى اختيار نوع الإقامة",
+    ),
+    "pleaseSelectCage": MessageLookupByLibrary.simpleMessage(
+      "يرجى اختيار القفص",
+    ),
     "prescription": MessageLookupByLibrary.simpleMessage("الروشة"),
     "price": MessageLookupByLibrary.simpleMessage("السعر"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("سياسة الخصوصية"),
@@ -443,6 +466,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "securityAuditsDesc": MessageLookupByLibrary.simpleMessage(
       "نقوم بإجراء تدقيقات أمنية منتظمة لتحديد ومعالجة المخاطر الأمنية المحتملة. فريقنا مكرس لمراقبة وتعزيز تدابير الأمان باستمرار لضمان سلامة وخصوصية بيانات عيادتك.",
+    ),
+    "selectBoarding": MessageLookupByLibrary.simpleMessage("اختر نوع الإقامة"),
+    "selectBoardingBy": MessageLookupByLibrary.simpleMessage("اختر طبيبًا"),
+    "selectPet": MessageLookupByLibrary.simpleMessage(
+      "يرجى اختيار أليف لبدء الخدمة",
     ),
     "selectPetType": MessageLookupByLibrary.simpleMessage("اختر نوع الاليف"),
     "send": MessageLookupByLibrary.simpleMessage("إرسال"),

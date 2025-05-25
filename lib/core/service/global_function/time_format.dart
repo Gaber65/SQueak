@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 
-
-
 String formatTimeToAmPm(String time) {
+  print('time: $time');
   if (time.isEmpty) return '';
 
   final parts = time.split(':');
@@ -42,7 +41,10 @@ String formatDate(String dateString) {
 
 String formatFacebookTimePost(String createdAt) {
   try {
-    final backendFormat = DateFormat('EEE MMM dd yyyy HH:mm:ss \'GMT\'z', 'en_US');
+    final backendFormat = DateFormat(
+      'EEE MMM dd yyyy HH:mm:ss \'GMT\'z',
+      'en_US',
+    );
     final utcTime = backendFormat.parse(createdAt, true);
     final localTime = utcTime.toLocal();
     final now = DateTime.now();
@@ -84,4 +86,33 @@ String formatBILL(String createdAt) {
   final localTime = utcTime.toLocal();
 
   return DateFormat('EEE, MMM dd yyyy, hh:mm a', 'en_US').format(localTime);
+}
+
+String formatTimeToAmPmReminder(String time) {
+  if (time.trim().isEmpty) return '';
+  final parts = time.trim().split(':').map((e) => e.trim()).toList();
+  if (parts.length < 2) return '';
+  final hours = int.parse(parts[0]);
+  final minutes = int.parse(parts[1]);
+
+  var hour = hours % 12;
+  if (hour == 0) hour = 12;
+
+  final formattedMinutes = minutes.toString().padLeft(2, '0');
+  final suffix = hours >= 12 ? 'PM' : 'AM';
+
+  return '$hour:$formattedMinutes $suffix';
+}
+String formatBoarding(String createdAt) {
+  print("Input date string: $createdAt");
+
+  // Define the expected format based on actual date string
+  DateFormat backendFormat =
+  DateFormat("yyyy-MM-dd'T'HH:mm:ss", 'en_US'); // Adjust as needed
+
+  DateTime utcTime = backendFormat.parse(createdAt, true);
+
+  DateTime localTime = utcTime.toLocal();
+
+  return DateFormat('MMM dd yyyy, hh:mm a', 'en_US').format(localTime);
 }

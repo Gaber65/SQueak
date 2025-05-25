@@ -2563,6 +2563,141 @@ class S {
       args: [],
     );
   }
+
+  /// `Please select a pet to start service`
+  String get selectPet {
+    return Intl.message(
+      'Please select a pet to start service',
+      name: 'selectPet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select boarding Type name`
+  String get pleaseSelectBoarding {
+    return Intl.message(
+      'Please select boarding Type name',
+      name: 'pleaseSelectBoarding',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select Cage`
+  String get pleaseSelectCage {
+    return Intl.message(
+      'Please select Cage',
+      name: 'pleaseSelectCage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Boarding Type`
+  String get boardingType {
+    return Intl.message(
+      'Boarding Type',
+      name: 'boardingType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Boarding Type name`
+  String get selectBoarding {
+    return Intl.message(
+      'Select Boarding Type name',
+      name: 'selectBoarding',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Note that you select boarding price in hours`
+  String get boardingTypeNoteHour {
+    return Intl.message(
+      'Note that you select boarding price in hours',
+      name: 'boardingTypeNoteHour',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Note that you select boarding price in days`
+  String get boardingTypeNoteDay {
+    return Intl.message(
+      'Note that you select boarding price in days',
+      name: 'boardingTypeNoteDay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cage`
+  String get boardingCage {
+    return Intl.message('Cage', name: 'boardingCage', desc: '', args: []);
+  }
+
+  /// `Select Cage`
+  String get cageSelect {
+    return Intl.message('Select Cage', name: 'cageSelect', desc: '', args: []);
+  }
+
+  /// `Entry Date`
+  String get entryDate {
+    return Intl.message('Entry Date', name: 'entryDate', desc: '', args: []);
+  }
+
+  /// `Exit Date`
+  String get exitDate {
+    return Intl.message('Exit Date', name: 'exitDate', desc: '', args: []);
+  }
+
+  /// `Initial cost`
+  String get boardingPrice {
+    return Intl.message(
+      'Initial cost',
+      name: 'boardingPrice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Boarding By`
+  String get boardingBy {
+    return Intl.message('Boarding By', name: 'boardingBy', desc: '', args: []);
+  }
+
+  /// `Select Doctor`
+  String get selectBoardingBy {
+    return Intl.message(
+      'Select Doctor',
+      name: 'selectBoardingBy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share Images Pet`
+  String get ShareImagesPet {
+    return Intl.message(
+      'Share Images Pet',
+      name: 'ShareImagesPet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search for pets...`
+  String get findPotentialMates {
+    return Intl.message(
+      'Search for pets...',
+      name: 'findPotentialMates',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

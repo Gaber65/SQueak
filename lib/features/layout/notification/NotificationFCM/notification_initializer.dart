@@ -1,6 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'notification_navigation.dart';
+import 'notification_service.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -40,4 +41,6 @@ Future<void> initNotifications() async {
   if (details?.didNotificationLaunchApp ?? false) {
     initialNotificationPayload = details?.notificationResponse?.payload;
   }
+
+  await NotificationServiceReminder.init();
 }

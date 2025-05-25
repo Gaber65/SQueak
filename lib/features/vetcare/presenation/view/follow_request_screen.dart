@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../../generated/l10n.dart';
-import '../../../service/view/pet_vaccination.dart';
+import '../../../vaccination/presentation/widgets/vaccination_loading.dart';
 import '../controllers/follow_request/follow_request_cubit.dart';
 import 'pet_merge_screen.dart';
 
@@ -110,7 +110,7 @@ class _FollowRequestContent extends StatelessWidget {
     FollowRequestState state,
   ) {
     // This is a simplified version - you'll need to adapt this based on your actual data structure
-    if (cubit.entities == null) return VacShimmer();
+    if (cubit.entities == null) return VaccinationLoading();
 
     // Check if clinic data is available
     final hasClinicData = cubit.entities != null;

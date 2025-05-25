@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/pets/presentation/controller/pet_cubit.dart';
+import 'package:squeak/features/vaccination/presentation/widgets/vaccination_loading.dart';
 
 import '../../../../generated/l10n.dart';
 import '../../../pets/presentation/view/pet_screen.dart';
-import '../../../service/view/pet_vaccination.dart';
 import '../../domain/entities/vet_client.dart';
 import '../controllers/pet_async/pet_async_cubit.dart';
 
@@ -116,7 +116,7 @@ class _PetMergeContent extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context, PetAsyncCubit cubit) {
-    if (!cubit.isGetVet) return VacShimmer();
+    if (!cubit.isGetVet) return VaccinationLoading();
     if (cubit.vetClientModel.isEmpty) return _buildEmptyStateView(context);
 
     return _buildPetListView(context, cubit);

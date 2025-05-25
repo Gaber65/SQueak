@@ -47,6 +47,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ServiceLocation": MessageLookupByLibrary.simpleMessage("Service location"),
     "ServiceName": MessageLookupByLibrary.simpleMessage("Service Name"),
     "ServicePhone": MessageLookupByLibrary.simpleMessage("Service Phone"),
+    "ShareImagesPet": MessageLookupByLibrary.simpleMessage("Share Images Pet"),
     "TimeOfRecord": MessageLookupByLibrary.simpleMessage("Time"),
     "VerifyPhone": MessageLookupByLibrary.simpleMessage(" Verify Phone"),
     "about": MessageLookupByLibrary.simpleMessage("About"),
@@ -122,8 +123,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "birthdate_validation": MessageLookupByLibrary.simpleMessage(
       "Please enter your birthdate",
     ),
+    "boardingBy": MessageLookupByLibrary.simpleMessage("Boarding By"),
+    "boardingCage": MessageLookupByLibrary.simpleMessage("Cage"),
+    "boardingPrice": MessageLookupByLibrary.simpleMessage("Initial cost"),
+    "boardingType": MessageLookupByLibrary.simpleMessage("Boarding Type"),
+    "boardingTypeNoteDay": MessageLookupByLibrary.simpleMessage(
+      "Note that you select boarding price in days",
+    ),
+    "boardingTypeNoteHour": MessageLookupByLibrary.simpleMessage(
+      "Note that you select boarding price in hours",
+    ),
     "booking": MessageLookupByLibrary.simpleMessage("Booking"),
     "breed": MessageLookupByLibrary.simpleMessage("breed"),
+    "cageSelect": MessageLookupByLibrary.simpleMessage("Select Cage"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "cancelFollow": MessageLookupByLibrary.simpleMessage("Cancel"),
     "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
@@ -269,6 +281,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterYourText": MessageLookupByLibrary.simpleMessage(
       "What are you thinking .... ?",
     ),
+    "entryDate": MessageLookupByLibrary.simpleMessage("Entry Date"),
+    "exitDate": MessageLookupByLibrary.simpleMessage("Exit Date"),
     "expiredRequest": MessageLookupByLibrary.simpleMessage(
       "The follow request you\\\'re looking for is no longer available. \'\n                      \'It may have been cancelled, expired, or already accepted.",
     ),
@@ -284,6 +298,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Filter by status",
     ),
     "filter_hint_pets": MessageLookupByLibrary.simpleMessage("Filter by pet"),
+    "findPotentialMates": MessageLookupByLibrary.simpleMessage(
+      "Search for pets...",
+    ),
     "followCode": MessageLookupByLibrary.simpleMessage("Follow Code"),
     "followConfirmation": MessageLookupByLibrary.simpleMessage(
       "Follow Confirmation",
@@ -428,6 +445,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "phone_validation": MessageLookupByLibrary.simpleMessage(
       "Please enter your phone number",
     ),
+    "pleaseSelectBoarding": MessageLookupByLibrary.simpleMessage(
+      "Please select boarding Type name",
+    ),
+    "pleaseSelectCage": MessageLookupByLibrary.simpleMessage(
+      "Please select Cage",
+    ),
     "prescription": MessageLookupByLibrary.simpleMessage("Prescription"),
     "price": MessageLookupByLibrary.simpleMessage("price"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
@@ -471,6 +494,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "securityAuditsDesc": MessageLookupByLibrary.simpleMessage(
       "We conduct regular security audits to identify and address potential security risks. Our team is dedicated to continuously monitoring and enhancing our security measures to ensure the safety and privacy of your clinic\'s data.",
+    ),
+    "selectBoarding": MessageLookupByLibrary.simpleMessage(
+      "Select Boarding Type name",
+    ),
+    "selectBoardingBy": MessageLookupByLibrary.simpleMessage("Select Doctor"),
+    "selectPet": MessageLookupByLibrary.simpleMessage(
+      "Please select a pet to start service",
     ),
     "selectPetType": MessageLookupByLibrary.simpleMessage("Select Pet Type"),
     "send": MessageLookupByLibrary.simpleMessage("Send"),

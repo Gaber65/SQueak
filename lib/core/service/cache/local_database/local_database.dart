@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-import '../../../../features/service/models/reminder_model.dart';
+import '../../../../features/vaccination/data/models/reminder_model.dart';
 
 class LocalDatabaseHelper {
   static Database? _database;
