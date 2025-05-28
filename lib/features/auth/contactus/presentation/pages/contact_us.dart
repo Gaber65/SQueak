@@ -48,8 +48,7 @@ class _ContactScreenState extends State<ContactScreen> {
             );
 
             // Initialize necessary data
-            cubit.loadCountries();
-            cubit.detectCountryCode();
+            cubit.loadCountries().then((value) => cubit.detectCountryCode());
 
             return cubit;
           },
@@ -57,6 +56,7 @@ class _ContactScreenState extends State<ContactScreen> {
       ],
       child: BlocConsumer<ContactUsCubit, ContactUsState>(
         listener: (context, state) {
+
           if (state is ContactUsErrorState) {
             errorToast(
               context,

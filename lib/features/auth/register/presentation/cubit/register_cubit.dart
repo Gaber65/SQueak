@@ -9,7 +9,8 @@ import 'package:squeak/features/auth/register/domin/entities/register_entity.dar
 import 'package:squeak/features/auth/register/domin/usecses/get_countries_use_case.dart';
 import 'package:squeak/features/auth/register/domin/usecses/register_qr_use_case.dart';
 import 'package:squeak/features/auth/register/domin/usecses/register_use_case.dart';
-
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 part 'register_state.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
@@ -21,15 +22,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     required this.getCountriesUseCase,
     required this.registerUseCase,
     required this.registerQrUseCase,
-  }) : super(RegisterInitial()) {
-    // Initialize controllers
-    _initializeControllers();
-  }
-
-  Future<void> initialize() async {
-    await loadCountries();
-    await detectCountryCode();
-  }
+  }) : super(RegisterInitial());
 
   static RegisterCubit get(BuildContext context) => BlocProvider.of(context);
 
@@ -46,8 +39,8 @@ class RegisterCubit extends Cubit<RegisterState> {
   // State variables
   bool isAccept = false;
   bool isRegister = false;
-  String countryCode = "EG";
-  String countryPhoneCode = "+20";
+  String countryCode = "";
+  String countryPhoneCode = "";
   int countryIdToServer = 1;
   List<CountryEntity> countries = [];
 
@@ -92,16 +85,55 @@ class RegisterCubit extends Cubit<RegisterState> {
   Future<void> detectCountryCode() async {
     emit(CountryCodeDetectionLoadingState());
     try {
-      // Default values as fallback
-      countryCode = "EG";
-      countryPhoneCode = "+20";
-      countryIdToServer = 1;
+      // Step 1: Get device location
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        emit(CountryCodeDetectionErrorState("Location services are disabled."));
+        return;
+      }
 
-      // Here you could add actual geolocation detection:
-      // 1. Get device location
-      // 2. Reverse geocode to get country
-      // 3. Match with countries list
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.deniedForever) {
+        emit(
+          CountryCodeDetectionErrorState(
+            "Location permissions are permanently denied.",
+          ),
+        );
+        return;
+      }
 
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission != LocationPermission.whileInUse &&
+            permission != LocationPermission.always) {
+          emit(
+            CountryCodeDetectionErrorState("Location permission not granted."),
+          );
+          return;
+        }
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.low,
+      );
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+      final countryCodeFromLocation = placemarks.first.country;
+
+      final country = countries.firstWhere(
+        (c) => c.name == countryCodeFromLocation,
+      );
+
+      countryCode = country.name; // e.g., "US"
+      countryPhoneCode = country.phoneCode; // e.g., "+1"
+      countryIdToServer = country.id;
+      print(countryCodeFromLocation); // Server ID, whatever you use
+      print(countryIdToServer);
+      print(countryPhoneCode);
+      print(countryIdToServer);
       emit(CountryCodeDetectionSuccessState());
     } catch (e) {
       emit(CountryCodeDetectionErrorState(e.toString()));
@@ -167,7 +199,11 @@ class RegisterCubit extends Cubit<RegisterState> {
         .execute(entity, clinicCode)
         .then((value) async {
           emit(RegistrationSuccessState());
-          await LoginCubit.get(context).login(context,email: emailController.text, password: passwordController.text);
+          await LoginCubit.get(context).login(
+            context,
+            email: emailController.text,
+            password: passwordController.text,
+          );
         })
         .catchError((error) {
           isRegister = false;

@@ -73,7 +73,7 @@ class VerifyUser extends StatelessWidget {
           if (state is VerifyUserErrorState) {
             errorToast(context, state.error);
           }
-          if (state is RestPasswordSuccessState) {
+          if (state is VerifyUserSuccessState) {
             navigateAndFinish(context, LoginScreen());
           }
         },

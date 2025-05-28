@@ -139,11 +139,11 @@ class GetUserAppointment extends StatelessWidget {
   }
 
   Widget buildItem(
-    AppointmentEntity appointments,
-    BuildContext context,
-    UserAppointmentCubit cubit,
-    int index,
-  ) {
+      AppointmentEntity appointments,
+      BuildContext context,
+      UserAppointmentCubit cubit,
+      int index,
+      ) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Container(
@@ -172,9 +172,9 @@ class GetUserAppointment extends StatelessWidget {
                           CircleAvatar(
                             radius: MainCubit.get(context).isDark ? 8 : 7,
                             backgroundColor:
-                                MainCubit.get(context).isDark
-                                    ? ColorManager.getAppointmentWhite
-                                    : null,
+                            MainCubit.get(context).isDark
+                                ? ColorManager.getAppointmentWhite
+                                : null,
                             child: CircleAvatar(
                               radius: MainCubit.get(context).isDark ? 5 : 7,
                               backgroundColor: Colors.black,
@@ -184,16 +184,16 @@ class GetUserAppointment extends StatelessWidget {
                           Text(
                             S.of(context).appointmentReserved,
                             style:
-                                MainCubit.get(context).isDark
-                                    ? GoogleFonts.readexPro().copyWith(
-                                      color: ColorManager.sWhite,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                    )
-                                    : GoogleFonts.readexPro().copyWith(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                    ),
+                            MainCubit.get(context).isDark
+                                ? GoogleFonts.readexPro().copyWith(
+                              color: ColorManager.sWhite,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            )
+                                : GoogleFonts.readexPro().copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                           SizedBox(width: 10),
                           Text(
@@ -445,130 +445,130 @@ class GetUserAppointment extends StatelessWidget {
                       )
                     // done status
                     else if (appointments.status == 3)
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 7,
-                            backgroundColor: Colors.green[600],
-                          ),
-                          const SizedBox(width: 5),
-                          Text(S.of(context).appointmentDone),
-                          Spacer(),
-                          Text(
-                            ' ${formatDateString(appointments.date)}  ,  ',
-                            maxLines: 2,
-                          ),
-                          Text(formatTimeToAmPm(appointments.time)),
-                          Spacer(),
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 7,
+                              backgroundColor: Colors.green[600],
+                            ),
+                            const SizedBox(width: 5),
+                            Text(S.of(context).appointmentDone),
+                            Spacer(),
+                            Text(
+                              ' ${formatDateString(appointments.date)}  ,  ',
+                              maxLines: 2,
+                            ),
+                            Text(formatTimeToAmPm(appointments.time)),
+                            Spacer(),
 
-                          if (appointments.status == 3)
-                            PopupMenuButton<int>(
-                              padding: EdgeInsets.zero,
-                              onCanceled: () {
-                                Navigator.of(context);
-                              },
-                              itemBuilder: (context) {
-                                return [
-                                  if (appointments.visitId != null &&
-                                      appointments.isBillSqueakVisible)
+                            if (appointments.status == 3)
+                              PopupMenuButton<int>(
+                                padding: EdgeInsets.zero,
+                                onCanceled: () {
+                                  Navigator.of(context);
+                                },
+                                itemBuilder: (context) {
+                                  return [
+                                    if (appointments.visitId != null &&
+                                        appointments.isBillSqueakVisible)
+                                      PopupMenuItem(
+                                        value: 1,
+                                        onTap: () {
+                                          cubit.printReceipt(
+                                            appointments,
+                                            context,
+                                          );
+                                        },
+                                        child: Row(
+                                          children: [
+                                            isArabic()
+                                                ? Text('الفاتورة')
+                                                : Text('Bill'),
+                                            Spacer(),
+                                            Icon(
+                                              Icons.receipt_long_sharp,
+                                              color: Color(0xff6096ba),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     PopupMenuItem(
-                                      value: 1,
+                                      value: 2,
                                       onTap: () {
-                                        cubit.printReceipt(
-                                          appointments,
+                                        navigateToScreen(
                                           context,
+                                          RateAppointment(
+                                            isNav: true,
+                                            model: appointments,
+                                          ),
                                         );
                                       },
                                       child: Row(
                                         children: [
                                           isArabic()
-                                              ? Text('الفاتورة')
-                                              : Text('Bill'),
+                                              ? Text("التقييم")
+                                              : Text('Rate'),
                                           Spacer(),
                                           Icon(
-                                            Icons.receipt_long_sharp,
-                                            color: Color(0xff6096ba),
+                                            Icons.star_border_purple500,
+                                            color: Colors.amber,
                                           ),
                                         ],
                                       ),
                                     ),
-                                  PopupMenuItem(
-                                    value: 2,
-                                    onTap: () {
-                                      navigateToScreen(
-                                        context,
-                                        RateAppointment(
-                                          isNav: true,
-                                          model: appointments,
-                                        ),
-                                      );
-                                    },
-                                    child: Row(
-                                      children: [
-                                        isArabic()
-                                            ? Text("التقييم")
-                                            : Text('Rate'),
-                                        Spacer(),
-                                        Icon(
-                                          Icons.star_border_purple500,
-                                          color: Colors.amber,
-                                        ),
-                                      ],
+                                    PopupMenuItem(
+                                      value: 3,
+                                      onTap: () {
+                                        navigateToScreen(
+                                          context,
+                                          PrescriptionForPetScreen(
+                                            reservationid: appointments.id,
+                                          ),
+                                        );
+                                      },
+                                      child: Row(
+                                        children: [
+                                          isArabic()
+                                              ? Text("الروشتة")
+                                              : Text("Prescription"),
+                                          Spacer(),
+                                          Icon(
+                                            Icons.add_box_rounded,
+                                            color: Colors.amber,
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  PopupMenuItem(
-                                    value: 3,
-                                    onTap: () {
-                                      navigateToScreen(
-                                        context,
-                                        PrescriptionForPetScreen(
-                                          reservationid: appointments.id,
-                                        ),
-                                      );
-                                    },
-                                    child: Row(
-                                      children: [
-                                        isArabic()
-                                            ? Text("الروشتة")
-                                            : Text("Prescription"),
-                                        Spacer(),
-                                        Icon(
-                                          Icons.add_box_rounded,
-                                          color: Colors.amber,
-                                        ),
-                                      ],
+                                    PopupMenuItem(
+                                      value: 4,
+                                      onTap: () {
+                                        navigateToScreen(
+                                          context,
+                                          FilesForPetScreen(
+                                            reservationid: appointments.id,
+                                          ),
+                                        );
+                                      },
+                                      child: Row(
+                                        children: [
+                                          isArabic()
+                                              ? Text("الملفات")
+                                              : Text("Files"),
+                                          Spacer(),
+                                          Icon(
+                                            Icons.file_copy_rounded,
+                                            color: Colors.amber,
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  PopupMenuItem(
-                                    value: 4,
-                                    onTap: () {
-                                      navigateToScreen(
-                                        context,
-                                        FilesForPetScreen(
-                                          reservationid: appointments.id,
-                                        ),
-                                      );
-                                    },
-                                    child: Row(
-                                      children: [
-                                        isArabic()
-                                            ? Text("الملفات")
-                                            : Text("Files"),
-                                        Spacer(),
-                                        Icon(
-                                          Icons.file_copy_rounded,
-                                          color: Colors.amber,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ];
-                              },
-                              icon: const Icon(Icons.more_vert_outlined),
-                              offset: const Offset(0, 20),
-                            ),
-                        ],
-                      ),
+                                  ];
+                                },
+                                icon: const Icon(Icons.more_vert_outlined),
+                                offset: const Offset(0, 20),
+                              ),
+                          ],
+                        ),
                     const SizedBox(height: 5),
 
                     if (appointments.status == 3 &&
@@ -586,16 +586,16 @@ class GetUserAppointment extends StatelessWidget {
                             Row(
                               children: List.generate(
                                 5,
-                                (index) =>
-                                    index < appointments.doctorServiceRate
-                                        ? const Icon(
-                                          Icons.star,
-                                          color: Colors.amber,
-                                        )
-                                        : const Icon(
-                                          Icons.star_border,
-                                          color: Colors.amber,
-                                        ),
+                                    (index) =>
+                                index < appointments.doctorServiceRate
+                                    ? const Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                )
+                                    : const Icon(
+                                  Icons.star_border,
+                                  color: Colors.amber,
+                                ),
                               ),
                             ),
                           ],
@@ -647,6 +647,17 @@ class GetUserAppointment extends StatelessWidget {
                           ),
                         ),
                       ),
+                      SizedBox(height: 7),
+                      if (appointments.status == 3) ...[
+                        Row(
+                          children: [
+                            Text('T : ${appointments.temperature} '),
+
+                            SizedBox(width: 20),
+                            Text('W : ${appointments.weight} '),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                   const Spacer(),
@@ -665,7 +676,7 @@ class GetUserAppointment extends StatelessWidget {
                     },
                     child: FastCachedImage(
                       url:
-                          'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/google-maps.png?alt=media&token=17b77d3f-92a8-4339-bc65-80cf49dff79e',
+                      'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/google-maps.png?alt=media&token=17b77d3f-92a8-4339-bc65-80cf49dff79e',
                       height: 20,
                       width: 20,
                       fit: BoxFit.fill,
@@ -699,7 +710,7 @@ class GetUserAppointment extends StatelessWidget {
                                         children: [
                                           TextSpan(
                                             text:
-                                                "${S.of(context).appointmentModalDescription} ",
+                                            "${S.of(context).appointmentModalDescription} ",
                                             style: TextStyle(
                                               fontWeight: FontWeight.normal,
                                             ),
@@ -713,7 +724,7 @@ class GetUserAppointment extends StatelessWidget {
                                           ),
                                           TextSpan(
                                             text:
-                                                " ${isArabic() ? "و" : "and"} ${S.of(context).appointmentButtonBooking} ",
+                                            " ${isArabic() ? "و" : "and"} ${S.of(context).appointmentButtonBooking} ",
                                             style: TextStyle(
                                               fontWeight: FontWeight.normal,
                                             ),
@@ -732,7 +743,7 @@ class GetUserAppointment extends StatelessWidget {
                                 actions: <Widget>[
                                   SizedBox(
                                     width:
-                                        MediaQuery.of(context).size.width / 3,
+                                    MediaQuery.of(context).size.width / 3,
                                     child: ElevatedButton(
                                       onPressed: () async {
                                         cubit.emit(
@@ -756,11 +767,11 @@ class GetUserAppointment extends StatelessWidget {
                                       style: ElevatedButton.styleFrom(
                                         foregroundColor: Colors.red,
                                         backgroundColor:
-                                            MainCubit.get(context).isDark
-                                                ? ColorManager
-                                                    .myPetsBaseBlackColor
-                                                : Colors.red.shade100
-                                                    .withOpacity(.4),
+                                        MainCubit.get(context).isDark
+                                            ? ColorManager
+                                            .myPetsBaseBlackColor
+                                            : Colors.red.shade100
+                                            .withOpacity(.4),
                                         elevation: 0,
                                         shape: (RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
@@ -775,7 +786,7 @@ class GetUserAppointment extends StatelessWidget {
                                   ),
                                   SizedBox(
                                     width:
-                                        MediaQuery.of(context).size.width / 3,
+                                    MediaQuery.of(context).size.width / 3,
                                     child: ElevatedButton(
                                       onPressed: () {
                                         Navigator.of(context).pop(false);
@@ -783,11 +794,11 @@ class GetUserAppointment extends StatelessWidget {
                                       style: ElevatedButton.styleFrom(
                                         foregroundColor: Colors.green,
                                         backgroundColor:
-                                            MainCubit.get(context).isDark
-                                                ? ColorManager
-                                                    .myPetsBaseBlackColor
-                                                : Colors.green.shade100
-                                                    .withOpacity(.4),
+                                        MainCubit.get(context).isDark
+                                            ? ColorManager
+                                            .myPetsBaseBlackColor
+                                            : Colors.green.shade100
+                                            .withOpacity(.4),
                                         elevation: 0,
                                         shape: (RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
@@ -825,9 +836,9 @@ class GetUserAppointment extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.green,
                         backgroundColor:
-                            MainCubit.get(context).isDark
-                                ? ColorManager.myPetsBaseBlackColor
-                                : Colors.green.shade100.withOpacity(.4),
+                        MainCubit.get(context).isDark
+                            ? ColorManager.myPetsBaseBlackColor
+                            : Colors.green.shade100.withOpacity(.4),
                         elevation: 0,
                         shape: (RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -851,9 +862,9 @@ class GetUserAppointment extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.blue,
                         backgroundColor:
-                            MainCubit.get(context).isDark
-                                ? ColorManager.myPetsBaseBlackColor
-                                : Colors.blue.shade100.withOpacity(.4),
+                        MainCubit.get(context).isDark
+                            ? ColorManager.myPetsBaseBlackColor
+                            : Colors.blue.shade100.withOpacity(.4),
                         elevation: 0,
                         shape: (RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -865,131 +876,131 @@ class GetUserAppointment extends StatelessWidget {
                   const SizedBox(width: 10),
                   appointments.status == 0
                       ? Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text(
-                                    S.of(context).appointmentModalTitle,
-                                  ),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text.rich(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(
+                                S.of(context).appointmentModalTitle,
+                              ),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text.rich(
+                                    TextSpan(
+                                      children: [
                                         TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text:
-                                                  "${S.of(context).appointmentModalDescription} ",
-                                              style:
-                                                  Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium, // Use the existing theme for consistency
-                                            ),
-                                            TextSpan(
-                                              text: appointments.pet.name,
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodyMedium?.copyWith(
-                                                fontWeight:
-                                                    FontWeight
-                                                        .bold, // Make the pet's name bold
-                                              ),
-                                            ),
-                                          ],
+                                          text:
+                                          "${S.of(context).appointmentModalDescription} ",
+                                          style:
+                                          Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium, // Use the existing theme for consistency
                                         ),
-                                      ),
-                                      const CircleAvatar(
-                                        backgroundImage: NetworkImage(
-                                          'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?w=740&t=st=1693530236~exp=1693530836~hmac=754f0eea1ad76b4cfe66e8f471927ff6d1d2c6625ff14e6cb2c81aa69ab9fc90',
+                                        TextSpan(
+                                          text: appointments.pet.name,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium?.copyWith(
+                                            fontWeight:
+                                            FontWeight
+                                                .bold, // Make the pet's name bold
+                                          ),
                                         ),
-                                        radius: 75,
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                  actions: <Widget>[
-                                    SizedBox(
-                                      width:
-                                          MediaQuery.of(context).size.width / 3,
-                                      child: ElevatedButton(
-                                        onPressed: () async {
-                                          cubit.deleteAppointments(
-                                            appointments.id,
-                                          );
-                                          Navigator.of(context).pop(true);
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          foregroundColor: Colors.red,
-                                          backgroundColor:
-                                              MainCubit.get(context).isDark
-                                                  ? ColorManager
-                                                      .myPetsBaseBlackColor
-                                                  : Colors.red.shade100
-                                                      .withOpacity(.4),
-                                          elevation: 0,
-                                          shape: (RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          )),
-                                        ),
-                                        child: Text(
-                                          S
-                                              .of(context)
-                                              .appointmentModalButtonYes,
-                                        ),
-                                      ),
+                                  const CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                      'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?w=740&t=st=1693530236~exp=1693530836~hmac=754f0eea1ad76b4cfe66e8f471927ff6d1d2c6625ff14e6cb2c81aa69ab9fc90',
                                     ),
-                                    SizedBox(
-                                      width:
-                                          MediaQuery.of(context).size.width / 3,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop(false);
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          foregroundColor: Colors.green,
-                                          backgroundColor:
-                                              MainCubit.get(context).isDark
-                                                  ? ColorManager
-                                                      .myPetsBaseBlackColor
-                                                  : Colors.green.shade100
-                                                      .withOpacity(.4),
-                                          elevation: 0,
-                                          shape: (RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          )),
+                                    radius: 75,
+                                  ),
+                                ],
+                              ),
+                              actions: <Widget>[
+                                SizedBox(
+                                  width:
+                                  MediaQuery.of(context).size.width / 3,
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      cubit.deleteAppointments(
+                                        appointments.id,
+                                      );
+                                      Navigator.of(context).pop(true);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.red,
+                                      backgroundColor:
+                                      MainCubit.get(context).isDark
+                                          ? ColorManager
+                                          .myPetsBaseBlackColor
+                                          : Colors.red.shade100
+                                          .withOpacity(.4),
+                                      elevation: 0,
+                                      shape: (RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          12,
                                         ),
-                                        child: Text(
-                                          S
-                                              .of(context)
-                                              .appointmentModalButtonNo,
-                                        ),
-                                      ),
+                                      )),
                                     ),
-                                  ],
-                                );
-                              },
+                                    child: Text(
+                                      S
+                                          .of(context)
+                                          .appointmentModalButtonYes,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width:
+                                  MediaQuery.of(context).size.width / 3,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(false);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.green,
+                                      backgroundColor:
+                                      MainCubit.get(context).isDark
+                                          ? ColorManager
+                                          .myPetsBaseBlackColor
+                                          : Colors.green.shade100
+                                          .withOpacity(.4),
+                                      elevation: 0,
+                                      shape: (RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          12,
+                                        ),
+                                      )),
+                                    ),
+                                    child: Text(
+                                      S
+                                          .of(context)
+                                          .appointmentModalButtonNo,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             );
                           },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.red,
-                            backgroundColor:
-                                MainCubit.get(context).isDark
-                                    ? ColorManager.myPetsBaseBlackColor
-                                    : Colors.red.shade100.withOpacity(.4),
-                            elevation: 0,
-                            shape: (RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            )),
-                          ),
-                          child: Text(S.of(context).appointmentButtonCancel),
-                        ),
-                      )
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        backgroundColor:
+                        MainCubit.get(context).isDark
+                            ? ColorManager.myPetsBaseBlackColor
+                            : Colors.red.shade100.withOpacity(.4),
+                        elevation: 0,
+                        shape: (RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        )),
+                      ),
+                      child: Text(S.of(context).appointmentButtonCancel),
+                    ),
+                  )
                       : const SizedBox.shrink(),
                 ],
               ),

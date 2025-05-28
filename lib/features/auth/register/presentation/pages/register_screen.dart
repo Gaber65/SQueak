@@ -30,13 +30,15 @@ class RegisterScreen extends StatelessWidget {
         );
 
         // Initialize necessary data
-        cubit.loadCountries();
-        cubit.detectCountryCode();
+        cubit.loadCountries().then((value) => cubit.detectCountryCode());
+
 
         return cubit;
       },
       child: BlocConsumer<RegisterCubit, RegisterState>(
         listener: (context, state) {
+          final cubit = RegisterCubit.get(context);
+
           if (state is RegistrationErrorState) {
             errorToast(context, state.error);
           }
@@ -50,18 +52,9 @@ class RegisterScreen extends StatelessWidget {
             );
           }
 
-
         },
         builder: (context, state) {
           final cubit = RegisterCubit.get(context);
-
-          // Show loading indicator when initializing
-          if (state is CountriesLoadingState ||
-              state is CountryCodeDetectionLoadingState) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
 
           return AuthItem(widget: RegisterView(cubit: cubit));
         },

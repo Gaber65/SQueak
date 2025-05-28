@@ -5,7 +5,6 @@ import 'package:squeak/features/auth/register/presentation/cubit/register_cubit.
 
 import '../../../generated/l10n.dart';
 
-
 import '../../utils/export_path/export_files.dart';
 
 class PhoneTextField extends StatefulWidget {
@@ -34,19 +33,11 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
   }
 
   void _initializeSelectedCountry() {
-    final cachedCountryCode = CacheHelper.getData('countryCodeE') ?? 'EG';
-    final cachedCountryId = CacheHelper.getData('countryId') ?? 1;
-    final cachedPhoneCode = _registerCubit.countryPhoneCode;
-
-    // Try to find matching country from the list
-    _selectedCountry = widget.countries.firstWhere(
-          (country) => country.name == cachedCountryCode,
-      orElse: () => CountryEntity(
-        name: cachedCountryCode,
-        id: cachedCountryId,
-        phoneCode: cachedPhoneCode,
-      ),
-    ) ;
+    _selectedCountry = CountryEntity(
+      name: _registerCubit.countryCode,
+      id: _registerCubit.countryIdToServer,
+      phoneCode: _registerCubit.countryPhoneCode,
+    );
 
     _updateCubitCountry();
   }
@@ -60,12 +51,13 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
   void _openCountryDialog() {
     showDialog(
       context: context,
-      builder: (context) => CountryDialog(
-        countries: widget.countries,
-        onSelectCountry: (country) {
-          _handleCountrySelection(country);
-        },
-      ),
+      builder:
+          (context) => CountryDialog(
+            countries: widget.countries,
+            onSelectCountry: (country) {
+              _handleCountrySelection(country);
+            },
+          ),
     );
   }
 
@@ -86,34 +78,47 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: widget.controller,
-      keyboardType: TextInputType.phone,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return S.of(context).phone_validation;
+    return BlocConsumer<RegisterCubit, RegisterState>(
+      listener: (context, state) {
+        if (state is CountryCodeDetectionSuccessState) {
+          _selectedCountry = CountryEntity(
+            name: _registerCubit.countryCode,
+            id: _registerCubit.countryIdToServer,
+            phoneCode: _registerCubit.countryPhoneCode,
+          );
         }
-        return null;
       },
-      decoration: InputDecoration(
-        prefixIcon: _buildCountryCodeSelector(),
-        hintText: S.of(context).phone_hint,
-        contentPadding: EdgeInsets.zero,
-        filled: true,
-        counterStyle: FontStyleThame.textStyle(
-          context: context,
-          fontSize: 13,
-        ),
-        hintStyle: _getHintTextStyle(context),
-        fillColor: _getFillColor(context),
-        border: _getInputBorder(),
-        enabledBorder: _getInputBorder(),
-        focusedBorder: _getInputBorder(),
-        disabledBorder: _getInputBorder(),
-        errorBorder: _getInputBorder(),
-        focusedErrorBorder: _getInputBorder(),
-      ),
+      builder: (context, state) {
+        return TextFormField(
+          controller: widget.controller,
+          keyboardType: TextInputType.phone,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return S.of(context).phone_validation;
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            prefixIcon: _buildCountryCodeSelector(),
+            hintText: S.of(context).phone_hint,
+            contentPadding: EdgeInsets.zero,
+            filled: true,
+            counterStyle: FontStyleThame.textStyle(
+              context: context,
+              fontSize: 13,
+            ),
+            hintStyle: _getHintTextStyle(context),
+            fillColor: _getFillColor(context),
+            border: _getInputBorder(),
+            enabledBorder: _getInputBorder(),
+            focusedBorder: _getInputBorder(),
+            disabledBorder: _getInputBorder(),
+            errorBorder: _getInputBorder(),
+            focusedErrorBorder: _getInputBorder(),
+          ),
+        );
+      },
     );
   }
 
@@ -141,9 +146,10 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
       context: context,
       fontSize: 14,
       fontWeight: FontWeight.w700,
-      fontColor: _isDarkMode(context)
-          ? Colors.white54
-          : const Color.fromRGBO(0, 0, 0, .3),
+      fontColor:
+          _isDarkMode(context)
+              ? Colors.white54
+              : const Color.fromRGBO(0, 0, 0, .3),
     );
   }
 
@@ -152,16 +158,15 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
       context: context,
       fontSize: 14,
       fontWeight: FontWeight.w700,
-      fontColor: _isDarkMode(context)
-          ? Colors.white54
-          : const Color.fromRGBO(0, 0, 0, .3),
+      fontColor:
+          _isDarkMode(context)
+              ? Colors.white54
+              : const Color.fromRGBO(0, 0, 0, .3),
     );
   }
 
   Color _getFillColor(BuildContext context) {
-    return _isDarkMode(context)
-        ? Colors.black26
-        : Colors.grey.shade200;
+    return _isDarkMode(context) ? Colors.black26 : Colors.grey.shade200;
   }
 
   bool _isDarkMode(BuildContext context) {
@@ -198,10 +203,7 @@ class CountryDialog extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Text(
               'Select Country',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(
@@ -225,6 +227,3 @@ class CountryDialog extends StatelessWidget {
     );
   }
 }
-
-
-

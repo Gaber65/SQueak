@@ -22,20 +22,17 @@ class AllAppointment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-  providers: [
-    BlocProvider(
-      create:
-          (context) =>
-              sl<UserAppointmentCubit>()
-                ..fetchSuppliers()
-                ..getAppointment(true),
-
-),
-    BlocProvider(
-      create: (context) => sl<PetCubit>()..getOwnerPets(),
-    ),
-  ],
-  child: BlocConsumer<UserAppointmentCubit, UserAppointmentState>(
+      providers: [
+        BlocProvider(
+          create:
+              (context) =>
+                  sl<UserAppointmentCubit>()
+                    ..fetchSuppliers()
+                    ..getAppointment(true),
+        ),
+        BlocProvider(create: (context) => sl<PetCubit>()..getOwnerPets()),
+      ],
+      child: BlocConsumer<UserAppointmentCubit, UserAppointmentState>(
         listener: (context, state) {
           if (state is DeleteAppointmentSuccess) {
             UserAppointmentCubit.get(context).getAppointment(false);
@@ -56,9 +53,7 @@ class AllAppointment extends StatelessWidget {
                 preferredSize: const Size.fromHeight(50),
                 child: Row(
                   children: [
-                    Expanded(
-                      child:   buildStateFilter(context)
-                    ),
+                    Expanded(child: buildStateFilter(context)),
                     Expanded(
                       child: BlocConsumer<PetCubit, PetState>(
                         builder: (context, state) {
@@ -127,7 +122,7 @@ class AllAppointment extends StatelessWidget {
           );
         },
       ),
-);
+    );
   }
 
   Widget buildItem(
@@ -639,6 +634,17 @@ class AllAppointment extends StatelessWidget {
                           ),
                         ),
                       ),
+                      SizedBox(height: 7),
+                      if (appointments.status == 3) ...[
+                        Row(
+                          children: [
+                            Text('T : ${appointments.temperature} '),
+
+                            SizedBox(width: 20),
+                            Text('W : ${appointments.weight} '),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                   const Spacer(),

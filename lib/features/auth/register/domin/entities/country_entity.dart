@@ -8,4 +8,6 @@ class CountryEntity {
     required this.name,
     required this.phoneCode,
   });
+
+  Map toMap() => {'id': id, 'name': name, 'phoneCode': phoneCode};
 }

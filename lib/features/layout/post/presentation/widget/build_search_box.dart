@@ -34,6 +34,7 @@ Padding buildSearchBox(PostCubit cubit) {
                 ),
               );
             } else {
+              sl<SearchCubit>().getSupplier();
               cubit.init();
             }
           }

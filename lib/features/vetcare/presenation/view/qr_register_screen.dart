@@ -43,9 +43,8 @@ class RegisterQrScreen extends StatelessWidget {
               registerQrUseCase: RegisterQrUseCase(repository),
             );
 
-            // Initialize necessary data
-            cubit.loadCountries();
-            cubit.detectCountryCode();
+            cubit.loadCountries().then((value) => cubit.detectCountryCode());
+
 
             return cubit;
           },

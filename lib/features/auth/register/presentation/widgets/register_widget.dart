@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
@@ -8,10 +7,7 @@ import 'package:squeak/features/auth/register/presentation/cubit/register_cubit.
 import 'package:squeak/generated/l10n.dart';
 
 class RegisterView extends StatelessWidget {
-  const RegisterView({
-    super.key,
-    required this.cubit,
-  });
+  const RegisterView({super.key, required this.cubit});
 
   final RegisterCubit cubit;
 
@@ -34,15 +30,10 @@ class RegisterView extends StatelessWidget {
             ),
 
             /// name
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             MyTextForm(
               controller: cubit.nameController,
-              prefixIcon: const Icon(
-                Icons.person,
-                size: 14,
-              ),
+              prefixIcon: const Icon(Icons.person, size: 14),
               enable: false,
               hintText: S.of(context).enterName,
               validatorText: S.of(context).enterName,
@@ -50,15 +41,10 @@ class RegisterView extends StatelessWidget {
             ),
 
             /// email
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
             MyTextForm(
               controller: cubit.emailController,
-              prefixIcon: const Icon(
-                Icons.alternate_email_sharp,
-                size: 14,
-              ),
+              prefixIcon: const Icon(Icons.alternate_email_sharp, size: 14),
               enable: false,
               hintText: S.of(context).enterUrEmail,
               validatorText: S.of(context).enterUrEmail,
@@ -66,24 +52,17 @@ class RegisterView extends StatelessWidget {
             ),
 
             /// phone
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
             PhoneTextField(
               controller: cubit.phoneController,
               countries: RegisterCubit.get(context).countries,
             ),
 
             /// password
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
             MyTextForm(
               controller: cubit.passwordController,
-              prefixIcon: const Icon(
-                Icons.lock,
-                size: 14,
-              ),
+              prefixIcon: const Icon(Icons.lock, size: 14),
               enable: true,
               hintText: S.of(context).enterUrPassword,
               validatorText: S.of(context).enterUrPassword,
@@ -91,15 +70,10 @@ class RegisterView extends StatelessWidget {
             ),
 
             /// Clinic Code
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             MyTextForm(
               controller: cubit.followCodeController,
-              prefixIcon: const Icon(
-                Icons.person,
-                size: 14,
-              ),
+              prefixIcon: const Icon(Icons.person, size: 14),
               enable: false,
               hintText: S.of(context).followCode,
               obscureText: false,
@@ -107,9 +81,7 @@ class RegisterView extends StatelessWidget {
             ),
 
             /// Register
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -118,24 +90,32 @@ class RegisterView extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  backgroundColor: ColorManager
-.primaryColor,
+                  backgroundColor: ColorManager.primaryColor,
                 ),
-                onPressed: cubit.isRegister
-                    ? null
-                    : () {
-                        if (cubit.formKey.currentState!.validate()) {
-                          cubit.register();
-                        }
-                      },
-                child: cubit.isRegister
-                    ? CircularProgressIndicator()
-                    : Text(S.of(context).register),
+                onPressed:
+                    cubit.isRegister
+                        ? null
+                        : () {
+                          if (cubit.formKey.currentState!.validate()) {
+                            if (cubit.countryCode.isEmpty) {
+                              infoToast(
+                                context,
+                                isArabic()
+                                    ? 'يرجى اختيار دولتك قبل متابعة التسجيل.'
+                                    : 'Please select your country before proceeding with registration.',
+                              );
+                            } else {
+                              cubit.register();
+                            }
+                          }
+                        },
+                child:
+                    cubit.isRegister
+                        ? CircularProgressIndicator()
+                        : Text(S.of(context).register),
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -157,8 +137,7 @@ class RegisterView extends StatelessWidget {
                     style: FontStyleThame.textStyle(
                       context: context,
                       fontSize: 14,
-                      fontColor: ColorManager
-.secondColor,
+                      fontColor: ColorManager.secondColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

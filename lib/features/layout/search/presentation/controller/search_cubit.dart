@@ -90,27 +90,22 @@ class SearchCubit extends Cubit<SearchState> {
     emit(FollowLoading());
     final result = await getClintFormVetUseCase.call(clinicCode);
 
-    result.fold(
-      (failure) {
-        emit(FollowError(failure));
-      },
-      (clients) {
-        if (clients.isNotEmpty) {
-          if (isFilter) {
-            vetClientModel =
-                clients
-                    .where((element) => element.addedInSqueakStatues == false)
-                    .toList();
-          } else {
-            vetClientModel = clients;
-          }
-          emit(FollowSuccess(true));
+    result.fold((failure) {}, (clients) {
+      if (clients.isNotEmpty) {
+        if (isFilter) {
+          vetClientModel =
+              clients
+                  .where((element) => element.addedInSqueakStatues == false)
+                  .toList();
         } else {
-          vetClientModel.clear();
-          emit(FollowSuccess(false));
+          vetClientModel = clients;
         }
-      },
-    );
+        emit(FollowSuccess(true));
+      } else {
+        vetClientModel.clear();
+        emit(FollowSuccess(false));
+      }
+    });
 
     return vetClientModel;
   }
