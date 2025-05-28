@@ -1,5 +1,3 @@
-// features/vetcare/presentation/pages/pet_merge_screen.dart
-
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -89,11 +87,9 @@ class _PetMergeContent extends StatelessWidget {
     ErrorAddInSqueakStatuesState state,
   ) {
     final errorMessage =
-        state.error is Map &&
-                state.error['errors'] != null &&
-                state.error['errors'].isNotEmpty
-            ? state.error['errors'].values.first.first
-            : state.error.toString();
+        state.error.errors.isNotEmpty
+            ? state.error.errors.values.first.first
+            : state.error.message;
     errorToast(context, errorMessage);
   }
 
@@ -319,7 +315,7 @@ class _PetMergeContent extends StatelessWidget {
       backgroundColor:
           MainCubit.get(context).isDark
               ? ColorManager.myPetsBaseBlackColor
-              : ColorManager.myPetsBaseBlackColor,
+              : color.withOpacity(0.2),
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );

@@ -18,9 +18,9 @@ class RegisterRemoteDataSource {
           .doc('Is0fJjcbMCqOrWmQdKoj')
           .snapshots()
           .listen((event) {
-        username = event.data()!['Username'];
-        password = event.data()!['password'];
-      });
+            username = event.data()!['Username'];
+            password = event.data()!['password'];
+          });
     } on Exception catch (e) {
       print(e);
     }
@@ -29,16 +29,14 @@ class RegisterRemoteDataSource {
   Future<List<CountryModel>> getCountry(String name) async {
     await getTokenFormFirebase();
     try {
-      final auth = 'Basic ${base64Encode(utf8.encode('${username ?? "Ahmed.Omar@Veticare.com"}:${password ?? "Password@123"}'))}';
+      final auth =
+          'Basic ${base64Encode(utf8.encode('${username ?? "Ahmed.Omar@Veticare.com"}:${password ?? "Password@123"}'))}';
       final dio = Dio();
       final response = await dio.request(
         '${ConfigModel.baseApiUrlSqueak}$version/squeak/countries?Name=$name',
         options: Options(
           method: 'GET',
-          headers: {
-            'accept': '*/*',
-            'Authorization': auth,
-          },
+          headers: {'accept': '*/*', 'Authorization': auth},
         ),
       );
 
@@ -53,20 +51,38 @@ class RegisterRemoteDataSource {
   }
 
   Future<void> register(Map<String, dynamic> data) async {
-    await DioFinalHelper.postData(method: registerEndPoint, data: data);
+    try {
+      await DioFinalHelper.postData(method: registerEndPoint, data: data);
+    } on DioException catch (e) {
+      throw ServerException(
+        errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
+      );
+    }
   }
 
   Future<void> registerQr(Map<String, dynamic> data) async {
-    await DioFinalHelper.putData(method: registerQrEndPoint, data: data);
+    try {
+      await DioFinalHelper.putData(method: registerQrEndPoint, data: data);
+    } on DioException catch (e) {
+      throw ServerException(
+        errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
+      );
+    }
   }
 
-  Future<List<VetClientModel>> getClients(String code, String phone, bool isFilter) async {
+  Future<List<VetClientModel>> getClients(
+    String code,
+    String phone,
+    bool isFilter,
+  ) async {
     final response = await DioFinalHelper.getData(
       method: getClientClinicEndPoint(code, phone),
       language: true,
     );
 
-    final list = List<VetClientModel>.from(response.data["data"].map((x) => VetClientModel.fromJson(x)));
+    final list = List<VetClientModel>.from(
+      response.data["data"].map((x) => VetClientModel.fromJson(x)),
+    );
 
     if (isFilter) {
       return list.where((e) => e.addedInSqueakStatues == false).toList();

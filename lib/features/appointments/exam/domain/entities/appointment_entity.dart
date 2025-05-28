@@ -22,7 +22,7 @@ class AppointmentEntity extends Equatable {
   final String clinicName;
   final int source;
   final ClientEntity client;
-  final PetEntity pet;
+  final PetEntityAppointment pet;
   final DoctorUserEntity? doctorUser;
   final int weight;
   final int temperature;
@@ -133,12 +133,12 @@ class ClientEntity extends Equatable {
   };
 }
 
-class PetEntity extends Equatable {
+class PetEntityAppointment extends Equatable {
   final String? name;
   final String? squeakPetId;
   final int? gender;
 
-  const PetEntity({
+  const PetEntityAppointment({
     this.name,
     this.gender,
     this.squeakPetId,

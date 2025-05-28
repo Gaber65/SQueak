@@ -1,10 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/comments/domain/entities/comment_entity.dart';
 
 import '../../../../generated/l10n.dart';
+import '../../../auth/login/domin/entities/login_entity.dart';
 import '../../../auth/register/presentation/widgets/authItem.dart';
 import '../controllers/vet_register/vet_register_cubit.dart';
 import 'pet_merge_screen.dart';
@@ -47,12 +48,7 @@ class _VetCareRegisterContent extends StatelessWidget {
   }
 
   void _showErrorToast(BuildContext context, ErrorRegisterState state) {
-    errorToast(
-      context,
-      state.error is Map && state.error['errors'] != null && state.error['errors'].isNotEmpty
-          ? state.error['errors'].values.first.first
-          : state.error.toString(),
-    );
+    errorToast(context, extractFirstErrorAuth(state.error));
   }
 
   void _handleLoginSuccess(BuildContext context, SuccessLoginState state) {
@@ -60,32 +56,36 @@ class _VetCareRegisterContent extends StatelessWidget {
     _navigateAfterLogin(context, state);
   }
 
-  void _saveUserData(dynamic userModel) {
-    CacheHelper.saveData('token', userModel.data!.token);
-    CacheHelper.saveData('role', userModel.data!.role);
-    CacheHelper.saveData('clintId', userModel.data!.id);
-    CacheHelper.saveData('refreshToken', userModel.data!.refreshToken);
-    CacheHelper.saveData('phone', userModel.data!.phone);
-    CacheHelper.saveData('name', userModel.data!.fullName);
-    CacheHelper.saveData('clientName', userModel.data!.fullName);
+  void _saveUserData(LoginEntity userModel) {
+    CacheHelper.saveData('token', userModel.token);
+    CacheHelper.saveData('role', userModel.role);
+    CacheHelper.saveData('clintId', userModel.id);
+    CacheHelper.saveData('refreshToken', userModel.refreshToken);
+    CacheHelper.saveData('phone', userModel.phone);
+    CacheHelper.saveData('name', userModel.fullName);
+    CacheHelper.saveData('clientName', userModel.fullName);
+    CacheHelper.saveData('expiry', userModel.expiresIn.toIso8601String());
+    sub?.cancel();
   }
 
   void _navigateAfterLogin(BuildContext context, SuccessLoginState state) {
     final cubit = VetRegisterCubit.get(context);
     final nextScreen =
-    state.isHavePet
-        ? PetMergeScreen(
-      code: cubit.vetClientModelOne?.clinicCode ?? '',
-      isNavigation: false,
-    )
-        : LayoutScreen();
+        state.isHavePet
+            ? PetMergeScreen(
+              code: cubit.vetClientModelOne?.clinicCode ?? '',
+              isNavigation: false,
+            )
+            : LayoutScreen();
     navigateAndFinish(context, nextScreen);
   }
 
   void _showLoginErrorToast(BuildContext context, ErrorLoginState state) {
     errorToast(
       context,
-      state.error is Map && state.error['errors'] != null && state.error['errors'].isNotEmpty
+      state.error is Map &&
+              state.error['errors'] != null &&
+              state.error['errors'].isNotEmpty
           ? state.error['errors'].values.first.first
           : state.error.toString(),
     );

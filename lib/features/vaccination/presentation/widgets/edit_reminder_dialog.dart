@@ -131,12 +131,7 @@ class _EditReminderDialogState extends State<EditReminderDialog> {
                               "${widget.cubit.pickedFromEdit!.hour}:${widget.cubit.pickedFromEdit!.minute}",
                             ),
                           )
-                          : isArabic()
-                          ? Text(
-                            formatTimeToAmPmReminder(
-                              widget.reminder.timeAR.toString(),
-                            ),
-                          )
+
                           : Text(
                             formatTimeToAmPmReminder(
                               widget.reminder.time.toString(),
@@ -200,9 +195,7 @@ class _EditReminderDialogState extends State<EditReminderDialog> {
                       ? "${widget.cubit.pickedFromEdit!.minute} : ${widget.cubit.pickedFromEdit!.hour}"
                       : "${widget.cubit.pickedFromEdit!.hour} : ${widget.cubit.pickedFromEdit!.minute}",
               notes:
-                  notesController.text.isEmpty
-                      ? widget.reminder.notes
-                      : notesController.text,
+              notesController.text,
               notificationID: widget.reminder.notificationID,
               subTypeFeed:
                   widget.reminder.subTypeFeed?.isEmpty ?? true

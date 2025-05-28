@@ -7,8 +7,6 @@ import 'package:squeak/features/appointments/exam/domain/entities/client_clinic.
 import 'package:squeak/features/appointments/exam/domain/entities/clinic_entity.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/doctor_entity.dart';
 
-
-
 import '../../../../../../../core/service/service_locator/locatore_export_path.dart';
 
 part 'appointment_state.dart';
@@ -140,12 +138,7 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     isLoading = false;
     result.fold(
       (failure) {
-        emit(
-          CreateAppointmentsError(
-            extractFirstError(failure)
-,
-          ),
-        );
+        emit(CreateAppointmentsError(extractFirstError(failure)));
       },
       (_) {
         if (params.isExisted) {

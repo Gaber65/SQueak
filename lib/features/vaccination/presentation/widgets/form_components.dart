@@ -6,10 +6,11 @@ import '../../domain/entities/vaccination_entity.dart';
 import '../cubit/ui/vaccination_ui_cubit.dart';
 
 Widget buildDropDownBreed(
-  List<VaccinationNameEntity> vacEntitiesData,
-  BuildContext context,
-) {
+    List<VaccinationNameEntity> vacEntitiesData,
+    BuildContext context,
+    ) {
   final cubit = context.read<VaccinationUiCubit>();
+  final isDark = MainCubit.get(context).isDark;
 
   return DropdownButtonFormField<VaccinationNameEntity>(
     decoration: buildInputDecoration(context),
@@ -24,20 +25,47 @@ Widget buildDropDownBreed(
       }
       return null;
     },
-    iconEnabledColor: Colors.black,
+    iconEnabledColor: isDark ? Colors.white : Colors.black,
     autovalidateMode: AutovalidateMode.onUserInteraction,
-    hint: Text(cubit.valueVacItem),
+
+    // Ensures the dropdown menu background follows dark mode
+    dropdownColor: isDark ? Colors.black : Colors.white,
+
+    // Affects the selected item text shown inside the field after selection
+    style: TextStyle(
+      color: isDark ? Colors.white : Colors.black,
+      fontSize: 16,
+    ),
+
+    // Hint when nothing is selected
+    hint: Text(
+      cubit.valueVacItem,
+      style: TextStyle(
+        color: isDark ? Colors.white54 : Colors.grey,
+        fontSize: 16,
+      ),
+    ),
+
+    // What happens when the user selects an item
     onChanged: (newValue) {
-      print(newValue!.vacName);
-      cubit.changeSelect(vacName: newValue!.vacName, vacId: newValue.vacID);
+      if (newValue != null) {
+        cubit.changeSelect(vacName: newValue.vacName, vacId: newValue.vacID);
+      }
     },
-    items:
-        vacEntitiesData.map((VaccinationNameEntity value) {
-          return DropdownMenuItem<VaccinationNameEntity>(
-            value: value,
-            child: Text(value.vacName),
-          );
-        }).toList(),
+
+    // The list of dropdown menu items
+    items: vacEntitiesData.map((VaccinationNameEntity value) {
+      return DropdownMenuItem<VaccinationNameEntity>(
+        value: value,
+        child: Text(
+          value.vacName,
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black,
+            fontSize: 16,
+          ),
+        ),
+      );
+    }).toList(),
   );
 }
 
@@ -115,15 +143,17 @@ Widget buildDropDownFreq(List<String> freq, BuildContext context) {
 }
 
 InputDecoration buildInputDecoration(BuildContext context) {
+  final isDark = MainCubit.get(context).isDark;
+
   return InputDecoration(
     contentPadding: const EdgeInsets.only(right: 10, left: 10),
-    fillColor:
-        MainCubit.get(context).isDark ? Colors.black26 : Colors.grey.shade200,
+    filled: true,
+    fillColor: isDark ? Colors.black26 : Colors.grey.shade200, // ✅ Key change
+
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
       borderSide: BorderSide.none,
     ),
-    focusColor: Colors.grey.shade200,
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
       borderSide: BorderSide.none,
@@ -144,16 +174,13 @@ InputDecoration buildInputDecoration(BuildContext context) {
       borderRadius: BorderRadius.circular(8),
       borderSide: BorderSide.none,
     ),
+
     labelStyle: FontStyleThame.textStyle(
       context: context,
-      fontColor:
-          MainCubit.get(context).isDark
-              ? ColorManager.sWhite
-              : ColorManager.black_87,
+      fontColor: isDark ? ColorManager.sWhite : ColorManager.black_87,
       fontSize: 18,
       fontWeight: FontWeight.normal,
     ),
-    filled: true,
   );
 }
 

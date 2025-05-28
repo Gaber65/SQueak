@@ -18,9 +18,14 @@ import '../../../login/presentation/pages/login_screen.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 class VerifyUser extends StatelessWidget {
-  VerifyUser({super.key, required this.emailController});
+  VerifyUser({
+    super.key,
+    required this.emailController,
+    required this.clinicCode,
+  });
 
   final TextEditingController emailController;
+  final TextEditingController clinicCode;
   final List<TextEditingController> controllers = List.generate(
     4,
     (index) => TextEditingController(),
@@ -40,7 +45,9 @@ class VerifyUser extends StatelessWidget {
     if (isValid) {
       String otp = controllers.map((controller) => controller.text).join();
 
-      context.read<PasswordCubit>().verifyUser(otp, emailController.text);
+      PasswordCubit.get(
+        context,
+      ).verifyUser(otp, emailController.text, clinicCode.text);
     } else {
       errorToast(context, 'Please enter a valid code');
     }
@@ -63,7 +70,7 @@ class VerifyUser extends StatelessWidget {
           ),
       child: BlocConsumer<PasswordCubit, PasswordState>(
         listener: (context, state) {
-          if (state is RestPasswordErrorState) {
+          if (state is VerifyUserErrorState) {
             errorToast(context, state.error);
           }
           if (state is RestPasswordSuccessState) {
@@ -71,7 +78,9 @@ class VerifyUser extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          var cubit = context.read<PasswordCubit>();
+
+          var ifShow = clinicCode.text;
+          var cubit = PasswordCubit.get(context);
           return WillPopScope(
             onWillPop: () async {
               navigateAndFinish(context, RegisterScreen());
@@ -211,9 +220,9 @@ class VerifyUser extends StatelessWidget {
                           }),
                         ),
                         const SizedBox(height: 20),
-                        cubit.followCodeController.text.isNotEmpty
+                        ifShow.isNotEmpty
                             ? MyTextForm(
-                              controller: cubit.followCodeController,
+                              controller: clinicCode,
                               prefixIcon: const Icon(Icons.person, size: 14),
                               enable: false,
                               hintText: S.of(context).followCode,

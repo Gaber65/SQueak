@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:squeak/features/auth/login/domin/entities/login_entity.dart';
 
 import '../../../../core/base_usecase/base_usecase.dart';
 import '../../../../core/error/failure.dart';
@@ -64,13 +65,13 @@ class RegisterParams extends Equatable {
       ];
 }
 
-class LoginUseCase extends BaseUseCase<String, LoginParams> {
+class LoginUseCase extends BaseUseCase<LoginEntity, LoginParams> {
   final BaseVetRepository repository;
 
   LoginUseCase(this.repository);
 
   @override
-  Future<Either<Failure, String>> call(LoginParams params) async {
+  Future<Either<Failure, LoginEntity>> call(LoginParams params) async {
     return await repository.login(
       emailOrPhone: params.emailOrPhone,
       password: params.password,

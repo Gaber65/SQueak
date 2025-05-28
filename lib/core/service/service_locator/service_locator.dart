@@ -1,8 +1,8 @@
 import 'package:get_it/get_it.dart';
+
 import '../../../features/appointments/exam/presentation/controller/user/user_appointment_cubit.dart';
 import '../../../features/layout/search/presentation/controller/search_cubit.dart';
 import '../../../features/settings/persentaion/controller/setting_cubit.dart';
-import '../../../features/vaccination/data/datasources/vaccination_local_data_source.dart';
 import '../../../features/vetcare/presenation/controllers/follow_request/follow_request_cubit.dart';
 import 'locatore_export_path.dart';
 
@@ -292,5 +292,28 @@ class ServiceLocator {
 
     // UI Cubit
     sl.registerFactory(() => VaccinationUiCubit(dataCubit: sl()));
+
+    sl.registerLazySingleton<QRRemoteDataSource>(
+      () => QRRemoteDataSourceImpl(),
+    );
+
+    // Repository
+    sl.registerLazySingleton<QRRepository>(
+      () => QRRepositoryImpl(remoteDataSource: sl()),
+    );
+
+    // Use cases
+    sl.registerLazySingleton(() => CheckClinicInSupplierUseCase(sl()));
+    sl.registerLazySingleton(() => FollowQRClinicUseCase(sl()));
+    sl.registerLazySingleton(() => GetVetClientsUseCase(sl()));
+
+    // Cubit
+    sl.registerFactory(
+      () => QRCubit(
+        checkClinicInSupplierUseCase: sl(),
+        followClinicUseCase: sl(),
+        getVetClientsUseCase: sl(),
+      ),
+    );
   }
 }

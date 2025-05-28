@@ -38,24 +38,25 @@ class ContactUsCubit extends Cubit<ContactUsState> {
 
     isContactUs = true;
     emit(ContactUsLoadingState());
-
-    try {
-      await contactUsUseCase.execute(
-        ContactUsEntity(
-          title: titleController.text,
-          phone: phoneController.text,
-          fullName: nameController.text,
-          comment: commentController.text,
-          email: emailController.text,
-        ),
-      );
-
-      isContactUs = false;
-      emit(ContactUsSuccessState());
-    } catch (e) {
-      isContactUs = false;
-      emit(ContactUsErrorState(e.toString() as ErrorMessageModel));
-    }
+    await contactUsUseCase
+        .execute(
+          ContactUsEntity(
+            title: titleController.text,
+            phone: phoneController.text,
+            fullName: nameController.text,
+            comment: commentController.text,
+            email: emailController.text,
+          ),
+        )
+        .then((value) {
+          isContactUs = false;
+          emit(ContactUsSuccessState());
+        })
+        .catchError((error) {
+          ServerException failure = error;
+          isContactUs = false;
+          emit(ContactUsErrorState(failure.errorMessageModel));
+        });
   }
 
   void clearContactUs() {

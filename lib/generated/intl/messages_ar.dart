@@ -539,10 +539,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "تحديث الآن",
     ),
     "updateVersionModuleContent": MessageLookupByLibrary.simpleMessage(
-      "إصدار جديد من Upgrade متاح!",
+      "يحتاج تطبيقك إلى التحديث\n",
     ),
     "updateVersionModuleContent2": MessageLookupByLibrary.simpleMessage(
-      "هل ترغب في التحديث الآن؟",
+      "هذا الإصدار من التطبيق قديم.\nيرجى الانتقال إلى المتجر للتحديث",
     ),
     "updateVersionModuleTitle": MessageLookupByLibrary.simpleMessage(
       "تحديث التطبيق",

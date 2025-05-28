@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:lottie/lottie.dart';
+import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/appointment_entity.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/rate_appointment.dart';
@@ -20,14 +21,21 @@ class AllAppointment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
+    return MultiBlocProvider(
+  providers: [
+    BlocProvider(
       create:
           (context) =>
               sl<UserAppointmentCubit>()
                 ..fetchSuppliers()
                 ..getAppointment(true),
 
-      child: BlocConsumer<UserAppointmentCubit, UserAppointmentState>(
+),
+    BlocProvider(
+      create: (context) => sl<PetCubit>()..getOwnerPets(),
+    ),
+  ],
+  child: BlocConsumer<UserAppointmentCubit, UserAppointmentState>(
         listener: (context, state) {
           if (state is DeleteAppointmentSuccess) {
             UserAppointmentCubit.get(context).getAppointment(false);
@@ -49,9 +57,13 @@ class AllAppointment extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      child: BlocConsumer<LayoutCubit, LayoutState>(
+                      child:   buildStateFilter(context)
+                    ),
+                    Expanded(
+                      child: BlocConsumer<PetCubit, PetState>(
                         builder: (context, state) {
-                          return buildStateFilter(context);
+                          var cubit = PetCubit.get(context);
+                          return buildPetFilter(context, cubit.pets);
                         },
                         listener: (context, state) {},
                       ),
@@ -70,6 +82,7 @@ class AllAppointment extends StatelessWidget {
             floatingActionButton: FloatingActionButton(
               backgroundColor: ColorManager.primaryColor,
               onPressed: () {
+                print("DEBUG: Floating button pressed");
                 LayoutCubit.get(context).changeBottomNav(1);
 
                 navigateAndFinish(context, LayoutScreen());
@@ -114,7 +127,7 @@ class AllAppointment extends StatelessWidget {
           );
         },
       ),
-    );
+);
   }
 
   Widget buildItem(

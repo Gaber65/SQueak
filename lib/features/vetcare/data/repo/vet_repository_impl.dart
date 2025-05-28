@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:squeak/features/auth/login/domin/entities/login_entity.dart';
 
 import '../../../../core/error/failure.dart';
 import '../../../../core/network/error_message_model.dart';
@@ -41,7 +42,7 @@ class VetRepository implements BaseVetRepository {
       );
       return Right(result);
     } on DioException catch (e) {
-      return Left(ServerFailure(e.response?.data['message'] ?? 'Server error'));
+      return Left(ServerFailure(ErrorMessageModel.fromJson(e.response?.data)));
     } catch (e) {
       return Left(
         ServerFailure(
@@ -57,7 +58,7 @@ class VetRepository implements BaseVetRepository {
   }
 
   @override
-  Future<Either<Failure, String>> login({
+  Future<Either<Failure, LoginEntity>> login({
     required String emailOrPhone,
     required String password,
   }) async {
@@ -195,7 +196,7 @@ class VetRepository implements BaseVetRepository {
       );
       return Right(result);
     } on DioException catch (e) {
-      return Left(ServerFailure(e.response?.data['message'] ?? 'Server error'));
+      return Left(ServerFailure(ErrorMessageModel.fromJson(e.response?.data)));
     } catch (e) {
       return Left(
         ServerFailure(

@@ -68,12 +68,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
         return Scaffold(
           extendBody: false,
           resizeToAvoidBottomInset: false,
-          body: PopScope(
-            canPop: false,
-            onPopInvokedWithResult:
-                (didPop, result) => showExitConfirmationDialog(context),
-            child: cubit.screens[selectedIndex],
-          ),
+          body: cubit.screens[selectedIndex],
           floatingActionButton: SizedBox(
             width: 70,
             height: 70,

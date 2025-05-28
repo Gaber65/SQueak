@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-
 import '../../../../../core/base_usecase/base_usecase.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
-
-import '../../../../layout/notification/NotificationFCM/notification_service.dart';
 import '../../../domain/entities/reminder_entity.dart';
 import '../../../domain/entities/vaccination_entity.dart';
 import '../../../domain/usecases/create_reminder_usecase.dart';
@@ -68,7 +65,7 @@ class VaccinationDataCubit extends Cubit<VaccinationDataState> {
       int day = int.parse(dateParts[2]);
 
       print("reminder.notificationID: ${reminder.notificationID}");
-      await NotificationServiceReminder.scheduleNotification(
+      await NotificationScheduler.scheduleReminderNotification(
         id: int.parse(reminder.notificationID),
         title:
             reminder.reminderType.toString() == "other" ||
@@ -111,7 +108,7 @@ class VaccinationDataCubit extends Cubit<VaccinationDataState> {
       int hour = int.parse(parts[0]);
       int minute = int.parse(parts[1]);
 
-      await NotificationServiceReminder.editScheduledNotification(
+      await NotificationScheduler.editScheduledNotification(
         notificationId: int.parse(reminder.notificationID),
         newTitle:
             reminder.reminderType.toString() == "other" ||

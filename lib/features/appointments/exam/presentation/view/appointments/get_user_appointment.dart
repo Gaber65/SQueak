@@ -14,6 +14,7 @@ import 'package:squeak/features/appointments/exam/presentation/view/files_and_pr
 import 'package:squeak/features/appointments/exam/presentation/view/files_and_prescription_for_pet/prescription_for_pet_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../../pets/presentation/controller/pet_cubit.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 import '../component/filter_component.dart';
 
@@ -22,12 +23,17 @@ class GetUserAppointment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create:
-          (context) =>
-              sl<UserAppointmentCubit>()
-                ..fetchSuppliers()
-                ..getAppointment(true),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create:
+              (context) =>
+                  sl<UserAppointmentCubit>()
+                    ..fetchSuppliers()
+                    ..getAppointment(true),
+        ),
+        BlocProvider(create: (context) => sl<PetCubit>()..getOwnerPets()),
+      ],
       child: BlocConsumer<UserAppointmentCubit, UserAppointmentState>(
         listener: (context, state) {
           if (state is DeleteAppointmentSuccess) {
@@ -58,19 +64,12 @@ class GetUserAppointment extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    // Expanded(
-                    //   child: BlocConsumer<LayoutCubit, LayoutState>(
-                    //     builder: (context, state) {
-                    //       List<PetData> pets = LayoutCubit.get(context).pets;
-                    //       return buildPetFilter(context, pets);
-                    //     },
-                    //     listener: (context, state) {},
-                    //   ),
-                    // ),
+                    Expanded(child: buildStateFilter(context)),
                     Expanded(
-                      child: BlocConsumer<LayoutCubit, LayoutState>(
+                      child: BlocConsumer<PetCubit, PetState>(
                         builder: (context, state) {
-                          return buildStateFilter(context);
+                          var cubit = PetCubit.get(context);
+                          return buildPetFilter(context, cubit.pets);
                         },
                         listener: (context, state) {},
                       ),
@@ -126,7 +125,10 @@ class GetUserAppointment extends StatelessWidget {
             floatingActionButton: FloatingActionButton(
               backgroundColor: ColorManager.primaryColor,
               onPressed: () {
+                print("DEBUG: Floating button pressed");
                 LayoutCubit.get(context).changeBottomNav(1);
+
+                navigateAndFinish(context, LayoutScreen());
               },
               child: const Icon(IconlyLight.calendar, color: Colors.white),
             ),

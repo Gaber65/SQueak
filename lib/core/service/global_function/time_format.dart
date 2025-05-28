@@ -3,26 +3,35 @@ import 'package:intl/intl.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 
 String formatTimeToAmPm(String time) {
-  print('time: $time');
   if (time.isEmpty) return '';
 
-  final parts = time.split(':');
-  final hours = int.parse(parts[0]);
-  final minutes = int.parse(parts[1]);
-  final seconds = int.parse(parts[2].substring(0, 1));
+  try {
+    final parts = time.split(':');
+    if (parts.length < 3) return '';
 
-  final utcDate = DateTime.utc(0, 1, 1, hours, minutes, seconds);
-  final localDate = utcDate.toLocal();
+    final hours = int.parse(parts[0]);
+    final minutes = int.parse(parts[1]);
 
-  final localHours = localDate.hour;
-  final formattedMinutes = localDate.minute.toString().padLeft(2, '0');
-  final suffix = localHours >= 12 ? 'PM' : 'AM';
+    // If there's a decimal in seconds, split
+    final secondsPart = parts[2].split('.')[0];
+    final seconds = int.parse(secondsPart);
 
-  var hour = localHours % 12;
-  if (hour == 0) hour = 12;
+    final utcDate = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day, hours, minutes, seconds);
+    final localDate = utcDate.toLocal();
 
-  return '$hour:$formattedMinutes $suffix';
+    int hour = localDate.hour % 12;
+    if (hour == 0) hour = 12;
+
+    final formattedMinutes = localDate.minute.toString().padLeft(2, '0');
+    final suffix = localDate.hour >= 12 ? 'PM' : 'AM';
+
+    return '$hour:$formattedMinutes $suffix';
+  } catch (e) {
+    print('Error in formatTimeToAmPm: $e');
+    return '';
+  }
 }
+
 
 String formatDateString(String dateString) {
   final date = DateTime.parse(dateString);
@@ -89,6 +98,8 @@ String formatBILL(String createdAt) {
 }
 
 String formatTimeToAmPmReminder(String time) {
+  print('time: $time');
+  print('time.trim().isEmpty: ${time.trim().isEmpty}');
   if (time.trim().isEmpty) return '';
   final parts = time.trim().split(':').map((e) => e.trim()).toList();
   if (parts.length < 2) return '';
@@ -103,16 +114,53 @@ String formatTimeToAmPmReminder(String time) {
 
   return '$hour:$formattedMinutes $suffix';
 }
+
 String formatBoarding(String createdAt) {
   print("Input date string: $createdAt");
 
   // Define the expected format based on actual date string
-  DateFormat backendFormat =
-  DateFormat("yyyy-MM-dd'T'HH:mm:ss", 'en_US'); // Adjust as needed
+  DateFormat backendFormat = DateFormat(
+    "yyyy-MM-dd'T'HH:mm:ss",
+    'en_US',
+  ); // Adjust as needed
 
   DateTime utcTime = backendFormat.parse(createdAt, true);
 
   DateTime localTime = utcTime.toLocal();
 
   return DateFormat('MMM dd yyyy, hh:mm a', 'en_US').format(localTime);
+}
+
+String convertLocalTimeToUTC(String time) {
+  if (time.isEmpty) return '';
+
+  try {
+    final parts = time.split(':');
+    if (parts.length < 2) return '';
+
+    final hours = int.parse(parts[0]);
+    final minutes = int.parse(parts[1]);
+    final seconds = parts.length >= 3 ? int.parse(parts[2]) : 0;
+
+    final now = DateTime.now();
+    final localDate = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      hours,
+      minutes,
+      seconds,
+    );
+
+    final utcDate = localDate.toUtc();
+
+    final utcHours = utcDate.hour.toString().padLeft(2, '0');
+    final utcMinutes = utcDate.minute.toString().padLeft(2, '0');
+    final utcSeconds = utcDate.second.toString().padLeft(2, '0');
+
+    return '$utcHours:$utcMinutes:$utcSeconds';
+  } catch (e) {
+    print('Error in convertLocalTimeToUTC: $e');
+    return '';
+  }
 }

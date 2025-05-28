@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/appointments/exam/domain/entities/appointment_entity.dart';
+import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 
 import '../../../../../../core/utils/enums/dayOfWeek_enum.dart';
 import '../../../../../pets/data/models/pet_model.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 
-Widget buildPetFilter(BuildContext context, List<PetData> pets) {
+Widget buildPetFilter(BuildContext context, List<PetEntities> pets) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Container(
@@ -20,7 +22,7 @@ Widget buildPetFilter(BuildContext context, List<PetData> pets) {
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: PopupMenuButton<PetData>(
+        child: PopupMenuButton<PetEntities>(
           constraints: BoxConstraints(
             maxHeight: MediaQuery.of(context).size.height,
           ),
@@ -31,10 +33,11 @@ Widget buildPetFilter(BuildContext context, List<PetData> pets) {
           onSelected: (value) {
             UserAppointmentCubit.get(context).selectedPetId = value.petId;
             UserAppointmentCubit.get(context).petName = value.petName;
+            UserAppointmentCubit.get(context).emit(GetInvoicesSuccess());
             UserAppointmentCubit.get(context).filterAppointments();
           },
           itemBuilder: (context) => pets.map((e) {
-            return PopupMenuItem<PetData>(
+            return PopupMenuItem<PetEntities>(
               value: e,
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * .32,
@@ -43,9 +46,7 @@ Widget buildPetFilter(BuildContext context, List<PetData> pets) {
             );
           }).toList(),
           child: buildPopupButtonChild(
-              context,
-              UserAppointmentCubit.get(context).petName ??
-                  S.of(context).filter_hint_pets,
+              context, UserAppointmentCubit.get(context).petName ?? S.of(context).filter_hint_pets,
               UserAppointmentCubit.get(context).selectedPetId != null),
         ),
       ),
@@ -76,6 +77,8 @@ Widget buildStateFilter(BuildContext context) {
           onSelected: (value) {
             UserAppointmentCubit.get(context).selectedState = value.state.index;
             UserAppointmentCubit.get(context).selectedStateValue = value.key;
+            UserAppointmentCubit.get(context).emit(GetInvoicesSuccess());
+
             UserAppointmentCubit.get(context).filterAppointments();
           },
           itemBuilder: (context) => generateDummyDataState(context).map((e) {

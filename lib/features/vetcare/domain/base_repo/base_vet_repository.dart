@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:squeak/features/auth/login/domin/entities/login_entity.dart';
 import 'dart:io';
 
 import '../../../../core/error/failure.dart';
@@ -19,7 +20,7 @@ abstract class BaseVetRepository {
     required int countryId,
   });
 
-  Future<Either<Failure, String>> login({
+  Future<Either<Failure, LoginEntity>> login({
     required String emailOrPhone,
     required String password,
   });

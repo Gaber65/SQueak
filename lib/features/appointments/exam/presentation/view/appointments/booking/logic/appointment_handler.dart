@@ -29,15 +29,7 @@ class AppointmentHandler {
       return;
     }
 
-    if (doctorId == null || doctorId.isEmpty) {
-      errorToast(
-        context,
-        isArabic()
-            ? "يرجى اختيار طبيب من القائمة."
-            : "Please select a doctor from the list.",
-      );
-      return;
-    }
+
 
     // Format date and time
     String formatDate = DateFormat('yyyy-MM-dd', 'en_US').format(selectedDate);

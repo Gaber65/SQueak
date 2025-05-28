@@ -28,7 +28,7 @@ class RegisterScreen extends StatelessWidget {
           registerUseCase: RegisterUseCase(repository),
           registerQrUseCase: RegisterQrUseCase(repository),
         );
-        
+
         // Initialize necessary data
         cubit.loadCountries();
         cubit.detectCountryCode();
@@ -45,34 +45,25 @@ class RegisterScreen extends StatelessWidget {
               context,
               VerifyUser(
                 emailController: RegisterCubit.get(context).emailController,
+                clinicCode: RegisterCubit.get(context).followCodeController,
               ),
             );
           }
-          
-          // Handle country loading errors
-          if (state is CountriesErrorState) {
-            debugPrint('Failed to load countries: ${state.error}');
-          }
-          
-          // Handle country code detection errors
-          if (state is CountryCodeDetectionErrorState) {
-            debugPrint('Country code detection failed: ${state.error}');
-          }
+
+
         },
         builder: (context, state) {
           final cubit = RegisterCubit.get(context);
-          
+
           // Show loading indicator when initializing
-          if (state is CountriesLoadingState || 
+          if (state is CountriesLoadingState ||
               state is CountryCodeDetectionLoadingState) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }
-          
-          return AuthItem(
-            widget: RegisterView(cubit: cubit),
-          );
+
+          return AuthItem(widget: RegisterView(cubit: cubit));
         },
       ),
     );

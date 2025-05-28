@@ -16,6 +16,6 @@ class SuccessAddInSqueakStatuesState extends PetAsyncState {
   SuccessAddInSqueakStatuesState(this.petId);
 }
 class ErrorAddInSqueakStatuesState extends PetAsyncState {
-  final dynamic error;
+  final ErrorMessageModel error;
   ErrorAddInSqueakStatuesState(this.error);
 }
