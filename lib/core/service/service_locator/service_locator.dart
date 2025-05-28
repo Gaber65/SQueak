@@ -339,7 +339,6 @@ class ServiceLocator {
     );
 
     // UI Cubit
-    sl.registerFactory(() => VaccinationUiCubit(dataCubit: sl()));
 
     sl.registerLazySingleton<QRRemoteDataSource>(
           () => QRRemoteDataSourceImpl(),
@@ -365,4 +364,4 @@ class ServiceLocator {
     );
   }
   }
-}
+
