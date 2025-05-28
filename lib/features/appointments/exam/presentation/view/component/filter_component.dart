@@ -32,6 +32,7 @@ Widget buildPetFilter(BuildContext context, List<PetEntities> pets) {
           onSelected: (value) {
             UserAppointmentCubit.get(context).selectedPetId = value.petId;
             UserAppointmentCubit.get(context).petName = value.petName;
+            UserAppointmentCubit.get(context).emit(GetInvoicesSuccess());
             UserAppointmentCubit.get(context).filterAppointments();
           },
           itemBuilder:
@@ -81,6 +82,8 @@ Widget buildStateFilter(BuildContext context) {
           onSelected: (value) {
             UserAppointmentCubit.get(context).selectedState = value.state.index;
             UserAppointmentCubit.get(context).selectedStateValue = value.key;
+            UserAppointmentCubit.get(context).emit(GetInvoicesSuccess());
+
             UserAppointmentCubit.get(context).filterAppointments();
           },
           itemBuilder:

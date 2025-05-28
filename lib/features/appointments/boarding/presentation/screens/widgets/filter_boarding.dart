@@ -32,6 +32,8 @@ Widget buildPetFilterBoarding(BuildContext context, List<PetEntities> pets) {
           onSelected: (value) {
             BoardingCubit.get(context).selectedPetId = value.petName;
             BoardingCubit.get(context).petName = value.petName;
+            BoardingCubit.get(context).emit(FilterState());
+
             BoardingCubit.get(context).filterBoardings();
           },
           itemBuilder: (context) => pets.map((e) {
