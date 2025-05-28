@@ -191,27 +191,13 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
         if (mounted) setState(() => isCreatingAppointment = false);
         return;
       }
-      String fixedTimeFormat = "10:00:00";
-      try {
-        String formattedTime = time!;
-        if (formattedTime.toUpperCase().contains('AM') ||
-            formattedTime.toUpperCase().contains('PM')) {
-          formattedTime = convertTo24Hour(formattedTime);
-        }
-        if (formattedTime.split(':').length == 2) {
-          formattedTime = "$formattedTime:00";
-        }
-        fixedTimeFormat = formattedTime;
-      } catch (e) {
-        print("DEBUG: Error formatting time: $e, using default time");
-      }
-      print(
-        "DEBUG: Selected pet: ${matchedPet.petName} with ID: ${matchedPet.petId}, doctorId: $doctorId",
-      );
-      print("DEBUG: Using appointment time: $fixedTimeFormat");
+      var formattedTime = convertLocalTimeToUTC(time!);
+
+      print("DEBUG: Formatted time: $formattedTime");
+      print("DEBUG: time: $time");
       Map<String, dynamic> requestData = {
         "date": dateController.text,
-        "time": fixedTimeFormat,
+        "time": formattedTime,
         "petId": matchedPet.petId,
         "clinicCode": widget.clinicCode,
         "clientId": matchedPet.clientId,

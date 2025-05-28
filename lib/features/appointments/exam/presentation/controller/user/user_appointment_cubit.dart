@@ -98,7 +98,7 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
     final result = await getSuppliers(const NoParameters());
     result.fold((failure) => emit(GetSupplierError()), (suppliersData) {
       suppliers = suppliersData;
-      emit(GetSupplierSuccess());
+      emit(GetSupplierSuccess(suppliersData));
     });
   }
 
@@ -136,11 +136,16 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
   }
 
   void filterAppointments() {
-    filteredList = appointments.where((appointment) {
-          final matchesPet = selectedPetId == null || appointment.pet.squeakPetId == selectedPetId;
-          final matchesState = selectedState == null || appointment.status == selectedState;
+    filteredList =
+        appointments.where((appointment) {
+          final matchesPet =
+              selectedPetId == null ||
+              appointment.pet.squeakPetId == selectedPetId;
+          final matchesState =
+              selectedState == null || appointment.status == selectedState;
           return matchesPet && matchesState;
         }).toList();
+
     emit(AppointmentFiltered(filteredList));
   }
 
@@ -200,5 +205,4 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
       ),
     );
   }
-
 }

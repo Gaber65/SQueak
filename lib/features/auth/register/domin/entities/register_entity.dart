@@ -22,6 +22,18 @@ class RegisterEntity {
   Map<String, dynamic> toMap() {
     return {
       'fullName': fullName,
+      'phoneNumber': phone,
+      'email': email,
+      'password': password,
+      'countryId': countryId,
+      'gender': gender,
+      if (followCode != null) 'followCode': followCode,
+      'allToShareDataWithVetICare': shareData,
+    };
+  }
+  Map<String, dynamic> toMapRegister() {
+    return {
+      'fullName': fullName,
       'email': email,
       'password': password,
       'phone': phone,

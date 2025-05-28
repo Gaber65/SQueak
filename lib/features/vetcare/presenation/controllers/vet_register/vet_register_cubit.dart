@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:squeak/core/network/error_message_model.dart';
+import 'package:squeak/features/auth/login/domin/entities/login_entity.dart';
 
 import '../../../domain/entities/data_vet.dart';
 import '../../../domain/use_case/register_vet_usecase.dart';

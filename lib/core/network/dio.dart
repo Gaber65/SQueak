@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
+import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import '../service/refresh_token_manger/token_manager.dart';
 import 'config_model.dart';
 
@@ -102,6 +103,20 @@ String extractFirstError(dynamic error) {
       }
     }
     return error.error.message ?? "Unknown error";
+  } catch (_) {
+    return "Unknown error";
+  }
+}
+String extractFirstErrorAuth(ErrorMessageModel error) {
+  try {
+    final entries = error.errors.entries;
+    if (entries.isNotEmpty) {
+      final firstValues = entries.first.value;
+      if (firstValues.isNotEmpty) {
+        return firstValues.first;
+      }
+    }
+    return error.message ?? "Unknown error";
   } catch (_) {
     return "Unknown error";
   }

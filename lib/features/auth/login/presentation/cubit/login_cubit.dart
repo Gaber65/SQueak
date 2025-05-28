@@ -23,45 +23,34 @@ class LoginCubit extends Cubit<LoginState> {
 
   bool isLoggedIn = false;
 
-  Future<void> login(BuildContext context) async {
+  Future<void> login(
+    BuildContext context, {
+    String? email,
+    String? password,
+  }) async {
     isLoggedIn = true;
     emit(LoginLoading());
-
-    try {
-      String emailOrPhone = emailController.text;
-      if (!isEmail(emailOrPhone)) {
-        emailOrPhone = normalizePhoneNumber(emailOrPhone);
-      }
-
-      final entity = await loginUseCase(
-        emailOrPhoneNumber: emailOrPhone,
-        password: passwordController.text,
-      );
-
-      CacheHelper.saveData('token', entity.token);
-      MainCubit.get(context).saveToken();
-
-      clearFields();
-
-      isLoggedIn = false;
-      emit(LoginSuccess(entity));
-    } catch (e) {
-      isLoggedIn = false;
-      if (e is DioException) {
-        emit(LoginError(ErrorMessageModel.fromJson(e.response?.data)));
-      } else {
-        emit(
-          LoginError(
-            ErrorMessageModel(
-              message: e.toString(),
-              errors: {},
-              success: false,
-              statusCode: 500,
-            ),
-          ),
-        );
-      }
+    String emailOrPhone = email ?? emailController.text;
+    if (!isEmail(emailOrPhone)) {
+      emailOrPhone = normalizePhoneNumber(emailOrPhone);
     }
+
+    await loginUseCase(
+          emailOrPhoneNumber: emailOrPhone,
+          password: password ?? passwordController.text,
+        )
+        .then((value) {
+          CacheHelper.saveData('token', value.token);
+          MainCubit.get(context).saveToken();
+          clearFields();
+          isLoggedIn = false;
+          emit(LoginSuccess(value));
+        })
+        .catchError((error) {
+          isLoggedIn = false;
+          ServerException failure = error;
+          emit(LoginError(failure.errorMessageModel));
+        });
   }
 
   void clearFields() {

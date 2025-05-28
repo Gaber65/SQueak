@@ -112,10 +112,8 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
   @override
   Future<void> createAppointment(CreateAppointmentParams params) async {
     try {
-      final String formattedTime = _formatAppointmentTime(
-        params.appointmentTime,
-      );
-
+      String formattedTime = _formatAppointmentTime(params.appointmentTime);
+      formattedTime = convertLocalTimeToUTC(formattedTime);
       if (params.isExisted) {
         final Map<String, dynamic> requestData = {
           "date": params.appointmentDate,

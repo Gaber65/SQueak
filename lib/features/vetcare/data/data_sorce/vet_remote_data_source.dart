@@ -3,9 +3,11 @@ import 'dart:io';
 
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:squeak/features/auth/login/data/models/login_data_model.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
 import '../models/data_vet_model.dart';
@@ -59,18 +61,27 @@ class VetRemoteDataSource implements BaseVetRemoteDataSource {
   }
 
   @override
-  Future<String> login({
+  Future<LoginData> login({
     required String emailOrPhone,
     required String password,
   }) async {
+    final fbToken =
+        CacheHelper.getData('DeviceToken') ??
+        await FirebaseMessaging.instance.getToken();
     try {
       final response = await DioFinalHelper.postData(
         method: loginEndPoint,
-        data: {'emailOrPhoneNumber': emailOrPhone, 'Password': password},
+        data: {
+          'emailOrPhoneNumber': emailOrPhone,
+          'Password': password,
+          'FbToken': fbToken,
+          'IOSDevice': Platform.isIOS,
+          'Androidevice': Platform.isAndroid,
+        },
       );
 
       // Return token or user ID
-      return response.data['data']['token'] ?? '';
+      return LoginData.fromJson(response.data['data']);
     } catch (e) {
       rethrow;
     }

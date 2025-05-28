@@ -39,7 +39,11 @@ class RatingInitialized extends UserAppointmentState {}
 // Supplier States
 class GetSupplierLoading extends UserAppointmentState {}
 
-class GetSupplierSuccess extends UserAppointmentState {}
+class GetSupplierSuccess extends UserAppointmentState {
+  final MySupplier suppliers;
+
+  const GetSupplierSuccess(this.suppliers);
+}
 
 class GetSupplierError extends UserAppointmentState {}
 

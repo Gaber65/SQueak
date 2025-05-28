@@ -1,5 +1,5 @@
 export 'package:get_it/get_it.dart';
-export 'package:internet_connection_checker/internet_connection_checker.dart' show InternetConnectionChecker;
+export 'package:internet_connection_checker/internet_connection_checker.dart';
 export 'package:squeak/core/network/dio.dart';
 export 'package:squeak/core/utils/export_path/export_files.dart';
 export 'package:squeak/features/appointments/exam/data/data_source/appointment_local_data_source.dart';
@@ -58,11 +58,9 @@ export '../../../features/layout/post/domain/repository/base_post_repository.dar
 export '../../../features/layout/search/data/data_source/search_data_source.dart';
 export '../../../features/layout/search/data/repository/search_repository.dart';
 export '../../../features/layout/search/domain/repository/base_search_repository.dart';
-export '../../../features/layout/search/domain/usecase/get_search_list_use_case.dart'
-    show GetSearchListUseCase;
+export '../../../features/layout/search/domain/usecase/get_search_list_use_case.dart';
 export '../../../features/layout/search/domain/usecase/get_supplier_use_case.dart';
-export '../../../features/layout/search/domain/usecase/unfollow_clinic_use_case.dart'
-    show UnfollowClinicUseCase;
+export '../../../features/layout/search/domain/usecase/unfollow_clinic_use_case.dart';
 export '../../../features/pets/data/data_source/pet_local_data_source.dart';
 export '../../../features/pets/data/data_source/pet_remote_data_source.dart';
 export '../../../features/pets/data/repo/pet_repository_impl.dart';
@@ -100,3 +98,12 @@ export '../main_service/domain/usecases/mange_upload_image_use_case.dart';
 export '../main_service/domain/usecases/mange_upload_sound_use_case.dart';
 export '../main_service/domain/usecases/mange_upload_video_use_case.dart';
 export '../main_service/presentation/controller/main_cubit/main_cubit.dart';
+
+export 'package:squeak/features/vetcare/domain/use_case/follow_clinic_usecase.dart';
+export '../../../features/vaccination/data/datasources/vaccination_local_data_source.dart';
+export '../../../features/vetcare/data/data_sorce/qr_register_data_source.dart';
+export '../../../features/vetcare/data/repo/qr_repo.dart';
+export '../../../features/vetcare/domain/base_repo/qr_base_repo.dart';
+export '../../../features/vetcare/domain/use_case/check_clinic_usecase.dart';
+export '../../../features/vetcare/domain/use_case/get_vet_clients_usecase.dart';
+export '../../../features/vetcare/presenation/controllers/qr_register/qr_cubit.dart';

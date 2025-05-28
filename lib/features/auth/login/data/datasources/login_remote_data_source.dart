@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:squeak/features/auth/login/data/models/auth_model.dart';
@@ -11,19 +12,25 @@ class LoginRemoteDataSource {
     required String password,
   }) async {
     final fbToken =
-        CacheHelper.getData('DeviceToken') ?? await FirebaseMessaging.instance.getToken();
+        CacheHelper.getData('DeviceToken') ??
+        await FirebaseMessaging.instance.getToken();
 
-    final response = await DioFinalHelper.postData(
-      method: loginEndPoint,
-      data: {
-        'emailOrPhoneNumber': emailOrPhoneNumber,
-        'password': password,
-        // 'FbToken': fbToken,
-        // 'IOSDevice': Platform.isIOS,
-        'Androidevice': Platform.isAndroid,
-      },
-    );
-
-    return AuthModel.fromJson(response.data);
+    try {
+      final response = await DioFinalHelper.postData(
+        method: loginEndPoint,
+        data: {
+          'emailOrPhoneNumber': emailOrPhoneNumber,
+          'password': password,
+          'FbToken': fbToken,
+          'IOSDevice': Platform.isIOS,
+          'Androidevice': Platform.isAndroid,
+        },
+      );
+      return AuthModel.fromJson(response.data);
+    } on DioException catch (e) {
+      throw ServerException(
+        errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
+      );
+    }
   }
 }

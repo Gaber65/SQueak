@@ -10,19 +10,19 @@ import '../../../../../features/layout/notification/NotificationAPI/presentation
 import '../../../../../features/layout/notification/NotificationFCM/notification_initializer.dart';
 import '../../../../../firebase_options.dart';
 
+@pragma('vm:entry-point')
 class InitFunctions {
   static Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
     ConfigModel.setEnvironment(Environment.test);
     Bloc.observer = MyBlocObserver();
     await _initServiceLocator();
-    await initNotifications();
+    await NotificationInitializer.initialize();
     await _initFirebase();
-    await LocalDatabaseHelper.initDB(); // ✅ Initialize local database
+    await LocalDatabaseHelper.initDB();
     await _initCache();
     await _initDio();
     await _configureChucker();
-    _setupWorkManager();
     await _setupMessaging();
   }
 
@@ -35,7 +35,7 @@ class InitFunctions {
   static void _listenToForegroundMessages() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       print('app foreground');
-      _handleMessage(message, true);
+      _handleMessage(message);
     });
   }
 
@@ -43,7 +43,7 @@ class InitFunctions {
   static void _listenToMessageOpenedApp() {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       print('app opened');
-      _handleMessage(message, true);
+      _handleMessage(message);
     });
   }
 
@@ -58,37 +58,20 @@ class InitFunctions {
   ) async {
     print('app Terminated');
 
-    _handleMessage(message, false);
+    _handleMessage(message);
   }
 
   @pragma('vm:entry-point')
-  static void _handleMessage(RemoteMessage message, bool isAppOpen) async {
-    print('Message received: ${message.toMap()}');
+  static void _handleMessage(RemoteMessage message) async {
+    print('Message received: ${message.toMap()}\n \n \n');
     final model = NotificationMessage.fromJson(message.toMap());
 
-    FirebaseMessagingHandler.handleNotification(
-      model.data!.title!,
-      model.data!.body!,
-      model.data!.imageUrl!,
-      model.data!.targetTypeId!,
-      model.data!.targetType!,
-    );
-    await CacheHelper.init();
-
-    switch (model.data!.targetType) {
-      case "AppointmentCompleted":
-        CacheHelper.saveData('IsForceRate', true);
-        _handleAppointment(model.data!.targetTypeId!, isAppOpen);
-        break;
-    }
-  }
-
-  static void _handleAppointment(targetTypeId, bool isAppOpen) {
-    getAppointment(
-      id: targetTypeId,
-      isNav: false,
-      type: NotificationType.AppointmentCompleted,
-      context: navigatorKey.currentContext!,
+    NotificationScheduler.scheduleInstantNotification(
+      title: model.data!.title!,
+      body: model.data!.body!,
+      id: model.data!.targetTypeId!,
+      typeName: model.data!.targetType!,
+      largeImageUrl: model.data!.imageUrl!,
     );
   }
 
@@ -102,18 +85,6 @@ class InitFunctions {
     await ServiceLocator().init();
   }
 
-  static void _setupWorkManager() {
-    // Workmanager().initialize(ReminderManager.callbackDispatcher,
-    //     isInDebugMode: kDebugMode);
-    //
-    // Workmanager().registerPeriodicTask(
-    //   '1',
-    //   'refreshTokenTask',
-    //   frequency: Duration(hours: 4),
-    //   initialDelay: Duration(seconds: 10),
-    //   constraints: Constraints(networkType: NetworkType.connected),
-    // );
-  }
   static Future<void> _initCache() async {
     await CacheHelper.init();
     await FastCachedImageConfig.init(clearCacheAfter: Duration(days: 20));

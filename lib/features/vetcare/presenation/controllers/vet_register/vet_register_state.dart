@@ -8,14 +8,14 @@ class VetRegisterInitial extends VetRegisterState {}
 class LoadingRegisterState extends VetRegisterState {}
 class SuccessRegisterState extends VetRegisterState {}
 class ErrorRegisterState extends VetRegisterState {
-  final dynamic error;
+  final ErrorMessageModel error;
   ErrorRegisterState(this.error);
 }
 
 // Login states
 class LoadingLoginState extends VetRegisterState {}
 class SuccessLoginState extends VetRegisterState {
-  final dynamic authModel;
+  final LoginEntity authModel;
   final bool isHavePet;
   SuccessLoginState(this.authModel, this.isHavePet);
 }

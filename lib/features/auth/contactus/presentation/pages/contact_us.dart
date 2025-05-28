@@ -170,20 +170,10 @@ class _ContactScreenState extends State<ContactScreen> {
 
                 /// phone
                 SizedBox(height: 20),
-                (CacheHelper.getData('token') != null)
-                    ? MyTextForm(
-                      controller: cubit.phoneController,
-                      prefixIcon: const Icon(Icons.phone, size: 14),
-                      enable: false,
-                      enabled: true,
-                      hintText: S.of(context).phone_hint,
-                      validatorText: S.of(context).phone_validation,
-                      obscureText: false,
-                    )
-                    : PhoneTextField(
-                      controller: cubit.phoneController,
-                      countries: RegisterCubit.get(context).countries,
-                    ),
+                PhoneTextField(
+                  controller: cubit.phoneController,
+                  countries: RegisterCubit.get(context).countries,
+                ),
 
                 /// title
                 SizedBox(height: 20),

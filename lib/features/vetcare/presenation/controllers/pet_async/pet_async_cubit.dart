@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:squeak/core/network/error_message_model.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 
 import '../../../domain/entities/vet_client.dart';

@@ -14,7 +14,9 @@ class PasswordRemoteDataSource {
       );
       return ErrorMessageModel.fromJson(response.data);
     } on DioException catch (e) {
-      throw ErrorMessageModel.fromJson(e.response?.data);
+      throw ServerException(
+        errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
+      );
     }
   }
 
@@ -31,8 +33,10 @@ class PasswordRemoteDataSource {
         },
       );
       return ErrorMessageModel.fromJson(response.data);
-    } on DioException catch (e) {
-      throw ErrorMessageModel.fromJson(e.response?.data);
+    }on DioException catch (e) {
+      throw ServerException(
+        errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
+      );
     }
   }
 
@@ -48,8 +52,10 @@ class PasswordRemoteDataSource {
         },
       );
       return ErrorMessageModel.fromJson(response.data);
-    } on DioException catch (e) {
-      throw ErrorMessageModel.fromJson(e.response?.data);
+    }on DioException catch (e) {
+      throw ServerException(
+        errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
+      );
     }
   }
 }

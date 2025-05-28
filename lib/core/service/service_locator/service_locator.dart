@@ -213,7 +213,6 @@ class ServiceLocator {
     sl.registerLazySingleton<BaseVetRemoteDataSource>(
       () => VetRemoteDataSource(),
     );
-
     // Cubits
     sl.registerFactory(
       () => AppointmentCubit(
@@ -338,5 +337,32 @@ class ServiceLocator {
     sl.registerLazySingleton<BoardingRemoteDataSource>(
           () => BoardingRemoteDataSourceImpl(),
     );
+
+    // UI Cubit
+    sl.registerFactory(() => VaccinationUiCubit(dataCubit: sl()));
+
+    sl.registerLazySingleton<QRRemoteDataSource>(
+          () => QRRemoteDataSourceImpl(),
+    );
+
+    // Repository
+    sl.registerLazySingleton<QRRepository>(
+          () => QRRepositoryImpl(remoteDataSource: sl()),
+    );
+
+    // Use cases
+    sl.registerLazySingleton(() => CheckClinicInSupplierUseCase(sl()));
+    sl.registerLazySingleton(() => FollowQRClinicUseCase(sl()));
+    sl.registerLazySingleton(() => GetVetClientsUseCase(sl()));
+
+    // Cubit
+    sl.registerFactory(
+          () => QRCubit(
+        checkClinicInSupplierUseCase: sl(),
+        followClinicUseCase: sl(),
+        getVetClientsUseCase: sl(),
+      ),
+    );
+  }
   }
 }

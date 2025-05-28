@@ -27,9 +27,9 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
   Future<void> initialize() async {
-  await loadCountries();
-  await detectCountryCode();
-}
+    await loadCountries();
+    await detectCountryCode();
+  }
 
   static RegisterCubit get(BuildContext context) => BlocProvider.of(context);
 
@@ -61,7 +61,6 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   // Initialize user data if already logged in
 
-
   // Clear all form fields
   void clearRegisterForm() {
     passwordController.clear();
@@ -73,8 +72,8 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
   // Toggle data sharing agreement
-  void toggleDataSharing() {
-    isAccept = !isAccept;
+  void toggleDataSharing(value) {
+    isAccept = value;
     emit(RegisterFormUpdatedState());
   }
 
@@ -102,7 +101,7 @@ class RegisterCubit extends Cubit<RegisterState> {
       // 1. Get device location
       // 2. Reverse geocode to get country
       // 3. Match with countries list
-      
+
       emit(CountryCodeDetectionSuccessState());
     } catch (e) {
       emit(CountryCodeDetectionErrorState(e.toString()));
@@ -115,27 +114,33 @@ class RegisterCubit extends Cubit<RegisterState> {
 
     isRegister = true;
     emit(RegistrationLoadingState());
+    phoneController.text = normalizePhoneNumber(phoneController.text);
 
-    try {
-      final entity = RegisterEntity(
-        fullName: nameController.text,
-        email: emailController.text,
-        password: passwordController.text,
-        phone: phoneController.text,
-        countryId: countryIdToServer,
-        followCode: followCodeController.text.trim(),
-        shareData: isAccept,
-      );
-
-      await registerUseCase.execute(entity);
-
-      isRegister = false;
-      CacheHelper.saveData("followCode", followCodeController.text.trim());
-      emit(RegistrationSuccessState());
-    } catch (e) {
-      isRegister = false;
-      emit(RegistrationErrorState(e.toString()));
-    }
+    final entity = RegisterEntity(
+      fullName: nameController.text,
+      email: emailController.text,
+      password: passwordController.text,
+      phone: phoneController.text,
+      countryId: countryIdToServer,
+      followCode: followCodeController.text.trim(),
+      shareData: isAccept,
+    );
+    await registerUseCase
+        .execute(entity)
+        .then((value) {
+          isRegister = false;
+          CacheHelper.saveData("followCode", followCodeController.text.trim());
+          emit(RegistrationSuccessState());
+        })
+        .catchError((error) {
+          isRegister = false;
+          ServerException failure = error;
+          emit(
+            RegistrationErrorState(
+              extractFirstErrorAuth(failure.errorMessageModel),
+            ),
+          );
+        });
   }
 
   // QR-based registration
@@ -145,29 +150,35 @@ class RegisterCubit extends Cubit<RegisterState> {
     isRegister = true;
     LoginCubit.get(context).isLoggedIn = true;
     emit(RegistrationLoadingState());
+    phoneController.text = normalizePhoneNumber(phoneController.text);
 
-    try {
-      final entity = RegisterEntity(
-        fullName: nameController.text,
-        email: emailController.text,
-        password: passwordController.text,
-        phone: phoneController.text,
-        countryId: countryIdToServer,
-        shareData: isAccept,
-      );
+    final entity = RegisterEntity(
+      fullName: nameController.text,
+      email: emailController.text,
+      password: passwordController.text,
+      phone: phoneController.text,
+      countryId: countryIdToServer,
+      shareData: isAccept,
+    );
 
-      await registerQrUseCase.execute(entity, clinicCode);
+    print(entity.toMap());
 
-      isRegister = false;
-      emit(RegistrationSuccessState());
-      
-      // Automatically log in after successful registration
-      await LoginCubit.get(context).login(context);
-    } catch (e) {
-      isRegister = false;
-      LoginCubit.get(context).isLoggedIn = false;
-      emit(RegistrationErrorState(e.toString()));
-    }
+    await registerQrUseCase
+        .execute(entity, clinicCode)
+        .then((value) async {
+          emit(RegistrationSuccessState());
+          await LoginCubit.get(context).login(context,email: emailController.text, password: passwordController.text);
+        })
+        .catchError((error) {
+          isRegister = false;
+          LoginCubit.get(context).isLoggedIn = false;
+          ServerException failure = error;
+          emit(
+            RegistrationErrorState(
+              extractFirstErrorAuth(failure.errorMessageModel),
+            ),
+          );
+        });
   }
 
   @override
