@@ -142,8 +142,10 @@ class _BookingContentState extends State<BookingContent> {
           },
           child: Scaffold(
             appBar: AppBar(
-              title: Text(
-                S.of(context).booking,
+              title: Text(S.of(context).startAppointment),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
               ),
               actions: [
                 Padding(
@@ -157,39 +159,37 @@ class _BookingContentState extends State<BookingContent> {
                         ),
                       ),
                       onPressed:
-                      cubit.isLoading
-                          ? null
-                          : () {
-                        if (time == null) {
-                          infoToast(
-                            context,
-                            isArabic()
-                                ? 'الوقت مطلوب'
-                                : 'Please select time',
-                          );
-                        } else {
-                          handleCreateAppointment(context);
-                        }
-                      },
+                          cubit.isLoading
+                              ? null
+                              : () {
+                                if (time == null) {
+                                  infoToast(
+                                    context,
+                                    isArabic()
+                                        ? 'الوقت مطلوب'
+                                        : 'Please select time',
+                                  );
+                                } else {
+                                  handleCreateAppointment(context);
+                                }
+                              },
                       child:
-                      cubit.isLoading
-                          ? const CircularProgressIndicator()
-                          : Text(
-                        S.of(context).booking,
-                        style: FontStyleThame.textStyle(
-                          context: context,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          fontColor: ColorManager.primaryColor,
-                        ),
-                      ),
+                          cubit.isLoading
+                              ? const CircularProgressIndicator()
+                              : Text(
+                                S.of(context).booking,
+                                style: FontStyleThame.textStyle(
+                                  context: context,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  fontColor: ColorManager.primaryColor,
+                                ),
+                              ),
                     ),
                   ),
                 ),
               ],
             ),
-
-
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
             floatingActionButton: Padding(

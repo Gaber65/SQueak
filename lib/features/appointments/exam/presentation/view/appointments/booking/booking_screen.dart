@@ -28,12 +28,20 @@ class BookingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BookingContent(
-      selectedDate: selectedDate,
-      clinicCode: clinicCode,
-      timeSlotData: timeSlotData,
-      doctors: doctors,
-      petSelectFromIcon: petSelectFromIcon,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => sl<AppointmentCubit>()..getClientINClinic(clinicCode),
+        ),
+        BlocProvider(create: (_) => sl<PetCubit>()..getOwnerPets()),
+      ],
+      child: BookingContent(
+        selectedDate: selectedDate,
+        clinicCode: clinicCode,
+        timeSlotData: timeSlotData,
+        doctors: doctors,
+        petSelectFromIcon: petSelectFromIcon,
+      ),
     );
   }
 }
