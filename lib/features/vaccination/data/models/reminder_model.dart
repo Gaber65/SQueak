@@ -13,6 +13,7 @@ class ReminderModel extends ReminderEntity {
     required super.notificationID,
     super.notes,
     super.otherTitle,
+    super.vaccinationId,
     super.subTypeFeed,
   });
 
@@ -30,6 +31,8 @@ class ReminderModel extends ReminderEntity {
       notes: entity.notes,
       otherTitle: entity.otherTitle,
       subTypeFeed: entity.subTypeFeed,
+      vaccinationId: entity.vaccinationId,
+
     );
   }
 

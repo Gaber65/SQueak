@@ -28,4 +28,13 @@ class ErrorMessageModel extends Equatable {
   }
   @override
   List<Object?> get props => [errors, message, success, statusCode];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'errors': errors,
+      'message': message,
+      'success': success,
+      'statusCode': statusCode,
+    };
+  }
 }

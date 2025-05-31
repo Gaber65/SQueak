@@ -35,7 +35,7 @@ class PetCubit extends Cubit<PetState> {
     required this.createPetUseCase,
     required this.updatePetUseCase,
     required this.deletePetUseCase,
-  }) : super(PetInitial()) {}
+  }) : super(PetInitial());
 
   static PetCubit get(context) => BlocProvider.of(context);
 
@@ -54,12 +54,15 @@ class PetCubit extends Cubit<PetState> {
   );
   final petNameController = TextEditingController();
   final imageNameController = TextEditingController();
+  final passportNumberController = TextEditingController();
+  final passportImageNameController = TextEditingController();
 
   // Form state
   int gender = 1;
   bool isLoading = false;
   bool spayed = false;
   File? petImage;
+  File? passportImage;
 
   String dropdownValueBreed = '';
   String dropdownValueSpecies = '';
@@ -149,6 +152,10 @@ class PetCubit extends Cubit<PetState> {
         pet.imageName.toString().contains('freepik')
             ? ''
             : pet.imageName.toString();
+    // Add passport fields initialization
+    passportNumberController.text = pet.passportNumber ?? '';
+    passportImageNameController.text = pet.passportImage ?? '';
+
     gender = pet.gender;
     petId = pet.petId.toString();
     specieId = pet.specieId.toString();
@@ -175,13 +182,24 @@ class PetCubit extends Cubit<PetState> {
               ? ''
               : imageNameController.text,
       birthdate: birthdateController.text,
+      passportImage:
+          passportImageNameController.text.isEmpty
+              ? ''
+              : passportImageNameController.text,
+      passportNumber:
+          passportNumberController.text.isEmpty
+              ? ''
+              : passportNumberController.text,
     );
-
+    print(pet.toJson());
     final result = await createPetUseCase(PetParams(pet: pet));
 
     isLoading = false;
     result.fold(
-      (error) => emit(PetCreateErrorState(extractFirstError(error))),
+      (error) {
+        print(error.error.toJson());
+        emit(PetCreateErrorState(extractFirstError(error)));
+      },
       (createdPet) {
         pets.add(createdPet);
         emit(PetCreateSuccessState());
@@ -206,6 +224,14 @@ class PetCubit extends Cubit<PetState> {
               ? ''
               : imageNameController.text,
       birthdate: birthdateController.text,
+      passportImage:
+          passportImageNameController.text.isEmpty
+              ? ''
+              : passportImageNameController.text,
+      passportNumber:
+          passportNumberController.text.isEmpty
+              ? ''
+              : passportNumberController.text,
     );
 
     final result = await updatePetUseCase(PetParams(pet: pet));
@@ -280,6 +306,28 @@ class PetCubit extends Cubit<PetState> {
     } else {
       emit(PetImagePickedErrorState());
     }
+  }
+
+  Future<void> getPassportImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      passportImage = File(pickedFile.path);
+      emit(PetImagePickedSuccessState());
+    } else {
+      emit(PetImagePickedErrorState());
+    }
+  }
+
+  void removePassportImage() {
+    passportImage = null;
+    passportImageNameController.clear();
+    emit(PetFormUpdatedState());
+  }
+
+  // Change passport image name
+  void changePassportImageName(String name) {
+    passportImageNameController.text = name;
+    emit(PetFormUpdatedState());
   }
 
   @override

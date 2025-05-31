@@ -14,7 +14,7 @@ Padding buildSearchBox(PostCubit cubit) {
   return Padding(
     padding: const EdgeInsets.all(20.0),
     child: BlocProvider(
-      create: (context) => sl<SearchCubit>(),
+      create: (context) => sl<SearchCubit>()..getSupplier(),
       child: BlocConsumer<SearchCubit, SearchState>(
         listener: (context, state) {
           if (state is FollowError) {

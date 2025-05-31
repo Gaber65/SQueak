@@ -15,6 +15,7 @@ class Invoice extends Equatable {
   final String? doB;
   final String ownerName;
   final List<ItemEntity> items;
+  final List<PackageOfferEntity> packageOffers; // Added package offers
   final List<PaymentHistoryEntity> paymentHistories;
   final double receiptTotal;
   final double totalAfterVatAndDiscount;
@@ -53,6 +54,7 @@ class Invoice extends Equatable {
     this.saCode,
     required this.ownerName,
     required this.items,
+    required this.packageOffers, // Added package offers
     required this.paymentHistories,
     required this.receiptTotal,
     required this.totalAfterVatAndDiscount,
@@ -77,32 +79,33 @@ class Invoice extends Equatable {
 
   @override
   List<Object?> get props => [
-        clinicName,
-        clientPhone,
-        visitId,
-        visitDate,
-        petName,
-        species,
-        issueDate,
-        document,
-        code,
-        breed,
-        sex,
-        doB,
-        ownerName,
-        items,
-        paymentHistories,
-        receiptTotal,
-        totalAfterVatAndDiscount,
-        discount,
-        paid,
-        debit,
-        vat,
-        invoiceCode,
-        isNeedSaQrCode,
-        isNeedPaymentHistory,
-        isNeedItems,
-      ];
+    clinicName,
+    clientPhone,
+    visitId,
+    visitDate,
+    petName,
+    species,
+    issueDate,
+    document,
+    code,
+    breed,
+    sex,
+    doB,
+    ownerName,
+    items,
+    packageOffers, // Added to props
+    paymentHistories,
+    receiptTotal,
+    totalAfterVatAndDiscount,
+    discount,
+    paid,
+    debit,
+    vat,
+    invoiceCode,
+    isNeedSaQrCode,
+    isNeedPaymentHistory,
+    isNeedItems,
+  ];
 }
 
 class ItemEntity extends Equatable {
@@ -120,6 +123,38 @@ class ItemEntity extends Equatable {
 
   @override
   List<Object?> get props => [itemName, price, quantity, total];
+}
+
+class PackageOfferItemEntity extends Equatable {
+  final String itemName;
+  final String price;
+  final String quantity;
+  final String total;
+
+  const PackageOfferItemEntity({
+    required this.itemName,
+    required this.price,
+    required this.quantity,
+    required this.total,
+  });
+
+  @override
+  List<Object?> get props => [itemName, price, quantity, total];
+}
+
+class PackageOfferEntity extends Equatable {
+  final String packageName;
+  final int packageQuantity;
+  final List<PackageOfferItemEntity> packageItems;
+
+  const PackageOfferEntity({
+    required this.packageName,
+    required this.packageQuantity,
+    required this.packageItems,
+  });
+
+  @override
+  List<Object?> get props => [packageName, packageQuantity, packageItems];
 }
 
 class PaymentHistoryEntity extends Equatable {

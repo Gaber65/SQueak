@@ -160,7 +160,7 @@ class PrintScreen extends StatelessWidget {
                               ListView.builder(
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
-                                itemCount: cubit.pet!.species == '' ? 2 : 3,
+                                itemCount: cubit.invoice!.species == '' ? 2 : 3,
                                 itemBuilder: (context, index) {
                                   return Row(
                                     children: [
@@ -196,7 +196,8 @@ class PrintScreen extends StatelessWidget {
                                               index == 0
                                                   ? S.of(context).petName
                                                   : index == 1 &&
-                                                      cubit.pet!.species != ''
+                                                      cubit.invoice!.species !=
+                                                          ''
                                                   ? S.of(context).species
                                                   : S.of(context).sex,
                                               style: TextStyle(
@@ -231,11 +232,12 @@ class PrintScreen extends StatelessWidget {
                                             padding: const EdgeInsets.all(4.0),
                                             child: Text(
                                               index == 0
-                                                  ? cubit.pet!.petName
+                                                  ? cubit.invoice!.petName
                                                   : index == 1 &&
-                                                      cubit.pet!.species != ''
-                                                  ? cubit.pet!.species
-                                                  : cubit.pet!.sex,
+                                                      cubit.invoice!.species !=
+                                                          ''
+                                                  ? cubit.invoice!.species
+                                                  : cubit.invoice!.sex,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -329,8 +331,8 @@ class PrintScreen extends StatelessWidget {
                                             padding: const EdgeInsets.all(4.0),
                                             child: Text(
                                               index == 0
-                                                  ? cubit.owner!.ownerName
-                                                  : cubit.owner!.phone,
+                                                  ? cubit.invoice!.ownerName
+                                                  : cubit.invoice!.clientPhone,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -374,6 +376,50 @@ class PrintScreen extends StatelessWidget {
                                   3,
                                   context,
                                 ),
+
+                              if (cubit.invoice!.packageOffers.isNotEmpty) ...[
+                                SizedBox(height: 10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: cubit.invoice!.packageOffers.map((offer) {
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "📦 ${offer.packageName} (x${offer.packageQuantity})",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(height: 10),
+                                        _buildTableWithHeaders(
+                                          [
+                                            [
+                                              S.of(context).itemName,
+                                              S.of(context).price,
+                                              S.of(context).qty,
+                                              S.of(context).total,
+                                            ],
+                                            ...offer.packageItems.map((e) {
+                                              return [
+                                                e.itemName,
+                                                e.price.toString(),
+                                                e.quantity.toString(),
+                                                e.total.toString(),
+                                              ];
+                                            }),
+                                          ],
+                                          3,
+                                          context,
+                                        ),
+                                        SizedBox(height: 20),
+                                      ],
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+
+
                               SizedBox(height: 10),
                               // Total and Paid Amount
                               Text(
@@ -418,9 +464,7 @@ class PrintScreen extends StatelessWidget {
                                       S.of(context).value,
                                       S.of(context).paymentType,
                                     ],
-                                    ...cubit.invoice!.paymentHistories.map((
-                                      e,
-                                    ) {
+                                    ...cubit.invoice!.paymentHistories.map((e) {
                                       return [
                                         e.paymentDate,
                                         e.paymentName.toString(),
@@ -499,7 +543,7 @@ class PrintScreen extends StatelessWidget {
     // Save PDF or share it using the `Printing` package
     await Printing.sharePdf(
       bytes: await pdf.save(),
-      filename: 'widget_image.pdf',
+      filename: 'invoice.pdf',
     );
   }
 
@@ -513,7 +557,7 @@ class PrintScreen extends StatelessWidget {
             clinicPhone.startsWith('10') ||
             clinicPhone.startsWith('12') ||
             clinicPhone.startsWith('15')) {
-          clinicPhone = '0' + clinicPhone;
+          clinicPhone = '0$clinicPhone';
         }
         return Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
@@ -531,13 +575,13 @@ class PrintScreen extends StatelessWidget {
               ),
               Spacer(),
               Text(
-                "${index == 0
+                index == 0
                     ? cubit.invoice!.clinicName
                     : index == 1
                     ? clinicPhone
                     : index == 2
                     ? cubit.invoice!.invoiceCode
-                    : (formatBILL(cubit.invoice!.issueDate))}",
+                    : (cubit.invoice!.issueDate),
               ),
             ],
           ),

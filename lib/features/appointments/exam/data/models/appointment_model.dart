@@ -35,18 +35,16 @@ class AppointmentModel extends AppointmentEntity {
       id: json['id'],
       date: json['date'],
       time: json['time'],
-      isBillSqueakVisible: json['isBillSqueakVisible'] ?? false,
+      isBillSqueakVisible: json['isBillSqueakVisible'],
       doctorUserId: json['doctorUserId'],
       visitId: json['visitId'].toString().contains('00000000')
           ? null
           : json['visitId'],
-      isRating: json['isRating'] == null
-          ? (json['cleanlinessRate'] > 0 || json['doctorServiceRate'] > 0)
+      isRating: json['isRating'] ?? ((json['cleanlinessRate'] > 0 || json['doctorServiceRate'] > 0)
               ? true
               : (json['cleanlinessRate'] == 0 && json['doctorServiceRate'] == 0)
                   ? false
-                  : false
-          : json['isRating'],
+                  : false),
       cleanlinessRate: json['cleanlinessRate'],
       doctorServiceRate: json['doctorServiceRate'],
       feedbackComment: json['feedbackComment'],
@@ -65,8 +63,8 @@ class AppointmentModel extends AppointmentEntity {
       doctorUser: json['doctorUser'] != null
           ? DoctorUserModel.fromJson(json['doctorUser'])
           : null,
-      temperature: json['temprature'] == null ? 0 : json['temprature'],
-      weight: json['wieght'] == null ? 0 : json['wieght'],
+      temperature: json['temprature'] ?? 0,
+      weight: json['wieght'] ?? 0,
     );
   }
 

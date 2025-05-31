@@ -6,9 +6,9 @@ import '../../domain/entities/vaccination_entity.dart';
 import '../cubit/ui/vaccination_ui_cubit.dart';
 
 Widget buildDropDownBreed(
-    List<VaccinationNameEntity> vacEntitiesData,
-    BuildContext context,
-    ) {
+  List<VaccinationNameEntity> vacEntitiesData,
+  BuildContext context,
+) {
   final cubit = context.read<VaccinationUiCubit>();
   final isDark = MainCubit.get(context).isDark;
 
@@ -32,10 +32,7 @@ Widget buildDropDownBreed(
     dropdownColor: isDark ? Colors.black : Colors.white,
 
     // Affects the selected item text shown inside the field after selection
-    style: TextStyle(
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 16,
-    ),
+    style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16),
 
     // Hint when nothing is selected
     hint: Text(
@@ -54,18 +51,19 @@ Widget buildDropDownBreed(
     },
 
     // The list of dropdown menu items
-    items: vacEntitiesData.map((VaccinationNameEntity value) {
-      return DropdownMenuItem<VaccinationNameEntity>(
-        value: value,
-        child: Text(
-          value.vacName,
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black,
-            fontSize: 16,
-          ),
-        ),
-      );
-    }).toList(),
+    items:
+        vacEntitiesData.map((VaccinationNameEntity value) {
+          return DropdownMenuItem<VaccinationNameEntity>(
+            value: value,
+            child: Text(
+              value.vacName,
+              style: TextStyle(
+                color: isDark ? Colors.white : Colors.black,
+                fontSize: 16,
+              ),
+            ),
+          );
+        }).toList(),
   );
 }
 

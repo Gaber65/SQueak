@@ -17,7 +17,7 @@ Future<void> getAppointment({
 }) async {
   try {
     final response = await DioFinalHelper.getData(
-      method: createAndGetAppointmentsEndPoint(CacheHelper.getData('phone')),
+      method: createAndGetAppointmentsEndPoint(CacheHelper.getData('phone'),false),
       language: true,
     );
 

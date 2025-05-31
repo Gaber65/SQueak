@@ -92,8 +92,8 @@ String updateAvailabilitiesEndPoint(String id) =>
     '$version/availabilities/$id';
 
 /// Appointments
-String createAndGetAppointmentsEndPoint(String phone) =>
-    '$version/vetcare/AllMyPetsRerservations/paginated?ClientPhone=$phone';
+String createAndGetAppointmentsEndPoint(String phone,bool isApplyFilter) =>
+    '$version/vetcare/AllMyPetsRerservations/paginated?ClientPhone=$phone&IsApplyFilter=$isApplyFilter';
 const String getAppointmentsEndPoint = '$version/appointments/user';
 const String createAndGetReservationsEndPointGetFromNintyDays =
     '$version/vetcare/MyReservation/Today';

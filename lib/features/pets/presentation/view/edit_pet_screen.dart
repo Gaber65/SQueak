@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
+import 'package:squeak/features/pets/presentation/view/widgets/add_pet/passport_section.dart';
+import 'package:squeak/features/pets/presentation/view/widgets/add_pet/pet_form_section.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/birthdate_section.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/breed_species_section.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/gender_section.dart';
@@ -73,7 +75,12 @@ class EditPet extends StatelessWidget {
                   children: [
                     ProfileImageSection(pets: pets, cubit: cubit),
                     const SizedBox(height: 24),
+
                     GeneralInformationSection(cubit: cubit, isDark: isDark),
+                    SizedBox(height: responsiveHeight(30, context)),
+
+                    PassportSection(cubit: cubit, isDark: isDark),
+                    SizedBox(height: responsiveHeight(30, context)),
                     BreedSpeciesSection(cubit: cubit, isDark: isDark),
                     GenderSection(cubit: cubit),
                     BirthdateSection(cubit: cubit, isDark: isDark),

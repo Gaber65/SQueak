@@ -17,6 +17,7 @@ class InvoiceModel extends Invoice {
     super.saCode,
     required super.ownerName,
     required super.items,
+    required super.packageOffers, // Added package offers
     required super.paymentHistories,
     required super.receiptTotal,
     required super.totalAfterVatAndDiscount,
@@ -62,12 +63,15 @@ class InvoiceModel extends Invoice {
       sex: json['sex'] ?? '-',
       doB: json['doB'] ?? '-',
       ownerName: json['ownerName'] ?? '-',
-      items: (json['items'] as List<dynamic>)
+      items: (json['items'] as List<dynamic>? ?? [])
           .map((item) => ItemModel.fromJson(item as Map<String, dynamic>))
           .toList(),
-      paymentHistories: (json['paymentHistories'] as List<dynamic>)
+      packageOffers: (json['packageOffer'] as List<dynamic>? ?? [])
+          .map((offer) => PackageOfferModel.fromJson(offer as Map<String, dynamic>))
+          .toList(),
+      paymentHistories: (json['paymentHistories'] as List<dynamic>? ?? [])
           .map((history) =>
-              PaymentHistoryModel.fromJson(history as Map<String, dynamic>))
+          PaymentHistoryModel.fromJson(history as Map<String, dynamic>))
           .toList(),
       receiptTotal: json['receiptTotal'] ?? 0.0,
       totalAfterVatAndDiscount: json['totalAfterVatAndDiscount'] ?? 0.0,
@@ -107,6 +111,9 @@ class InvoiceModel extends Invoice {
       'doB': doB,
       'ownerName': ownerName,
       'items': (items as List<ItemModel>).map((item) => item.toJson()).toList(),
+      'packageOffer': (packageOffers as List<PackageOfferModel>)
+          .map((offer) => offer.toJson())
+          .toList(),
       'paymentHistories': (paymentHistories as List<PaymentHistoryModel>)
           .map((history) => history.toJson())
           .toList(),
@@ -156,6 +163,61 @@ class ItemModel extends ItemEntity {
       'price': price,
       'quantity': quantity,
       'total': total,
+    };
+  }
+}
+
+class PackageOfferItemModel extends PackageOfferItemEntity {
+  const PackageOfferItemModel({
+    required super.itemName,
+    required super.price,
+    required super.quantity,
+    required super.total,
+  });
+
+  factory PackageOfferItemModel.fromJson(Map<String, dynamic> json) {
+    return PackageOfferItemModel(
+      itemName: json['itemName'] ?? '-',
+      price: json['price'] ?? '-',
+      quantity: json['quantity'] ?? '-',
+      total: json['total'] ?? '-',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'itemName': itemName,
+      'price': price,
+      'quantity': quantity,
+      'total': total,
+    };
+  }
+}
+
+class PackageOfferModel extends PackageOfferEntity {
+  const PackageOfferModel({
+    required super.packageName,
+    required super.packageQuantity,
+    required super.packageItems,
+  });
+
+  factory PackageOfferModel.fromJson(Map<String, dynamic> json) {
+    return PackageOfferModel(
+      packageName: json['packageName'] ?? '-',
+      packageQuantity: json['packageQuantity'] ?? 0,
+      packageItems: (json['packageItem'] as List<dynamic>? ?? [])
+          .map((item) => PackageOfferItemModel.fromJson(item as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'packageName': packageName,
+      'packageQuantity': packageQuantity,
+      'packageItem': (packageItems as List<PackageOfferItemModel>)
+          .map((item) => item.toJson())
+          .toList(),
     };
   }
 }

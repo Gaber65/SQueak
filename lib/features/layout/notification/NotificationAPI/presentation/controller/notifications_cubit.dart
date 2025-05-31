@@ -58,11 +58,13 @@ class NotificationsCubit extends Cubit<NotificationsState> {
   PostEntity? postModel;
   bool isLoadingPost = false;
   Future<void> getPostNotification(String postId) async {
+    isLoadingPost = true;
     emit(NotificationsLoadingState());
     final result = await getPostNotificationUseCase(postId);
 
     result.fold(
       (failure) {
+        isLoadingPost = false;
         emit(NotificationsErrorState());
       },
       (r) async {
@@ -73,6 +75,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
         } else {
           emit(GetPostError());
         }
+        isLoadingPost = false;
         emit(NotificationsSuccessState());
       },
     );

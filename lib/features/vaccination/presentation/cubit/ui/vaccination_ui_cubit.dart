@@ -155,6 +155,7 @@ class VaccinationUiCubit extends Cubit<VaccinationUiState> {
       notes: comments,
       petId: petId,
       notificationID: notificationId.toString(),
+      vaccinationId:valueIdItem,
       subTypeFeed:
           feedSubTypeValue.isEmpty ||
                   feedSubTypeValue.toString() == "نوع معين الطعام" ||

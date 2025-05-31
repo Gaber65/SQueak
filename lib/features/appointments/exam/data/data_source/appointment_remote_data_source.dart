@@ -218,25 +218,14 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
   ) async {
     try {
       final response = await DioFinalHelper.getData(
-        method: createAndGetAppointmentsEndPoint(phone),
+        method: createAndGetAppointmentsEndPoint(phone, applyFilter),
         language: true,
       );
 
-      List<AppointmentModel> appointments =
-          (response.data['data']['result'] as List)
-              .map((e) => AppointmentModel.fromJson(e))
-              .toList();
+      List<AppointmentModel> appointments = (response.data['data']['result'] as List).map((e) => AppointmentModel.fromJson(e)).toList();
 
       appointments.sort((a, b) => a.date.compareTo(b.date));
 
-      if (applyFilter) {
-        appointments.removeWhere((element) {
-          DateTime appointmentDate = DateTime.parse(element.date);
-          return appointmentDate.isBefore(
-            DateTime.now().subtract(const Duration(days: 1)),
-          );
-        });
-      }
 
       return appointments;
     } on DioException catch (e) {

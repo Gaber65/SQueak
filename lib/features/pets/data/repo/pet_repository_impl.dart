@@ -89,14 +89,16 @@ class PetRepositoryImpl implements PetRepository {
         return Left(ServerFailure(failure.errorMessageModel));
       }
     } else {
-      return const Left(ServerFailure(
+      return const Left(
+        ServerFailure(
           ErrorMessageModel(
             message: 'No internet connection',
             statusCode: 0,
             errors: {},
             success: false,
           ),
-        ),);
+        ),
+      );
     }
   }
 
@@ -117,14 +119,16 @@ class PetRepositoryImpl implements PetRepository {
         return Left(ServerFailure(failure.errorMessageModel));
       }
     } else {
-      return const Left(ServerFailure(
+      return const Left(
+        ServerFailure(
           ErrorMessageModel(
             message: 'No internet connection',
             statusCode: 0,
             errors: {},
             success: false,
           ),
-        ),);
+        ),
+      );
     }
   }
 
@@ -132,18 +136,7 @@ class PetRepositoryImpl implements PetRepository {
   Future<Either<Failure, PetEntities>> createPet(PetEntities pet) async {
     if (await networkInfo.isConnected) {
       try {
-        final petData = PetData(
-          petId: pet.petId,
-          petName: pet.petName,
-          breedId: pet.breedId,
-          isSpayed: pet.isSpayed,
-          gender: pet.gender,
-          specieId: pet.specieId,
-          imageName: pet.imageName,
-          birthdate: pet.birthdate,
-        );
-
-        final remotePet = await remoteDataSource.createPet(petData);
+        final remotePet = await remoteDataSource.createPet(pet);
         final pets = await localDataSource.getCachedPets();
         pets.add(remotePet);
         await localDataSource.cachePets(pets);
@@ -153,14 +146,16 @@ class PetRepositoryImpl implements PetRepository {
         return Left(ServerFailure(failure.errorMessageModel));
       }
     } else {
-      return const Left(ServerFailure(
+      return const Left(
+        ServerFailure(
           ErrorMessageModel(
             message: 'No internet connection',
             statusCode: 0,
             errors: {},
             success: false,
           ),
-        ),);
+        ),
+      );
     }
   }
 
@@ -177,6 +172,8 @@ class PetRepositoryImpl implements PetRepository {
           specieId: pet.specieId,
           imageName: pet.imageName,
           birthdate: pet.birthdate,
+          passportNumber:pet.passportNumber,
+          passportImage: pet.passportImage,
         );
 
         final remotePet = await remoteDataSource.updatePet(
@@ -195,14 +192,16 @@ class PetRepositoryImpl implements PetRepository {
         return Left(ServerFailure(failure.errorMessageModel));
       }
     } else {
-      return const Left(ServerFailure(
+      return const Left(
+        ServerFailure(
           ErrorMessageModel(
             message: 'No internet connection',
             statusCode: 0,
             errors: {},
             success: false,
           ),
-        ),);
+        ),
+      );
     }
   }
 
@@ -220,14 +219,16 @@ class PetRepositoryImpl implements PetRepository {
         return Left(ServerFailure(failure.errorMessageModel));
       }
     } else {
-      return const Left(ServerFailure(
+      return const Left(
+        ServerFailure(
           ErrorMessageModel(
             message: 'No internet connection',
             statusCode: 0,
             errors: {},
             success: false,
           ),
-        ),);
+        ),
+      );
     }
   }
 }

@@ -11,8 +11,14 @@ import 'empty_state.dart';
 class PetScreenContent extends StatefulWidget {
   final List<PetEntities> pets;
   final PetCubit cubit;
+  final PetState state;
 
-  const PetScreenContent({super.key, required this.pets, required this.cubit});
+  const PetScreenContent({
+    super.key,
+    required this.pets,
+    required this.cubit,
+    required this.state,
+  });
 
   @override
   State<PetScreenContent> createState() => _PetScreenContentState();
@@ -40,6 +46,13 @@ class _PetScreenContentState extends State<PetScreenContent> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
             onPressed: () => _handleBackPress(),
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(2.0),
+            child:
+                widget.state is DeletePetLoadingState
+                    ? const LinearProgressIndicator()
+                    : Container(),
           ),
         ),
         body:

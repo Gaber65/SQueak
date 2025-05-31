@@ -13,6 +13,8 @@ class PetData extends PetEntities {
     required super.birthdate,
     super.breed,
     super.isSelected,
+    super.passportImage,
+    super.passportNumber,
   });
 
   factory PetData.fromJson(Map<String, dynamic> json) {
@@ -30,9 +32,12 @@ class PetData extends PetEntities {
               ? ''
               : json['imageName'],
       birthdate: json['birthdate'] ?? '',
+      passportImage: json['passportImage'],
+      passportNumber: json['passportnumber'],
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'petName': petName,
@@ -43,6 +48,8 @@ class PetData extends PetEntities {
       'specieId': specieId,
       'imageName': imageName,
       'birthdate': birthdate,
+      'passportnumber': passportNumber,
+      'passportImage': passportImage,
     };
   }
 }

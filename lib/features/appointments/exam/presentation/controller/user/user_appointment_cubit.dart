@@ -9,6 +9,7 @@ import 'package:squeak/features/appointments/exam/domain/entities/clinic_entity.
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/print_reciept.dart';
 import 'dart:typed_data';
 import '../../../../../../../core/service/service_locator/locatore_export_path.dart';
+import '../../../data/models/invoice_model.dart';
 import '../../../domain/entities/invoice.dart';
 
 part 'user_appointment_state.dart';
@@ -35,8 +36,7 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
   List<AppointmentEntity> appointments = [];
   MySupplier? suppliers;
   Invoice? invoice;
-  PetPrint? pet;
-  OwnerPrint? owner;
+
   bool isLoadingInvoice = false;
   List<AppointmentEntity> filteredList = [];
   String? selectedPetId;
@@ -56,7 +56,9 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
         applyFilter: applyFilter,
       ),
     );
-    result.fold((failure) => emit(GetAppointmentError()), (appointmentsList) {
+    result.fold((failure) {
+      emit(GetAppointmentError());
+    }, (appointmentsList) {
       appointments = appointmentsList;
 
       filteredList = List.from(appointments);
@@ -117,19 +119,6 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
       (failure) => emit(GetInvoicesError(extractFirstError(failure))),
       (invoiceData) {
         invoice = invoiceData;
-
-        // Create pet and owner models from invoice data
-        pet = PetPrint(
-          petName: invoiceData.petName,
-          species: invoiceData.species,
-          sex: invoiceData.sex,
-        );
-
-        owner = OwnerPrint(
-          ownerName: invoiceData.ownerName,
-          phone: invoiceData.clientPhone,
-        );
-
         emit(GetInvoicesSuccess());
       },
     );

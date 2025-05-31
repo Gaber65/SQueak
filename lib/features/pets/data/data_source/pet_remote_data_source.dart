@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
 import '../models/pet_model.dart';
@@ -8,7 +9,7 @@ abstract class PetRemoteDataSource {
   Future<List<BreedData>> getAllBreeds();
   Future<List<BreedData>> getBreedsBySpeciesId(String speciesId);
   Future<List<BreedData>> getAllSpecies();
-  Future<PetData> createPet(PetData pet);
+  Future<PetData> createPet(PetEntities pet);
   Future<PetData> updatePet(String id, PetData pet);
   Future<void> deletePet(String id);
 }
@@ -83,7 +84,7 @@ class PetRemoteDataSourceImpl implements PetRemoteDataSource {
   }
 
   @override
-  Future<PetData> createPet(PetData pet) async {
+  Future<PetData> createPet(PetEntities pet) async {
     try {
       final response = await DioFinalHelper.postData(
         method: addPetEndPint,

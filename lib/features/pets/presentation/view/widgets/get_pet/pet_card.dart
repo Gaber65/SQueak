@@ -145,10 +145,9 @@ class PetCard extends StatelessWidget {
       imageUrl:
           'https://img.freepik.com/premium-vector/sad-dog_161669-74.jpg?size=626&ext=jpg&uid=R78903714&ga=GA1.2.131510781.1692744483&semt=ais',
       onConfirm: () async {
-        print('pet id ${pet.petId.toString()}');
-        print('pet id ${pet.toJson()}');
-        await cubit.deletePet(pet.petId.toString());
+
         Navigator.of(context).pop(true);
+        await cubit.deletePet(pet.petId.toString());
       },
     );
   }

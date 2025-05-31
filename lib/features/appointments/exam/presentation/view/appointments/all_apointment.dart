@@ -28,7 +28,7 @@ class AllAppointment extends StatelessWidget {
               (context) =>
                   sl<UserAppointmentCubit>()
                     ..fetchSuppliers()
-                    ..getAppointment(true),
+                    ..getAppointment(false),
         ),
         BlocProvider(create: (context) => sl<PetCubit>()..getOwnerPets()),
       ],
@@ -197,8 +197,7 @@ class AllAppointment extends StatelessWidget {
                               },
                               itemBuilder: (context) {
                                 return [
-                                  if (appointments.visitId != null &&
-                                      appointments.isBillSqueakVisible)
+                                  if (appointments.isBillSqueakVisible)
                                     PopupMenuItem(
                                       value: 1,
                                       onTap: () {
@@ -330,8 +329,7 @@ class AllAppointment extends StatelessWidget {
                               },
                               itemBuilder: (context) {
                                 return [
-                                  if (appointments.visitId != null &&
-                                      appointments.isBillSqueakVisible)
+                                  if (appointments.isBillSqueakVisible)
                                     PopupMenuItem(
                                       value: 1,
                                       onTap: () {
@@ -456,8 +454,7 @@ class AllAppointment extends StatelessWidget {
                               },
                               itemBuilder: (context) {
                                 return [
-                                  if (appointments.visitId != null &&
-                                      appointments.isBillSqueakVisible)
+                                  if (appointments.isBillSqueakVisible)
                                     PopupMenuItem(
                                       value: 1,
                                       onTap: () {

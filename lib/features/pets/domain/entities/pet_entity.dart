@@ -4,13 +4,15 @@ class PetEntities {
   final String breedId;
   final bool isSpayed;
   final int gender;
-  final dynamic specieId;
-  final dynamic imageName;
+  final String specieId;
+  final String imageName;
   final String birthdate;
+  final String? passportNumber;
+  final String? passportImage;
   final BreedEntity? breed;
-  bool isSelected;
+  final bool isSelected;
 
-  PetEntities({
+  const PetEntities({
     required this.petId,
     required this.petName,
     required this.breedId,
@@ -19,19 +21,26 @@ class PetEntities {
     required this.specieId,
     required this.imageName,
     required this.birthdate,
+    this.passportNumber,
+    this.passportImage,
     this.breed,
     this.isSelected = false,
   });
-  Map<String, dynamic> toJson() => {
-    'petId': petId,
-    'petName': petName,
-    'breedId': breedId.isEmpty ? null : breedId,
-    'gender': gender,
-    'isSpayed': isSpayed,
-    'specieId': specieId,
-    'imageName': imageName,
-    'birthdate': birthdate,
-  };
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': petId,
+      'petName': petName,
+      if (breedId.isNotEmpty) 'breedId': breedId,
+      'isSpayed': isSpayed,
+      'gender': gender,
+      'specieId': specieId,
+      'imageName': imageName,
+      'birthdate': birthdate,
+      'passportnumber': passportNumber,
+      'passportImage': passportImage,
+    };
+  }
 }
 
 class BreedEntity {

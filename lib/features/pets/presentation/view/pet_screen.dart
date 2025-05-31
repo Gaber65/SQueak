@@ -30,7 +30,7 @@ class PetScreen extends StatelessWidget {
         },
         builder: (context, state) {
           final cubit = PetCubit.get(context);
-          return PetScreenContent(pets: cubit.pets, cubit: cubit);
+          return PetScreenContent(pets: cubit.pets, cubit: cubit,state: state,);
         },
       ),
     );

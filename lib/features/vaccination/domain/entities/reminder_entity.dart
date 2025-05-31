@@ -13,6 +13,7 @@ class ReminderEntity extends Equatable {
   final String? notes;
   final String? otherTitle;
   final String? subTypeFeed;
+  final String? vaccinationId;
 
   const ReminderEntity({
     this.id,
@@ -26,6 +27,7 @@ class ReminderEntity extends Equatable {
     required this.notificationID,
     this.notes,
     this.otherTitle,
+    this.vaccinationId,
     this.subTypeFeed,
   });
 

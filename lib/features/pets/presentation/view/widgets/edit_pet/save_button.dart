@@ -22,22 +22,7 @@ class SaveButton extends StatelessWidget {
           ),
           elevation: 0,
         ),
-        onPressed: () {
-          if (cubit.formKey.currentState!.validate()) {
-            if (cubit.petImage == null) {
-              cubit.updatePet();
-            } else {
-              cubit.isLoading = true;
-              MainCubit.get(context)
-                  .getGlobalImage(cubit.petImage!, UploadPlace.petsImages)
-                  .then((value) {
-                    cubit.imageNameController.text =
-                        MainCubit.get(context).modelImage!.data;
-                    cubit.updatePet();
-                  });
-            }
-          }
-        },
+        onPressed: () => _handleSave(context),
         child:
             cubit.isLoading
                 ? const SizedBox(
@@ -58,5 +43,62 @@ class SaveButton extends StatelessWidget {
                 ),
       ),
     );
+  }
+
+  void _handleSave(BuildContext context) {
+    if (cubit.formKey.currentState!.validate()) {
+      cubit.isLoading = true;
+      cubit.emit(ChangeBreedState());
+
+      // Handle both pet image and passport image uploads
+      _handleImageUploads(context);
+    }
+  }
+
+  void _handleImageUploads(BuildContext context) {
+    List<Future> uploadTasks = [];
+
+    // Upload pet image if exists
+    if (cubit.petImage != null) {
+      uploadTasks.add(
+        MainCubit.get(
+          context,
+        ).getGlobalImage(cubit.petImage!, UploadPlace.petsImages).then((value) {
+          cubit.imageNameController.text =
+              MainCubit.get(context).modelImage!.data;
+        }),
+      );
+    }
+
+    // Upload passport image if exists
+    if (cubit.passportImage != null) {
+      uploadTasks.add(
+        MainCubit.get(context)
+            .getGlobalImage(cubit.passportImage!, UploadPlace.petsImages)
+            .then((value) {
+              cubit.passportImageNameController.text =
+                  MainCubit.get(context).modelImage!.data;
+            }),
+      );
+    }
+
+    if (uploadTasks.isNotEmpty) {
+      // Wait for all image uploads to complete
+      Future.wait(uploadTasks)
+          .then((_) {
+            cubit.updatePet();
+          })
+          .catchError((error) {
+            cubit.isLoading = false;
+            cubit.emit(PetCreateErrorState(error.toString()));
+            errorToast(
+              context,
+              isArabic() ? "فشل في رفع الصور" : "Failed to upload images",
+            );
+          });
+    } else {
+      // No images to upload, proceed directly
+      cubit.updatePet();
+    }
   }
 }
