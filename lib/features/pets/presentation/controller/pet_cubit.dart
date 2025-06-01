@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:squeak/core/base_usecase/base_usecase.dart';
 import 'package:squeak/core/network/dio.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
+import 'package:squeak/core/service/global_function/format_utils.dart';
 import '../../../../features/pets/domain/entities/pet_entity.dart';
 import '../../../../features/pets/domain/use_case/get_owner_pets_usecase.dart';
 import '../../../../features/pets/domain/use_case/get_all_breeds_usecase.dart';
@@ -144,6 +145,12 @@ class PetCubit extends Cubit<PetState> {
 
   // Initialize form for editing an existing pet
   void initEdit(PetEntities pet) {
+    print(pet.toJson());
+    print(pet.breed);
+    searchController.text =
+        (isArabic()
+            ? pet.breed?.arBreed
+            : pet.breed?.enBreed ?? S.current.breed)!;
     petNameController.text = pet.petName;
     breedIdController.text = pet.breedId;
     birthdateController.text =
@@ -161,7 +168,6 @@ class PetCubit extends Cubit<PetState> {
     specieId = pet.specieId.toString();
     spayed = pet.isSpayed;
     dropdownValueBreed = pet.breedId;
-    searchController.text = pet.breed?.enType ?? S.current.breed;
     emit(PetFormUpdatedState());
   }
 

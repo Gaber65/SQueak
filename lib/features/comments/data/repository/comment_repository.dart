@@ -12,6 +12,7 @@ class CommentRepository extends BaseCommentRepository {
 
   CommentRepository(this.baseCommentRemoteDataSource);
 
+
   @override
   Future<Either<Failure, CommentEntity>> createComment(
     CreateCommentParameters parameters,
@@ -19,7 +20,6 @@ class CommentRepository extends BaseCommentRepository {
     final result = await baseCommentRemoteDataSource.createCommentDataSource(
       parameters,
     );
-
     try {
       return Right(result);
     } on ServerException catch (failure) {

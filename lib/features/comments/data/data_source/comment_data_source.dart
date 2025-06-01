@@ -22,6 +22,7 @@ abstract class BaseCommentRemoteDataSource {
 }
 
 class CommentRemoteDataSource extends BaseCommentRemoteDataSource {
+
   @override
   Future<CommentModel> createCommentDataSource(
     CreateCommentParameters parameters,
@@ -97,6 +98,7 @@ class CommentRemoteDataSource extends BaseCommentRemoteDataSource {
           .map((e) => CommentModel.fromJson(e))
           .toList();
     } on DioException catch (e) {
+      print(e.response!.data);
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

@@ -9,10 +9,10 @@ class PetEntities {
   final String birthdate;
   final String? passportNumber;
   final String? passportImage;
-  final BreedEntity? breed;
-  final bool isSelected;
+  final BreedPetEntity? breed;
+  bool isSelected;
 
-  const PetEntities({
+  PetEntities({
     required this.petId,
     required this.petName,
     required this.breedId,
@@ -53,6 +53,12 @@ class BreedEntity {
     required this.id,
     required this.specieId,
   });
+
+  Map<String, dynamic> toJson() => {
+    'enType': enType,
+    'id': id,
+    'specieId': specieId,
+  };
 }
 
 class SpeciesEntity {
@@ -60,4 +66,15 @@ class SpeciesEntity {
   final String type;
 
   const SpeciesEntity({required this.id, required this.type});
+}
+class BreedPetEntity {
+  final String enBreed;
+  final String arBreed;
+
+  BreedPetEntity({required this.enBreed, required this.arBreed});
+
+  Map<String, dynamic> toJson() => {
+    'enBreed': enBreed,
+    'arBreed': arBreed,
+  };
 }

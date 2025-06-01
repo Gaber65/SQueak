@@ -25,7 +25,10 @@ class _ConsentCheckboxState extends State<ConsentCheckbox> {
       listener: (context, state) {},
       builder: (context, state) {
         return Card(
-          color: Colors.orange.shade50,
+          color:
+              MainCubit.get(context).isDark
+                  ? Colors.blue.shade900
+                  : Colors.orange.shade50,
           child: Padding(
             padding: const EdgeInsets.all(8),
             child: Row(
@@ -33,12 +36,12 @@ class _ConsentCheckboxState extends State<ConsentCheckbox> {
               children: [
                 Checkbox(
                   value: isShared,
+
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   onChanged: (value) {
                     isShared = value!;
                     widget.cubit.toggleDataSharing(value);
-                    setState(() {
-
-                    });
+                    setState(() {});
                   },
                   activeColor: ColorManager.primaryColor,
                 ),
@@ -53,6 +56,10 @@ class _ConsentCheckboxState extends State<ConsentCheckbox> {
                             style: FontStyleThame.textStyle(
                               context: context,
                               fontSize: 13,
+                              fontColor:
+                                  MainCubit.get(context).isDark
+                                      ? Colors.white60
+                                      : Colors.black,
                             ),
                           ),
                           TextSpan(
@@ -61,13 +68,20 @@ class _ConsentCheckboxState extends State<ConsentCheckbox> {
                               context: context,
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
-                              fontColor: ColorManager.primaryColor,
+                              fontColor:
+                                  MainCubit.get(context).isDark
+                                      ? Colors.white
+                                      : ColorManager.primaryColor,
                             ),
                           ),
                           TextSpan(
                             text: _getConsentSuffix(),
                             style: FontStyleThame.textStyle(
                               context: context,
+                              fontColor:
+                                  MainCubit.get(context).isDark
+                                      ? Colors.white60
+                                      : Colors.black,
                               fontSize: 13,
                             ),
                           ),

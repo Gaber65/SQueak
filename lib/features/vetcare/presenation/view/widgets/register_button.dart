@@ -31,24 +31,25 @@ class RegisterButton extends StatelessWidget {
               elevation: 2,
             ),
             onPressed: isLoading ? null : () => _handleRegister(context),
-            child: isLoading
-                ? const SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            )
-                : Text(
-              S.of(context).register,
-              style: FontStyleThame.textStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                context: context,
-                fontColor: Colors.white,
-              ),
-            ),
+            child:
+                isLoading
+                    ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                    : Text(
+                      S.of(context).register,
+                      style: FontStyleThame.textStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        context: context,
+                        fontColor: Colors.white,
+                      ),
+                    ),
           ),
         );
       },
@@ -57,7 +58,16 @@ class RegisterButton extends StatelessWidget {
 
   void _handleRegister(BuildContext context) {
     if (cubit.formKey.currentState!.validate()) {
-      cubit.registerWithQr(clinicCode, context);
+      if (cubit.countryCode.isEmpty) {
+        infoToast(
+          context,
+          isArabic()
+              ? 'يرجى اختيار دولتك قبل متابعة التسجيل.'
+              : 'Please select your country before proceeding with registration.',
+        );
+      } else {
+        cubit.registerWithQr(clinicCode, context);
+      }
     }
   }
 }

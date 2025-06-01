@@ -3,10 +3,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/auth/register/presentation/cubit/register_cubit.dart';
 
 class RegisterFormFields extends StatelessWidget {
-  const RegisterFormFields({
-    super.key,
-    required this.cubit,
-  });
+  const RegisterFormFields({super.key, required this.cubit});
 
   final RegisterCubit cubit;
 
@@ -29,7 +26,7 @@ class RegisterFormFields extends StatelessWidget {
     return MyTextForm(
       controller: cubit.nameController,
       prefixIcon: const Icon(Icons.person, size: 20),
-      enable: true,
+      enable: false,
       hintText: S.of(context).enterName,
       validatorText: S.of(context).enterName,
       obscureText: false,
@@ -40,7 +37,7 @@ class RegisterFormFields extends StatelessWidget {
     return MyTextForm(
       controller: cubit.emailController,
       prefixIcon: const Icon(Icons.email_outlined, size: 20),
-      enable: true,
+      enable: false,
       hintText: S.of(context).enterUrEmail,
       validatorText: S.of(context).enterUrEmail,
       obscureText: false,
@@ -52,6 +49,7 @@ class RegisterFormFields extends StatelessWidget {
     return PhoneTextField(
       controller: cubit.phoneController,
       countries: cubit.countries,
+      registerCubit: cubit,
     );
   }
 

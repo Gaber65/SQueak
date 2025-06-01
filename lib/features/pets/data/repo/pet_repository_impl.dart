@@ -19,18 +19,6 @@ class PetRepositoryImpl implements PetRepository {
 
   @override
   Future<Either<Failure, List<PetEntities>>> getOwnerPets() async {
-    try {
-      final localPets = await localDataSource.getCachedPets();
-      if (localPets != null && localPets.isNotEmpty) {
-        // Fire and forget remote update
-        _updatePetsFromRemote();
-        return Right(localPets);
-      }
-    } catch (_) {
-      // Ignore local cache failure
-    }
-
-    // If local failed or was empty, fetch from remote
     return await _fetchPetsFromRemote();
   }
 
@@ -45,15 +33,6 @@ class PetRepositoryImpl implements PetRepository {
     }
   }
 
-  /// Background refresh of pet data
-  Future<void> _updatePetsFromRemote() async {
-    try {
-      final remotePets = await remoteDataSource.getOwnerPets();
-      await localDataSource.cachePets(remotePets);
-    } catch (_) {
-      // Silent failure/logging if needed
-    }
-  }
 
   @override
   Future<Either<Failure, List<BreedEntity>>> getAllBreeds() async {
@@ -172,7 +151,7 @@ class PetRepositoryImpl implements PetRepository {
           specieId: pet.specieId,
           imageName: pet.imageName,
           birthdate: pet.birthdate,
-          passportNumber:pet.passportNumber,
+          passportNumber: pet.passportNumber,
           passportImage: pet.passportImage,
         );
 

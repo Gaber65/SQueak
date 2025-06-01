@@ -9,6 +9,7 @@ import 'locatore_export_path.dart';
 final sl = GetIt.instance;
 
 class ServiceLocator {
+
   Future<void> init() async {
     // Register Cubits
     sl.registerFactory(() => MainCubit(sl(), sl(), sl(), sl(), sl()));

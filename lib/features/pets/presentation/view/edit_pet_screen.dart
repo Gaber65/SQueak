@@ -79,11 +79,13 @@ class EditPet extends StatelessWidget {
                     GeneralInformationSection(cubit: cubit, isDark: isDark),
                     SizedBox(height: responsiveHeight(30, context)),
 
-                    PassportSection(cubit: cubit, isDark: isDark),
-                    SizedBox(height: responsiveHeight(30, context)),
+
                     BreedSpeciesSection(cubit: cubit, isDark: isDark),
                     GenderSection(cubit: cubit),
                     BirthdateSection(cubit: cubit, isDark: isDark),
+
+                    PassportSection(cubit: cubit, isDark: isDark),
+                    SizedBox(height: responsiveHeight(30, context)),
                     SaveButton(cubit: cubit),
                   ],
                 ),

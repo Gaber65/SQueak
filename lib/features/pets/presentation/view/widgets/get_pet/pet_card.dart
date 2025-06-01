@@ -110,6 +110,8 @@ class PetCard extends StatelessWidget {
   }
 
   void _navigateToEditPet(BuildContext context) {
+    print('Pet ID: ${pet.petId}');
+    print('Pet Breed: ${pet.breed}');
     navigateToScreen(context, EditPet(pets: pet, breedData: cubit.allBreeds));
   }
 

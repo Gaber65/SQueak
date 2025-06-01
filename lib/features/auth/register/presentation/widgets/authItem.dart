@@ -20,7 +20,7 @@ class AuthItem extends StatelessWidget {
           children: [
             SizedBox(
               width: double.infinity,
-              height: 310,
+              height: 340,
               child: Stack(
                 children: [
                   Stack(

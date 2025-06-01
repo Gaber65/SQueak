@@ -140,47 +140,6 @@ Widget buildDropDownFreq(List<String> freq, BuildContext context) {
   );
 }
 
-InputDecoration buildInputDecoration(BuildContext context) {
-  final isDark = MainCubit.get(context).isDark;
-
-  return InputDecoration(
-    contentPadding: const EdgeInsets.only(right: 10, left: 10),
-    filled: true,
-    fillColor: isDark ? Colors.black26 : Colors.grey.shade200, // ✅ Key change
-
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide.none,
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide.none,
-    ),
-    disabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide.none,
-    ),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide.none,
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide.none,
-    ),
-    focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide.none,
-    ),
-
-    labelStyle: FontStyleThame.textStyle(
-      context: context,
-      fontColor: isDark ? ColorManager.sWhite : ColorManager.black_87,
-      fontSize: 18,
-      fontWeight: FontWeight.normal,
-    ),
-  );
-}
 
 Widget buildSelectDateVac(BuildContext context, VaccinationUiCubit cubit) {
   return InkWell(
@@ -243,5 +202,46 @@ Widget buildDropDownFreqForEdit(
         freq.map((String value) {
           return DropdownMenuItem<String>(value: value, child: Text(value));
         }).toList(),
+  );
+}
+InputDecoration buildInputDecoration(BuildContext context) {
+  final isDark = MainCubit.get(context).isDark;
+
+  return InputDecoration(
+    contentPadding: const EdgeInsets.only(right: 10, left: 10),
+    filled: true,
+    fillColor: isDark ? Colors.black26 : Colors.grey.shade200, // ✅ Key change
+
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide.none,
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide.none,
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide.none,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide.none,
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide.none,
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide.none,
+    ),
+
+    labelStyle: FontStyleThame.textStyle(
+      context: context,
+      fontColor: isDark ? ColorManager.sWhite : ColorManager.black_87,
+      fontSize: 18,
+      fontWeight: FontWeight.normal,
+    ),
   );
 }

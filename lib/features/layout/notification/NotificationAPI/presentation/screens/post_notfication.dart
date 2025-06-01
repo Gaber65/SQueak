@@ -9,7 +9,6 @@ import '../../../../../comments/presentation/widget/comment_widget/success_comme
 import '../../../../post/presentation/widget/build_post_item_shimmer.dart';
 import '../../../../post/presentation/widget/post_item.dart';
 
-
 class PostNotification extends StatelessWidget {
   PostNotification({super.key, required this.id});
 
@@ -65,48 +64,66 @@ class PostNotification extends StatelessWidget {
               child: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
                 slivers: [
-                  SliverToBoxAdapter(
-                    child:
-                        cubit.isLoadingPost
-                            ? BuildPostItemShimmer()
-                            : (cubit.postModel == null)
-                            ? Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height:
-                                        MediaQuery.sizeOf(context).height * 0.2,
-                                  ),
-                                  const Icon(
-                                    Icons.error_outline,
-                                    size: 80,
-                                    color: Colors.red,
-                                  ),
-                                  const SizedBox(height: 24),
-                                  Text(
-                                    isArabic()
-                                        ? 'عذرًا! المنشور غير موجود'
-                                        : 'Oops! Post Not Found',
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
+                  BlocConsumer<NotificationsCubit, NotificationsState>(
+                    listener: (context, state) {
+                      if (state is GetPostError) {
+                        cubit.isLoadingPost = false;
+                        cubit.postFound = false;
+                      }
+                    },
+                    builder: (context, state) {
+                      return SliverToBoxAdapter(
+                        child: Builder(
+                          builder: (_) {
+                            if (cubit.isLoadingPost) {
+                              return BuildPostItemShimmer();
+                            }
+
+                            if (cubit.postModel == null) {
+                              return Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.sizeOf(context).height *
+                                          0.2,
                                     ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    isArabic()
-                                        ? 'نأسف، لكن المنشور الذي تبحث عنه قد تم حذفه أو غير موجود.'
-                                        : "We're sorry, but the post you're looking for has been deleted or doesn't exist.",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  const SizedBox(height: 24),
-                                ],
-                              ),
-                            )
-                            : BuildPostItem(postItem: cubit.postModel!),
+                                    const Icon(
+                                      Icons.error_outline,
+                                      size: 80,
+                                      color: Colors.red,
+                                    ),
+                                    const SizedBox(height: 24),
+                                    Text(
+                                      isArabic()
+                                          ? 'عذرًا! المنشور غير موجود'
+                                          : 'Oops! Post Not Found',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      isArabic()
+                                          ? 'نأسف، لكن المنشور الذي تبحث عنه قد تم حذفه أو غير موجود.'
+                                          : "We're sorry, but the post you're looking for has been deleted or doesn't exist.",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    const SizedBox(height: 24),
+                                  ],
+                                ),
+                              );
+                            }
+
+                            return BuildPostItem(postItem: cubit.postModel!);
+                          },
+                        ),
+                      );
+                    },
                   ),
                   if (cubit.postModel != null)
                     SliverList(
@@ -177,8 +194,7 @@ class PostNotification extends StatelessWidget {
                       radius: 20.0,
                       child: Icon(Icons.close, size: 16.0),
                     ),
-                    onPressed: () {
-                    },
+                    onPressed: () {},
                   ),
                 ],
               ),
@@ -218,47 +234,24 @@ class PostNotification extends StatelessWidget {
                     cubit.isLoading
                         ? null
                         : () {
-                          // if (commentController.text.isNotEmpty) {
-                          //   if (cubit.commentImage != null) {
-                          //     cubit.isLoading = true;
-                          //     cubit.emit(CreateCommentLoading());
-                          //     MainCubit.get(context)
-                          //         .getGlobalImage(
-                          //       file: cubit.commentImage!,
-                          //       uploadPlace: UploadPlace.commentImages.value,
-                          //     )
-                          //         .whenComplete(() {
-                          //       return {
-                          //         cubit.createComment(
-                          //           postId: id,
-                          //           content: commentController.text,
-                          //           petId: CacheHelper.getData('isPet') == true
-                          //               ? CacheHelper.getData('activeId')
-                          //               : null,
-                          //           image:
-                          //               MainCubit.get(context).modelImage!.data!,
-                          //           parentId: isReplayCommentOpen
-                          //               ? CacheHelper.getData('replayCommentID')
-                          //               : null,
-                          //         )
-                          //       };
-                          //     });
-                          //   } else {
-                          //     cubit.createComment(
-                          //       postId: id,
-                          //       content: commentController.text,
-                          //       petId: CacheHelper.getData('isPet') == true
-                          //           ? CacheHelper.getData('activeId')
-                          //           : null,
-                          //       image: MainCubit.get(context).modelImage == null
-                          //           ? ''
-                          //           : MainCubit.get(context).modelImage!.data!,
-                          //       parentId: isReplayCommentOpen
-                          //           ? CacheHelper.getData('replayCommentID')
-                          //           : null,
-                          //     );
-                          //   }
-                          // }
+                          if (commentController.text.isNotEmpty) {
+                            cubit.createComment(
+                              postId: id,
+                              content: commentController.text,
+                              petId:
+                                  CacheHelper.getData('isPet') == true
+                                      ? CacheHelper.getData('activeId')
+                                      : null,
+                              image:
+                                  MainCubit.get(context).modelImage == null
+                                      ? ''
+                                      : MainCubit.get(context).modelImage!.data,
+                              parentId:
+                                  isReplayCommentOpen
+                                      ? CacheHelper.getData('replayCommentID')
+                                      : null,
+                            );
+                          }
                         },
                 icon:
                     cubit.isLoading

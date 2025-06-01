@@ -56,6 +56,7 @@ class RegisterView extends StatelessWidget {
             PhoneTextField(
               controller: cubit.phoneController,
               countries: RegisterCubit.get(context).countries,
+              registerCubit: cubit,
             ),
 
             /// password

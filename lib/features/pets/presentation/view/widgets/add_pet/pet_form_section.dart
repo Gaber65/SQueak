@@ -28,8 +28,6 @@ class PetFormSection extends StatelessWidget {
           PetNameField(cubit: cubit, isDark: isDark),
           SizedBox(height: responsiveHeight(20, context)),
 
-          PassportSection(cubit: cubit, isDark: isDark),
-          SizedBox(height: responsiveHeight(30, context)),
 
           BreedSpeciesSection(cubit: cubit, isDark: isDark),
           SizedBox(height: responsiveHeight(20, context)),
@@ -40,6 +38,9 @@ class PetFormSection extends StatelessWidget {
 
           BirthdatePicker(cubit: cubit, isDark: isDark),
           SizedBox(height: responsiveHeight(20, context)),
+
+          PassportSection(cubit: cubit, isDark: isDark),
+          SizedBox(height: responsiveHeight(30, context)),
 
           SaveButton(cubit: cubit),
           SizedBox(height: responsiveHeight(30, context)),

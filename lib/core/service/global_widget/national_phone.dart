@@ -10,11 +10,13 @@ import '../../utils/export_path/export_files.dart';
 class PhoneTextField extends StatefulWidget {
   final List<CountryEntity> countries;
   final TextEditingController controller;
+  final RegisterCubit registerCubit;
 
   const PhoneTextField({
     super.key,
     required this.countries,
     required this.controller,
+    required this.registerCubit,
   });
 
   @override
@@ -22,30 +24,28 @@ class PhoneTextField extends StatefulWidget {
 }
 
 class _PhoneTextFieldState extends State<PhoneTextField> {
-  late RegisterCubit _registerCubit;
   late CountryEntity _selectedCountry;
 
   @override
   void initState() {
     super.initState();
-    _registerCubit = context.read<RegisterCubit>();
     _initializeSelectedCountry();
   }
 
   void _initializeSelectedCountry() {
     _selectedCountry = CountryEntity(
-      name: _registerCubit.countryCode,
-      id: _registerCubit.countryIdToServer,
-      phoneCode: _registerCubit.countryPhoneCode,
+      name: widget.registerCubit.countryCode,
+      id: widget.registerCubit.countryIdToServer,
+      phoneCode: widget.registerCubit.countryPhoneCode,
     );
 
     _updateCubitCountry();
   }
 
   void _updateCubitCountry() {
-    _registerCubit.countryCode = _selectedCountry.name;
-    _registerCubit.countryPhoneCode = _selectedCountry.phoneCode;
-    _registerCubit.countryIdToServer = _selectedCountry.id;
+    widget.registerCubit.countryCode = _selectedCountry.name;
+    widget.registerCubit.countryPhoneCode = _selectedCountry.phoneCode;
+    widget.registerCubit.countryIdToServer = _selectedCountry.id;
   }
 
   void _openCountryDialog() {
@@ -71,10 +71,12 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
     CacheHelper.saveData('countryCodeE', country.name);
 
     // Update cubit
-    _registerCubit.countryIdToServer = country.id;
-    _registerCubit.countryPhoneCode = country.phoneCode;
-    _registerCubit.countryCode = country.name;
+    widget.registerCubit.countryIdToServer = country.id;
+    widget.registerCubit.countryPhoneCode = country.phoneCode;
+    widget.registerCubit.countryCode = country.name;
   }
+
+  isDark(context) => MainCubit.get(context).isDark;
 
   @override
   Widget build(BuildContext context) {
@@ -82,9 +84,9 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
       listener: (context, state) {
         if (state is CountryCodeDetectionSuccessState) {
           _selectedCountry = CountryEntity(
-            name: _registerCubit.countryCode,
-            id: _registerCubit.countryIdToServer,
-            phoneCode: _registerCubit.countryPhoneCode,
+            name: widget.registerCubit.countryCode,
+            id: widget.registerCubit.countryIdToServer,
+            phoneCode: widget.registerCubit.countryPhoneCode,
           );
         }
       },
@@ -100,22 +102,52 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
             return null;
           },
           decoration: InputDecoration(
+            contentPadding: const EdgeInsets.only(right: 10, left: 10),
+            filled: true,
+            fillColor:
+                isDark(context)
+                    ? Colors.black26
+                    : Colors.grey.shade200, // ✅ Key change
+
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+
+            labelStyle: FontStyleThame.textStyle(
+              context: context,
+              fontColor:
+                  isDark(context) ? ColorManager.sWhite : ColorManager.black_87,
+              fontSize: 18,
+              fontWeight: FontWeight.normal,
+            ),
             prefixIcon: _buildCountryCodeSelector(),
             hintText: S.of(context).phone_hint,
-            contentPadding: EdgeInsets.zero,
-            filled: true,
             counterStyle: FontStyleThame.textStyle(
               context: context,
               fontSize: 13,
             ),
             hintStyle: _getHintTextStyle(context),
-            fillColor: _getFillColor(context),
-            border: _getInputBorder(),
-            enabledBorder: _getInputBorder(),
-            focusedBorder: _getInputBorder(),
-            disabledBorder: _getInputBorder(),
-            errorBorder: _getInputBorder(),
-            focusedErrorBorder: _getInputBorder(),
           ),
         );
       },
@@ -147,9 +179,7 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
       fontSize: 14,
       fontWeight: FontWeight.w700,
       fontColor:
-          _isDarkMode(context)
-              ? Colors.white54
-              : const Color.fromRGBO(0, 0, 0, .3),
+          isDark(context) ? Colors.white : const Color.fromRGBO(0, 0, 0, .3),
     );
   }
 
@@ -159,27 +189,7 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
       fontSize: 14,
       fontWeight: FontWeight.w700,
       fontColor:
-          _isDarkMode(context)
-              ? Colors.white54
-              : const Color.fromRGBO(0, 0, 0, .3),
-    );
-  }
-
-  Color _getFillColor(BuildContext context) {
-    return _isDarkMode(context) ? Colors.black26 : Colors.grey.shade200;
-  }
-
-  bool _isDarkMode(BuildContext context) {
-    // Implement your dark mode check logic here
-    // For example, if you're using a theme cubit:
-    // return context.read<ThemeCubit>().isDarkMode;
-    return false; // Default to light mode
-  }
-
-  InputBorder _getInputBorder() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide.none,
+          isDark(context) ? Colors.white : const Color.fromRGBO(0, 0, 0, .3),
     );
   }
 }

@@ -21,7 +21,8 @@ class PetData extends PetEntities {
     return PetData(
       petId: json['id'],
       petName: json['petName'],
-      breed: json['breed'] == null ? null : BreedData.fromJson(json['breed']),
+      breed: json["breed"] == null ? null : BreedModel.fromJson(json["breed"]),
+
       breedId: json['breedId'] ?? '',
       gender: json['gender'],
       isSpayed: json['isSpayed'] ?? false,
@@ -50,7 +51,20 @@ class PetData extends PetEntities {
       'birthdate': birthdate,
       'passportnumber': passportNumber,
       'passportImage': passportImage,
+      'breed': breed?.toJson(),
     };
+  }
+}
+
+class BreedModel extends BreedPetEntity {
+  BreedModel({required super.enBreed, required super.arBreed});
+
+  factory BreedModel.fromJson(Map<String, dynamic> json) {
+    return BreedModel(enBreed: json['enBreed'], arBreed: json['arBreed']);
+  }
+
+  Map<String, dynamic> toMap() {
+    return {'enBreed': enBreed, 'arBreed': arBreed};
   }
 }
 
@@ -64,16 +78,33 @@ class BreedData extends BreedEntity {
   factory BreedData.fromJson(Map<String, dynamic> json) {
     return BreedData(
       specieId: json['specieId'] ?? '',
-      enType:
-          json['arType'] != null
-              ? (isArabic() ? json['arType'] : json['enType']) ?? 'Unknown Type'
-              : (isArabic() ? json['arBreed'] : json['enBreed']) ??
-                  'Unknown Breed',
       id: json['id'] ?? '',
+      enType: getDisplayTypeOrBreed(json),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {'enType': enType, 'id': id, 'specieId': specieId};
   }
+}
+
+String getDisplayTypeOrBreed(Map<String, dynamic> json) {
+  final isAr = isArabic();
+
+  // Priority 1: Species object (enType/arType)
+  if (json.containsKey('arType') || json.containsKey('enType')) {
+    return isAr
+        ? (json['arType'] ?? json['enType'] ?? '')
+        : (json['enType'] ?? json['arType'] ?? '');
+  }
+
+  // Priority 2: Breed object (enBreed/arBreed)
+  if (json.containsKey('arBreed') || json.containsKey('enBreed')) {
+    return isAr
+        ? (json['arBreed'] ?? json['enBreed'] ?? '')
+        : (json['enBreed'] ?? json['arBreed'] ?? '');
+  }
+
+  // Default fallback
+  return '';
 }

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/exam/data/models/client_clinic_model.dart';
+import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
+
+import '../../../../../../../pets/data/models/pet_model.dart';
 
 // Extension to add isSelected property to PetClinicModel
 extension PetClinicModelExtension on PetClinicModel {
@@ -20,7 +23,7 @@ extension PetClinicModelExtension on PetClinicModel {
 final Set<String> _selectedPetIds = {};
 
 class PetCarousel extends StatelessWidget {
-  final List<dynamic> pets;
+  final List<PetEntities> pets;
   final Function(dynamic) onPetSelected;
   final bool initializeFirstPet;
 

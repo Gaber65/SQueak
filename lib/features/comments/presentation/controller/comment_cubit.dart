@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/service/cache/shared_preferences/cache_helper.dart' show CacheHelper;
+import '../../../../core/service/cache/shared_preferences/cache_helper.dart'
+    show CacheHelper;
 import '../../../../core/service/global_function/format_utils.dart';
 import '../../domain/entities/comment_entity.dart';
 import '../../domain/repository/base_comment_repository.dart';
@@ -13,6 +14,7 @@ import 'package:intl/intl.dart';
 part 'comment_state.dart';
 
 class CommentCubit extends Cubit<CommentState> {
+
   CommentCubit(
     this.deleteCommentPostUseCase,
     this.updateCommentUseCase,
@@ -40,6 +42,7 @@ class CommentCubit extends Cubit<CommentState> {
     isLoading = true;
     emit(CreateCommentLoading());
     final userId = CacheHelper.getData('clintId');
+
     final result = await createCommentUseCase(
       CreateCommentParameters(
         content: content,
@@ -50,8 +53,9 @@ class CommentCubit extends Cubit<CommentState> {
         parentId: parentId,
       ),
     );
+
     result.fold(
-      (_) {
+      (error) {
         isLoading = false;
         emit(CreateCommentError());
       },
@@ -67,6 +71,7 @@ class CommentCubit extends Cubit<CommentState> {
       },
     );
   }
+
   void _addCommentToList(CommentEntity comment, String? parentId) {
     if (parentId == null) {
       comments.add(comment);
@@ -135,6 +140,7 @@ class CommentCubit extends Cubit<CommentState> {
       emit(DeleteCommentSuccess());
     });
   }
+
   void _removeCommentById(String commentId) {
     comments =
         comments.where((comment) => comment.id != commentId).map((comment) {
@@ -143,6 +149,7 @@ class CommentCubit extends Cubit<CommentState> {
           return comment.copyWith(replies: updatedReplies);
         }).toList();
   }
+
   GetCommentPostUseCase getCommentPostUseCase;
   List<CommentEntity> comments = [];
   Future<void> getComment({required String postId}) async {

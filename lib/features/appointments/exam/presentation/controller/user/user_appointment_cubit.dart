@@ -56,14 +56,17 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
         applyFilter: applyFilter,
       ),
     );
-    result.fold((failure) {
-      emit(GetAppointmentError());
-    }, (appointmentsList) {
-      appointments = appointmentsList;
+    result.fold(
+      (failure) {
+        emit(GetAppointmentError());
+      },
+      (appointmentsList) {
+        appointments = appointmentsList;
 
-      filteredList = List.from(appointments);
-      emit(GetAppointmentSuccess());
-    });
+        filteredList = List.from(appointments);
+        emit(GetAppointmentSuccess());
+      },
+    );
   }
 
   Future<void> deleteAppointments(String appointmentId) async {
@@ -85,7 +88,7 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
         appointmentId: model.id,
         cleanlinessRate: ratingCleanliness,
         doctorServiceRate: ratingDoctor,
-        feedbackComment: model.feedbackComment ?? '',
+        feedbackComment: rateController.text,
       ),
     );
     isLoadingRate = false;

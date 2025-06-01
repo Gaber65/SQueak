@@ -57,9 +57,13 @@ class NotificationsCubit extends Cubit<NotificationsState> {
   List<PostEntity> post = [];
   PostEntity? postModel;
   bool isLoadingPost = false;
+  bool postFound = false;
   Future<void> getPostNotification(String postId) async {
     isLoadingPost = true;
+    postFound = false;
+    postModel = null;
     emit(NotificationsLoadingState());
+
     final result = await getPostNotificationUseCase(postId);
 
     result.fold(
@@ -67,16 +71,21 @@ class NotificationsCubit extends Cubit<NotificationsState> {
         isLoadingPost = false;
         emit(NotificationsErrorState());
       },
-      (r) async {
+      (r) {
         post = r;
-        if (post.any((element) => element.postId == postId)) {
+
+        try {
           postModel = post.firstWhere((element) => element.postId == postId);
-          print('Post found: $postModel');
-        } else {
+          postFound = true;
+          isLoadingPost = false;
+          emit(NotificationsSuccessState());
+        } catch (_) {
+          // postId not found in the list
+          isLoadingPost = false;
+          postModel = null;
+          postFound = false;
           emit(GetPostError());
         }
-        isLoadingPost = false;
-        emit(NotificationsSuccessState());
       },
     );
   }

@@ -56,7 +56,6 @@ class _ContactScreenState extends State<ContactScreen> {
       ],
       child: BlocConsumer<ContactUsCubit, ContactUsState>(
         listener: (context, state) {
-
           if (state is ContactUsErrorState) {
             errorToast(
               context,
@@ -78,17 +77,21 @@ class _ContactScreenState extends State<ContactScreen> {
         },
         builder: (context, state) {
           var cubit = ContactUsCubit.get(context);
-
+          var registerCubit = RegisterCubit.get(context);
           return Scaffold(
             appBar: AppBar(title: Text(S.of(context).help)),
-            body: _buildBody(context, cubit),
+            body: _buildBody(context, cubit, registerCubit),
           );
         },
       ),
     );
   }
 
-  Widget _buildBody(context, ContactUsCubit cubit) {
+  Widget _buildBody(
+    context,
+    ContactUsCubit cubit,
+    RegisterCubit registerCubit,
+  ) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Column(
@@ -100,7 +103,7 @@ class _ContactScreenState extends State<ContactScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 100),
-                child: _buildLoginDetail(context, cubit),
+                child: _buildLoginDetail(context, cubit, registerCubit),
               ),
             ],
           ),
@@ -126,7 +129,11 @@ class _ContactScreenState extends State<ContactScreen> {
     );
   }
 
-  Widget _buildLoginDetail(context, ContactUsCubit cubit) {
+  Widget _buildLoginDetail(
+    context,
+    ContactUsCubit cubit,
+    RegisterCubit registerCubit,
+  ) {
     return SingleChildScrollView(
       child: Center(
         child: Form(
@@ -170,9 +177,17 @@ class _ContactScreenState extends State<ContactScreen> {
 
                 /// phone
                 SizedBox(height: 20),
-                PhoneTextField(
-                  controller: cubit.phoneController,
-                  countries: RegisterCubit.get(context).countries,
+                BlocConsumer<RegisterCubit, RegisterState>(
+                  listener: (context, state) {
+                    // TODO: implement listener
+                  },
+                  builder: (context, state) {
+                    return PhoneTextField(
+                      controller: cubit.phoneController,
+                      countries: RegisterCubit.get(context).countries,
+                      registerCubit: registerCubit,
+                    );
+                  },
                 ),
 
                 /// title
