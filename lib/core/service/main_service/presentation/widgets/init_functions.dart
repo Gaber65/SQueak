@@ -14,7 +14,7 @@ import '../../../../../firebase_options.dart';
 class InitFunctions {
   static Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
-    ConfigModel.setEnvironment(Environment.test);
+    ConfigModel.setEnvironment(Environment.pro);
     Bloc.observer = MyBlocObserver();
     await _initServiceLocator();
     await NotificationInitializer.initialize();
@@ -96,7 +96,7 @@ class InitFunctions {
   }
 
   static Future<void> _configureChucker() async {
-    ChuckerFlutter.showOnRelease = true;
+    ChuckerFlutter.showOnRelease = false;
     ChuckerFlutter.showNotification = true;
   }
 }
