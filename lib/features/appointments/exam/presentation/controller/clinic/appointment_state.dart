@@ -15,10 +15,10 @@ class GetAvailabilitySuccess extends AppointmentState {}
 class GetAvailabilityError extends AppointmentState {}
 
 // Supplier States
-class GetSupplierLoading extends AppointmentState {}
-class GetSupplierSuccess extends AppointmentState {}
-class GetSupplierError extends AppointmentState {}
-class SuppliersFiltered extends AppointmentState {}
+class GetSupplierLoadingScreen extends AppointmentState {}
+class GetSupplierSuccessScreen extends AppointmentState {}
+class GetSupplierErrorScreen extends AppointmentState {}
+class SuppliersFilteredScreen extends AppointmentState {}
 
 // Unfollow Clinic States
 class UnFollowLoading extends AppointmentState {}

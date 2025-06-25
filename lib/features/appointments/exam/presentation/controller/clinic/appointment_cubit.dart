@@ -78,12 +78,12 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   }
 
   Future<void> getSuppliersList() async {
-    emit(GetSupplierLoading());
+    emit(GetSupplierLoadingScreen());
     final result = await getSuppliersUseCase(const NoParameters());
-    result.fold((failure) => emit(GetSupplierError()), (suppliersData) {
+    result.fold((failure) => emit(GetSupplierErrorScreen()), (suppliersData) {
       suppliers = suppliersData;
       filteredSuppliers = suppliersData.data;
-      emit(GetSupplierSuccess());
+      emit(GetSupplierSuccessScreen());
     });
   }
 
@@ -172,7 +172,7 @@ class AppointmentCubit extends Cubit<AppointmentState> {
                     ),
               )
               .toList();
-      emit(SuppliersFiltered());
+      emit(SuppliersFilteredScreen());
     }
   }
 

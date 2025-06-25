@@ -14,7 +14,7 @@ import '../../../../../firebase_options.dart';
 class InitFunctions {
   static Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
-    ConfigModel.setEnvironment(Environment.pro);
+    ConfigModel.setEnvironment(Environment.test);
     Bloc.observer = MyBlocObserver();
     await _initServiceLocator();
     await NotificationInitializer.initialize();
