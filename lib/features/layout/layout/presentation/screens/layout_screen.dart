@@ -83,16 +83,8 @@ class _LayoutScreenState extends State<LayoutScreen> {
                           : Colors.white,
                   foregroundColor: ColorManager.primaryColor,
                   onPressed: () {
-                    if (cubit.versionEntity != null &&
-                        cubit.currentVersion.isNotEmpty &&
-                        cubit.versionEntity!.version != cubit.currentVersion) {
-                      if (cubit.versionEntity!.version !=
-                          cubit.currentVersion) {
-                        showUpdateDialog(context, cubit.versionEntity!);
-                      }
-                    } else {
-                      navigateToScreen(context, PetScreen());
-                    }
+                    navigateToScreen(context, PetScreen());
+
                   },
                   child: Icon(Icons.pets, size: 30),
                 );

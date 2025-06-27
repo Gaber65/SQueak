@@ -56,6 +56,7 @@ class PetCubit extends Cubit<PetState> {
   final petNameController = TextEditingController();
   final imageNameController = TextEditingController();
   final passportNumberController = TextEditingController();
+  final microchipNumberController = TextEditingController();
   final passportImageNameController = TextEditingController();
 
   // Form state

@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.softicare.squeak",
+      "sha256_cert_fingerprints": [
+        "44:66:5C:1F:6D:BE:91:00:36:F0:31:9A:62:32:72:39:9F:DF:6B:7E:4F:38:CD:07:A7:69:D4:E3:BE:4F:32:E9",
+        "8B:6C:85:03:D6:EB:AB:A4:9D:04:12:56:14:8A:4A:9A:C6:E3:2C:7E:4B:BF:2D:6D:8A:58:62:49:A8:11:F9:8C"
+      ]
+    }
+  }
+]

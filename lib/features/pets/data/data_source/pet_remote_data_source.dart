@@ -22,7 +22,6 @@ class PetRemoteDataSourceImpl implements PetRemoteDataSource {
         method: getOwnerPetEndPoint,
         language: true,
       );
-      print(response.data['data']['petsDto'].first['breed']);
       return (response.data['data']['petsDto'] as List)
           .map((e) => PetData.fromJson(e))
           .toList();

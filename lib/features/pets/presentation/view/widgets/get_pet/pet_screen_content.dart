@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:squeak/features/pets/presentation/view/add_pet_screen.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/pet_card.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/pet_type_option.dart';
+import 'package:squeak/features/qr/presentation/view/new_scanner.dart';
 
 import '../../../../../../core/utils/export_path/export_files.dart';
 import '../../../../domain/entities/pet_entity.dart';

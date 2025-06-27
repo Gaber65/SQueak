@@ -1,38 +1,118 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Pet App">
+  <meta name="description" content="Pet Application">
+
+  <!-- App Links for Android (will be set dynamically) -->
+  <meta property="al:android:url" content="">
+  <meta property="al:web:url" content="">
 
   <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="squeak">
+  <meta name="apple-mobile-web-app-title" content="SQueak">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>squeak</title>
+  <title>SQueak</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Import Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-analytics.js";
+    import { getMessaging } from "https://www.gstatic.com/firebasejs/9.9.1/firebase-messaging.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAwhHjpQvkqMoFhDfUK17NbVZekVjzraJo",
+      authDomain: "squeak-c005f.firebaseapp.com",
+      projectId: "squeak-c005f",
+      storageBucket: "squeak-c005f.appspot.com",
+      messagingSenderId: "205107241099",
+      appId: "1:205107241099:web:d78ace6bd56f88ad1d748e",
+      measurementId: "G-HTC081X6LJ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const messaging = getMessaging(app);
+  </script>
+
+  <!-- This script adds the flutter initialization JS code -->
+  <script src="flutter.js" defer></script>
+
+  <!-- The value below is injected by flutter build, do not touch. -->
+  <script>
+    const serviceWorkerVersion = null;
+  </script>
+
+  <!-- Dynamically update App Links meta tags -->
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+      const fullPath = window.location.pathname + window.location.search;
+      const androidUrl = `squeakvetcare://web.app${fullPath}`;
+      const webUrl = `https://squeakvetcare.web.app${fullPath}`;
+
+      document.querySelector('meta[property="al:android:url"]').setAttribute('content', androidUrl);
+      document.querySelector('meta[property="al:web:url"]').setAttribute('content', webUrl);
+    });
+  </script>
 </head>
+
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+<!-- Register service worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('flutter-first-frame', function () {
+      navigator.serviceWorker.register('flutter_service_worker.js');
+    });
+  }
+</script>
+
+<!-- Request permission and get Firebase messaging token -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    messaging.requestPermission().then(() => {
+      return messaging.getToken();
+    }).then((token) => {
+      console.log('Token:', token);
+      // Send the token to your server for further handling
+    }).catch((err) => {
+      console.log('Error getting permission or token:', err);
+    });
+  });
+</script>
+
+<script src="main.dart.js" type="application/javascript"></script>
+
+<!-- Function to handle deep link redirection -->
+<script type="text/javascript">
+  function redirectToAppOrStore() {
+    const fullPath = window.location.pathname + window.location.search;
+    const appSchemeUrl = `squeakvetcare://web.app${fullPath}`;
+    const playStoreUrl = "https://play.google.com/store/apps/details?id=com.softicare.squeak";
+
+    // Try to open the app
+    window.location.href = appSchemeUrl;
+
+    // Fallback to Play Store if the app is not installed
+    setTimeout(() => {
+      window.location.href = playStoreUrl;
+    }, 2000);
+  }
+
+  document.addEventListener('DOMContentLoaded', redirectToAppOrStore);
+</script>
+
+<script type="text/javascript">
+  window.flutterWebRenderer = "html";
+</script>
 </body>
+
 </html>
