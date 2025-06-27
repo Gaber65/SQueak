@@ -14,13 +14,12 @@ class QrStatusIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<QrCubit, QrState>(
       builder: (context, state) {
-        final qrCubit = context.read<QrCubit>();
-        final isLinked = qrCubit.isPetLinkedToQr(pet.petId);
+        final isLinked = pet.qrCodeId != null;
 
         return Row(
           children: [
             Text(
-             isArabic() ? "حالة   QR " : 'QR Status: ',
+              isArabic() ? "حالة   QR " : 'QR Status: ',
               style: TextStyle(
                 fontSize: 12,
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
@@ -30,16 +29,14 @@ class QrStatusIndicator extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               decoration: BoxDecoration(
-                color:
+                color: isLinked ? Colors.green : null,
+                border:
                     isLinked
-                        ? Colors.green
-                        : null,
-                border: isLinked ? null : Border.all(
-                  color: isLinked
-                      ? Colors.green
-                      : Colors.grey.shade400,
-                  width: 1,
-                ),
+                        ? null
+                        : Border.all(
+                          color: isLinked ? Colors.green : Colors.grey.shade400,
+                          width: 1,
+                        ),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
@@ -52,7 +49,12 @@ class QrStatusIndicator extends StatelessWidget {
                     : 'Not Linked',
                 style: TextStyle(
                   fontSize: 10,
-                  color: isLinked ? Colors.white : MainCubit.get(context).isDark ? Colors.white : Colors.black,
+                  color:
+                      isLinked
+                          ? Colors.white
+                          : MainCubit.get(context).isDark
+                          ? Colors.white
+                          : Colors.black,
                   fontWeight: FontWeight.w500,
                 ),
               ),

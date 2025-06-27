@@ -2,14 +2,11 @@ import 'package:get_it/get_it.dart';
 import 'package:squeak/features/qr/data/datasources/qr_remote_datasource.dart';
 import 'package:squeak/features/qr/data/repositories/qr_repository_impl.dart';
 import 'package:squeak/features/qr/domain/repositories/qr_repository.dart';
-import 'package:squeak/features/qr/domain/usecases/get_qr_by_pet_usecase.dart';
 import 'package:squeak/features/qr/domain/usecases/link_pet_to_qr_usecase.dart';
-import 'package:squeak/features/qr/domain/usecases/scan_qr_usecase.dart';
 import 'package:squeak/features/qr/domain/usecases/unlink_pet_from_qr_usecase.dart';
 
 import '../../../features/appointments/exam/presentation/controller/user/user_appointment_cubit.dart';
 import '../../../features/layout/search/presentation/controller/search_cubit.dart';
-import '../../../features/qr/domain/usecases/download_qr_usecase.dart';
 import '../../../features/qr/presentation/controller/qr_cubit.dart';
 import '../../../features/settings/persentaion/controller/setting_cubit.dart';
 import '../../../features/vetcare/presenation/controllers/follow_request/follow_request_cubit.dart';
@@ -342,17 +339,13 @@ class ServiceLocator {
 
     sl.registerLazySingleton(() => LinkPetToQrUseCase(sl()));
     sl.registerLazySingleton(() => UnlinkPetFromQrUseCase(sl()));
-    sl.registerLazySingleton(() => ScanQrUseCase(sl()));
-    sl.registerLazySingleton(() => DownloadQrUseCase(sl()));
-    sl.registerLazySingleton(() => GetQrByPetUseCase(sl()));
+
 
     // Cubits
     sl.registerFactory(() => QrCubit(
       linkPetToQrUseCase: sl(),
       unlinkPetFromQrUseCase: sl(),
-      scanQrUseCase: sl(),
-      getQrByPetUseCase: sl(),
-      downloadQrUseCase: sl(),
+
     ));
   }
 }

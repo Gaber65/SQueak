@@ -163,6 +163,7 @@ class PetCubit extends Cubit<PetState> {
     // Add passport fields initialization
     passportNumberController.text = pet.passportNumber ?? '';
     passportImageNameController.text = pet.passportImage ?? '';
+    microchipNumberController.text = pet.microShipNumber ?? '';
 
     gender = pet.gender;
     petId = pet.petId.toString();
@@ -197,6 +198,8 @@ class PetCubit extends Cubit<PetState> {
           passportNumberController.text.isEmpty
               ? ''
               : passportNumberController.text,
+      microShipNumber:
+          microchipNumberController.text.isEmpty ? '' : microchipNumberController.text,
     );
     print(pet.toJson());
     final result = await createPetUseCase(PetParams(pet: pet));
@@ -239,6 +242,8 @@ class PetCubit extends Cubit<PetState> {
           passportNumberController.text.isEmpty
               ? ''
               : passportNumberController.text,
+      microShipNumber:
+      microchipNumberController.text.isEmpty ? '' : microchipNumberController.text,
     );
 
     final result = await updatePetUseCase(PetParams(pet: pet));

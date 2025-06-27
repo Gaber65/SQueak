@@ -15,6 +15,9 @@ class PetData extends PetEntities {
     super.isSelected,
     super.passportImage,
     super.passportNumber,
+    super.microShipNumber,
+    super.qrCode,
+    super.qrCodeId,
   });
 
   factory PetData.fromJson(Map<String, dynamic> json) {
@@ -35,6 +38,9 @@ class PetData extends PetEntities {
       birthdate: json['birthdate'] ?? '',
       passportImage: json['passportImage'],
       passportNumber: json['passportnumber'],
+      microShipNumber: json['microShipNumber'],
+      qrCode: json['qrCode'],
+      qrCodeId: json['qrCodeId'],
     );
   }
 

@@ -381,44 +381,45 @@ class PrintScreen extends StatelessWidget {
                                 SizedBox(height: 10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: cubit.invoice!.packageOffers.map((offer) {
-                                    return Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "📦 ${offer.packageName} (x${offer.packageQuantity})",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        SizedBox(height: 10),
-                                        _buildTableWithHeaders(
-                                          [
-                                            [
-                                              S.of(context).itemName,
-                                              S.of(context).price,
-                                              S.of(context).qty,
-                                              S.of(context).total,
-                                            ],
-                                            ...offer.packageItems.map((e) {
-                                              return [
-                                                e.itemName,
-                                                e.price.toString(),
-                                                e.quantity.toString(),
-                                                e.total.toString(),
-                                              ];
-                                            }),
+                                  children:
+                                      cubit.invoice!.packageOffers.map((offer) {
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "📦 ${offer.packageName} (x${offer.packageQuantity})",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            SizedBox(height: 10),
+                                            _buildTableWithHeaders(
+                                              [
+                                                [
+                                                  S.of(context).itemName,
+                                                  S.of(context).price,
+                                                  S.of(context).qty,
+                                                  S.of(context).total,
+                                                ],
+                                                ...offer.packageItems.map((e) {
+                                                  return [
+                                                    e.itemName,
+                                                    e.price.toString(),
+                                                    e.quantity.toString(),
+                                                    e.total.toString(),
+                                                  ];
+                                                }),
+                                              ],
+                                              3,
+                                              context,
+                                            ),
+                                            SizedBox(height: 20),
                                           ],
-                                          3,
-                                          context,
-                                        ),
-                                        SizedBox(height: 20),
-                                      ],
-                                    );
-                                  }).toList(),
+                                        );
+                                      }).toList(),
                                 ),
                               ],
-
 
                               SizedBox(height: 10),
                               // Total and Paid Amount
@@ -508,9 +509,7 @@ class PrintScreen extends StatelessWidget {
 
   Future<Uint8List> _capturePng() async {
     try {
-      RenderRepaintBoundary boundary =
-          _globalKey.currentContext?.findRenderObject()
-              as RenderRepaintBoundary;
+      RenderRepaintBoundary boundary = _globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 3.0);
       ByteData? byteData = await image.toByteData(
         format: ui.ImageByteFormat.png,
@@ -541,10 +540,7 @@ class PrintScreen extends StatelessWidget {
     );
 
     // Save PDF or share it using the `Printing` package
-    await Printing.sharePdf(
-      bytes: await pdf.save(),
-      filename: 'invoice.pdf',
-    );
+    await Printing.sharePdf(bytes: await pdf.save(), filename: 'invoice.pdf');
   }
 
   Widget _buildClinicInfo(context, UserAppointmentCubit cubit) {

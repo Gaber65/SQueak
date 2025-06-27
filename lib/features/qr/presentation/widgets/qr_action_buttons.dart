@@ -1,6 +1,13 @@
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:pdf/widgets.dart' as pw;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
+import 'package:printing/printing.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import '../../../pets/presentation/view/widgets/get_pet/action_button.dart';
 import '../../../vaccination/presentation/pages/pet_vaccination_page.dart';
@@ -11,47 +18,41 @@ import 'qr_link_dialog.dart';
 class QrActionButtons extends StatelessWidget {
   final PetEntities pet;
   final PetCubit petCubit;
-  const QrActionButtons({super.key, required this.pet, required this.petCubit});
+   QrActionButtons({super.key, required this.pet, required this.petCubit});
+  final GlobalKey _qrKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<QrCubit, QrState>(
       listener: (context, state) {
         if (state is QrLinkSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.green,
-            ),
-          );
+          successToast(context, state.message);
         } else if (state is QrUnlinkSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.green,
-            ),
-          );
+          successToast(context, state.message);
         } else if (state is QrDownloadSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.green,
-            ),
-          );
+          successToast(context, state.message);
         } else if (state is QrError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-          );
+          errorToast(context, state.message);
         }
       },
       builder: (context, state) {
-        final qrCubit = context.read<QrCubit>();
-        final isLinked = qrCubit.isPetLinkedToQr(pet.petId);
+        final isLinked = pet.qrCodeId != null;
         final isLoading = state is QrLoading;
 
         if (isLinked) {
           return Row(
             children: [
+              Offstage(
+                offstage: true,
+                child: RepaintBoundary(
+                  key: _qrKey,
+                  child: QrImageView(
+                    data: pet.qrCodeId!,
+                    version: QrVersions.auto,
+                    size: 200.0,
+                  ),
+                ),
+              ),
               Expanded(
                 flex: 6,
                 child: OutlinedButton.icon(
@@ -65,7 +66,10 @@ class QrActionButtons extends StatelessWidget {
                       width: .5,
                     ),
                   ),
-                  onPressed: isLoading ? null : () => _downloadQr(context),
+                  onPressed: isLoading ? null : () async {
+                    Uint8List imageBytes = await _capturePng();
+                    _saveAsPdf(imageBytes);
+                  },
                   icon:
                       isLoading
                           ? const SizedBox(
@@ -110,7 +114,10 @@ class QrActionButtons extends StatelessWidget {
                   child: Icon(
                     Icons.link_off,
                     size: 16,
-                    color: MainCubit.get(context).isDark ? Colors.white : Colors.black,
+                    color:
+                        MainCubit.get(context).isDark
+                            ? Colors.white
+                            : Colors.black,
                   ),
                 ),
               ),
@@ -166,6 +173,60 @@ class QrActionButtons extends StatelessWidget {
         } else {
           return Row(
             children: [
+              Offstage(
+                offstage: true,
+                child: RepaintBoundary(
+                  key: _qrKey,
+                  child: QrImageView(
+                    data: pet.qrCodeId ?? 'dsfdsfdsfdsf',
+                    version: QrVersions.auto,
+                    size: 200.0,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 6,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.all(5),
+                    side: BorderSide(
+                      color:
+                      MainCubit.get(context).isDark
+                          ? Colors.white
+                          : Colors.grey.shade400,
+                      width: .5,
+                    ),
+                  ),
+                  onPressed: isLoading ? null : () async {
+                    Uint8List imageBytes = await _capturePng();
+                    _saveAsPdf(imageBytes);
+                  },
+                  icon:
+                  isLoading
+                      ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                      : Icon(
+                    Icons.qr_code_sharp,
+                    size: 16,
+                    color:
+                    MainCubit.get(context).isDark
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                  label: Text(
+                    isArabic() ? 'تحميل QR' : 'Download QR',
+                    style: TextStyle(
+                      color:
+                      MainCubit.get(context).isDark
+                          ? Colors.white
+                          : Colors.black,
+                    ),
+                  ),
+                ),
+              ),
               Expanded(
                 flex: 6,
                 child: OutlinedButton.icon(
@@ -329,7 +390,46 @@ class QrActionButtons extends StatelessWidget {
     );
   }
 
-  void _downloadQr(BuildContext context) {
-    context.read<QrCubit>().downloadQrCode(pet.petId, pet.petName);
+  Future<Uint8List> _capturePng() async {
+    try {
+      // انتظر لحد نهاية فريم الـ UI
+      await Future.delayed(Duration(milliseconds: 100));
+      RenderRepaintBoundary boundary = _qrKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
+
+      if (boundary.debugNeedsPaint) {
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+
+      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+
+      if (byteData != null) {
+        Uint8List pngBytes = byteData.buffer.asUint8List();
+        return pngBytes;
+      } else {
+        throw Exception("Failed to convert image to ByteData.");
+      }
+    } catch (e) {
+      print(e);
+      throw Exception("Failed to capture image.");
+    }
   }
+
+  Future<void> _saveAsPdf(Uint8List imageBytes) async {
+    final pdf = pw.Document();
+
+    final image = pw.MemoryImage(imageBytes);
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Center(child: pw.Image(image));
+        },
+      ),
+    );
+
+    // Save PDF or share it using the `Printing` package
+    await Printing.sharePdf(bytes: await pdf.save(), filename: 'qr.pdf');
+  }
+
 }

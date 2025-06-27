@@ -18,3 +18,7 @@ bool isArabic() {
 }
 
 
+String extractQRIdFromUrl(String url) {
+  final uri = Uri.parse(url);
+  return uri.queryParameters['id'] ?? '';
+}

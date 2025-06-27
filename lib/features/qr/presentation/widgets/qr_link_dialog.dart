@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import '../../../../core/service/global_function/format_utils.dart';
 import '../../../../core/service/global_widget/custom_text_form_field.dart';
+import '../../../../core/service/global_widget/toast.dart';
 import '../../../../core/service/service_locator/service_locator.dart';
 import '../../../../core/utils/theme/color_mangment/color_manager.dart';
 import '../controller/qr_cubit.dart';
@@ -30,6 +31,14 @@ class _QrLinkDialogState extends State<QrLinkDialog> {
         listener: (context, state) {
           if (state is QrLinkSuccess) {
             Navigator.pop(context);
+
+            successToast(context, state.message);
+          } else if (state is QrUnlinkSuccess) {
+            successToast(context, state.message);
+          } else if (state is QrDownloadSuccess) {
+            successToast(context, state.message);
+          } else if (state is QrError) {
+            errorToast(context, state.message);
           }
         },
         child: AlertDialog(
@@ -42,9 +51,9 @@ class _QrLinkDialogState extends State<QrLinkDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                Icons.qr_code,
-                size: 64,
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                Icons.qr_code_2,
+                size: 100,
+                color: ColorManager.primaryColor,
               ),
               const SizedBox(height: 16),
               Text(
@@ -62,7 +71,7 @@ class _QrLinkDialogState extends State<QrLinkDialog> {
                       controller: qrController,
                       prefixIcon: Icon(Icons.qr_code_2, size: 20),
                       enable: false,
-
+                      enabled: false,
                       hintText:
                           isArabic()
                               ? 'أدخل معرف رمز QR أو امسحه'
@@ -94,18 +103,22 @@ class _QrLinkDialogState extends State<QrLinkDialog> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(isArabic() ? 'إلغاء' : 'Cancel'),
+              child: Text(
+                isArabic() ? 'إلغاء' : 'Cancel',
+                style: const TextStyle(color: ColorManager.primaryColor),
+              ),
             ),
             BlocBuilder<QrCubit, QrState>(
               builder: (context, state) {
                 var cubit = QrCubit.get(context);
                 final isLoading = state is QrLoading;
                 return TextButton(
-                  onPressed: isLoading
-                      ? null
-                      : () {
-                          _linkQr(cubit);
-                        },
+                  onPressed:
+                      isLoading || qrController.text.isEmpty
+                          ? null
+                          : () {
+                            _linkQr(cubit);
+                          },
                   child:
                       isLoading
                           ? const SizedBox(
@@ -113,7 +126,12 @@ class _QrLinkDialogState extends State<QrLinkDialog> {
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                          : Text(isArabic() ? 'ربط رمز QR' : 'Link QR Code'),
+                          : Text(
+                            isArabic() ? 'ربط رمز QR' : 'Link QR Code',
+                            style:  TextStyle(
+                              color:qrController.text.isEmpty ? Colors.grey : ColorManager.primaryColor,
+                            ),
+                          ),
                 );
               },
             ),

@@ -9,6 +9,9 @@ class PetEntities {
   final String birthdate;
   final String? passportNumber;
   final String? passportImage;
+  final String? microShipNumber;
+  final String? qrCode;
+  final String? qrCodeId;
   final BreedPetEntity? breed;
   bool isSelected;
 
@@ -22,6 +25,9 @@ class PetEntities {
     required this.imageName,
     required this.birthdate,
     this.passportNumber,
+    this.microShipNumber,
+    this.qrCode,
+    this.qrCodeId,
     this.passportImage,
     this.breed,
     this.isSelected = false,

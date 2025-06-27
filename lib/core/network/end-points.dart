@@ -150,6 +150,9 @@ String getAllBoardingEndPoint(String phone) =>
     '$version/vetcare/boarding?ClientPhone=$phone';
 String rateBoardingEndPoint  = '$version/vetcare/reviewboarding';
 
+///Qr
+String qrScanEndPoint  = '$version/qr/Scan';
+String qrUnlinkEndPoint  = '$version/qr/unlink';
 
 /// App State
 String? clintId;

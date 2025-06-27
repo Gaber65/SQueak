@@ -1,7 +1,10 @@
-import '../../domain/entities/qr_code_entity.dart';
+import 'package:dartz/dartz.dart';
+
+import 'package:squeak/core/error/failure.dart';
+
+import '../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../domain/repositories/qr_repository.dart';
 import '../datasources/qr_remote_datasource.dart';
-import '../../../pets/domain/entities/pet_entity.dart';
 
 class QrRepositoryImpl implements QrRepository {
   final QrRemoteDataSource remoteDataSource;
@@ -9,42 +12,33 @@ class QrRepositoryImpl implements QrRepository {
   QrRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<bool> linkPetToQr(String petId, String qrCodeId) async {
-    return await remoteDataSource.linkPetToQr(petId, qrCodeId);
+  Future<Either<Failure, bool>> linkPetToQr(
+    String petId,
+    String qrCodeId,
+  ) async {
+    try {
+      return Right(await remoteDataSource.linkPetToQr(petId, qrCodeId));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.errorMessageModel));
+    }
   }
 
   @override
-  Future<bool> unlinkPetFromQr(String petId) async {
-    return await remoteDataSource.unlinkPetFromQr(petId);
+  Future<Either<Failure, bool>> unlinkPetFromQr(String petId) async {
+    try {
+      return Right(await remoteDataSource.unlinkPetFromQr(petId));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.errorMessageModel));
+    }
   }
 
-  @override
-  Future<QrCodeEntity?> getQrCodeByPetId(String petId) async {
-    return await remoteDataSource.getQrCodeByPetId(petId);
-  }
-
-  @override
-  Future<PetEntities?> getPetByQrCode(String qrCodeId) async {
-    return await remoteDataSource.getPetByQrCode(qrCodeId);
-  }
-
-  @override
-  Future<String> generateQrCode(String petId) async {
-    return await remoteDataSource.generateQrCode(petId);
-  }
-
-  @override
-  Future<bool> downloadQrCode(String qrCodeId, String petName) async {
-    return await remoteDataSource.downloadQrCode(qrCodeId, petName);
-  }
-
-  @override
-  Future<void> sendScanNotification(String qrCodeId, String petId, {Map<String, double>? location}) async {
-    return await remoteDataSource.sendScanNotification(qrCodeId, petId, location: location);
-  }
-
-  @override
-  Future<bool> validateQrCode(String qrCodeId) async {
-    return await remoteDataSource.validateQrCode(qrCodeId);
-  }
+  // @override
+  // Future<bool> linkPetToQr(String petId, String qrCodeId) async {
+  //   return await remoteDataSource.linkPetToQr(petId, qrCodeId);
+  // }
+  //
+  // @override
+  // Future<bool> unlinkPetFromQr(String petId) async {
+  //   return await remoteDataSource.unlinkPetFromQr(petId);
+  // }
 }

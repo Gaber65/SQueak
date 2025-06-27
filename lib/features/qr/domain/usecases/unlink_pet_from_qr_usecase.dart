@@ -1,15 +1,17 @@
+import 'package:dartz/dartz.dart';
+
+import '../../../../core/service/service_locator/locatore_export_path.dart';
 import '../repositories/qr_repository.dart';
 
-class UnlinkPetFromQrUseCase {
+class UnlinkPetFromQrUseCase extends BaseUseCase<bool, String> {
   final QrRepository repository;
 
   UnlinkPetFromQrUseCase(this.repository);
 
-  Future<bool> call(String petId) async {
-    try {
-      return await repository.unlinkPetFromQr(petId);
-    } catch (e) {
-      throw Exception('Failed to unlink pet from QR code: $e');
-    }
+  @override
+  Future<Either<Failure, bool>> call(String parameters) async {
+    return await repository.unlinkPetFromQr(parameters);
   }
+
+
 }
