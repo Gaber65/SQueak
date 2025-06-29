@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:printing/printing.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:flutter/rendering.dart';
 import 'package:pdf/widgets.dart' as pw;
-
-import '../../../../core/service/global_function/format_utils.dart';
+import 'package:printing/printing.dart';
 
 class QrSave extends StatelessWidget {
    QrSave({super.key, required this.qrData, required this.isDarkMode});
@@ -16,20 +15,11 @@ class QrSave extends StatelessWidget {
 
   Future<Uint8List> _capturePng() async {
     try {
-      // انتظر لحد نهاية فريم الـ UI
-      await Future.delayed(Duration(milliseconds: 100));
-      RenderRepaintBoundary boundary =
-      _qrKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
-
-      if (boundary.debugNeedsPaint) {
-        await Future.delayed(const Duration(milliseconds: 100));
-      }
-
+      RenderRepaintBoundary boundary = _qrKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 3.0);
       ByteData? byteData = await image.toByteData(
         format: ui.ImageByteFormat.png,
       );
-
       if (byteData != null) {
         Uint8List pngBytes = byteData.buffer.asUint8List();
         return pngBytes;
@@ -276,32 +266,8 @@ class QrSave extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                         child: InkWell(
                           onTap: () async {
-                            try {
-                              // استنى انتهاء الرسم (frame) قبل الالتقاط
-                              await Future.delayed(Duration(milliseconds: 100));
-
-                              WidgetsBinding.instance.addPostFrameCallback((
-                                _,
-                              ) async {
-                                try {
-                                  final imageBytes = await _capturePng();
-                                  await _saveAsPdf(imageBytes);
-                                } catch (e) {
-                                  print("❌ Error capturing QR: $e");
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        isArabic()
-                                            ? 'فشل في حفظ الكود'
-                                            : 'Failed to save QR code',
-                                      ),
-                                    ),
-                                  );
-                                }
-                              });
-                            } catch (e) {
-                              print("❌ Outer error: $e");
-                            }
+                            Uint8List imageBytes = await _capturePng();
+                            _saveAsPdf(imageBytes);
                           },
                           borderRadius: BorderRadius.circular(12),
                           splashColor:

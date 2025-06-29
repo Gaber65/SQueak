@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:squeak/core/network/end-points.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import '../../domain/entities/boarding_entry_entity.dart';
 
@@ -505,6 +506,8 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                     _buildEnhancedHeader(boarding),
                     _buildEnhancedImageCarousel(boarding),
                     if (boarding.boardingImages.length > 1) _buildEnhancedPageIndicators(boarding),
+
+
                     _buildEnhancedCloseButton(),
                   ],
                 ),
@@ -817,129 +820,145 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
             },
             itemCount: boarding.boardingImages.length,
             itemBuilder: (context, index) {
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 12),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.network(
-                        boarding.boardingImages[index],
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  _shimmerBaseColor,
-                                  _shimmerHighlightColor,
-                                  _shimmerBaseColor,
-                                ],
-                                stops: const [0.0, 0.5, 1.0],
-                              ),
-                            ),
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes != null
-                                        ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                        : null,
-                                    color: widget.isDarkMode
-                                        ? Colors.blue.shade400
-                                        : Colors.blue.shade600,
-                                    strokeWidth: 3,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    isArabic() ? 'جاري التحميل...' : 'Loading...',
-                                    style: TextStyle(
-                                      color: _textSecondaryColor,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
+
+              return Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 12),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.network(
+                              imageUrlWithVetICare+ boarding.boardingImages[index]['imageName'],
+                              fit: BoxFit.cover,
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        _shimmerBaseColor,
+                                        _shimmerHighlightColor,
+                                        _shimmerBaseColor,
+                                      ],
+                                      stops: const [0.0, 0.5, 1.0],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                        errorBuilder: (context, error, _) => Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: widget.isDarkMode
-                                  ? [
-                                Colors.grey.shade800,
-                                Colors.grey.shade900,
-                              ]
-                                  : [
-                                Colors.grey.shade200,
-                                Colors.grey.shade300,
-                              ],
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(20),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        CircularProgressIndicator(
+                                          value: loadingProgress.expectedTotalBytes != null
+                                              ? loadingProgress.cumulativeBytesLoaded /
+                                              loadingProgress.expectedTotalBytes!
+                                              : null,
+                                          color: widget.isDarkMode
+                                              ? Colors.blue.shade400
+                                              : Colors.blue.shade600,
+                                          strokeWidth: 3,
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          isArabic() ? 'جاري التحميل...' : 'Loading...',
+                                          style: TextStyle(
+                                            color: _textSecondaryColor,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                              errorBuilder: (context, error, _) => Container(
                                 decoration: BoxDecoration(
-                                  color: widget.isDarkMode
-                                      ? Colors.grey.shade700
-                                      : Colors.grey.shade100,
-                                  borderRadius: BorderRadius.circular(20),
+                                  gradient: LinearGradient(
+                                    colors: widget.isDarkMode
+                                        ? [
+                                      Colors.grey.shade800,
+                                      Colors.grey.shade900,
+                                    ]
+                                        : [
+                                      Colors.grey.shade200,
+                                      Colors.grey.shade300,
+                                    ],
+                                  ),
                                 ),
-                                child: Icon(
-                                  Icons.broken_image_rounded,
-                                  size: 60,
-                                  color: widget.isDarkMode
-                                      ? Colors.grey.shade500
-                                      : Colors.grey.shade600,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(20),
+                                      decoration: BoxDecoration(
+                                        color: widget.isDarkMode
+                                            ? Colors.grey.shade700
+                                            : Colors.grey.shade100,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Icon(
+                                        Icons.broken_image_rounded,
+                                        size: 60,
+                                        color: widget.isDarkMode
+                                            ? Colors.grey.shade500
+                                            : Colors.grey.shade600,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      isArabic() ? 'فشل في تحميل الصورة' : 'Failed to load image',
+                                      style: TextStyle(
+                                        color: _textSecondaryColor,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      isArabic() ? 'اضغط لإعادة المحاولة' : 'Tap to retry',
+                                      style: TextStyle(
+                                        color: _textSecondaryColor,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 16),
-                              Text(
-                                isArabic() ? 'فشل في تحميل الصورة' : 'Failed to load image',
-                                style: TextStyle(
-                                  color: _textSecondaryColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
+                            ),
+                            // Enhanced gradient overlay
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    _overlayColor.withOpacity(0.4),
+                                    Colors.transparent,
+                                    Colors.transparent,
+                                    _overlayColor.withOpacity(0.4),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                isArabic() ? 'اضغط لإعادة المحاولة' : 'Tap to retry',
-                                style: TextStyle(
-                                  color: _textSecondaryColor,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+
+                          ],
                         ),
                       ),
-                      // Enhanced gradient overlay
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              _overlayColor.withOpacity(0.4),
-                              Colors.transparent,
-                              Colors.transparent,
-                              _overlayColor.withOpacity(0.4),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                  Text(
+                    boarding.boardingImages[index]['note'] ?? '',
+                    style: TextStyle(
+                      color: _textSecondaryColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               );
             },
           ),

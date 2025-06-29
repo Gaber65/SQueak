@@ -15,7 +15,7 @@ class QrRemoteDataSourceImpl implements QrRemoteDataSource {
         method: qrScanEndPoint,
         data: {
           "petId": petId,
-          "qrCodeId": extractAllIdsFromUrl(qrCodeId),
+          "qrCodeId": extractFirstUuidFromUrl(qrCodeId),
           "qrCode": qrCodeId,
         },
       );

@@ -25,6 +25,7 @@ class BoardingRemoteDataSourceImpl implements BoardingRemoteDataSource {
 
   @override
   Future<List<BoardingTypeModel>> getBoardingTypes(String clinicCode) async {
+
     try {
       final response = await DioFinalHelper.getData(
         method: boardingTypeEndPoint(clinicCode),
@@ -75,6 +76,8 @@ class BoardingRemoteDataSourceImpl implements BoardingRemoteDataSource {
     String phone,
     bool applyFilter,
   ) async {
+    print('***************************************');
+    print('getBoardingEntries');
     try {
       Response response = await DioFinalHelper.getData(
         method: getAllBoardingEndPoint(CacheHelper.getData('phone')),

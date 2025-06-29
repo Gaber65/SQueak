@@ -151,7 +151,7 @@ class PetCubit extends Cubit<PetState> {
     searchController.text =
         (isArabic()
             ? pet.breed?.arBreed
-            : pet.breed?.enBreed ?? S.current.breed)!;
+            : pet.breed?.enBreed ?? S.current.breed) ?? '';
     petNameController.text = pet.petName;
     breedIdController.text = pet.breedId;
     birthdateController.text =

@@ -502,7 +502,13 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
   }
 
   void _linkQr(QrCubit cubit) {
-    cubit.linkPetToQr(widget.pet.petId, qrController.text);
+    final uuid = extractFirstUuidFromUrl(qrController.text);
+
+    if (uuid != null) {
+      cubit.linkPetToQr(widget.pet.petId, qrController.text);
+    } else {
+      errorToast(context, isArabic() ? 'رمز QR غير صالح. هذا الرمز غير مسجل في نظامنا.' : 'Invalid QR Code. This code is not registered in our system');
+    }
   }
   @override
   void dispose() {

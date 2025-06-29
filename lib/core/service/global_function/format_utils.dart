@@ -17,12 +17,23 @@ bool isArabic() {
   return Intl.getCurrentLocale() == 'ar';
 }
 
-String extractAllIdsFromUrl(String url) {
-  // استخدم regex لاستخراج كل شكل UUID
-  final regex = RegExp(
-    r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}',
-    caseSensitive: false,
-  );
+String? extractFirstUuidFromUrl(String url) {
+  try {
+    final regex = RegExp(
+      r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}',
+      caseSensitive: false,
+    );
 
-  return regex.allMatches(url).map((m) => m.group(0)!).toList().first;
+    final matches = regex.allMatches(url);
+    if (matches.isNotEmpty) {
+      return matches.first.group(0);
+    } else {
+      // URL صحيح لكن مفيهوش UUID
+      return null;
+    }
+  } catch (e) {
+    // لو حصل أي استثناء (مثلاً null أو غير متوقع)
+    print('Error extracting UUID from URL: $e');
+    return null;
+  }
 }

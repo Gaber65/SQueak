@@ -53,59 +53,18 @@ class BoardingRepositoryImpl implements BoardingRepository {
   @override
   Future<Either<Failure, List<BoardingEntryEntity>>> getBoardingEntries(
     String phone,
-    bool applyFilter,
+    bool applyFilter, // ← مش هنستخدمه، ممكن تشيله كمان
   ) async {
-    try {
-      final cachedEntries = await localDataSource.getCachedBoardingEntries();
-      if (cachedEntries.isNotEmpty) {
-        final cachedResult =
-            cachedEntries.map((model) => model.toEntity()).toList();
-
-        if (applyFilter) {
-          final filtered =
-              cachedResult.where((entry) {
-                return entry.existDate.isAfter(
-                  DateTime.now().subtract(const Duration(days: 1)),
-                );
-              }).toList();
-
-          return Right(filtered);
-        }
-
-        return Right(cachedResult);
-      }
-    } catch (_) {}
-
     try {
       final remoteEntries = await remoteDataSource.getBoardingEntries(
         phone,
-        applyFilter,
+        false,
       );
 
-      await localDataSource.cacheBoardingEntries(remoteEntries);
-
-      List<BoardingEntryEntity> result =
-          remoteEntries.map((model) => model.toEntity()).toList();
-
-      if (applyFilter) {
-        result =
-            result.where((entry) {
-              return entry.existDate.isAfter(
-                DateTime.now().subtract(const Duration(days: 1)),
-              );
-            }).toList();
-      }
-
+      final result = remoteEntries.map((e) => e.toEntity()).toList();
       return Right(result);
     } on ServerException catch (e) {
-      try {
-        final fallbackCached = await localDataSource.getCachedBoardingEntries();
-        return Right(fallbackCached.map((model) => model.toEntity()).toList());
-      } catch (_) {
-        return Left(ServerFailure(e.errorMessageModel));
-      }
-    } on LocalDatabaseException catch (e) {
-      return Left(LocalDatabaseFailure(e.errorMessage as dynamic));
+      return Left(ServerFailure(e.errorMessageModel));
     }
   }
 
