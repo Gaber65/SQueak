@@ -80,19 +80,10 @@ class BoardingRemoteDataSourceImpl implements BoardingRemoteDataSource {
         method: getAllBoardingEndPoint(CacheHelper.getData('phone')),
         language: false,
       );
-      var boardingEntry =
-          (response.data['data']['result'] as List)
-              .map((e) => BoardingEntryModel.fromJson(e))
-              .toList();
-      if (applyFilter) {
-        boardingEntry.removeWhere((element) {
-          DateTime boardingDate = element.existDate;
-          return boardingDate.isBefore(
-            DateTime.now().subtract(const Duration(days: 1)),
-          );
-        });
-      }
-      return boardingEntry;
+
+      return (response.data['data']['result'] as List)
+          .map((e) => BoardingEntryModel.fromJson(e))
+          .toList();
     } on DioException catch (e) {
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response?.data ?? {}),

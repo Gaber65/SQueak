@@ -887,39 +887,3 @@ Widget buildItem(
   );
 }
 
-Center emptyAppointment(BuildContext context) {
-  return Center(
-    child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          LottieBuilder.network(
-            'https://lottie.host/812196ca-692a-4bd1-8920-3bbffa763c4e/P24Orl2mFH.json',
-            height: 300,
-            repeat: false,
-            width: double.infinity,
-          ),
-          InkWell(
-            onTap: () {
-              LayoutCubit.get(context).changeBottomNav(1);
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                isArabic()
-                    ? 'اختر العيادة الخاص بك واحجز موعدك.'
-                    : 'Pick your Clinic and book your appointment.',
-                textAlign: TextAlign.center,
-                style: FontStyleThame.textStyle(
-                  context: context,
-                  fontColor: ColorManager.secondColor,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}

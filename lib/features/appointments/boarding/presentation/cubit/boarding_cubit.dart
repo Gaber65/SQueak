@@ -97,7 +97,7 @@ class BoardingCubit extends Cubit<BoardingState> {
 
     final params = GetBoardingEntriesParams(
       phone: CacheHelper.getData('phone'),
-      applyFilter: applyFilter,
+      applyFilter: false,
     );
 
     final result = await getBoardingEntriesUseCase(params);

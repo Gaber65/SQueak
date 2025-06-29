@@ -1,7 +1,7 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:squeak/features/appointments/boarding/domain/repositories/boarding_repository.dart';
-
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../../core/service/service_locator/locatore_export_path.dart';
@@ -16,421 +16,433 @@ import '../share_image_pet_screen.dart';
 class BoardingCard extends StatelessWidget {
   final BoardingEntryEntity entry;
   final BoardingCubit cubit;
+  final bool isDarkMode;
 
-  const BoardingCard({super.key, required this.entry, required this.cubit});
+  const BoardingCard({
+    super.key,
+    required this.entry,
+    required this.cubit,
+    this.isDarkMode = false,
+  });
+
+  // Simple color getters
+  Color get _cardColor => isDarkMode ? Colors.grey.shade900 : Colors.white;
+  Color get _textColor => isDarkMode ? Colors.white : Colors.black87;
+  Color get _subtitleColor => isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600;
+  Color get _borderColor => isDarkMode ? Colors.grey.shade700 : Colors.grey.shade200;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Container(
-        width: double.infinity,
-        decoration: Decorations.kDecorationBoxShadow(context: context),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(6),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: FastCachedImageProvider(
-                        imageUrlWithVetICare + (entry.clinicLogo ?? ''),
-                      ),
-                      radius: 24,
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(entry.pet.name),
-                          Text(entry.clinicName),
-                        ],
-                      ),
-                    ),
-                    _buildStatusChip(
-                      BoardingStatusExtension.fromInt(entry.status ?? 0),
-                    ),
-                    if (entry.status == BoardingStatusEnums.paid.index &&
-                        entry.status != BoardingStatusEnums.closed.index)
-                      PopupMenuButton<int>(
-                        padding: EdgeInsets.zero,
-                        onCanceled: () {
-                          Navigator.of(context);
-                        },
-                        itemBuilder: (context) {
-                          return [
-                            PopupMenuItem(
-                              value: 2,
-                              onTap: () {
-                                navigateToScreen(
-                                  context,
-                                  RateBoarding(
-                                    boardingEntryEntity: entry,
-                                    isNav: true,
-                                  ),
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Text('Rate'),
-                                  Spacer(),
-                                  Icon(
-                                    Icons.star_border_purple500,
-                                    color: Colors.amber,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            PopupMenuItem(
-                              value: 2,
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder:
-                                      (_) => ImageCarouselWidget(
-                                        open: true,
-                                        onOpenChange:
-                                            (open) => Navigator.pop(context),
-                                        boarding: entry,
-                                        onShare: (imageUrl, platform) {
-                                          cubit.shareImageEntries(
-                                            ShareImageBoardingEntriesParams(
-                                              imageUrl: imageUrl,
-                                              platform: platform,
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Text('Image'),
-                                  Spacer(),
-                                  Icon(
-                                    Icons.image,
-                                    color: ColorManager.primaryColor,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ];
-                        },
-                        icon: const Icon(Icons.more_vert_outlined),
-                        offset: const Offset(0, 20),
-                      ),
-                    if (entry.status == BoardingStatusEnums.inProgress.index)
-                      PopupMenuButton<int>(
-                        padding: EdgeInsets.zero,
-                        onCanceled: () {
-                          Navigator.of(context);
-                        },
-                        itemBuilder: (context) {
-                          return [
-                            PopupMenuItem(
-                              value: 2,
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder:
-                                      (_) => ImageCarouselWidget(
-                                        open: true,
-                                        onOpenChange:
-                                            (open) => Navigator.pop(context),
-                                        boarding: entry,
-                                        onShare: (imageUrl, platform) {
-                                          cubit.shareImageEntries(
-                                            ShareImageBoardingEntriesParams(
-                                              imageUrl: imageUrl,
-                                              platform: platform,
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Text('Image'),
-                                  Spacer(),
-                                  Icon(
-                                    Icons.image,
-                                    color: ColorManager.primaryColor,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ];
-                        },
-                        icon: const Icon(Icons.more_vert_outlined),
-                        offset: const Offset(0, 20),
-                      ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: [
-                    _buildInfoRow(
-                      Icons.calendar_today,
-                      isArabic() ? 'تاريخ الحجز' : 'Check-in',
-                      formatBoarding(entry.entryDate.toString()),
-                    ),
-                    _buildInfoRow(
-                      Icons.calendar_today,
-                      isArabic() ? 'تاريخ الخروج' : 'Check-out',
-                      formatBoarding(entry.existDate.toString()),
-                    ),
-                    _buildInfoRow(
-                      Icons.access_time,
-                      isArabic() ? 'المدة' : 'Duration',
-                      '${entry.period} ${entry.period == 1
-                          ? isArabic()
-                              ? 'يوم'
-                              : 'day'
-                          : isArabic()
-                          ? 'ايام'
-                          : 'days'}',
-                    ),
-                  ],
-                ),
-              ),
-              if (entry.status == 3 && entry.doctorServiceRate != 0)
-                Center(
-                  child: Row(
-                    children: [
-                      Text(
-                        isArabic() ? 'تقييم الطبيب' : 'Doctor rating : ',
-                        style: FontStyleThame.textStyle(
-                          context: context,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Row(
-                        children: List.generate(
-                          5,
-                          (index) =>
-                              index < entry.doctorServiceRate
-                                  ? const Icon(Icons.star, color: Colors.amber)
-                                  : const Icon(
-                                    Icons.star_border,
-                                    color: Colors.amber,
-                                  ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              Padding(
-                padding: const EdgeInsets.all(2),
-                child: Container(
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    color: ColorManager.primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.pets,
-                            size: 20,
-                            color: ColorManager.primaryColor,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            entry.boardingType.name,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          launchUrl(Uri.parse('tel:${entry.clinicPhone}'));
-                        },
-                        icon: Icon(
-                          Icons.call,
-                          size: 20,
-                          color: ColorManager.primaryColor,
-                        ),
-                      ),
-
-                    ],
-                  ),
-                ),
-              ),
-
-              // Padding(
-              //   padding: const EdgeInsets.all(6),
-              //   child: Row(
-              //     children: [
-              //       Expanded(
-              //         child: ElevatedButton(
-              //           onPressed: () {
-              //             navigateToScreen(
-              //               context,
-              //               BoardingAgain(entry: entry),
-              //             );
-              //           },
-              //           style: ElevatedButton.styleFrom(
-              //             foregroundColor: Colors.green,
-              //             backgroundColor:
-              //                 MainCubit.get(context).isDark
-              //                     ? ColorManager.myPetsBaseBlackColor
-              //                     : Colors.green.shade100.withOpacity(.4),
-              //             elevation: 0,
-              //             shape: (RoundedRectangleBorder(
-              //               borderRadius: BorderRadius.circular(12),
-              //             )),
-              //           ),
-              //           child: Text(S.of(context).appointmentButtonEdit),
-              //         ),
-              //       ),
-              //       const SizedBox(width: 6),
-              //       if (entry.status != BoardingStatusEnums.cancelled.index &&
-              //           entry.status != BoardingStatusEnums.paid.index &&
-              //           entry.status != BoardingStatusEnums.closed.index)
-              //         Expanded(
-              //           child: ElevatedButton(
-              //             onPressed: () {
-              //               showCustomConfirmationDialog(
-              //                 context: context,
-              //                 description:
-              //                     isArabic()
-              //                         ? Text.rich(
-              //                           TextSpan(
-              //                             text:
-              //                                 'هل أنت متأكد أنك تريد الغاء الاقامة ل ',
-              //                             children: [
-              //                               TextSpan(
-              //                                 text: entry.pet.name,
-              //                                 style: TextStyle(
-              //                                   fontWeight: FontWeight.bold,
-              //                                 ),
-              //                               ),
-              //                               TextSpan(text: '?'),
-              //                             ],
-              //                           ),
-              //                         )
-              //                         : Text.rich(
-              //                           TextSpan(
-              //                             text:
-              //                                 'Are you sure you want to cancel the boarding for ',
-              //                             children: [
-              //                               TextSpan(
-              //                                 text: entry.pet.name,
-              //                                 style: TextStyle(
-              //                                   fontWeight: FontWeight.bold,
-              //                                 ),
-              //                               ),
-              //                               TextSpan(text: '?'),
-              //                             ],
-              //                           ),
-              //                         ),
-              //                 imageUrl:
-              //                     'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/rb_47400.png?alt=media&token=dcd29c55-5078-458c-8932-38c7f05f6224',
-              //                 onConfirm: () async {
-              //                   var editModel = EditBoardingParams(
-              //                     clinicCode: entry.clinicCode,
-              //                     entryDate: entry.entryDate.toString(),
-              //                     existDate: entry.existDate.toString(),
-              //                     period: entry.period,
-              //                     comment: entry.comment,
-              //                     boardingTypeId: entry.boardingType.id,
-              //                     vetICarePetId: entry.petId,
-              //                     id: entry.id,
-              //                     boardingStatus:
-              //                         BoardingStatusEnums.cancelled.index,
-              //                   );
-              //                   await cubit.editBoarding(editModel);
-              //
-              //                   Navigator.of(context).pop(
-              //                     true,
-              //                   ); // You can pop with true to signal confirmation.
-              //                 },
-              //               );
-              //             },
-              //             style: ElevatedButton.styleFrom(
-              //               foregroundColor: Colors.red,
-              //               backgroundColor:
-              //                   MainCubit.get(context).isDark
-              //                       ? ColorManager.myPetsBaseBlackColor
-              //                       : Colors.red.shade100.withOpacity(.4),
-              //               elevation: 0,
-              //               shape: (RoundedRectangleBorder(
-              //                 borderRadius: BorderRadius.circular(12),
-              //               )),
-              //             ),
-              //             child: Text(S.of(context).appointmentButtonCancel),
-              //           ),
-              //         ),
-              //       if (entry.status != BoardingStatusEnums.cancelled.index &&
-              //           entry.status != BoardingStatusEnums.paid.index &&
-              //           entry.status != BoardingStatusEnums.closed.index)
-              //         const SizedBox(width: 6),
-              //       Expanded(
-              //         child: ElevatedButton(
-              //           onPressed: () {
-              //             launchUrl(Uri.parse('tel:${entry.clinicPhone}'));
-              //           },
-              //           style: ElevatedButton.styleFrom(
-              //             foregroundColor: Colors.blue,
-              //             backgroundColor:
-              //                 MainCubit.get(context).isDark
-              //                     ? ColorManager.myPetsBaseBlackColor
-              //                     : Colors.blue.shade100.withOpacity(.4),
-              //             elevation: 0,
-              //             shape: (RoundedRectangleBorder(
-              //               borderRadius: BorderRadius.circular(12),
-              //             )),
-              //           ),
-              //           child: Text(S.of(context).appointmentButtonCall),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-            ],
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: _cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: isDarkMode
+                ? Colors.black.withOpacity(0.3)
+                : Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-        ),
+        ],
       ),
-    );
-  }
-
-  Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
+      child: Column(
         children: [
-          Icon(icon, size: 16, color: ColorManager.primaryColor),
-          const SizedBox(width: 8),
-          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(value),
+          _buildHeader(),
+          _buildContent(),
+          _buildFooter(),
         ],
       ),
     );
   }
 
-  Widget _buildStatusChip(BoardingStatusEnums status) {
+  Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: status.getChipColor(),
-        borderRadius: BorderRadius.circular(16),
+        color: isDarkMode
+            ? Colors.grey.shade800.withOpacity(0.5)
+            : Colors.grey.shade50,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      child: Text(
-        status.getDisplayText(isArabic()),
-        style: TextStyle(color: status.getTextColor(), fontSize: 12),
+      child: Row(
+        children: [
+          // Simple avatar
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: ColorManager.primaryColor.withOpacity(0.3),
+                width: 2,
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: FastCachedImage(
+                url: imageUrlWithVetICare + (entry.clinicLogo ?? ''),
+                fit: BoxFit.cover,
+                errorBuilder: (context, exception, stacktrace) => Container(
+                  color: ColorManager.primaryColor.withOpacity(0.1),
+                  child: Icon(
+                    Icons.local_hospital,
+                    color: ColorManager.primaryColor,
+                    size: 24,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          // Pet and clinic info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  entry.pet.name,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: _textColor,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  entry.clinicName,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: _subtitleColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Simple status chip
+          _buildSimpleStatusChip(),
+
+          // Simple menu
+          if (_shouldShowMenu()) _buildSimpleMenu(),
+        ],
       ),
     );
   }
+
+  Widget _buildSimpleStatusChip() {
+    final status = BoardingStatusExtension.fromInt(entry.status ?? 0);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: status.getChipColor(),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        status.getDisplayText(isArabic()),
+        style: TextStyle(
+          color: status.getTextColor(),
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSimpleMenu() {
+    return PopupMenuButton<int>(
+      icon: Icon(
+        Icons.more_vert,
+        color: _subtitleColor,
+        size: 20,
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: _cardColor,
+      itemBuilder: (context) => [
+        if (entry.status == BoardingStatusEnums.paid.index)
+          PopupMenuItem(
+            value: 1,
+            child: Row(
+              children: [
+                Icon(Icons.star, color: Colors.amber, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  isArabic() ? 'تقييم' : 'Rate',
+                  style: TextStyle(color: _textColor),
+                ),
+              ],
+            ),
+            onTap: () {
+              Future.delayed(Duration.zero, () {
+                navigateToScreen(
+                  context,
+                  RateBoarding(boardingEntryEntity: entry, isNav: true),
+                );
+              });
+            },
+          ),
+        PopupMenuItem(
+          value: 2,
+          child: Row(
+            children: [
+              Icon(Icons.image, color: ColorManager.primaryColor, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                isArabic() ? 'الصور' : 'Images',
+                style: TextStyle(color: _textColor),
+              ),
+            ],
+          ),
+          onTap: () {
+            Future.delayed(Duration.zero, () => _showImages(context));
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContent() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          // Simple info rows
+          _buildInfoRow(
+            Icons.login,
+            isArabic() ? 'دخول' : 'Check-in',
+            formatBoarding(entry.entryDate.toString()),
+          ),
+          const SizedBox(height: 8),
+          _buildInfoRow(
+            Icons.logout,
+            isArabic() ? 'خروج' : 'Check-out',
+            formatBoarding(entry.existDate.toString()),
+          ),
+          const SizedBox(height: 8),
+          _buildInfoRow(
+            Icons.schedule,
+            isArabic() ? 'المدة' : 'Duration',
+            '${entry.period} ${entry.period == 1
+                ? (isArabic() ? 'يوم' : 'day')
+                : (isArabic() ? 'أيام' : 'days')}',
+          ),
+
+          // Doctor rating if available
+          if (entry.status == 3 && entry.doctorServiceRate != 0)
+            _buildDoctorRating(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 16,
+          color: ColorManager.primaryColor,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          '$label: ',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: _subtitleColor,
+            fontSize: 14,
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(
+              color: _textColor,
+              fontSize: 14,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDoctorRating() {
+    return Container(
+      margin: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.amber.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.amber.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.medical_services, color: Colors.amber, size: 16),
+          const SizedBox(width: 8),
+          Text(
+            isArabic() ? 'تقييم الطبيب:' : 'Doctor rating:',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: _textColor,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Row(
+            children: List.generate(
+              5,
+                  (index) => Icon(
+                index < entry.doctorServiceRate
+                    ? Icons.star
+                    : Icons.star_border,
+                color: Colors.amber,
+                size: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFooter() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDarkMode
+            ? Colors.grey.shade800.withOpacity(0.3)
+            : Colors.grey.shade50,
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+      ),
+      child: Row(
+        children: [
+          // Boarding type
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: ColorManager.primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: ColorManager.primaryColor.withOpacity(0.3),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.pets,
+                  size: 16,
+                  color: ColorManager.primaryColor,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  entry.boardingType.name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: ColorManager.primaryColor,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const Spacer(),
+
+          // Call button
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.green,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  launchUrl(Uri.parse('tel:${entry.clinicPhone}'));
+                },
+                borderRadius: BorderRadius.circular(8),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.phone, color: Colors.white, size: 16),
+                      SizedBox(width: 6),
+                      Text(
+                        'Call',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _shouldShowMenu() {
+    return entry.status == BoardingStatusEnums.paid.index ||
+        entry.status == BoardingStatusEnums.inProgress.index;
+  }
+
+  void _showImages(context) {
+    showDialog(
+      context: context,
+      builder: (_) => ImageCarouselWidget(
+        open: true,
+        isDarkMode: isDarkMode,
+        onOpenChange: (open) => Navigator.pop(context),
+        boarding: entry,
+        onShare: (imageUrl, platform) {
+          cubit.shareImageEntries(
+            ShareImageBoardingEntriesParams(
+              imageUrl: imageUrl,
+              platform: platform,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// Simple usage function
+Widget buildSimpleBoardingCard(
+    BoardingEntryEntity entry,
+    BoardingCubit cubit, {
+      bool isDarkMode = false,
+    }) {
+  return BoardingCard(
+    entry: entry,
+    cubit: cubit,
+    isDarkMode: isDarkMode,
+  );
+}
+
+// Auto-detect theme version
+Widget buildSimpleThemeAwareBoardingCard(
+    BuildContext context,
+    BoardingEntryEntity entry,
+    BoardingCubit cubit,
+    ) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  return BoardingCard(
+    entry: entry,
+    cubit: cubit,
+    isDarkMode: isDark,
+  );
 }

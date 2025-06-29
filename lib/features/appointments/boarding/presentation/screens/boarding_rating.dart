@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
+import '../../../../../core/service/service_locator/service_locator.dart';
 import '../../domain/entities/boarding_entry_entity.dart';
 import '../cubit/boarding_cubit.dart';
 import '../cubit/boarding_state.dart';
@@ -41,54 +42,57 @@ class _RateBoardingState extends State<RateBoarding> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BoardingCubit, BoardingState>(
-      listener: (context, state) {
-        if (state is RateBoardingSuccess) {
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Rating submitted successfully')),
-          );
-        } else if (state is RateBoardingError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
-        }
-      },
-      builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Rate Boarding'),
-            automaticallyImplyLeading: widget.boardingEntryEntity.isRating,
-          ),
-          floatingActionButton: !widget.boardingEntryEntity.isRating
-              ? _buildSubmitButton(context, state)
-              : null,
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-          body: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildHeaderImage(),
-                  const SizedBox(height: 20),
-                  _buildTitle(),
-                  const SizedBox(height: 10),
-                  _buildDescription(),
-                  const SizedBox(height: 50),
-                  _buildDoctorRating(),
-                  const SizedBox(height: 20),
-                  const Divider(),
-                  const SizedBox(height: 20),
-                  _buildCleanlinessRating(),
-                  const SizedBox(height: 20),
-                  if (widget.boardingEntryEntity.isRating) _buildFeedbackField(),
-                  const SizedBox(height: 100),
-                ],
+    return BlocProvider(
+      create: (context) => sl<BoardingCubit>(),
+      child: BlocConsumer<BoardingCubit, BoardingState>(
+        listener: (context, state) {
+          if (state is RateBoardingSuccess) {
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Rating submitted successfully')),
+            );
+          } else if (state is RateBoardingError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Rate Boarding'),
+              automaticallyImplyLeading: widget.boardingEntryEntity.isRating,
+            ),
+            floatingActionButton: !widget.boardingEntryEntity.isRating
+                ? _buildSubmitButton(context, state)
+                : null,
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+            body: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildHeaderImage(),
+                    const SizedBox(height: 20),
+                    _buildTitle(),
+                    const SizedBox(height: 10),
+                    _buildDescription(),
+                    const SizedBox(height: 50),
+                    _buildDoctorRating(),
+                    const SizedBox(height: 20),
+                    const Divider(),
+                    const SizedBox(height: 20),
+                    _buildCleanlinessRating(),
+                    const SizedBox(height: 20),
+                    if (widget.boardingEntryEntity.isRating) _buildFeedbackField(),
+                    const SizedBox(height: 100),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

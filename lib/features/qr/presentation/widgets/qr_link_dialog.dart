@@ -10,6 +10,7 @@ import '../../../pets/presentation/controller/pet_cubit.dart';
 import '../controller/qr_cubit.dart';
 import '../../../pets/domain/entities/pet_entity.dart';
 import '../view/new_scanner.dart';
+import 'package:flutter/services.dart'; // مهم للـ Clipboard
 
 class QrLinkDialog extends StatefulWidget {
   final PetEntities pet;
@@ -286,53 +287,64 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
           Row(
             children: [
               Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: widget.isDarkMode
-                        ? Colors.grey.shade900
-                        : Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: qrController.text.isNotEmpty
-                          ? ColorManager.primaryColor
-                          : (widget.isDarkMode
-                          ? Colors.grey.shade600
-                          : Colors.grey.shade300),
-                    ),
-                  ),
-                  child: TextField(
-                    controller: qrController,
-                    style: TextStyle(
-                      color: widget.isDarkMode ? Colors.white : Colors.black87,
-                    ),
-                    decoration: InputDecoration(
-                      enabled:false,
-                      hintText: isArabic()
-                          ? 'أدخل معرف رمز QR'
-                          : 'Enter QR code ID',
-                      hintStyle: TextStyle(
-                        color: widget.isDarkMode
-                            ? Colors.grey.shade500
-                            : Colors.grey.shade500,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.qr_code_2_rounded,
-                        color: widget.isDarkMode
-                            ? Colors.grey.shade400
-                            : Colors.grey.shade600,
-                        size: 20,
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+                child: GestureDetector(
+                  onDoubleTap: () {
+                    if (qrController.text.isNotEmpty) {
+                      Clipboard.setData(ClipboardData(text: qrController.text));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(isArabic() ? 'تم نسخ الرمز' : 'Code copied'),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: widget.isDarkMode
+                          ? Colors.grey.shade900
+                          : Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: qrController.text.isNotEmpty
+                            ? ColorManager.primaryColor
+                            : (widget.isDarkMode
+                            ? Colors.grey.shade600
+                            : Colors.grey.shade300),
                       ),
                     ),
-                    onChanged: (value) => setState(() {}),
+                    child: TextField(
+                      controller: qrController,
+                      enabled: false, // ما يتكتبش فيه
+                      style: TextStyle(
+                        color: widget.isDarkMode ? Colors.white : Colors.black87,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: isArabic()
+                            ? 'أدخل معرف رمز QR'
+                            : 'Enter QR code ID',
+                        hintStyle: TextStyle(
+                          color: widget.isDarkMode
+                              ? Colors.grey.shade500
+                              : Colors.grey.shade500,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.qr_code_2_rounded,
+                          color: widget.isDarkMode
+                              ? Colors.grey.shade400
+                              : Colors.grey.shade600,
+                          size: 20,
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
+              ),              const SizedBox(width: 12),
               _buildScanButton(),
             ],
           ),
@@ -362,7 +374,7 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: isScanning ? null : _simulateScan,
+          onTap: isScanning ? null : () => _simulateScan(context),
           borderRadius: BorderRadius.circular(12),
           child: Container(
             padding: const EdgeInsets.all(12),
@@ -476,10 +488,10 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
     );
   }
 
-  Future<void> _simulateScan() async {
+  Future<void> _simulateScan(context) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ScannerScreen()),
+      MaterialPageRoute(builder: (context) =>  ScannerScreen()),
     );
 
     if (result != null && result is String) {
