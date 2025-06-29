@@ -120,12 +120,11 @@ String formatBoarding(String createdAt) {
 
   // Define the expected format based on actual date string
   DateFormat backendFormat = DateFormat(
-    "yyyy-MM-dd'T'HH:mm:ss",
+    "yyyy-MM-dd HH:mm:ss.SSS",
     'en_US',
-  ); // Adjust as needed
+  );
 
   DateTime utcTime = backendFormat.parse(createdAt, true);
-
   DateTime localTime = utcTime.toLocal();
 
   return DateFormat('MMM dd yyyy, hh:mm a', 'en_US').format(localTime);

@@ -5,17 +5,28 @@ import 'package:squeak/features/qr/domain/repositories/qr_repository.dart';
 import 'package:squeak/features/qr/domain/usecases/link_pet_to_qr_usecase.dart';
 import 'package:squeak/features/qr/domain/usecases/unlink_pet_from_qr_usecase.dart';
 
+import 'package:squeak/features/appointments/boarding/data/repositories/boarding_repository_impl.dart';
+import 'package:squeak/features/appointments/boarding/domain/usecases/get_boarding_types_usecase.dart';
+import 'package:squeak/features/appointments/boarding/presentation/cubit/boarding_cubit.dart';
+import '../../../features/appointments/boarding/data/datasources/boarding_local_data_source.dart';
+import '../../../features/appointments/boarding/data/datasources/boarding_remote_data_source.dart';
+import '../../../features/appointments/boarding/domain/repositories/boarding_repository.dart';
+import '../../../features/appointments/boarding/domain/usecases/create_boarding_usecase.dart';
+import '../../../features/appointments/boarding/domain/usecases/edit_boarding_usecase.dart';
+import '../../../features/appointments/boarding/domain/usecases/get_boarding_entries_usecase.dart';
+import '../../../features/appointments/boarding/domain/usecases/rate_boarding_usecase.dart';
+import '../../../features/appointments/boarding/domain/usecases/share_image_usecase.dart';
 import '../../../features/appointments/exam/presentation/controller/user/user_appointment_cubit.dart';
 import '../../../features/layout/search/presentation/controller/search_cubit.dart';
 import '../../../features/qr/presentation/controller/qr_cubit.dart';
 import '../../../features/settings/persentaion/controller/setting_cubit.dart';
+import '../../../features/vaccination/data/datasources/vaccination_local_data_source.dart';
 import '../../../features/vetcare/presenation/controllers/follow_request/follow_request_cubit.dart';
 import 'locatore_export_path.dart';
 
 final sl = GetIt.instance;
 
 class ServiceLocator {
-
   Future<void> init() async {
     // Register Cubits
     sl.registerFactory(() => MainCubit(sl(), sl(), sl(), sl(), sl()));
@@ -300,13 +311,49 @@ class ServiceLocator {
     // UI Cubit
     sl.registerFactory(() => VaccinationUiCubit(dataCubit: sl()));
 
+    // Cubits
+    sl.registerFactory(
+      () => BoardingCubit(
+        getBoardingTypesUseCase: sl(),
+        createBoardingUseCase: sl(),
+        editBoardingUseCase: sl(),
+        getBoardingEntriesUseCase: sl(),
+        rateBoardingUseCase: sl(),
+        shareImageEntriesUseCase: sl(),
+      ),
+    );
+
+    // Use cases
+    sl.registerLazySingleton(() => GetBoardingTypesUseCase(sl()));
+    sl.registerLazySingleton(() => CreateBoardingUseCase(sl()));
+    sl.registerLazySingleton(() => EditBoardingUseCase(sl()));
+    sl.registerLazySingleton(() => GetBoardingEntriesUseCase(sl()));
+    sl.registerLazySingleton(() => RateBoardingUseCase(sl()));
+    sl.registerLazySingleton(() => ShareImageEntriesUseCase(sl()));
+
+    // Repository
+    sl.registerLazySingleton<BoardingRepository>(
+      () =>
+          BoardingRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()),
+    );
+
+    // Data sources
+    sl.registerLazySingleton<BoardingLocalDataSource>(
+      () => BoardingLocalDataSourceImpl(),
+    );
+    sl.registerLazySingleton<BoardingRemoteDataSource>(
+          () => BoardingRemoteDataSourceImpl(),
+    );
+
+    // UI Cubit
+
     sl.registerLazySingleton<QRRemoteDataSource>(
-      () => QRRemoteDataSourceImpl(),
+          () => QRRemoteDataSourceImpl(),
     );
 
     // Repository
     sl.registerLazySingleton<QRRepository>(
-      () => QRRepositoryImpl(remoteDataSource: sl()),
+          () => QRRepositoryImpl(remoteDataSource: sl()),
     );
 
     // Use cases
@@ -316,7 +363,7 @@ class ServiceLocator {
 
     // Cubit
     sl.registerFactory(
-      () => QRCubit(
+          () => QRCubit(
         checkClinicInSupplierUseCase: sl(),
         followClinicUseCase: sl(),
         getVetClientsUseCase: sl(),

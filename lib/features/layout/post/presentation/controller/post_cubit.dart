@@ -12,10 +12,11 @@ class PostCubit extends Cubit<PostState> {
   PostCubit(this.getAllPostUseCase) : super(PostInitial()) {
     init();
   }
+
   static PostCubit get(context) => BlocProvider.of(context);
+
   int _pageNumber = 1;
   final List<PostEntity> _userPosts = [];
-  final List<PostEntity> _userPostsModel = [];
 
   List<PostEntity> get userPosts => List.unmodifiable(_userPosts);
 
@@ -30,9 +31,7 @@ class PostCubit extends Cubit<PostState> {
       final postsJson = json.decode(cachedData);
       _userPosts
         ..clear()
-        ..addAll(
-          List<PostEntity>.from(postsJson.map((x) => PostEntity.fromJson(x))),
-        );
+        ..addAll(List<PostEntity>.from(postsJson.map((x) => PostEntity.fromJson(x))));
       _sortUserPostsByDate();
     }
   }
@@ -42,44 +41,38 @@ class PostCubit extends Cubit<PostState> {
 
     final result = await getAllPostUseCase(_pageNumber);
     result.fold(
-      (_) => emit(GetPostErrorState()),
-      (posts) => _handlePostSuccess(posts),
+          (_) => emit(GetPostErrorState()),
+          (posts) => _handlePostSuccess(posts),
     );
   }
 
   void _handlePostSuccess(Iterable<PostEntity> posts) {
     _pageNumber++;
 
-    _userPostsModel
-      ..clear()
-      ..addAll(posts);
-
-    if (_userPostsModel.isEmpty) {
+    if (posts.isEmpty) {
       emit(PaginationErrorState());
       return;
     }
 
     final existingPostIds = _userPosts.map((post) => post.postId).toSet();
-    final newPosts =
-        _userPostsModel
-            .where((post) => !existingPostIds.contains(post.postId))
-            .toList();
+    final newPosts = posts.where((post) => !existingPostIds.contains(post.postId)).toList();
 
     if (newPosts.isNotEmpty) {
       _userPosts.addAll(newPosts);
       _sortUserPostsByDate();
     }
 
-    final jsonToString = json.encode(_userPostsModel);
+    final jsonToString = json.encode(_userPosts);
     CacheHelper.saveData('posts', jsonToString);
+
     emit(GetPostSuccessState());
   }
 
   void _sortUserPostsByDate() {
+    final dateFormat = DateFormat('EEE MMM dd yyyy HH:mm:ss zzz', 'en_US');
     _userPosts.sort((a, b) {
-      final dateFormat = DateFormat('EEE MMM dd yyyy HH:mm:ss zzz', 'en_US');
-      DateTime dateA = dateFormat.parse(a.createdAt);
-      DateTime dateB = dateFormat.parse(b.createdAt);
+      final dateA = dateFormat.parse(a.createdAt);
+      final dateB = dateFormat.parse(b.createdAt);
       return dateB.compareTo(dateA);
     });
   }

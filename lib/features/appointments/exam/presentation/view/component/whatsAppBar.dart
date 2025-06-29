@@ -227,6 +227,7 @@ class ProfileIconButtons extends StatelessWidget {
                     onPressed: () {
                       CacheHelper.removeData('posts');
                       SearchCubit.get(context).unfollowClinic(clinics.id);
+
                       AppointmentCubit.get(context).emit(UnfollowSuccess());
                     },
                     style: ElevatedButton.styleFrom(

@@ -3,11 +3,9 @@ import 'package:iconly/iconly.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/appointment_entity.dart';
-import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
-
 
 import '../../../../../../core/utils/enums/dayOfWeek_enum.dart';
-import '../../../../../pets/data/models/pet_model.dart';
+import '../../../../../pets/domain/entities/pet_entity.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 
 Widget buildPetFilter(BuildContext context, List<PetEntities> pets) {
@@ -15,9 +13,10 @@ Widget buildPetFilter(BuildContext context, List<PetEntities> pets) {
     padding: const EdgeInsets.all(8.0),
     child: Container(
       decoration: BoxDecoration(
-        color: MainCubit.get(context).isDark
-            ? Colors.black26
-            : Colors.grey.shade200,
+        color:
+            MainCubit.get(context).isDark
+                ? Colors.black26
+                : Colors.grey.shade200,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
@@ -36,18 +35,23 @@ Widget buildPetFilter(BuildContext context, List<PetEntities> pets) {
             UserAppointmentCubit.get(context).emit(GetInvoicesSuccess());
             UserAppointmentCubit.get(context).filterAppointments();
           },
-          itemBuilder: (context) => pets.map((e) {
-            return PopupMenuItem<PetEntities>(
-              value: e,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * .32,
-                child: Text(e.petName),
-              ),
-            );
-          }).toList(),
+          itemBuilder:
+              (context) =>
+                  pets.map((e) {
+                    return PopupMenuItem<PetEntities>(
+                      value: e,
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * .32,
+                        child: Text(e.petName),
+                      ),
+                    );
+                  }).toList(),
           child: buildPopupButtonChild(
-              context, UserAppointmentCubit.get(context).petName ?? S.of(context).filter_hint_pets,
-              UserAppointmentCubit.get(context).selectedPetId != null),
+            context,
+            UserAppointmentCubit.get(context).petName ??
+                S.of(context).filter_hint_pets,
+            UserAppointmentCubit.get(context).selectedPetId != null,
+          ),
         ),
       ),
     ),
@@ -59,9 +63,10 @@ Widget buildStateFilter(BuildContext context) {
     padding: const EdgeInsets.all(8.0),
     child: Container(
       decoration: BoxDecoration(
-        color: MainCubit.get(context).isDark
-            ? Colors.black26
-            : Colors.grey.shade200,
+        color:
+            MainCubit.get(context).isDark
+                ? Colors.black26
+                : Colors.grey.shade200,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
@@ -81,17 +86,20 @@ Widget buildStateFilter(BuildContext context) {
 
             UserAppointmentCubit.get(context).filterAppointments();
           },
-          itemBuilder: (context) => generateDummyDataState(context).map((e) {
-            return PopupMenuItem<StateAppointment>(
-              value: e,
-              child: Text(e.key),
-            );
-          }).toList(),
+          itemBuilder:
+              (context) =>
+                  generateDummyDataState(context).map((e) {
+                    return PopupMenuItem<StateAppointment>(
+                      value: e,
+                      child: Text(e.key),
+                    );
+                  }).toList(),
           child: buildPopupButtonChild(
-              context,
-              UserAppointmentCubit.get(context).selectedStateValue ??
-                  S.of(context).filter_hint_State,
-              UserAppointmentCubit.get(context).selectedStateValue != null),
+            context,
+            UserAppointmentCubit.get(context).selectedStateValue ??
+                S.of(context).filter_hint_State,
+            UserAppointmentCubit.get(context).selectedStateValue != null,
+          ),
         ),
       ),
     ),
@@ -104,10 +112,7 @@ Widget buildPopupButtonChild(BuildContext context, String hint, bool active) {
       SizedBox(
         width: MediaQuery.of(context).size.width * .32,
         child: Padding(
-          padding: const EdgeInsets.only(
-            left: 8.0,
-            right: 8.0,
-          ),
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
           child: Text(
             hint,
             maxLines: 1,
@@ -116,11 +121,12 @@ Widget buildPopupButtonChild(BuildContext context, String hint, bool active) {
               context: context,
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              fontColor: active
-                  ? MainCubit.get(context).isDark
-                      ? Colors.white
-                      : Colors.black
-                  : MainCubit.get(context).isDark
+              fontColor:
+                  active
+                      ? MainCubit.get(context).isDark
+                          ? Colors.white
+                          : Colors.black
+                      : MainCubit.get(context).isDark
                       ? Colors.white54
                       : Color.fromRGBO(0, 0, 0, .3),
             ),

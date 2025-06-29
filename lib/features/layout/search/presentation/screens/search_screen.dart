@@ -25,6 +25,7 @@ class SearchScreen extends StatelessWidget {
           }
 
           if (state is FollowSuccess) {
+            CacheHelper.removeData('posts');
             if (state.isHavePet) {
               navigateAndFinish(
                 context,

@@ -30,6 +30,8 @@ class AvailabilityScreen extends StatelessWidget {
       child: BlocConsumer<AppointmentCubit, AppointmentState>(
         listener: (context, state) {
           if (state is UnfollowSuccess) {
+            CacheHelper.removeData('posts');
+
             LayoutCubit.get(context).changeBottomNav(1);
             navigateToScreen(context, LayoutScreen());
           }

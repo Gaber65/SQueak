@@ -25,6 +25,8 @@ Padding buildSearchBox(PostCubit cubit) {
           }
 
           if (state is FollowSuccess) {
+            CacheHelper.removeData('posts');
+
             if (state.isHavePet) {
               navigateAndFinish(
                 context,
