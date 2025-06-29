@@ -17,8 +17,12 @@ bool isArabic() {
   return Intl.getCurrentLocale() == 'ar';
 }
 
+String extractAllIdsFromUrl(String url) {
+  // استخدم regex لاستخراج كل شكل UUID
+  final regex = RegExp(
+    r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}',
+    caseSensitive: false,
+  );
 
-String extractQRIdFromUrl(String url) {
-  final uri = Uri.parse(url);
-  return uri.queryParameters['id'] ?? '';
+  return regex.allMatches(url).map((m) => m.group(0)!).toList().first;
 }

@@ -221,7 +221,7 @@ class PetCubit extends Cubit<PetState> {
   Future<void> updatePet() async {
     isLoading = true;
     emit(PetCreateLoadingState());
-
+print(microchipNumberController.text);
     final pet = PetEntities(
       petId: petId,
       petName: petNameController.text,
@@ -242,8 +242,7 @@ class PetCubit extends Cubit<PetState> {
           passportNumberController.text.isEmpty
               ? ''
               : passportNumberController.text,
-      microShipNumber:
-      microchipNumberController.text.isEmpty ? '' : microchipNumberController.text,
+      microShipNumber: microchipNumberController.text.isEmpty ? '' : microchipNumberController.text,
     );
 
     final result = await updatePetUseCase(PetParams(pet: pet));

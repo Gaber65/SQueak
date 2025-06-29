@@ -152,7 +152,6 @@ String rateBoardingEndPoint  = '$version/vetcare/reviewboarding';
 
 ///Qr
 String qrScanEndPoint  = '$version/qr/Scan';
-String qrUnlinkEndPoint  = '$version/qr/unlink';
 
 /// App State
 String? clintId;

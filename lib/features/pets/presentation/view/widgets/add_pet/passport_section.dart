@@ -14,6 +14,34 @@ class PassportSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
+          isArabic()
+              ? 'معلومات شريحة الدقيقة' : 'Microchip Information',
+          style: FontStyleThame.textStyle(
+            context: context,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 12),
+        MyTextForm(
+          controller: cubit.microchipNumberController,
+          prefixIcon: Icon(
+            Icons.sim_card_alert_outlined,
+            size: 20,
+            color: isDark ? ColorManager.sWhite : ColorManager.black_87,
+          ),
+          enable: false,
+
+          hintText:
+          isArabic()
+              ? 'ادخل رقم الشريحة الدقيقة'
+              : 'Enter Microchip Number',
+          validatorText: null, // Optional fieldtest
+          obscureText: false,
+        ),
+        const SizedBox(height: 12),
+
+        Text(
           isArabic() ? 'معلومات جواز السفر' : 'Passport Information',
           style: FontStyleThame.textStyle(
             context: context,
@@ -87,33 +115,7 @@ class PassportSection extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 12),
-        Text(
-          isArabic()
-              ? 'معلومات شريحة الدقيقة' : 'Microchip Information',
-          style: FontStyleThame.textStyle(
-            context: context,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 12),
-        MyTextForm(
-          controller: cubit.microchipNumberController,
-          prefixIcon: Icon(
-            Icons.sim_card_alert_outlined,
-            size: 20,
-            color: isDark ? ColorManager.sWhite : ColorManager.black_87,
-          ),
-          enable: false,
 
-          hintText:
-          isArabic()
-              ? 'ادخل رقم الشريحة الدقيقة'
-              : 'Enter Microchip Number',
-          validatorText: null, // Optional fieldtest
-          obscureText: false,
-        ),
       ],
     );
   }

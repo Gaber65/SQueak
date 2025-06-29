@@ -49,15 +49,26 @@ class _LayoutScreenState extends State<LayoutScreen> {
           if (!_isDialogShown &&
               cubit.versionEntity != null &&
               cubit.currentVersion.isNotEmpty) {
-            if (cubit.versionEntity!.version != cubit.currentVersion) {
-              _isDialogShown = true;
-              await showUpdateDialog(
-                context,
-                cubit.versionEntity!,
-              ).whenComplete(() {
-                _isDialogShown = false;
-              });
+
+
+            String serverVersion = cubit.versionEntity!.version; // "1.0.25"
+            String currentVersion = cubit.currentVersion;        // "1.0.26"
+
+            if (isVersionGreater(serverVersion, currentVersion)) {
+              print("يوجد تحديث");
+              if (cubit.versionEntity!.version != cubit.currentVersion) {
+                _isDialogShown = true;
+                await showUpdateDialog(
+                  context,
+                  cubit.versionEntity!,
+                ).whenComplete(() {
+                  _isDialogShown = false;
+                });
+              }
+            } else {
+              print("أحدث نسخة بالفعل");
             }
+
           }
         }
       },
@@ -84,7 +95,6 @@ class _LayoutScreenState extends State<LayoutScreen> {
                   foregroundColor: ColorManager.primaryColor,
                   onPressed: () {
                     navigateToScreen(context, PetScreen());
-
                   },
                   child: Icon(Icons.pets, size: 30),
                 );

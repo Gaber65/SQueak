@@ -2,11 +2,9 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/service/service_locator/locatore_export_path.dart';
 
-
 abstract class QrRemoteDataSource {
   Future<bool> linkPetToQr(String petId, String qrCodeId);
-  Future<bool> unlinkPetFromQr(String petId);
-
+  Future<bool> unlinkPetFromQr(String petId, String qrCodeId);
 }
 
 class QrRemoteDataSourceImpl implements QrRemoteDataSource {
@@ -17,8 +15,8 @@ class QrRemoteDataSourceImpl implements QrRemoteDataSource {
         method: qrScanEndPoint,
         data: {
           "petId": petId,
-          "qrCodeId": extractQRIdFromUrl(qrCodeId),
-          "qrCode": qrCodeId
+          "qrCodeId": extractAllIdsFromUrl(qrCodeId),
+          "qrCode": qrCodeId,
         },
       );
       return response.data['success'] ?? false;
@@ -30,17 +28,17 @@ class QrRemoteDataSourceImpl implements QrRemoteDataSource {
   }
 
   @override
-  Future<bool> unlinkPetFromQr(String petId) async {
+  Future<bool> unlinkPetFromQr(String petId, String qrCodeId) async {
     try {
-      final response = await DioFinalHelper.postData(
-        method: '/qr/unlink',
-        data: {'petId': petId},
+      final response = await DioFinalHelper.putData(
+        method: qrScanEndPoint,
+        data: {"petId": petId, "qrCodeId": qrCodeId},
       );
       return response.data['success'] ?? false;
-    } catch (e) {
-      throw Exception('Failed to unlink pet from QR: $e');
+    } on DioException catch (e) {
+      throw ServerException(
+        errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
+      );
     }
   }
-
-
 }

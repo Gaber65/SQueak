@@ -45,6 +45,7 @@ class PetEntities {
       'birthdate': birthdate,
       'passportnumber': passportNumber,
       'passportImage': passportImage,
+      'microShipNumber': microShipNumber
     };
   }
 }

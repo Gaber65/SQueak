@@ -153,6 +153,7 @@ class PetRepositoryImpl implements PetRepository {
           birthdate: pet.birthdate,
           passportNumber: pet.passportNumber,
           passportImage: pet.passportImage,
+          microShipNumber: pet.microShipNumber,
         );
 
         final remotePet = await remoteDataSource.updatePet(

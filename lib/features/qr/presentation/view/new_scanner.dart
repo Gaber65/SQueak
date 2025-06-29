@@ -13,8 +13,10 @@ class ScannerScreen extends StatelessWidget {
       body: MobileScanner(
         controller: MobileScannerController(
           facing: CameraFacing.back,
+
           torchEnabled: false,
         ),
+
         onDetect: (capture) {
           final List<Barcode> barcodes = capture.barcodes;
           if (barcodes.isNotEmpty) {

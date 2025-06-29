@@ -5,6 +5,17 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../domain/entities/version_entity.dart';
 
+bool isVersionGreater(String v1, String v2) {
+  final v1Parts = v1.split('.').map(int.parse).toList();
+  final v2Parts = v2.split('.').map(int.parse).toList();
+
+  for (int i = 0; i < v1Parts.length; i++) {
+    if (v1Parts[i] > v2Parts[i]) return true;
+    if (v1Parts[i] < v2Parts[i]) return false;
+  }
+
+  return false; // يعني النسختين متساويتين أو الحالية أحدث أو مساوية
+}
 Future<dynamic> showUpdateDialog(
   BuildContext context,
   VersionEntity version,

@@ -9,25 +9,8 @@ Future<void> selectDate(BuildContext context, PetCubit cubit) async {
     initialDate: DateTime.now(),
     firstDate: DateTime(2000),
     lastDate: DateTime.now(),
-    builder: (context, child) {
-      return Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: ColorScheme.light(
-            primary: ColorManager.primaryColor,
-            onPrimary: Colors.white,
-            onSurface: Theme.of(context).brightness == Brightness.dark
-                ? Colors.white
-                : Colors.black,
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(
-              foregroundColor: ColorManager.primaryColor,
-            ),
-          ),
-        ),
-        child: child!,
-      );
-    },
+    initialEntryMode: DatePickerEntryMode.calendarOnly,
+
   );
   if (pickedDate != null) {
     cubit.changeBirthdate(pickedDate.toString().substring(0, 10));

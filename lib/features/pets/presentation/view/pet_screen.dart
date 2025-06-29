@@ -4,6 +4,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/pet_screen_content.dart';
 import 'package:squeak/generated/l10n.dart';
 
+import '../../../qr/presentation/controller/qr_cubit.dart';
 import '../../domain/entities/pet_entity.dart';
 import '../controller/pet_cubit.dart';
 
@@ -12,25 +13,47 @@ class PetScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create:
-          (context) =>
-              sl<PetCubit>()
-                ..getOwnerPets(),
-      child: BlocConsumer<PetCubit, PetState>(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => sl<PetCubit>()..getOwnerPets()),
+        BlocProvider(create: (context) => sl<QrCubit>()),
+      ],
+      child: BlocConsumer<QrCubit, QrState>(
         listener: (context, state) {
-          if (state is DeletePetSuccessState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(S.of(context).petDeletedSuccessfully),
-                backgroundColor: Colors.green,
-              ),
-            );
+          if (state is QrLinkSuccess) {
+            successToast(context, state.message);
+            Navigator.pop(context);
+            PetCubit.get(context).getOwnerPets();
+          } else if (state is QrUnlinkSuccess) {
+            successToast(context, state.message);
+            PetCubit.get(context).getOwnerPets();
+          } if (state is QrError) {
+            errorToast(context, state.message);
           }
         },
         builder: (context, state) {
-          final cubit = PetCubit.get(context);
-          return PetScreenContent(pets: cubit.pets, cubit: cubit,state: state,);
+          return BlocConsumer<PetCubit, PetState>(
+            listener: (context, state) {
+              if (state is DeletePetSuccessState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(S.of(context).petDeletedSuccessfully),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            },
+            builder: (context, state) {
+              final cubit = PetCubit.get(context);
+              final qrCubit = QrCubit.get(context);
+              return PetScreenContent(
+                pets: cubit.pets,
+                cubit: cubit,
+                state: state,
+                qrCubit: qrCubit,
+              );
+            },
+          );
         },
       ),
     );

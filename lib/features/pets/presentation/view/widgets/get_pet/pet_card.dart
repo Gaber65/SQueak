@@ -17,8 +17,9 @@ import 'icon_circle.dart';
 class PetCard extends StatefulWidget {
   final PetEntities pet;
   final PetCubit cubit;
+  final QrCubit qrCubit;
 
-  const PetCard({super.key, required this.pet, required this.cubit});
+  const PetCard({super.key, required this.pet, required this.cubit, required this.qrCubit});
 
   @override
   State<PetCard> createState() => _PetCardState();
@@ -45,17 +46,11 @@ class _PetCardState extends State<PetCard> {
               const SizedBox(height: 12),
 
               // QR Status Indicator
-              BlocProvider(
-                create: (context) => sl<QrCubit>(),
-                child: QrStatusIndicator(pet: widget.pet),
-              ),
+              QrStatusIndicator(pet: widget.pet),
 
               const SizedBox(height: 12),
 
-              BlocProvider(
-                create: (context) => sl<QrCubit>(),
-                child: QrActionButtons(pet: widget.pet, petCubit: widget.cubit),
-              ),
+              QrActionButtons(pet: widget.pet, petCubit: widget.cubit,c: widget.qrCubit,),
               // QR Action Buttons
             ],
           ),

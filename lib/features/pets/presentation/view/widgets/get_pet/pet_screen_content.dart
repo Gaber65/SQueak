@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:squeak/features/pets/presentation/view/add_pet_screen.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/pet_card.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/pet_type_option.dart';
+import 'package:squeak/features/qr/presentation/controller/qr_cubit.dart';
 import 'package:squeak/features/qr/presentation/view/new_scanner.dart';
 
 import '../../../../../../core/utils/export_path/export_files.dart';
@@ -12,6 +13,7 @@ import 'empty_state.dart';
 class PetScreenContent extends StatefulWidget {
   final List<PetEntities> pets;
   final PetCubit cubit;
+  final QrCubit qrCubit;
   final PetState state;
 
   const PetScreenContent({
@@ -19,6 +21,7 @@ class PetScreenContent extends StatefulWidget {
     required this.pets,
     required this.cubit,
     required this.state,
+    required this.qrCubit,
   });
 
   @override
@@ -61,7 +64,7 @@ class _PetScreenContentState extends State<PetScreenContent> {
                 ? EmptyState(
                   onAddPetPressed: () => showPetTypeSelection(context),
                 )
-                : _buildPetList(),
+                : _buildPetList(widget.qrCubit),
         floatingActionButton: FloatingActionButton(
           backgroundColor: ColorManager.primaryColor,
           child: const Icon(Icons.add, color: Colors.white),
@@ -71,13 +74,13 @@ class _PetScreenContentState extends State<PetScreenContent> {
     );
   }
 
-  Widget _buildPetList() {
+  Widget _buildPetList(qrCubit) {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: widget.pets.length,
       separatorBuilder: (_, __) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
-        return PetCard(pet: widget.pets[index], cubit: widget.cubit);
+        return PetCard(pet: widget.pets[index], cubit: widget.cubit,qrCubit:qrCubit,);
       },
     );
   }

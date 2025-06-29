@@ -18,17 +18,20 @@ class QrCubit extends Cubit<QrState> {
   }) : super(QrInitial());
 
   // Store QR codes for pets
-
+  bool isLoading = false;
   Future<void> linkPetToQr(String petId, String qrCodeId) async {
+    isLoading = true;
     emit(QrLoading());
     final success = await linkPetToQrUseCase(
       LinkPetToQrParams(petId: petId, qrCodeId: qrCodeId),
     );
     success.fold(
       (failure) {
-        emit(QrError(failure.error.message));
+        isLoading = false;
+        emit(QrError(extractFirstError(failure)));
       },
       (success) {
+        isLoading = false;
         emit(
           QrLinkSuccess(
             isArabic()
@@ -40,12 +43,14 @@ class QrCubit extends Cubit<QrState> {
     );
   }
 
-  Future<void> unlinkPetFromQr(String petId) async {
+  Future<void> unlinkPetFromQr(String petId, String qrCodeId) async {
     emit(QrLoading());
-    final success = await unlinkPetFromQrUseCase(petId);
+    final success = await unlinkPetFromQrUseCase(
+      LinkPetToQrParams(petId: petId, qrCodeId: qrCodeId),
+    );
     success.fold(
       (failure) {
-        emit(QrError(failure.error.message));
+        emit(QrError(extractFirstError(failure)));
       },
       (success) {
         emit(

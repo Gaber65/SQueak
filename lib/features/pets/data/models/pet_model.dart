@@ -58,6 +58,7 @@ class PetData extends PetEntities {
       'passportnumber': passportNumber,
       'passportImage': passportImage,
       'breed': breed?.toJson(),
+      'microShipNumber': microShipNumber,
     };
   }
 }
