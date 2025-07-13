@@ -117,8 +117,8 @@ class BoardingCubit extends Cubit<BoardingState> {
 
     final params = RateBoardingParams(
       boardingId: BoardingEntryEntity.id,
-      cleanlinessRate: ratingCleanliness,
-      doctorServiceRate: ratingDoctor,
+      cleanlinessRate: BoardingEntryEntity.cleanlinessRate,
+      doctorServiceRate: BoardingEntryEntity.doctorServiceRate,
       feedbackComment: rateController.text,
     );
 

@@ -1065,11 +1065,13 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
               ),
               child: IconButton(
                 icon: const Icon(Icons.share_rounded, color: Colors.white, size: 24),
-                onPressed: () => _openEnhancedShareSheet(boarding.boardingImages[currentImageIndex]),
+                onPressed: () {
+                  print( boarding.boardingImages);
+                  _openEnhancedShareSheet(imageUrlWithVetICare+ boarding.boardingImages[currentImageIndex]['imageName']);
+                },
               ),
             ),
           ),
-
           // Enhanced Image counter
           Positioned(
             top: 20,

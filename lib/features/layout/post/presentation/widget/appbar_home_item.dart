@@ -50,5 +50,6 @@ AppBar buildAppBarHome(context) {
                 : const Icon(IconlyLight.notification),
       ),
     ],
+
   );
 }

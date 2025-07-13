@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import '../../../../../core/service/service_locator/service_locator.dart';
+import '../../../../../core/utils/theme/navigation_helper/navigation.dart';
+import '../../../../layout/layout/presentation/cubit/layout_cubit.dart';
+import '../../../../layout/layout/presentation/screens/layout_screen.dart';
 import '../../domain/entities/boarding_entry_entity.dart';
 import '../cubit/boarding_cubit.dart';
 import '../cubit/boarding_state.dart';
@@ -36,7 +39,8 @@ class _RateBoardingState extends State<RateBoarding> {
     if (widget.boardingEntryEntity.isRating) {
       _cleanlinessRating = widget.boardingEntryEntity.cleanlinessRate;
       _doctorRating = widget.boardingEntryEntity.doctorServiceRate;
-      _feedbackController.text = widget.boardingEntryEntity.feedbackComment ?? '';
+      _feedbackController.text =
+          widget.boardingEntryEntity.feedbackComment ?? '';
     }
   }
 
@@ -47,14 +51,12 @@ class _RateBoardingState extends State<RateBoarding> {
       child: BlocConsumer<BoardingCubit, BoardingState>(
         listener: (context, state) {
           if (state is RateBoardingSuccess) {
-            Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Rating submitted successfully')),
-            );
+            LayoutCubit.get(context).changeBottomNav(2);
+            navigateAndFinish(context, LayoutScreen());
           } else if (state is RateBoardingError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
@@ -63,10 +65,12 @@ class _RateBoardingState extends State<RateBoarding> {
               title: const Text('Rate Boarding'),
               automaticallyImplyLeading: widget.boardingEntryEntity.isRating,
             ),
-            floatingActionButton: !widget.boardingEntryEntity.isRating
-                ? _buildSubmitButton(context, state)
-                : null,
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+            floatingActionButton:
+                !widget.boardingEntryEntity.isRating
+                    ? _buildSubmitButton(context, state)
+                    : null,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
             body: Padding(
               padding: const EdgeInsets.all(20.0),
               child: SingleChildScrollView(
@@ -84,7 +88,8 @@ class _RateBoardingState extends State<RateBoarding> {
                     const SizedBox(height: 20),
                     _buildCleanlinessRating(),
                     const SizedBox(height: 20),
-                    if (widget.boardingEntryEntity.isRating) _buildFeedbackField(),
+                    if (widget.boardingEntryEntity.isRating)
+                      _buildFeedbackField(),
                     const SizedBox(height: 100),
                   ],
                 ),
@@ -115,10 +120,7 @@ class _RateBoardingState extends State<RateBoarding> {
   Widget _buildTitle() {
     return Text(
       'Session Feedback',
-      style: GoogleFonts.inter(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      ),
+      style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold),
     );
   }
 
@@ -143,41 +145,36 @@ class _RateBoardingState extends State<RateBoarding> {
   }
 
   Widget _buildDoctorRating() {
-    return _buildRatingRow(
-      'Doctor Service:',
-      _doctorRating,
-      (rating) {
-        if (!widget.boardingEntryEntity.isRating) {
-          setState(() {
-            _doctorRating = rating;
-          });
-        }
-      },
-    );
+    return _buildRatingRow('Doctor Service:', _doctorRating, (rating) {
+      if (!widget.boardingEntryEntity.isRating) {
+        setState(() {
+          _doctorRating = rating;
+        });
+      }
+    });
   }
 
   Widget _buildCleanlinessRating() {
-    return _buildRatingRow(
-      'Cleanliness of Clinic:',
-      _cleanlinessRating,
-      (rating) {
-        if (!widget.boardingEntryEntity.isRating) {
-          setState(() {
-            _cleanlinessRating = rating;
-          });
-        }
-      },
-    );
+    return _buildRatingRow('Cleanliness of Clinic:', _cleanlinessRating, (
+      rating,
+    ) {
+      if (!widget.boardingEntryEntity.isRating) {
+        setState(() {
+          _cleanlinessRating = rating;
+        });
+      }
+    });
   }
 
-  Widget _buildRatingRow(String title, int rating, Function(int) onRatingChanged) {
+  Widget _buildRatingRow(
+    String title,
+    int rating,
+    Function(int) onRatingChanged,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 14),
-        ),
+        Text(title, style: const TextStyle(fontSize: 14)),
         Row(
           children: List.generate(5, (index) {
             return GestureDetector(
@@ -200,12 +197,11 @@ class _RateBoardingState extends State<RateBoarding> {
       enabled: !widget.boardingEntryEntity.isRating,
       maxLines: 5,
       decoration: InputDecoration(
-        hintText: widget.boardingEntryEntity.isRating
-            ? widget.boardingEntryEntity.feedbackComment ?? ''
-            : 'Please enter your feedback',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        hintText:
+            widget.boardingEntryEntity.isRating
+                ? widget.boardingEntryEntity.feedbackComment ?? ''
+                : 'Please enter your feedback',
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         filled: true,
         fillColor: Colors.grey.shade100,
       ),
@@ -236,18 +232,46 @@ class _RateBoardingState extends State<RateBoarding> {
           ),
           const SizedBox(width: 8),
           FloatingActionButton(
-            onPressed: (canSubmit && !isLoading) ? _submitRating : null,
-            child: isLoading
-                ? const CircularProgressIndicator()
-                : const Icon(IconlyLight.send),
+            onPressed:
+                (canSubmit && !isLoading) ? () => _submitRating(context) : null,
+            child:
+                isLoading
+                    ? const CircularProgressIndicator()
+                    : const Icon(IconlyLight.send),
           ),
         ],
       ),
     );
   }
 
-  void _submitRating() {
-    context.read<BoardingCubit>().rateBoarding(widget.boardingEntryEntity);
+  void _submitRating(context) {
+    BoardingCubit.get(context).rateBoarding(
+      BoardingEntryEntity(
+        id: widget.boardingEntryEntity.id,
+        entryDate: widget.boardingEntryEntity.entryDate,
+        existDate: widget.boardingEntryEntity.existDate,
+        period: widget.boardingEntryEntity.period,
+        paymentDate: widget.boardingEntryEntity.paymentDate,
+        comment: widget.boardingEntryEntity.comment,
+        status: widget.boardingEntryEntity.status,
+        boardingTypeId: widget.boardingEntryEntity.boardingTypeId,
+        boardingType: widget.boardingEntryEntity.boardingType,
+        petId: widget.boardingEntryEntity.petId,
+        pet: widget.boardingEntryEntity.pet,
+        boardingImages: widget.boardingEntryEntity.boardingImages,
+        clinicPhone: widget.boardingEntryEntity.clinicPhone,
+        clinicLocation: widget.boardingEntryEntity.clinicLocation,
+        clinicLogo: widget.boardingEntryEntity.clinicLogo,
+        clinicCode: widget.boardingEntryEntity.clinicCode,
+        clinicName: widget.boardingEntryEntity.clinicName,
+        clinicId: widget.boardingEntryEntity.clinicId,
+        cleanlinessRate: _cleanlinessRating,
+        doctorServiceRate: _doctorRating,
+        feedbackComment: _feedbackController.text,
+        isRating: true,
+        tenantId: widget.boardingEntryEntity.tenantId,
+      ),
+    );
   }
 
   @override

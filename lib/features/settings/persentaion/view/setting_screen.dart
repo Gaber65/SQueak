@@ -4,6 +4,8 @@ import 'package:quickalert/quickalert.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:iconly/iconly.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:squeak/features/mating/feeds/presentation/screens/pet_profile_screen.dart';
+import 'package:widget_circular_animator/widget_circular_animator.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
 
@@ -35,60 +37,54 @@ class SettingScreen extends StatelessWidget {
                 physics: BouncingScrollPhysics(),
                 children: [
                   ///image + name + change
-                  Container(
-                    height: 69,
-                    decoration: Decorations.kDecorationBoxShadow(
-                      context: context,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(.0),
-                      child: Row(
-                        children: [
-                          // (state is ProfileImageUploadLoading)
-                          //     ? WidgetCircularAnimator(
-                          //       size: 65,
-                          //       innerIconsSize: 3,
-                          //       outerIconsSize: 3,
-                          //       innerAnimation: Curves.easeInOutBack,
-                          //       outerAnimation: Curves.easeInOutBack,
-                          //       innerColor: Colors.deepPurple,
-                          //       outerColor: Colors.orangeAccent,
-                          //       innerAnimationSeconds: 10,
-                          //       outerAnimationSeconds: 10,
-                          //       child: Container(
-                          //         height: 69,
-                          //         decoration: BoxDecoration(
-                          //           shape: BoxShape.circle,
-                          //           color: Colors.grey[200],
-                          //         ),
-                          //         child: Icon(
-                          //           Icons.person_outline,
-                          //           color: Colors.deepOrange[200],
-                          //           size: 30,
-                          //         ),
-                          //       ),
-                          //     )
-                          //     :
-                          buildImage(context),
-                          SizedBox(width: 15),
-                          Text(
-                            CacheHelper.getData('name') ?? '',
-                            style: FontStyleThame.textStyle(
-                              context: context,
-                              fontSize: 18,
+                  InkWell(
+                    onTap : () {
+                      navigateToScreen(context, PetProfileScreen());
+                    },
+                    child: Container(
+                      height: 69,
+                      decoration: Decorations.kDecorationBoxShadow(
+                        context: context,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(.0),
+                        child: Row(
+                          children: [
+                            (state is UploadProfileImageLoadingState)
+                                ? WidgetCircularAnimator(
+                                  size: 65,
+                                  innerIconsSize: 3,
+                                  outerIconsSize: 3,
+                                  innerAnimation: Curves.easeInOutBack,
+                                  outerAnimation: Curves.easeInOutBack,
+                                  innerColor: Colors.deepPurple,
+                                  outerColor: Colors.orangeAccent,
+                                  innerAnimationSeconds: 10,
+                                  outerAnimationSeconds: 10,
+                                  child: Container(
+                                    height: 69,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.grey[200],
+                                    ),
+                                    child: Icon(
+                                      Icons.person_outline,
+                                      color: Colors.deepOrange[200],
+                                      size: 30,
+                                    ),
+                                  ),
+                                )
+                                : buildImage(context),
+                            SizedBox(width: 15),
+                            Text(
+                              CacheHelper.getData('name') ?? '',
+                              style: FontStyleThame.textStyle(
+                                context: context,
+                                fontSize: 18,
+                              ),
                             ),
-                          ),
-                          Spacer(),
-                          IconButton(
-                            onPressed: () {
-                              navigateToScreen(context, UpProfileScreen());
-                            },
-                            icon: Icon(
-                              Icons.edit,
-                              color: ColorManager.primaryColor,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
