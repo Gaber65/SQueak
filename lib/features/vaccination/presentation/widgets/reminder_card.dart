@@ -57,9 +57,7 @@ class _ReminderCardState extends State<ReminderCard>
     ));
 
     // Start pulse animation for upcoming reminders
-    if (_isUpcoming(widget.reminder.date)) {
-      _pulseController.repeat(reverse: true);
-    }
+
   }
 
   @override
@@ -69,8 +67,8 @@ class _ReminderCardState extends State<ReminderCard>
     final isDarkMode = MainCubit.get(context).isDark;
 
     final reminderInfo = getReminderTypeInfo(widget.reminder.reminderType);
-    final isUpcoming = _isUpcoming(widget.reminder.date);
-    final daysUntil = _getDaysUntil(widget.reminder.date);
+    final isUpcoming = _isUpcoming(widget.reminder.date, widget.reminder.time);
+    final daysUntil = _getDaysUntil(widget.reminder.date, widget.reminder.time);
 
     return AnimatedBuilder(
       animation: _scaleAnimation,
@@ -1034,25 +1032,37 @@ class _ReminderCardState extends State<ReminderCard>
     );
   }
 
-  bool _isUpcoming(String dateStr) {
+  bool _isUpcoming(String dateStr, String timeStr) {
+    final reminderDateTime = combineDateAndTime(dateStr, timeStr);
+    if (reminderDateTime == null) return false;
+
+    return reminderDateTime.isAfter(DateTime.now());
+  }
+
+  DateTime? combineDateAndTime(String dateStr, String timeStr) {
     try {
       final date = DateTime.parse(dateStr);
-      final now = DateTime.now();
-      return date.isAfter(now);
+      final timeParts = timeStr.split(":");
+      final hour = int.parse(timeParts[0]);
+      final minute = int.parse(timeParts[1]);
+
+      return DateTime(date.year, date.month, date.day, hour, minute);
     } catch (e) {
-      return false;
+      print("Error parsing date/time: $e");
+      return null;
     }
   }
 
-  int _getDaysUntil(String dateStr) {
-    try {
-      final date = DateTime.parse(dateStr);
-      final now = DateTime.now();
-      final difference = date.difference(now).inDays;
-      return difference < 0 ? 0 : difference;
-    } catch (e) {
-      return 0;
-    }
+  int _getDaysUntil(String dateStr, String timeStr) {
+    final reminderDateTime = combineDateAndTime(dateStr, timeStr);
+    if (reminderDateTime == null) return 0;
+
+    final now = DateTime.now();
+    final reminderDateOnly = DateTime(reminderDateTime.year, reminderDateTime.month, reminderDateTime.day);
+    final nowOnly = DateTime(now.year, now.month, now.day);
+
+    final difference = reminderDateOnly.difference(nowOnly).inDays;
+    return difference < 0 ? 0 : difference;
   }
 
   @override

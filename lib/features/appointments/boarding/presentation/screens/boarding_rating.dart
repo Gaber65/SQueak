@@ -66,11 +66,11 @@ class _RateBoardingState extends State<RateBoarding> {
               automaticallyImplyLeading: widget.boardingEntryEntity.isRating,
             ),
             floatingActionButton:
-                !widget.boardingEntryEntity.isRating
-                    ? _buildSubmitButton(context, state)
-                    : null,
+            !widget.boardingEntryEntity.isRating
+                ? _buildSubmitButton(context, state)
+                : null,
             floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
+            FloatingActionButtonLocation.centerFloat,
             body: Padding(
               padding: const EdgeInsets.all(20.0),
               child: SingleChildScrollView(
@@ -156,8 +156,8 @@ class _RateBoardingState extends State<RateBoarding> {
 
   Widget _buildCleanlinessRating() {
     return _buildRatingRow('Cleanliness of Clinic:', _cleanlinessRating, (
-      rating,
-    ) {
+        rating,
+        ) {
       if (!widget.boardingEntryEntity.isRating) {
         setState(() {
           _cleanlinessRating = rating;
@@ -167,10 +167,10 @@ class _RateBoardingState extends State<RateBoarding> {
   }
 
   Widget _buildRatingRow(
-    String title,
-    int rating,
-    Function(int) onRatingChanged,
-  ) {
+      String title,
+      int rating,
+      Function(int) onRatingChanged,
+      ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -198,9 +198,9 @@ class _RateBoardingState extends State<RateBoarding> {
       maxLines: 5,
       decoration: InputDecoration(
         hintText:
-            widget.boardingEntryEntity.isRating
-                ? widget.boardingEntryEntity.feedbackComment ?? ''
-                : 'Please enter your feedback',
+        widget.boardingEntryEntity.isRating
+            ? widget.boardingEntryEntity.feedbackComment ?? ''
+            : 'Please enter your feedback',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         filled: true,
         fillColor: Colors.grey.shade100,
@@ -233,11 +233,11 @@ class _RateBoardingState extends State<RateBoarding> {
           const SizedBox(width: 8),
           FloatingActionButton(
             onPressed:
-                (canSubmit && !isLoading) ? () => _submitRating(context) : null,
+            (canSubmit && !isLoading) ? () => _submitRating(context) : null,
             child:
-                isLoading
-                    ? const CircularProgressIndicator()
-                    : const Icon(IconlyLight.send),
+            isLoading
+                ? const CircularProgressIndicator()
+                : const Icon(IconlyLight.send),
           ),
         ],
       ),

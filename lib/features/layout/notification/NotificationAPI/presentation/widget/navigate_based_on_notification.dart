@@ -11,12 +11,16 @@ import '../screens/post_notfication.dart';
 import 'get_appoiment_function.dart';
 
 void navigateBasedOnNotification(
-  NotificationEntities notification,
-  BuildContext context,
-) {
-  NotificationType? notificationType = NotificationEntities.getNotificationType(
-    notification.eventType,
-  );
+    NotificationEntities notification,
+    BuildContext context,
+    ) {
+  final NotificationType? notificationType =
+      getNotificationType(notification.eventType.name);
+
+  if (notificationType == null) {
+    print('Unknown notification type: ${notification.eventType}');
+    return;
+  }
 
   switch (notificationType) {
     case NotificationType.VaccinationReminder:
@@ -25,9 +29,8 @@ void navigateBasedOnNotification(
       break;
 
     case NotificationType.FollowRequest:
-      NotificationsCubit.get(
-        context,
-      ).updateNotification(notification.notificationEvents[0].id);
+      NotificationsCubit.get(context)
+          .updateNotification(notification.notificationEvents[0].id);
       navigateToScreen(
         context,
         FollowRequestScreen(clinicID: notification.eventTypeId),
@@ -36,7 +39,10 @@ void navigateBasedOnNotification(
 
     case NotificationType.NewCommentOnPost:
     case NotificationType.NewPostAdded:
-      navigateToScreen(context, PostNotification(id: notification.eventTypeId));
+      navigateToScreen(
+        context,
+        PostNotification(id: notification.eventTypeId),
+      );
       break;
 
     case NotificationType.NewAppointmentOrReservation:
@@ -44,7 +50,7 @@ void navigateBasedOnNotification(
     case NotificationType.ReservationReminder:
       getAppointment(
         id: notification.eventTypeId,
-        type: notificationType!,
+        type: notificationType,
         isNav: true,
         context: context,
         notification: notification,
@@ -52,7 +58,7 @@ void navigateBasedOnNotification(
       break;
 
     default:
-      print('Unhandled notification type: ${notification.eventType}');
+      print('Unhandled notification type (should not reach here): $notificationType');
       break;
   }
 }

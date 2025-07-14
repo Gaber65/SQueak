@@ -128,7 +128,6 @@ class BoardingCard extends StatelessWidget {
           // Simple status chip
           _buildSimpleStatusChip(),
 
-          // Simple menu
           _buildSimpleMenu(),
         ],
       ),
@@ -203,9 +202,6 @@ class BoardingCard extends StatelessWidget {
             Future.delayed(Duration.zero, () => _showImages(context));
           },
         ),
-
-
-
       ],
     );
   }
@@ -398,7 +394,8 @@ class BoardingCard extends StatelessWidget {
   }
 
   bool _shouldShowMenu() {
-    return entry.status == BoardingStatusEnums.paid.index || entry.status == BoardingStatusEnums.inProgress.index;
+    return entry.status == BoardingStatusEnums.paid.index ||
+        entry.status == BoardingStatusEnums.inProgress.index;
   }
 
   void _showImages(context) {

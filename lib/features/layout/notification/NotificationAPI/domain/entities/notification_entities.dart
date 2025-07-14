@@ -2,7 +2,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 
 class NotificationEntities {
   final String message;
-  final String eventType;
+  final NotificationType eventType;
   final String eventTypeId;
   final String title;
   final String logo;
@@ -25,7 +25,7 @@ class NotificationEntities {
     required this.isDeleted,
   });
 
-  static NotificationType? getNotificationType(String typeName) {
+  static NotificationType? getNotificationType(NotificationType typeName) {
     try {
       return NotificationType.values.firstWhere(
         (type) => type.toString().split('.').last == typeName,

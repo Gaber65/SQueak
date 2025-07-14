@@ -32,7 +32,6 @@ class PostCubit extends Cubit<PostState> {
       _userPosts
         ..clear()
         ..addAll(List<PostEntity>.from(postsJson.map((x) => PostEntity.fromJson(x))));
-      _sortUserPostsByDate();
     }
   }
 
@@ -59,7 +58,6 @@ class PostCubit extends Cubit<PostState> {
 
     if (newPosts.isNotEmpty) {
       _userPosts.addAll(newPosts);
-      _sortUserPostsByDate();
     }
 
     final jsonToString = json.encode(_userPosts);
@@ -68,14 +66,14 @@ class PostCubit extends Cubit<PostState> {
     emit(GetPostSuccessState());
   }
 
-  void _sortUserPostsByDate() {
-    final dateFormat = DateFormat('EEE MMM dd yyyy HH:mm:ss zzz', 'en_US');
-    _userPosts.sort((a, b) {
-      final dateA = dateFormat.parse(a.createdAt);
-      final dateB = dateFormat.parse(b.createdAt);
-      return dateB.compareTo(dateA);
-    });
-  }
+  // void _sortUserPostsByDate() {
+  //   final dateFormat = DateFormat('EEE MMM dd yyyy HH:mm:ss zzz', 'en_US');
+  //   _userPosts.sort((a, b) {
+  //     final dateA = dateFormat.parse(a.createdAt);
+  //     final dateB = dateFormat.parse(b.createdAt);
+  //     return dateB.compareTo(dateA);
+  //   });
+  // }
 
   Future<void> handleRefresh() async {
     await Future.delayed(const Duration(seconds: 1));

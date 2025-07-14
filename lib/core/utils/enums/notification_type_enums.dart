@@ -1,15 +1,27 @@
 enum NotificationType {
   NewAppointmentOrReservation,
+  NewCommentOnYourPost,
   NewCommentOnPost,
   FollowRequest,
   RespondedToFollowRequest,
   VaccinationReminder,
+  NewFollower,
   AppointmentCompleted,
   NewPetAdded,
   NewPostAdded,
   ReservationReminder,
+  BoardingCheckOut,
+  BoardingPartialPaided,
+  BoardingPaided,
+  NewFriendRequest,
   AcceptFriendRequest,
-  Reward,
+  CustomeMessage,
+  NewReactionOnPost,
+  AddWalletReward,
+  AndroidCustomeNotification,
+  IOSCustomeNotification,
+  AndroidAndIOSCustomeNotification,
+  QrCodeNotification,
 }
 
 extension NotificationTypeExtension on NotificationType {
@@ -17,6 +29,8 @@ extension NotificationTypeExtension on NotificationType {
     switch (this) {
       case NotificationType.NewAppointmentOrReservation:
         return 'NewAppointmentOrReservation';
+      case NotificationType.NewCommentOnYourPost:
+        return 'NewCommentOnYourPost';
       case NotificationType.NewCommentOnPost:
         return 'NewCommentOnPost';
       case NotificationType.FollowRequest:
@@ -25,6 +39,8 @@ extension NotificationTypeExtension on NotificationType {
         return 'RespondedToFollowRequest';
       case NotificationType.VaccinationReminder:
         return 'VaccinationReminder';
+      case NotificationType.NewFollower:
+        return 'NewFollower';
       case NotificationType.AppointmentCompleted:
         return 'AppointmentCompleted';
       case NotificationType.NewPetAdded:
@@ -33,10 +49,30 @@ extension NotificationTypeExtension on NotificationType {
         return 'NewPostAdded';
       case NotificationType.ReservationReminder:
         return 'ReservationReminder';
+      case NotificationType.BoardingCheckOut:
+        return 'BoardingCheckOut';
+      case NotificationType.BoardingPartialPaided:
+        return 'BoardingPartialPaided';
+      case NotificationType.BoardingPaided:
+        return 'BoardingPaided';
+      case NotificationType.NewFriendRequest:
+        return 'NewFriendRequest';
       case NotificationType.AcceptFriendRequest:
         return 'AcceptFriendRequest';
-      case NotificationType.Reward:
-        return 'Rewards';
+      case NotificationType.CustomeMessage:
+        return 'CustomeMessage';
+      case NotificationType.NewReactionOnPost:
+        return 'NewReactionOnPost';
+      case NotificationType.AddWalletReward:
+        return 'AddWalletReward';
+      case NotificationType.AndroidCustomeNotification:
+        return 'AndroidCustomeNotification';
+      case NotificationType.IOSCustomeNotification:
+        return 'IOSCustomeNotification';
+      case NotificationType.AndroidAndIOSCustomeNotification:
+        return 'AndroidAndIOSCustomeNotification';
+      case NotificationType.QrCodeNotification:
+        return 'QrCodeNotification';
     }
   }
 }
