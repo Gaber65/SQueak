@@ -128,8 +128,7 @@ class BoardingCard extends StatelessWidget {
           // Simple status chip
           _buildSimpleStatusChip(),
 
-          // Simple menu
-          if (_shouldShowMenu()) _buildSimpleMenu(),
+          _buildSimpleMenu(),
         ],
       ),
     );

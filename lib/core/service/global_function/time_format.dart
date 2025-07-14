@@ -118,16 +118,20 @@ String formatTimeToAmPmReminder(String time) {
 String formatBoarding(String createdAt) {
   print("Input date string: $createdAt");
 
-  // Define the expected format based on actual date string
-  DateFormat backendFormat = DateFormat(
-    "yyyy-MM-dd HH:mm:ss.SSS",
-    'en_US',
-  );
+  try {
+    // لو السيرفر بيرسل التوقيت كـ UTC بدون 'Z' في آخره
+    // لازم نحلل التاريخ باعتباره في UTC manually
+    DateTime utcTime = DateTime.parse(createdAt).toUtc();
 
-  DateTime utcTime = backendFormat.parse(createdAt, true);
-  DateTime localTime = utcTime.toLocal();
+    // نحوله للتوقيت المحلي
+    DateTime localTime = utcTime.toLocal();
 
-  return DateFormat('MMM dd yyyy, hh:mm a', 'en_US').format(localTime);
+    // ننسق الناتج
+    return DateFormat('MMM dd yyyy, hh:mm a', 'en_US').format(localTime);
+  } catch (e) {
+    print('Error parsing date: $e');
+    return createdAt;
+  }
 }
 
 String convertLocalTimeToUTC(String time) {

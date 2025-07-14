@@ -66,27 +66,31 @@ Center emptyBoarding(BuildContext context) {
             repeat: false,
             width: double.infinity,
           ),
-          InkWell(
-            onTap: () {
-              navigateToScreen(
-                context,
-                MySupplierScreen(petSelectFromIcon: null),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                isArabic()
-                    ? 'اختر العيادة الخاصة بك وحجز الإقامة الخاصة بك.'
-                    : 'Pick your Clinic and book your Boarding.',
-                textAlign: TextAlign.center,
-                style: FontStyleThame.textStyle(
-                  context: context,
-                  fontColor: ColorManager.secondColor,
-                ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              isArabic()
+                  ? 'لا توجد أي إقامات مُسجّلة حتى الآن'
+                  : 'No boarding records available yet.',
+              textAlign: TextAlign.center,
+              style: FontStyleThame.textStyle(
+                context: context,
+                fontWeight: FontWeight.bold,
+                fontColor: ColorManager.secondColor,
               ),
             ),
           ),
+          Text(
+            !isArabic()
+                ? 'When your pet is checked into a boarding service at one of your followed clinics, the details will appear here automatically'
+                : 'عند تسجيل صديقك الأليف في إقامة من خلال إحدى العيادات التي تتابعها، ستظهر تفاصيلها هنا تلقائيًا.',
+            textAlign: TextAlign.center,
+            style: FontStyleThame.textStyle(
+              context: context,
+              fontColor: ColorManager.secondColor,
+            ),
+          ),
+
         ],
       ),
     ),

@@ -35,12 +35,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<LayoutCubit, LayoutState>(
       listener: (context, state) async {
-        if (CacheHelper.getBool('isExpiredToken')) {
-          await showExpiredTokenDialog(context).whenComplete(() {
-            CacheHelper.clearData();
-            navigateAndFinish(context, const LoginScreen());
-          });
-        }
+
 
         // Check for version updates when both version states are successful
         if (state is GetVersionSuccessState ||

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import '../../../../../core/service/global_widget/ImageDetail.dart';
 import '../../../../comments/presentation/screens/comment.dart';
 import '../../domain/entities/post_entity.dart';
 
@@ -74,14 +75,28 @@ class BuildPostItem extends StatelessWidget {
 
             // Post image
             if (postItem.image != null && postItem.image!.isNotEmpty)
-              Container(
-                height: 250,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(
-                    image: NetworkImage(imageUrl + postItem.image!),
-                    fit: BoxFit.cover,
+              InkWell(
+                onTap: () {
+                  navigateToScreen(
+                    context,
+                    ImageDetailSimple(
+                      path:
+                       imageUrl + postItem.image!,
+                      title:
+                      postItem.title,
+                      description: postItem.content,
+                    ),
+                  );
+                },
+                child: Container(
+                  height: 250,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    image: DecorationImage(
+                      image: NetworkImage(imageUrl + postItem.image!),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),

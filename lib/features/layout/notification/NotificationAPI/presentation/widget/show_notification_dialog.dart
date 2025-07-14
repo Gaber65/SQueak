@@ -171,9 +171,8 @@ print( '***********************');
                             ),
                             onPressed: () {
                               Navigator.of(context).pop();
-                              Future.delayed(Duration(milliseconds: 300), () {
-                                navigateBasedOnNotification(model, contextNav);
-                              });
+                              navigateBasedOnNotification(model, contextNav);
+
                             },
                             child: Text(
                               "Got it! 🐾",

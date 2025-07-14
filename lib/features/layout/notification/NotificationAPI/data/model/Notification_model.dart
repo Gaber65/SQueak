@@ -1,3 +1,4 @@
+import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/domain/entities/notification_entities.dart';
 
 class NotificationModel extends NotificationEntities {
@@ -17,7 +18,7 @@ class NotificationModel extends NotificationEntities {
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
       message: json['message'],
-      eventType: json['eventType'],
+      eventType: getNotificationType(json['eventType'])!,
       eventTypeId: json['eventTypeId'],
       title: json['title'],
       logo: json['logo'] ?? '',
