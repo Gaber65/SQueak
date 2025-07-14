@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../domain/mating_request.dart';
+
 class MatingRequestsScreen extends StatelessWidget {
   const MatingRequestsScreen({super.key});
 
@@ -51,7 +53,7 @@ class MatingRequestsScreen extends StatelessWidget {
                     const Icon(Icons.favorite, size: 16),
                     const SizedBox(width: 4),
                     Text(
-                      'Received (${petProvider.receivedRequests.where((r) => r.status == RequestStatus.pending).length})',
+                      'Received (${MatingRequest.dummyMatingRequests.where((r) => r.status == RequestStatus.pending).length})',
                     ),
                   ],
                 ),
@@ -62,7 +64,7 @@ class MatingRequestsScreen extends StatelessWidget {
                   children: [
                     const Icon(Icons.send, size: 16),
                     const SizedBox(width: 4),
-                    Text('Sent (${petProvider.sentRequests.length})'),
+                    Text('Sent (1)'),
                   ],
                 ),
               ),
@@ -72,62 +74,28 @@ class MatingRequestsScreen extends StatelessWidget {
           // Tab Views
           Expanded(
             child: TabBarView(
-              children: [
-                _ReceivedRequestsTab(),
-                _SentRequestsTab(),
-              ],
+              children: [_ReceivedRequestsTab(), _SentRequestsTab()],
             ),
           ),
         ],
       ),
     );
-
   }
 }
 
 class _ReceivedRequestsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<PetProvider>(
-      builder: (context, petProvider, child) {
-        final receivedRequests = petProvider.receivedRequests;
-
-        if (receivedRequests.isEmpty) {
-          return const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.inbox, size: 64, color: Colors.grey),
-                SizedBox(height: 16),
-                Text(
-                  'No Requests Yet',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
-                  ),
-                ),
-                Text(
-                  'Mating requests will appear here',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
-          );
-        }
-
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: receivedRequests.length,
-          itemBuilder: (context, index) {
-            final request = receivedRequests[index];
-            return _RequestCard(
-              request: request,
-              isReceived: true,
-              onAccept: () => petProvider.acceptMatingRequest(request.id),
-              onReject: () => petProvider.rejectMatingRequest(request.id),
-            );
-          },
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: MatingRequest.dummyMatingRequests.length,
+      itemBuilder: (context, index) {
+        final request = MatingRequest.dummyMatingRequests[index];
+        return _RequestCard(
+          request: request,
+          isReceived: true,
+          onAccept: () {},
+          onReject: () {},
         );
       },
     );
@@ -170,10 +138,7 @@ class _SentRequestsTab extends StatelessWidget {
           itemCount: sentRequests.length,
           itemBuilder: (context, index) {
             final request = sentRequests[index];
-            return _RequestCard(
-              request: request,
-              isReceived: false,
-            );
+            return _RequestCard(request: request, isReceived: false);
           },
         );
       },
@@ -281,10 +246,7 @@ class _RequestCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       timeAgo,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
                 ),
@@ -303,10 +265,7 @@ class _RequestCard extends StatelessWidget {
               ),
               child: Text(
                 request.message,
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
-                ),
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
               ),
             ),
 
