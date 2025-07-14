@@ -4,13 +4,12 @@ import 'package:quickalert/quickalert.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:iconly/iconly.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:squeak/features/mating/feeds/presentation/screens/pet_profile_screen.dart';
-import 'package:widget_circular_animator/widget_circular_animator.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
 
 import '../../../auth/contactus/presentation/pages/contact_us.dart';
 import '../../../auth/login/presentation/pages/login_screen.dart';
+import '../../../mating/layoutMating/presentation/screens/mating_layout.dart';
 import '../../../settings/persentaion/view/privacy_policy_screen.dart';
 import '../../../settings/persentaion/view/update_profile_screen.dart';
 import '../controller/setting_cubit.dart';
@@ -37,59 +36,91 @@ class SettingScreen extends StatelessWidget {
                 physics: BouncingScrollPhysics(),
                 children: [
                   ///image + name + change
-                  InkWell(
-                    onTap : () {
-                      navigateToScreen(context, PetProfileScreen());
-                    },
-                    child: Container(
-                      height: 69,
-                      decoration: Decorations.kDecorationBoxShadow(
-                        context: context,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(.0),
-                        child: Row(
-                          children: [
-                            (state is UploadProfileImageLoadingState)
-                                ? WidgetCircularAnimator(
-                                  size: 65,
-                                  innerIconsSize: 3,
-                                  outerIconsSize: 3,
-                                  innerAnimation: Curves.easeInOutBack,
-                                  outerAnimation: Curves.easeInOutBack,
-                                  innerColor: Colors.deepPurple,
-                                  outerColor: Colors.orangeAccent,
-                                  innerAnimationSeconds: 10,
-                                  outerAnimationSeconds: 10,
-                                  child: Container(
-                                    height: 69,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.grey[200],
-                                    ),
-                                    child: Icon(
-                                      Icons.person_outline,
-                                      color: Colors.deepOrange[200],
-                                      size: 30,
-                                    ),
-                                  ),
-                                )
-                                : buildImage(context),
-                            SizedBox(width: 15),
-                            Text(
-                              CacheHelper.getData('name') ?? '',
-                              style: FontStyleThame.textStyle(
-                                context: context,
-                                fontSize: 18,
-                              ),
+                  Container(
+                    height: 69,
+                    decoration: Decorations.kDecorationBoxShadow(
+                      context: context,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(.0),
+                      child: Row(
+                        children: [
+                          // (state is ProfileImageUploadLoading)
+                          //     ? WidgetCircularAnimator(
+                          //       size: 65,
+                          //       innerIconsSize: 3,
+                          //       outerIconsSize: 3,
+                          //       innerAnimation: Curves.easeInOutBack,
+                          //       outerAnimation: Curves.easeInOutBack,
+                          //       innerColor: Colors.deepPurple,
+                          //       outerColor: Colors.orangeAccent,
+                          //       innerAnimationSeconds: 10,
+                          //       outerAnimationSeconds: 10,
+                          //       child: Container(
+                          //         height: 69,
+                          //         decoration: BoxDecoration(
+                          //           shape: BoxShape.circle,
+                          //           color: Colors.grey[200],
+                          //         ),
+                          //         child: Icon(
+                          //           Icons.person_outline,
+                          //           color: Colors.deepOrange[200],
+                          //           size: 30,
+                          //         ),
+                          //       ),
+                          //     )
+                          //     :
+                          buildImage(context),
+                          SizedBox(width: 15),
+                          Text(
+                            CacheHelper.getData('name') ?? '',
+                            style: FontStyleThame.textStyle(
+                              context: context,
+                              fontSize: 18,
                             ),
-                          ],
-                        ),
+                          ),
+                          Spacer(),
+                          IconButton(
+                            onPressed: () {
+                              navigateToScreen(context, UpProfileScreen());
+                            },
+                            icon: Icon(
+                              Icons.edit,
+                              color: ColorManager.primaryColor,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
 
                   SizedBox(height: 25),
+
+                  // Management pet  Section
+                  Text(
+                    isArabic() ? 'ادارة صديقك الاليف' : 'Manage Pets',
+                    style: FontStyleThame.textStyle(
+                      context: context,
+                      fontSize: 18,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+
+                  // MatingLayout pet  Section
+                  _buildSettingItem(
+                    context: context,
+                    icon:
+                        'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/rb_49299.png?alt=media&token=3f7daec5-e664-43bc-9e62-0ef2b7f018f3',
+                    title: 'Mating shows',
+
+                    subtitle: '',
+                    trailingWidget: IconButton(
+                      onPressed: () {
+                        navigateToScreen(context, MatingLayoutScreen());
+                      },
+                      icon: Icon(Icons.chevron_right),
+                    ),
+                  ),
 
                   // Personalization Section
                   Text(
@@ -325,6 +356,7 @@ class SettingScreen extends StatelessWidget {
       ),
     );
   }
+
   Widget buildImage(BuildContext context) {
     final profile = SettingCubit.get(context).profile;
     final imageActive = CacheHelper.getData('ImageActive');
@@ -334,21 +366,23 @@ class SettingScreen extends StatelessWidget {
 
     if (imageActive != null && imageActive != '') {
       backgroundImage = NetworkImage('$imageUrl$imageActive');
-    } else if (profile != null && profile.imageName !=  '') {
+    } else if (profile != null && profile.imageName != '') {
       backgroundImage = NetworkImage('$imageUrl${profile.imageName}');
     } else {
       backgroundImage = AssetImage(
-        isPet ? AssetImageModel.defaultPetImage : AssetImageModel.defaultUserImage,
+        isPet
+            ? AssetImageModel.defaultPetImage
+            : AssetImageModel.defaultUserImage,
       );
     }
 
     return CircleAvatar(
       radius: 37,
-      backgroundColor:
-      Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       backgroundImage: backgroundImage,
     );
   }
+
   Widget _buildSettingItem({
     required BuildContext context,
     required String icon,

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:app_links/app_links.dart';
+import 'package:squeak/features/mating/layoutMating/presentation/screens/mating_layout.dart';
 
 import '../../../../../features/auth/login/presentation/pages/login_screen.dart';
 import '../../../../utils/export_path/export_files.dart';
@@ -109,7 +110,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             themeMode: cubit.isDark ? ThemeMode.dark : ThemeMode.light,
             debugShowCheckedModeBanner: false,
             navigatorKey: navigatorKey,
-            home: appStartPoint,
+            home: MatingLayoutScreen(),
             locale:
                 cubit.language == 'en'
                     ? const Locale('en')

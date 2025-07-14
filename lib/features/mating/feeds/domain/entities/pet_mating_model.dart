@@ -46,6 +46,39 @@ class PetMating {
       passportNumber: passportNumber ?? this.passportNumber,
     );
   }
+  static List<PetMating> availablePets = [
+    PetMating(
+      id: 'available-1',
+      name: 'Bella',
+      breed: 'Golden Retriever',
+      gender: 'Female',
+      age: '2 years',
+      description: 'Friendly and loves to play fetch!',
+      profilePicture: 'assets/images/bella.jpg',
+      status: PetMatingStatus.availableForMating,
+    ),
+    PetMating(
+      id: 'available-2',
+      name: 'Max',
+      breed: 'German Shepherd',
+      gender: 'Male',
+      age: '3 years',
+      description: 'Very gentle and well-trained',
+      profilePicture: 'assets/images/max.jpg',
+      status: PetMatingStatus.availableForMating,
+    ),
+    PetMating(
+      id: 'available-3',
+      name: 'Luna',
+      breed: 'Persian Cat',
+      gender: 'Female',
+      age: '1.5 years',
+      description: 'Sweet and affectionate',
+      profilePicture: 'assets/images/luna.jpg',
+      status: PetMatingStatus.availableForMating,
+    ),
+  ];
+
 }
 
 enum PetMatingStatus {
