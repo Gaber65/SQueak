@@ -48,6 +48,8 @@ IconData getNotificationIcon(NotificationEntities notification) {
       return Icons.smartphone;
     case NotificationType.QrCodeNotification:
       return Icons.qr_code;
+    case NotificationType.NewBoardingImage:
+      return Icons.image;
     default:
       return Icons.notifications; // Fallback icon
   }
@@ -56,6 +58,8 @@ IconData getNotificationIcon(NotificationEntities notification) {
 // Map NotificationType to Flutter Colors
 Color getNotificationColor(NotificationEntities notification) {
   switch (notification.eventType) {
+    case NotificationType.NewBoardingImage:
+      return Colors.deepPurple;
     case NotificationType.NewAppointmentOrReservation:
       return Colors.blue;
     case NotificationType.NewCommentOnYourPost:

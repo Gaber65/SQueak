@@ -22,6 +22,7 @@ enum NotificationType {
   IOSCustomeNotification,
   AndroidAndIOSCustomeNotification,
   QrCodeNotification,
+  NewBoardingImage
 }
 
 extension NotificationTypeExtension on NotificationType {
@@ -73,6 +74,8 @@ extension NotificationTypeExtension on NotificationType {
         return 'AndroidAndIOSCustomeNotification';
       case NotificationType.QrCodeNotification:
         return 'QrCodeNotification';
+      case NotificationType.NewBoardingImage:
+        return 'NewBoardingImage';
     }
   }
 }

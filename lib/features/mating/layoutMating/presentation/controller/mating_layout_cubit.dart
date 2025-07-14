@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:squeak/features/mating/feeds/presentation/screens/feed_mating.dart';
+import 'package:squeak/features/mating/matingRequest/presentation/screens/mating_requests_screen.dart';
 
 part 'mating_layout_state.dart';
 
@@ -17,7 +18,7 @@ class MatingLayoutCubit extends Cubit<MatingLayoutState> {
   final List<Widget> screens = [
     const PetFeedScreen(),
     const Scaffold(),
-    const Scaffold(),
+    const MatingRequestsScreen(),
     const Scaffold(),
     const Scaffold(),
   ];

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
+import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import '../../domain/mating_request.dart';
 
 class MatingRequestsScreen extends StatelessWidget {
@@ -8,76 +7,79 @@ class MatingRequestsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Column(
-        children: [
-          // Header
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.favorite, color: Colors.pink.shade500),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Mating Requests for currentProfile',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: DefaultTabController(
+        length: 2,
+        child: Column(
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.favorite, color: Colors.pink.shade500),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Mating Requests for currentProfile',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Manage incoming and outgoing mating requests',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+
+            // Tab Bar
+            TabBar(
+              labelColor: ColorManager.primaryColor,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor:ColorManager.primaryColor,
+              tabs: [
+                Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.favorite, size: 16),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Received (${MatingRequest.dummyMatingRequests.where((r) => r.status == RequestStatus.pending).length})',
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Manage incoming and outgoing mating requests',
-                  style: TextStyle(color: Colors.grey),
+                Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.send, size: 16),
+                      const SizedBox(width: 4),
+                      Text('Sent (1)'),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
 
-          // Tab Bar
-          TabBar(
-            labelColor: Colors.pink,
-            unselectedLabelColor: Colors.grey,
-            indicatorColor: Colors.pink,
-            tabs: [
-              Tab(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.favorite, size: 16),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Received (${MatingRequest.dummyMatingRequests.where((r) => r.status == RequestStatus.pending).length})',
-                    ),
-                  ],
-                ),
+            // Tab Views
+            Expanded(
+              child: TabBarView(
+                children: [_ReceivedRequestsTab(), _SentRequestsTab()],
               ),
-              Tab(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.send, size: 16),
-                    const SizedBox(width: 4),
-                    Text('Sent (1)'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          // Tab Views
-          Expanded(
-            child: TabBarView(
-              children: [_ReceivedRequestsTab(), _SentRequestsTab()],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -88,6 +90,8 @@ class _ReceivedRequestsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
+      physics: const BouncingScrollPhysics(),
+
       itemCount: MatingRequest.dummyMatingRequests.length,
       itemBuilder: (context, index) {
         final request = MatingRequest.dummyMatingRequests[index];
@@ -105,44 +109,16 @@ class _ReceivedRequestsTab extends StatelessWidget {
 class _SentRequestsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<PetProvider>(
-      builder: (context, petProvider, child) {
-        final sentRequests = petProvider.sentRequests;
-
-        if (sentRequests.isEmpty) {
-          return const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.send, size: 64, color: Colors.grey),
-                SizedBox(height: 16),
-                Text(
-                  'No Sent Requests',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
-                  ),
-                ),
-                Text(
-                  'Requests you send will appear here',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
-          );
-        }
-
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: sentRequests.length,
-          itemBuilder: (context, index) {
-            final request = sentRequests[index];
-            return _RequestCard(request: request, isReceived: false);
-          },
-        );
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.all(16),
+      itemCount: MatingRequest.dummyMatingRequests.length,
+      itemBuilder: (context, index) {
+        final request = MatingRequest.dummyMatingRequests[index];
+        return _RequestCard(request: request, isReceived: false);
       },
     );
+
   }
 }
 
@@ -164,8 +140,12 @@ class _RequestCard extends StatelessWidget {
     final pet = isReceived ? request.fromPet : request.toPet;
     final timeAgo = _getTimeAgo(request.timestamp);
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+    return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        decoration: Decorations.kDecorationBoxShadow(context: context),
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -280,8 +260,11 @@ class _RequestCard extends StatelessWidget {
                       icon: const Icon(Icons.check, size: 16),
                       label: const Text('Accept'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: Colors.green.shade500,
                         foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ),
@@ -292,6 +275,9 @@ class _RequestCard extends StatelessWidget {
                       icon: const Icon(Icons.close, size: 16),
                       label: const Text('Reject'),
                       style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         foregroundColor: Colors.red,
                       ),
                     ),
@@ -305,6 +291,13 @@ class _RequestCard extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorManager.primaryColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: () {
                     // Navigate to chat
                     ScaffoldMessenger.of(context).showSnackBar(
