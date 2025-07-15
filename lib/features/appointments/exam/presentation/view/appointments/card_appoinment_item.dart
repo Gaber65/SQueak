@@ -725,7 +725,6 @@ List<PopupMenuEntry<int>> _buildMenuItems(
 Widget _buildVitalsSection(appointment, context) {
   return Row(
     children: [
-
       _buildVitalItem(
         'Temp',
         '${appointment.temperature}°C',
