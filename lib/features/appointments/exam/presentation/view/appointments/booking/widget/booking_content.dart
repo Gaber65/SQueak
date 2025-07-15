@@ -29,6 +29,7 @@ class BookingContent extends StatefulWidget {
     required this.timeSlotData,
     required this.doctors,
     required this.petSelectFromIcon,
+    required this.pets,
   });
 
   final DateTime selectedDate;
@@ -36,6 +37,8 @@ class BookingContent extends StatefulWidget {
   final String clinicCode;
   final List<Doctor> doctors;
   final PetEntities? petSelectFromIcon;
+  final List<PetEntities> pets;
+
   @override
   State<BookingContent> createState() => _BookingContentState();
 }
@@ -55,7 +58,6 @@ class _BookingContentState extends State<BookingContent> {
     if (widget.petSelectFromIcon != null) {
       petSelect = widget.petSelectFromIcon;
     }
-
   }
 
   @override
@@ -68,7 +70,6 @@ class _BookingContentState extends State<BookingContent> {
       });
     }
   }
-
 
   void _showInfoNoPetDialog(context) async {
     showDialog<void>(
@@ -115,7 +116,6 @@ class _BookingContentState extends State<BookingContent> {
   Widget build(BuildContext context) {
     return BlocConsumer<AppointmentCubit, AppointmentState>(
       listener: (context, state) {
-
         if (state is CreateAppointmentsSuccess) {
           successToast(
             context,
@@ -131,9 +131,6 @@ class _BookingContentState extends State<BookingContent> {
       },
       builder: (context, state) {
         final cubit = AppointmentCubit.get(context);
-        final petCubit = PetCubit.get(context);
-        final pets = petCubit.pets;
-
 
         return WillPopScope(
           onWillPop: () async {
@@ -211,7 +208,7 @@ class _BookingContentState extends State<BookingContent> {
                   children: [
                     if (widget.petSelectFromIcon == null)
                       PetCarousel(
-                        pets: pets,
+                        pets: widget.pets,
                         onPetSelected: (firstPet) {
                           setState(() {
                             petSelect = firstPet;

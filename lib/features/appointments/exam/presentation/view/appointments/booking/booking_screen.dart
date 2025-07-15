@@ -9,7 +9,6 @@ import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/pets/presentation/controller/pet_cubit.dart';
 import 'package:squeak/features/appointments/exam/presentation/controller/clinic/appointment_cubit.dart';
 
-
 class BookingScreen extends StatelessWidget {
   const BookingScreen({
     super.key,
@@ -18,6 +17,7 @@ class BookingScreen extends StatelessWidget {
     required this.clinicCode,
     required this.doctors,
     required this.petSelectFromIcon,
+    required this.pets,
   });
 
   final DateTime selectedDate;
@@ -25,21 +25,19 @@ class BookingScreen extends StatelessWidget {
   final String clinicCode;
   final List<Doctor> doctors;
   final PetEntities? petSelectFromIcon;
+  final List<PetEntities> pets;
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) => sl<AppointmentCubit>()..getClientINClinic(clinicCode),
-        ),
-        BlocProvider(create: (_) => sl<PetCubit>()..getOwnerPets()),
-      ],
+    return BlocProvider(
+      create: (_) => sl<AppointmentCubit>()..getClientINClinic(clinicCode),
+
       child: BookingContent(
         selectedDate: selectedDate,
         clinicCode: clinicCode,
         timeSlotData: timeSlotData,
         doctors: doctors,
+        pets: pets,
         petSelectFromIcon: petSelectFromIcon,
       ),
     );
