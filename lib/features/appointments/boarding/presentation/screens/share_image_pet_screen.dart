@@ -815,7 +815,8 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                                 boarding.boardingImages[index]['imageName'],
                             title:
                                 isArabic() ? 'تفاصيل الصورة' : 'Image details',
-                            description: boarding.boardingImages[index]['note'] ?? '',
+                            description:
+                                boarding.boardingImages[index]['note'] ?? '',
                           ),
                         );
                       },
@@ -1078,7 +1079,9 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                 ),
                 onPressed:
                     () => _openEnhancedShareSheet(
-                      boarding.boardingImages[currentImageIndex],
+                      imageUrlWithVetICare +
+                          boarding
+                              .boardingImages[currentImageIndex]['imageName'],
                     ),
               ),
             ),
