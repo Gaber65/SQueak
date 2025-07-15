@@ -20,7 +20,7 @@ class NotificationCard extends StatelessWidget {
     final IconData icon = getNotificationIcon(notification);
     final Color iconBgColor = getNotificationColor(notification);
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
+print(notification.title);
     return GestureDetector(
       onTap: () {
         showNotificationDialog(context, notification);
@@ -67,19 +67,38 @@ class NotificationCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          notification.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: isDarkMode ? Colors.white : Colors.grey[800],
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                notification.title.trim().replaceAll(RegExp(r'\s+'), ' '),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDarkMode ? Colors.white : Colors.grey[800],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 8.0,
+                              ),
+                              child: Text(
+                                formatFacebookTimePost(notification.createdAt),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: isDarkMode ? Colors.grey[400] : Colors.grey[500],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 4.0),
                         Text(
-                          notification.message,
+                          notification.message.trim().replaceAll(RegExp(r'\s+'), ' '),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -90,17 +109,7 @@ class NotificationCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 16.0),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Text(
-                      formatFacebookTimePost(notification.createdAt),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isDarkMode ? Colors.grey[400] : Colors.grey[500],
-                      ),
-                    ),
-                  ),
+
                 ],
               ),
             ),

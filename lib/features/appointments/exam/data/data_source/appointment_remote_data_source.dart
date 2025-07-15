@@ -222,10 +222,12 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
         language: true,
       );
 
-      List<AppointmentModel> appointments = (response.data['data']['result'] as List).map((e) => AppointmentModel.fromJson(e)).toList();
+      List<AppointmentModel> appointments =
+          (response.data['data']['result'] as List)
+              .map((e) => AppointmentModel.fromJson(e))
+              .toList();
 
-      appointments.sort((a, b) => a.date.compareTo(b.date));
-
+      appointments.sort((a, b) => b.date.compareTo(a.date));
 
       return appointments;
     } on DioException catch (e) {

@@ -20,9 +20,14 @@ class AppointmentLocalDataSourceImpl implements AppointmentLocalDataSource {
       final jsonString = CacheHelper.getData('appointments');
       if (jsonString != null) {
         final jsonMap = json.decode(jsonString);
-        return List<AppointmentModel>.from(
+
+        final list = List<AppointmentModel>.from(
           jsonMap.map((x) => AppointmentModel.fromJson(x)),
         );
+
+        list.sort((a, b) => b.date.compareTo(a.date));
+
+        return list;
       } else {
         throw LocalDatabaseFailure(
           ErrorMessageModel(
@@ -44,6 +49,7 @@ class AppointmentLocalDataSourceImpl implements AppointmentLocalDataSource {
       );
     }
   }
+
 
   @override
   Future<void> cacheAppointments(List<AppointmentModel> appointments) async {

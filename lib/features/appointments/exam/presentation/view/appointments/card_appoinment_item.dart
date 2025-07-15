@@ -325,87 +325,6 @@ Widget _buildStatusRow(
   }
 }
 
-// Widget _buildPopupMenu(
-//   AppointmentEntity appointments,
-//   BuildContext context,
-//   UserAppointmentCubit cubit,
-// ) {
-//   return PopupMenuButton<int>(
-//     padding: EdgeInsets.zero,
-//     onCanceled: () {
-//       Navigator.of(context);
-//     },
-//     itemBuilder: (context) {
-//       return [
-//         if (appointments.visitId != null && appointments.isBillSqueakVisible)
-//           PopupMenuItem(
-//             value: 1,
-//             onTap: () {
-//               cubit.printReceipt(appointments, context);
-//             },
-//             child: Row(
-//               children: [
-//                 isArabic() ? Text('الفاتورة') : Text('Bill'),
-//                 Spacer(),
-//                 Icon(Icons.receipt_long_sharp, color: Color(0xff6096ba)),
-//               ],
-//             ),
-//           ),
-//         PopupMenuItem(
-//           value: 2,
-//           onTap: () {
-//             navigateToScreen(
-//               context,
-//               RateAppointment(model: appointments, isNav: true),
-//             );
-//           },
-//           child: Row(
-//             children: [
-//               isArabic() ? Text("التقييم") : Text('Rate'),
-//               Spacer(),
-//               Icon(Icons.star_border_purple500, color: Colors.amber),
-//             ],
-//           ),
-//         ),
-//         PopupMenuItem(
-//           value: 3,
-//           onTap: () {
-//             navigateToScreen(
-//               context,
-//               PrescriptionForPetScreen(reservationid: appointments.id),
-//             );
-//           },
-//           child: Row(
-//             children: [
-//               isArabic() ? Text("الروشتة") : Text("Prescription"),
-//               Spacer(),
-//               Icon(Icons.add_box_rounded, color: Colors.amber),
-//             ],
-//           ),
-//         ),
-//         PopupMenuItem(
-//           value: 4,
-//           onTap: () {
-//             navigateToScreen(
-//               context,
-//               FilesForPetScreen(reservationid: appointments.id),
-//             );
-//           },
-//           child: Row(
-//             children: [
-//               isArabic() ? Text("الملفات") : Text("Files"),
-//               Spacer(),
-//               Icon(Icons.file_copy_rounded, color: Colors.amber),
-//             ],
-//           ),
-//         ),
-//       ];
-//     },
-//     icon: const Icon(Icons.more_vert_outlined),
-//     offset: const Offset(0, 20),
-//   );
-// }
-
 List<Widget> _buildActionButtons(
   AppointmentEntity appointments,
   BuildContext context,
@@ -804,30 +723,26 @@ List<PopupMenuEntry<int>> _buildMenuItems(
 }
 
 Widget _buildVitalsSection(appointment, context) {
-  return         Expanded(
-    child: Row(
-      children: [
-        _buildVitalItem(
-          'Temp',
-          '${appointment.temperature}°C',
-          Icons.thermostat_rounded,
-          Colors.red,
-          context,
-        ),
-        const SizedBox(width: 20),
-        _buildVitalItem(
-          'Weight',
-          '${appointment.weight} kg',
-          Icons.monitor_weight_rounded,
-          Colors.blue,
-          context,
-        ),
-      ],
-    ),
+  return Row(
+    children: [
+      _buildVitalItem(
+        'Temp',
+        '${appointment.temperature}°C',
+        Icons.thermostat_rounded,
+        Colors.red,
+        context,
+      ),
+      const SizedBox(width: 20),
+      _buildVitalItem(
+        'Weight',
+        '${appointment.weight} kg',
+        Icons.monitor_weight_rounded,
+        Colors.blue,
+        context,
+      ),
+    ],
   );
-
 }
-
 Widget _buildVitalItem(
   String label,
   String value,

@@ -22,6 +22,8 @@ enum NotificationType {
   IOSCustomeNotification,
   AndroidAndIOSCustomeNotification,
   QrCodeNotification,
+  NewBoardingImage,
+  Unknown, // ✅ جديد
 }
 
 extension NotificationTypeExtension on NotificationType {
@@ -73,15 +75,20 @@ extension NotificationTypeExtension on NotificationType {
         return 'AndroidAndIOSCustomeNotification';
       case NotificationType.QrCodeNotification:
         return 'QrCodeNotification';
+      case NotificationType.NewBoardingImage:
+        return 'NewBoardingImage';
+      case NotificationType.Unknown:
+        return 'Unknown';
     }
   }
 }
 
-NotificationType? getNotificationType(String typeName) {
-  for (NotificationType type in NotificationType.values) {
+
+NotificationType getNotificationType(String typeName) {
+  for (var type in NotificationType.values) {
     if (type.typeName == typeName) {
       return type;
     }
   }
-  return null; // If no match is found
+  return NotificationType.Unknown;
 }

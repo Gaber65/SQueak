@@ -1,11 +1,8 @@
-// lib/utils/notification_helpers.dart
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../../../core/utils/enums/notification_type_enums.dart';
 import '../../domain/entities/notification_entities.dart';
 
-// Map NotificationType to Material Icons
 IconData getNotificationIcon(NotificationEntities notification) {
   switch (notification.eventType) {
     case NotificationType.NewAppointmentOrReservation:
@@ -48,14 +45,18 @@ IconData getNotificationIcon(NotificationEntities notification) {
       return Icons.smartphone;
     case NotificationType.QrCodeNotification:
       return Icons.qr_code;
+    case NotificationType.NewBoardingImage:
+      return Icons.image;
+    case NotificationType.Unknown:
     default:
-      return Icons.notifications; // Fallback icon
+      return Icons.notifications;
   }
 }
 
-// Map NotificationType to Flutter Colors
 Color getNotificationColor(NotificationEntities notification) {
   switch (notification.eventType) {
+    case NotificationType.NewBoardingImage:
+      return Colors.deepPurple;
     case NotificationType.NewAppointmentOrReservation:
       return Colors.blue;
     case NotificationType.NewCommentOnYourPost:
@@ -96,26 +97,8 @@ Color getNotificationColor(NotificationEntities notification) {
       return Colors.grey;
     case NotificationType.QrCodeNotification:
       return Colors.blueGrey;
+    case NotificationType.Unknown:
     default:
-      return Colors.grey; // Fallback color
-  }
-}
-
-// Utility to format time (e.g., "5 minutes ago")
-String formatTimeAgo(DateTime dateTime) {
-  final Duration diff = DateTime.now().difference(dateTime);
-
-  if (diff.inSeconds < 60) {
-    return '${diff.inSeconds} seconds ago';
-  } else if (diff.inMinutes < 60) {
-    return '${diff.inMinutes} minutes ago';
-  } else if (diff.inHours < 24) {
-    return '${diff.inHours} hours ago';
-  } else if (diff.inDays < 30) {
-    return '${diff.inDays} days ago';
-  } else if (diff.inDays < 365) {
-    return '${(diff.inDays / 30).floor()} months ago';
-  } else {
-    return '${(diff.inDays / 365).floor()} years ago';
+      return Colors.grey;
   }
 }
