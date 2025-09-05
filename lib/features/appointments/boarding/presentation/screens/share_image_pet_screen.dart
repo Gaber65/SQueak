@@ -788,7 +788,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   }
 
   Widget _buildEnhancedImageCarousel(BoardingEntryEntity boarding) {
-    return Container(
+    return SizedBox(
       height: 350,
       child: Stack(
         children: [

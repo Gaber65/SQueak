@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/appointments/exam/domain/entities/appointment_entity.dart';
 
 import '../../../../../../core/utils/enums/dayOfWeek_enum.dart';
 import '../../../../../pets/domain/entities/pet_entity.dart';

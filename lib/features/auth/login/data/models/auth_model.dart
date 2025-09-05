@@ -6,7 +6,7 @@ import 'package:squeak/features/auth/login/data/models/login_data_model.dart';
 class AuthModel extends ErrorMessageModel {
   final LoginData? data;
 
-  AuthModel({
+  const AuthModel({
     required this.data,
     required super.errors,
     required super.message,

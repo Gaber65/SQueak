@@ -50,6 +50,16 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     getSuppliersList();
   }
 
+  // New method to load both availabilities and doctors in parallel
+  Future<void> loadAvailabilityPageData(String clinicCode) async {
+    // Start both operations in parallel
+    final availabilityFuture = fetchAvailabilities(clinicCode);
+    final doctorsFuture = fetchDoctors(clinicCode);
+    
+    // Don't wait for both - let them complete independently
+    await Future.wait([availabilityFuture, doctorsFuture]);
+  }
+
   Future<void> fetchAvailabilities(String clinicCode) async {
     emit(GetAvailabilityLoading());
     final result = await getAvailabilitiesUseCase(

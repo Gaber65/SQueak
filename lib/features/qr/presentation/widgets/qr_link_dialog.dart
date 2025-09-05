@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import '../../../../core/service/global_function/format_utils.dart';
-import '../../../../core/service/global_widget/custom_text_form_field.dart';
 import '../../../../core/service/global_widget/toast.dart';
-import '../../../../core/service/service_locator/service_locator.dart';
 import '../../../../core/utils/theme/color_mangment/color_manager.dart';
-import '../../../pets/presentation/controller/pet_cubit.dart';
 import '../controller/qr_cubit.dart';
 import '../../../pets/domain/entities/pet_entity.dart';
-import '../view/new_scanner.dart';
+// import '../view/new_scanner.dart';  // Temporarily disabled due to mobile_scanner dependency conflict
 import 'package:flutter/services.dart'; // مهم للـ Clipboard
 
 class QrLinkDialog extends StatefulWidget {
@@ -489,6 +485,16 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
   }
 
   Future<void> _simulateScan(context) async {
+    // Temporarily disabled due to mobile_scanner dependency conflict
+    // TODO: Re-enable when mobile_scanner is compatible with Firebase
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('QR Scanner temporarily unavailable. Please enter QR code manually.'),
+        duration: Duration(seconds: 3),
+      ),
+    );
+    
+    /* Original implementation:
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) =>  ScannerScreen()),
@@ -499,6 +505,7 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
         qrController.text = result;
       });
     }
+    */
   }
 
   void _linkQr(QrCubit cubit) {

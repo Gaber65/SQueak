@@ -33,23 +33,23 @@ class NotificationMessage {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["senderId"] = senderId;
-    _data["category"] = category;
-    _data["collapseKey"] = collapseKey;
-    _data["contentAvailable"] = contentAvailable;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["senderId"] = senderId;
+    data["category"] = category;
+    data["collapseKey"] = collapseKey;
+    data["contentAvailable"] = contentAvailable;
     if(data != null) {
-      _data["data"] = data?.toJson();
+      data["data"] = data?.toJson();
     }
-    _data["from"] = from;
-    _data["messageId"] = messageId;
-    _data["messageType"] = messageType;
-    _data["mutableContent"] = mutableContent;
-    _data["notification"] = notification;
-    _data["sentTime"] = sentTime;
-    _data["threadId"] = threadId;
-    _data["ttl"] = ttl;
-    return _data;
+    data["from"] = from;
+    data["messageId"] = messageId;
+    data["messageType"] = messageType;
+    data["mutableContent"] = mutableContent;
+    data["notification"] = notification;
+    data["sentTime"] = sentTime;
+    data["threadId"] = threadId;
+    data["ttl"] = ttl;
+    return data;
   }
 }
 
@@ -75,14 +75,14 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> _data = <String, dynamic>{};
-    _data["content_available"] = contentAvailable;
-    _data["mutable_content"] = mutableContent;
-    _data["TargetType"] = targetType;
-    _data["ImageUrl"] = imageUrl;
-    _data["Title"] = title;
-    _data["TargetTypeId"] = targetTypeId;
-    _data["Body"] = body;
-    return _data;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["content_available"] = contentAvailable;
+    data["mutable_content"] = mutableContent;
+    data["TargetType"] = targetType;
+    data["ImageUrl"] = imageUrl;
+    data["Title"] = title;
+    data["TargetTypeId"] = targetTypeId;
+    data["Body"] = body;
+    return data;
   }
 }

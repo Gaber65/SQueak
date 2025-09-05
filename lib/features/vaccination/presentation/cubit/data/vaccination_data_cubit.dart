@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../../../../core/base_usecase/base_usecase.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../domain/entities/reminder_entity.dart';
 import '../../../domain/entities/vaccination_entity.dart';
-import '../../../domain/usecases/create_reminder_usecase.dart';
-import '../../../domain/usecases/delete_reminder_usecase.dart';
-import '../../../domain/usecases/get_pet_reminders_usecase.dart';
-import '../../../domain/usecases/get_vaccination_names_usecase.dart';
-import '../../../domain/usecases/update_reminder_usecase.dart';
 
 part 'vaccination_data_state.dart';
 

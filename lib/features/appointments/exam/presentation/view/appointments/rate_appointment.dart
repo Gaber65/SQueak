@@ -155,7 +155,7 @@ class _RateAppointmentState extends State<RateAppointment> {
                 padding: const EdgeInsets.all(20.0),
                 child: ListView(
                   children: [
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height * 0.35,
                       child: FastCachedImage(

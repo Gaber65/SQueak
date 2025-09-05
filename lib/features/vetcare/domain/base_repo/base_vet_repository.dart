@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:squeak/features/auth/login/domin/entities/login_entity.dart';
-import 'dart:io';
 
 import '../../../../core/error/failure.dart';
 import '../entities/data_vet.dart';

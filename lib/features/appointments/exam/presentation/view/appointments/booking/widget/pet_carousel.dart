@@ -60,9 +60,9 @@ class PetCarousel extends StatelessWidget {
         );
 
         // Mark first pet as selected
-        pets.forEach((element) {
+        for (var element in pets) {
           element.isSelected = false;
-        });
+        }
         pets[0].isSelected = true;
       });
     }
@@ -84,9 +84,9 @@ class PetCarousel extends StatelessWidget {
           itemBuilder: (context, index, realIndex) {
             return InkWell(
               onTap: () {
-                pets.forEach((element) {
+                for (var element in pets) {
                   element.isSelected = false;
-                });
+                }
                 pets[index].isSelected = true;
 
                 onPetSelected(pets[index]);
@@ -133,9 +133,9 @@ class PetCarousel extends StatelessWidget {
           },
           options: CarouselOptions(
             onPageChanged: (index, reason) {
-              pets.forEach((element) {
+              for (var element in pets) {
                 element.isSelected = false;
-              });
+              }
 
               pets[index].isSelected = true;
 

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/supplier/get_supplier.dart';
-import 'package:squeak/features/vaccination/presentation/pages/pet_vaccination_page.dart';
 
 import '../../../../../qr/presentation/controller/qr_cubit.dart';
 import '../../../../../qr/presentation/widgets/qr_action_buttons.dart';
@@ -11,7 +9,6 @@ import '../../../../../qr/presentation/widgets/qr_status_indicator.dart';
 import '../../../../domain/entities/pet_entity.dart';
 import '../../../controller/pet_cubit.dart';
 import '../../edit_pet_screen.dart';
-import 'action_button.dart';
 import 'icon_circle.dart';
 
 class PetCard extends StatefulWidget {

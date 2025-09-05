@@ -11,9 +11,32 @@ class LoginRemoteDataSource {
     required String emailOrPhoneNumber,
     required String password,
   }) async {
-    final fbToken =
-        CacheHelper.getData('DeviceToken') ??
-        await FirebaseMessaging.instance.getToken();
+    String? fbToken;
+    
+    try {
+      // Try to get cached token first
+      fbToken = CacheHelper.getData('DeviceToken');
+      
+      // If no cached token, try to get from Firebase
+      if (fbToken == null || fbToken.isEmpty) {
+        try {
+          fbToken = await FirebaseMessaging.instance.getToken();
+          
+          // Cache the token for future use
+          if (fbToken != null) {
+            CacheHelper.saveData('DeviceToken', fbToken);
+          }
+        } catch (firebaseError) {
+          print('Firebase token error: $firebaseError');
+          // Use a fallback token if Firebase fails
+          fbToken = 'fallback_token_${DateTime.now().millisecondsSinceEpoch}';
+        }
+      }
+    } catch (e) {
+      print('Token retrieval error: $e');
+      // Use a fallback token
+      fbToken = 'fallback_token_${DateTime.now().millisecondsSinceEpoch}';
+    }
 
     try {
       final response = await DioFinalHelper.postData(
@@ -21,7 +44,7 @@ class LoginRemoteDataSource {
         data: {
           'emailOrPhoneNumber': emailOrPhoneNumber,
           'password': password,
-          'FbToken': fbToken,
+          'FbToken': fbToken ?? 'default_token',
           'IOSDevice': Platform.isIOS,
           'Androidevice': Platform.isAndroid,
         },

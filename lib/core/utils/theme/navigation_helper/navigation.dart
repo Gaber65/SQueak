@@ -61,8 +61,8 @@ void navigateAndFinish(context, widget) {
   );
 }
 Future<void> navigateToReference({required url}) async {
-  final Uri _urla = Uri.parse(url);
-  if (!await launchUrl(_urla)) {
-    throw Exception('Could not launch $_urla');
+  final Uri urla = Uri.parse(url);
+  if (!await launchUrl(urla)) {
+    throw Exception('Could not launch $urla');
   }
 }

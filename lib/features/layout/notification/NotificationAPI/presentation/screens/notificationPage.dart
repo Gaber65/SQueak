@@ -6,12 +6,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/controller/notifications_cubit.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/screens/test.dart';
 
-import 'package:squeak/generated/l10n.dart';
 
-import '../../domain/entities/notification_entities.dart';
-import '../widget/get_color_for_notification.dart';
-import '../widget/get_notification_icon.dart';
-import '../widget/show_notification_dialog.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});

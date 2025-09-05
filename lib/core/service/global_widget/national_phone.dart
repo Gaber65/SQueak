@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/auth/register/domin/entities/country_entity.dart';
 import 'package:squeak/features/auth/register/presentation/cubit/register_cubit.dart';
 
-import '../../../generated/l10n.dart';
 
 import '../../utils/export_path/export_files.dart';
 

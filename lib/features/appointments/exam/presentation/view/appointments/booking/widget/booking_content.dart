@@ -2,17 +2,13 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/appointments/exam/data/models/availability_model.dart';
-import 'package:squeak/features/appointments/exam/domain/entities/appointment_entity.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/availability_entities.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/doctor_entity.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/booking/widget/no_have_pet.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/booking/widget/pet_carousel.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
-import 'package:squeak/features/pets/presentation/controller/pet_cubit.dart';
 import 'package:squeak/features/appointments/exam/presentation/controller/clinic/appointment_cubit.dart';
 import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
 

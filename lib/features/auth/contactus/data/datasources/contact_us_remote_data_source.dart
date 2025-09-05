@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:squeak/core/network/dio.dart';
 
-import '../../../../../core/network/end-points.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 
 class ContactUsRemoteDataSource {

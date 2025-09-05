@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/comments/domain/entities/comment_entity.dart';
 
-import '../../../../generated/l10n.dart';
 import '../../../auth/login/domin/entities/login_entity.dart';
 import '../../../auth/register/presentation/widgets/authItem.dart';
 import '../controllers/vet_register/vet_register_cubit.dart';

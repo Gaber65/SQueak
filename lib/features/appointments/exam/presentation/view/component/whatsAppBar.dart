@@ -160,7 +160,7 @@ class WhatsappAppbar extends SliverPersistentHeaderDelegate {
 }
 
 class WhatsappProfileBody extends StatelessWidget {
-  WhatsappProfileBody({Key? key, required this.list}) : super(key: key);
+  const WhatsappProfileBody({super.key, required this.list});
   final Widget list;
 
   @override
@@ -170,7 +170,7 @@ class WhatsappProfileBody extends StatelessWidget {
 }
 
 class ProfileIconButtons extends StatelessWidget {
-  ProfileIconButtons({Key? key, required this.clinics}) : super(key: key);
+  const ProfileIconButtons({super.key, required this.clinics});
 
   final Clinic clinics;
 
@@ -267,12 +267,12 @@ class ProfileIconButtons extends StatelessWidget {
 }
 
 class PhoneAndName extends StatelessWidget {
-  PhoneAndName({
-    Key? key,
+  const PhoneAndName({
+    super.key,
     required this.speciality,
     required this.clinicName,
     required this.phone,
-  }) : super(key: key);
+  });
   final String speciality;
   final String phone;
   final String clinicName;

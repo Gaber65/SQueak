@@ -2,6 +2,7 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/service/global_widget/vc_loading_widget.dart';
 import 'package:squeak/features/auth/password/data/datasources/password_remote_data_source.dart';
 import 'package:squeak/features/auth/password/data/repositories/password_repo.dart';
 import 'package:squeak/features/auth/password/domin/usecses/forget_password_usecase.dart';
@@ -9,7 +10,6 @@ import 'package:squeak/features/auth/password/domin/usecses/reset_password_useca
 import 'package:squeak/features/auth/password/domin/usecses/verify_user_usecase.dart';
 import 'package:squeak/features/auth/password/presentation/cubit/password_cubit.dart';
 import 'package:squeak/features/auth/password/presentation/pages/reset_password.dart';
-import '../../../../../generated/l10n.dart';
 import '../../../contactus/presentation/pages/contact_us.dart';
 import '../../../login/presentation/pages/login_screen.dart';
 
@@ -147,29 +147,16 @@ class ForgotPasswordScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            backgroundColor: ColorManager.primaryColor,
-                          ),
-                          onPressed:
-                              cubit.isForgetPassword
-                                  ? null
-                                  : () {
-                                    if (cubit.formKey.currentState!
-                                        .validate()) {
-                                      cubit.forgetPassword();
-                                    }
-                                  },
-                          child:
-                              cubit.isForgetPassword
-                                  ? CircularProgressIndicator()
-                                  : Text(S.of(context).send),
+                      VcLoadingButton(
+                        onPressed: () {
+                          if (cubit.formKey.currentState!.validate()) {
+                            cubit.forgetPassword();
+                          }
+                        },
+                        isLoading: cubit.isForgetPassword,
+                        child: Text(
+                          S.of(context).send,
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
                     ],

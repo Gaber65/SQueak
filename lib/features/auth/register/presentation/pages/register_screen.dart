@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-import 'package:squeak/features/auth/login/presentation/pages/login_screen.dart';
 import 'package:squeak/features/auth/password/presentation/pages/verfiy_user_screen.dart';
 import 'package:squeak/features/auth/register/data/datasources/register_remote_data_source.dart';
 import 'package:squeak/features/auth/register/data/repositories/register_repository_impl.dart';

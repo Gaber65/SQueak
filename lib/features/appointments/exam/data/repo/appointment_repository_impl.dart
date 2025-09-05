@@ -25,20 +25,59 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
   Future<Either<Failure, List<Availability>>> getAvailabilities(
     String clinicCode,
   ) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final remoteAvailabilities = await remoteDataSource.getAvailabilities(
-          clinicCode,
-        );
-        return Right(remoteAvailabilities);
-      } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel));
+    try {
+      // Step 1: Get from local cache first
+      final cachedAvailabilities = await localDataSource.getCachedAvailabilities(clinicCode);
+
+      // Step 2: Start fetching from remote in background to update cache
+      if (await networkInfo.isConnected) {
+        try {
+          final remoteAvailabilities = await remoteDataSource.getAvailabilities(clinicCode);
+          await localDataSource.cacheAvailabilities(clinicCode, remoteAvailabilities);
+          
+          // Return fresh data from remote
+          return Right(remoteAvailabilities);
+        } catch (_) {
+          // If remote fails but we have cached data, return cached
+          if (cachedAvailabilities != null) {
+            return Right(cachedAvailabilities);
+          }
+          rethrow;
+        }
       }
-    } else {
+
+      // Step 3: Return cached data if available (offline case)
+      if (cachedAvailabilities != null) {
+        return Right(cachedAvailabilities);
+      }
+
+      // Step 4: No cache and no internet
       return Left(
         ServerFailure(
           ErrorMessageModel(
-            message: 'No internet connection',
+            message: 'No internet connection and no cached data available',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
+    } on ServerException catch (failure) {
+      // Try to return cached data if server fails
+      try {
+        final cachedAvailabilities = await localDataSource.getCachedAvailabilities(clinicCode);
+        if (cachedAvailabilities != null) {
+          return Right(cachedAvailabilities);
+        }
+      } catch (_) {
+        // Ignore cache errors
+      }
+      return Left(ServerFailure(failure.errorMessageModel));
+    } catch (e) {
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: 'Failed to load availabilities: $e',
             statusCode: 0,
             errors: {},
             success: false,
@@ -101,18 +140,59 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
 
   @override
   Future<Either<Failure, List<Doctor>>> getDoctors(String clinicCode) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final remoteDoctors = await remoteDataSource.getDoctors(clinicCode);
-        return Right(remoteDoctors);
-      } on ServerException catch (failure) {
-        return Left(ServerFailure(failure.errorMessageModel));
+    try {
+      // Step 1: Get from local cache first
+      final cachedDoctors = await localDataSource.getCachedDoctors(clinicCode);
+
+      // Step 2: Start fetching from remote in background to update cache
+      if (await networkInfo.isConnected) {
+        try {
+          final remoteDoctors = await remoteDataSource.getDoctors(clinicCode);
+          await localDataSource.cacheDoctors(clinicCode, remoteDoctors);
+          
+          // Return fresh data from remote
+          return Right(remoteDoctors);
+        } catch (_) {
+          // If remote fails but we have cached data, return cached
+          if (cachedDoctors != null) {
+            return Right(cachedDoctors);
+          }
+          rethrow;
+        }
       }
-    } else {
+
+      // Step 3: Return cached data if available (offline case)
+      if (cachedDoctors != null) {
+        return Right(cachedDoctors);
+      }
+
+      // Step 4: No cache and no internet
       return Left(
         LocalDatabaseFailure(
           ErrorMessageModel(
-            message: 'No internet connection',
+            message: 'No internet connection and no cached data available',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
+    } on ServerException catch (failure) {
+      // Try to return cached data if server fails
+      try {
+        final cachedDoctors = await localDataSource.getCachedDoctors(clinicCode);
+        if (cachedDoctors != null) {
+          return Right(cachedDoctors);
+        }
+      } catch (_) {
+        // Ignore cache errors
+      }
+      return Left(ServerFailure(failure.errorMessageModel));
+    } catch (e) {
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel(
+            message: 'Failed to load doctors: $e',
             statusCode: 0,
             errors: {},
             success: false,

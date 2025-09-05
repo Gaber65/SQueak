@@ -14,7 +14,7 @@ void navigateBasedOnNotification(
     NotificationEntities notification,
     BuildContext context,
     ) {
-  final NotificationType? notificationType =
+  final NotificationType notificationType =
       getNotificationType(notification.eventType.name);
 
   if (notificationType == null) {

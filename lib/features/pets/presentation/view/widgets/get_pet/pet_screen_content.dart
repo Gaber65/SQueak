@@ -3,9 +3,9 @@ import 'package:squeak/features/pets/presentation/view/add_pet_screen.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/pet_card.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/pet_type_option.dart';
 import 'package:squeak/features/qr/presentation/controller/qr_cubit.dart';
-import 'package:squeak/features/qr/presentation/view/new_scanner.dart';
 
 import '../../../../../../core/utils/export_path/export_files.dart';
+import '../../../../../../core/service/global_widget/vc_loading_widget.dart';
 import '../../../../domain/entities/pet_entity.dart';
 import '../../../controller/pet_cubit.dart';
 import 'empty_state.dart';
@@ -59,19 +59,70 @@ class _PetScreenContentState extends State<PetScreenContent> {
                     : Container(),
           ),
         ),
-        body:
-            widget.pets.isEmpty
-                ? EmptyState(
-                  onAddPetPressed: () => showPetTypeSelection(context),
-                )
-                : _buildPetList(widget.qrCubit),
-        floatingActionButton: FloatingActionButton(
+        body: _buildBody(),
+        floatingActionButton: _shouldShowFab() ? FloatingActionButton(
           backgroundColor: ColorManager.primaryColor,
           child: const Icon(Icons.add, color: Colors.white),
           onPressed: () => showPetTypeSelection(context),
-        ),
+        ) : null,
       ),
     );
+  }
+
+  Widget _buildBody() {
+    // Show loading when fetching pets initially
+    if (widget.state is GetOwnerPetsLoadingState) {
+      return Center(
+        child: VcLoadingIndicator(
+          message: isArabic() ? "جاري تحميل حيواناتك الأليفة..." : "Loading your pets...",
+          size: 32.0,
+        ),
+      );
+    }
+    
+    // Show error state if failed to load pets
+    if (widget.state is GetOwnerPetsErrorState) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              isArabic() ? "خطأ في تحميل حيواناتك الأليفة" : "Failed to load your pets",
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => widget.cubit.getOwnerPets(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorManager.primaryColor,
+              ),
+              child: Text(isArabic() ? "إعادة المحاولة" : "Try Again"),
+            ),
+          ],
+        ),
+      );
+    }
+    
+    // Show empty state when no pets exist (after loading is complete)
+    if (widget.pets.isEmpty && widget.state is! GetOwnerPetsLoadingState) {
+      return EmptyState(
+        onAddPetPressed: () => showPetTypeSelection(context),
+      );
+    }
+    
+    // Show pets list when pets exist
+    return _buildPetList(widget.qrCubit);
+  }
+
+  bool _shouldShowFab() {
+    // Show FAB only when not loading
+    return widget.state is! GetOwnerPetsLoadingState;
   }
 
   Widget _buildPetList(qrCubit) {

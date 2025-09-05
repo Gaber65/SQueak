@@ -1,4 +1,3 @@
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:comment_tree/widgets/comment_tree_widget.dart';
 import 'package:comment_tree/widgets/tree_theme_data.dart';
 import 'package:flutter/material.dart';
@@ -7,19 +6,9 @@ import 'package:squeak/core/utils/theme/color_mangment/color_manager.dart';
 import 'package:squeak/features/comments/domain/entities/comment_entity.dart';
 
 import '../../../../../core/network/end-points.dart';
-import '../../../../../core/service/cache/shared_preferences/cache_helper.dart';
-import '../../../../../core/service/global_function/format_utils.dart';
-import '../../../../../core/service/global_function/time_format.dart';
-import '../../../../../core/service/global_widget/global_Image.dart';
-import '../../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
-import '../../../../../core/service/service_locator/service_locator.dart';
 import '../../../../../core/utils/theme/asset_image/asset_image.dart';
-import '../../../../../core/utils/theme/fonts/font_styles.dart';
-import '../../../../../core/utils/theme/navigation_helper/navigation.dart';
-import '../../../../../generated/l10n.dart';
 
 import '../../controller/comment_cubit.dart';
-import '../../screens/build_edit_comment.dart';
 import 'comment_item_card.dart';
 
 class SuccessComment extends StatelessWidget {

@@ -5,7 +5,7 @@ import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../controller/pet_cubit.dart';
 
 class SaveButton extends StatelessWidget {
-  const SaveButton({Key? key, required this.cubit}) : super(key: key);
+  const SaveButton({super.key, required this.cubit});
 
   final PetCubit cubit;
 

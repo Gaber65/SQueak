@@ -7,6 +7,7 @@ import 'package:app_links/app_links.dart';
 
 import '../../../../../features/auth/login/presentation/pages/login_screen.dart';
 import '../../../../utils/export_path/export_files.dart';
+import '../../../../theme/app_theme.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 StreamSubscription? sub;
@@ -104,8 +105,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           final cubit = MainCubit.get(context);
           return MaterialApp(
             title: 'SQueak',
-            theme: buildThemeDataLight(context),
-            darkTheme: buildThemeData(),
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
             themeMode: cubit.isDark ? ThemeMode.dark : ThemeMode.light,
             debugShowCheckedModeBanner: false,
             navigatorKey: navigatorKey,

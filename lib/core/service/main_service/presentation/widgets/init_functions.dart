@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/layout/notification/NotificationFCM/notification_message.dart';
-import '../../../../../features/layout/notification/NotificationAPI/presentation/widget/get_appoiment_function.dart';
-import '../../../../../features/layout/notification/NotificationFCM/notification_initializer.dart';
 import '../../../../../firebase_options.dart';
 
 @pragma('vm:entry-point')

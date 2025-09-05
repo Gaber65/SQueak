@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 
 import '../models/version_model.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';

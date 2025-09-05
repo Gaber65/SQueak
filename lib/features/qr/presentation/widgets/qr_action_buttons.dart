@@ -1,14 +1,10 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
-import 'package:printing/printing.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/qr/presentation/widgets/qr_save.dart';
 import 'package:squeak/features/qr/presentation/widgets/qr_unlink_dialog.dart';
-import '../../../pets/presentation/view/widgets/get_pet/action_button.dart';
 import '../../../vaccination/presentation/pages/pet_vaccination_page.dart';
 import '../controller/qr_cubit.dart';
 import '../../../pets/domain/entities/pet_entity.dart';

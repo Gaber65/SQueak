@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:drop_down_search_field/drop_down_search_field.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/layout/post/domain/entities/post_entity.dart';
-import 'package:squeak/features/layout/search/domain/entities/vet_client_search_entity.dart';
-import 'package:squeak/features/pets/data/models/pet_model.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 import '../../../controller/pet_cubit.dart';

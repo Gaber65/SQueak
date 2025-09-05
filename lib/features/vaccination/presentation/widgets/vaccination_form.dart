@@ -13,11 +13,11 @@ class VaccinationForm extends StatelessWidget {
   final PetEntities petModel;
 
   const VaccinationForm({
-    Key? key,
+    super.key,
     required this.formKey,
     required this.commentController,
     required this.petModel,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,3 @@
-import 'package:bloc/bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -48,8 +46,35 @@ class LoginCubit extends Cubit<LoginState> {
         })
         .catchError((error) {
           isLoggedIn = false;
-          ServerException failure = error;
-          emit(LoginError(failure.errorMessageModel));
+          if (error is ServerException) {
+            emit(LoginError(error.errorMessageModel));
+          } else {
+            // Handle any other type of exception (including FirebaseException)
+            String errorMessage = 'An unexpected error occurred';
+            
+            // Try to extract message from different exception types
+            if (error.toString().contains('Firebase')) {
+              errorMessage = 'Firebase authentication failed';
+            } else if (error.toString().contains('network')) {
+              errorMessage = 'Network connection failed';
+            }
+            
+            // Check if error has a message property
+            try {
+              if (error.message != null) {
+                errorMessage = error.message.toString();
+              }
+            } catch (_) {
+              // If no message property, use default
+            }
+            
+            emit(LoginError(ErrorMessageModel(
+              message: errorMessage,
+              statusCode: 0,
+              errors: {},
+              success: false,
+            )));
+          }
         });
   }
 

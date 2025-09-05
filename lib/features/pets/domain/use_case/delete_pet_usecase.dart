@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:equatable/equatable.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
 import '../base_repo/pet_base_repository.dart';

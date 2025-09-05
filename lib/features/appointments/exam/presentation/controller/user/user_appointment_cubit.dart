@@ -9,7 +9,6 @@ import 'package:squeak/features/appointments/exam/domain/entities/clinic_entity.
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/print_reciept.dart';
 import 'dart:typed_data';
 import '../../../../../../../core/service/service_locator/locatore_export_path.dart';
-import '../../../data/models/invoice_model.dart';
 import '../../../domain/entities/invoice.dart';
 
 part 'user_appointment_state.dart';

@@ -54,7 +54,7 @@ class AllAppointment extends StatelessWidget {
             length: 2,
             child: Builder(
               builder: (context) {
-                final TabController tabController = DefaultTabController.of(context)!;
+                final TabController tabController = DefaultTabController.of(context);
 
                 return Scaffold(
                   appBar: AppBar(

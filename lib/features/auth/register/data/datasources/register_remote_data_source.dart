@@ -13,7 +13,7 @@ class RegisterRemoteDataSource {
 
   Future<void> getTokenFormFirebase() async {
     try {
-      await FirebaseFirestore.instance
+      FirebaseFirestore.instance
           .collection('UserToken')
           .doc('Is0fJjcbMCqOrWmQdKoj')
           .snapshots()

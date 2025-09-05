@@ -10,7 +10,6 @@ import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/breed_sp
 import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/gender_section.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/general_information_section.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/profile_image_section.dart';
-import 'package:squeak/generated/l10n.dart';
 
 // Import widget sections
 import '../controller/pet_cubit.dart';

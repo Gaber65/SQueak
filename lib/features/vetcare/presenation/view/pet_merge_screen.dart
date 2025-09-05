@@ -6,7 +6,6 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/pets/presentation/controller/pet_cubit.dart';
 import 'package:squeak/features/vaccination/presentation/widgets/vaccination_loading.dart';
 
-import '../../../../generated/l10n.dart';
 import '../../../pets/presentation/view/pet_screen.dart';
 import '../../domain/entities/vet_client.dart';
 import '../controllers/pet_async/pet_async_cubit.dart';

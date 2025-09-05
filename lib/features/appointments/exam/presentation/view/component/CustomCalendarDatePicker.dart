@@ -49,11 +49,11 @@ class _CalendarScreenState extends State<CalendarScreen>
     _animation = Tween<double>(begin: 1.0, end: 1.2).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
-    print(widget.selectedDate.toString() + '-----------------');
+    print('${widget.selectedDate}-----------------');
 
     if (widget.selectedDate != null) {
       _selectedDate = widget.selectedDate;
-      print(_selectedDate.toString() + '-----------------');
+      print('$_selectedDate-----------------');
       setState(() {});
       final slot =
           _timeSlots[DayOfWeek.values[(_selectedDate!.weekday - 1 + 7) % 7]]!

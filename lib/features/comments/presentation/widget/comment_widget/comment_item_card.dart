@@ -136,7 +136,7 @@ class CommentItemCard extends StatelessWidget {
 
 
                 Text(
-                  data.replies.length == 0
+                  data.replies.isEmpty
                       ? S.of(context).reply
                       : data.replies.length == 1
                       ? S.of(context).view1Reply

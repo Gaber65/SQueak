@@ -1,10 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:chucker_flutter/chucker_flutter.dart';
-import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
-import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import '../service/refresh_token_manger/token_manager.dart';
-import 'config_model.dart';
 
 class DioFinalHelper {
   static late Dio dio;

@@ -4,11 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/theme/app_theme.dart';
 import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
-import '../../../../auth/login/presentation/pages/login_screen.dart';
-import '../cubit/layout_cubit.dart';
-import '../widgets/exit_confirmation_dialog.dart';
-import '../widgets/expired_token_dialog.dart';
 import '../widgets/update_dialog.dart';
 
 class LayoutScreen extends StatefulWidget {
@@ -75,23 +72,18 @@ class _LayoutScreenState extends State<LayoutScreen> {
           resizeToAvoidBottomInset: false,
           body: cubit.screens[selectedIndex],
           floatingActionButton: SizedBox(
-            width: 70,
-            height: 70,
+            width: 64,
+            height: 64,
             child: BlocConsumer<MainCubit, MainState>(
               listener: (context, state) {
                 // TODO: implement listener
               },
               builder: (context, state) {
                 return FloatingActionButton(
-                  backgroundColor:
-                      MainCubit.get(context).isDark
-                          ? ThemeData.dark().scaffoldBackgroundColor
-                          : Colors.white,
-                  foregroundColor: ColorManager.primaryColor,
                   onPressed: () {
-                    navigateToScreen(context, PetScreen());
+                    navigateToScreen(context, const PetScreen());
                   },
-                  child: Icon(Icons.pets, size: 30),
+                  child: const Icon(Icons.pets, size: 28),
                 );
               },
             ),
@@ -103,15 +95,13 @@ class _LayoutScreenState extends State<LayoutScreen> {
               // TODO: implement listener
             },
             builder: (context, state) {
+              final theme = Theme.of(context);
               return AnimatedBottomNavigationBar(
-                activeColor: ColorManager.primaryColor,
-                backgroundColor:
-                    MainCubit.get(context).isDark
-                        ? ThemeData.dark().scaffoldBackgroundColor
-                        : Colors.white,
-                inactiveColor: Colors.grey,
-                splashSpeedInMilliseconds: 300,
-                gapWidth: 100,
+                activeColor: theme.colorScheme.primary,
+                backgroundColor: theme.colorScheme.surface,
+                inactiveColor: theme.colorScheme.onSurfaceVariant,
+                splashSpeedInMilliseconds: 200,
+                gapWidth: 88,
                 activeIndex: selectedIndex,
                 onTap: (index) {
                   cubit.changeBottomNav(index);
@@ -121,7 +111,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
                 },
                 gapLocation: GapLocation.center,
                 notchSmoothness: NotchSmoothness.softEdge,
-                icons: [
+                icons: const [
                   IconlyLight.home,
                   IconlyLight.add_user,
                   IconlyLight.time_circle,

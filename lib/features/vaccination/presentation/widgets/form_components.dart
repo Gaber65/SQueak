@@ -150,7 +150,7 @@ Widget buildSelectDateVac(BuildContext context, VaccinationUiCubit cubit) {
       child: MyTextForm(
         controller: TextEditingController(
           text:
-              cubit.currentDateItem == null || cubit.currentDateItem == ''
+              cubit.currentDateItem == ''
                   ? isArabic()
                       ? 'من فضلك ادخل تاريخ الميلاد'
                       : 'Please enter date of birth'

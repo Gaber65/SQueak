@@ -40,7 +40,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
   List<PetClinicModel> _localPetList = [];
   List<AvailabilityModel> _localAvailabilities = [];
   List<DoctorModel> _localDoctors = [];
-  TextEditingController _commentController =
+  final TextEditingController _commentController =
       TextEditingController(); // Local comment controller
 
   @override
@@ -217,7 +217,6 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
         LayoutCubit.get(context).selectedIndex = 2;
         navigateAndFinish(context, const LayoutScreen());
       }
-      ;
       successToast(
         context,
         isArabic() ? 'تم حجز الموعد بنجاح' : 'Appointment booked successfully',
@@ -405,10 +404,11 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                                 'yyyy-MM-dd',
                                 'en_US',
                               ).format(selectedDay);
-                              if (mounted)
+                              if (mounted) {
                                 setState(
                                   () => dateController.text = formatDate,
                                 );
+                              }
                             },
                             onIntervalSelected: (p0) {
                               print("DEBUG: Original time selection: $p0");
@@ -583,6 +583,8 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
 }
 
 class CalendarShimmer extends StatelessWidget {
+  const CalendarShimmer({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(

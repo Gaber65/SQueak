@@ -1,7 +1,6 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/generated/l10n.dart';
 
 class EmptyState extends StatelessWidget {
   final VoidCallback onAddPetPressed;

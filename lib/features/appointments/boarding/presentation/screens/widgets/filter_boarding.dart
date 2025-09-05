@@ -3,9 +3,7 @@ import 'package:iconly/iconly.dart';
 import 'package:squeak/features/appointments/boarding/presentation/cubit/boarding_state.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
-import '../../../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart' show MainCubit;
 import '../../../../../../core/service/service_locator/locatore_export_path.dart';
-import '../../../../../../generated/l10n.dart';
 import '../../../domain/entities/boarding_status.dart';
 import '../../cubit/boarding_cubit.dart';
 

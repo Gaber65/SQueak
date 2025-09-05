@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
-import '../../../../generated/l10n.dart';
 import '../../../pets/domain/entities/pet_entity.dart';
 import '../cubit/ui/vaccination_ui_cubit.dart';
 import '../widgets/vaccination_form.dart';
 import '../widgets/vaccination_list.dart';
 import '../widgets/vaccination_loading.dart';
-import 'package:get_it/get_it.dart';
 import '../cubit/data/vaccination_data_cubit.dart';
 
 class PetVaccinationPage extends StatelessWidget {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/service/global_widget/vc_loading_widget.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/component/CustomCalendarDatePicker.dart';
 import '../../../../../pets/domain/entities/pet_entity.dart';
 import '../../../domain/entities/clinic_entity.dart';
@@ -11,7 +12,7 @@ import '../component/whatsAppBar.dart';
 import '../appointments/book_again_screen.dart';
 
 class AvailabilityScreen extends StatelessWidget {
-  AvailabilityScreen({
+  const AvailabilityScreen({
     super.key,
     required this.clinicInfo,
     this.petSelectFromIcon,
@@ -56,11 +57,18 @@ class AvailabilityScreen extends StatelessWidget {
             final petCubit = PetCubit.get(context);
             final pets = petCubit.pets;
 
-            return Scaffold(
-              body: SafeArea(
-                child: CustomScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  slivers: [
+            return Stack(
+              children: [
+                VcLoadingOverlay(
+                  isLoading: state is GetAvailabilityLoading,
+                  message: state is GetAvailabilityLoading 
+                          ? (isArabic() ? 'جاري تحميل المواعيد المتاحة...' : 'Loading availability...')
+                          : null,
+                  child: Scaffold(
+                body: SafeArea(
+                  child: CustomScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    slivers: [
                     /// AppBar
                     SliverPersistentHeader(
                       delegate: WhatsappAppbar(
@@ -111,6 +119,54 @@ class AvailabilityScreen extends StatelessWidget {
                             ),
                           ),
 
+                          /// Doctors Status Indicator
+                          if (state is GetDoctorLoading)
+                            Container(
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const SizedBox(
+                                    width: 12,
+                                    height: 12,
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    isArabic() 
+                                      ? 'جاري تحضير بيانات الأطباء...' 
+                                      : 'Preparing doctors data...',
+                                    style: FontStyleThame.textStyle(
+                                      context: context,
+                                      fontColor: Colors.orange,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          else if (appointmentCubit.doctors.isNotEmpty)
+                            Container(
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.check_circle, color: Colors.green, size: 14),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    isArabic() 
+                                      ? '${appointmentCubit.doctors.length} طبيب متاح' 
+                                      : '${appointmentCubit.doctors.length} doctors available',
+                                    style: FontStyleThame.textStyle(
+                                      context: context,
+                                      fontColor: Colors.green,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
                           /// Calendar view
                           Builder(
                             builder: (context) {
@@ -144,8 +200,8 @@ class AvailabilityScreen extends StatelessWidget {
                                           ),
                                         );
 
-                                        appointmentCubit
-                                            .emit(GetAvailabilitySuccess());
+                                        // Clear any loading states after navigation
+                                        // appointmentCubit.emit(GetAvailabilitySuccess());
                                       },
                                     ),
                                   ),
@@ -210,6 +266,17 @@ class AvailabilityScreen extends StatelessWidget {
                   ],
                 ),
               ),
+            ),
+                  ),
+                
+                // Separate overlay for unfollow action
+                if (state is UnFollowLoading)
+                  VcLoadingOverlay(
+                    isLoading: true,
+                    message: isArabic() ? 'جاري إلغاء المتابعة...' : 'Unfollowing clinic...',
+                    child: Container(),
+                  ),
+              ],
             );
           },
         ),

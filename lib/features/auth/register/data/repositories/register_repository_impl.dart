@@ -4,7 +4,6 @@ import 'package:squeak/features/auth/register/domin/entities/country_entity.dart
 import 'package:squeak/features/auth/register/domin/entities/register_entity.dart';
 import 'package:squeak/features/auth/register/domin/repositries/register_repository.dart';
 
-import '../../../../../core/error/exception.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 
 class RegisterRepositoryImpl implements RegisterRepository {

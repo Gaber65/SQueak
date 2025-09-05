@@ -32,7 +32,7 @@ class VaccinationRemoteDataSourceImpl implements VaccinationRemoteDataSource {
           errorMessageModel: ErrorMessageModel.fromJson(response.data),
         );
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(
           e.response?.data ??

@@ -5,7 +5,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 class DebugAppointmentAPI extends StatefulWidget {
   final String clinicCode;
   
-  const DebugAppointmentAPI({Key? key, required this.clinicCode}) : super(key: key);
+  const DebugAppointmentAPI({super.key, required this.clinicCode});
 
   @override
   State<DebugAppointmentAPI> createState() => _DebugAppointmentAPIState();

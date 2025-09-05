@@ -1,7 +1,6 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:squeak/features/appointments/boarding/domain/repositories/boarding_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../../core/service/service_locator/locatore_export_path.dart';
@@ -9,7 +8,6 @@ import '../../../domain/entities/boarding_entry_entity.dart';
 import '../../../domain/entities/boarding_status.dart';
 import '../../../domain/usecases/share_image_usecase.dart';
 import '../../cubit/boarding_cubit.dart';
-import '../boarding_again.dart';
 import '../boarding_rating.dart';
 import '../share_image_pet_screen.dart';
 

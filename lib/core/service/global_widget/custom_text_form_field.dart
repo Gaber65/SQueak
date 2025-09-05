@@ -3,7 +3,6 @@ import '../../../generated/l10n.dart';
 import '../../utils/theme/fonts/font_styles.dart';
 import '../global_function/format_utils.dart';
 import '../main_service/presentation/controller/main_cubit/main_cubit.dart';
-import '../service_locator/service_locator.dart';
 
 class MyTextForm extends StatefulWidget {
 

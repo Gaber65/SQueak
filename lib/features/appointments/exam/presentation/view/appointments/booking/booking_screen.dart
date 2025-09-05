@@ -6,7 +6,6 @@ import 'package:squeak/features/appointments/exam/domain/entities/availability_e
 import 'package:squeak/features/appointments/exam/domain/entities/doctor_entity.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/booking/widget/booking_content.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
-import 'package:squeak/features/pets/presentation/controller/pet_cubit.dart';
 import 'package:squeak/features/appointments/exam/presentation/controller/clinic/appointment_cubit.dart';
 
 class BookingScreen extends StatelessWidget {

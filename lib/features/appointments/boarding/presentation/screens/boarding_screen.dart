@@ -4,7 +4,6 @@ import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/boarding/domain/repositories/boarding_repository.dart';
-import '../../../../../generated/l10n.dart';
 import '../../../../pets/domain/entities/pet_entity.dart';
 import '../../../../pets/presentation/controller/pet_cubit.dart';
 import '../../../exam/presentation/view/appointments/booking/widget/pet_carousel.dart';

@@ -4,7 +4,6 @@ import 'package:squeak/core/service/main_service/presentation/controller/main_cu
 import '../../utils/theme/color_mangment/color_manager.dart';
 import '../../utils/theme/fonts/font_styles.dart';
 import '../global_function/format_utils.dart';
-import '../service_locator/service_locator.dart';
 
 
 

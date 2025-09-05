@@ -17,7 +17,9 @@ class QRRemoteDataSourceImpl implements QRRemoteDataSource {
   Future<bool> checkClinicInSupplier(CheckClinicParams params) async {
     print('checkClinicInSupplier');
     print(params.clinicCode);
-    params.suppliers.data.forEach((element) => print(element.data.code));
+    for (var element in params.suppliers.data) {
+      print(element.data.code);
+    }
 
     try {
       if (params.suppliers.data.isNotEmpty) {

@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
-import '../../domain/use_case/create_appointment.dart';
 import '../models/appointment_model.dart';
 import '../models/availability_model.dart';
 import '../models/client_clinic_model.dart';

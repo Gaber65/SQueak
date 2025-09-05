@@ -20,6 +20,7 @@ class VersionModel extends ErrorMessageModel {
     data: DataVersion.fromJson(json["data"]),
   );
 
+  @override
   Map<String, dynamic> toJson() => {
     "success": success,
     "errors": errors,

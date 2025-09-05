@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/auth/register/presentation/cubit/register_cubit.dart';
 
 import 'welcome_card.dart';

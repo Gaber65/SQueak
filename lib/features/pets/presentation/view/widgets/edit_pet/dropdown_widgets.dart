@@ -4,7 +4,6 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import 'package:squeak/generated/l10n.dart';
 
-import '../../../../data/models/pet_model.dart';
 import '../../../../domain/entities/pet_entity.dart';
 import '../../../controller/pet_cubit.dart';
 

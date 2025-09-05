@@ -1,7 +1,6 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../layout/layout/presentation/widgets/exit_confirmation_dialog.dart';
 import '../../../contactus/presentation/pages/contact_us.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
