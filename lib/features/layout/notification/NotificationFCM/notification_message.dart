@@ -39,7 +39,7 @@ class NotificationMessage {
     data["collapseKey"] = collapseKey;
     data["contentAvailable"] = contentAvailable;
     if(data != null) {
-      data["data"] = data?.toJson();
+      data["data"] = data;
     }
     data["from"] = from;
     data["messageId"] = messageId;

@@ -136,7 +136,7 @@ class OptimizedAvatarImage extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          initials ?? '🐾',
+          initials ?? 'P',
           style: TextStyle(
             fontSize: size * 0.4,
             fontWeight: FontWeight.w600,

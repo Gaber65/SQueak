@@ -166,7 +166,7 @@ class PetAvatar extends StatelessWidget {
       }
       return petName![0].toUpperCase();
     }
-    return '🐾';
+    return 'P';
   }
 
   Color _getBreedColor() {

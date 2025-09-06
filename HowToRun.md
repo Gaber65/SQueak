@@ -153,7 +153,18 @@ echo 'export PATH="/opt/homebrew/opt/ruby/bin:$PATH"' >> ~/.zshrc
 1. Download from [Android Studio](https://developer.android.com/studio)
 2. Install with default settings
 3. Launch and complete initial setup wizard
-merg====
+merg====nmac@MacBook-Pro-mac SqueakFlutter % flutter run -d 'iPhone 16 Pro Max'
+Launching lib/main.dart on iPhone 16 Pro Max in debug mode...
+Running Xcode build...                                                  
+Xcode build done.                                           71.9s
+Failed to build iOS app
+Error (Xcode): lib/features/auth/login/presentation/widgets/enhanced_login_widget.dart:126:23: Error:
+Can't find ']' to match '['.
+
+
+Could not build the application for the simulator.
+Error launching application on iPhone 16 Pro Max.
+mac@MacBook-Pro-mac SqueakFlutter % 
 **Step 4.2: Configure Android SDK**
 ```bash
 # Accept Android licenses

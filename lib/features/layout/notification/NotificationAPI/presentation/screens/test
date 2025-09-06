@@ -242,7 +242,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       NotificationEntities(
         id: "10",
         title: "New Reaction on Your Post",
-        message: "Someone reacted with a ❤️ to your post 'Happy Dog Day!'",
+        message: "Someone reacted with a heart to your post 'Happy Dog Day!'",
         eventType: NotificationType.NewReactionOnPost,
         eventTypeId: "post-457",
         logo: "",

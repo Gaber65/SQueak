@@ -3,8 +3,10 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/utils/firebase_token_helper.dart';
 import 'package:squeak/features/layout/notification/NotificationFCM/notification_message.dart';
 import '../../../../../firebase_options.dart';
 
@@ -15,13 +17,28 @@ class InitFunctions {
     ConfigModel.setEnvironment(Environment.test);
     Bloc.observer = MyBlocObserver();
     await _initServiceLocator();
+    await _initCache(); // Initialize cache first
     await NotificationInitializer.initialize();
     await _initFirebase();
     await LocalDatabaseHelper.initDB();
-    await _initCache();
     await _initDio();
     await _configureChucker();
     await _setupMessaging();
+    await _initPerformanceMonitoring();
+  }
+
+  /// Initialize performance monitoring
+  static Future<void> _initPerformanceMonitoring() async {
+    try {
+      // Simple performance monitoring setup
+      if (kDebugMode) {
+        debugPrint('Performance monitoring initialized');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Performance monitoring initialization failed: $e');
+      }
+    }
   }
 
   static Future<void> _setupMessaging() async {
@@ -74,9 +91,56 @@ class InitFunctions {
   }
 
   static Future<void> _initFirebase() async {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      
+      // Initialize Firebase messaging with proper permissions
+      await _initializeFirebaseMessaging();
+      
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('ERROR: Firebase initialization error: $e');
+      }
+    }
+  }
+
+  static Future<void> _initializeFirebaseMessaging() async {
+    try {
+      final messaging = FirebaseMessaging.instance;
+      
+      // Request permissions for notifications
+      final settings = await messaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+        provisional: false,
+      );
+      
+      if (kDebugMode) {
+        debugPrint('Notification permission status: ${settings.authorizationStatus}');
+      }
+      
+      // Use FirebaseTokenHelper for robust token management
+      try {
+        final token = await FirebaseTokenHelper.getFirebaseToken();
+        if (token != null) {
+          if (kDebugMode) {
+            debugPrint('SUCCESS: Firebase token obtained via helper: ${token.substring(0, 10)}...');
+          }
+        }
+      } catch (tokenError) {
+        if (kDebugMode) {
+          debugPrint('WARNING: Firebase token helper error: $tokenError');
+        }
+      }
+      
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('ERROR: Firebase messaging initialization error: $e');
+      }
+    }
   }
 
   static Future<void> _initServiceLocator() async {

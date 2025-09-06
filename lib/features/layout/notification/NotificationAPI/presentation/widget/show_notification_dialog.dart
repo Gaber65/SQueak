@@ -91,7 +91,7 @@ print( '***********************');
 
                       // Personalized Greeting with extracted clinic name
                       Text(
-                        "Hey, $userName! 🐾 Here's a message from $extractedClinicName!",
+                        "Hey, $userName! Here's a message from $extractedClinicName!",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -173,7 +173,7 @@ print( '***********************');
 
                             },
                             child: Text(
-                              "Got it! 🐾",
+                              "Got it!",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
