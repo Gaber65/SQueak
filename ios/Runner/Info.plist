@@ -52,6 +52,12 @@
 	<string>We need your location to determine your country code.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photos to allow you to upload and share them.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Allow discovering and connecting to the local Dart VM Service for debugging and hot reload.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_dartVmService._tcp</string>
+	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

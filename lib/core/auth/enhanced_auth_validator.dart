@@ -127,6 +127,103 @@ class EnhancedAuthValidator {
       metadata: {'strength': strength, 'color': strengthColor},
     );
   }
+
+  /// Validates name with detailed feedback
+  static ValidationResult validateName(String name) {
+    if (name.trim().isEmpty) {
+      return ValidationResult(
+        isValid: false,
+        message: 'Name is required',
+        severity: ValidationSeverity.error,
+      );
+    }
+    
+    if (name.trim().length < 2) {
+      return ValidationResult(
+        isValid: false,
+        message: 'Name must be at least 2 characters',
+        severity: ValidationSeverity.error,
+      );
+    }
+    
+    if (name.trim().length > 50) {
+      return ValidationResult(
+        isValid: false,
+        message: 'Name must be less than 50 characters',
+        severity: ValidationSeverity.error,
+      );
+    }
+    
+    // Check for valid name characters (letters, spaces, apostrophes, hyphens)
+    if (!RegExp(r"^[a-zA-Z\s'-]+$").hasMatch(name.trim())) {
+      return ValidationResult(
+        isValid: false,
+        message: 'Name can only contain letters, spaces, apostrophes, and hyphens',
+        severity: ValidationSeverity.error,
+      );
+    }
+    
+    return ValidationResult(isValid: true, message: 'Valid name');
+  }
+
+  /// Validates password confirmation
+  static ValidationResult validatePasswordConfirmation(String password, String confirmPassword) {
+    if (confirmPassword.isEmpty) {
+      return ValidationResult(
+        isValid: false,
+        message: 'Please confirm your password',
+        severity: ValidationSeverity.error,
+      );
+    }
+    
+    if (password != confirmPassword) {
+      return ValidationResult(
+        isValid: false,
+        message: 'Passwords do not match',
+        severity: ValidationSeverity.error,
+      );
+    }
+    
+    return ValidationResult(isValid: true, message: 'Passwords match');
+  }
+
+  /// Validates clinic code
+  static ValidationResult validateClinicCode(String clinicCode) {
+    if (clinicCode.trim().isEmpty) {
+      return ValidationResult(
+        isValid: false,
+        message: 'Clinic code is required',
+        severity: ValidationSeverity.error,
+      );
+    }
+    
+    if (clinicCode.trim().length < 3) {
+      return ValidationResult(
+        isValid: false,
+        message: 'Clinic code must be at least 3 characters',
+        severity: ValidationSeverity.error,
+      );
+    }
+    
+    if (clinicCode.trim().length > 20) {
+      return ValidationResult(
+        isValid: false,
+        message: 'Clinic code must be less than 20 characters',
+        severity: ValidationSeverity.error,
+      );
+    }
+    
+    // Allow alphanumeric characters, hyphens, and underscores
+    if (!RegExp(r'^[a-zA-Z0-9_-]+$').hasMatch(clinicCode.trim())) {
+      return ValidationResult(
+        isValid: false,
+        message: 'Clinic code can only contain letters, numbers, hyphens, and underscores',
+        severity: ValidationSeverity.error,
+      );
+    }
+    
+    return ValidationResult(isValid: true, message: 'Valid clinic code');
+  }
 }
 
 /// Validation result with comprehensive information

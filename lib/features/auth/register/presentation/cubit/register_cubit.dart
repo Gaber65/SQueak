@@ -84,20 +84,27 @@ class RegisterCubit extends Cubit<RegisterState> {
   Future<void> detectCountryCode() async {
     emit(CountryCodeDetectionLoadingState());
     try {
+      // Ensure we have countries loaded
+      if (countries.isEmpty) {
+        try {
+          await loadCountries();
+        } catch (_) {}
+      }
+
       // Step 1: Get device location
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        emit(CountryCodeDetectionErrorState("Location services are disabled."));
+        // Fallback to cache/default instead of erroring
+        _fallbackToCachedOrDefaultCountry();
+        emit(CountryCodeDetectionSuccessState());
         return;
       }
 
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.deniedForever) {
-        emit(
-          CountryCodeDetectionErrorState(
-            "Location permissions are permanently denied.",
-          ),
-        );
+        // Respect denial but keep UX smooth with fallback
+        _fallbackToCachedOrDefaultCountry();
+        emit(CountryCodeDetectionSuccessState());
         return;
       }
 
@@ -105,39 +112,85 @@ class RegisterCubit extends Cubit<RegisterState> {
         permission = await Geolocator.requestPermission();
         if (permission != LocationPermission.whileInUse &&
             permission != LocationPermission.always) {
-          emit(
-            CountryCodeDetectionErrorState("Location permission not granted."),
-          );
+          _fallbackToCachedOrDefaultCountry();
+          emit(CountryCodeDetectionSuccessState());
           return;
         }
       }
 
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.low,
-      );
+      // Try current position with a short timeout; if it fails use last known
+      Position? position;
+      try {
+        position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.low,
+          timeLimit: const Duration(seconds: 5),
+        );
+      } catch (_) {
+        // iOS can throw kCLErrorDomain=2 (location unknown); use last known
+        position = await Geolocator.getLastKnownPosition();
+      }
 
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
-      final countryCodeFromLocation = placemarks.first.country;
+      if (position != null) {
+        final placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+        final countryNameFromLocation = placemarks.isNotEmpty
+            ? (placemarks.first.country ?? '').trim()
+            : '';
 
-      final country = countries.firstWhere(
-        (c) => c.name == countryCodeFromLocation,
-      );
+        if (countryNameFromLocation.isNotEmpty) {
+          final country = countries.firstWhere(
+            (c) => _normalize(c.name) == _normalize(countryNameFromLocation),
+            orElse: () => countries.isNotEmpty ? countries.first : CountryEntity(id: 1, name: "", phoneCode: ""),
+          );
 
-      countryCode = country.name; // e.g., "US"
-      countryPhoneCode = country.phoneCode; // e.g., "+1"
-      countryIdToServer = country.id;
-      print(countryCodeFromLocation); // Server ID, whatever you use
-      print(countryIdToServer);
-      print(countryPhoneCode);
-      print(countryIdToServer);
+          _applyCountrySelection(country);
+          emit(CountryCodeDetectionSuccessState());
+          return;
+        }
+      }
+
+      // If we reach here, we couldn't determine by location; fallback
+      _fallbackToCachedOrDefaultCountry();
       emit(CountryCodeDetectionSuccessState());
     } catch (e) {
-      emit(CountryCodeDetectionErrorState(e.toString()));
+      // As a safety net, never block the UI; fall back and continue
+      _fallbackToCachedOrDefaultCountry();
+      emit(CountryCodeDetectionSuccessState());
     }
   }
+
+  void _applyCountrySelection(CountryEntity country) {
+    countryCode = country.name;
+    countryPhoneCode = country.phoneCode;
+    countryIdToServer = country.id;
+    // Cache for next launch
+    try {
+      CacheHelper.saveData('countryId', country.id);
+      CacheHelper.saveData('countryCodeE', country.name);
+    } catch (_) {}
+  }
+
+  void _fallbackToCachedOrDefaultCountry() {
+    try {
+      final cachedId = CacheHelper.getData('countryId');
+      if (cachedId != null && countries.isNotEmpty) {
+        final byId = countries.firstWhere(
+          (c) => c.id == cachedId,
+          orElse: () => countries.first,
+        );
+        _applyCountrySelection(byId);
+        return;
+      }
+    } catch (_) {}
+
+    if (countries.isNotEmpty) {
+      _applyCountrySelection(countries.first);
+    }
+  }
+
+  String _normalize(String s) => s.toLowerCase().trim();
 
   // Normal registration
   Future<void> register() async {
