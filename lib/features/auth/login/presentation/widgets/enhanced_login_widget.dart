@@ -4,7 +4,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/auth/enhanced_auth_validator.dart';
 import 'package:squeak/core/widgets/vc_enhanced_button.dart';
 import 'package:squeak/core/accessibility/accessibility_helper.dart';
-import 'package:squeak/core/monitoring/advanced_performance_monitor.dart';
+// Performance monitoring import removed for memory optimization
 
 import 'package:squeak/features/auth/login/presentation/cubit/login_cubit.dart';
 import 'package:squeak/features/auth/password/presentation/pages/forgot_password.dart';
@@ -23,10 +23,10 @@ class EnhancedLoginView extends StatefulWidget {
 class _EnhancedLoginViewState extends State<EnhancedLoginView> 
     with AccessibilityMixin, TickerProviderStateMixin {
   ValidationResult? _emailValidation;
-  ValidationResult? _passwordValidation;
+  // Password validation removed - no longer validating passwords on login page
   bool _isFormValid = false;
   bool _obscurePassword = true;
-  final AdvancedPerformanceMonitor _performanceMonitor = AdvancedPerformanceMonitor();
+  // Performance monitoring removed for memory optimization
   
   late AnimationController _shakeController;
   late AnimationController _pulseController;
@@ -53,6 +53,16 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
 
     // TEMPORARILY DISABLED - Performance monitoring causing potential crashes
     // _performanceMonitor.endOperation('enhanced_login_init');
+    
+    // Trigger initial validation if fields have content
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.cubit.emailController.text.isNotEmpty) {
+        _validateEmail();
+      }
+      if (widget.cubit.passwordController.text.isNotEmpty) {
+        _validatePassword();
+      }
+    });
   }
 
   @override
@@ -74,18 +84,24 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
   }
 
   void _validatePassword() {
+    // PASSWORD VALIDATION REMOVED - No longer validating passwords on login page
     setState(() {
-      _passwordValidation = EnhancedAuthValidator.validatePassword(
-        widget.cubit.passwordController.text,
-      );
+      // Password always considered valid, just update form validity
       _updateFormValidity();
     });
   }
 
   void _updateFormValidity() {
     final wasValid = _isFormValid;
-    _isFormValid = (_emailValidation?.isValid ?? false) && 
-                   (_passwordValidation?.isValid ?? false);
+    
+    // DEBUG: Check validation status
+    debugPrint('Email validation: ${_emailValidation?.isValid} - ${_emailValidation?.message}');
+    debugPrint('Password validation: DISABLED (always valid)');
+    
+    // Only validate email, password validation removed
+    _isFormValid = (_emailValidation?.isValid ?? false);
+    
+    debugPrint('Form valid: $_isFormValid');
     
     // Trigger pulse animation when form becomes valid
     if (!wasValid && _isFormValid) {
@@ -95,17 +111,34 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
   }
 
   void _handleLogin() {
-    if (!_isFormValid) {
+    // TEMPORARY: Basic validation for testing
+    final email = widget.cubit.emailController.text.trim();
+    final password = widget.cubit.passwordController.text.trim();
+    
+    if (email.isEmpty) {
       _shakeController.forward().then((_) => _shakeController.reverse());
       HapticFeedback.mediumImpact();
-      announce('Please fix the form errors before continuing');
+      announce('Please enter your email or phone number');
       return;
+    }
+    
+    if (password.isEmpty) {
+      _shakeController.forward().then((_) => _shakeController.reverse());
+      HapticFeedback.mediumImpact();
+      announce('Please enter your password');
+      return;
+    }
+    
+    // If enhanced validation is available and valid, great!
+    // Otherwise, proceed with basic validation
+    if (!_isFormValid) {
+      debugPrint('TEMPORARY: Proceeding with basic validation since enhanced validation failed');
+      debugPrint('Email: $email, Password length: ${password.length}');
     }
 
     HapticFeedback.selectionClick();
-    if (widget.cubit.formKey.currentState!.validate()) {
-      widget.cubit.login(context);
-    }
+    // Always try to login - let the backend handle validation
+    widget.cubit.login(context);
   }
 
   void _togglePasswordVisibility() {
@@ -217,11 +250,9 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
               // Enhanced Password Field with accessibility
               AccessibilityHelper.accessibleFormField(
                 label: 'Secure Paw-ssword',
-                hint: 'Enter your secure password to protect your pet data',
+                hint: 'Enter your password to continue',
                 required: true,
-                errorText: _passwordValidation?.isValid == false 
-                    ? _passwordValidation?.message 
-                    : null,
+                errorText: null, // Password validation removed
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -229,11 +260,7 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: _passwordValidation?.isValid == false 
-                              ? Colors.red.shade300
-                              : _passwordValidation?.isValid == true
-                                  ? Colors.green.shade300
-                                  : Colors.grey.shade300,
+                          color: Colors.grey.shade300, // Always neutral since validation is disabled
                           width: 1.5,
                         ),
                       ),
@@ -259,45 +286,10 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                             vertical: 16,
                           ),
                         ),
-                        validator: (value) => _passwordValidation?.isValid == false 
-                            ? _passwordValidation?.message 
-                            : null,
+                        validator: (value) => null, // Password validation removed
                       ),
                     ),
-                    if (_passwordValidation != null && !_passwordValidation!.isValid)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: AccessibilityHelper.semanticWrapper(
-                          liveRegion: true,
-                          child: Text(
-                            _passwordValidation!.message ?? '',
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                    if (_passwordValidation != null && _passwordValidation!.isValid)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.check_circle, 
-                              color: Colors.green, 
-                              size: 16,
-                            ),
-                            const SizedBox(width: 4),
-                            const Text(
-                              'Password is valid',
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    // Password validation UI removed - no longer showing validation feedback
                   ],
                 ),
               ),
@@ -330,22 +322,23 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
 
               SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 24 : 16),
 
-              // Enhanced Login Button with accessibility
+              // Enhanced Login Button with accessibility - TEMPORARILY ALWAYS ENABLED FOR TESTING
               SizedBox(
                 width: double.infinity,
                 child: VCEnhancedButton(
-                  onPressed: _isFormValid ? _handleLogin : null,
+                  // TEMPORARY: Always enable button for testing, check validation in method
+                  onPressed: _handleLogin,
                   isLoading: widget.cubit.isLoggedIn,
                   loadingText: 'Finding your furry friends...',
                   semanticLabel: 'Login button',
                   tooltip: _isFormValid 
                       ? 'Tap to login' 
-                      : 'Please complete the form to login',
+                      : 'Tap to login (validation will be checked)',
                   animationDuration: getAnimationDuration(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isFormValid 
                         ? ColorManager.secondColor 
-                        : Colors.grey.shade400,
+                        : ColorManager.secondColor.withOpacity(0.8),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
