@@ -5,6 +5,11 @@ import 'package:squeak/features/layout/post/presentation/widget/appbar_home_item
 import 'package:squeak/features/layout/post/presentation/widget/get_posts_when_user_follow.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/theme/widgets/pet_teaching/did_you_know_card.dart';
+import 'package:squeak/core/theme/widgets/pet_teaching/pet_tips_repository.dart';
+import 'package:squeak/core/theme/widgets/vc_card.dart';
+import 'package:squeak/core/theme/widgets/pet_teaching/pet_avatar.dart';
+import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
 
 import '../widget/build_search_box.dart';
 import '../widget/loading_posts.dart';
@@ -24,7 +29,13 @@ class HomeScreen extends StatelessWidget {
           var cubit = PostCubit.get(context);
           return Scaffold(
             appBar: buildAppBarHome(context),
-            body: _buildBody(cubit, state),
+      body: Column(
+              children: [
+                const _PetTipBanner(),
+        const _ActivePetSummary(),
+                Expanded(child: _buildBody(cubit, state)),
+              ],
+            ),
           );
         },
       ),
@@ -41,5 +52,74 @@ class HomeScreen extends StatelessWidget {
     }
 
     return buildNotificationListenerUserPosts(cubit, state);
+  }
+}
+
+/// Lightweight tip banner shown at top of Home
+class _PetTipBanner extends StatelessWidget {
+  const _PetTipBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<PetTip>>(
+      future: const PetTipsRepository().loadTips(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const SizedBox(height: 0);
+        }
+        final tips = snapshot.data ?? const <PetTip>[];
+  if (tips.isEmpty) return const SizedBox(height: 0);
+        final tip = tips.first;
+        return DidYouKnowCard(
+          title: tip.title,
+          content: tip.content,
+          category: tip.category,
+          isDismissible: true,
+          onDismiss: () {
+            // no-op; UI hint only
+          },
+        );
+      },
+    );
+  }
+}
+
+/// Minimal “Active Pet” summary card (UI-only)
+class _ActivePetSummary extends StatelessWidget {
+  const _ActivePetSummary();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return VcCard(
+      onTap: () => navigateToScreen(context, const PetScreen()),
+      child: Row(
+        children: [
+          PetAvatar.small(petName: 'Pet'),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Your pets',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "Tap to view and manage pets",
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.chevron_right),
+        ],
+      ),
+    );
   }
 }

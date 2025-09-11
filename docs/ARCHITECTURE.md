@@ -41,6 +41,7 @@ lib/
 │   │   └── service_locator/       # Dependency injection
 │   └── utils/                     # Utilities
 │       ├── theme/                 # App theming
+│       │   └── widgets/           # Design system and pet teaching widgets
 │       ├── constants/             # App constants
 │       └── helpers/               # Helper functions
 ├── features/                      # Feature modules
@@ -61,6 +62,11 @@ lib/
 └── generated/                     # Generated files
     └── intl/                      # Localization files
 ```
+
+### UI Refresh Notes (2025-09)
+- Pets-First UX refresh was applied as a presentation-layer change only.
+- Theming centralized via `ColorManager` and `AppTheme` moved to a clinical blue→purple palette.
+- A lightweight `PetTipsRepository` reads tips from bundled JSON at `assets/content/pet_tips.json` for Did-You-Know cards; no backend dependency.
 
 ## 🧩 Layer Architecture
 

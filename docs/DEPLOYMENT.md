@@ -66,6 +66,21 @@ PROVISIONING_PROFILE_SPECIFIER=Squeak App Store Profile
 DEVELOPMENT_TEAM=YOUR_TEAM_ID
 ```
 
+#### Simulator/Debug Notes
+- Hot reload on iOS simulators requires local network/Bonjour permissions configured in `Info.plist`. This project includes the required keys so `flutter run` supports hot reload out of the box.
+- Ensure the iOS simulator has network access and the device is discoverable for `flutter run -d '<simulator name>'`.
+
+### macOS (Debug)
+- If running the macOS app locally, CocoaPods Firebase requires macOS 10.15 or newer. The Podfile has been updated to `platform :osx, '10.15'`.
+- After changing pods, run:
+  - `flutter clean`
+  - `flutter pub get`
+  - `cd macos && pod install && cd ..`
+
+### Assets
+- All static content must be declared in `pubspec.yaml` under `flutter/assets`.
+- Pet tips are bundled at `assets/content/pet_tips.json` and used by the Home tip banner.
+
 #### Fastlane iOS Setup
 ```ruby
 # ios/fastlane/Fastfile

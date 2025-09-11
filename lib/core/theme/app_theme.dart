@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:squeak/core/utils/theme/color_mangment/color_manager.dart';
 
 /// Modern Material 3 theme system for Squeak app
-/// Blue → Purple accent palette with clinic-grade aesthetic
+/// Clinical Blue → Purple accent palette with clinic-grade aesthetic
 class AppTheme {
-  // Design tokens
-  static const _primaryColor = Color(0xFF5B6CFF);
-  static const _secondaryColor = Color(0xFF7A57D1);
+  // Design tokens aligned with enhanced register theme
+  static const _primaryColor = ColorManager.primaryColor; // #4E6BFF
+  static const _secondaryColor = ColorManager.secondColor; // #7A57D1
   static const _backgroundColor = Color(0xFFF7F8FA);
   static const _surfaceColor = Color(0xFFFFFFFF);
   static const _errorColor = Color(0xFFD32F2F);
   
-  // Supporting colors
-  static const _successColor = Color(0xFF2E7D32);
-  static const _warningColor = Color(0xFFED6C02);
-  static const _infoColor = Color(0xFF0288D1);
+  // Supporting colors (reserved for future use)
   
-  // Dark theme colors
-  static const _darkPrimaryColor = Color(0xFF7C88FF);
-  static const _darkSecondaryColor = Color(0xFF9B7DE0);
+  // Dark theme colors (blue → purple accents with good contrast)
+  static const _darkPrimaryColor = Color(0xFF7186FF);
+  static const _darkSecondaryColor = Color(0xFF9A7AE8);
   static const _darkBackgroundColor = Color(0xFF121212);
   static const _darkSurfaceColor = Color(0xFF1E1E1E);
   
@@ -63,8 +61,8 @@ class AppTheme {
       outlineVariant: Color(0xFFCAC4D0),
     ),
     
-    // Typography with Inter/Roboto semantic scales
-    textTheme: GoogleFonts.interTextTheme().copyWith(
+    // Typography with Noto Sans semantic scales
+    textTheme: GoogleFonts.notoSansTextTheme().copyWith(
       displayLarge: GoogleFonts.inter(
         fontSize: 57,
         fontWeight: FontWeight.w400,
@@ -107,49 +105,49 @@ class AppTheme {
         letterSpacing: 0,
         height: 1.27,
       ),
-      titleMedium: GoogleFonts.inter(
+  titleMedium: GoogleFonts.notoSans(
         fontSize: 16,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.15,
         height: 1.50,
       ),
-      titleSmall: GoogleFonts.inter(
+  titleSmall: GoogleFonts.notoSans(
         fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.10,
         height: 1.43,
       ),
-      bodyLarge: GoogleFonts.inter(
+  bodyLarge: GoogleFonts.notoSans(
         fontSize: 16,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.15,
         height: 1.50,
       ),
-      bodyMedium: GoogleFonts.inter(
+  bodyMedium: GoogleFonts.notoSans(
         fontSize: 14,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.25,
         height: 1.43,
       ),
-      bodySmall: GoogleFonts.inter(
+  bodySmall: GoogleFonts.notoSans(
         fontSize: 12,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.40,
         height: 1.33,
       ),
-      labelLarge: GoogleFonts.inter(
+  labelLarge: GoogleFonts.notoSans(
         fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.10,
         height: 1.43,
       ),
-      labelMedium: GoogleFonts.inter(
+  labelMedium: GoogleFonts.notoSans(
         fontSize: 12,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.50,
         height: 1.33,
       ),
-      labelSmall: GoogleFonts.inter(
+  labelSmall: GoogleFonts.notoSans(
         fontSize: 11,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.50,
@@ -163,7 +161,7 @@ class AppTheme {
       foregroundColor: const Color(0xFF1C1B1F),
       elevation: elevation0,
       centerTitle: false,
-      titleTextStyle: GoogleFonts.inter(
+  titleTextStyle: GoogleFonts.notoSans(
         fontSize: 22,
         fontWeight: FontWeight.w600,
         color: const Color(0xFF1C1B1F),
@@ -199,7 +197,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radius20),
         ),
         elevation: elevation1,
-        textStyle: GoogleFonts.inter(
+  textStyle: GoogleFonts.notoSans(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           letterSpacing: 0.10,
@@ -220,7 +218,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radius20),
         ),
         side: const BorderSide(color: _primaryColor),
-        textStyle: GoogleFonts.inter(
+  textStyle: GoogleFonts.notoSans(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           letterSpacing: 0.10,
@@ -240,7 +238,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radius20),
         ),
-        textStyle: GoogleFonts.inter(
+        textStyle: GoogleFonts.notoSans(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           letterSpacing: 0.10,
@@ -251,7 +249,8 @@ class AppTheme {
     // Input decoration theme
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: _backgroundColor,
+      // Slightly lighter fill to match enhanced register fields
+      fillColor: const Color(0xFFFAFAFA),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(radius12),
         borderSide: const BorderSide(color: Color(0xFF79747E)),
@@ -262,19 +261,19 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(radius12),
-        borderSide: const BorderSide(color: _primaryColor, width: 2),
+        borderSide: const BorderSide(color: _primaryColor, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(radius12),
         borderSide: const BorderSide(color: _errorColor),
       ),
-      contentPadding: const EdgeInsets.all(spacing16),
-      labelStyle: GoogleFonts.inter(
+      contentPadding: const EdgeInsets.symmetric(horizontal: spacing16, vertical: spacing16),
+      labelStyle: GoogleFonts.notoSans(
         fontSize: 16,
         fontWeight: FontWeight.w400,
         color: const Color(0xFF49454F),
       ),
-      hintStyle: GoogleFonts.inter(
+      hintStyle: GoogleFonts.notoSans(
         fontSize: 16,
         fontWeight: FontWeight.w400,
         color: const Color(0xFF79747E),
@@ -302,7 +301,7 @@ class AppTheme {
     // SnackBar theme
     snackBarTheme: SnackBarThemeData(
       backgroundColor: const Color(0xFF313033),
-      contentTextStyle: GoogleFonts.inter(
+      contentTextStyle: GoogleFonts.notoSans(
         fontSize: 14,
         fontWeight: FontWeight.w400,
         color: Colors.white,
@@ -316,7 +315,7 @@ class AppTheme {
     // Chip theme
     chipTheme: ChipThemeData(
       backgroundColor: _backgroundColor,
-      labelStyle: GoogleFonts.inter(
+  labelStyle: GoogleFonts.notoSans(
         fontSize: 14,
         fontWeight: FontWeight.w400,
       ),
@@ -349,8 +348,8 @@ class AppTheme {
       outlineVariant: Color(0xFF49454F),
     ),
     
-    // Typography (same as light theme)
-    textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme).copyWith(
+  // Typography (same family as light theme)
+  textTheme: GoogleFonts.notoSansTextTheme(ThemeData.dark().textTheme).copyWith(
       displayLarge: GoogleFonts.inter(
         fontSize: 57,
         fontWeight: FontWeight.w400,
@@ -393,7 +392,7 @@ class AppTheme {
         height: 1.33,
         color: const Color(0xFFE6E1E5),
       ),
-      titleLarge: GoogleFonts.inter(
+  titleLarge: GoogleFonts.notoSans(
         fontSize: 22,
         fontWeight: FontWeight.w600,
         letterSpacing: 0,

@@ -10,19 +10,18 @@ AppBar buildAppBarHome(context) {
     automaticallyImplyLeading: false,
     centerTitle: false,
     title: ShaderMask(
-      shaderCallback:
-          (bounds) => LinearGradient(
-            colors: [
-              Colors.blue.shade900,
-              Colors.blue.shade400,
-            ], // Gradient colors
-            tileMode: TileMode.decal,
-          ).createShader(bounds),
-      child: Text(
+      shaderCallback: (bounds) => const LinearGradient(
+        colors: [
+          ColorManager.primaryColor,
+          ColorManager.secondColor,
+        ],
+        tileMode: TileMode.decal,
+      ).createShader(bounds),
+      child: const Text(
         'SQueak',
         style: TextStyle(
           fontSize: 25.0,
-          color: Colors.white, // Color here is ignored
+          color: Colors.white, // ignored, shaded by gradient
         ),
       ),
     ),

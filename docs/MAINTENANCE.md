@@ -4,6 +4,8 @@
 
 This document provides comprehensive guidance for maintaining, troubleshooting, and supporting the Squeak Flutter application throughout its lifecycle.
 
+Note (2025-09): Theme tokens are centralized in `ColorManager` and `AppTheme`. Prefer theme-based colors instead of hard-coded constants. Home tips are stored in `assets/content/pet_tips.json`; to add a new tip, append an object with `category`, `title`, and `content` fields and run `flutter pub get` if `pubspec.yaml` changes.
+
 ## 📋 Maintenance Checklist
 
 ### Daily Maintenance

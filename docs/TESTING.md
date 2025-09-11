@@ -4,6 +4,8 @@
 
 This document outlines the comprehensive testing strategy for the Squeak Flutter application, including unit tests, widget tests, integration tests, and testing best practices.
 
+Note (2025-09): Recent UI-only updates include a theme palette change and a Home tip banner sourced from a local JSON asset. No API contracts changed; existing tests remain valid. Prefer snapshot (golden) tests for the new `DidYouKnowCard` variations and smoke tests for Home rendering.
+
 ## 🏗️ Testing Architecture
 
 ### Testing Pyramid Structure

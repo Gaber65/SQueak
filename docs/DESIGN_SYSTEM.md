@@ -8,14 +8,14 @@ This document outlines the complete design system for the Squeak Flutter applica
 
 ### Primary Colors
 ```dart
-// Purple Gradient Theme
-static const Color primaryColor = Color(0xFF5B6CFF);
+// Clinical Blue → Purple Theme
+static const Color primaryColor = Color(0xFF4E6BFF);
 static const Color primaryVariant = Color(0xFF7A57D1);
-static const Color secondaryColor = Color(0xFFFF7029);
+static const Color secondaryColor = Color(0xFF7A57D1);
 
 // Gradient Definition
 LinearGradient primaryGradient = LinearGradient(
-  colors: [Color(0xFF5B6CFF), Color(0xFF7A57D1)],
+  colors: [Color(0xFF4E6BFF), Color(0xFF7A57D1)],
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
 );
@@ -49,7 +49,7 @@ static const Color infoColor = Color(0xFF17A2B8);
 // Usage in Components
 Container(
   decoration: BoxDecoration(
-    color: ColorManager.successColor,
+    color: Theme.of(context).colorScheme.primary,
     borderRadius: BorderRadius.circular(8),
   ),
 )

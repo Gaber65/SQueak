@@ -4,6 +4,8 @@
 
 This document outlines the API integration and networking architecture for the Squeak Flutter application.
 
+Note: The Home screen "Did You Know?" tips currently load from a local asset (`assets/content/pet_tips.json`) via `PetTipsRepository` and are not fetched from the backend.
+
 ## 🔗 Base Configuration
 
 ### API Endpoints
