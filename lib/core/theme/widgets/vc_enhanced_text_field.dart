@@ -160,7 +160,7 @@ class _VcEnhancedTextFieldState extends State<VcEnhancedTextField>
           child: Padding(
             padding: const EdgeInsets.only(top: 4),
             child: Text(
-              _validationResult!.message,
+              _validationResult!.message ?? '',
               style: TextStyle(
                 fontSize: 12,
                 color: _getBorderColor(),

@@ -5,15 +5,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Advanced cache manager with TTL, compression, and multiple storage strategies
 class AdvancedCacheManager {
-  static const String _keyPrefix = 'cache_';
+  static const String _cachePrefix = 'cache_';
   static const String _expiryPrefix = 'expiry_';
-  
-  static final AdvancedCacheManager _instance = AdvancedCacheManager._internal();
+  static const String _metadataPrefix = 'metadata_';
+  static const Duration _defaultTTL = Duration(hours: 24);
+  static const int _maxMemoryCacheSize = 100;
+
+  static final AdvancedCacheManager _instance =
+      AdvancedCacheManager._internal();
   factory AdvancedCacheManager() => _instance;
   AdvancedCacheManager._internal();
 
   final Map<String, dynamic> _memoryCache = {};
-  bool _isInitialized = false;
+  SharedPreferences? _prefs;
+  Timer? _cleanupTimer;
 
   /// Initialize the cache manager
   Future<void> initialize() async {
@@ -44,12 +49,14 @@ class AdvancedCacheManager {
     );
 
     // Store in memory cache
-    if (strategy == CacheStrategy.memoryAndDisk || strategy == CacheStrategy.memoryOnly) {
+    if (strategy == CacheStrategy.memoryAndDisk ||
+        strategy == CacheStrategy.memoryOnly) {
       _addToMemoryCache(key, cacheItem);
     }
 
     // Store in persistent cache
-    if (strategy == CacheStrategy.memoryAndDisk || strategy == CacheStrategy.diskOnly) {
+    if (strategy == CacheStrategy.memoryAndDisk ||
+        strategy == CacheStrategy.diskOnly) {
       await _saveToDisk(key, cacheItem);
     }
 
@@ -80,7 +87,7 @@ class AdvancedCacheManager {
       if (diskItem.strategy == CacheStrategy.memoryAndDisk) {
         _addToMemoryCache(key, diskItem);
       }
-      
+
       if (kDebugMode) {
         debugPrint('Disk cache hit: $key');
       }
@@ -109,14 +116,15 @@ class AdvancedCacheManager {
   /// Clear all cached data
   Future<void> clear() async {
     _memoryCache.clear();
-    
+
     final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys().where((key) => key.startsWith(_keyPrefix)).toList();
-    
+    final keys =
+        prefs.getKeys().where((key) => key.startsWith(_cachePrefix)).toList();
+
     for (final key in keys) {
       await prefs.remove(key);
     }
-    
+
     if (kDebugMode) {
       debugPrint('Cleared ${keys.length} cache entries');
     }
@@ -126,12 +134,12 @@ class AdvancedCacheManager {
   Future<void> delete(String key) async {
     // Remove from memory cache
     _memoryCache.remove(key);
-    
+
     // Remove from disk cache
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_getStorageKey(key));
     await prefs.remove(_getExpiryKey(key));
-    
+
     if (kDebugMode) {
       debugPrint('Deleted cache key: $key');
     }
@@ -140,8 +148,9 @@ class AdvancedCacheManager {
   /// Get cache statistics
   CacheStatistics getStatistics() {
     final memorySize = _memoryCache.length;
-    final memoryHits = _memoryCache.values.where((item) => !item.isExpired).length;
-    
+    final memoryHits =
+        _memoryCache.values.where((item) => !item.isExpired).length;
+
     return CacheStatistics(
       memoryCacheSize: memorySize,
       memoryCacheHits: memoryHits,
@@ -153,9 +162,12 @@ class AdvancedCacheManager {
   void _addToMemoryCache(String key, CacheItem item) {
     // Remove oldest items if cache is full
     if (_memoryCache.length >= _maxMemoryCacheSize) {
-      final oldestKey = _memoryCache.entries
-          .reduce((a, b) => a.value.createdAt.isBefore(b.value.createdAt) ? a : b)
-          .key;
+      final oldestKey =
+          _memoryCache.entries
+              .reduce(
+                (a, b) => a.value.createdAt.isBefore(b.value.createdAt) ? a : b,
+              )
+              .key;
       _memoryCache.remove(oldestKey);
     }
 
@@ -186,8 +198,12 @@ class AdvancedCacheManager {
       final metadata = json.decode(metadataString);
       final isCompressed = metadata['isCompressed'] as bool;
       final strategy = CacheStrategy.values[metadata['strategy'] as int];
-      final expiryTime = DateTime.fromMillisecondsSinceEpoch(metadata['expiryTime'] as int);
-      final createdAt = DateTime.fromMillisecondsSinceEpoch(metadata['createdAt'] as int);
+      final expiryTime = DateTime.fromMillisecondsSinceEpoch(
+        metadata['expiryTime'] as int,
+      );
+      final createdAt = DateTime.fromMillisecondsSinceEpoch(
+        metadata['createdAt'] as int,
+      );
 
       final decompressedData = isCompressed ? _decompress(rawData) : rawData;
       final data = json.decode(decompressedData) as T;
@@ -215,11 +231,13 @@ class AdvancedCacheManager {
     var loadedCount = 0;
 
     for (final key in keys) {
-      if (key.startsWith(_cachePrefix) && loadedCount < _maxMemoryCacheSize ~/ 2) {
+      if (key.startsWith(_cachePrefix) &&
+          loadedCount < _maxMemoryCacheSize ~/ 2) {
         final cacheKey = key.substring(_cachePrefix.length);
         final item = await _loadFromDisk(cacheKey);
-        
-        if (item != null && !item.isExpired && 
+
+        if (item != null &&
+            !item.isExpired &&
             (item.strategy == CacheStrategy.memoryAndDisk)) {
           _memoryCache[cacheKey] = item;
           loadedCount++;
@@ -239,6 +257,12 @@ class AdvancedCacheManager {
     });
   }
 
+  /// Get storage key with prefix
+  String _getStorageKey(String key) => '$_cachePrefix$key';
+
+  /// Get expiry key with prefix
+  String _getExpiryKey(String key) => '$_expiryPrefix$key';
+
   /// Clean up expired cache items
   Future<void> _cleanupExpiredItems() async {
     // Clean memory cache
@@ -252,7 +276,7 @@ class AdvancedCacheManager {
       if (key.startsWith(_metadataPrefix)) {
         final cacheKey = key.substring(_metadataPrefix.length);
         final item = await _loadFromDisk(cacheKey);
-        
+
         if (item != null && item.isExpired) {
           await remove(cacheKey);
           removedCount++;
@@ -315,11 +339,7 @@ class CacheItem<T> {
 }
 
 /// Cache strategy options
-enum CacheStrategy {
-  memoryOnly,
-  diskOnly,
-  memoryAndDisk,
-}
+enum CacheStrategy { memoryOnly, diskOnly, memoryAndDisk }
 
 /// Cache statistics
 class CacheStatistics {
@@ -333,10 +353,11 @@ class CacheStatistics {
     required this.totalCacheSize,
   });
 
-  double get hitRate => memoryCacheSize > 0 ? memoryCacheHits / memoryCacheSize : 0.0;
+  double get hitRate =>
+      memoryCacheSize > 0 ? memoryCacheHits / memoryCacheSize : 0.0;
 
   @override
   String toString() {
-    return 'Cache Stats: Memory(${memoryCacheSize}), Hits(${memoryCacheHits}), Hit Rate(${(hitRate * 100).toStringAsFixed(1)}%)';
+    return 'Cache Stats: Memory($memoryCacheSize), Hits($memoryCacheHits), Hit Rate(${(hitRate * 100).toStringAsFixed(1)}%)';
   }
 }
