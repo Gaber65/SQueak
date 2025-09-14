@@ -42,7 +42,7 @@ class VcEnhancedTextField extends StatefulWidget {
   State<VcEnhancedTextField> createState() => _VcEnhancedTextFieldState();
 }
 
-class _VcEnhancedTextFieldState extends State<VcEnhancedTextField> 
+class _VcEnhancedTextFieldState extends State<VcEnhancedTextField>
     with SingleTickerProviderStateMixin {
   ValidationResult? _validationResult;
   late AnimationController _validationAnimationController;
@@ -56,13 +56,12 @@ class _VcEnhancedTextFieldState extends State<VcEnhancedTextField>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _validationAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _validationAnimationController,
-      curve: Curves.easeInOut,
-    ));
+    _validationAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _validationAnimationController,
+        curve: Curves.easeInOut,
+      ),
+    );
 
     widget.controller.addListener(_onTextChanged);
   }
@@ -76,11 +75,11 @@ class _VcEnhancedTextFieldState extends State<VcEnhancedTextField>
 
   void _onTextChanged() {
     if (!widget.enableRealTimeValidation || !_hasInteracted) return;
-    
+
     setState(() {
       _validationResult = widget.validator?.call(widget.controller.text);
     });
-    
+
     if (_validationResult != null) {
       _validationAnimationController.forward();
       widget.onValidationChanged?.call();
@@ -97,7 +96,7 @@ class _VcEnhancedTextFieldState extends State<VcEnhancedTextField>
 
   Color _getBorderColor() {
     if (_validationResult == null) return Colors.grey[300]!;
-    
+
     switch (_validationResult!.severity) {
       case ValidationSeverity.success:
         return Colors.green;
@@ -112,10 +111,10 @@ class _VcEnhancedTextFieldState extends State<VcEnhancedTextField>
 
   Widget? _buildValidationIcon() {
     if (!widget.showValidationIcon || _validationResult == null) return null;
-    
+
     IconData iconData;
     Color iconColor;
-    
+
     switch (_validationResult!.severity) {
       case ValidationSeverity.success:
         iconData = Icons.check_circle;
@@ -133,17 +132,13 @@ class _VcEnhancedTextFieldState extends State<VcEnhancedTextField>
         iconData = Icons.info;
         iconColor = Colors.blue;
     }
-    
+
     return AnimatedBuilder(
       animation: _validationAnimation,
       builder: (context, child) {
         return Transform.scale(
           scale: _validationAnimation.value,
-          child: Icon(
-            iconData,
-            color: iconColor,
-            size: 20,
-          ),
+          child: Icon(iconData, color: iconColor, size: 20),
         );
       },
     );
@@ -151,7 +146,7 @@ class _VcEnhancedTextFieldState extends State<VcEnhancedTextField>
 
   Widget? _buildValidationMessage() {
     if (_validationResult == null || !_hasInteracted) return null;
-    
+
     return AnimatedBuilder(
       animation: _validationAnimation,
       builder: (context, child) {
@@ -160,7 +155,7 @@ class _VcEnhancedTextFieldState extends State<VcEnhancedTextField>
           child: Padding(
             padding: const EdgeInsets.only(top: 4),
             child: Text(
-              _validationResult!.message,
+              _validationResult!.message ?? '',
               style: TextStyle(
                 fontSize: 12,
                 color: _getBorderColor(),
@@ -204,15 +199,14 @@ class _VcEnhancedTextFieldState extends State<VcEnhancedTextField>
               prefixIcon: widget.prefixIcon,
               suffixIcon: widget.suffixIcon ?? _buildValidationIcon(),
               border: InputBorder.none,
-              contentPadding: widget.contentPadding ?? 
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding:
+                  widget.contentPadding ??
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               labelStyle: TextStyle(
                 color: _getBorderColor(),
                 fontWeight: FontWeight.w500,
               ),
-              hintStyle: TextStyle(
-                color: Colors.grey[400],
-              ),
+              hintStyle: TextStyle(color: Colors.grey[400]),
             ),
           ),
         ),

@@ -33,25 +33,26 @@ abstract class AppointmentRemoteDataSource {
 }
 
 class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
-  final AdvancedPerformanceMonitor _performanceMonitor = AdvancedPerformanceMonitor();
+  final AdvancedPerformanceMonitor _performanceMonitor =
+      AdvancedPerformanceMonitor();
 
   @override
   Future<List<AvailabilityModel>> getAvailabilities(String clinicCode) async {
     final stopwatch = Stopwatch()..start();
-    
+
     try {
       final response = await DioFinalHelper.getData(
         method: getAvailabilitiesEndPoint(clinicCode),
         language: true,
       );
-      
+
       stopwatch.stop();
       _performanceMonitor.trackNetworkRequest(
         'get_availabilities',
         stopwatch.elapsedMilliseconds,
         statusCode: response.statusCode,
       );
-      
+
       final List data = response.data['data'];
       return data
           .map((e) => AvailabilityModel.fromJson(e))
@@ -66,7 +67,7 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
         statusCode: e.response?.statusCode,
         error: e.message,
       );
-      
+
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

@@ -12,7 +12,7 @@ class OfflineManager {
   final Connectivity _connectivity = Connectivity();
   final AdvancedCacheManager _cache = AdvancedCacheManager();
   final List<OfflineOperation> _pendingOperations = [];
-  
+
   bool _isOnline = true;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
   Timer? _syncTimer;
@@ -39,7 +39,7 @@ class OfflineManager {
       if (_isOnline) {
         // Try to fetch fresh data
         final freshData = await onlineDataFetcher();
-        
+
         // Cache the fresh data
         await _cache.set(
           key: key,
@@ -47,7 +47,7 @@ class OfflineManager {
           ttl: cacheTTL ?? const Duration(hours: 24),
           strategy: CacheStrategy.memoryAndDisk,
         );
-        
+
         return freshData;
       }
     } catch (e) {
@@ -74,12 +74,14 @@ class OfflineManager {
   /// Queue operation for when online
   Future<void> queueOperation(OfflineOperation operation) async {
     _pendingOperations.add(operation);
-    
+
     // Save to persistent storage
     await _savePendingOperations();
-    
+
     if (kDebugMode) {
-      debugPrint('Queued operation: ${operation.type} (${_pendingOperations.length} pending)');
+      debugPrint(
+        'Queued operation: ${operation.type} (${_pendingOperations.length} pending)',
+      );
     }
 
     // Try to sync immediately if online
@@ -131,7 +133,8 @@ class OfflineManager {
   /// Update connectivity status
   void _updateConnectivityStatus(List<ConnectivityResult> results) {
     final wasOnline = _isOnline;
-    _isOnline = results.isNotEmpty && !results.contains(ConnectivityResult.none);
+    _isOnline =
+        results.isNotEmpty && !results.contains(ConnectivityResult.none);
 
     if (kDebugMode) {
       debugPrint('Connectivity changed: ${_isOnline ? "ONLINE" : "OFFLINE"}');
@@ -189,14 +192,14 @@ class OfflineManager {
   Future<bool> _executeOperation(OfflineOperation operation) async {
     // This would integrate with your API client
     // For now, we'll simulate the operation
-    
+
     if (kDebugMode) {
       debugPrint('Executing ${operation.type}: ${operation.id}');
     }
 
     // Simulate API call delay
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     // Simulate success/failure (90% success rate)
     return DateTime.now().millisecond % 10 != 0;
   }

@@ -31,7 +31,6 @@ class RegisterScreen extends StatelessWidget {
         // Initialize necessary data
         cubit.loadCountries().then((value) => cubit.detectCountryCode());
 
-
         return cubit;
       },
       child: BlocConsumer<RegisterCubit, RegisterState>(
@@ -48,7 +47,6 @@ class RegisterScreen extends StatelessWidget {
               ),
             );
           }
-
         },
         builder: (context, state) {
           final cubit = RegisterCubit.get(context);

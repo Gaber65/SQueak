@@ -54,7 +54,9 @@ class AllAppointment extends StatelessWidget {
             length: 2,
             child: Builder(
               builder: (context) {
-                final TabController tabController = DefaultTabController.of(context);
+                final TabController tabController = DefaultTabController.of(
+                  context,
+                );
 
                 return Scaffold(
                   appBar: AppBar(
@@ -96,7 +98,12 @@ class AllAppointment extends StatelessWidget {
                               color: ColorManager.primaryColor,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            unselectedLabelColor: Color.fromRGBO(129, 136, 152, 1),
+                            unselectedLabelColor: Color.fromRGBO(
+                              129,
+                              136,
+                              152,
+                              1,
+                            ),
                             indicatorWeight: 2,
                             padding: EdgeInsets.all(6),
                             labelStyle: FontStyleThame.textStyle(
@@ -123,106 +130,110 @@ class AllAppointment extends StatelessWidget {
                   body: TabBarView(
                     children: [
                       Scaffold(
-                        body:   Column(
-                  children: [
-                      const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: BlocConsumer<
-                            UserAppointmentCubit,
-                            UserAppointmentState
-                        >(
-                          builder: (context, state) {
-                            return buildStateFilter(context);
-                          },
-                          listener: (context, state) {},
-                        ),
-                      ),
-                      Expanded(
-                        child: BlocConsumer<PetCubit, PetState>(
-                          builder: (context, state) {
-                            return buildPetFilter(
-                              context,
-                              PetCubit.get(context).pets,
-                            );
-                          },
-                          listener: (context, state) {},
-                        ),
-                      ),
-                      if (state is AppointmentFiltered)
-                        IconButton(
-                          icon: Icon(Icons.clear), // Clear icon
-                          onPressed: () {
-                            UserAppointmentCubit.get(
-                              context,
-                            ).clearFilters();
-                          },
-                        ),
-                    ],
-                  ),
-                  Expanded(
-                    child: BlocConsumer<
-                        UserAppointmentCubit,
-                        UserAppointmentState
-                    >(
-                      listener: (context, state) {},
-
-                      builder: (context, state) {
-                        if (state is GetAppointmentLoading && cubit.appointments.isEmpty) {
-                          return ListView.builder(
-                            itemCount: 6,
-                            itemBuilder: (context, index) => appointmentShimmerItem(context),
-                            physics: const BouncingScrollPhysics(),
-                          );
-                        } else if (cubit.appointments.isEmpty) {
-                          return emptyAppointment(context);
-                        } else if (state is AppointmentFiltered) {
-                          return ListView.builder(
-                            itemBuilder: (context, index) {
-                              return buildItem(
-                                state.appointments[index],
-                                context,
-                                cubit,
-                                index,
-                              );
-                            },
-                            itemCount: state.appointments.length,
-                            physics: const BouncingScrollPhysics(),
-                          );
-                        } else {
-                          return RefreshIndicator(
-                            onRefresh: () async {
-                              await cubit.getAppointment(false);
-                            },
-                            child: ListView.builder(
-                              itemBuilder: (context, index) {
-                                return buildItem(
-                                  cubit.appointments[index],
-                                  context,
-                                  cubit,
-                                  index,
-                                );
-                              },
-                              itemCount: cubit.appointments.length,
-                              physics: const BouncingScrollPhysics(),
+                        body: Column(
+                          children: [
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: BlocConsumer<
+                                    UserAppointmentCubit,
+                                    UserAppointmentState
+                                  >(
+                                    builder: (context, state) {
+                                      return buildStateFilter(context);
+                                    },
+                                    listener: (context, state) {},
+                                  ),
+                                ),
+                                Expanded(
+                                  child: BlocConsumer<PetCubit, PetState>(
+                                    builder: (context, state) {
+                                      return buildPetFilter(
+                                        context,
+                                        PetCubit.get(context).pets,
+                                      );
+                                    },
+                                    listener: (context, state) {},
+                                  ),
+                                ),
+                                if (state is AppointmentFiltered)
+                                  IconButton(
+                                    icon: Icon(Icons.clear), // Clear icon
+                                    onPressed: () {
+                                      UserAppointmentCubit.get(
+                                        context,
+                                      ).clearFilters();
+                                    },
+                                  ),
+                              ],
                             ),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                  ],
-                ),
-                       floatingActionButton:   FloatingActionButton(
-                            backgroundColor: ColorManager.primaryColor,
-                            onPressed: () {
-                              LayoutCubit.get(context).changeBottomNav(1);
-                              navigateAndFinish(context, LayoutScreen());
-                            },
-                            child:
-                            const Icon(IconlyLight.calendar, color: Colors.white),
+                            Expanded(
+                              child: BlocConsumer<
+                                UserAppointmentCubit,
+                                UserAppointmentState
+                              >(
+                                listener: (context, state) {},
+
+                                builder: (context, state) {
+                                  if (state is GetAppointmentLoading) {
+                                    return ListView.builder(
+                                      itemCount: 6,
+                                      itemBuilder:
+                                          (context, index) =>
+                                              appointmentShimmerItem(context),
+                                      physics: const BouncingScrollPhysics(),
+                                    );
+                                  } else if (cubit.appointments.isEmpty) {
+                                    return emptyAppointment(context);
+                                  } else if (state is AppointmentFiltered) {
+                                    return ListView.builder(
+                                      itemBuilder: (context, index) {
+                                        return buildItem(
+                                          state.appointments[index],
+                                          context,
+                                          cubit,
+                                          index,
+                                        );
+                                      },
+                                      itemCount: state.appointments.length,
+                                      physics: const BouncingScrollPhysics(),
+                                    );
+                                  } else {
+                                    return RefreshIndicator(
+                                      onRefresh: () async {
+                                        await cubit.getAppointment(false);
+                                      },
+                                      child: ListView.builder(
+                                        itemBuilder: (context, index) {
+                                          return buildItem(
+                                            cubit.appointments[index],
+                                            context,
+                                            cubit,
+                                            index,
+                                          );
+                                        },
+                                        itemCount: cubit.appointments.length,
+                                        physics: const BouncingScrollPhysics(),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        floatingActionButton: FloatingActionButton(
+                          backgroundColor: ColorManager.primaryColor,
+                          onPressed: () {
+                            LayoutCubit.get(context).changeBottomNav(1);
+                            navigateAndFinish(context, LayoutScreen());
+                          },
+                          child: const Icon(
+                            IconlyLight.calendar,
+                            color: Colors.white,
                           ),
+                        ),
                       ),
 
                       BlocConsumer<BoardingCubit, BoardingState>(
@@ -247,12 +258,15 @@ class AllAppointment extends StatelessWidget {
                                     ),
                                   ),
                                   Expanded(
-                                    child: BlocConsumer<LayoutCubit, LayoutState>(
-                                      builder: (context, state) {
-                                        return buildStateFilterBoarding(context);
-                                      },
-                                      listener: (context, state) {},
-                                    ),
+                                    child:
+                                        BlocConsumer<LayoutCubit, LayoutState>(
+                                          builder: (context, state) {
+                                            return buildStateFilterBoarding(
+                                              context,
+                                            );
+                                          },
+                                          listener: (context, state) {},
+                                        ),
                                   ),
                                   if (state is BoardingFiltered)
                                     IconButton(
@@ -271,24 +285,30 @@ class AllAppointment extends StatelessWidget {
                                         ? ListView.builder(
                                           itemBuilder: (context, index) {
                                             return BoardingCard(
-                                              isDarkMode:MainCubit.get(context).isDark,
-                                              entry: state.filteredEntries[index],
+                                              isDarkMode:
+                                                  MainCubit.get(context).isDark,
+                                              entry:
+                                                  state.filteredEntries[index],
                                               cubit: boardingCubit,
                                             );
                                           },
-                                          itemCount: state.filteredEntries.length,
-                                          physics: const BouncingScrollPhysics(),
+                                          itemCount:
+                                              state.filteredEntries.length,
+                                          physics:
+                                              const BouncingScrollPhysics(),
                                         )
                                         : RefreshIndicator(
                                           onRefresh: () async {
-                                            await boardingCubit.getBoardingEntries(
-                                              true,
-                                            );
+                                            await boardingCubit
+                                                .getBoardingEntries(true);
                                           },
                                           child: ListView.builder(
                                             itemBuilder: (context, index) {
                                               return BoardingCard(
-                                                isDarkMode:MainCubit.get(context).isDark,
+                                                isDarkMode:
+                                                    MainCubit.get(
+                                                      context,
+                                                    ).isDark,
 
                                                 entry:
                                                     boardingCubit
@@ -300,7 +320,8 @@ class AllAppointment extends StatelessWidget {
                                                 boardingCubit
                                                     .boardingEntries
                                                     .length,
-                                            physics: const BouncingScrollPhysics(),
+                                            physics:
+                                                const BouncingScrollPhysics(),
                                           ),
                                         ),
                               ),
@@ -311,7 +332,7 @@ class AllAppointment extends StatelessWidget {
                     ],
                   ),
                 );
-              }
+              },
             ),
           );
         },

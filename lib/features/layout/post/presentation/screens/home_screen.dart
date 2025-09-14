@@ -29,10 +29,10 @@ class HomeScreen extends StatelessWidget {
           var cubit = PostCubit.get(context);
           return Scaffold(
             appBar: buildAppBarHome(context),
-      body: Column(
+            body: Column(
               children: [
                 const _PetTipBanner(),
-        const _ActivePetSummary(),
+                const _ActivePetSummary(),
                 Expanded(child: _buildBody(cubit, state)),
               ],
             ),
@@ -68,7 +68,7 @@ class _PetTipBanner extends StatelessWidget {
           return const SizedBox(height: 0);
         }
         final tips = snapshot.data ?? const <PetTip>[];
-  if (tips.isEmpty) return const SizedBox(height: 0);
+        if (tips.isEmpty) return const SizedBox(height: 0);
         final tip = tips.first;
         return DidYouKnowCard(
           title: tip.title,
