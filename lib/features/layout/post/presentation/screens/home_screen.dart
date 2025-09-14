@@ -29,10 +29,10 @@ class HomeScreen extends StatelessWidget {
           var cubit = PostCubit.get(context);
           return Scaffold(
             appBar: buildAppBarHome(context),
-      body: Column(
+            body: Column(
               children: [
                 const _PetTipBanner(),
-        const _ActivePetSummary(),
+                const _ActivePetSummary(),
                 Expanded(child: _buildBody(cubit, state)),
               ],
             ),
@@ -56,11 +56,22 @@ class HomeScreen extends StatelessWidget {
 }
 
 /// Lightweight tip banner shown at top of Home
-class _PetTipBanner extends StatelessWidget {
+class _PetTipBanner extends StatefulWidget {
   const _PetTipBanner();
 
   @override
+  _PetTipBannerState createState() => _PetTipBannerState();
+}
+
+class _PetTipBannerState extends State<_PetTipBanner> {
+  static bool _isDismissed = false;
+
+  @override
   Widget build(BuildContext context) {
+    if (_isDismissed) {
+      return const SizedBox(height: 0);
+    }
+
     return FutureBuilder<List<PetTip>>(
       future: const PetTipsRepository().loadTips(),
       builder: (context, snapshot) {
@@ -68,7 +79,9 @@ class _PetTipBanner extends StatelessWidget {
           return const SizedBox(height: 0);
         }
         final tips = snapshot.data ?? const <PetTip>[];
-  if (tips.isEmpty) return const SizedBox(height: 0);
+        if (tips.isEmpty) {
+          return const SizedBox(height: 0);
+        }
         final tip = tips.first;
         return DidYouKnowCard(
           title: tip.title,
@@ -76,7 +89,9 @@ class _PetTipBanner extends StatelessWidget {
           category: tip.category,
           isDismissible: true,
           onDismiss: () {
-            // no-op; UI hint only
+            setState(() {
+              _isDismissed = true;
+            });
           },
         );
       },
