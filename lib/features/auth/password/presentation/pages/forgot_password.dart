@@ -21,7 +21,7 @@ class ForgotPasswordScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create:
-          (BuildContext context) => PasswordCubit(
+          (_) => PasswordCubit(
             forgetPasswordUseCase: ForgetPasswordUseCase(
               PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
             ),
@@ -53,11 +53,13 @@ class ForgotPasswordScreen extends StatelessWidget {
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                onPressed: () => Navigator.pop(context),
+              ),
               actions: [
                 InkWell(
-                  onTap: () {
-                    navigateToScreen(context, ContactScreen());
-                  },
+                  onTap: () => navigateToScreen(context, ContactScreen()),
                   borderRadius: BorderRadius.circular(100),
                   child: Card(
                     color: const Color(0xFF7B5CE6).withOpacity(0.15),
@@ -72,185 +74,221 @@ class ForgotPasswordScreen extends StatelessWidget {
             ),
             body: LayoutBuilder(
               builder: (context, constraints) {
-                final width = constraints.maxWidth;
-                final height = constraints.maxHeight;
-                final isTablet = width > 600;
-                final double fontScale = isTablet ? 1.4 : 1.0;
-                final double padding = isTablet ? 32.0 : 20.0;
-                final double imageHeight =
-                    isTablet ? height * 0.45 : height * 0.38;
+                final isTablet = constraints.maxWidth > 600;
+                final fontScale = isTablet ? 1.4 : 1.0;
+                final double headerHeight =
+                    isTablet
+                        ? constraints.maxHeight * 0.4
+                        : constraints.maxHeight * 0.38;
 
-                return SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: padding,
-                    vertical: padding / 2,
-                  ),
-                  child: Form(
-                    key: cubit.formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Stack(
-                          alignment: Alignment.center,
+                return Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: headerHeight,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF7B5CE6),
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(24),
+                          bottomRight: Radius.circular(24),
+                        ),
+                      ),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            top: 20,
+                            left: 30,
+                            child: Icon(
+                              Icons.pets,
+                              color: Colors.white24,
+                              size: 50,
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 40,
+                            right: 40,
+                            child: Icon(
+                              Icons.pets,
+                              color: Colors.white24,
+                              size: 70,
+                            ),
+                          ),
+                          Positioned(
+                            top: 10,
+                            right: 80,
+                            child: Icon(
+                              Icons.pets,
+                              color: Colors.white24,
+                              size: 50,
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 10,
+                            left: 80,
+                            child: Icon(
+                              Icons.pets,
+                              color: Colors.white24,
+                              size: 40,
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.pets,
+                                  color: Colors.white,
+                                  size: 60,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'Welcome Back!',
+                                  style: TextStyle(
+                                    fontSize: 28 * fontScale,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                  ),
+                                  child: Text(
+                                    'Your furry friends are waiting for you! 🐾',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 16 * fontScale,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isTablet ? 40 : 24,
+                          vertical: isTablet ? 30 : 20,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Positioned(
-                              top: -imageHeight * 0.1,
-                              left: -imageHeight * 0.05,
-                              child: Transform.scale(
-                                scale: 0.8,
-                                child: Icon(
-                                  Icons.star,
-                                  size: imageHeight * 0.15,
-                                  color: const Color(
-                                    0xFF7B5CE6,
-                                  ).withOpacity(0.2),
+                            Column(
+                              children: [
+                                Text(
+                                  'Forgot Your Password ? 🐾',
+                                  style: TextStyle(
+                                    fontSize: 20 * fontScale,
+                                    fontWeight: FontWeight.bold,
+                                    color: ColorManager.secondColor,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: -imageHeight * 0.05,
-                              right: -imageHeight * 0.1,
-                              child: Transform.scale(
-                                scale: 1.2,
-                                child: Icon(
-                                  Icons.heart_broken,
-                                  size: imageHeight * 0.2,
-                                  color: Colors.red.withOpacity(0.1),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'Enter your registered email below to receive a reset code and return to your pet paradise!',
+                                  style: TextStyle(
+                                    fontSize: 14 * fontScale,
+                                    color: Colors.grey[700],
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                              ),
+                              ],
                             ),
-                            Container(
-                              height: imageHeight,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(
-                                      0xFF7B5CE6,
-                                    ).withOpacity(0.1),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 5),
+                            MyTextForm(
+                              controller: cubit.emailController,
+                              prefixIcon: const Icon(
+                                Icons.alternate_email_sharp,
+                                color: ColorManager.secondColor,
+                              ),
+                              enable: true,
+                              hintText: S.of(context).enterUrEmail,
+                              validatorText: S.of(context).email_valid,
+                              obscureText: false,
+                            ),
+                            VcLoadingButton(
+                              onPressed: () {
+                                if (cubit.formKey.currentState!.validate()) {
+                                  cubit.forgetPassword();
+                                }
+                              },
+                              isLoading: cubit.isForgetPassword,
+                              backgroundColor: ColorManager.secondColor,
+                              borderRadius: 14,
+                              height: isTablet ? 60 : 50,
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    S.of(context).send,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18 * fontScale,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8 * fontScale),
+                                  Icon(
+                                    Icons.pets,
+                                    color: Colors.white,
+                                    size: 22 * fontScale,
                                   ),
                                 ],
                               ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.asset(
-                                  'assets/forgetpassord_new.jpg',
-                                  height: imageHeight,
-                                  fit: BoxFit.cover,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Remembered your password ?',
+                                  style: TextStyle(
+                                    fontSize: 14 * fontScale,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed:
+                                      () => navigateToScreen(
+                                        context,
+                                        LoginScreen(),
+                                      ),
+                                  child: Text(
+                                    S.of(context).login,
+                                    style: TextStyle(
+                                      fontSize: 14 * fontScale,
+                                      fontWeight: FontWeight.bold,
+                                      color: ColorManager.secondColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Wrap(
+                              spacing: 8,
+                              alignment: WrapAlignment.center,
+                              children: List.generate(
+                                6,
+                                (index) => Icon(
+                                  Icons.pets,
+                                  size: isTablet ? 40 : 28,
+                                  color: const Color(
+                                    0xFF7B5CE6,
+                                  ).withOpacity(0.7),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
-                        Text(
-                          isArabic()
-                              ? 'نسيت كلمة المرور؟'
-                              : 'Forgot Your Password ? 🐾',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 22 * fontScale,
-                            fontWeight: FontWeight.bold,
-                            color: ColorManager.secondColor,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          isArabic()
-                              ? 'أدخل بريدك الإلكتروني المسجل أدناه لاستلام رمز لإعادة التعيين.'
-                              : 'Enter your registered email below to receive a reset code and return to your pet paradise!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14 * fontScale,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                        const SizedBox(height: 30),
-                        MyTextForm(
-                          controller: cubit.emailController,
-                          prefixIcon: const Icon(
-                            Icons.alternate_email_sharp,
-                            color: ColorManager.secondColor,
-                          ),
-                          enable: true,
-                          hintText: S.of(context).enterUrEmail,
-                          validatorText: S.of(context).email_valid,
-                          obscureText: false,
-                        ),
-                        const SizedBox(height: 25),
-                        VcLoadingButton(
-                          onPressed: () {
-                            if (cubit.formKey.currentState!.validate()) {
-                              cubit.forgetPassword();
-                            }
-                          },
-                          isLoading: cubit.isForgetPassword,
-                          backgroundColor: ColorManager.secondColor,
-                          borderRadius: 30,
-                          height: isTablet ? 60 : 50,
-                          width: double.infinity,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                S.of(context).send,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16 * fontScale,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Icon(Icons.pets),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              isArabic()
-                                  ? 'تذكرت كلمة المرور؟'
-                                  : 'Remembered your password ?',
-                              style: TextStyle(
-                                fontSize: 14 * fontScale,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                navigateToScreen(context, LoginScreen());
-                              },
-                              child: Text(
-                                S.of(context).login,
-                                style: TextStyle(
-                                  fontSize: 14 * fontScale,
-                                  fontWeight: FontWeight.bold,
-                                  color: ColorManager.secondColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 30),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          alignment: WrapAlignment.center,
-                          children: List.generate(
-                            6,
-                            (index) => Icon(
-                              Icons.pets,
-                              size: isTablet ? 40 : 28,
-                              color: const Color(0xFF7B5CE6).withOpacity(0.7),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 );
               },
             ),
