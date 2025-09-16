@@ -1,7 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:squeak/core/network/end-points.dart';
-import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/global_widget/ImageDetail.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import '../../domain/entities/boarding_entry_entity.dart';
@@ -36,32 +36,14 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   late AnimationController _pulseController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
-  late Animation<double> _pulseAnimation;
 
   // Enhanced Dark Mode Color Scheme
-  ColorScheme get _colorScheme =>
-      widget.isDarkMode ? const ColorScheme.dark() : const ColorScheme.light();
-
-  Color get _backgroundColor =>
-      widget.isDarkMode ? Colors.grey.shade900 : Colors.white;
-
-  Color get _surfaceColor =>
-      widget.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade50;
-
-  Color get _cardColor =>
-      widget.isDarkMode ? Colors.grey.shade800 : Colors.white;
-
-  Color get _borderColor =>
-      widget.isDarkMode ? Colors.grey.shade700 : Colors.grey.shade200;
 
   Color get _textPrimaryColor =>
       widget.isDarkMode ? Colors.white : Colors.black87;
 
   Color get _textSecondaryColor =>
       widget.isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600;
-
-  Color get _iconColor =>
-      widget.isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700;
 
   Color get _overlayColor =>
       widget.isDarkMode
@@ -105,10 +87,6 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
-
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
 
     if (widget.open) {
       _animationController.forward();
