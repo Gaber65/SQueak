@@ -1,7 +1,6 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/appointment_entity.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/book_again_screen.dart';
@@ -92,7 +91,6 @@ Widget buildItem(
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.5,
                       child: Text(
@@ -124,7 +122,8 @@ Widget buildItem(
                         children: [
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.5,
-                            child: _buildVitalsSection(appointments, context),),
+                            child: _buildVitalsSection(appointments, context),
+                          ),
                         ],
                       ),
                     ],
@@ -206,7 +205,7 @@ Widget _buildStatusRow(
                     ),
           ),
           SizedBox(width: 10),
-          Text(' ${formatDateString(appointments.date)}  ,  ', maxLines: 2),
+          Text(' ${formatDateString(appointments.date)} , ', maxLines: 2),
           Text(formatTimeToAmPm(appointments.time)),
         ],
       );
@@ -232,56 +231,84 @@ Widget _buildStatusRow(
       );
 
     case 2: // End_Examination
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      return Column(
         children: [
-          CircleAvatar(radius: 7, backgroundColor: Colors.purple[600]),
-          const SizedBox(width: 5),
-          Text(
-            isArabic() ? 'انتهاء الفحص' : 'Examination Ended',
-            style: GoogleFonts.readexPro().copyWith(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: Colors.purple[600],
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircleAvatar(radius: 7, backgroundColor: Colors.purple[600]),
+              const SizedBox(width: 5),
+              Text(
+                isArabic() ? 'انتهاء الفحص' : 'Examination Ended',
+                style: GoogleFonts.readexPro().copyWith(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.purple[600],
+                ),
+              ),
+            ],
           ),
-          SizedBox(width: 10),
-          Text(' ${formatDateString(appointments.date)}  ,  ', maxLines: 2),
-          Text(formatTimeToAmPm(appointments.time)),
+          SizedBox(height: 14),
+          Row(
+            children: [
+              Text(' ${formatDateString(appointments.date)} , ', maxLines: 2),
+              Text(formatTimeToAmPm(appointments.time)),
+            ],
+          ),
         ],
       );
 
     case 3: // Finished
-      return Row(
+      return Column(
         children: [
-          CircleAvatar(radius: 7, backgroundColor: Colors.green[600]),
-          const SizedBox(width: 5),
-          Text(S.of(context).appointmentDone),
-          Spacer(),
-          Text(' ${formatDateString(appointments.date)}  ,  ', maxLines: 2),
-          Text(formatTimeToAmPm(appointments.time)),
-          Spacer(),
-          _buildEnhancedMenu(context, appointments, appointments.status, cubit),
+          Row(
+            children: [
+              CircleAvatar(radius: 7, backgroundColor: Colors.green[600]),
+              const SizedBox(width: 5),
+              Text(
+                S.of(context).appointmentDone,
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              Spacer(),
+              _buildEnhancedMenu(
+                context,
+                appointments,
+                appointments.status,
+                cubit,
+              ),
+            ],
+          ),
+          SizedBox(height: 5),
+          Row(
+            children: [
+              Text(' ${formatDateString(appointments.date)}  ,  ', maxLines: 2),
+              Text(formatTimeToAmPm(appointments.time)),
+            ],
+          ),
         ],
       );
 
     case 4: // Attended
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      return Column(
         children: [
-          CircleAvatar(radius: 7, backgroundColor: Colors.teal[600]),
-          const SizedBox(width: 5),
-          Text(
-            isArabic() ? 'حضر' : 'Attended',
-            style: GoogleFonts.readexPro().copyWith(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: Colors.teal[600],
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircleAvatar(radius: 7, backgroundColor: Colors.teal[600]),
+              const SizedBox(width: 5),
+              Text(
+                isArabic() ? 'حضر' : 'Attended',
+                style: GoogleFonts.readexPro().copyWith(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.teal[600],
+                ),
+              ),
+              SizedBox(width: 10),
+              Text(' ${formatDateString(appointments.date)}  ,  ', maxLines: 2),
+              Text(formatTimeToAmPm(appointments.time)),
+            ],
           ),
-          SizedBox(width: 10),
-          Text(' ${formatDateString(appointments.date)}  ,  ', maxLines: 2),
-          Text(formatTimeToAmPm(appointments.time)),
         ],
       );
 
@@ -743,6 +770,7 @@ Widget _buildVitalsSection(appointment, context) {
     ],
   );
 }
+
 Widget _buildVitalItem(
   String label,
   String value,

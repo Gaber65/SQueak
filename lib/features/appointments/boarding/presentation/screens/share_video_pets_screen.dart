@@ -1237,7 +1237,6 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
     _fadeController.dispose();
     _pulseController.dispose();
 
-    // تأكد من إيقاف وتنظيف جميع VideoPlayerController
     for (var controller in _videoControllers) {
       controller.pause();
       controller.dispose();
@@ -1246,7 +1245,7 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
   }
 }
 
-// دوال الاستخدام المحسّنة
+
 void showEnhancedDarkModeVideoCarousel(
   BuildContext context,
   BoardingEntryEntity? boarding,
@@ -1270,7 +1269,6 @@ void showEnhancedDarkModeVideoCarousel(
   );
 }
 
-// إصدار يكتشف الثيم تلقائياً
 void showThemeAwareEnhancedVideoCarousel(
   BuildContext context,
   BoardingEntryEntity? boarding,
