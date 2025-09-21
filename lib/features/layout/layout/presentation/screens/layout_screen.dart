@@ -258,7 +258,7 @@ class _LayoutScreenState extends State<LayoutScreen>
 
   @override
   void initState() {
-    print(CacheHelper.getData('havePets'));
+    // print(CacheHelper.getData('havePets'));
     super.initState();
 
     MainCubit.get(context).saveToken();

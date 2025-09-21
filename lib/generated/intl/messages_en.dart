@@ -298,6 +298,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Filter by status",
     ),
     "filter_hint_pets": MessageLookupByLibrary.simpleMessage("Filter by pet"),
+    "findPetFriends": MessageLookupByLibrary.simpleMessage("Find Pet Friends"),
     "findPotentialMates": MessageLookupByLibrary.simpleMessage(
       "Search for pets...",
     ),

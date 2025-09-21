@@ -373,6 +373,7 @@ class AdvancedCacheManager {
   final Map<String, dynamic> _memoryCache = {};
   SharedPreferences? _prefs;
   Timer? _cleanupTimer;
+  bool _isInitialized = false;
 
   /// Initialize the cache manager
   Future<void> initialize() async {
@@ -470,8 +471,8 @@ class AdvancedCacheManager {
     if (!_isInitialized) await initialize();
 
     _memoryCache.remove(key);
-    await _prefs.remove(_getStorageKey(key));
-    await _prefs.remove(_getMetadataKey(key));
+    await _prefs?.remove(_getStorageKey(key));
+    await _prefs?.remove(_getMetadataKey(key));
 
     if (kDebugMode) debugPrint('Removed cache key: $key');
   }
@@ -487,14 +488,14 @@ class AdvancedCacheManager {
         prefs.getKeys().where((key) => key.startsWith(_cachePrefix)).toList();
 
     for (final key in keys) {
-      await _prefs.remove(key);
+      await _prefs?.remove(key);
     }
 
     final metaKeys =
-        _prefs.getKeys().where((k) => k.startsWith(_metadataPrefix)).toList();
+        _prefs?.getKeys().where((k) => k.startsWith(_metadataPrefix)).toList();
 
-    for (final key in metaKeys) {
-      await _prefs.remove(key);
+    for (final key in metaKeys!) {
+      await _prefs?.remove(key);
     }
 
     if (kDebugMode) {
@@ -558,16 +559,16 @@ class AdvancedCacheManager {
       'createdAt': item.createdAt.millisecondsSinceEpoch,
     };
 
-    await _prefs.setString(_getStorageKey(key), item.rawData);
-    await _prefs.setString(_getMetadataKey(key), json.encode(metadata));
+    await _prefs?.setString(_getStorageKey(key), item.rawData);
+    await _prefs?.setString(_getMetadataKey(key), json.encode(metadata));
   }
 
   /// Load cache item from disk
   Future<CacheItem<T>?> _loadFromDisk<T>(String key) async {
     if (!_isInitialized) await initialize();
 
-    final rawData = _prefs.getString(_getStorageKey(key));
-    final metadataString = _prefs.getString(_getMetadataKey(key));
+    final rawData = _prefs?.getString(_getStorageKey(key));
+    final metadataString = _prefs?.getString(_getMetadataKey(key));
 
     if (rawData == null || metadataString == null) return null;
 
@@ -609,10 +610,10 @@ class AdvancedCacheManager {
   Future<void> _loadMemoryCache() async {
     if (!_isInitialized) return;
 
-    final keys = _prefs.getKeys();
+    final keys = _prefs?.getKeys();
     var loadedCount = 0;
 
-    for (final key in keys) {
+    for (final key in keys!) {
       if (key.startsWith(_cachePrefix) &&
           loadedCount < _maxMemoryCacheSize ~/ 2) {
         final cacheKey = key.substring(_cachePrefix.length);
@@ -655,10 +656,10 @@ class AdvancedCacheManager {
     _memoryCache.removeWhere((key, value) => value.isExpired);
 
     // Clean disk cache
-    final keys = _prefs.getKeys();
+    final keys = _prefs?.getKeys();
     var removedCount = 0;
 
-    for (final key in keys) {
+    for (final key in keys!) {
       if (key.startsWith(_metadataPrefix)) {
         final cacheKey = key.substring(_metadataPrefix.length);
         final item = await _loadFromDisk(cacheKey);
@@ -676,7 +677,6 @@ class AdvancedCacheManager {
   }
 
   // Helper to build storage key
-  String _getStorageKey(String key) => '$_cachePrefix$key';
   String _getMetadataKey(String key) => '$_metadataPrefix$key';
 
   /// Simple compression (in production, use a proper compression library)

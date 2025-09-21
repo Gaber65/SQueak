@@ -28,10 +28,9 @@ class S {
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final name =
-        (locale.countryCode?.isEmpty ?? false)
-            ? locale.languageCode
-            : locale.toString();
+    final name = (locale.countryCode?.isEmpty ?? false)
+        ? locale.languageCode
+        : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -80,15 +79,6 @@ class S {
     return Intl.message(
       'Enter your email address',
       name: 'enterUrEmail',
-      desc: '',
-      args: [],
-    );
-  }
-
-  String get findPetFriends {
-    return Intl.message(
-      "Find Pet Friends",
-      name: 'findPetFriends',
       desc: '',
       args: [],
     );
@@ -2704,6 +2694,16 @@ class S {
     return Intl.message(
       'Search for pets...',
       name: 'findPotentialMates',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Find Pet Friends`
+  String get findPetFriends {
+    return Intl.message(
+      'Find Pet Friends',
+      name: 'findPetFriends',
       desc: '',
       args: [],
     );
