@@ -60,11 +60,14 @@ class _PetScreenContentState extends State<PetScreenContent> {
           ),
         ),
         body: _buildBody(),
-        floatingActionButton: _shouldShowFab() ? FloatingActionButton(
-          backgroundColor: ColorManager.primaryColor,
-          child: const Icon(Icons.add, color: Colors.white),
-          onPressed: () => showPetTypeSelection(context),
-        ) : null,
+        floatingActionButton:
+            _shouldShowFab()
+                ? FloatingActionButton(
+                  backgroundColor: ColorManager.primaryColor,
+                  child: const Icon(Icons.add, color: Colors.white),
+                  onPressed: () => showPetTypeSelection(context),
+                )
+                : null,
       ),
     );
   }
@@ -74,26 +77,27 @@ class _PetScreenContentState extends State<PetScreenContent> {
     if (widget.state is GetOwnerPetsLoadingState) {
       return Center(
         child: VcLoadingIndicator(
-          message: isArabic() ? "جاري تحميل حيواناتك الأليفة..." : "Loading your pets...",
+          message:
+              isArabic()
+                  ? "جاري تحميل حيواناتك الأليفة..."
+                  : "Loading your pets...",
           size: 32.0,
         ),
       );
     }
-    
+
     // Show error state if failed to load pets
     if (widget.state is GetOwnerPetsErrorState) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              isArabic() ? "خطأ في تحميل حيواناتك الأليفة" : "Failed to load your pets",
+              isArabic()
+                  ? "خطأ في تحميل حيواناتك الأليفة"
+                  : "Failed to load your pets",
               style: const TextStyle(fontSize: 16, color: Colors.grey),
             ),
             const SizedBox(height: 16),
@@ -108,14 +112,12 @@ class _PetScreenContentState extends State<PetScreenContent> {
         ),
       );
     }
-    
+
     // Show empty state when no pets exist (after loading is complete)
     if (widget.pets.isEmpty && widget.state is! GetOwnerPetsLoadingState) {
-      return EmptyState(
-        onAddPetPressed: () => showPetTypeSelection(context),
-      );
+      return EmptyState(onAddPetPressed: () => showPetTypeSelection(context));
     }
-    
+
     // Show pets list when pets exist
     return _buildPetList(widget.qrCubit);
   }
@@ -131,7 +133,11 @@ class _PetScreenContentState extends State<PetScreenContent> {
       itemCount: widget.pets.length,
       separatorBuilder: (_, __) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
-        return PetCard(pet: widget.pets[index], cubit: widget.cubit,qrCubit:qrCubit,);
+        return PetCard(
+          pet: widget.pets[index],
+          cubit: widget.cubit,
+          qrCubit: qrCubit,
+        );
       },
     );
   }

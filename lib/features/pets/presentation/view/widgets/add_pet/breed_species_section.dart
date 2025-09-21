@@ -26,7 +26,6 @@ class BreedSpeciesSection extends StatelessWidget {
               const SizedBox(height: 16),
 
               _buildBreedDropdown(context),
-
             ] else ...[
               // Side by side on larger screens
               Row(
@@ -35,7 +34,6 @@ class BreedSpeciesSection extends StatelessWidget {
                   const SizedBox(width: 16),
 
                   Expanded(child: _buildBreedDropdown(context)),
-
                 ],
               ),
             ],
@@ -122,7 +120,7 @@ class BreedSpeciesSection extends StatelessWidget {
         return ListTile(
           title: Text(
             suggestion.type,
-              style: TextStyle(color: isDark ? Colors.white : Colors.black),
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
           ),
         );
       },

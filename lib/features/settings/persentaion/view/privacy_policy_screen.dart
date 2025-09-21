@@ -7,7 +7,6 @@ import 'dart:io'; // Import Platform class
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
 

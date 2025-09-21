@@ -5,7 +5,9 @@ import 'package:dartz/dartz.dart';
 abstract class PetRepository {
   Future<Either<Failure, List<PetEntities>>> getOwnerPets();
   Future<Either<Failure, List<BreedEntity>>> getAllBreeds();
-  Future<Either<Failure, List<BreedEntity>>> getBreedsBySpeciesId(String speciesId);
+  Future<Either<Failure, List<BreedEntity>>> getBreedsBySpeciesId(
+    String speciesId,
+  );
   Future<Either<Failure, List<SpeciesEntity>>> getAllSpecies();
   Future<Either<Failure, PetEntities>> createPet(PetEntities pet);
   Future<Either<Failure, PetEntities>> updatePet(PetEntities pet);

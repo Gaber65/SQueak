@@ -92,7 +92,6 @@ Widget buildItem(
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.5,
                       child: Text(
@@ -124,7 +123,8 @@ Widget buildItem(
                         children: [
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.5,
-                            child: _buildVitalsSection(appointments, context),),
+                            child: _buildVitalsSection(appointments, context),
+                          ),
                         ],
                       ),
                     ],
@@ -743,6 +743,7 @@ Widget _buildVitalsSection(appointment, context) {
     ],
   );
 }
+
 Widget _buildVitalItem(
   String label,
   String value,

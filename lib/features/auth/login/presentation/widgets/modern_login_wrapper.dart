@@ -21,43 +21,38 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
   @override
   void initState() {
     super.initState();
-    
+
     // Paw prints floating animation - LIMITED REPEAT
     _pawAnimationController = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
     );
-    
-    _pawFloatAnimation = Tween<double>(
-      begin: 0.0,
-      end: 10.0,
-    ).animate(CurvedAnimation(
-      parent: _pawAnimationController,
-      curve: Curves.easeInOut,
-    ));
+
+    _pawFloatAnimation = Tween<double>(begin: 0.0, end: 10.0).animate(
+      CurvedAnimation(parent: _pawAnimationController, curve: Curves.easeInOut),
+    );
 
     // Mascot bounce animation - LIMITED REPEAT
     _mascotAnimationController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
-    
-    _mascotBounceAnimation = Tween<double>(
-      begin: 0.0,
-      end: 5.0,
-    ).animate(CurvedAnimation(
-      parent: _mascotAnimationController,
-      curve: Curves.elasticOut,
-    ));
-    
+
+    _mascotBounceAnimation = Tween<double>(begin: 0.0, end: 5.0).animate(
+      CurvedAnimation(
+        parent: _mascotAnimationController,
+        curve: Curves.elasticOut,
+      ),
+    );
+
     // Start animations with limited repetitions
     _startAnimations();
   }
-  
+
   void _startAnimations() {
     // TEMPORARILY DISABLED - Animations causing memory leaks
     // Will re-enable after fixing memory issues
-    
+
     // Log that animations are disabled
     debugPrint('Login animations temporarily disabled for memory optimization');
   }
@@ -142,7 +137,7 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
               );
             },
           ),
-          
+
           // Main content
           Column(
             children: [
@@ -201,7 +196,7 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
                 },
               ),
               const SizedBox(height: 24),
-              
+
               // Pet-themed Welcome Text
               const Text(
                 'Welcome Back!',
@@ -219,7 +214,7 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
                 ),
               ),
               const SizedBox(height: 8),
-              
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -239,7 +234,7 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
                 ],
               ),
               const SizedBox(height: 4),
-              
+
               Text(
                 'Sign in to continue your pet care journey',
                 style: TextStyle(
@@ -260,10 +255,7 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
 class ModernLoginWrapper extends StatefulWidget {
   final LoginCubit cubit;
 
-  const ModernLoginWrapper({
-    super.key,
-    required this.cubit,
-  });
+  const ModernLoginWrapper({super.key, required this.cubit});
 
   @override
   State<ModernLoginWrapper> createState() => _ModernLoginWrapperState();
@@ -274,34 +266,36 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  final AdvancedPerformanceMonitor _performanceMonitor = AdvancedPerformanceMonitor();
+  final AdvancedPerformanceMonitor _performanceMonitor =
+      AdvancedPerformanceMonitor();
 
   @override
   void initState() {
     super.initState();
     // TEMPORARILY DISABLED - Performance monitoring causing potential crashes
     // _performanceMonitor.startOperation('modern_login_wrapper_init');
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-    ));
-    
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0.0, 0.5),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.3, 1.0, curve: Curves.elasticOut),
-    ));
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.3, 1.0, curve: Curves.elasticOut),
+      ),
+    );
 
     _animationController.forward();
     // TEMPORARILY DISABLED - Performance monitoring causing potential crashes
@@ -326,7 +320,7 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
               opacity: _fadeAnimation,
               child: const ModernLoginHeader(),
             ),
-            
+
             // Form Section
             Expanded(
               child: SlideTransition(
@@ -340,7 +334,7 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
                       child: Column(
                         children: [
                           const SizedBox(height: 20),
-                          
+
                           // Enhanced Login Form
                           Container(
                             padding: const EdgeInsets.all(24),
@@ -357,9 +351,9 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
                             ),
                             child: EnhancedLoginView(cubit: widget.cubit),
                           ),
-                          
+
                           const SizedBox(height: 40),
-                          
+
                           // Footer
                           _buildFooter(),
                         ],
@@ -376,11 +370,7 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
   }
 
   Widget _buildFooter() {
-    return Column(
-      children: [
-        _buildFeatureFooter(),
-      ],
-    );
+    return Column(children: [_buildFeatureFooter()]);
   }
 
   Widget _buildFeatureFooter() {
@@ -404,7 +394,7 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
           ],
         ),
         const SizedBox(height: 16),
-        
+
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -416,7 +406,7 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
           ],
         ),
         const SizedBox(height: 12),
-        
+
         // Animated pet mascots row with icons
         _buildAnimatedPetMascots(),
       ],
@@ -439,19 +429,11 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Icon(
-                icon,
-                size: 24,
-                color: ColorManager.secondColor,
-              ),
+              Icon(icon, size: 24, color: ColorManager.secondColor),
               Positioned(
                 top: -2,
                 right: -2,
-                child: Icon(
-                  accent,
-                  size: 10,
-                  color: Colors.red.shade400,
-                ),
+                child: Icon(accent, size: 10, color: Colors.red.shade400),
               ),
             ],
           ),
@@ -470,7 +452,7 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
   }
 
   Widget _buildAnimatedPetMascots() {
-    return Container(
+    return SizedBox(
       height: 40,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

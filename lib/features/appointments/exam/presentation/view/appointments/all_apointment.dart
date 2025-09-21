@@ -204,17 +204,26 @@ class AllAppointment extends StatelessWidget {
                                       onRefresh: () async {
                                         await cubit.getAppointment(false);
                                       },
-                                      child: ListView.builder(
-                                        itemBuilder: (context, index) {
-                                          return buildItem(
-                                            cubit.appointments[index],
-                                            context,
-                                            cubit,
-                                            index,
-                                          );
+                                      child: RefreshIndicator(
+                                        onRefresh: () async {
+                                          await cubit.getAppointment(false);
+                                          await cubit.fetchSuppliers();
                                         },
-                                        itemCount: cubit.appointments.length,
-                                        physics: const BouncingScrollPhysics(),
+                                        child: ListView.builder(
+                                          itemBuilder: (context, index) {
+                                            return buildItem(
+                                              cubit.appointments[index],
+                                              context,
+                                              cubit,
+                                              index,
+                                            );
+                                          },
+                                          itemCount: cubit.appointments.length,
+                                          physics:
+                                              const AlwaysScrollableScrollPhysics(
+                                                parent: BouncingScrollPhysics(),
+                                              ),
+                                        ),
                                       ),
                                     );
                                   }
@@ -226,7 +235,7 @@ class AllAppointment extends StatelessWidget {
                         floatingActionButton: FloatingActionButton(
                           backgroundColor: ColorManager.primaryColor,
                           onPressed: () {
-                            LayoutCubit.get(context).changeBottomNav(1);
+                            LayoutCubit.get(context).changeBottomNav(2);
                             navigateAndFinish(context, LayoutScreen());
                           },
                           child: const Icon(

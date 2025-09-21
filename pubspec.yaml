@@ -8,86 +8,66 @@ environment:
   sdk: ">=3.7.0 <4.0.0"
 
 dependencies:
+  animate_do: ^3.3.4
+  animated_bottom_navigation_bar: ^1.3.3
+  app_links: ^6.3.2
+  audioplayers: ^5.2.1
+  carousel_slider: ^5.0.0
+  chewie: ^1.8.5
+  chucker_flutter: ^1.8.1
+  cloud_firestore: ^5.4.4
+  comment_tree: ^0.3.0
+  cupertino_icons: ^1.0.8
+  dartz: ^0.10.1
+  dio: ^5.7.0
+  drop_down_search_field: ^1.0.6
+  dropdown_button2: ^2.3.9
+  dropdown_search: ^6.0.2
+  fast_cached_network_image: ^1.3.3+5
+  firebase_messaging: ^15.1.3
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
-
-  # UI and Animations
-  cupertino_icons: ^1.0.8
-  animated_bottom_navigation_bar: ^1.3.3
-  carousel_slider: ^5.0.0
-  shimmer: ^3.0.0
-  lottie: ^3.1.3
-  animate_do: ^3.3.4
-  widget_circular_animator: ^1.0.0
-  google_fonts: ^6.2.1
-  iconly: ^1.0.1
-  quickalert: ^1.1.0
-  # mobile_scanner: ^5.2.0  # Temporarily disabled due to dependency conflict
-
-  # Networking and APIs
-  dio: ^5.7.0
-  http: ^1.2.2
-  app_links: ^6.3.2
-  internet_connection_checker: ^3.0.1
-  chucker_flutter: ^1.8.1
-
-  # Firebase
-  cloud_firestore: ^5.4.4
-  firebase_messaging: ^15.1.3
-
-  # State Management & Utilities
   flutter_bloc: ^8.1.6
-  get_it: ^8.0.3
-  dartz: ^0.10.1
-  shared_preferences: ^2.3.2
-  package_info_plus: ^8.2.1
-
-  # Media & Files
-  image_picker: ^1.1.2
   flutter_image_compress: ^2.3.0
-  flutter_to_pdf: ^0.2.2
-  printing: ^5.13.3
-  video_player: ^2.9.2
-  chewie: ^1.8.5
-  fast_cached_network_image: ^1.3.3+5
-
-  # Location & Maps
-  geolocator: ^13.0.2
-  geocoding: ^3.0.0
-
-  # Permissions
-  permission_handler: ^11.3.1
-
-  # UI Components
-  table_calendar: ^3.1.2
-  drop_down_search_field: ^1.0.6
-  comment_tree: ^0.3.0
-  phone_text_field: ^0.0.7
-  qr_flutter: ^4.1.0
-  toastification: ^3.0.2
-
-  # WebView & Notifications
   flutter_inappwebview: ^6.1.5
   flutter_local_notifications: ^17.2.4
-  url_launcher: ^6.3.1
-
-  # Audio
-  audioplayers: ^5.2.1
-
-  # Sharing
-  share_plus: ^10.1.1
-
-  # Misc
-  intl: any  # Add a version here if needed
-  sqflite: ^2.4.2
+  flutter_localizations:
+    sdk: flutter
+  flutter_screenutil: ^5.9.3
   flutter_svg: ^2.1.0
+  flutter_to_pdf: ^0.2.2
+  flutter_typeahead: ^5.2.0
+  font_awesome_flutter: 10.9.1
+  geocoding: ^3.0.0
+  geolocator: ^13.0.2
+  get_it: ^8.0.3
+  google_fonts: ^6.2.1
+  http: ^1.2.2
+  iconly: ^1.0.1
+  image_picker: ^1.1.2
+  internet_connection_checker: ^3.0.1
+  intl: any
+  lottie: ^3.1.3
+  package_info_plus: ^8.2.1
+  permission_handler: ^11.3.1
+  phone_text_field: ^0.0.7
+  printing: ^5.13.3
+  qr_flutter: ^4.1.0
+  quickalert: ^1.1.0
+  share_plus: ^10.1.1
+  shared_preferences: ^2.3.2
+  shimmer: ^3.0.0
+  sqflite: ^2.4.2
+  table_calendar: ^3.1.2
+  toastification: ^3.0.2
+  url_launcher: ^6.3.1
+  video_player: ^2.9.2
+  widget_circular_animator: ^1.0.0
 
 dev_dependencies:
+  flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true

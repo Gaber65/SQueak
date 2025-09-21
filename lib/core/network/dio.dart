@@ -39,11 +39,12 @@ class DioFinalHelper {
     await _ensureValidToken();
     dio.options.headers = {
       'Authorization': 'Bearer ${token ?? CacheHelper.getData('token')}',
-      'Accept-Language': language
-          ? 'en'
-          : isArabic()
-          ? 'ar'
-          : 'en',
+      'Accept-Language':
+          language
+              ? 'en'
+              : isArabic()
+              ? 'ar'
+              : 'en',
     };
     return await dio.get(method);
   }
@@ -103,6 +104,7 @@ String extractFirstError(dynamic error) {
     return "Unknown error";
   }
 }
+
 String extractFirstErrorAuth(ErrorMessageModel error) {
   try {
     final entries = error.errors.entries;

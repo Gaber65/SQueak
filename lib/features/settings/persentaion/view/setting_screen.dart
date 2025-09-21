@@ -329,30 +329,33 @@ class SettingScreen extends StatelessWidget {
       ),
     );
   }
+
   Widget buildImage(BuildContext context) {
     final profile = SettingCubit.get(context).profile;
     final imageActive = CacheHelper.getData('ImageActive');
-    final isPet = CacheHelper.getBool('isPet') ?? false;
+    final isPet = CacheHelper.getBool('isPet');
 
     ImageProvider backgroundImage;
 
     if (imageActive != null && imageActive != '') {
       backgroundImage = NetworkImage('$imageUrl$imageActive');
-    } else if (profile != null && profile.imageName !=  '') {
+    } else if (profile != null && profile.imageName != '') {
       backgroundImage = NetworkImage('$imageUrl${profile.imageName}');
     } else {
-      backgroundImage = AssetImage(
-        isPet ? AssetImageModel.defaultPetImage : AssetImageModel.defaultUserImage,
+      backgroundImage = NetworkImage(
+        isPet
+            ? AssetImageModel.defaultPetImage
+            : AssetImageModel.defaultUserImage,
       );
     }
 
     return CircleAvatar(
-      radius: 37,
-      backgroundColor:
-      Theme.of(context).scaffoldBackgroundColor,
+      radius: 33,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       backgroundImage: backgroundImage,
     );
   }
+
   Widget _buildSettingItem({
     required BuildContext context,
     required String icon,

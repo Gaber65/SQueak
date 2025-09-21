@@ -6,8 +6,6 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/controller/notifications_cubit.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/screens/test.dart';
 
-
-
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});
 
@@ -16,13 +14,10 @@ class NotificationScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => sl<NotificationsCubit>()..fetchNotifications(),
       child: BlocConsumer<NotificationsCubit, NotificationsState>(
-        listener: (context, state) {
-          // TODO: implement listener
-        },
+        listener: (context, state) {},
         builder: (context, state) {
           var cubit = NotificationsCubit.get(context);
           return Scaffold(
-
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -34,11 +29,12 @@ class NotificationScreen extends StatelessWidget {
                     ? _buildShimmerLoading(MainCubit.get(context).isDark)
                     : (cubit.notifications.isNotEmpty)
                     ? Container(
-                  decoration: BoxDecoration(
-                    color: !MainCubit.get(context).isDark
-                        ? Colors.white
-                        : Colors.black,
-                  ),
+                      decoration: BoxDecoration(
+                        color:
+                            !MainCubit.get(context).isDark
+                                ? Colors.white
+                                : Colors.black,
+                      ),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         itemBuilder: (context, index) {
@@ -59,6 +55,7 @@ class NotificationScreen extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildShimmerLoading(bool isDarkMode) {
     return Shimmer.fromColors(
       baseColor: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
@@ -79,6 +76,7 @@ class NotificationScreen extends StatelessWidget {
       ),
     );
   }
+
   // Widget _buildContent(NotificationEntities model,BuildContext context) {
   //   return Container(
   //     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),

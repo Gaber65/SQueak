@@ -10,17 +10,14 @@ import '../widget/show_notification_dialog.dart';
 class NotificationCard extends StatelessWidget {
   final NotificationEntities notification;
 
-  const NotificationCard({
-    super.key,
-    required this.notification,
-  });
+  const NotificationCard({super.key, required this.notification});
 
   @override
   Widget build(BuildContext context) {
     final IconData icon = getNotificationIcon(notification);
     final Color iconBgColor = getNotificationColor(notification);
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-print(notification.title);
+    print(notification.title);
     return GestureDetector(
       onTap: () {
         showNotificationDialog(context, notification);
@@ -30,7 +27,10 @@ print(notification.title);
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.0),
           border: Border.all(
-            color: isDarkMode ? Colors.white.withOpacity(0.1) : Colors.white.withOpacity(0.8),
+            color:
+                isDarkMode
+                    ? Colors.white.withOpacity(0.1)
+                    : Colors.white.withOpacity(0.8),
             width: 1.0,
           ),
           boxShadow: [
@@ -47,7 +47,8 @@ print(notification.title);
             filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
             child: Container(
               padding: const EdgeInsets.all(16.0),
-              color: (isDarkMode ? Colors.grey[800] : Colors.white)!.withOpacity(0.1),
+              color: (isDarkMode ? Colors.grey[800] : Colors.white)!
+                  .withOpacity(0.1),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -72,25 +73,32 @@ print(notification.title);
                           children: [
                             Flexible(
                               child: Text(
-                                notification.title.trim().replaceAll(RegExp(r'\s+'), ' '),
+                                notification.title.trim().replaceAll(
+                                  RegExp(r'\s+'),
+                                  ' ',
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: isDarkMode ? Colors.white : Colors.grey[800],
+                                  color:
+                                      isDarkMode
+                                          ? Colors.white
+                                          : Colors.grey[800],
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(
-                                left: 8.0,
-                              ),
+                              padding: const EdgeInsets.only(left: 8.0),
                               child: Text(
                                 formatFacebookTimePost(notification.createdAt),
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: isDarkMode ? Colors.grey[400] : Colors.grey[500],
+                                  color:
+                                      isDarkMode
+                                          ? Colors.grey[400]
+                                          : Colors.grey[500],
                                 ),
                               ),
                             ),
@@ -98,18 +106,23 @@ print(notification.title);
                         ),
                         const SizedBox(height: 4.0),
                         Text(
-                          notification.message.trim().replaceAll(RegExp(r'\s+'), ' '),
+                          notification.message.trim().replaceAll(
+                            RegExp(r'\s+'),
+                            ' ',
+                          ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 14,
-                            color: isDarkMode ? Colors.grey[300] : Colors.grey[600],
+                            color:
+                                isDarkMode
+                                    ? Colors.grey[300]
+                                    : Colors.grey[600],
                           ),
                         ),
                       ],
                     ),
                   ),
-
                 ],
               ),
             ),

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -150,7 +151,8 @@ class PetCubit extends Cubit<PetState> {
     searchController.text =
         (isArabic()
             ? pet.breed?.arBreed
-            : pet.breed?.enBreed ?? S.current.breed) ?? '';
+            : pet.breed?.enBreed ?? S.current.breed) ??
+        '';
     petNameController.text = pet.petName;
     breedIdController.text = pet.breedId;
     birthdateController.text =
@@ -198,7 +200,9 @@ class PetCubit extends Cubit<PetState> {
               ? ''
               : passportNumberController.text,
       microShipNumber:
-          microchipNumberController.text.isEmpty ? '' : microchipNumberController.text,
+          microchipNumberController.text.isEmpty
+              ? ''
+              : microchipNumberController.text,
     );
     print(pet.toJson());
     final result = await createPetUseCase(PetParams(pet: pet));
@@ -220,7 +224,7 @@ class PetCubit extends Cubit<PetState> {
   Future<void> updatePet() async {
     isLoading = true;
     emit(PetCreateLoadingState());
-print(microchipNumberController.text);
+    print(microchipNumberController.text);
     final pet = PetEntities(
       petId: petId,
       petName: petNameController.text,
@@ -241,7 +245,10 @@ print(microchipNumberController.text);
           passportNumberController.text.isEmpty
               ? ''
               : passportNumberController.text,
-      microShipNumber: microchipNumberController.text.isEmpty ? '' : microchipNumberController.text,
+      microShipNumber:
+          microchipNumberController.text.isEmpty
+              ? ''
+              : microchipNumberController.text,
     );
 
     final result = await updatePetUseCase(PetParams(pet: pet));
@@ -267,9 +274,21 @@ print(microchipNumberController.text);
 
     result.fold(
       (error) => emit(DeletePetErrorState(extractFirstError(error))),
-      (_) {
+      (_) async {
+        // Remove pet from in-memory list
         pets.removeWhere((pet) => pet.petId.toString() == id);
+
+        // Remove old cached data
+        await CacheHelper.removeData('pets');
+
+        // Save updated list in cache
+        await CacheHelper.saveData(
+          'havePets',
+          jsonEncode(pets.map((e) => e.toJson()).toList()),
+        );
+
         emit(DeletePetSuccessState());
+        print(CacheHelper.getData('havePets'));
       },
     );
   }
