@@ -8,7 +8,7 @@ import 'package:squeak/features/auth/contactus/presentation/pages/contact_us.dar
 
 class EnhancedAuthHeader extends StatefulWidget {
   const EnhancedAuthHeader({
-    super.key, 
+    super.key,
     required this.child,
     this.title = 'Welcome to Squeak',
     this.subtitle = 'Your Pet Care Companion',
@@ -34,35 +34,35 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
   @override
   void initState() {
     super.initState();
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.0, 0.6, curve: Curves.elasticOut),
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.0, 0.6, curve: Curves.elasticOut),
+      ),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.2, 0.8, curve: Curves.easeInOut),
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.2, 0.8, curve: Curves.easeInOut),
+      ),
+    );
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, -0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.0, 0.7, curve: Curves.easeOutCubic),
-    ));
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.0, 0.7, curve: Curves.easeOutCubic),
+      ),
+    );
 
     _animationController.forward();
   }
@@ -99,11 +99,9 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
                 children: [
                   // Background Pattern
                   Positioned.fill(
-                    child: CustomPaint(
-                      painter: PawPatternPainter(),
-                    ),
+                    child: CustomPaint(painter: PawPatternPainter()),
                   ),
-                  
+
                   // Help Button
                   if (widget.showHelpButton)
                     Positioned(
@@ -172,23 +170,17 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(20),
-                                      child: Image.asset(
-                                        'assets/squeaklogo.PNG',
-                                        fit: BoxFit.contain,
-                                        errorBuilder: (context, error, stackTrace) {
-                                          return Icon(
-                                            Icons.pets,
-                                            size: 60,
-                                            color: ColorManager.primaryColor,
-                                          );
-                                        },
+                                      child: Icon(
+                                        Icons.pets,
+                                        size: 60,
+                                        color: ColorManager.primaryColor,
                                       ),
                                     ),
                                   ),
                                 ),
-                                
+
                                 const SizedBox(height: 20),
-                                
+
                                 // Title
                                 Text(
                                   widget.title,
@@ -206,9 +198,9 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
-                                
+
                                 const SizedBox(height: 8),
-                                
+
                                 // Subtitle
                                 Text(
                                   widget.subtitle,
@@ -236,7 +228,7 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
                 ],
               ),
             ),
-            
+
             // Content Section
             Container(
               transform: Matrix4.translationValues(0, -30, 0),
@@ -261,32 +253,29 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
 class PawPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
-      ..style = PaintingStyle.fill;
+    final paint =
+        Paint()
+          ..color = Colors.white.withOpacity(0.1)
+          ..style = PaintingStyle.fill;
 
     // Draw scattered paw prints
     for (int i = 0; i < 15; i++) {
       final x = (i * 0.15 * size.width + 50) % size.width;
       final y = (i * 0.25 * size.height + 30) % size.height;
-      
+
       _drawPawPrint(canvas, paint, Offset(x, y), 0.8);
     }
   }
 
   void _drawPawPrint(Canvas canvas, Paint paint, Offset center, double scale) {
     final pawSize = 16.0 * scale;
-    
+
     // Main pad
     canvas.drawOval(
-      Rect.fromCenter(
-        center: center,
-        width: pawSize,
-        height: pawSize * 0.8,
-      ),
+      Rect.fromCenter(center: center, width: pawSize, height: pawSize * 0.8),
       paint,
     );
-    
+
     // Toe pads
     final toeSize = pawSize * 0.3;
     for (int i = 0; i < 4; i++) {
@@ -295,13 +284,9 @@ class PawPatternPainter extends CustomPainter {
         center.dx + (pawSize * 0.6) * math.cos(angle),
         center.dy + (pawSize * 0.6) * math.sin(angle) - pawSize * 0.2,
       );
-      
+
       canvas.drawOval(
-        Rect.fromCenter(
-          center: toeCenter,
-          width: toeSize,
-          height: toeSize,
-        ),
+        Rect.fromCenter(center: toeCenter, width: toeSize, height: toeSize),
         paint,
       );
     }
