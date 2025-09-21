@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:squeak/core/utils/export_path/export_files.dart';
