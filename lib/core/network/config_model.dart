@@ -2,8 +2,8 @@ import '../utils/enums/env_enums.dart';
 
 class ConfigModel {
   static late String serverFirstHalfOfImageUrl;
+  static late String serverSecondHalfOfVideoUrl; // added
   static late String baseApiUrlSqueak;
-
   static void setEnvironment(Environment env) {
     switch (env) {
       case Environment.test:
@@ -19,6 +19,6 @@ class ConfigModel {
         serverFirstHalfOfImageUrl = 'https://vicapipro.veticareapp.com/files/';
         baseApiUrlSqueak = 'https://squeakapipro.veticareapp.com';
         break;
-    }
+      }
   }
 }

@@ -359,25 +359,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Advanced cache manager with TTL, compression, and multiple storage strategies
 class AdvancedCacheManager {
-  // Storage key prefixes (consistent)
   static const String _cachePrefix = 'cache_';
-  static const String _metadataPrefix = 'meta_';
+  static const String _expiryPrefix = 'expiry_';
+  static const String _metadataPrefix = 'metadata_';
+  static const Duration _defaultTTL = Duration(hours: 24);
+  static const int _maxMemoryCacheSize = 100;
 
   static final AdvancedCacheManager _instance =
       AdvancedCacheManager._internal();
   factory AdvancedCacheManager() => _instance;
   AdvancedCacheManager._internal();
 
-  // --- Internal fields ---
-  late SharedPreferences _prefs;
-  bool _isInitialized = false;
+  final Map<String, dynamic> _memoryCache = {};
+  SharedPreferences? _prefs;
   Timer? _cleanupTimer;
-
-  final Map<String, CacheItem<dynamic>> _memoryCache = {};
-
-  // Configurable defaults
-  final Duration _defaultTTL = const Duration(days: 1);
-  final int _maxMemoryCacheSize = 100;
 
   /// Initialize the cache manager
   Future<void> initialize() async {
@@ -487,8 +482,9 @@ class AdvancedCacheManager {
 
     _memoryCache.clear();
 
+    final prefs = await SharedPreferences.getInstance();
     final keys =
-        _prefs.getKeys().where((k) => k.startsWith(_cachePrefix)).toList();
+        prefs.getKeys().where((key) => key.startsWith(_cachePrefix)).toList();
 
     for (final key in keys) {
       await _prefs.remove(key);
@@ -508,7 +504,17 @@ class AdvancedCacheManager {
 
   /// Delete cached data (alias for remove)
   Future<void> delete(String key) async {
-    await remove(key);
+    // Remove from memory cache
+    _memoryCache.remove(key);
+
+    // Remove from disk cache
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_getStorageKey(key));
+    await prefs.remove(_getExpiryKey(key));
+
+    if (kDebugMode) {
+      debugPrint('Deleted cache key: $key');
+    }
   }
 
   /// Get cache statistics
@@ -529,10 +535,13 @@ class AdvancedCacheManager {
   void _addToMemoryCache(String key, CacheItem item) {
     // Remove oldest items if cache is full
     if (_memoryCache.length >= _maxMemoryCacheSize) {
-      final oldestEntry = _memoryCache.entries.reduce(
-        (a, b) => a.value.createdAt.isBefore(b.value.createdAt) ? a : b,
-      );
-      _memoryCache.remove(oldestEntry.key);
+      final oldestKey =
+          _memoryCache.entries
+              .reduce(
+                (a, b) => a.value.createdAt.isBefore(b.value.createdAt) ? a : b,
+              )
+              .key;
+      _memoryCache.remove(oldestKey);
     }
 
     _memoryCache[key] = item;
@@ -563,15 +572,14 @@ class AdvancedCacheManager {
     if (rawData == null || metadataString == null) return null;
 
     try {
-      final metadata = json.decode(metadataString) as Map<String, dynamic>;
-      final isCompressed = metadata['isCompressed'] as bool? ?? false;
-      final strategyIdx = metadata['strategy'] as int? ?? 0;
-      final strategy = CacheStrategy.values[strategyIdx];
+      final metadata = json.decode(metadataString);
+      final isCompressed = metadata['isCompressed'] as bool;
+      final strategy = CacheStrategy.values[metadata['strategy'] as int];
       final expiryTime = DateTime.fromMillisecondsSinceEpoch(
-        metadata['expiryTime'] as int? ?? 0,
+        metadata['expiryTime'] as int,
       );
       final createdAt = DateTime.fromMillisecondsSinceEpoch(
-        metadata['createdAt'] as int? ?? 0,
+        metadata['createdAt'] as int,
       );
 
       final decompressedData = isCompressed ? _decompress(rawData) : rawData;
@@ -632,6 +640,12 @@ class AdvancedCacheManager {
       _cleanupExpiredItems();
     });
   }
+
+  /// Get storage key with prefix
+  String _getStorageKey(String key) => '$_cachePrefix$key';
+
+  /// Get expiry key with prefix
+  String _getExpiryKey(String key) => '$_expiryPrefix$key';
 
   /// Clean up expired cache items
   Future<void> _cleanupExpiredItems() async {

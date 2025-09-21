@@ -111,6 +111,7 @@ class BoardingCubit extends Cubit<BoardingState> {
     );
   }
 
+  // ignore: non_constant_identifier_names
   Future<void> rateBoarding(BoardingEntryEntity BoardingEntryEntity) async {
     emit(RateBoardingLoading());
 
@@ -132,6 +133,7 @@ class BoardingCubit extends Cubit<BoardingState> {
   void shareImageEntries(ShareImageBoardingEntriesParams entries) =>
       shareImageEntriesUseCase(entries);
 
+  // ignore: non_constant_identifier_names
   void initRating(BoardingEntryEntity BoardingEntryEntity) {
     ratingCleanliness = BoardingEntryEntity.cleanlinessRate;
     ratingDoctor = BoardingEntryEntity.doctorServiceRate;

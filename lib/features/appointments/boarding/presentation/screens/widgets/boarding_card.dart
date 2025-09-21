@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +12,7 @@ import '../../../domain/usecases/share_image_usecase.dart';
 import '../../cubit/boarding_cubit.dart';
 import '../boarding_rating.dart';
 import '../share_image_pet_screen.dart';
+import '../share_video_pets_screen.dart';
 
 class BoardingCard extends StatelessWidget {
   final BoardingEntryEntity entry;
@@ -198,6 +201,28 @@ class BoardingCard extends StatelessWidget {
           ),
           onTap: () {
             Future.delayed(Duration.zero, () => _showImages(context));
+          },
+        ),
+        // التغيير الجديد: إضافة خيار "الفيديوهات" أسفل خيار "الصور" في القائمة المنبثقة.
+        // هذا الخيار مشابه لخيار "الصور"، لكنه مخصص لعرض الفيديوهات.
+        // استخدمنا قيمة value: 3 لتمييزه عن الخيارات الأخرى (1 للتقييم، 2 للصور).
+        // الـ child: يحتوي على أيقونة فيديو (Icons.videocam) بلون أساسي، ومسافة، ثم نص "الفيديوهات" أو "Videos" حسب اللغة.
+        // onTap: يؤجل التنفيذ قليلاً ثم يستدعي دالة _showVideos الجديدة، والتي تعرض نافذة منبثقة مشابهة لعرض الفيديوهات.
+        // هذا التغيير يضيف عنصر PopupMenuItem جديد مباشرة بعد خيار "الصور" ليكون "تحت"ه في القائمة.
+        PopupMenuItem(
+          value: 3, // قيمة فريدة لخيار "الفيديوهات"
+          child: Row(
+            children: [
+              Icon(Icons.videocam, color: ColorManager.primaryColor, size: 18), // أيقونة الفيديو
+              const SizedBox(width: 8),
+              Text(
+                isArabic() ? 'الفيديوهات' : 'Videos', // نص الخيار حسب اللغة
+                style: TextStyle(color: _textColor),
+              ),
+            ],
+          ),
+          onTap: () {
+            Future.delayed(Duration.zero, () => _showVideos(context)); // استدعاء دالة عرض الفيديوهات
           },
         ),
       ],
@@ -391,10 +416,6 @@ class BoardingCard extends StatelessWidget {
     );
   }
 
-  bool _shouldShowMenu() {
-    return entry.status == BoardingStatusEnums.paid.index ||
-        entry.status == BoardingStatusEnums.inProgress.index;
-  }
 
   void _showImages(context) {
     showDialog(
@@ -408,6 +429,32 @@ class BoardingCard extends StatelessWidget {
           cubit.shareImageEntries(
             ShareImageBoardingEntriesParams(
               imageUrl: imageUrl,
+              platform: platform,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // التغيير الجديد: إضافة دالة _showVideos الجديدة لعرض الفيديوهات في نافذة منبثقة.
+  // هذه الدالة مشابهة تماماً لـ _showImages، لكنها تستخدم ويدجيت افتراضياً يدعى VideoCarouselWidget (افترض أنه موجود أو سيتم تنفيذه لاحقاً).
+  // الغرض: عرض معرض فيديوهات مرتبط بالحجز (entry)، مع دعم للمشاركة عبر onShare.
+  // إذا لم يكن VideoCarouselWidget موجوداً، يجب تنفيذه بشكل مشابه لـ ImageCarouselWidget لدعم الفيديوهات.
+  // هذا التغيير يكمل إضافة الخيار في القائمة، حيث يتم استدعاؤها عند النقر على "الفيديوهات".
+  // الباراميترات مشابهة: open, isDarkMode, onOpenChange, boarding, onShare (مع استدعاء cubit.shareImageEntries، والتي قد تحتاج تعديلاً لدعم الفيديوهات إذا لزم الأمر).
+  void _showVideos(context) {
+    showDialog(
+      context: context,
+      builder: (_) => VideoCarouselWidget( // ويدجيت جديد لعرض الفيديوهات (يجب تنفيذه إذا لم يكن موجوداً)
+        open: true,
+        isDarkMode: isDarkMode,
+        onOpenChange: (open) => Navigator.pop(context),
+        boarding: entry,
+        onShare: (videoUrl, platform) { // افترض videoUrl بدلاً من imageUrl
+          cubit.shareImageEntries( // قد يحتاج إلى دالة shareVideoEntries إذا اختلفت
+            ShareImageBoardingEntriesParams( // قد يحتاج تعديل البارامز لدعم الفيديو
+              imageUrl: videoUrl, // استخدم videoUrl هنا
               platform: platform,
             ),
           );

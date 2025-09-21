@@ -4,9 +4,10 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/auth/enhanced_auth_validator.dart';
 import 'package:squeak/core/service/global_widget/vc_loading_widget.dart';
 import 'package:squeak/core/accessibility/accessibility_helper.dart';
-
 import 'package:squeak/features/auth/register/presentation/cubit/register_cubit.dart';
 import 'package:squeak/features/auth/login/presentation/pages/login_screen.dart';
+import 'package:squeak/core/service/global_widget/country_code_selector.dart';
+import 'package:squeak/core/service/global_widget/phone_number_field.dart';
 
 class EnhancedRegisterView extends StatefulWidget {
   const EnhancedRegisterView({super.key, required this.cubit});
@@ -17,79 +18,101 @@ class EnhancedRegisterView extends StatefulWidget {
   State<EnhancedRegisterView> createState() => _EnhancedRegisterViewState();
 }
 
-class _EnhancedRegisterViewState extends State<EnhancedRegisterView> 
+class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     with AccessibilityMixin, TickerProviderStateMixin {
-  
   // Validation state variables
   ValidationResult? _nameValidation;
   ValidationResult? _emailValidation;
   ValidationResult? _passwordValidation;
   ValidationResult? _confirmPasswordValidation;
   ValidationResult? _clinicCodeValidation;
-  
+
   bool _isFormValid = false;
   bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
-  
+
   late AnimationController _shakeController;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  late AnimationController _countryFieldController; // Controller for country field animation
+  late Animation<double> _countryFieldAnimation; // Animation for country field
+  bool _isCountrySelected = false; // Track if country has been selected
 
   // Controllers for confirmation password
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize animations with reduced durations for better performance
     _shakeController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
     );
-    
+
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
-    
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.1),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeOutCubic,
-    ));
-    
+    ).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic),
+    );
+
+    // Initialize country field animation
+    _countryFieldController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+    _countryFieldAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
+      CurvedAnimation(
+        parent: _countryFieldController,
+        curve: Curves.easeInOut,
+      ),
+    )..addStatusListener((status) {
+        if (!_isCountrySelected) {
+          if (status == AnimationStatus.completed) {
+            _countryFieldController.reverse();
+          } else if (status == AnimationStatus.dismissed) {
+            _countryFieldController.forward();
+          }
+        }
+      });
+
     // Start animations
     _fadeController.forward();
-    
+    _countryFieldController.forward();
+
     // Initialize form validation
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateFormValidity();
     });
   }
 
+
   @override
   void dispose() {
     _shakeController.dispose();
     _fadeController.dispose();
     _confirmPasswordController.dispose();
+    _countryFieldController.dispose(); // Dispose country field controller
     super.dispose();
   }
 
   @override
-  Duration getAnimationDuration({Duration? defaultDuration, Duration? reducedDuration}) {
-    // Reduced animation duration for better performance
+  Duration getAnimationDuration({
+    Duration? defaultDuration,
+    Duration? reducedDuration,
+  }) {
     return const Duration(milliseconds: 200);
   }
 
@@ -116,17 +139,6 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
       _passwordValidation = EnhancedAuthValidator.validatePassword(
         widget.cubit.passwordController.text,
       );
-      _validateConfirmPassword(); // Also validate confirm password when password changes
-      _updateFormValidity();
-    });
-  }
-
-  void _validateConfirmPassword() {
-    setState(() {
-      _confirmPasswordValidation = EnhancedAuthValidator.validatePasswordConfirmation(
-        widget.cubit.passwordController.text,
-        _confirmPasswordController.text,
-      );
       _updateFormValidity();
     });
   }
@@ -142,18 +154,28 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
 
   void _updateFormValidity() {
     final wasValid = _isFormValid;
-    
-    _isFormValid = (_nameValidation?.isValid ?? false) && 
-                   (_emailValidation?.isValid ?? false) && 
-                   (_passwordValidation?.isValid ?? false) &&
-                   (_confirmPasswordValidation?.isValid ?? false) &&
-                   (_clinicCodeValidation?.isValid ?? false) &&
-                   widget.cubit.countryCode.isNotEmpty;
-    
+
+    _isFormValid =
+        (_nameValidation?.isValid ?? false) &&
+        (_emailValidation?.isValid ?? false) &&
+        (_passwordValidation?.isValid ?? false) &&
+        (_confirmPasswordValidation?.isValid ?? false) &&
+        (_clinicCodeValidation?.isValid ?? false) &&
+        widget.cubit.countryCode.isNotEmpty;
+
     debugPrint('Form valid: $_isFormValid');
-    
+
     if (wasValid != _isFormValid) {
       setState(() {});
+    }
+  }
+
+  void _stopCountryAnimation() {
+    if (!_isCountrySelected) {
+      setState(() {
+        _isCountrySelected = true;
+      });
+      _countryFieldController.stop();
     }
   }
 
@@ -161,17 +183,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     setState(() {
       _obscurePassword = !_obscurePassword;
     });
-    
-    // Provide haptic feedback
-    HapticFeedback.lightImpact();
-  }
 
-  void _toggleConfirmPasswordVisibility() {
-    setState(() {
-      _obscureConfirmPassword = !_obscureConfirmPassword;
-    });
-    
-    // Provide haptic feedback
     HapticFeedback.lightImpact();
   }
 
@@ -180,10 +192,9 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
       _shakeController.forward().then((_) {
         _shakeController.reset();
       });
-      
-      // Provide haptic feedback for validation error
+
       HapticFeedback.heavyImpact();
-      
+
       if (widget.cubit.countryCode.isEmpty) {
         infoToast(
           context,
@@ -195,16 +206,13 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
       return;
     }
 
-    // Provide haptic feedback for successful validation
     HapticFeedback.lightImpact();
-    
-    // Trigger registration
     widget.cubit.register();
   }
 
   Widget _buildValidationIcon(ValidationResult? validation) {
     if (validation == null) return const SizedBox.shrink();
-    
+
     return AnimatedSwitcher(
       duration: getAnimationDuration(),
       child: validation.isValid
@@ -223,6 +231,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -235,9 +244,14 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
             animation: _shakeController,
             builder: (context, child) {
               final shakeOffset = _shakeController.isAnimating
-                  ? Offset(_shakeController.value * 10 * (1 - _shakeController.value * 2).abs(), 0)
+                  ? Offset(
+                      _shakeController.value *
+                          10 *
+                          (1 - _shakeController.value * 2).abs(),
+                      0,
+                    )
                   : Offset.zero;
-              
+
               return Transform.translate(
                 offset: shakeOffset,
                 child: Padding(
@@ -252,14 +266,14 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Animated paw icon
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: ColorManager.primaryColor.withValues(alpha: 0.1),
+                                color: ColorManager.primaryColor.withValues(
+                                  alpha: 0.1,
+                                ),
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              
                               child: Icon(
                                 Icons.pets,
                                 size: 32,
@@ -282,7 +296,8 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                               style: FontStyleThame.textStyle(
                                 context: context,
                                 fontSize: 16,
-                                fontColor: Theme.of(context).colorScheme.outline,
+                                fontColor:
+                                    Theme.of(context).colorScheme.outline,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -290,7 +305,12 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                         ),
                       ),
 
-                      SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 24 : 16),
+                      SizedBox(
+                        height:
+                            getAnimationDuration().inMilliseconds > 200
+                                ? 24
+                                : 16,
+                      ),
 
                       // Enhanced Name Field
                       Column(
@@ -300,11 +320,14 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                color: _nameValidation?.isValid == false 
-                  ? ColorManager.red.withValues(alpha: 0.7)
-                  : _nameValidation?.isValid == true
-                    ? ColorManager.green.withValues(alpha: 0.7)
-                    : Theme.of(context).colorScheme.outlineVariant,
+                                color: _nameValidation?.isValid == false
+                                    ? ColorManager.red.withValues(alpha: 0.7)
+                                    : _nameValidation?.isValid == true
+                                        ? ColorManager.green.withValues(
+                                            alpha: 0.7)
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .outlineVariant,
                                 width: 1.5,
                               ),
                             ),
@@ -312,24 +335,30 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                               controller: widget.cubit.nameController,
                               decoration: InputDecoration(
                                 hintText: S.of(context).enterName,
-                                prefixIcon: const Icon(Icons.person_outline, size: 18),
+                                prefixIcon: const Icon(
+                                  Icons.person_outline,
+                                  size: 18,
+                                ),
                                 suffixIcon: _buildValidationIcon(_nameValidation),
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16, 
+                                  horizontal: 16,
                                   vertical: 16,
                                 ),
                               ),
                               onChanged: (value) => _validateName(),
-                              // No inline error text under controls
                               validator: (_) => null,
                             ),
                           ),
-                          // Validation text removed - no longer showing text feedback under controls
                         ],
                       ),
 
-                      SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 20 : 13),
+                      SizedBox(
+                        height:
+                            getAnimationDuration().inMilliseconds > 200
+                                ? 20
+                                : 13,
+                      ),
 
                       // Enhanced Email Field
                       Column(
@@ -339,11 +368,14 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                color: _emailValidation?.isValid == false 
-                  ? ColorManager.red.withValues(alpha: 0.7)
-                  : _emailValidation?.isValid == true
-                    ? ColorManager.green.withValues(alpha: 0.7)
-                    : Theme.of(context).colorScheme.outlineVariant,
+                                color: _emailValidation?.isValid == false
+                                    ? ColorManager.red.withValues(alpha: 0.7)
+                                    : _emailValidation?.isValid == true
+                                        ? ColorManager.green.withValues(
+                                            alpha: 0.7)
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .outlineVariant,
                                 width: 1.5,
                               ),
                             ),
@@ -352,55 +384,104 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                               keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
                                 hintText: S.of(context).enterUrEmail,
-                                prefixIcon: const Icon(Icons.email_outlined, size: 18),
-                                suffixIcon: _buildValidationIcon(_emailValidation),
+                                prefixIcon: const Icon(
+                                  Icons.email_outlined,
+                                  size: 18,
+                                ),
+                                suffixIcon:
+                                    _buildValidationIcon(_emailValidation),
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16, 
+                                  horizontal: 16,
                                   vertical: 16,
                                 ),
                               ),
                               onChanged: (value) => _validateEmail(),
-                              // No inline error text under controls
                               validator: (_) => null,
                             ),
                           ),
-                          // Validation text removed - no longer showing text feedback under controls
                         ],
                       ),
 
-                      SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 20 : 13),
-
-                      // Enhanced Phone Field
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-              color: widget.cubit.countryCode.isNotEmpty
-                ? ColorManager.green.withValues(alpha: 0.7)
-                : Theme.of(context).colorScheme.outlineVariant,
-                            width: 1.5,
-                          ),
-                        ),
-                        child: PhoneTextField(
-                          controller: widget.cubit.phoneController,
-                          countries: widget.cubit.countries,
-                          registerCubit: widget.cubit,
-                        ),
+                      SizedBox(
+                        height:
+                            getAnimationDuration().inMilliseconds > 200
+                                ? 20
+                                : 13,
                       ),
 
-                      SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 20 : 13),
+                      // Enhanced Phone Field - Separated Components
+                      Row(
+                        children: [
+                          // Country Code Selector with Animation
+                          Expanded(
+                            flex: 2,
+                            child: ScaleTransition(
+                              scale: _countryFieldAnimation,
+                              child: CountryCodeSelector(
+                                countries: widget.cubit.countries,
+                                registerCubit: widget.cubit,
+                                isValid: widget.cubit.countryCode.isNotEmpty,
+                                onCountryChanged: _updateFormValidity,
+                                onAnimationStop: _stopCountryAnimation,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          // Phone Number Field
+                          Expanded(
+                            flex: 4,
+                            child: Container(
+                              height: 56, // Fixed height to match country field
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: widget.cubit.countryCode.isNotEmpty
+                                      ? ColorManager.green
+                                          .withValues(alpha: 0.7)
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .outlineVariant,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: PhoneNumberField(
+                                controller: widget.cubit.phoneController,
+                                hintText: S.of(context).phone_hint,
+                                isValid: widget.cubit.countryCode.isNotEmpty,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return S.of(context).phone_validation;
+                                  }
+                                  return null;
+                                },
+                                onChanged: _updateFormValidity,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(
+                        height:
+                            getAnimationDuration().inMilliseconds > 200
+                                ? 20
+                                : 13,
+                      ),
 
                       // Enhanced Password Field
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-              color: _passwordValidation?.isValid == true
-                ? ColorManager.green.withValues(alpha: 0.7)
-                : _passwordValidation != null && !_passwordValidation!.isValid
-                  ? ColorManager.red.withValues(alpha: 0.7)
-                  : Theme.of(context).colorScheme.outlineVariant,
+                            color: _passwordValidation?.isValid == true
+                                ? ColorManager.green.withValues(alpha: 0.7)
+                                : _passwordValidation != null &&
+                                        !_passwordValidation!.isValid
+                                    ? ColorManager.red.withValues(alpha: 0.7)
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .outlineVariant,
                             width: 1.5,
                           ),
                         ),
@@ -408,14 +489,17 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                           controller: widget.cubit.passwordController,
                           obscureText: _obscurePassword,
                           decoration: InputDecoration(
-                            // Use hint instead of label to avoid persistent label under field
                             hintText: 'Enter your password',
-                            prefixIcon: const Icon(Icons.lock_outlined, size: 18),
+                            prefixIcon: const Icon(
+                              Icons.lock_outlined,
+                              size: 18,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
                             ),
-          fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                            fillColor:
+                                Theme.of(context).inputDecorationTheme.fillColor,
                             filled: true,
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
@@ -427,7 +511,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                                 if (_passwordValidation?.isValid == true)
                                   Icon(
                                     Icons.check_circle,
-            color: ColorManager.green,
+                                    color: ColorManager.green,
                                     size: 20,
                                   ),
                                 IconButton(
@@ -435,7 +519,8 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                                     _obscurePassword
                                         ? Icons.visibility
                                         : Icons.visibility_off,
-            color: Theme.of(context).colorScheme.outline,
+                                    color:
+                                        Theme.of(context).colorScheme.outline,
                                   ),
                                   onPressed: _togglePasswordVisibility,
                                 ),
@@ -446,56 +531,14 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                             _validatePassword();
                           },
                         ),
-                      ),                      SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 20 : 13),
-
-                      // Enhanced Confirm Password Field
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                color: _confirmPasswordValidation?.isValid == false 
-                  ? ColorManager.red.withValues(alpha: 0.7)
-                  : _confirmPasswordValidation?.isValid == true
-                    ? ColorManager.green.withValues(alpha: 0.7)
-                    : Theme.of(context).colorScheme.outlineVariant,
-                                width: 1.5,
-                              ),
-                            ),
-                            child: TextFormField(
-                              controller: _confirmPasswordController,
-                              obscureText: _obscureConfirmPassword,
-                              decoration: InputDecoration(
-                                hintText: 'Confirm your password',
-                                prefixIcon: const Icon(Icons.lock_outlined, size: 18),
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _obscureConfirmPassword 
-                                        ? Icons.visibility_outlined 
-                                        : Icons.visibility_off_outlined,
-                                    size: 18,
-                                  ),
-                                  onPressed: _toggleConfirmPasswordVisibility,
-                                  tooltip: _obscureConfirmPassword ? 'Show password' : 'Hide password',
-                                ),
-                                border: InputBorder.none,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16, 
-                                  vertical: 16,
-                                ),
-                              ),
-                              onChanged: (value) => _validateConfirmPassword(),
-                              // No inline error text under controls
-                              validator: (_) => null,
-                            ),
-                          ),
-                          // Validation text removed - no longer showing text feedback under controls
-                        ],
                       ),
 
-                      SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 20 : 13),
+                      SizedBox(
+                        height:
+                            getAnimationDuration().inMilliseconds > 200
+                                ? 20
+                                : 13,
+                      ),
 
                       // Enhanced Clinic Code Field
                       Column(
@@ -505,11 +548,14 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                color: _clinicCodeValidation?.isValid == false 
-                  ? ColorManager.red.withValues(alpha: 0.7)
-                  : _clinicCodeValidation?.isValid == true
-                    ? ColorManager.green.withValues(alpha: 0.7)
-                    : Theme.of(context).colorScheme.outlineVariant,
+                                color: _clinicCodeValidation?.isValid == false
+                                    ? ColorManager.red.withValues(alpha: 0.7)
+                                    : _clinicCodeValidation?.isValid == true
+                                        ? ColorManager.green
+                                            .withValues(alpha: 0.7)
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .outlineVariant,
                                 width: 1.5,
                               ),
                             ),
@@ -517,24 +563,31 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                               controller: widget.cubit.followCodeController,
                               decoration: InputDecoration(
                                 hintText: S.of(context).followCode,
-                                prefixIcon: const Icon(Icons.local_hospital_outlined, size: 18),
-                                suffixIcon: _buildValidationIcon(_clinicCodeValidation),
+                                prefixIcon: const Icon(
+                                  Icons.local_hospital_outlined,
+                                  size: 18,
+                                ),
+                                suffixIcon:
+                                    _buildValidationIcon(_clinicCodeValidation),
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16, 
+                                  horizontal: 16,
                                   vertical: 16,
                                 ),
                               ),
                               onChanged: (value) => _validateClinicCode(),
-                              // No inline error text under controls
                               validator: (_) => null,
                             ),
                           ),
-                          // Validation text removed - no longer showing text feedback under controls
                         ],
                       ),
 
-                      SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 32 : 24),
+                      SizedBox(
+                        height:
+                            getAnimationDuration().inMilliseconds > 200
+                                ? 32
+                                : 24,
+                      ),
 
                       // Enhanced Register Button
                       SizedBox(
@@ -542,21 +595,28 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                         child: VcLoadingButton(
                           onPressed: _isFormValid ? _onRegisterPressed : null,
                           isLoading: widget.cubit.isRegister,
-              backgroundColor: _isFormValid 
-                ? ColorManager.primaryColor 
-                : Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.6),
+                          backgroundColor: _isFormValid
+                              ? ColorManager.primaryColor
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .outlineVariant
+                                  .withValues(alpha: 0.6),
                           borderRadius: 12,
                           height: 56,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               if (!widget.cubit.isRegister) ...[
-                                const Icon(Icons.pets, color: ColorManager.white, size: 20),
+                                const Icon(
+                                  Icons.pets,
+                                  color: ColorManager.white,
+                                  size: 20,
+                                ),
                                 const SizedBox(width: 8),
                               ],
                               Text(
-                                widget.cubit.isRegister 
-                                    ? 'Creating Your Account...' 
+                                widget.cubit.isRegister
+                                    ? 'Creating Your Account...'
                                     : S.of(context).register,
                                 style: const TextStyle(
                                   color: ColorManager.white,
@@ -569,7 +629,12 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                         ),
                       ),
 
-                      SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 24 : 16),
+                      SizedBox(
+                        height:
+                            getAnimationDuration().inMilliseconds > 200
+                                ? 24
+                                : 16,
+                      ),
 
                       // Enhanced Login Link
                       Container(
@@ -579,26 +644,42 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                           children: [
                             Row(
                               children: [
-            Expanded(child: Divider(color: Theme.of(context).colorScheme.outlineVariant)),
+                                Expanded(
+                                  child: Divider(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .outlineVariant,
+                                  ),
+                                ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
                                   child: Text(
                                     'Already part of the pack?',
                                     style: FontStyleThame.textStyle(
                                       context: context,
                                       fontSize: 14,
-              fontColor: Theme.of(context).colorScheme.outline,
+                                      fontColor:
+                                          Theme.of(context).colorScheme.outline,
                                     ),
                                   ),
                                 ),
-            Expanded(child: Divider(color: Theme.of(context).colorScheme.outlineVariant)),
+                                Expanded(
+                                  child: Divider(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .outlineVariant,
+                                  ),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 16),
                             AccessibilityHelper.semanticWrapper(
                               label: 'Switch to login screen',
                               button: true,
-                              hint: 'Navigate to login if you already have an account',
+                              hint:
+                                  'Navigate to login if you already have an account',
                               child: InkWell(
                                 onTap: () {
                                   HapticFeedback.lightImpact();
@@ -607,12 +688,13 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                                 borderRadius: BorderRadius.circular(8),
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 24, 
+                                    horizontal: 24,
                                     vertical: 12,
                                   ),
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color: ColorManager.primaryColor.withValues(alpha: 0.3),
+                                      color: ColorManager.primaryColor
+                                          .withValues(alpha: 0.3),
                                     ),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -643,7 +725,12 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                         ),
                       ),
 
-                      SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 20 : 13),
+                      SizedBox(
+                        height:
+                            getAnimationDuration().inMilliseconds > 200
+                                ? 20
+                                : 13,
+                      ),
                     ],
                   ),
                 ),

@@ -15,6 +15,7 @@ class BoardingEntryEntity extends Equatable {
   final String petId;
   final PetBoardingEntity pet;
   final List<dynamic> boardingImages;
+  // final List<dynamic> boardingVideos; // added
   final String clinicPhone;
   final String clinicLocation;
   final String? clinicLogo;
@@ -40,6 +41,7 @@ class BoardingEntryEntity extends Equatable {
     required this.petId,
     required this.pet,
     required this.boardingImages,
+    // required this.boardingVideos, // added
     required this.clinicPhone,
     required this.clinicLocation,
     this.clinicLogo,
@@ -55,10 +57,29 @@ class BoardingEntryEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-    id, entryDate, existDate, period, paymentDate, comment, status,
-    boardingTypeId, boardingType, petId, pet, boardingImages,
-    clinicPhone, clinicLocation, clinicLogo, clinicCode, clinicName,
-    clinicId, cleanlinessRate, doctorServiceRate, feedbackComment,
-    isRating, tenantId
+    id,
+    entryDate,
+    existDate,
+    period,
+    paymentDate,
+    comment,
+    status,
+    boardingTypeId,
+    boardingType,
+    petId,
+    pet,
+    boardingImages,
+    // boardingVideos,
+    clinicPhone,
+    clinicLocation,
+    clinicLogo,
+    clinicCode,
+    clinicName,
+    clinicId,
+    cleanlinessRate,
+    doctorServiceRate,
+    feedbackComment,
+    isRating,
+    tenantId,
   ];
 }

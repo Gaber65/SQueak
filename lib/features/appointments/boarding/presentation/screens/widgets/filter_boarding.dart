@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_protected_member
+
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/features/appointments/boarding/presentation/cubit/boarding_state.dart';

@@ -2,18 +2,25 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:squeak/core/service/global_widget/ImageDetail.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import 'package:squeak/core/service/global_widget/boarding_video_details.dart';
+import 'package:video_player/video_player.dart';
 import '../../domain/entities/boarding_entry_entity.dart';
 
-class ImageCarouselWidget extends StatefulWidget {
+// قائمة ثابتة للفيديوهات من الأصول
+final List<Map<String, String>> staticVideos = [
+  {'path': 'assets/video/cute_pets.mp4', 'note': 'Cute pets playing'},
+  {'path': 'assets/video/funny_pets.mp4', 'note': 'Funny pets moments'},
+];
+
+class VideoCarouselWidget extends StatefulWidget {
   final bool open;
   final void Function(bool) onOpenChange;
   final BoardingEntryEntity? boarding;
-  final void Function(String imageUrl, String platform) onShare;
+  final void Function(String videoUrl, String platform) onShare;
   final bool isDarkMode;
 
-  const ImageCarouselWidget({
+  const VideoCarouselWidget({
     super.key,
     required this.open,
     required this.onOpenChange,
@@ -23,22 +30,24 @@ class ImageCarouselWidget extends StatefulWidget {
   });
 
   @override
-  State<ImageCarouselWidget> createState() => _ImageCarouselWidgetState();
+  State<VideoCarouselWidget> createState() => _VideoCarouselWidgetState();
 }
 
-class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
+class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
     with TickerProviderStateMixin {
   late PageController _pageController;
-  int currentImageIndex = 0;
-  bool isImageLoading = true;
+  int currentVideoIndex = 0;
+  List<VideoPlayerController> _videoControllers = [];
+  List<bool> _isVideoLoading = [];
+  List<bool> _isVideoPlaying = [];
+
   late AnimationController _animationController;
   late AnimationController _fadeController;
   late AnimationController _pulseController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
 
-  // Enhanced Dark Mode Color Scheme
-
+  // نظام ألوان محسّن للوضع المظلم
   Color get _textPrimaryColor =>
       widget.isDarkMode ? Colors.white : Colors.black87;
 
@@ -53,14 +62,12 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   Color get _shimmerBaseColor =>
       widget.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300;
 
-  Color get _shimmerHighlightColor =>
-      widget.isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100;
-
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
     _setupAnimations();
+    _initializeVideoControllers();
   }
 
   void _setupAnimations() {
@@ -94,22 +101,115 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
     }
   }
 
+  void _initializeVideoControllers() {
+    _isVideoLoading = List<bool>.filled(staticVideos.length, true);
+    _isVideoPlaying = List<bool>.filled(staticVideos.length, false);
+
+    _videoControllers =
+        staticVideos.asMap().entries.map((entry) {
+          final index = entry.key;
+          final video = entry.value;
+          final controller = VideoPlayerController.asset(video['path']!);
+
+          controller
+              .initialize()
+              .then((_) {
+                if (mounted) {
+                  setState(() {
+                    _isVideoLoading[index] = false;
+                  });
+                  controller.setLooping(true);
+
+                  // تشغيل الفيديو الأول فقط عند البداية
+                  if (index == currentVideoIndex && index == 0) {
+                    _playVideo(index);
+                  }
+                }
+              })
+              .catchError((error) {
+                if (mounted) {
+                  setState(() {
+                    _isVideoLoading[index] = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error loading video: ${video['path']}'),
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+                }
+              });
+          return controller;
+        }).toList();
+  }
+
+  // تشغيل فيديو معين وإيقاف الباقي
+  void _playVideo(int index) {
+    if (index >= 0 && index < _videoControllers.length && mounted) {
+      // إيقاف جميع الفيديوهات الأخرى
+      _stopAllVideos();
+
+      // تشغيل الفيديو المحدد
+      if (_videoControllers[index].value.isInitialized) {
+        _videoControllers[index].play();
+        setState(() {
+          _isVideoPlaying[index] = true;
+        });
+      }
+    }
+  }
+
+  // إيقاف جميع الفيديوهات
+  void _stopAllVideos() {
+    for (int i = 0; i < _videoControllers.length; i++) {
+      if (_videoControllers[i].value.isInitialized && _isVideoPlaying[i]) {
+        _videoControllers[i].pause();
+        setState(() {
+          _isVideoPlaying[i] = false;
+        });
+      }
+    }
+  }
+
+  // تبديل حالة التشغيل/الإيقاف للفيديو الحالي
+  void _toggleVideoPlayback() {
+    if (currentVideoIndex >= 0 &&
+        currentVideoIndex < _videoControllers.length &&
+        _videoControllers[currentVideoIndex].value.isInitialized) {
+      if (_isVideoPlaying[currentVideoIndex]) {
+        _videoControllers[currentVideoIndex].pause();
+        setState(() {
+          _isVideoPlaying[currentVideoIndex] = false;
+        });
+      } else {
+        _playVideo(currentVideoIndex);
+      }
+      HapticFeedback.selectionClick();
+    }
+  }
+
   @override
-  void didUpdateWidget(ImageCarouselWidget oldWidget) {
+  void didUpdateWidget(VideoCarouselWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.open != oldWidget.open) {
       if (widget.open) {
         _animationController.forward();
         _fadeController.forward();
+        // تشغيل الفيديو الحالي عند فتح المعرض
+        if (_videoControllers.isNotEmpty) {
+          _playVideo(currentVideoIndex);
+        }
       } else {
         _animationController.reverse();
         _fadeController.reverse();
+        // إيقاف جميع الفيديوهات عند إغلاق المعرض
+        _stopAllVideos();
       }
     }
   }
 
-  void nextImage() {
-    if (currentImageIndex < (widget.boarding?.boardingImages.length ?? 1) - 1) {
+  void nextVideo() {
+    if (currentVideoIndex < staticVideos.length - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 350),
         curve: Curves.easeInOutCubic,
@@ -118,8 +218,8 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
     }
   }
 
-  void prevImage() {
-    if (currentImageIndex > 0) {
+  void prevVideo() {
+    if (currentVideoIndex > 0) {
       _pageController.previousPage(
         duration: const Duration(milliseconds: 350),
         curve: Curves.easeInOutCubic,
@@ -128,17 +228,17 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
     }
   }
 
-  void _openEnhancedShareSheet(String imageUrl) {
+  void _openEnhancedShareSheet(String videoUrl) {
     HapticFeedback.mediumImpact();
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) => _buildEnhancedShareSheet(imageUrl),
+      builder: (context) => _buildEnhancedShareSheet(videoUrl),
     );
   }
 
-  Widget _buildEnhancedShareSheet(String imageUrl) {
+  Widget _buildEnhancedShareSheet(String videoUrl) {
     final shareOptions = [
       {
         'title': isArabic() ? 'فيسبوك' : 'Facebook',
@@ -194,7 +294,6 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Enhanced Handle bar
           Container(
             margin: const EdgeInsets.only(top: 12),
             width: 50,
@@ -209,8 +308,6 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
               borderRadius: BorderRadius.circular(3),
             ),
           ),
-
-          // Enhanced Header
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
@@ -254,7 +351,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        isArabic() ? 'مشاركة الصورة' : 'Share Image',
+                        isArabic() ? 'مشاركة الفيديو' : 'Share Video',
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -292,8 +389,6 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
               ],
             ),
           ),
-
-          // Enhanced Share options
           Padding(
             padding: const EdgeInsets.all(24),
             child: GridView.builder(
@@ -344,7 +439,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                     color: Colors.transparent,
                     child: InkWell(
                       onTap: () {
-                        widget.onShare(imageUrl, option['platform'] as String);
+                        widget.onShare(videoUrl, option['platform'] as String);
                         Navigator.pop(context);
                         HapticFeedback.selectionClick();
                       },
@@ -400,7 +495,6 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
               },
             ),
           ),
-
           const SizedBox(height: 16),
         ],
       ),
@@ -411,9 +505,8 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   Widget build(BuildContext context) {
     if (!widget.open) return const SizedBox();
 
-    final boarding = widget.boarding;
-    if (boarding == null || boarding.boardingImages.isEmpty) {
-      return _buildNoImagesDialog();
+    if (staticVideos.isEmpty) {
+      return _buildNoVideosDialog();
     }
 
     return AnimatedBuilder(
@@ -466,11 +559,9 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildEnhancedHeader(boarding),
-                    _buildEnhancedImageCarousel(boarding),
-                    if (boarding.boardingImages.length > 1)
-                      _buildEnhancedPageIndicators(boarding),
-
+                    _buildEnhancedHeader(),
+                    _buildEnhancedVideoCarousel(),
+                    if (staticVideos.length > 1) _buildEnhancedPageIndicators(),
                     _buildEnhancedCloseButton(),
                   ],
                 ),
@@ -482,7 +573,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
     );
   }
 
-  Widget _buildNoImagesDialog() {
+  Widget _buildNoVideosDialog() {
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
@@ -544,7 +635,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                         ),
                       ),
                       child: Icon(
-                        Icons.image_not_supported_rounded,
+                        Icons.videocam_off_rounded,
                         size: 70,
                         color:
                             widget.isDarkMode
@@ -554,7 +645,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      isArabic() ? 'لا توجد صور' : 'No Images Found',
+                      isArabic() ? 'لا توجد فيديوهات' : 'No Videos Found',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -577,8 +668,8 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                       ),
                       child: Text(
                         isArabic()
-                            ? 'لا توجد صور لهذه الإقامة.'
-                            : 'No images found for this boarding.',
+                            ? 'لا توجد فيديوهات لهذه الإقامة.'
+                            : 'No videos found for this boarding.',
                         style: TextStyle(
                           fontSize: 15,
                           color: _textSecondaryColor,
@@ -645,7 +736,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
     );
   }
 
-  Widget _buildEnhancedHeader(BoardingEntryEntity boarding) {
+  Widget _buildEnhancedHeader() {
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
@@ -689,7 +780,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
               ],
             ),
             child: const Icon(
-              Icons.photo_library_rounded,
+              Icons.video_library_rounded,
               color: Colors.white,
               size: 28,
             ),
@@ -700,9 +791,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isArabic()
-                      ? 'صور إقامة ${boarding.pet.name}'
-                      : "${boarding.pet.name}'s Boarding Photos",
+                  isArabic() ? 'فيديوهات الإقامة' : 'Boarding Videos',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -735,7 +824,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        Icons.photo_rounded,
+                        Icons.videocam_rounded,
                         size: 16,
                         color:
                             widget.isDarkMode
@@ -744,7 +833,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        '${boarding.boardingImages.length} ${isArabic() ? "صورة" : "photos"}',
+                        '${staticVideos.length} ${isArabic() ? "فيديو" : "videos"}',
                         style: TextStyle(
                           fontSize: 14,
                           color:
@@ -765,7 +854,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
     );
   }
 
-  Widget _buildEnhancedImageCarousel(BoardingEntryEntity boarding) {
+  Widget _buildEnhancedVideoCarousel() {
     return SizedBox(
       height: 350,
       child: Stack(
@@ -773,28 +862,27 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
           PageView.builder(
             controller: _pageController,
             onPageChanged: (index) {
+              // إيقاف الفيديو السابق وتشغيل الجديد
+              _playVideo(index);
               setState(() {
-                currentImageIndex = index;
+                currentVideoIndex = index;
               });
               HapticFeedback.selectionClick();
             },
-            itemCount: boarding.boardingImages.length,
+            itemCount: staticVideos.length,
             itemBuilder: (context, index) {
               return Column(
                 children: [
                   Expanded(
-                    child: InkWell(
+                    child: GestureDetector(
                       onTap: () {
                         navigateToScreen(
                           context,
-                          ImageDetailSimple(
-                            path:
-                                imageUrlWithVetICare +
-                                boarding.boardingImages[index]['imageName'],
+                          VideoDetailSimple(
+                            path: staticVideos[index]['path']!,
                             title:
-                                isArabic() ? 'تفاصيل الصورة' : 'Image details',
-                            description:
-                                boarding.boardingImages[index]['note'] ?? '',
+                                isArabic() ? 'تفاصيل الفيديو' : 'Video details',
+                            description: staticVideos[index]['note'] ?? '',
                           ),
                         );
                       },
@@ -805,42 +893,15 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                           child: Stack(
                             fit: StackFit.expand,
                             children: [
-                              Image.network(
-                                imageUrlWithVetICare +
-                                    boarding.boardingImages[index]['imageName'],
-                                fit: BoxFit.cover,
-                                loadingBuilder: (
-                                  context,
-                                  child,
-                                  loadingProgress,
-                                ) {
-                                  if (loadingProgress == null) return child;
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          _shimmerBaseColor,
-                                          _shimmerHighlightColor,
-                                          _shimmerBaseColor,
-                                        ],
-                                        stops: const [0.0, 0.5, 1.0],
-                                      ),
-                                    ),
+                              _isVideoLoading[index]
+                                  ? Container(
+                                    color: _shimmerBaseColor,
                                     child: Center(
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
                                           CircularProgressIndicator(
-                                            value:
-                                                loadingProgress
-                                                            .expectedTotalBytes !=
-                                                        null
-                                                    ? loadingProgress
-                                                            .cumulativeBytesLoaded /
-                                                        loadingProgress
-                                                            .expectedTotalBytes!
-                                                    : null,
                                             color:
                                                 widget.isDarkMode
                                                     ? Colors.blue.shade400
@@ -850,8 +911,8 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                                           const SizedBox(height: 16),
                                           Text(
                                             isArabic()
-                                                ? 'جاري التحميل...'
-                                                : 'Loading...',
+                                                ? 'جاري تحميل الفيديو...'
+                                                : 'Loading video...',
                                             style: TextStyle(
                                               color: _textSecondaryColor,
                                               fontSize: 14,
@@ -861,73 +922,8 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                                         ],
                                       ),
                                     ),
-                                  );
-                                },
-                                errorBuilder:
-                                    (context, error, _) => Container(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors:
-                                              widget.isDarkMode
-                                                  ? [
-                                                    Colors.grey.shade800,
-                                                    Colors.grey.shade900,
-                                                  ]
-                                                  : [
-                                                    Colors.grey.shade200,
-                                                    Colors.grey.shade300,
-                                                  ],
-                                        ),
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.all(20),
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  widget.isDarkMode
-                                                      ? Colors.grey.shade700
-                                                      : Colors.grey.shade100,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: Icon(
-                                              Icons.broken_image_rounded,
-                                              size: 60,
-                                              color:
-                                                  widget.isDarkMode
-                                                      ? Colors.grey.shade500
-                                                      : Colors.grey.shade600,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 16),
-                                          Text(
-                                            isArabic()
-                                                ? 'فشل في تحميل الصورة'
-                                                : 'Failed to load image',
-                                            style: TextStyle(
-                                              color: _textSecondaryColor,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            isArabic()
-                                                ? 'اضغط لإعادة المحاولة'
-                                                : 'Tap to retry',
-                                            style: TextStyle(
-                                              color: _textSecondaryColor,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                              ),
-                              // Enhanced gradient overlay
+                                  )
+                                  : VideoPlayer(_videoControllers[index]),
                               Container(
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
@@ -942,27 +938,54 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                                   ),
                                 ),
                               ),
+                              // زر التشغيل/الإيقاف في الوسط
+                              Center(
+                                child: GestureDetector(
+                                  onTap: _toggleVideoPlayback,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(20),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.6),
+                                      borderRadius: BorderRadius.circular(50),
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.3),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      _isVideoPlaying[index]
+                                          ? Icons.pause_rounded
+                                          : Icons.play_arrow_rounded,
+                                      color: Colors.white,
+                                      size: 40,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       ),
                     ),
                   ),
-                  Text(
-                    boarding.boardingImages[index]['note'] ?? '',
-                    style: TextStyle(
-                      color: _textSecondaryColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      staticVideos[index]['note'] ?? '',
+                      style: TextStyle(
+                        color: _textSecondaryColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ],
               );
             },
           ),
-
-          // Enhanced Navigation buttons
-          if (boarding.boardingImages.length > 1) ...[
+          if (staticVideos.length > 1) ...[
             Positioned(
               left: 20,
               top: 0,
@@ -989,7 +1012,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                       color: Colors.white,
                       size: 32,
                     ),
-                    onPressed: currentImageIndex > 0 ? prevImage : null,
+                    onPressed: currentVideoIndex > 0 ? prevVideo : null,
                   ),
                 ),
               ),
@@ -1021,16 +1044,14 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                       size: 32,
                     ),
                     onPressed:
-                        currentImageIndex < boarding.boardingImages.length - 1
-                            ? nextImage
+                        currentVideoIndex < staticVideos.length - 1
+                            ? nextVideo
                             : null,
                   ),
                 ),
               ),
             ),
           ],
-
-          // Enhanced Share button
           Positioned(
             top: 20,
             right: 20,
@@ -1057,15 +1078,11 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                 ),
                 onPressed:
                     () => _openEnhancedShareSheet(
-                      imageUrlWithVetICare +
-                          boarding
-                              .boardingImages[currentImageIndex]['imageName'],
+                      staticVideos[currentVideoIndex]['path']!,
                     ),
               ),
             ),
           ),
-
-          // Enhanced Image counter
           Positioned(
             top: 20,
             left: 20,
@@ -1088,10 +1105,10 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.photo_rounded, color: Colors.white, size: 16),
+                  Icon(Icons.videocam_rounded, color: Colors.white, size: 16),
                   const SizedBox(width: 6),
                   Text(
-                    '${currentImageIndex + 1}/${boarding.boardingImages.length}',
+                    '${currentVideoIndex + 1}/${staticVideos.length}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -1107,22 +1124,22 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
     );
   }
 
-  Widget _buildEnhancedPageIndicators(BoardingEntryEntity boarding) {
+  Widget _buildEnhancedPageIndicators() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(
-          boarding.boardingImages.length,
+          staticVideos.length,
           (index) => AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             margin: const EdgeInsets.symmetric(horizontal: 6),
-            width: currentImageIndex == index ? 32 : 10,
+            width: currentVideoIndex == index ? 32 : 10,
             height: 10,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               gradient:
-                  currentImageIndex == index
+                  currentVideoIndex == index
                       ? LinearGradient(
                         colors:
                             widget.isDarkMode
@@ -1131,13 +1148,13 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                       )
                       : null,
               color:
-                  currentImageIndex != index
+                  currentVideoIndex != index
                       ? (widget.isDarkMode
                           ? Colors.grey.shade600
                           : Colors.grey.shade300)
                       : null,
               boxShadow:
-                  currentImageIndex == index
+                  currentVideoIndex == index
                       ? [
                         BoxShadow(
                           color: Colors.blue.withOpacity(0.4),
@@ -1185,7 +1202,11 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
             ],
           ),
           child: ElevatedButton.icon(
-            onPressed: () => widget.onOpenChange(false),
+            onPressed: () {
+              // إيقاف جميع الفيديوهات قبل الإغلاق
+              _stopAllVideos();
+              widget.onOpenChange(false);
+            },
             icon: Icon(Icons.close_rounded, size: 22, color: _textPrimaryColor),
             label: Text(
               isArabic() ? 'إغلاق' : 'Close',
@@ -1215,15 +1236,20 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
     _animationController.dispose();
     _fadeController.dispose();
     _pulseController.dispose();
+
+    for (var controller in _videoControllers) {
+      controller.pause();
+      controller.dispose();
+    }
     super.dispose();
   }
 }
 
-// Enhanced usage functions
-void showEnhancedDarkModeImageCarousel(
+
+void showEnhancedDarkModeVideoCarousel(
   BuildContext context,
   BoardingEntryEntity? boarding,
-  void Function(String imageUrl, String platform) onShare, {
+  void Function(String videoUrl, String platform) onShare, {
   bool isDarkMode = false,
 }) {
   showDialog(
@@ -1231,7 +1257,7 @@ void showEnhancedDarkModeImageCarousel(
     barrierDismissible: true,
     barrierColor: isDarkMode ? Colors.black87 : Colors.black54,
     builder:
-        (context) => ImageCarouselWidget(
+        (context) => VideoCarouselWidget(
           open: true,
           onOpenChange: (open) {
             if (!open) Navigator.of(context).pop();
@@ -1243,14 +1269,13 @@ void showEnhancedDarkModeImageCarousel(
   );
 }
 
-// Auto-detect theme version
-void showThemeAwareEnhancedImageCarousel(
+void showThemeAwareEnhancedVideoCarousel(
   BuildContext context,
   BoardingEntryEntity? boarding,
-  void Function(String imageUrl, String platform) onShare,
+  void Function(String videoUrl, String platform) onShare,
 ) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
-  showEnhancedDarkModeImageCarousel(
+  showEnhancedDarkModeVideoCarousel(
     context,
     boarding,
     onShare,

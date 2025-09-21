@@ -8,7 +8,6 @@ import 'package:squeak/features/auth/login/presentation/cubit/login_cubit.dart';
 import 'package:squeak/features/auth/login/presentation/widgets/modern_login_wrapper.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/monitoring/advanced_performance_monitor.dart';
-import 'package:squeak/core/monitoring/performance_widget_wrapper.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -178,6 +177,7 @@ class _LoginScreenState extends State<LoginScreen>
 
       // Navigate to main screen
       Future.delayed(const Duration(milliseconds: 500), () {
+        // ignore: use_build_context_synchronously
         navigateAndFinish(context, LayoutScreen());
       });
     }

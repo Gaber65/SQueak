@@ -258,6 +258,7 @@ class _RateBoardingState extends State<RateBoarding> {
         petId: widget.boardingEntryEntity.petId,
         pet: widget.boardingEntryEntity.pet,
         boardingImages: widget.boardingEntryEntity.boardingImages,
+        // boardingVideos: widget.boardingEntryEntity.boardingVideos, // added
         clinicPhone: widget.boardingEntryEntity.clinicPhone,
         clinicLocation: widget.boardingEntryEntity.clinicLocation,
         clinicLogo: widget.boardingEntryEntity.clinicLogo,

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/theme/color_mangment/color_manager.dart';
 import 'package:video_player/video_player.dart';
@@ -21,20 +23,19 @@ class _VideoStringAppState extends State<VideoStringApp> {
   @override
   void initState() {
     super.initState();
-    videoPlayerController = VideoPlayerController.network(
-      widget.video,
-    )..addListener(() => setState(() {}));
+    // ignore: deprecated_member_use
+    videoPlayerController = VideoPlayerController.network(widget.video)
+      ..addListener(() => setState(() {}));
     videoPlayerController.initialize();
     chewieController = ChewieController(
       videoPlayerController: videoPlayerController,
       autoInitialize: false,
       autoPlay: false,
-      materialProgressColors:
-          ChewieProgressColors(playedColor: ColorManager.primaryColor),
+      materialProgressColors: ChewieProgressColors(
+        playedColor: ColorManager.primaryColor,
+      ),
       errorBuilder: (context, message) {
-        return Center(
-          child: Text(message),
-        );
+        return Center(child: Text(message));
       },
     );
   }
@@ -51,30 +52,31 @@ class _VideoStringAppState extends State<VideoStringApp> {
     return SizedBox(
       height: 200,
       width: double.infinity,
-      child: (videoPlayerController == null)
-          ? Container(
-              height: 600,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            )
-          : videoPlayerController.value.isInitialized
-              ? AspectRatio(
-                  aspectRatio: videoPlayerController.value.size.width /
-                      videoPlayerController.value.size.height,
-                  child: Container(
-                    color: Colors.black,
-                    child: Chewie(
-                      controller: chewieController,
-                    ),
-                  ),
-                )
-              : const SizedBox(
-                  height: 150,
-                  child: Center(child: Text('Video Loading...')),
+      child:
+          // ignore: unnecessary_null_comparison
+          (videoPlayerController == null)
+              ? Container(
+                height: 600,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
+              )
+              : videoPlayerController.value.isInitialized
+              ? AspectRatio(
+                aspectRatio:
+                    videoPlayerController.value.size.width /
+                    videoPlayerController.value.size.height,
+                child: Container(
+                  color: Colors.black,
+                  child: Chewie(controller: chewieController),
+                ),
+              )
+              : const SizedBox(
+                height: 150,
+                child: Center(child: Text('Video Loading...')),
+              ),
     );
   }
 }

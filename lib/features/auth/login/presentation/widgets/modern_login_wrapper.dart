@@ -1,6 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/core/monitoring/advanced_performance_monitor.dart';
 import 'package:squeak/features/auth/login/presentation/widgets/enhanced_login_widget.dart';
 import 'package:squeak/features/auth/login/presentation/cubit/login_cubit.dart';
 
@@ -21,39 +22,23 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
   @override
   void initState() {
     super.initState();
-
-    // Paw prints floating animation - LIMITED REPEAT
     _pawAnimationController = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
     );
-
     _pawFloatAnimation = Tween<double>(begin: 0.0, end: 10.0).animate(
       CurvedAnimation(parent: _pawAnimationController, curve: Curves.easeInOut),
     );
-
-    // Mascot bounce animation - LIMITED REPEAT
     _mascotAnimationController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
-
     _mascotBounceAnimation = Tween<double>(begin: 0.0, end: 5.0).animate(
       CurvedAnimation(
         parent: _mascotAnimationController,
         curve: Curves.elasticOut,
       ),
     );
-
-    // Start animations with limited repetitions
-    _startAnimations();
-  }
-
-  void _startAnimations() {
-    // TEMPORARILY DISABLED - Animations causing memory leaks
-    // Will re-enable after fixing memory issues
-
-    // Log that animations are disabled
     debugPrint('Login animations temporarily disabled for memory optimization');
   }
 
@@ -66,9 +51,19 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
 
   @override
   Widget build(BuildContext context) {
+    //  Added: Use MediaQuery for responsive sizing
+    final size = MediaQuery.of(context).size; // <-- Added
+    final width = size.width; // <-- Added
+    final height = size.height; // <-- Added
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(24, 60, 24, 40),
+      padding: EdgeInsets.fromLTRB(
+        width * 0.06, //  Changed: Scaled padding instead of fixed 24
+        height * 0.08, //  Changed: Scaled top padding instead of fixed 60
+        width * 0.06,
+        height * 0.05, //  Changed: Scaled bottom padding instead of fixed 40
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -85,18 +80,18 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
       ),
       child: Stack(
         children: [
-          // Floating paw prints background
+          // Floating paw prints - responsive positioning and size
           AnimatedBuilder(
             animation: _pawFloatAnimation,
             builder: (context, child) {
               return Positioned(
-                top: 20 + _pawFloatAnimation.value,
-                right: 30,
+                top: height * 0.03 + _pawFloatAnimation.value, //  Changed
+                right: width * 0.08, //  Changed
                 child: Transform.rotate(
                   angle: 0.3,
                   child: Icon(
                     Icons.pets,
-                    size: 24,
+                    size: width * 0.06, //  Changed: Scaled icon size
                     color: Colors.white.withOpacity(0.3),
                   ),
                 ),
@@ -107,13 +102,13 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
             animation: _pawFloatAnimation,
             builder: (context, child) {
               return Positioned(
-                top: 80 - _pawFloatAnimation.value,
-                left: 40,
+                top: height * 0.1 - _pawFloatAnimation.value, //  Changed
+                left: width * 0.1, //  Changed
                 child: Transform.rotate(
                   angle: -0.2,
                   child: Icon(
                     Icons.pets,
-                    size: 20,
+                    size: width * 0.05, //  Changed
                     color: Colors.white.withOpacity(0.2),
                   ),
                 ),
@@ -124,13 +119,15 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
             animation: _pawFloatAnimation,
             builder: (context, child) {
               return Positioned(
-                top: 40 + (_pawFloatAnimation.value * 0.7),
-                right: 80,
+                top:
+                    height * 0.06 +
+                    (_pawFloatAnimation.value * 0.7), //  Changed
+                right: width * 0.2, //  Changed
                 child: Transform.rotate(
                   angle: 0.5,
                   child: Icon(
                     Icons.pets,
-                    size: 16,
+                    size: width * 0.04, //  Changed
                     color: Colors.white.withOpacity(0.25),
                   ),
                 ),
@@ -141,15 +138,14 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
           // Main content
           Column(
             children: [
-              // Animated Pet Mascot Logo
               AnimatedBuilder(
                 animation: _mascotBounceAnimation,
                 builder: (context, child) {
                   return Transform.translate(
                     offset: Offset(0, -_mascotBounceAnimation.value),
                     child: Container(
-                      width: 90,
-                      height: 90,
+                      width: width * 0.22, //  Changed: Scaled mascot width
+                      height: width * 0.22, //  Changed: Scaled mascot height
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(25),
@@ -164,28 +160,26 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          // Cute pet face
                           const Icon(
                             Icons.pets,
                             size: 45,
                             color: ColorManager.secondColor,
                           ),
-                          // Heart eyes effect
                           Positioned(
-                            top: 20,
-                            left: 24,
+                            top: width * 0.05, //  Changed
+                            left: width * 0.06, //  Changed
                             child: Icon(
                               Icons.favorite,
-                              size: 8,
+                              size: width * 0.025, //  Changed
                               color: Colors.red.withOpacity(0.8),
                             ),
                           ),
                           Positioned(
-                            top: 20,
-                            right: 24,
+                            top: width * 0.05, //  Changed
+                            right: width * 0.06, //  Changed
                             child: Icon(
                               Icons.favorite,
-                              size: 8,
+                              size: width * 0.025, //  Changed
                               color: Colors.red.withOpacity(0.8),
                             ),
                           ),
@@ -195,13 +189,13 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
                   );
                 },
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: height * 0.03), //  Changed: Scaled spacing
 
-              // Pet-themed Welcome Text
               const Text(
                 'Welcome Back!',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize:
+                      28, // Kept as-is (title can stay fixed for readability)
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                   shadows: [
@@ -213,32 +207,32 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
                   ],
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: height * 0.01), //  Changed
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(Icons.pets, color: Colors.white, size: 16),
-                  const SizedBox(width: 8),
+                  SizedBox(width: width * 0.02), //  Changed
                   Text(
                     'Your furry friends are waiting for you!',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: width * 0.04, //  Changed
                       color: Colors.white.withOpacity(0.9),
                       fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: width * 0.02), //  Changed
                   const Icon(Icons.pets, color: Colors.white, size: 16),
                 ],
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: height * 0.005), //  Changed
 
               Text(
                 'Sign in to continue your pet care journey',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: width * 0.035, //  Changed
                   color: Colors.white.withOpacity(0.8),
                   fontWeight: FontWeight.w400,
                 ),
@@ -254,7 +248,6 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
 
 class ModernLoginWrapper extends StatefulWidget {
   final LoginCubit cubit;
-
   const ModernLoginWrapper({super.key, required this.cubit});
 
   @override
@@ -266,15 +259,10 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  final AdvancedPerformanceMonitor _performanceMonitor =
-      AdvancedPerformanceMonitor();
 
   @override
   void initState() {
     super.initState();
-    // TEMPORARILY DISABLED - Performance monitoring causing potential crashes
-    // _performanceMonitor.startOperation('modern_login_wrapper_init');
-
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
@@ -286,7 +274,6 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
         curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
       ),
     );
-
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0.0, 0.5),
       end: Offset.zero,
@@ -298,8 +285,6 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
     );
 
     _animationController.forward();
-    // TEMPORARILY DISABLED - Performance monitoring causing potential crashes
-    // _performanceMonitor.endOperation('modern_login_wrapper_init');
   }
 
   @override
@@ -310,18 +295,18 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
 
   @override
   Widget build(BuildContext context) {
+    //  Added: Use MediaQuery for responsive sizing
+    final width = MediaQuery.of(context).size.width; // <-- Added
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       body: SafeArea(
         child: Column(
           children: [
-            // Header Section
             FadeTransition(
               opacity: _fadeAnimation,
               child: const ModernLoginHeader(),
             ),
-
-            // Form Section
             Expanded(
               child: SlideTransition(
                 position: _slideAnimation,
@@ -329,15 +314,13 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
                   opacity: _fadeAnimation,
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(24),
+                    padding: EdgeInsets.all(width * 0.06), //  Changed
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          const SizedBox(height: 20),
-
-                          // Enhanced Login Form
+                          SizedBox(height: width * 0.05), //  Changed
                           Container(
-                            padding: const EdgeInsets.all(24),
+                            padding: EdgeInsets.all(width * 0.06), //  Changed
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
@@ -351,10 +334,7 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
                             ),
                             child: EnhancedLoginView(cubit: widget.cubit),
                           ),
-
-                          const SizedBox(height: 40),
-
-                          // Footer
+                          SizedBox(height: width * 0.1), // Changed
                           _buildFooter(),
                         ],
                       ),
@@ -374,50 +354,49 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
   }
 
   Widget _buildFeatureFooter() {
+    final width = MediaQuery.of(context).size.width; //  Added
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.pets, color: Colors.grey, size: 16),
-            const SizedBox(width: 8),
+            SizedBox(width: width * 0.02), //  Changed
             Text(
               'Trusted by Pet Parents Worldwide',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: width * 0.035, //  Changed
                 color: Colors.grey.shade600,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: width * 0.02), //  Changed
             const Icon(Icons.pets, color: Colors.grey, size: 16),
           ],
         ),
-        const SizedBox(height: 16),
-
+        SizedBox(height: width * 0.04), //  Changed
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildPetFeatureItem(Icons.pets, 'Pet Care', Icons.favorite_border),
-            const SizedBox(width: 32),
+            SizedBox(width: width * 0.08), //  Changed
             _buildPetFeatureItem(Icons.favorite, 'Love', Icons.favorite),
-            const SizedBox(width: 32),
+            SizedBox(width: width * 0.08), //  Changed
             _buildPetFeatureItem(Icons.shield, 'Safe', Icons.security),
           ],
         ),
-        const SizedBox(height: 12),
-
-        // Animated pet mascots row with icons
+        SizedBox(height: width * 0.03), //  Changed
         _buildAnimatedPetMascots(),
       ],
     );
   }
 
   Widget _buildPetFeatureItem(IconData icon, String label, IconData accent) {
+    final width = MediaQuery.of(context).size.width; //  Added
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(width * 0.03), //  Changed
           decoration: BoxDecoration(
             color: ColorManager.secondColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
@@ -429,20 +408,28 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Icon(icon, size: 24, color: ColorManager.secondColor),
+              Icon(
+                icon,
+                size: width * 0.06,
+                color: ColorManager.secondColor,
+              ), //  Changed
               Positioned(
                 top: -2,
                 right: -2,
-                child: Icon(accent, size: 10, color: Colors.red.shade400),
+                child: Icon(
+                  accent,
+                  size: width * 0.025,
+                  color: Colors.red.shade400,
+                ), //  Changed
               ),
             ],
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: width * 0.02), //  Changed
         Text(
           label,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: width * 0.03, //  Changed
             color: Colors.grey.shade600,
             fontWeight: FontWeight.w500,
           ),

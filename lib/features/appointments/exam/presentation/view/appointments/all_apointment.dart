@@ -176,7 +176,8 @@ class AllAppointment extends StatelessWidget {
                                 listener: (context, state) {},
 
                                 builder: (context, state) {
-                                  if (state is GetAppointmentLoading) {
+                                  if (state is GetAppointmentLoading &&
+                                      cubit.appointments.isEmpty) {
                                     return ListView.builder(
                                       itemCount: 6,
                                       itemBuilder:
@@ -204,26 +205,17 @@ class AllAppointment extends StatelessWidget {
                                       onRefresh: () async {
                                         await cubit.getAppointment(false);
                                       },
-                                      child: RefreshIndicator(
-                                        onRefresh: () async {
-                                          await cubit.getAppointment(false);
-                                          await cubit.fetchSuppliers();
+                                      child: ListView.builder(
+                                        itemBuilder: (context, index) {
+                                          return buildItem(
+                                            cubit.appointments[index],
+                                            context,
+                                            cubit,
+                                            index,
+                                          );
                                         },
-                                        child: ListView.builder(
-                                          itemBuilder: (context, index) {
-                                            return buildItem(
-                                              cubit.appointments[index],
-                                              context,
-                                              cubit,
-                                              index,
-                                            );
-                                          },
-                                          itemCount: cubit.appointments.length,
-                                          physics:
-                                              const AlwaysScrollableScrollPhysics(
-                                                parent: BouncingScrollPhysics(),
-                                              ),
-                                        ),
+                                        itemCount: cubit.appointments.length,
+                                        physics: const BouncingScrollPhysics(),
                                       ),
                                     );
                                   }
@@ -235,7 +227,7 @@ class AllAppointment extends StatelessWidget {
                         floatingActionButton: FloatingActionButton(
                           backgroundColor: ColorManager.primaryColor,
                           onPressed: () {
-                            LayoutCubit.get(context).changeBottomNav(2);
+                            LayoutCubit.get(context).changeBottomNav(1);
                             navigateAndFinish(context, LayoutScreen());
                           },
                           child: const Icon(
