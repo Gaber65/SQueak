@@ -16,6 +16,7 @@ class BoardingEntryModel extends BoardingEntryEntity {
     required super.petId,
     required super.pet,
     required super.boardingImages,
+    // required super.boardingVideos, // added
     required super.clinicPhone,
     required super.clinicLocation,
     super.clinicLogo,
@@ -43,6 +44,7 @@ class BoardingEntryModel extends BoardingEntryEntity {
       petId: json['petId'],
       pet: PetBoardingModel.fromJson(json['pet']),
       boardingImages: List<dynamic>.from(json['boardingImages']),
+      // boardingVideos: List<dynamic>.from(json['boardingVideos']), // added
       clinicPhone: json['clinicPhone'],
       clinicLocation: json['clinicLocation'],
       clinicLogo: json['clinicLogo'],
@@ -71,6 +73,7 @@ class BoardingEntryModel extends BoardingEntryEntity {
       'petId': petId,
       'pet': (pet as PetBoardingModel).toJson(),
       'boardingImages': boardingImages,
+      // 'boardingVideos': boardingVideos, // added
       'clinicPhone': clinicPhone,
       'clinicLocation': clinicLocation,
       'clinicLogo': clinicLogo,
@@ -99,6 +102,7 @@ class BoardingEntryModel extends BoardingEntryEntity {
       petId: petId,
       pet: (pet as PetBoardingModel).toEntity(),
       boardingImages: boardingImages,
+      // boardingVideos: boardingVideos, // added
       clinicPhone: clinicPhone,
       clinicLocation: clinicLocation,
       clinicLogo: clinicLogo,

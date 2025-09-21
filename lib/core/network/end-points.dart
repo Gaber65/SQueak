@@ -6,7 +6,9 @@ const String version = '/v1/api';
 
 /// Media URLs
 String imageUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
-String imageUrlWithVetICare = ConfigModel.serverFirstHalfOfImageUrl;
+String videoUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
+String imageUrlWithVetICare = ConfigModel.serverFirstHalfOfImageUrl; // added
+String videoUrlWithVetICare = ConfigModel.serverSecondHalfOfVideoUrl;
 
 /// Auth & User Management
 const String registerEndPoint = '$version/signUp';

@@ -95,6 +95,7 @@ flutter:
     - assets/
     - assets/notification.mp3
     - assets/content/pet_tips.json
+    - assets/video/
 
 flutter_intl:
   enabled: true
