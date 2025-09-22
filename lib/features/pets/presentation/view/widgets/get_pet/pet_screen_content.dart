@@ -241,40 +241,34 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                 const SizedBox(height: 24),
                 GestureDetector(
                   onTap:
-                      isLoadingOther
-                          // ignore: dead_code
-                          ? null
-                          : () async {
-                            // Show loading indicator instead of icon
-                            setState(() {
-                              isLoadingOther = true;
-                            });
-
-                            // Simulate delay for response (1 second)
-                            await Future.delayed(const Duration(seconds: 1));
-
-                            try {
-                              // Show species selector list after response
-                              await showSpeciesSelector(
-                                // ignore: use_build_context_synchronously
-                                context,
-                                cubit,
-                                onSelected: (species) {
-                                  navigateToAddPet(
-                                    species.type,
-                                    'assets/avatar7.jpg',
-                                    species.id,
-                                    context,
-                                  );
-                                },
-                              );
-                            } finally {
-                              // Hide loading indicator
-                              setState(() {
-                                isLoadingOther = false;
-                              });
-                            }
-                          },
+                  // ignore: dead_code
+                  () async {
+                    // Show loading indicator instead of icon
+                    setState(() {
+                      isLoadingOther = true;
+                    });
+                    try {
+                      // Show species selector list after response
+                      await showSpeciesSelector(
+                        // ignore: use_build_context_synchronously
+                        context,
+                        cubit,
+                        onSelected: (species) {
+                          navigateToAddPet(
+                            species.type,
+                            'assets/avatar7.jpg',
+                            species.id,
+                            context,
+                          );
+                        },
+                      );
+                    } finally {
+                      // Hide loading indicator
+                      setState(() {
+                        isLoadingOther = false;
+                      });
+                    }
+                  },
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 16),
