@@ -39,7 +39,7 @@ class EditPet extends StatelessWidget {
           (context) =>
               sl<PetCubit>()
                 ..initEdit(pets)
-                ..init(dropdownValueSpecies, species)
+                ..init(dropdownValueSpecies, species ?? '')
                 ..getAllSpecies(),
       child: BlocConsumer<PetCubit, PetState>(
         listener: (context, state) {
@@ -77,7 +77,6 @@ class EditPet extends StatelessWidget {
 
                     GeneralInformationSection(cubit: cubit, isDark: isDark),
                     SizedBox(height: responsiveHeight(30, context)),
-
 
                     BreedSpeciesSection(cubit: cubit, isDark: isDark),
                     GenderSection(cubit: cubit),

@@ -94,13 +94,13 @@ class _BookingContentState extends State<BookingContent> {
   void handleCreateAppointment(BuildContext context) {
     AppointmentHandler.createAppointment(
       context: context,
-      petSqueakId: petSelect!.petId,
+      petSqueakId: petSelect!.petId ?? '',
       clinicCode: widget.clinicCode,
       selectedDate: widget.selectedDate,
       time: time,
       doctorId: doctorId,
-      petName: petSelect!.petName,
-      petGender: petSelect!.gender,
+      petName: petSelect!.petName ?? '',
+      petGender: petSelect!.gender ?? 0,
       isSpayed: petSelect!.isSpayed,
       specieId: petSelect!.specieId,
       breedId: petSelect!.breedId,

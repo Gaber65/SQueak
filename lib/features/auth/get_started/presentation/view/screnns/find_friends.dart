@@ -142,9 +142,14 @@ class FindFriendsScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(6),
                                 color: ColorManager.bTwitter,
                               ),
-                              child: const Text(
-                                "OK",
-                                style: TextStyle(color: Colors.black),
+                              child: InkWell(
+                                onTap: () {
+                                  navigateToScreen(context, LayoutScreen());
+                                },
+                                child: const Text(
+                                  "OK",
+                                  style: TextStyle(color: Colors.black),
+                                ),
                               ),
                             ),
                           ),

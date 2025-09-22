@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:squeak/features/auth/get_started/domain/model/create_pets_modell.dart';
+
 import '../../../../core/utils/export_path/export_files.dart';
 import '../models/pet_model.dart';
 

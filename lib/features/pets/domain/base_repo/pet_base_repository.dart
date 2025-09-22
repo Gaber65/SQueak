@@ -1,3 +1,5 @@
+import 'package:squeak/features/auth/get_started/domain/entites/request_pet_inteties.dart';
+
 import '../../../../core/utils/export_path/export_files.dart';
 import '../entities/pet_entity.dart';
 import 'package:dartz/dartz.dart';

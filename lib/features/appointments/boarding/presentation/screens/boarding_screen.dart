@@ -61,7 +61,11 @@ DateTime? selectedDateTime;
 double? price;
 
 class BoardingScreen extends StatefulWidget {
-  const BoardingScreen({super.key, required this.clinicCode, this.petSelectFromIcon});
+  const BoardingScreen({
+    super.key,
+    required this.clinicCode,
+    this.petSelectFromIcon,
+  });
 
   final String clinicCode;
   final PetEntities? petSelectFromIcon;
@@ -173,7 +177,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
       period: difference.inDays,
       comment: _commentController.text,
       boardingTypeId: selectedBoardingType!.id,
-      vetICarePetId: petSelect!.petId,
+      vetICarePetId: petSelect!.petId ?? '',
     );
     context.read<BoardingCubit>().createBoarding(
       createParams, // This should come from selected pet
@@ -251,12 +255,12 @@ class _BoardingScreenState extends State<BoardingScreen> {
                         },
                         initializeFirstPet: !initTheSelectedPetValue,
                       ),
-                      SizedBox(height: 16),
-                      BoardingTypeDropdown(
-                        boardingTypes: cubit.boardingTypes,
-                        selectedBoardingType: selectedBoardingType,
-                        onChanged: _onBoardingTypeChanged,
-                      ),
+                    SizedBox(height: 16),
+                    BoardingTypeDropdown(
+                      boardingTypes: cubit.boardingTypes,
+                      selectedBoardingType: selectedBoardingType,
+                      onChanged: _onBoardingTypeChanged,
+                    ),
 
                     const SizedBox(height: 16),
 
@@ -284,7 +288,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
                     const SizedBox(height: 16),
 
                     DateFieldWidget(
-                      title:isArabic() ? 'تاريخ الخروج' : 'Exit Date',
+                      title: isArabic() ? 'تاريخ الخروج' : 'Exit Date',
                       controller: _exitDateController,
                       selectedDateTime: exitDateTime,
                       boardingType: selectedBoardingType,
@@ -312,7 +316,9 @@ class _BoardingScreenState extends State<BoardingScreen> {
                       ),
                       child: Text(
                         selectedBoardingType == null
-                            ? isArabic() ? 'الرجاء تحديد نوع الإقامة': 'Please select boarding type'
+                            ? isArabic()
+                                ? 'الرجاء تحديد نوع الإقامة'
+                                : 'Please select boarding type'
                             : '\$${calculatedCost.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontWeight: FontWeight.w500,

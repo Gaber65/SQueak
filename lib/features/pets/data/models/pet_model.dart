@@ -49,7 +49,7 @@ class PetData extends PetEntities {
     return {
       'petName': petName,
       'id': petId,
-      'breedId': breedId.isEmpty ? null : breedId,
+      'breedId': breedId?.isEmpty ?? true ? null : breedId,
       'gender': gender,
       'isSpayed': isSpayed,
       'specieId': specieId,

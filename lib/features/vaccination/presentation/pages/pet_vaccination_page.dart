@@ -31,7 +31,7 @@ class PetVaccinationPage extends StatelessWidget {
                   sl<VaccinationUiCubit>()
                     ..listenToDataCubit()
                     ..loadVaccinationNames()
-                    ..loadPetReminders(petModel.petId),
+                    ..loadPetReminders(petModel.petId ?? ''),
         ),
       ],
       child: BlocConsumer<VaccinationUiCubit, VaccinationUiState>(
@@ -143,7 +143,7 @@ class PetVaccinationPage extends StatelessWidget {
     );
     uiCubit
         .createReminder(
-          petId: petModel.petId,
+          petId: petModel.petId ?? '',
           data:
               (uiCubit.currentDateItem.toString().substring(0, 10) ==
                       DateTime.now().toString().substring(0, 10))
@@ -153,7 +153,7 @@ class PetVaccinationPage extends StatelessWidget {
           typeId: uiCubit.valueIdItem,
           valueVacItem: uiCubit.valueVacItem,
           context: context,
-          petName: petModel.petName,
+          petName: petModel.petName ?? '',
         )
         .then((_) {
           commentController.clear();

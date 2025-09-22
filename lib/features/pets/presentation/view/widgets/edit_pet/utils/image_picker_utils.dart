@@ -26,7 +26,7 @@ void showImageOptions(BuildContext context, PetCubit cubit, PetEntities pets) {
                 ),
               ),
               const SizedBox(height: 20),
-              if (pets.imageName.isNotEmpty)
+              if ((pets.imageName?.isNotEmpty ?? false))
                 ListTile(
                   leading: const Icon(Icons.delete, color: Colors.red),
                   title: Text(S.of(context).deletePhoto),

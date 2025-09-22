@@ -22,16 +22,16 @@ class VaccinationList extends StatelessWidget {
   Widget build(BuildContext context) {
     return reminders.isNotEmpty
         ? ListView.builder(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.only(bottom: 80), // Add padding for FAB
-      itemBuilder: (context, index) {
-        return ReminderCard(
-          reminder: reminders[index],
-          petId: petModel.petId,
-        );
-      },
-      itemCount: reminders.length,
-    )
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 80), // Add padding for FAB
+          itemBuilder: (context, index) {
+            return ReminderCard(
+              reminder: reminders[index],
+              petId: petModel.petId ?? '',
+            );
+          },
+          itemCount: reminders.length,
+        )
         : _buildEmptyState(context);
   }
 
@@ -76,7 +76,9 @@ class VaccinationList extends StatelessWidget {
         const SizedBox(height: 30),
         ElevatedButton.icon(
           onPressed: () {
-            context.read<VaccinationUiCubit>().changeBottomSheetShow(isShow: false);
+            context.read<VaccinationUiCubit>().changeBottomSheetShow(
+              isShow: false,
+            );
           },
           icon: const Icon(Icons.add),
           label: Text(isArabic() ? "إضافة تذكير" : "Add Reminder"),
