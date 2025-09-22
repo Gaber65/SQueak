@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
@@ -24,9 +26,10 @@ Future<void> showSpeciesSelector(
   List<SpeciesEntity> filtered = List.of(cubit.species);
 
   void applyFilter(String q) {
-    filtered = cubit.species
-        .where((s) => s.type.toLowerCase().contains(q.toLowerCase()))
-        .toList();
+    filtered =
+        cubit.species
+            .where((s) => s.type.toLowerCase().contains(q.toLowerCase()))
+            .toList();
   }
 
   await showModalBottomSheet(
@@ -66,9 +69,10 @@ Future<void> showSpeciesSelector(
                     controller: searchCtrl,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.search),
-                      hintText: isArabic()
-                          ? 'ابحث عن الفصيلة'
-                          : 'Search for species...',
+                      hintText:
+                          isArabic()
+                              ? 'ابحث عن الفصيلة'
+                              : 'Search for species...',
                       filled: true,
                       fillColor:
                           Theme.of(context).brightness == Brightness.dark
@@ -91,25 +95,26 @@ Future<void> showSpeciesSelector(
                         cubit.species.isEmpty
                             ? const Center(child: CircularProgressIndicator())
                             : Scrollbar(
-                                thumbVisibility: true,
-                                child: ListView.separated(
-                                  itemCount: filtered.length,
-                                  separatorBuilder: (_, __) => Divider(
-                                    height: 1,
-                                    color: Colors.grey.withOpacity(0.2),
-                                  ),
-                                  itemBuilder: (context, index) {
-                                    final item = filtered[index];
-                                    return ListTile(
-                                      title: Text(item.type),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        onSelected(item);
-                                      },
-                                    );
-                                  },
-                                ),
+                              thumbVisibility: true,
+                              child: ListView.separated(
+                                itemCount: filtered.length,
+                                separatorBuilder:
+                                    (_, __) => Divider(
+                                      height: 1,
+                                      color: Colors.grey.withOpacity(0.2),
+                                    ),
+                                itemBuilder: (context, index) {
+                                  final item = filtered[index];
+                                  return ListTile(
+                                    title: Text(item.type),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      onSelected(item);
+                                    },
+                                  );
+                                },
                               ),
+                            ),
                   ),
                 ],
               ),
@@ -120,5 +125,3 @@ Future<void> showSpeciesSelector(
     },
   );
 }
-
-

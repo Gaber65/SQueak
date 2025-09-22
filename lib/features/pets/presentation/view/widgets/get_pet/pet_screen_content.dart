@@ -174,111 +174,151 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
     backgroundColor:
         MainCubit.get(context).isDark ? Colors.grey[900] : Colors.white,
     builder: (context) {
-      return Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Drag handle
-            Container(
-              width: 60,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[400],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 24),
+      // Add StatefulBuilder to manage loading state
+      return StatefulBuilder(
+        builder: (context, setState) {
+          bool isLoadingOther = false;
 
-            Text(
-              S.of(context).selectPetType,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color:
-                    MainCubit.get(context).isDark ? Colors.white : Colors.black,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Row(
+          return Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  child: PetTypeOption(
-                    icon: FontAwesomeIcons.cat,
-                    label: isArabic() ? 'قطة' : 'Cat',
-                    onTap:
-                        () => navigateToAddPet(
-                          isArabic() ? 'قطة' : 'Cat',
-                          'assets/cat-with-gold.jpg',
-                          'f1131363-3b9f-40ee-9a89-0573ee274a10',
-                          context,
-                        ),
+                // Drag handle
+                Container(
+                  width: 60,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: PetTypeOption(
-                    icon: FontAwesomeIcons.dog,
-                    label: isArabic() ? 'كلب' : 'Dog',
-                    onTap:
-                        () => navigateToAddPet(
-                          isArabic() ? 'كلب' : 'Dog',
-                          'assets/dog.png',
-                          'bca48207-f05d-4e9f-a631-06f34eb5af39',
-                          context,
-                        ),
+                const SizedBox(height: 24),
+
+                Text(
+                  S.of(context).selectPetType,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color:
+                        MainCubit.get(context).isDark
+                            ? Colors.white
+                            : Colors.black,
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            GestureDetector(
-              onTap:
-                  () async {
-                    // Open searchable species selector. After pick, go to AddPet.
-                    await showSpeciesSelector(
-                      context,
-                      cubit,
-                      onSelected: (species) {
-                        navigateToAddPet(
-                          species.type,
-                          'assets/avatar7.jpg',
-                          species.id,
-                          context,
-                        );
-                      },
-                    );
-                  },
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                const SizedBox(height: 24),
+                Row(
                   children: [
-                    Icon(
-                      FontAwesomeIcons.paw,
-                      size: 40,
-                      color: Colors.blueAccent,
+                    Expanded(
+                      child: PetTypeOption(
+                        icon: FontAwesomeIcons.cat,
+                        label: isArabic() ? 'قطة' : 'Cat',
+                        onTap:
+                            () => navigateToAddPet(
+                              isArabic() ? 'قطة' : 'Cat',
+                              'assets/avatar7.jpg',
+                              'f1131363-3b9f-40ee-9a89-0573ee274a10',
+                              context,
+                            ),
+                      ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      isArabic() ? 'أخرى' : 'Other',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color:
-                            MainCubit.get(context).isDark
-                                ? Colors.white
-                                : Colors.black,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: PetTypeOption(
+                        icon: FontAwesomeIcons.dog,
+                        label: isArabic() ? 'كلب' : 'Dog',
+                        onTap:
+                            () => navigateToAddPet(
+                              isArabic() ? 'كلب' : 'Dog',
+                              'assets/avatar7.jpg',
+                              'bca48207-f05d-4e9f-a631-06f34eb5af39',
+                              context,
+                            ),
                       ),
                     ),
                   ],
                 ),
-              ),
+                const SizedBox(height: 24),
+                GestureDetector(
+                  onTap:
+                      isLoadingOther
+                          // ignore: dead_code
+                          ? null
+                          : () async {
+                            // Show loading indicator instead of icon
+                            setState(() {
+                              isLoadingOther = true;
+                            });
+
+                            // Simulate delay for response (1 second)
+                            await Future.delayed(const Duration(seconds: 1));
+
+                            try {
+                              // Show species selector list after response
+                              await showSpeciesSelector(
+                                // ignore: use_build_context_synchronously
+                                context,
+                                cubit,
+                                onSelected: (species) {
+                                  navigateToAddPet(
+                                    species.type,
+                                    'assets/avatar7.jpg',
+                                    species.id,
+                                    context,
+                                  );
+                                },
+                              );
+                            } finally {
+                              // Hide loading indicator
+                              setState(() {
+                                isLoadingOther = false;
+                              });
+                            }
+                          },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Show circular indicator instead of paw icon during loading
+                        isLoadingOther
+                            ? const SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  ColorManager.primaryColor,
+                                ),
+                              ),
+                            )
+                            : Icon(
+                              FontAwesomeIcons.paw,
+                              size: 40,
+                              color: Colors.blueAccent,
+                            ),
+                        const SizedBox(height: 8),
+                        Text(
+                          isArabic() ? 'أخرى' : 'Other',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color:
+                                MainCubit.get(context).isDark
+                                    ? Colors.white
+                                    : Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
             ),
-            const SizedBox(height: 16),
-          ],
-        ),
+          );
+        },
       );
     },
   );

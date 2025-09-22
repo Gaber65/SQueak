@@ -10,7 +10,7 @@ class MyTextForm extends StatefulWidget {
     super.key,
     required this.controller,
     required this.hintText,
-    required this.prefixIcon,
+     this.prefixIcon,
     this.obscureText,
     this.enable = false,
     this.enabled = true,
@@ -25,7 +25,7 @@ class MyTextForm extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final String? validatorText;
-  final Widget prefixIcon;
+  final Widget? prefixIcon;
   final bool? obscureText;
   final int maxLines;
   final TextInputType? keyboardType;

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
@@ -18,7 +20,7 @@ class GenderSelection extends StatelessWidget {
           style: FontStyleThame.textStyle(
             context: context,
             fontSize: 14,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 8),
@@ -57,12 +59,9 @@ class GenderSelection extends StatelessWidget {
       onTap: () => cubit.changeGender(id),
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        height: 50,
+        height: 60,
         decoration: BoxDecoration(
-          color:
-              isSelected
-                  ? ColorManager.primaryColor
-                  : ColorManager.primaryColor.withOpacity(0.1),
+          color: isSelected ? ColorManager.primaryColor : ColorManager.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color:
@@ -75,7 +74,7 @@ class GenderSelection extends StatelessWidget {
           child: Text(
             title,
             style: TextStyle(
-              color: isSelected ? Colors.white : ColorManager.primaryColor,
+              color: isSelected ? Colors.white : ColorManager.black_87,
               fontWeight: FontWeight.w600,
               fontSize: 16,
             ),

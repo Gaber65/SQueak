@@ -926,7 +926,7 @@ class S {
 
   /// `gender`
   String get gender {
-    return Intl.message('gender', name: 'gender', desc: '', args: []);
+    return Intl.message('Gender*', name: 'gender', desc: '', args: []);
   }
 
   /// `Unique Code`
