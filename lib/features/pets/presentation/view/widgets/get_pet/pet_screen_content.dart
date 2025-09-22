@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:squeak/features/pets/presentation/view/add_pet_screen.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/pet_card.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/pet_type_option.dart';
@@ -9,6 +10,7 @@ import '../../../../../../core/service/global_widget/vc_loading_widget.dart';
 import '../../../../domain/entities/pet_entity.dart';
 import '../../../controller/pet_cubit.dart';
 import 'empty_state.dart';
+import '../common/species_selector_sheet.dart';
 
 class PetScreenContent extends StatefulWidget {
   final List<PetEntities> pets;
@@ -33,6 +35,7 @@ class _PetScreenContentState extends State<PetScreenContent> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         if (_isSnackBarVisible) {
@@ -65,7 +68,7 @@ class _PetScreenContentState extends State<PetScreenContent> {
                 ? FloatingActionButton(
                   backgroundColor: ColorManager.primaryColor,
                   child: const Icon(Icons.add, color: Colors.white),
-                  onPressed: () => showPetTypeSelection(context),
+                  onPressed: () => showPetTypeSelection(context, widget.cubit),
                 )
                 : null,
       ),
@@ -115,7 +118,9 @@ class _PetScreenContentState extends State<PetScreenContent> {
 
     // Show empty state when no pets exist (after loading is complete)
     if (widget.pets.isEmpty && widget.state is! GetOwnerPetsLoadingState) {
-      return EmptyState(onAddPetPressed: () => showPetTypeSelection(context));
+      return EmptyState(
+        onAddPetPressed: () => showPetTypeSelection(context, widget.cubit),
+      );
     }
 
     // Show pets list when pets exist
@@ -160,19 +165,21 @@ class _PetScreenContentState extends State<PetScreenContent> {
   }
 }
 
-void showPetTypeSelection(BuildContext context) {
+void showPetTypeSelection(BuildContext context, PetCubit cubit) {
   showModalBottomSheet(
     context: context,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
+    backgroundColor:
+        MainCubit.get(context).isDark ? Colors.grey[900] : Colors.white,
     builder: (context) {
       return Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 8),
+            // Drag handle
             Container(
               width: 60,
               height: 4,
@@ -182,16 +189,22 @@ void showPetTypeSelection(BuildContext context) {
               ),
             ),
             const SizedBox(height: 24),
+
             Text(
               S.of(context).selectPetType,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color:
+                    MainCubit.get(context).isDark ? Colors.white : Colors.black,
+              ),
             ),
             const SizedBox(height: 24),
             Row(
               children: [
                 Expanded(
                   child: PetTypeOption(
-                    image: 'assets/cat-with-gold.jpg',
+                    icon: FontAwesomeIcons.cat,
                     label: isArabic() ? 'قطة' : 'Cat',
                     onTap:
                         () => navigateToAddPet(
@@ -205,7 +218,7 @@ void showPetTypeSelection(BuildContext context) {
                 const SizedBox(width: 16),
                 Expanded(
                   child: PetTypeOption(
-                    image: 'assets/dog.png',
+                    icon: FontAwesomeIcons.dog,
                     label: isArabic() ? 'كلب' : 'Dog',
                     onTap:
                         () => navigateToAddPet(
@@ -219,6 +232,51 @@ void showPetTypeSelection(BuildContext context) {
               ],
             ),
             const SizedBox(height: 24),
+            GestureDetector(
+              onTap:
+                  () async {
+                    // Open searchable species selector. After pick, go to AddPet.
+                    await showSpeciesSelector(
+                      context,
+                      cubit,
+                      onSelected: (species) {
+                        navigateToAddPet(
+                          species.type,
+                          'assets/avatar7.jpg',
+                          species.id,
+                          context,
+                        );
+                      },
+                    );
+                  },
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      FontAwesomeIcons.paw,
+                      size: 40,
+                      color: Colors.blueAccent,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      isArabic() ? 'أخرى' : 'Other',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color:
+                            MainCubit.get(context).isDark
+                                ? Colors.white
+                                : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
           ],
         ),
       );

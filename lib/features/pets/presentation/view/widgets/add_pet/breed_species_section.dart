@@ -4,6 +4,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 import '../../../controller/pet_cubit.dart';
+import '../common/species_selector_sheet.dart';
 
 class BreedSpeciesSection extends StatelessWidget {
   BreedSpeciesSection({super.key, required this.cubit, required this.isDark});
@@ -74,68 +75,39 @@ class BreedSpeciesSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        _buildDropDownSpecies(cubit.species, context),
+        // Tappable field that opens our unified species selector bottom sheet.
+        InkWell(
+          onTap: () async {
+            await showSpeciesSelector(
+              context,
+              cubit,
+              onSelected: (SpeciesEntity s) {
+                cubit.changeSpecies(s.type, s.id);
+                cubit.dropdownValueBreed = '';
+                cubit.breedData.clear();
+                cubit.breedIdController.clear();
+                cubit.searchController.clear();
+                cubit.getBreedsBySpecies(s.id);
+              },
+            );
+          },
+          child: MyTextForm(
+            controller: TextEditingController(text: cubit.dropdownValueSpecies),
+            enable: false,
+            enabled: false,
+            hintText:
+                cubit.dropdownValueSpecies.isEmpty
+                    ? 'Select species'
+                    : cubit.dropdownValueSpecies,
+            obscureText: false,
+            prefixIcon: const Icon(Icons.pets),
+          ),
+        ),
       ],
     );
   }
 
-  final suggestionBoxControllerSpecies = SuggestionsBoxController();
-
-  Widget _buildDropDownSpecies(
-    List<SpeciesEntity> speciesData,
-    BuildContext context,
-  ) {
-    List<SpeciesEntity> getSpeciesSuggestions(String query) {
-      return speciesData
-          .where((s) => s.type.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    }
-
-    return DropDownSearchFormField(
-      textFieldConfiguration: TextFieldConfiguration(
-        style: TextStyle(
-          color: isDark ? ColorManager.sWhite : ColorManager.black_87,
-        ),
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
-          ),
-          hintText:
-              cubit.dropdownValueSpecies.isEmpty
-                  ? 'Select species'
-                  : cubit.dropdownValueSpecies,
-          fillColor: isDark ? Colors.black26 : Colors.grey.shade200,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          filled: true,
-        ),
-      ),
-      suggestionsCallback: (pattern) {
-        return getSpeciesSuggestions(pattern);
-      },
-      itemBuilder: (context, SpeciesEntity suggestion) {
-        return ListTile(
-          title: Text(
-            suggestion.type,
-            style: TextStyle(color: isDark ? Colors.white : Colors.black),
-          ),
-        );
-      },
-      onSuggestionSelected: (SpeciesEntity suggestion) {
-        cubit.changeSpecies(suggestion.type, suggestion.id);
-        cubit.dropdownValueBreed = '';
-        cubit.breedData.clear();
-        cubit.breedIdController.clear();
-        cubit.searchController.clear();
-        cubit.getBreedsBySpecies(suggestion.id);
-      },
-      suggestionsBoxController: suggestionBoxControllerSpecies,
-      displayAllSuggestionWhenTap: true,
-    );
-  }
+  // Legacy dropdown removed in favor of the unified selector sheet.
 
   final suggestionBoxController = SuggestionsBoxController();
 

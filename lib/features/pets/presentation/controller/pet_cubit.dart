@@ -146,8 +146,6 @@ class PetCubit extends Cubit<PetState> {
 
   // Initialize form for editing an existing pet
   void initEdit(PetEntities pet) {
-    print(pet.toJson());
-    print(pet.breed);
     searchController.text =
         (isArabic()
             ? pet.breed?.arBreed
@@ -204,13 +202,12 @@ class PetCubit extends Cubit<PetState> {
               ? ''
               : microchipNumberController.text,
     );
-    print(pet.toJson());
+
     final result = await createPetUseCase(PetParams(pet: pet));
 
     isLoading = false;
     result.fold(
       (error) {
-        print(error.error.toJson());
         emit(PetCreateErrorState(extractFirstError(error)));
       },
       (createdPet) {
@@ -224,7 +221,6 @@ class PetCubit extends Cubit<PetState> {
   Future<void> updatePet() async {
     isLoading = true;
     emit(PetCreateLoadingState());
-    print(microchipNumberController.text);
     final pet = PetEntities(
       petId: petId,
       petName: petNameController.text,
@@ -288,7 +284,6 @@ class PetCubit extends Cubit<PetState> {
         );
 
         emit(DeletePetSuccessState());
-        print(CacheHelper.getData('havePets'));
       },
     );
   }
