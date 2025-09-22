@@ -16,32 +16,70 @@ class PassportSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          isArabic() ? 'معلومات شريحة الدقيقة' : 'Microchip Information',
-          style: FontStyleThame.textStyle(
-            context: context,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.blue),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(FontAwesomeIcons.microchip, color: Colors.blue),
+                    SizedBox(width: 8),
+                    Text(
+                      isArabic()
+                          ? 'معلومات شريحة الدقيقة'
+                          : 'Microchip Information',
+                      style: FontStyleThame.textStyle(
+                        context: context,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Microchip Number',
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: "Enter microship number (optional)",
+                    hintStyle: const TextStyle(color: Colors.black54),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 14,
+                      horizontal: 12,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFBFD2FF), // light border
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Color(0xFF4A7CFF), // focus border
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: 12),
-        MyTextForm(
-          controller: cubit.microchipNumberController,
-          prefixIcon: Icon(
-            Icons.sim_card_alert_outlined,
-            size: 20,
-            color: isDark ? ColorManager.sWhite : ColorManager.black_87,
-          ),
-          enable: false,
-
-          hintText:
-              isArabic()
-                  ? 'ادخل رقم الشريحة الدقيقة'
-                  : 'Enter Microchip Number',
-          validatorText: null, // Optional fieldtest
-          obscureText: false,
-        ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 20),
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),

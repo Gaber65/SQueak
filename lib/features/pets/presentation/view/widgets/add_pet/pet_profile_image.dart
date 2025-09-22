@@ -15,29 +15,42 @@ class PetProfileImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Stack(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          CircleAvatar(
-            radius: 50,
-            backgroundImage:
-                cubit.petImage == null
+          Stack(
+            children: [
+              CircleAvatar(
+                radius: 50,
+                backgroundImage: cubit.petImage == null
                     ? AssetImage(pathImage) as ImageProvider
                     : FileImage(cubit.petImage!),
+              ),
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: CircleAvatar(
+                  radius: 15,
+                  child: IconButton(
+                    icon: const Icon(Icons.camera_alt_outlined),
+                    iconSize: 15,
+                    onPressed: () {
+                      cubit.getPetImage();
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: CircleAvatar(
-              radius: 15,
-              child: IconButton(
-                icon: const Icon(Icons.camera_alt_outlined),
-                iconSize: 15,
-                onPressed: () {
-                  cubit.getPetImage();
-                },
+          const SizedBox(height: 8),
+          if (cubit.petImage == null)
+            const Text(
+              "Add a photo of your pet",
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
               ),
             ),
-          ),
         ],
       ),
     );

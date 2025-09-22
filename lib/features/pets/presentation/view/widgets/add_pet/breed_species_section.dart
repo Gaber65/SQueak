@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:drop_down_search_field/drop_down_search_field.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:drop_down_search_field/drop_down_search_field.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../controller/pet_cubit.dart';
 import '../common/species_selector_sheet.dart';
@@ -32,6 +32,7 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
         final isSmallScreen = constraints.maxWidth < 600;
 
         return BlocListener<PetCubit, PetState>(
+          bloc: widget.cubit,
           listener: (context, state) {
             // Listen for breed loading states to show/hide loading indicator
             if (state is GetAllBreedsLoadingState) {
@@ -89,7 +90,7 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
           style: FontStyleThame.textStyle(
             context: context,
             fontSize: 14,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 8),
@@ -146,7 +147,7 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
           style: FontStyleThame.textStyle(
             context: context,
             fontSize: 14,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 8),
@@ -193,9 +194,21 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
     final isSelected = widget.cubit.dropdownValueSpecies.toLowerCase() == name.toLowerCase();
     
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         // Handle direct selection for Dog/Cat
-        _handleSpeciesSelection(name, _getSpeciesIdForType(speciesType));
+        final speciesId = _getSpeciesIdForType(speciesType);
+        if (speciesId.isNotEmpty) {
+          _handleSpeciesSelection(name, speciesId);
+        } else {
+          // If we don't have the species ID, load species first
+          if (widget.cubit.species.isEmpty) {
+            await widget.cubit.getAllSpecies();
+          }
+          final newSpeciesId = _getSpeciesIdForType(speciesType);
+          if (newSpeciesId.isNotEmpty) {
+            _handleSpeciesSelection(name, newSpeciesId);
+          }
+        }
       },
       child: Container(
         height: 80,
@@ -326,6 +339,7 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
     
     try {
       await showSpeciesSelector(
+        // ignore: use_build_context_synchronously
         context,
         widget.cubit,
         onSelected: (SpeciesEntity s) {
@@ -342,15 +356,24 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
     }
   }
 
-  /// Gets the species ID for common species types (placeholder implementation)
+  /// Gets the species ID for common species types from loaded species list
   String _getSpeciesIdForType(String speciesType) {
-    // This should ideally come from your species list or be predefined
-    // For now, returning placeholder IDs - you may need to adjust based on your API
+    // Try to find the species in the loaded species list first
+    final speciesList = widget.cubit.species;
+    
+    // Look for exact or partial matches in the species list
+    for (final species in speciesList) {
+      if (species.type.toLowerCase().contains(speciesType.toLowerCase())) {
+        return species.id;
+      }
+    }
+    
+    // Fallback to commonly known IDs if species list is not loaded yet
     switch (speciesType.toLowerCase()) {
       case 'dog':
-        return '1'; // Replace with actual dog species ID
+        return 'bca48207-f05d-4e9f-a631-06f34eb5af39'; // Use the actual ID from pet_screen_content
       case 'cat':
-        return '2'; // Replace with actual cat species ID
+        return 'f1131363-3b9f-40ee-9a89-0573ee274a10'; // Use the actual ID from pet_screen_content
       default:
         return '';
     }
