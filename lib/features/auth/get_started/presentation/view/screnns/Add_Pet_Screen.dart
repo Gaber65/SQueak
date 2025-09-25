@@ -17,6 +17,7 @@ import 'package:squeak/features/pets/presentation/view/widgets/add_pet/birthdate
 import '../widgets/add_pet_additional_details.dart';
 import '../widgets/add_pet_app_bar.dart';
 import '../widgets/add_pet_breed_dropdown_modal.dart';
+import 'package:squeak/features/pets/presentation/view/widgets/common/species_selector_sheet.dart';
 import '../widgets/add_pet_choice.dart';
 import '../widgets/add_pet_image_picker.dart';
 import '../widgets/add_pet_section.dart';
@@ -208,23 +209,21 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                               if (_isLoadingSpecies) return;
                               setState(() => _isLoadingSpecies = true);
                               try {
-                                await context.read<PetCubit>().getAllSpecies();
-                                if (mounted) {
-                                  final cubit = context.read<PetCubit>();
-                                  AddPetBreedDropdownModal(
-                                    breeds: cubit.breedData,
-                                    controller: _breedController,
-                                    onBreedSelected: (
-                                      String breedId,
-                                      String breedName,
-                                    ) {
-                                      setState(() {
-                                        selectedBreedId = breedId;
-                                        _breedController.text = breedName;
-                                      });
-                                    },
-                                  );
-                                }
+                                await showSpeciesSelector(
+                                  context,
+                                  context.read<PetCubit>(),
+                                  onSelected: (species) {
+                                    setState(() {
+                                      selectedSpecies = species.type;
+                                      selectedSpeciesId = species.id;
+                                      // reset breed when species changes
+                                      selectedBreedId = null;
+                                      _breedController.clear();
+                                    });
+                                    CacheHelper.saveData("pet_species", species.type);
+                                    _onSpeciesChanged(species.type, speciesId: species.id);
+                                  },
+                                );
                               } finally {
                                 if (mounted) {
                                   setState(() => _isLoadingSpecies = false);
@@ -441,186 +440,6 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
       },
     );
   }
-
-  // Future<void> _openSpeciesPickerModal(
-  //   BuildContext context,
-  //   List<SpeciesEntity> species,
-  // ) async {
-  //   String filter = '';
-  //   await showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     backgroundColor: Colors.transparent,
-  //     builder: (ctx) {
-  //       return DraggableScrollableSheet(
-  //         initialChildSize: 0.6,
-  //         minChildSize: 0.3,
-  //         maxChildSize: 0.9,
-  //         expand: false,
-  //         builder: (context, scrollController) {
-  //           List<SpeciesEntity> filtered = species;
-  //           return StatefulBuilder(
-  //             builder: (context, setModalState) {
-  //               filtered =
-  //                   species
-  //                       .where(
-  //                         (s) => s.type.toLowerCase().contains(
-  //                           filter.toLowerCase(),
-  //                         ),
-  //                       )
-  //                       .toList();
-  //               return Container(
-  //                 decoration: const BoxDecoration(
-  //                   color: Colors.white,
-  //                   borderRadius: BorderRadius.vertical(
-  //                     top: Radius.circular(16),
-  //                   ),
-  //                 ),
-  //                 padding: const EdgeInsets.symmetric(
-  //                   horizontal: 16,
-  //                   vertical: 12,
-  //                 ),
-  //                 child: Column(
-  //                   children: [
-  //                     Container(
-  //                       width: 40,
-  //                       height: 4,
-  //                       margin: const EdgeInsets.only(bottom: 16),
-  //                       decoration: BoxDecoration(
-  //                         color: Colors.grey[300],
-  //                         borderRadius: BorderRadius.circular(2),
-  //                       ),
-  //                     ),
-  //                     const Text(
-  //                       'Select Species',
-  //                       style: TextStyle(
-  //                         fontSize: 18,
-  //                         fontWeight: FontWeight.bold,
-  //                         color: Colors.black87,
-  //                       ),
-  //                     ),
-  //                     const SizedBox(height: 16),
-  //                     Container(
-  //                       decoration: BoxDecoration(
-  //                         color: Colors.grey[100],
-  //                         borderRadius: BorderRadius.circular(12),
-  //                         border: Border.all(color: Colors.grey[300]!),
-  //                       ),
-  //                       child: TextField(
-  //                         autofocus: true,
-  //                         decoration: InputDecoration(
-  //                           hintText: 'Search species...',
-  //                           hintStyle: TextStyle(color: Colors.grey[600]),
-  //                           prefixIcon: Icon(
-  //                             Icons.search,
-  //                             color: Colors.grey[600],
-  //                           ),
-  //                           border: InputBorder.none,
-  //                           contentPadding: const EdgeInsets.symmetric(
-  //                             horizontal: 16,
-  //                             vertical: 12,
-  //                           ),
-  //                         ),
-  //                         onChanged: (v) => setModalState(() => filter = v),
-  //                       ),
-  //                     ),
-  //                     const SizedBox(height: 16),
-  //                     Expanded(
-  //                       child:
-  //                           filtered.isEmpty
-  //                               ? Center(
-  //                                 child: Column(
-  //                                   mainAxisAlignment: MainAxisAlignment.center,
-  //                                   children: [
-  //                                     Icon(
-  //                                       Icons.search_off,
-  //                                       size: 48,
-  //                                       color: Colors.grey[400],
-  //                                     ),
-  //                                     const SizedBox(height: 16),
-  //                                     Text(
-  //                                       'No species found',
-  //                                       style: TextStyle(
-  //                                         color: Colors.grey[600],
-  //                                         fontSize: 16,
-  //                                       ),
-  //                                     ),
-  //                                   ],
-  //                                 ),
-  //                               )
-  //                               : ListView.separated(
-  //                                 controller: scrollController,
-  //                                 itemCount: filtered.length,
-  //                                 separatorBuilder:
-  //                                     (_, __) => Divider(
-  //                                       height: 1,
-  //                                       color: Colors.grey[200],
-  //                                     ),
-  //                                 itemBuilder: (context, index) {
-  //                                   final s = filtered[index];
-  //                                   return ListTile(
-  //                                     contentPadding:
-  //                                         const EdgeInsets.symmetric(
-  //                                           horizontal: 16,
-  //                                           vertical: 8,
-  //                                         ),
-  //                                     leading: Container(
-  //                                       width: 40,
-  //                                       height: 40,
-  //                                       decoration: BoxDecoration(
-  //                                         color: ColorManager.primaryColor
-  //                                             .withOpacity(0.1),
-  //                                         borderRadius: BorderRadius.circular(
-  //                                           20,
-  //                                         ),
-  //                                       ),
-  //                                       child: Icon(
-  //                                         Icons.pets,
-  //                                         color: ColorManager.primaryColor,
-  //                                         size: 20,
-  //                                       ),
-  //                                     ),
-  //                                     title: Text(
-  //                                       s.type,
-  //                                       style: const TextStyle(
-  //                                         fontWeight: FontWeight.w500,
-  //                                         fontSize: 16,
-  //                                       ),
-  //                                     ),
-  //                                     trailing: const Icon(
-  //                                       Icons.arrow_forward_ios,
-  //                                       size: 16,
-  //                                       color: Colors.grey,
-  //                                     ),
-  //                                     onTap: () {
-  //                                       setState(() {
-  //                                         selectedSpecies = s.type;
-  //                                         selectedSpeciesId = s.id;
-  //                                       });
-  //                                       CacheHelper.saveData(
-  //                                         "pet_species",
-  //                                         s.type,
-  //                                       );
-  //                                       _onSpeciesChanged(
-  //                                         s.type,
-  //                                         speciesId: s.id,
-  //                                       );
-  //                                       Navigator.of(context).pop();
-  //                                     },
-  //                                   );
-  //                                 },
-  //                               ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               );
-  //             },
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
 
   bool _isDogSpecies(String species) {
     return species.toLowerCase() == 'dog' ||
