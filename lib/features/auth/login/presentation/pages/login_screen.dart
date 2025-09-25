@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:squeak/features/auth/get_started/presentation/view/screnns/welcome_to_squek.dart';
 import 'package:squeak/features/auth/login/data/datasources/login_remote_data_source.dart';
 import 'package:squeak/features/auth/login/data/repositories/login_repository.dart';
 import 'package:squeak/features/auth/login/domin/usecses/login_use_case.dart';
@@ -16,40 +17,35 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> 
+class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
-  
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  final AdvancedPerformanceMonitor _performanceMonitor = AdvancedPerformanceMonitor();
+  final AdvancedPerformanceMonitor _performanceMonitor =
+      AdvancedPerformanceMonitor();
 
   @override
   void initState() {
     super.initState();
     // TEMPORARILY DISABLED - Performance monitoring causing potential crashes
     // _performanceMonitor.startOperation('login_screen_init');
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-    
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0.0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutBack,
-    ));
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
+    );
 
     _animationController.forward();
     // TEMPORARILY DISABLED - Performance monitoring causing potential crashes
@@ -66,13 +62,12 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     // TEMPORARILY DISABLED - Performance monitoring wrapper causing potential crashes
     return BlocProvider(
-      create: (context) => LoginCubit(
-        LoginUseCase(
-          LoginRepositoryImpl(
-            remoteDataSource: LoginRemoteDataSource(),
+      create:
+          (context) => LoginCubit(
+            LoginUseCase(
+              LoginRepositoryImpl(remoteDataSource: LoginRemoteDataSource()),
+            ),
           ),
-        ),
-      ),
       child: BlocConsumer<LoginCubit, LoginState>(
         listener: (context, state) {
           _handleStateChanges(context, state);
@@ -88,13 +83,13 @@ class _LoginScreenState extends State<LoginScreen>
   void _handleStateChanges(BuildContext context, LoginState state) {
     if (state is LoginError) {
       _performanceMonitor.recordException(
-        Exception('Login failed: ${state.error.message}'), 
+        Exception('Login failed: ${state.error.message}'),
         StackTrace.current,
       );
-      
+
       // Enhanced error handling with haptic feedback
       HapticFeedback.mediumImpact();
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
@@ -128,16 +123,19 @@ class _LoginScreenState extends State<LoginScreen>
         ),
       );
     }
-    
+
     if (state is LoginSuccess) {
-      _performanceMonitor.endOperation('login_process', metadata: {
-        'user_id': state.userEntity.id,
-        'role': state.userEntity.role,
-      });
-      
+      _performanceMonitor.endOperation(
+        'login_process',
+        metadata: {
+          'user_id': state.userEntity.id,
+          'role': state.userEntity.role,
+        },
+      );
+
       // Success haptic feedback
       HapticFeedback.lightImpact();
-      
+
       // Save user data
       CacheHelper.saveData('role', state.userEntity.role);
       CacheHelper.saveData('clintId', state.userEntity.id);
@@ -147,8 +145,8 @@ class _LoginScreenState extends State<LoginScreen>
       CacheHelper.saveData('username', state.userEntity.fullName);
       CacheHelper.saveData('email', state.userEntity.email);
       TokenManager.saveToken(
-        state.userEntity.token, 
-        state.userEntity.expiresIn, 
+        state.userEntity.token,
+        state.userEntity.expiresIn,
         state.userEntity.refreshToken,
       );
 
@@ -175,15 +173,20 @@ class _LoginScreenState extends State<LoginScreen>
         ),
       );
 
-      // Navigate to main screen
-      Future.delayed(const Duration(milliseconds: 500), () {
-        // ignore: use_build_context_synchronously
+      if (CacheHelper.getBool('welcome_seen')) {
         navigateAndFinish(context, LayoutScreen());
-      });
+      } else {
+        navigateAndFinish(context, WelcomeToSquek());
+        CacheHelper.saveData('welcome_seen', true);
+      }
     }
   }
 
-  Widget _buildAnimatedContent(BuildContext context, LoginCubit cubit, LoginState state) {
+  Widget _buildAnimatedContent(
+    BuildContext context,
+    LoginCubit cubit,
+    LoginState state,
+  ) {
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
@@ -191,9 +194,7 @@ class _LoginScreenState extends State<LoginScreen>
           opacity: _fadeAnimation,
           child: SlideTransition(
             position: _slideAnimation,
-            child: ModernLoginWrapper(
-              cubit: cubit,
-            ),
+            child: ModernLoginWrapper(cubit: cubit),
           ),
         );
       },

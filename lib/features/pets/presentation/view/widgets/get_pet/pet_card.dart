@@ -16,7 +16,12 @@ class PetCard extends StatefulWidget {
   final PetCubit cubit;
   final QrCubit qrCubit;
 
-  const PetCard({super.key, required this.pet, required this.cubit, required this.qrCubit});
+  const PetCard({
+    super.key,
+    required this.pet,
+    required this.cubit,
+    required this.qrCubit,
+  });
 
   @override
   State<PetCard> createState() => _PetCardState();
@@ -47,7 +52,11 @@ class _PetCardState extends State<PetCard> {
 
               const SizedBox(height: 12),
 
-              QrActionButtons(pet: widget.pet, petCubit: widget.cubit,c: widget.qrCubit,),
+              QrActionButtons(
+                pet: widget.pet,
+                petCubit: widget.cubit,
+                c: widget.qrCubit,
+              ),
               // QR Action Buttons
             ],
           ),
@@ -73,7 +82,7 @@ class _PetCardState extends State<PetCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.pet.petName,
+                widget.pet.petName ?? '',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -81,11 +90,12 @@ class _PetCardState extends State<PetCard> {
               ),
               const SizedBox(height: 4),
               Text(
-                widget.pet.birthdate.isEmpty
+                (widget.pet.birthdate?.isEmpty ?? true)
                     ? ''
-                    : widget.pet.birthdate.substring(0, 10),
+                    : widget.pet.birthdate!.substring(0, 10),
                 style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
+
               if (widget.pet.breed != null) ...[
                 const SizedBox(height: 2),
                 Text(
@@ -115,7 +125,6 @@ class _PetCardState extends State<PetCard> {
     );
   }
 
-
   void _navigateToEditPet(BuildContext context) {
     print('Pet ID: ${widget.pet.petId}');
     print('Pet Breed: ${widget.pet.breed}');
@@ -124,5 +133,4 @@ class _PetCardState extends State<PetCard> {
       EditPet(pets: widget.pet, breedData: widget.cubit.allBreeds),
     );
   }
-
 }

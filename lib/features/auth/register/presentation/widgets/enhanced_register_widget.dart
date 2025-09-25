@@ -34,7 +34,8 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  late AnimationController _countryFieldController; // Controller for country field animation
+  late AnimationController
+  _countryFieldController; // Controller for country field animation
   late Animation<double> _countryFieldAnimation; // Animation for country field
   bool _isCountrySelected = false; // Track if country has been selected
 
@@ -74,19 +75,16 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
       vsync: this,
     );
     _countryFieldAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
-      CurvedAnimation(
-        parent: _countryFieldController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _countryFieldController, curve: Curves.easeInOut),
     )..addStatusListener((status) {
-        if (!_isCountrySelected) {
-          if (status == AnimationStatus.completed) {
-            _countryFieldController.reverse();
-          } else if (status == AnimationStatus.dismissed) {
-            _countryFieldController.forward();
-          }
+      if (!_isCountrySelected) {
+        if (status == AnimationStatus.completed) {
+          _countryFieldController.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          _countryFieldController.forward();
         }
-      });
+      }
+    });
 
     // Start animations
     _fadeController.forward();
@@ -97,7 +95,6 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
       _updateFormValidity();
     });
   }
-
 
   @override
   void dispose() {
@@ -215,22 +212,22 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
 
     return AnimatedSwitcher(
       duration: getAnimationDuration(),
-      child: validation.isValid
-          ? const Icon(
-              Icons.check_circle,
-              color: ColorManager.green,
-              size: 16,
-              key: ValueKey('valid'),
-            )
-          : const Icon(
-              Icons.error,
-              color: ColorManager.red,
-              size: 16,
-              key: ValueKey('invalid'),
-            ),
+      child:
+          validation.isValid
+              ? const Icon(
+                Icons.check_circle,
+                color: ColorManager.green,
+                size: 16,
+                key: ValueKey('valid'),
+              )
+              : const Icon(
+                Icons.error,
+                color: ColorManager.red,
+                size: 16,
+                key: ValueKey('invalid'),
+              ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -243,14 +240,15 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
           child: AnimatedBuilder(
             animation: _shakeController,
             builder: (context, child) {
-              final shakeOffset = _shakeController.isAnimating
-                  ? Offset(
-                      _shakeController.value *
-                          10 *
-                          (1 - _shakeController.value * 2).abs(),
-                      0,
-                    )
-                  : Offset.zero;
+              final shakeOffset =
+                  _shakeController.isAnimating
+                      ? Offset(
+                        _shakeController.value *
+                            10 *
+                            (1 - _shakeController.value * 2).abs(),
+                        0,
+                      )
+                      : Offset.zero;
 
               return Transform.translate(
                 offset: shakeOffset,
@@ -320,14 +318,18 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: _nameValidation?.isValid == false
-                                    ? ColorManager.red.withValues(alpha: 0.7)
-                                    : _nameValidation?.isValid == true
+                                color:
+                                    _nameValidation?.isValid == false
+                                        ? ColorManager.red.withValues(
+                                          alpha: 0.7,
+                                        )
+                                        : _nameValidation?.isValid == true
                                         ? ColorManager.green.withValues(
-                                            alpha: 0.7)
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .outlineVariant,
+                                          alpha: 0.7,
+                                        )
+                                        : Theme.of(
+                                          context,
+                                        ).colorScheme.outlineVariant,
                                 width: 1.5,
                               ),
                             ),
@@ -339,7 +341,9 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                                   Icons.person_outline,
                                   size: 18,
                                 ),
-                                suffixIcon: _buildValidationIcon(_nameValidation),
+                                suffixIcon: _buildValidationIcon(
+                                  _nameValidation,
+                                ),
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 16,
@@ -368,14 +372,18 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: _emailValidation?.isValid == false
-                                    ? ColorManager.red.withValues(alpha: 0.7)
-                                    : _emailValidation?.isValid == true
+                                color:
+                                    _emailValidation?.isValid == false
+                                        ? ColorManager.red.withValues(
+                                          alpha: 0.7,
+                                        )
+                                        : _emailValidation?.isValid == true
                                         ? ColorManager.green.withValues(
-                                            alpha: 0.7)
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .outlineVariant,
+                                          alpha: 0.7,
+                                        )
+                                        : Theme.of(
+                                          context,
+                                        ).colorScheme.outlineVariant,
                                 width: 1.5,
                               ),
                             ),
@@ -388,8 +396,9 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                                   Icons.email_outlined,
                                   size: 18,
                                 ),
-                                suffixIcon:
-                                    _buildValidationIcon(_emailValidation),
+                                suffixIcon: _buildValidationIcon(
+                                  _emailValidation,
+                                ),
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 16,
@@ -436,12 +445,14 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: widget.cubit.countryCode.isNotEmpty
-                                      ? ColorManager.green
-                                          .withValues(alpha: 0.7)
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .outlineVariant,
+                                  color:
+                                      widget.cubit.countryCode.isNotEmpty
+                                          ? ColorManager.green.withValues(
+                                            alpha: 0.7,
+                                          )
+                                          : Theme.of(
+                                            context,
+                                          ).colorScheme.outlineVariant,
                                   width: 1.5,
                                 ),
                               ),
@@ -474,14 +485,15 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: _passwordValidation?.isValid == true
-                                ? ColorManager.green.withValues(alpha: 0.7)
-                                : _passwordValidation != null &&
+                            color:
+                                _passwordValidation?.isValid == true
+                                    ? ColorManager.green.withValues(alpha: 0.7)
+                                    : _passwordValidation != null &&
                                         !_passwordValidation!.isValid
                                     ? ColorManager.red.withValues(alpha: 0.7)
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .outlineVariant,
+                                    : Theme.of(
+                                      context,
+                                    ).colorScheme.outlineVariant,
                             width: 1.5,
                           ),
                         ),
@@ -499,7 +511,9 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                               borderSide: BorderSide.none,
                             ),
                             fillColor:
-                                Theme.of(context).inputDecorationTheme.fillColor,
+                                Theme.of(
+                                  context,
+                                ).inputDecorationTheme.fillColor,
                             filled: true,
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
@@ -548,14 +562,18 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: _clinicCodeValidation?.isValid == false
-                                    ? ColorManager.red.withValues(alpha: 0.7)
-                                    : _clinicCodeValidation?.isValid == true
-                                        ? ColorManager.green
-                                            .withValues(alpha: 0.7)
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .outlineVariant,
+                                color:
+                                    _clinicCodeValidation?.isValid == false
+                                        ? ColorManager.red.withValues(
+                                          alpha: 0.7,
+                                        )
+                                        : _clinicCodeValidation?.isValid == true
+                                        ? ColorManager.green.withValues(
+                                          alpha: 0.7,
+                                        )
+                                        : Theme.of(
+                                          context,
+                                        ).colorScheme.outlineVariant,
                                 width: 1.5,
                               ),
                             ),
@@ -567,8 +585,9 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                                   Icons.local_hospital_outlined,
                                   size: 18,
                                 ),
-                                suffixIcon:
-                                    _buildValidationIcon(_clinicCodeValidation),
+                                suffixIcon: _buildValidationIcon(
+                                  _clinicCodeValidation,
+                                ),
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 16,
@@ -595,12 +614,11 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                         child: VcLoadingButton(
                           onPressed: _isFormValid ? _onRegisterPressed : null,
                           isLoading: widget.cubit.isRegister,
-                          backgroundColor: _isFormValid
-                              ? ColorManager.primaryColor
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .outlineVariant
-                                  .withValues(alpha: 0.6),
+                          backgroundColor:
+                              _isFormValid
+                                  ? ColorManager.primaryColor
+                                  : Theme.of(context).colorScheme.outlineVariant
+                                      .withValues(alpha: 0.6),
                           borderRadius: 12,
                           height: 56,
                           child: Row(
@@ -646,9 +664,10 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                               children: [
                                 Expanded(
                                   child: Divider(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .outlineVariant,
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.outlineVariant,
                                   ),
                                 ),
                                 Padding(
@@ -667,9 +686,10 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                                 ),
                                 Expanded(
                                   child: Divider(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .outlineVariant,
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.outlineVariant,
                                   ),
                                 ),
                               ],

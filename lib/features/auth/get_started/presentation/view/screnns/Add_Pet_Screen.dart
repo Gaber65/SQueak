@@ -30,6 +30,8 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
   String? base64String;
   String selectedSpecies = "dog";
   String? selectedGender;
+  String? selectedSpeciesId;
+  String? selectedBreedId;
 
   @override
   void initState() {
@@ -48,9 +50,9 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
 
   Future<void> _restoreData() async {
     _nameController.text = CacheHelper.getData('pet_name') ?? '';
-    _breedController.text = CacheHelper.getData('pet_breed') ?? '';
+    // _breedController.text = CacheHelper.getData('pet_breed') ?? '';
     _dateController.text = CacheHelper.getData('pet_date') ?? '';
-    selectedGender = CacheHelper.getData('pet_gender');
+    // selectedGender = CacheHelper.getData('pet_gender');
     final imgBase64 = CacheHelper.getData('pet_image');
     if (imgBase64 != null) {
       try {
@@ -196,6 +198,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                                       if (value != null) {
                                         setState(() {
                                           selectedSpecies = value.type;
+                                          selectedSpeciesId = value.id;
                                         });
                                         CacheHelper.saveData(
                                           "pet_species",
@@ -315,30 +318,110 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
               ),
             ),
 
-            Container(
-              margin: const EdgeInsets.all(16),
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorManager.primaryColor,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+            BlocConsumer<PetCubit, PetState>(
+              listener: (context, state) {
+                if (state is PetCreateSuccessState) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Pet created successfully!"),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                  navigateToScreen(context, FindFriendsScreen());
+                } else if (state is PetCreateErrorState) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              builder: (context, state) {
+                final isLoading = state is PetCreateLoadingState;
+
+                return Container(
+                  margin: const EdgeInsets.all(16),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorManager.primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed:
+                        isLoading
+                            ? null
+                            : () {
+                              if (_nameController.text.trim().isEmpty) {
+                                _showValidationDialog();
+                                return;
+                              }
+                              final pet = PetEntities(
+                                imageName:
+                                    context
+                                            .read<PetCubit>()
+                                            .imageNameController
+                                            .text
+                                            .isNotEmpty
+                                        ? context
+                                            .read<PetCubit>()
+                                            .imageNameController
+                                            .text
+                                        : null,
+                                breedId: selectedBreedId,
+                                gender:
+                                    selectedGender == "male"
+                                        ? 1
+                                        : selectedGender == "female"
+                                        ? 2
+                                        : null,
+                                birthdate:
+                                    _dateController.text.isNotEmpty
+                                        ? DateTime.parse(
+                                          "${_dateController.text.split('/')[2]}-"
+                                          "${_dateController.text.split('/')[0].padLeft(2, '0')}-"
+                                          "${_dateController.text.split('/')[1].padLeft(2, '0')}"
+                                          "T00:00:00.000Z",
+                                        ).toIso8601String()
+                                        : null,
+                                isSpayed: false,
+                                petName: _nameController.text.trim(),
+                                specieId:
+                                    selectedSpecies == "dog"
+                                        ? "bca48207-f05d-4e9f-a631-06f34eb5af39"
+                                        : selectedSpecies == "cat"
+                                        ? "f1131363-3b9f-40ee-9a89-0573ee274a10"
+                                        : selectedSpeciesId,
+                              );
+
+                              context.read<PetCubit>().createPetGetStarting(
+                                pet: pet,
+                              );
+                            },
+                    child:
+                        isLoading
+                            ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                            : const Text(
+                              "Add Pet",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                   ),
-                ),
-                onPressed: () {
-                  if (_nameController.text.trim().isEmpty) {
-                    _showValidationDialog();
-                  } else {
-                    navigateToScreen(context, const FindFriendsScreen());
-                  }
-                },
-                child: const Text(
-                  "Add Pet",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
+                );
+              },
             ),
           ],
         ),
@@ -352,9 +435,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
       builder: (context) {
         return AlertDialog(
           title: const Text("Missing Information"),
-          content: const Text(
-            "Please enter your pet's name and select a species to continue.",
-          ),
+          content: const Text("Please enter your pet's name."),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -545,7 +626,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
       child: GestureDetector(
         onTap: () {
           setState(() => selectedGender = value);
-          CacheHelper.saveData('pet_gender', value);
+          // CacheHelper.saveData('pet_gender', value);
         },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
@@ -789,10 +870,11 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                                       title: Text(b.enType),
                                       onTap: () {
                                         _breedController.text = b.enType;
-                                        CacheHelper.saveData(
-                                          'pet_breed',
-                                          _breedController.text,
-                                        );
+                                        selectedBreedId = b.id;
+                                        // CacheHelper.saveData(
+                                        //   'pet_breed',
+                                        //   _breedController.text,
+                                        // );
                                         Navigator.of(context).pop();
                                         setState(() {});
                                       },

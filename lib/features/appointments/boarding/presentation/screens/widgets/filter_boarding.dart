@@ -14,9 +14,10 @@ Widget buildPetFilterBoarding(BuildContext context, List<PetEntities> pets) {
     padding: const EdgeInsets.all(8.0),
     child: Container(
       decoration: BoxDecoration(
-        color: MainCubit.get(context).isDark
-            ? Colors.black26
-            : Colors.grey.shade200,
+        color:
+            MainCubit.get(context).isDark
+                ? Colors.black26
+                : Colors.grey.shade200,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
@@ -36,20 +37,23 @@ Widget buildPetFilterBoarding(BuildContext context, List<PetEntities> pets) {
 
             BoardingCubit.get(context).filterBoardings();
           },
-          itemBuilder: (context) => pets.map((e) {
-            return PopupMenuItem<PetEntities>(
-              value: e,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * .32,
-                child: Text(e.petName),
-              ),
-            );
-          }).toList(),
+          itemBuilder:
+              (context) =>
+                  pets.map((e) {
+                    return PopupMenuItem<PetEntities>(
+                      value: e,
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * .32,
+                        child: Text(e.petName ?? ''),
+                      ),
+                    );
+                  }).toList(),
           child: buildPopupButtonChild(
-              context,
-              BoardingCubit.get(context).petName ??
-                  S.of(context).filter_hint_pets,
-              BoardingCubit.get(context).selectedPetId != null),
+            context,
+            BoardingCubit.get(context).petName ??
+                S.of(context).filter_hint_pets,
+            BoardingCubit.get(context).selectedPetId != null,
+          ),
         ),
       ),
     ),
@@ -61,9 +65,10 @@ Widget buildStateFilterBoarding(BuildContext context) {
     padding: const EdgeInsets.all(8.0),
     child: Container(
       decoration: BoxDecoration(
-        color: MainCubit.get(context).isDark
-            ? Colors.black26
-            : Colors.grey.shade200,
+        color:
+            MainCubit.get(context).isDark
+                ? Colors.black26
+                : Colors.grey.shade200,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
@@ -82,18 +87,20 @@ Widget buildStateFilterBoarding(BuildContext context) {
             BoardingCubit.get(context).emit(FilterState());
             BoardingCubit.get(context).filterBoardings();
           },
-          itemBuilder: (context) =>
-              generateDummyDataStateForBoarding(context).map((e) {
-            return PopupMenuItem<StateBoardingEnums>(
-              value: e,
-              child: Text(e.key),
-            );
-          }).toList(),
+          itemBuilder:
+              (context) =>
+                  generateDummyDataStateForBoarding(context).map((e) {
+                    return PopupMenuItem<StateBoardingEnums>(
+                      value: e,
+                      child: Text(e.key),
+                    );
+                  }).toList(),
           child: buildPopupButtonChild(
-              context,
-              BoardingCubit.get(context).selectedStateValue ??
-                  S.of(context).filter_hint_State,
-              BoardingCubit.get(context).selectedStateValue != null),
+            context,
+            BoardingCubit.get(context).selectedStateValue ??
+                S.of(context).filter_hint_State,
+            BoardingCubit.get(context).selectedStateValue != null,
+          ),
         ),
       ),
     ),
@@ -106,9 +113,7 @@ Widget buildPopupButtonChild(BuildContext context, String hint, bool active) {
       SizedBox(
         width: MediaQuery.of(context).size.width * .32,
         child: Padding(
-          padding: const EdgeInsetsDirectional.only(
-            start: 8.0,
-          ),
+          padding: const EdgeInsetsDirectional.only(start: 8.0),
           child: Text(
             hint,
             maxLines: 1,
@@ -116,11 +121,12 @@ Widget buildPopupButtonChild(BuildContext context, String hint, bool active) {
               context: context,
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              fontColor: active
-                  ? MainCubit.get(context).isDark
-                      ? Colors.white
-                      : Colors.black
-                  : MainCubit.get(context).isDark
+              fontColor:
+                  active
+                      ? MainCubit.get(context).isDark
+                          ? Colors.white
+                          : Colors.black
+                      : MainCubit.get(context).isDark
                       ? Colors.white54
                       : Color.fromRGBO(0, 0, 0, .3),
             ),

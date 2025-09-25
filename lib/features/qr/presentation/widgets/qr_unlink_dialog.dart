@@ -238,8 +238,6 @@ class _QrUnlinkDialogState extends State<QrUnlinkDialog>
     );
   }
 
-
-
   Widget _buildWarningMessage() {
     return Container(
       padding: const EdgeInsets.all(18),
@@ -432,7 +430,10 @@ class _QrUnlinkDialogState extends State<QrUnlinkDialog>
       await Future.delayed(const Duration(milliseconds: 800));
 
       // Perform the actual unlink
-      widget.cubit.unlinkPetFromQr(widget.pet.petId, widget.pet.qrCodeId!);
+      widget.cubit.unlinkPetFromQr(
+        widget.pet.petId ?? '',
+        widget.pet.qrCodeId!,
+      );
 
       // Close dialog
       if (mounted) {

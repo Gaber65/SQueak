@@ -373,8 +373,8 @@ class _PetMergeContent extends StatelessWidget {
                           CircleAvatar(
                             radius: 15,
                             backgroundImage: NetworkImage(
-                              pet.imageName.isNotEmpty
-                                  ? imageUrl + pet.imageName
+                              (pet.imageName?.isNotEmpty ?? false)
+                                  ? imageUrl + pet.imageName!
                                   : 'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/painting-cat-with-gold-medallion-its-collar.jpg?alt=media&token=2fbc1736-9ee5-4feb-8ba8-c670fd1ecc57',
                             ),
                           ),
@@ -382,7 +382,7 @@ class _PetMergeContent extends StatelessWidget {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.7,
                             child: Text(
-                              pet.petName,
+                              pet.petName ?? '',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: FontStyleThame.textStyle(context: context),

@@ -314,7 +314,13 @@ class SettingScreen extends StatelessWidget {
                         onConfirmBtnTap: () {
                           MainCubit.get(context).removeToken();
                           LayoutCubit.get(context).changeBottomNav(0);
+                          final welcomeSeen = CacheHelper.getBool(
+                            'welcome_seen',
+                          );
                           CacheHelper.clearData();
+                          if (welcomeSeen) {
+                            CacheHelper.saveData('welcome_seen', true);
+                          }
                           navigateAndFinish(context, LoginScreen());
                         },
                       );

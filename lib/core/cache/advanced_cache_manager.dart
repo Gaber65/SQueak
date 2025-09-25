@@ -358,6 +358,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Advanced cache manager with TTL, compression, and multiple storage strategies
+
 class AdvancedCacheManager {
   static const String _cachePrefix = 'cache_';
   static const String _expiryPrefix = 'expiry_';

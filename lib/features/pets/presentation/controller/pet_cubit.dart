@@ -7,6 +7,7 @@ import 'package:squeak/core/base_usecase/base_usecase.dart';
 import 'package:squeak/core/network/dio.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
+import 'package:squeak/features/auth/get_started/domain/entites/request_pet_inteties.dart';
 import '../../../../features/pets/domain/entities/pet_entity.dart';
 import '../../../../features/pets/domain/use_case/get_owner_pets_usecase.dart';
 import '../../../../features/pets/domain/use_case/get_all_breeds_usecase.dart';
@@ -27,8 +28,11 @@ class PetCubit extends Cubit<PetState> {
   final CreatePetUseCase createPetUseCase;
   final UpdatePetUseCase updatePetUseCase;
   final DeletePetUseCase deletePetUseCase;
+  // final CreatePetLoginScreenUseCase createPetLoginScreenUseCase;
 
-  PetCubit({
+  PetCubit(
+  // this.createPetLoginScreenUseCase,
+  {
     required this.getOwnerPetsUseCase,
     required this.getAllBreedsUseCase,
     required this.getBreedsBySpeciesUseCase,
@@ -151,10 +155,13 @@ class PetCubit extends Cubit<PetState> {
             ? pet.breed?.arBreed
             : pet.breed?.enBreed ?? S.current.breed) ??
         '';
-    petNameController.text = pet.petName;
-    breedIdController.text = pet.breedId;
+    petNameController.text = pet.petName ?? '';
+    breedIdController.text = pet.breedId ?? '';
     birthdateController.text =
-        pet.birthdate.isEmpty ? '' : pet.birthdate.substring(0, 10);
+        (pet.birthdate?.isNotEmpty ?? false)
+            ? pet.birthdate!.substring(0, 10)
+            : '';
+
     imageNameController.text =
         pet.imageName.toString().contains('freepik')
             ? ''
@@ -164,11 +171,11 @@ class PetCubit extends Cubit<PetState> {
     passportImageNameController.text = pet.passportImage ?? '';
     microchipNumberController.text = pet.microShipNumber ?? '';
 
-    gender = pet.gender;
+    gender = pet.gender ?? 0;
     petId = pet.petId.toString();
     specieId = pet.specieId.toString();
-    spayed = pet.isSpayed;
-    dropdownValueBreed = pet.breedId;
+    spayed = pet.isSpayed ?? false;
+    dropdownValueBreed = pet.breedId ?? '';
     emit(PetFormUpdatedState());
   }
 
@@ -208,6 +215,27 @@ class PetCubit extends Cubit<PetState> {
     isLoading = false;
     result.fold(
       (error) {
+        emit(PetCreateErrorState(extractFirstError(error)));
+      },
+      (createdPet) {
+        pets.add(createdPet);
+        emit(PetCreateSuccessState());
+      },
+    );
+  }
+
+  // Create a new pet
+  Future<void> createPetGetStarting({required PetEntities pet}) async {
+    isLoading = true;
+    emit(PetCreateLoadingState());
+
+    print(pet.toJson());
+    final result = await createPetUseCase(PetParams(pet: pet));
+
+    isLoading = false;
+    result.fold(
+      (error) {
+        print(error.error.toJson());
         emit(PetCreateErrorState(extractFirstError(error)));
       },
       (createdPet) {

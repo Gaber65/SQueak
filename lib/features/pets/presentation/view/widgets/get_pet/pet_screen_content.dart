@@ -50,10 +50,10 @@ class _PetScreenContentState extends State<PetScreenContent> {
           elevation: 0,
           centerTitle: true,
           title: Text(S.of(context).myPets),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            onPressed: () => _handleBackPress(),
-          ),
+          // leading: IconButton(
+          //   icon: const Icon(Icons.arrow_back_ios),
+          //   onPressed: () => _handleBackPress(),
+          // ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(2.0),
             child:

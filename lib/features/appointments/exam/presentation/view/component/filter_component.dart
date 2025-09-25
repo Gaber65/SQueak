@@ -41,7 +41,7 @@ Widget buildPetFilter(BuildContext context, List<PetEntities> pets) {
                       value: e,
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * .32,
-                        child: Text(e.petName),
+                        child: Text(e.petName ?? ''),
                       ),
                     );
                   }).toList(),
