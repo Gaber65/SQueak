@@ -905,7 +905,7 @@ void _toggleVideoPlayback() {
   /// Builds the main video carousel with navigation and controls
   Widget _buildEnhancedVideoCarousel(BoardingEntryEntity boarding) {
      final List<Map<String, dynamic>> videoList = boarding.boardingImages
-    .where((vid) => vid['VideoName'] != null && vid['VideoName'].toString().isNotEmpty)
+    .where((vid) => vid['videoName'] != null && vid['videoName'].toString().isNotEmpty)
     .cast<Map<String, dynamic>>()
     .toList();
     return SizedBox(
@@ -940,7 +940,7 @@ void _toggleVideoPlayback() {
                           VideoDetailSimple(
                             path:
                                 imageUrlWithVetICare +
-                                videoList[index]['VideoName'],
+                                videoList[index]['videoName'],
                             title:
                                 isArabic() ? 'تفاصيل الفيديو' : 'Video details',
                             description:
@@ -1186,7 +1186,7 @@ void _toggleVideoPlayback() {
   /// Builds the video player widget with loading and error states
 Widget _buildVideoPlayer(int index, BoardingEntryEntity boarding) {
  final List<Map<String, dynamic>> videoList = boarding.boardingImages
-    .where((vid) => vid['VideoName'] != null && vid['VideoName'].toString().isNotEmpty)
+    .where((vid) => vid['videoName'] != null && vid['videoName'].toString().isNotEmpty)
     .cast<Map<String, dynamic>>()
     .toList();
 
@@ -1305,13 +1305,17 @@ Widget _buildErrorState(int index) {
 }
 
   Widget _buildEnhancedPageIndicators(BoardingEntryEntity boarding) {
+final List<Map<String, dynamic>> videoList = boarding.boardingImages
+    .where((vid) => vid['videoName'] != null && vid['videoName'].toString().isNotEmpty)
+    .cast<Map<String, dynamic>>()
+    .toList();
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(
-          boarding.boardingImages.length,
+          videoList.length,
           (index) => AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             margin: const EdgeInsets.symmetric(horizontal: 6),

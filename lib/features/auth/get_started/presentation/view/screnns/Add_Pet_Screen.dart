@@ -30,11 +30,12 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
   final _nameController = TextEditingController();
   final _breedController = TextEditingController();
   File? imagefile;
-  String? base64String;
   String selectedSpecies = "dog";
   String? selectedGender;
   String? selectedSpeciesId;
   String? selectedBreedId;
+  
+  bool _isLoadingSpecies =  false;
 
   @override
   void initState() {
@@ -159,74 +160,26 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                         style: TextStyle(color: Colors.white),
                       ),
                       const SizedBox(height: 8),
-                      Column(
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              _buildChoice(
-                                label: "Dog",
-                                icon: FontAwesomeIcons.dog,
-                                value: "dog",
-                              ),
-                              _buildChoice(
-                                label: "Cat",
-                                icon: FontAwesomeIcons.cat,
-                                value: "cat",
-                              ),
-                              _buildChoice(
-                                label: "Other",
-                                icon: Icons.more_horiz,
-                                value: "other",
-                              ),
-                            ],
+                          _buildChoice(
+                            label: "Dog",
+                            icon: FontAwesomeIcons.dog,
+                            value: "dog",
                           ),
-
-                          if (selectedSpecies == "other")
-                            Padding(
-                              padding: const EdgeInsets.only(top: 16.0),
-                              child: BlocBuilder<PetCubit, PetState>(
-                                builder: (context, state) {
-                                  final cubit = context.read<PetCubit>();
-                                  return DropdownButton<SpeciesEntity>(
-                                    isExpanded: true,
-                                    value: cubit.species.firstWhere(
-                                      (s) => s.type == selectedSpecies,
-                                      orElse: () => cubit.species.first,
-                                    ),
-                                    items:
-                                        cubit.species
-                                            .map(
-                                              (species) => DropdownMenuItem(
-                                                value: species,
-                                                child: Text(species.type),
-                                              ),
-                                            )
-                                            .toList(),
-                                    onChanged: (value) {
-                                      if (value != null) {
-                                        setState(() {
-                                          selectedSpecies = value.type;
-                                          selectedSpeciesId = value.id;
-                                        });
-                                        CacheHelper.saveData(
-                                          "pet_species",
-                                          value.type,
-                                        );
-                                        _onSpeciesChanged(
-                                          value.type,
-                                          speciesId: value.id,
-                                        );
-                                      }
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
+                          _buildChoice(
+                            label: "Cat",
+                            icon: FontAwesomeIcons.cat,
+                            value: "cat",
+                          ),
+                          _buildChoice(
+                            label: "Other",
+                            icon: Icons.more_horiz,
+                            value: "other",
+                          ),
                         ],
                       ),
-
                       const SizedBox(height: 16),
-
                       const Text(
                         "Breed",
                         style: TextStyle(color: Colors.white),
@@ -550,30 +503,47 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
     required IconData icon,
     required String value,
   }) {
-    String displayLabel = value;
-    if (value == "other" &&
-        selectedSpecies != "dog" &&
-        selectedSpecies != "cat") {
-      displayLabel = selectedSpecies;
+    String displayLabel = label;
+    bool isSelected = false;
+    
+    // Handle selection logic based on species type
+    if (value == "dog") {
+      isSelected = _isDogSpecies(selectedSpecies);
+    } else if (value == "cat") {
+      isSelected = _isCatSpecies(selectedSpecies);
+    } else if (value == "other") {
+      isSelected = !_isDogSpecies(selectedSpecies) && !_isCatSpecies(selectedSpecies);
+      if (isSelected && selectedSpecies != "other") {
+        displayLabel = selectedSpecies;
+      }
     }
 
-    final isSelected =
-        selectedSpecies == value ||
-        (value == "other" &&
-            selectedSpecies != "dog" &&
-            selectedSpecies != "cat");
+    // Show loading indicator for "Other" button when loading species
+    final showLoading = value == "other" && _isLoadingSpecies;
 
     return Expanded(
       child: GestureDetector(
-        onTap: () {
+        onTap: _isLoadingSpecies ? null : () async {
           if (value == "other") {
-            // Force show the dropdown when "Other" is clicked
-            if (selectedSpecies == "dog" || selectedSpecies == "cat") {
-              setState(() {
-                selectedSpecies = "other";
-              });
+            // Prevent multiple requests
+            if (_isLoadingSpecies) return;
+            
+            setState(() {
+              _isLoadingSpecies = true;
+            });
+            
+            try {
+              await context.read<PetCubit>().getAllSpecies();
+              if (mounted) {
+                await _openSpeciesPickerModal(context, context.read<PetCubit>().species);
+              }
+            } finally {
+              if (mounted) {
+                setState(() {
+                  _isLoadingSpecies = false;
+                });
+              }
             }
-            // The dropdown will be shown because of the condition in the parent widget
           } else {
             _onSpeciesChanged(value);
           }
@@ -590,9 +560,21 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
           ),
           child: Column(
             children: [
-              Icon(icon, color: Colors.white),
+              showLoading 
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : Icon(icon, color: Colors.white),
               const SizedBox(height: 4),
-              Text(displayLabel, style: const TextStyle(color: Colors.white)),
+              Text(
+                showLoading ? "Loading..." : displayLabel, 
+                style: const TextStyle(color: Colors.white),
+              ),
             ],
           ),
         ),
@@ -884,6 +866,195 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
         );
       },
     );
+  }
+
+  Future<void> _openSpeciesPickerModal(
+    BuildContext context,
+    List<SpeciesEntity> species,
+  ) async {
+    String filter = '';
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.3,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (context, scrollController) {
+            List<SpeciesEntity> filtered = species;
+            return StatefulBuilder(
+              builder: (context, setModalState) {
+                filtered = species
+                    .where(
+                      (s) => s.type.toLowerCase().contains(
+                        filter.toLowerCase(),
+                      ),
+                    )
+                    .toList();
+                return Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  child: Column(
+                    children: [
+                      // Handle bar
+                      Container(
+                        width: 40,
+                        height: 4,
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      
+                      // Title
+                      const Text(
+                        'Select Species',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Search bar
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey[300]!),
+                        ),
+                        child: TextField(
+                          autofocus: true,
+                          decoration: InputDecoration(
+                            hintText: 'Search species...',
+                            hintStyle: TextStyle(color: Colors.grey[600]),
+                            prefixIcon: Icon(
+                              Icons.search,
+                              color: Colors.grey[600],
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                          onChanged: (v) => setModalState(() => filter = v),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Species list
+                      Expanded(
+                        child: filtered.isEmpty
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.search_off,
+                                      size: 48,
+                                      color: Colors.grey[400],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      'No species found',
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : ListView.separated(
+                                controller: scrollController,
+                                itemCount: filtered.length,
+                                separatorBuilder: (_, __) => Divider(
+                                  height: 1,
+                                  color: Colors.grey[200],
+                                ),
+                                itemBuilder: (context, index) {
+                                  final s = filtered[index];
+                                  return ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                    leading: Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: ColorManager.primaryColor.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Icon(
+                                        Icons.pets,
+                                        color: ColorManager.primaryColor,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    title: Text(
+                                      s.type,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    trailing: const Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 16,
+                                      color: Colors.grey,
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        selectedSpecies = s.type;
+                                        selectedSpeciesId = s.id;
+                                      });
+                                      CacheHelper.saveData("pet_species", s.type);
+                                      _onSpeciesChanged(s.type, speciesId: s.id);
+                                      Navigator.of(context).pop();
+                                    },
+                                  );
+                                },
+                              ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // Helper methods to determine species type
+  bool _isDogSpecies(String species) {
+    return species.toLowerCase() == 'dog' || 
+           species.toLowerCase() == 'dogs' ||
+           species.toLowerCase().contains('canine');
+  }
+
+  bool _isCatSpecies(String species) {
+    return species.toLowerCase() == 'cat' || 
+           species.toLowerCase() == 'cats' ||
+           species.toLowerCase() == 'cow' ||  // Handle the cow -> cat mapping
+           species.toLowerCase() == 'cows' ||
+           species.toLowerCase().contains('feline');
   }
 
   void _onSpeciesChanged(String species, {String? speciesId}) {

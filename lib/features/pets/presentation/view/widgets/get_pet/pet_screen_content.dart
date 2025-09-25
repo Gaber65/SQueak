@@ -147,13 +147,6 @@ class _PetScreenContentState extends State<PetScreenContent> {
     );
   }
 
-  void _handleBackPress() {
-    if (_isSnackBarVisible) {
-      _hideSnackBar();
-    } else {
-      _navigateToHome();
-    }
-  }
 
   void _hideSnackBar() {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
