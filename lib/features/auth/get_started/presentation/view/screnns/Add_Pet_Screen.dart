@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -7,13 +9,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import 'package:squeak/core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
-import 'package:squeak/core/service/service_locator/service_locator.dart';
 import 'package:squeak/core/utils/enums/upload_place.dart';
 import 'package:squeak/core/utils/theme/color_mangment/color_manager.dart';
 import 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
 import 'package:squeak/features/auth/get_started/presentation/view/screnns/find_friends.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/pets/presentation/controller/pet_cubit.dart';
+
+import '../../../../../pets/presentation/view/widgets/add_pet/birthdate_picker.dart';
 
 class GetStartedAddPetScreen extends StatefulWidget {
   const GetStartedAddPetScreen({super.key});
@@ -79,6 +82,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final petCubit = context.read<PetCubit>();
     return Scaffold(
       appBar: _buildAppBar(context),
       backgroundColor: ColorManager.editScreenTextFieldBaseColor.withValues(
@@ -183,8 +187,12 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                               child: BlocBuilder<PetCubit, PetState>(
                                 builder: (context, state) {
                                   final cubit = context.read<PetCubit>();
-                                  return DropdownButtonFormField<SpeciesEntity>(
+                                  return DropdownButton<SpeciesEntity>(
                                     isExpanded: true,
+                                    value: cubit.species.firstWhere(
+                                      (s) => s.type == selectedSpecies,
+                                      orElse: () => cubit.species.first,
+                                    ),
                                     items:
                                         cubit.species
                                             .map(
@@ -204,17 +212,12 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                                           "pet_species",
                                           value.type,
                                         );
-
                                         _onSpeciesChanged(
                                           value.type,
                                           speciesId: value.id,
                                         );
                                       }
                                     },
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      hintText: "Choose a species",
-                                    ),
                                   );
                                 },
                               ),
@@ -232,7 +235,6 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                       BlocBuilder<PetCubit, PetState>(
                         builder: (context, state) {
                           final cubit = context.read<PetCubit>();
-
                           if (state is GetAllBreedsLoadingState) {
                             return const Center(
                               child: CircularProgressIndicator(
@@ -240,21 +242,18 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                               ),
                             );
                           }
-
                           if (state is GetAllBreedsErrorState) {
                             return Text(
                               state.message,
                               style: const TextStyle(color: Colors.red),
                             );
                           }
-
                           return _buildBreedDropdownModal(cubit.breedData);
                         },
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-
                   _buildSection(
                     icon: Icons.favorite,
                     title: "Additional Details",
@@ -280,37 +279,10 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                         ],
                       ),
                       const SizedBox(height: 16),
-
-                      const Text(
-                        "Birth Date",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      const SizedBox(height: 8),
-                      _buildTextField(
-                        "mm / dd / yyyy",
-                        controller: _dateController,
-                        readOnly: true,
-                        onTap: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1900),
-                            lastDate: DateTime(2100),
-                          );
-                          if (pickedDate != null) {
-                            _dateController.text =
-                                "${pickedDate.month}/${pickedDate.day}/${pickedDate.year}";
-                            CacheHelper.saveData(
-                              'pet_date',
-                              _dateController.text,
-                            );
-                          }
+                      BlocBuilder<PetCubit, PetState>(
+                        builder: (context, state) {
+                          return BirthdatePicker(cubit: petCubit, isDark: true);
                         },
-                        suffix: const Icon(
-                          Icons.calendar_today,
-                          color: Colors.white54,
-                          size: 18,
-                        ),
                       ),
                     ],
                   ),
@@ -593,7 +565,19 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
 
     return Expanded(
       child: GestureDetector(
-        onTap: () => _onSpeciesChanged(value),
+        onTap: () {
+          if (value == "other") {
+            // Force show the dropdown when "Other" is clicked
+            if (selectedSpecies == "dog" || selectedSpecies == "cat") {
+              setState(() {
+                selectedSpecies = "other";
+              });
+            }
+            // The dropdown will be shown because of the condition in the parent widget
+          } else {
+            _onSpeciesChanged(value);
+          }
+        },
         child: Container(
           margin: const EdgeInsets.only(left: 8),
           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -622,33 +606,49 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
     required String value,
   }) {
     final isSelected = selectedGender == value;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Expanded(
       child: GestureDetector(
         onTap: () {
           setState(() => selectedGender = value);
-          // CacheHelper.saveData('pet_gender', value);
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+          padding: EdgeInsets.symmetric(
+            vertical: screenHeight * 0.025,
+            horizontal: screenWidth * 0.05,
+          ),
           decoration: BoxDecoration(
             color: isSelected ? ColorManager.primaryColor : Colors.white10,
             border: Border.all(
               color: ColorManager.primaryColor.withOpacity(.7),
             ),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(screenWidth * 0.02), // scaled padding
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(26),
                   color: ColorManager.editScreenBaseFontColor,
                 ),
-                child: Icon(icon, color: Colors.blueAccent),
+                child: Icon(
+                  icon,
+                  color: Colors.blueAccent,
+                  size: screenWidth * 0.06, // responsive icon size
+                ),
               ),
-              const SizedBox(width: 8),
-              Text(label, style: const TextStyle(color: Colors.white)),
+              SizedBox(width: screenWidth * 0.02),
+              Text(
+                label,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: screenWidth * 0.04, // responsive font size
+                ),
+              ),
             ],
           ),
         ),
@@ -736,11 +736,11 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
           context.read<PetCubit>().imageNameController.text =
               MainCubit.get(context).modelImage!.data;
 
-          print(context.read<PetCubit>().imageNameController.text);
+          // print(context.read<PetCubit>().imageNameController.text);
         });
 
-        print("Image File: $imagefile");
-        print("Image Path: ${imagefile!.path}");
+        // print("Image File: $imagefile");
+        // print("Image Path: ${imagefile!.path}");
       }
     } catch (e) {
       debugPrint('Error picking image: $e');
@@ -765,11 +765,8 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
           context.read<PetCubit>().imageNameController.text =
               MainCubit.get(context).modelImage!.data;
 
-          print(context.read<PetCubit>().imageNameController.text);
+          // print(context.read<PetCubit>().imageNameController.text);
         });
-
-        print("Image File: $imagefile");
-        print("Image Path: ${imagefile!.path}");
       }
     } catch (e) {
       debugPrint('Error picking image: $e');
@@ -871,10 +868,6 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                                       onTap: () {
                                         _breedController.text = b.enType;
                                         selectedBreedId = b.id;
-                                        // CacheHelper.saveData(
-                                        //   'pet_breed',
-                                        //   _breedController.text,
-                                        // );
                                         Navigator.of(context).pop();
                                         setState(() {});
                                       },

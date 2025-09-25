@@ -28,6 +28,7 @@ class PetCubit extends Cubit<PetState> {
   final CreatePetUseCase createPetUseCase;
   final UpdatePetUseCase updatePetUseCase;
   final DeletePetUseCase deletePetUseCase;
+  // final birthdateController = TextEditingController();
   // final CreatePetLoginScreenUseCase createPetLoginScreenUseCase;
 
   PetCubit(
@@ -392,4 +393,5 @@ class PetCubit extends Cubit<PetState> {
     imageNameController.dispose();
     return super.close();
   }
+
 }

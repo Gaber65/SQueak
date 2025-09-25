@@ -11,7 +11,6 @@ class ImageCarouselWidget extends StatefulWidget {
   final BoardingEntryEntity? boarding;
   final void Function(String imageUrl, String platform) onShare;
   final bool isDarkMode;
- 
 
   const ImageCarouselWidget({
     super.key,
@@ -24,7 +23,6 @@ class ImageCarouselWidget extends StatefulWidget {
 
   @override
   State<ImageCarouselWidget> createState() => _ImageCarouselWidgetState();
-  
 }
 
 class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
@@ -37,7 +35,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   late AnimationController _pulseController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
-   
+
   // Enhanced Dark Mode Color Scheme
   Color get _textPrimaryColor =>
       widget.isDarkMode ? Colors.white : Colors.black87;
@@ -410,12 +408,10 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   @override
   Widget build(BuildContext context) {
     if (!widget.open) return const SizedBox();
-
     final boarding = widget.boarding;
     if (boarding == null || boarding.boardingImages.isEmpty) {
       return _buildNoImagesDialog();
     }
-
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
@@ -646,10 +642,15 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   }
 
   Widget _buildEnhancedHeader(BoardingEntryEntity boarding) {
-    final List<Map<String, dynamic>> imageList = boarding.boardingImages
-    .where((img) => img['imageName'] != null && img['imageName'].toString().isNotEmpty)
-    .cast<Map<String, dynamic>>()
-    .toList();
+    final List<Map<String, dynamic>> imageList =
+        boarding.boardingImages
+            .where(
+              (img) =>
+                  img['imageName'] != null &&
+                  img['imageName'].toString().isNotEmpty,
+            )
+            .cast<Map<String, dynamic>>()
+            .toList();
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
@@ -769,337 +770,376 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
     );
   }
 
-Widget _buildEnhancedImageCarousel(BoardingEntryEntity boarding) {
-  
- final List<Map<String, dynamic>> imageList = boarding.boardingImages
-    .where((img) => img['imageName'] != null && img['imageName'].toString().isNotEmpty)
-    .cast<Map<String, dynamic>>()
-    .toList();
+  Widget _buildEnhancedImageCarousel(BoardingEntryEntity boarding) {
+    final List<Map<String, dynamic>> imageList =
+        boarding.boardingImages
+            .where(
+              (img) =>
+                  img['imageName'] != null &&
+                  img['imageName'].toString().isNotEmpty,
+            )
+            .cast<Map<String, dynamic>>()
+            .toList();
 
-  if (imageList.isEmpty) {
-    return _buildNoImagesDialog();
-  }
+    if (imageList.isEmpty) { 
+      return _buildNoImagesDialog();
+    }
 
-  return SizedBox(
-    height: 350,
-    child: Stack(
-      children: [
-        PageView.builder(
-          controller: _pageController,
-          onPageChanged: (index) {
-            setState(() {
-              currentImageIndex = index;
-            });
-            HapticFeedback.selectionClick();
-          },
-          itemCount: imageList.length, 
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      navigateToScreen(
-                        context,
-                        ImageDetailSimple(
-                          path: imageUrlWithVetICare + imageList[index]['imageName'],
-                          title: isArabic() ? 'تفاصيل الصورة' : 'Image details',
-                          description: imageList[index]['note'] ?? '',
-                        ),
-                      );
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 12),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Image.network(
-                              imageUrlWithVetICare + imageList[index]['imageName'],
-                              fit: BoxFit.cover,
-                              loadingBuilder: (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        _shimmerBaseColor,
-                                        _shimmerHighlightColor,
-                                        _shimmerBaseColor,
-                                      ],
-                                      stops: const [0.0, 0.5, 1.0],
+    return SizedBox(
+      height: 350,
+      child: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                currentImageIndex = index;
+              });
+              HapticFeedback.selectionClick();
+            },
+            itemCount: imageList.length,
+            itemBuilder: (context, index) {
+              return Column(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        navigateToScreen(
+                          context,
+                          ImageDetailSimple(
+                            path:
+                                imageUrlWithVetICare +
+                                imageList[index]['imageName'],
+                            title:
+                                isArabic() ? 'تفاصيل الصورة' : 'Image details',
+                            description: imageList[index]['note'] ?? '',
+                          ),
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 12),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Image.network(
+                                imageUrlWithVetICare +
+                                    imageList[index]['imageName'],
+                                fit: BoxFit.cover,
+                                loadingBuilder: (
+                                  context,
+                                  child,
+                                  loadingProgress,
+                                ) {
+                                  if (loadingProgress == null) return child;
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          _shimmerBaseColor,
+                                          _shimmerHighlightColor,
+                                          _shimmerBaseColor,
+                                        ],
+                                        stops: const [0.0, 0.5, 1.0],
+                                      ),
                                     ),
-                                  ),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        CircularProgressIndicator(
-                                          value: loadingProgress.expectedTotalBytes != null
-                                              ? loadingProgress.cumulativeBytesLoaded /
-                                                  loadingProgress.expectedTotalBytes!
-                                              : null,
-                                          color: widget.isDarkMode
-                                              ? Colors.blue.shade400
-                                              : Colors.blue.shade600,
-                                          strokeWidth: 3,
-                                        ),
-                                        const SizedBox(height: 16),
-                                        Text(
-                                          isArabic() ? 'جاري التحميل...' : 'Loading...',
-                                          style: TextStyle(
-                                            color: _textSecondaryColor,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          CircularProgressIndicator(
+                                            value:
+                                                loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                    : null,
+                                            color:
+                                                widget.isDarkMode
+                                                    ? Colors.blue.shade400
+                                                    : Colors.blue.shade600,
+                                            strokeWidth: 3,
                                           ),
-                                        ),
-                                      ],
+                                          const SizedBox(height: 16),
+                                          Text(
+                                            isArabic()
+                                                ? 'جاري التحميل...'
+                                                : 'Loading...',
+                                            style: TextStyle(
+                                              color: _textSecondaryColor,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                              errorBuilder: (context, error, _) => Container(
+                                  );
+                                },
+                                errorBuilder:
+                                    (context, error, _) => Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors:
+                                              widget.isDarkMode
+                                                  ? [
+                                                    Colors.grey.shade800,
+                                                    Colors.grey.shade900,
+                                                  ]
+                                                  : [
+                                                    Colors.grey.shade200,
+                                                    Colors.grey.shade300,
+                                                  ],
+                                        ),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(20),
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  widget.isDarkMode
+                                                      ? Colors.grey.shade700
+                                                      : Colors.grey.shade100,
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            child: Icon(
+                                              Icons.broken_image_rounded,
+                                              size: 60,
+                                              color:
+                                                  widget.isDarkMode
+                                                      ? Colors.grey.shade500
+                                                      : Colors.grey.shade600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          Text(
+                                            isArabic()
+                                                ? 'فشل في تحميل الصورة'
+                                                : 'Failed to load image',
+                                            style: TextStyle(
+                                              color: _textSecondaryColor,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            isArabic()
+                                                ? 'اضغط لإعادة المحاولة'
+                                                : 'Tap to retry',
+                                            style: TextStyle(
+                                              color: _textSecondaryColor,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                              ),
+                              // Enhanced gradient overlay
+                              Container(
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
-                                    colors: widget.isDarkMode
-                                        ? [
-                                            Colors.grey.shade800,
-                                            Colors.grey.shade900,
-                                          ]
-                                        : [
-                                            Colors.grey.shade200,
-                                            Colors.grey.shade300,
-                                          ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      _overlayColor.withOpacity(0.4),
+                                      Colors.transparent,
+                                      Colors.transparent,
+                                      _overlayColor.withOpacity(0.4),
+                                    ],
                                   ),
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.all(20),
-                                      decoration: BoxDecoration(
-                                        color: widget.isDarkMode
-                                            ? Colors.grey.shade700
-                                            : Colors.grey.shade100,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Icon(
-                                        Icons.broken_image_rounded,
-                                        size: 60,
-                                        color: widget.isDarkMode
-                                            ? Colors.grey.shade500
-                                            : Colors.grey.shade600,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      isArabic()
-                                          ? 'فشل في تحميل الصورة'
-                                          : 'Failed to load image',
-                                      style: TextStyle(
-                                        color: _textSecondaryColor,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      isArabic()
-                                          ? 'اضغط لإعادة المحاولة'
-                                          : 'Tap to retry',
-                                      style: TextStyle(
-                                        color: _textSecondaryColor,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               ),
-                            ),
-                            // Enhanced gradient overlay
-                            Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    _overlayColor.withOpacity(0.4),
-                                    Colors.transparent,
-                                    Colors.transparent,
-                                    _overlayColor.withOpacity(0.4),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Text(
-                  imageList[index]['note'] ?? '',
-                  style: TextStyle(
-                    color: _textSecondaryColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-
-        // Enhanced Navigation buttons
-        if (imageList.length > 1) ...[
-          Positioned(
-            left: 20,
-            top: 0,
-            bottom: 0,
-            child: Center(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [_overlayColor, _overlayColor.withOpacity(0.8)],
-                  ),
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: Colors.white.withOpacity(0.2)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                  Text(
+                    imageList[index]['note'] ?? '',
+                    style: TextStyle(
+                      color: _textSecondaryColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
                     ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.chevron_left_rounded,
-                    color: Colors.white,
-                    size: 32,
                   ),
-                  onPressed: currentImageIndex > 0 ? prevImage : null,
+                ],
+              );
+            },
+          ),
+
+          // Enhanced Navigation buttons
+          if (imageList.length > 1) ...[
+            Positioned(
+              left: 20,
+              top: 0,
+              bottom: 0,
+              child: Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [_overlayColor, _overlayColor.withOpacity(0.8)],
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Colors.white.withOpacity(0.2)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.chevron_left_rounded,
+                      color: Colors.white,
+                      size: 32,
+                    ),
+                    onPressed: currentImageIndex > 0 ? prevImage : null,
+                  ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            right: 20,
-            top: 0,
-            bottom: 0,
-            child: Center(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [_overlayColor, _overlayColor.withOpacity(0.8)],
-                  ),
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: Colors.white.withOpacity(0.2)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+            Positioned(
+              right: 20,
+              top: 0,
+              bottom: 0,
+              child: Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [_overlayColor, _overlayColor.withOpacity(0.8)],
                     ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.chevron_right_rounded,
-                    color: Colors.white,
-                    size: 32,
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Colors.white.withOpacity(0.2)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  onPressed: currentImageIndex < imageList.length - 1
-                      ? nextImage
-                      : null,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.chevron_right_rounded,
+                      color: Colors.white,
+                      size: 32,
+                    ),
+                    onPressed:
+                        currentImageIndex < imageList.length - 1
+                            ? nextImage
+                            : null,
+                  ),
                 ),
+              ),
+            ),
+          ],
+
+          // Enhanced Share button
+          Positioned(
+            top: 20,
+            right: 20,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [_overlayColor, _overlayColor.withOpacity(0.8)],
+                ),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.share_rounded,
+                  color: Colors.white,
+                  size: 24,
+                ),
+                onPressed:
+                    () => _openEnhancedShareSheet(
+                      imageUrlWithVetICare +
+                          imageList[currentImageIndex]['imageName'],
+                    ),
+              ),
+            ),
+          ),
+
+          // Enhanced Image counter
+          Positioned(
+            top: 20,
+            left: 20,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [_overlayColor, _overlayColor.withOpacity(0.8)],
+                ),
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.photo_rounded, color: Colors.white, size: 16),
+                  const SizedBox(width: 6),
+                  Text(
+                    '${currentImageIndex + 1}/${imageList.length}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
         ],
-
-        // Enhanced Share button
-        Positioned(
-          top: 20,
-          right: 20,
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [_overlayColor, _overlayColor.withOpacity(0.8)],
-              ),
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: Colors.white.withOpacity(0.2)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.share_rounded,
-                color: Colors.white,
-                size: 24,
-              ),
-              onPressed: () => _openEnhancedShareSheet(
-                imageUrlWithVetICare + imageList[currentImageIndex]['imageName'],
-              ),
-            ),
-          ),
-        ),
-
-        // Enhanced Image counter
-        Positioned(
-          top: 20,
-          left: 20,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [_overlayColor, _overlayColor.withOpacity(0.8)],
-              ),
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(color: Colors.white.withOpacity(0.2)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.photo_rounded, color: Colors.white, size: 16),
-                const SizedBox(width: 6),
-                Text(
-                  '${currentImageIndex + 1}/${imageList.length}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-}
+      ),
+    );
+  }
 
   Widget _buildEnhancedPageIndicators(BoardingEntryEntity boarding) {
+    final List<Map<String, dynamic>> imageList =
+        boarding.boardingImages
+            .where(
+              (img) =>
+                  img['imageName'] != null &&
+                  img['imageName'].toString().isNotEmpty,
+            )
+            .cast<Map<String, dynamic>>()
+            .toList();
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(
-          boarding.boardingImages.length,
+          imageList.length,
           (index) => AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             margin: const EdgeInsets.symmetric(horizontal: 6),

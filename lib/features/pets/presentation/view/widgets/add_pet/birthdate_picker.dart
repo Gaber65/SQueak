@@ -77,6 +77,7 @@ class BirthdatePicker extends StatelessWidget {
             context: context,
             fontSize: 14,
             fontWeight: FontWeight.w700,
+            fontColor: isDark ? Colors.white : Colors.black,
           ),
         ),
         const SizedBox(height: 8),
@@ -112,13 +113,13 @@ class BirthdatePicker extends StatelessWidget {
                           child: Text(
                             cubit.birthdateController.text.isEmpty
                                 ? (isArabic() ? 'اختر التاريخ' : 'MM/DD/YYYY')
-                                : cubit.birthdateController.text,
+                                : cubit.birthdateController.text ,
                             style: FontStyleThame.textStyle(
                               context: context,
                               fontSize: 14,
                               fontColor: cubit.birthdateController.text.isEmpty
                                   ? (isDark ? Colors.white54 : Colors.grey)
-                                  : null,
+                                  : isDark ? Colors.white : Colors.black,
                             ),
                           ),
                         ),
@@ -194,6 +195,7 @@ class BirthdatePicker extends StatelessWidget {
             style: FontStyleThame.textStyle(
               context: context,
               fontSize: 12,
+              fontColor: isDark ? Colors.white : Colors.black,
             ),
             textAlign: TextAlign.center,
           ),

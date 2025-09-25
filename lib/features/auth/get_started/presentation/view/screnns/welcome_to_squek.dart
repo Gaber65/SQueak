@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
 import 'package:squeak/features/auth/get_started/presentation/view/screnns/Quick_Tour_Screen.dart';
@@ -7,6 +9,10 @@ class WelcomeToSquek extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -19,135 +25,159 @@ class WelcomeToSquek extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 18),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  border: Border.all(color: Colors.white),
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.pets, color: Colors.white, size: 42),
-                ),
+          child: SingleChildScrollView( // prevents overflow on small devices
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: width * 0.06, // 6% of screen width
+                vertical: height * 0.02,
               ),
-              const SizedBox(height: 24),
-              const Text(
-                'Welcome To Squeak',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 18),
-              const SizedBox(
-                width: 220,
-                child: Text(
-                  textAlign: TextAlign.center,
-                  "Your pet's social network is ready. Let's get you started with a quick tour.",
-                  style: TextStyle(color: Colors.white70, fontSize: 18),
-                ),
-              ),
-              const SizedBox(height: 18),
-
-              Container(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 44,
-                  vertical: 24,
-                ),
-                padding: const EdgeInsets.all(32),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withOpacity(0.2)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildFeatureItem(Icons.add, "Add your first pet"),
-                    const SizedBox(height: 12),
-                    _buildFeatureItem(Icons.group, "Connect with pet friends"),
-                    const SizedBox(height: 12),
-                    _buildFeatureItem(
-                      Icons.calendar_today,
-                      "Schedule appointments",
-                    ),
-                    const SizedBox(height: 12),
-                    _buildFeatureItem(Icons.chat, "Start chatting"),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 200,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  onPressed: () {
-                    navigateToScreen(context, QuickTourScreen());
-                  },
-                  child: const Text(
-                    "Let's Get Started!",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-
-              Spacer(),
-              Column(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
-                    "Step 1 of 4",
-                    style: TextStyle(color: Colors.white, fontSize: 14),
+                  SizedBox(height: height * 0.02),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(width * 0.02),
+                      child: Icon(Icons.pets,
+                          color: Colors.white, size: width * 0.12),
+                    ),
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(4, (index) {
-                      bool isActive = index == 0;
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        width: isActive ? 10 : 8,
-                        height: isActive ? 10 : 8,
-                        decoration: BoxDecoration(
-                          color:
-                              isActive
-                                  ? Colors.white
-                                  : Colors.white.withOpacity(0.4),
-                          shape: BoxShape.circle,
+                  SizedBox(height: height * 0.03),
+                  Text(
+                    'Welcome To Squeak',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: width * 0.065, // dynamic font
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: height * 0.02),
+                  SizedBox(
+                    width: width * 0.65,
+                    child: Text(
+                      textAlign: TextAlign.center,
+                      "Your pet's social network is ready. Let's get you started with a quick tour.",
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: width * 0.045,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: height * 0.025),
+
+                  // Features Box
+                  Container(
+                    margin: EdgeInsets.symmetric(
+                      vertical: height * 0.03,
+                    ),
+                    padding: EdgeInsets.all(width * 0.07),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildFeatureItem(Icons.add, "Add your first pet", width),
+                        SizedBox(height: height * 0.015),
+                        _buildFeatureItem(Icons.group, "Connect with pet friends", width),
+                        SizedBox(height: height * 0.015),
+                        _buildFeatureItem(Icons.calendar_today, "Schedule appointments", width),
+                        SizedBox(height: height * 0.015),
+                        _buildFeatureItem(Icons.chat, "Start chatting", width),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(
+                    width: width * 0.6,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      );
-                    }),
+                        padding: EdgeInsets.symmetric(
+                          vertical: height * 0.018,
+                        ),
+                      ),
+                      onPressed: () {
+                        navigateToScreen(context, QuickTourScreen());
+                      },
+                      child: Text(
+                        "Let's Get Started!",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: width * 0.045,
+                        ),
+                      ),
+                    ),
                   ),
-                  SizedBox(height: 36),
+
+                  SizedBox(height: height * 0.05),
+                  Column(
+                    children: [
+                      Text(
+                        "Step 1 of 4",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: width * 0.035,
+                        ),
+                      ),
+                      SizedBox(height: height * 0.01),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(4, (index) {
+                          bool isActive = index == 0;
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: isActive ? width * 0.025 : width * 0.02,
+                            height: isActive ? width * 0.025 : width * 0.02,
+                            decoration: BoxDecoration(
+                              color: isActive
+                                  ? Colors.white
+                                  // ignore: deprecated_member_use
+                                  : Colors.white.withOpacity(0.4),
+                              shape: BoxShape.circle,
+                            ),
+                          );
+                        }),
+                      ),
+                      SizedBox(height: height * 0.05),
+                    ],
+                  ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildFeatureItem(IconData icon, String text) {
+  Widget _buildFeatureItem(IconData icon, String text, double width) {
     return Row(
       children: [
         CircleAvatar(
-          radius: 16,
+          radius: width * 0.05,
           backgroundColor: Colors.white.withOpacity(0.2),
-          child: Icon(icon, color: Colors.white, size: 18),
+          child: Icon(icon, color: Colors.white, size: width * 0.045),
         ),
-        const SizedBox(width: 12),
-        Text(text, style: const TextStyle(color: Colors.white, fontSize: 16)),
+        SizedBox(width: width * 0.03),
+        Text(
+          text,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: width * 0.045,
+          ),
+        ),
       ],
     );
   }
