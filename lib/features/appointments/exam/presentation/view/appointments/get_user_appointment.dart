@@ -22,7 +22,9 @@ class GetUserAppointment extends StatelessWidget {
     {'en': 'Examination', 'ar': 'الاختبار'},
     {'en': 'Boarding', 'ar': 'مكان الاقامة'},
   ];
-
+bool isArabic() {
+  return MainCubit.get(navigatorKey.currentContext!).language == 'ar';
+}
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(

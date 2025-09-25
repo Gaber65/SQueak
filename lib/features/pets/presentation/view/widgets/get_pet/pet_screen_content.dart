@@ -177,7 +177,7 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
       // Add StatefulBuilder to manage loading state
       return StatefulBuilder(
         builder: (context, setState) {
-          bool isLoadingOther = false;
+          bool isLoadingOther = cubit.isLoading = false;
 
           return Padding(
             padding: const EdgeInsets.all(20),
@@ -240,17 +240,10 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                 ),
                 const SizedBox(height: 24),
                 GestureDetector(
-                  onTap:
-                  // ignore: dead_code
-                  () async {
-                    // Show loading indicator instead of icon
-                    setState(() {
-                      isLoadingOther = true;
-                    });
+                  onTap: () async {
                     try {
                       // Show species selector list after response
                       await showSpeciesSelector(
-                        // ignore: use_build_context_synchronously
                         context,
                         cubit,
                         onSelected: (species) {
@@ -275,7 +268,6 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Show circular indicator instead of paw icon during loading
                         isLoadingOther
                             ? const SizedBox(
                               width: 40,
@@ -287,7 +279,7 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                                 ),
                               ),
                             )
-                            : Icon(
+                            : const Icon(
                               FontAwesomeIcons.paw,
                               size: 40,
                               color: Colors.blueAccent,

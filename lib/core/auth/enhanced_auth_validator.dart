@@ -167,26 +167,24 @@ class EnhancedAuthValidator {
   }
 
   /// Validates password confirmation
-  static ValidationResult validatePasswordConfirmation(String password, String confirmPassword) {
-    if (confirmPassword.isEmpty) {
-      return ValidationResult(
-        isValid: false,
-        message: 'Please confirm your password',
-        severity: ValidationSeverity.error,
-      );
-    }
+  // static ValidationResult validatePasswordConfirmation(String password, String confirmPassword) {
+  //   if (confirmPassword.isEmpty) {
+  //     return ValidationResult(
+  //       isValid: false,
+  //       message: 'Please confirm your password',
+  //       severity: ValidationSeverity.error,
+  //     );
+  //   }
     
-    if (password != confirmPassword) {
-      return ValidationResult(
-        isValid: false,
-        message: 'Passwords do not match',
-        severity: ValidationSeverity.error,
-      );
-    }
-    
-    return ValidationResult(isValid: true, message: 'Passwords match');
-  }
-
+  //   if (password != confirmPassword) {
+  //     return ValidationResult(
+  //       isValid: false,
+  //       message: 'Passwords do not match',
+  //       severity: ValidationSeverity.error,
+  //     );
+  //   }
+  //   return ValidationResult(isValid: true, message: 'Passwords match');
+  // }
   /// Validates clinic code
   static ValidationResult validateClinicCode(String clinicCode) {
     if (clinicCode.trim().isEmpty) {

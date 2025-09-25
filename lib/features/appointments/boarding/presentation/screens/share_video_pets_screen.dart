@@ -1,24 +1,20 @@
 // ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import 'package:squeak/core/service/global_widget/boarding_video_details.dart';
 import 'package:video_player/video_player.dart';
+import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import '../../../../../core/service/global_widget/boarding_video_details.dart';
 import '../../domain/entities/boarding_entry_entity.dart';
 
-// قائمة ثابتة للفيديوهات من الأصول
-final List<Map<String, String>> staticVideos = [
-  {'path': 'assets/video/cute_pets.mp4', 'note': 'Cute pets playing'},
-  {'path': 'assets/video/funny_pets.mp4', 'note': 'Funny pets moments'},
-];
-
+/// Enhanced Video Carousel Widget with dark mode support and smooth animations
+/// Displays boarding videos in a carousel format with navigation, sharing, and full-screen options
 class VideoCarouselWidget extends StatefulWidget {
-  final bool open;
-  final void Function(bool) onOpenChange;
-  final BoardingEntryEntity? boarding;
-  final void Function(String videoUrl, String platform) onShare;
-  final bool isDarkMode;
+  final bool open; // Controls whether the carousel dialog is visible
+  final void Function(bool) onOpenChange; // Callback when open state changes
+  final BoardingEntryEntity? boarding; // Boarding entity containing video data
+  final void Function(String videoUrl, String platform)
+  onShare; // Share callback
+  final bool isDarkMode; // Theme mode toggle
 
   const VideoCarouselWidget({
     super.key,
@@ -35,19 +31,25 @@ class VideoCarouselWidget extends StatefulWidget {
 
 class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
     with TickerProviderStateMixin {
-  late PageController _pageController;
-  int currentVideoIndex = 0;
-  List<VideoPlayerController> _videoControllers = [];
-  List<bool> _isVideoLoading = [];
-  List<bool> _isVideoPlaying = [];
+  // Controllers and state management
+  late PageController
+  _pageController; // Controls the PageView for video carousel
+  int currentVideoIndex = 0; // Currently displayed video index
+  bool isVideoLoading = true; // Loading state for videos
 
-  late AnimationController _animationController;
-  late AnimationController _fadeController;
-  late AnimationController _pulseController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
+  // Animation controllers for smooth transitions
+  late AnimationController _animationController; // Main dialog animation
+  late AnimationController _fadeController; // Fade in/out animation
+  late AnimationController _pulseController; // Pulse animation for loading
+  late Animation<double> _scaleAnimation; // Scale animation for dialog
+  late Animation<double> _fadeAnimation; // Fade animation
 
-  // نظام ألوان محسّن للوضع المظلم
+  // Video player controllers - one for each video to manage playback
+  List<VideoPlayerController?> _videoControllers = [];
+  List<bool> _videoInitialized = []; // Track which videos are initialized
+  List<bool> _isPlaying = []; // Track playing state for each video
+
+  // Dark mode color scheme - computed properties for consistent theming
   Color get _textPrimaryColor =>
       widget.isDarkMode ? Colors.white : Colors.black87;
 
@@ -62,6 +64,9 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
   Color get _shimmerBaseColor =>
       widget.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300;
 
+  Color get _shimmerHighlightColor =>
+      widget.isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100;
+
   @override
   void initState() {
     super.initState();
@@ -70,146 +75,126 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
     _initializeVideoControllers();
   }
 
+  /// Sets up all animation controllers used in the widget
   void _setupAnimations() {
+    // Main dialog scale animation
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
 
+    // Fade transition animation
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
+    // Pulse animation for loading states
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
 
+    // Scale animation with elastic curve for appealing entrance
     _scaleAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
     );
 
+    // Smooth fade animation
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
 
+    // Start animations if dialog should be open
     if (widget.open) {
       _animationController.forward();
       _fadeController.forward();
     }
   }
 
+  /// Initializes video controllers for all boarding videos
   void _initializeVideoControllers() {
-    _isVideoLoading = List<bool>.filled(staticVideos.length, true);
-    _isVideoPlaying = List<bool>.filled(staticVideos.length, false);
+    if (widget.boarding?.boardingImages != null) {
+      final videoCount = widget.boarding!.boardingImages.length;
 
-    _videoControllers =
-        staticVideos.asMap().entries.map((entry) {
-          final index = entry.key;
-          final video = entry.value;
-          final controller = VideoPlayerController.asset(video['path']!);
+      // Initialize lists to track video states
+      _videoControllers = List.filled(videoCount, null);
+      _videoInitialized = List.filled(videoCount, false);
+      _isPlaying = List.filled(videoCount, false);
 
-          controller
-              .initialize()
-              .then((_) {
-                if (mounted) {
-                  setState(() {
-                    _isVideoLoading[index] = false;
-                  });
-                  controller.setLooping(true);
-
-                  // تشغيل الفيديو الأول فقط عند البداية
-                  if (index == currentVideoIndex && index == 0) {
-                    _playVideo(index);
-                  }
-                }
-              })
-              .catchError((error) {
-                if (mounted) {
-                  setState(() {
-                    _isVideoLoading[index] = false;
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error loading video: ${video['path']}'),
-                      duration: const Duration(seconds: 3),
-                    ),
-                  );
-                }
-              });
-          return controller;
-        }).toList();
-  }
-
-  // تشغيل فيديو معين وإيقاف الباقي
-  void _playVideo(int index) {
-    if (index >= 0 && index < _videoControllers.length && mounted) {
-      // إيقاف جميع الفيديوهات الأخرى
-      _stopAllVideos();
-
-      // تشغيل الفيديو المحدد
-      if (_videoControllers[index].value.isInitialized) {
-        _videoControllers[index].play();
-        setState(() {
-          _isVideoPlaying[index] = true;
-        });
+      // Create video controller for the first video (lazy loading for others)
+      if (videoCount > 0) {
+        _initializeVideoController(0);
       }
     }
   }
 
-  // إيقاف جميع الفيديوهات
-  void _stopAllVideos() {
-    for (int i = 0; i < _videoControllers.length; i++) {
-      if (_videoControllers[i].value.isInitialized && _isVideoPlaying[i]) {
-        _videoControllers[i].pause();
-        setState(() {
-          _isVideoPlaying[i] = false;
+  /// Initializes a specific video controller by index
+void _initializeVideoController(int index) {
+  if (widget.boarding?.boardingImages != null &&
+      index < widget.boarding!.boardingImages.length &&
+      _videoControllers[index] == null) {
+    final videoName = widget.boarding?.boardingImages[index]?['VideoName'];
+    if (videoName != null && videoName.isNotEmpty) {
+      final videoUrl = imageUrlWithVetICare + videoName;
+      
+      _videoControllers[index] = VideoPlayerController.network(videoUrl)
+        ..initialize().then((_) {
+          if (mounted) {
+            setState(() {
+              _videoInitialized[index] = true;
+              isVideoLoading = false;
+            });
+          }
+        }).catchError((error) {
+          print('Video initialization error for index $index: $error');
+          if (mounted) {
+            setState(() {
+              _videoInitialized[index] = false;
+              isVideoLoading = false;
+            });
+          }
         });
-      }
-    }
-  }
 
-  // تبديل حالة التشغيل/الإيقاف للفيديو الحالي
-  void _toggleVideoPlayback() {
-    if (currentVideoIndex >= 0 &&
-        currentVideoIndex < _videoControllers.length &&
-        _videoControllers[currentVideoIndex].value.isInitialized) {
-      if (_isVideoPlaying[currentVideoIndex]) {
-        _videoControllers[currentVideoIndex].pause();
-        setState(() {
-          _isVideoPlaying[currentVideoIndex] = false;
-        });
-      } else {
-        _playVideo(currentVideoIndex);
-      }
-      HapticFeedback.selectionClick();
+      // 添加循环播放监听
+      _videoControllers[index]!.addListener(() {
+        if (_videoControllers[index]!.value.position == 
+            _videoControllers[index]!.value.duration) {
+          _videoControllers[index]!.seekTo(Duration.zero);
+          _videoControllers[index]!.play();
+        }
+      });
     }
   }
+}
 
   @override
   void didUpdateWidget(VideoCarouselWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    // Handle open state changes with animations
     if (widget.open != oldWidget.open) {
       if (widget.open) {
         _animationController.forward();
         _fadeController.forward();
-        // تشغيل الفيديو الحالي عند فتح المعرض
-        if (_videoControllers.isNotEmpty) {
-          _playVideo(currentVideoIndex);
-        }
+        // Initialize video controllers when opening
+        _initializeVideoControllers();
       } else {
         _animationController.reverse();
         _fadeController.reverse();
-        // إيقاف جميع الفيديوهات عند إغلاق المعرض
-        _stopAllVideos();
+        // Pause all videos when closing
+        _pauseAllVideos();
       }
     }
   }
 
+  /// Navigates to the next video in the carousel
   void nextVideo() {
-    if (currentVideoIndex < staticVideos.length - 1) {
+    if (currentVideoIndex < (widget.boarding?.boardingImages.length ?? 1) - 1) {
+      // Pause current video before switching
+      _pauseCurrentVideo();
+
       _pageController.nextPage(
         duration: const Duration(milliseconds: 350),
         curve: Curves.easeInOutCubic,
@@ -218,8 +203,12 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
     }
   }
 
+  /// Navigates to the previous video in the carousel
   void prevVideo() {
     if (currentVideoIndex > 0) {
+      // Pause current video before switching
+      _pauseCurrentVideo();
+
       _pageController.previousPage(
         duration: const Duration(milliseconds: 350),
         curve: Curves.easeInOutCubic,
@@ -228,6 +217,48 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
     }
   }
 
+  /// Toggles play/pause state for the currently displayed video
+void _toggleVideoPlayback() {
+  if (_videoControllers[currentVideoIndex] != null &&
+      _videoInitialized[currentVideoIndex]) {
+    final controller = _videoControllers[currentVideoIndex]!;
+
+    setState(() {
+      if (controller.value.isPlaying) {
+        controller.pause();
+        _isPlaying[currentVideoIndex] = false;
+      } else {
+        controller.play();
+        _isPlaying[currentVideoIndex] = true;
+      }
+    });
+
+    HapticFeedback.selectionClick();
+  }
+}
+
+  /// Pauses the currently displayed video
+  void _pauseCurrentVideo() {
+    if (_videoControllers[currentVideoIndex] != null &&
+        _videoInitialized[currentVideoIndex]) {
+      _videoControllers[currentVideoIndex]!.pause();
+      setState(() {
+        _isPlaying[currentVideoIndex] = false;
+      });
+    }
+  }
+
+  /// Pauses all videos - useful when closing the dialog
+  void _pauseAllVideos() {
+    for (int i = 0; i < _videoControllers.length; i++) {
+      if (_videoControllers[i] != null && _videoInitialized[i]) {
+        _videoControllers[i]!.pause();
+        _isPlaying[i] = false;
+      }
+    }
+  }
+
+  /// Opens the enhanced share sheet for video sharing
   void _openEnhancedShareSheet(String videoUrl) {
     HapticFeedback.mediumImpact();
     showModalBottomSheet(
@@ -238,6 +269,7 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
     );
   }
 
+  /// Builds the enhanced share sheet with platform options
   Widget _buildEnhancedShareSheet(String videoUrl) {
     final shareOptions = [
       {
@@ -294,6 +326,7 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Handle bar for visual feedback
           Container(
             margin: const EdgeInsets.only(top: 12),
             width: 50,
@@ -308,6 +341,8 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
               borderRadius: BorderRadius.circular(3),
             ),
           ),
+
+          // Header section with video icon and title
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
@@ -389,6 +424,8 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
               ],
             ),
           ),
+
+          // Share platform options grid
           Padding(
             padding: const EdgeInsets.all(24),
             child: GridView.builder(
@@ -495,6 +532,7 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
               },
             ),
           ),
+
           const SizedBox(height: 16),
         ],
       ),
@@ -505,7 +543,8 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
   Widget build(BuildContext context) {
     if (!widget.open) return const SizedBox();
 
-    if (staticVideos.isEmpty) {
+    final boarding = widget.boarding;
+    if (boarding == null || boarding.boardingImages.isEmpty) {
       return _buildNoVideosDialog();
     }
 
@@ -559,9 +598,10 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildEnhancedHeader(),
-                    _buildEnhancedVideoCarousel(),
-                    if (staticVideos.length > 1) _buildEnhancedPageIndicators(),
+                    _buildEnhancedHeader(boarding),
+                    _buildEnhancedVideoCarousel(boarding),
+                    if (boarding.boardingImages.length > 1)
+                      _buildEnhancedPageIndicators(boarding),
                     _buildEnhancedCloseButton(),
                   ],
                 ),
@@ -573,6 +613,7 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
     );
   }
 
+  /// Builds the dialog shown when no videos are available
   Widget _buildNoVideosDialog() {
     return AnimatedBuilder(
       animation: _animationController,
@@ -736,7 +777,12 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
     );
   }
 
-  Widget _buildEnhancedHeader() {
+  /// Builds the enhanced header section with video information
+  Widget _buildEnhancedHeader(BoardingEntryEntity boarding) {
+     final List<Map<String, dynamic>> videoList = boarding.boardingImages
+    .where((vid) => vid['videoName'] != null && vid['videoName'].toString().isNotEmpty)
+    .cast<Map<String, dynamic>>()
+    .toList();
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
@@ -791,7 +837,9 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isArabic() ? 'فيديوهات الإقامة' : 'Boarding Videos',
+                  isArabic()
+                      ? 'فيديوهات إقامة ${boarding.pet.name}'
+                      : "${boarding.pet.name}'s Boarding Videos",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -833,7 +881,7 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        '${staticVideos.length} ${isArabic() ? "فيديو" : "videos"}',
+                        '${videoList.length} ${isArabic() ? "فيديو" : "videos"}',
                         style: TextStyle(
                           fontSize: 14,
                           color:
@@ -854,35 +902,49 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
     );
   }
 
-  Widget _buildEnhancedVideoCarousel() {
+  /// Builds the main video carousel with navigation and controls
+  Widget _buildEnhancedVideoCarousel(BoardingEntryEntity boarding) {
+     final List<Map<String, dynamic>> videoList = boarding.boardingImages
+    .where((vid) => vid['VideoName'] != null && vid['VideoName'].toString().isNotEmpty)
+    .cast<Map<String, dynamic>>()
+    .toList();
     return SizedBox(
       height: 350,
       child: Stack(
         children: [
+          // Main PageView for video carousel
           PageView.builder(
             controller: _pageController,
             onPageChanged: (index) {
-              // إيقاف الفيديو السابق وتشغيل الجديد
-              _playVideo(index);
+              // Pause previous video and update current index
+              _pauseCurrentVideo();
               setState(() {
                 currentVideoIndex = index;
               });
+
+              // Initialize the new video controller if not already done
+              _initializeVideoController(index);
+
               HapticFeedback.selectionClick();
             },
-            itemCount: staticVideos.length,
+            itemCount: boarding.boardingImages.length,
             itemBuilder: (context, index) {
               return Column(
                 children: [
                   Expanded(
-                    child: GestureDetector(
+                    child: InkWell(
                       onTap: () {
+                        // Navigate to full-screen video detail
                         navigateToScreen(
                           context,
                           VideoDetailSimple(
-                            path: staticVideos[index]['path']!,
+                            path:
+                                imageUrlWithVetICare +
+                                videoList[index]['VideoName'],
                             title:
                                 isArabic() ? 'تفاصيل الفيديو' : 'Video details',
-                            description: staticVideos[index]['note'] ?? '',
+                            description:
+                                videoList[index]['note'] ?? '',
                           ),
                         );
                       },
@@ -893,37 +955,10 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
                           child: Stack(
                             fit: StackFit.expand,
                             children: [
-                              _isVideoLoading[index]
-                                  ? Container(
-                                    color: _shimmerBaseColor,
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          CircularProgressIndicator(
-                                            color:
-                                                widget.isDarkMode
-                                                    ? Colors.blue.shade400
-                                                    : Colors.blue.shade600,
-                                            strokeWidth: 3,
-                                          ),
-                                          const SizedBox(height: 16),
-                                          Text(
-                                            isArabic()
-                                                ? 'جاري تحميل الفيديو...'
-                                                : 'Loading video...',
-                                            style: TextStyle(
-                                              color: _textSecondaryColor,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                  : VideoPlayer(_videoControllers[index]),
+                              // Video player or loading/error state
+                              _buildVideoPlayer(index, boarding),
+
+                              // Enhanced gradient overlay for better control visibility
                               Container(
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
@@ -938,58 +973,78 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
                                   ),
                                 ),
                               ),
-                              // زر التشغيل/الإيقاف في الوسط
-                              Center(
-                                child: GestureDetector(
-                                  onTap: _toggleVideoPlayback,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(20),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.6),
-                                      borderRadius: BorderRadius.circular(50),
-                                      border: Border.all(
-                                        color: Colors.white.withOpacity(0.3),
-                                        width: 2,
+
+                              // Play/Pause button overlay
+                              if (_videoInitialized[index])
+                                Center(
+                                  child: GestureDetector(
+                                    onTap: _toggleVideoPlayback,
+                                    child: AnimatedOpacity(
+                                      opacity: _isPlaying[index] ? 0.0 : 0.8,
+                                      duration: const Duration(
+                                        milliseconds: 300,
                                       ),
-                                    ),
-                                    child: Icon(
-                                      _isVideoPlaying[index]
-                                          ? Icons.pause_rounded
-                                          : Icons.play_arrow_rounded,
-                                      color: Colors.white,
-                                      size: 40,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(20),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.7),
+                                          borderRadius: BorderRadius.circular(
+                                            50,
+                                          ),
+                                          border: Border.all(
+                                            color: Colors.white.withOpacity(
+                                              0.3,
+                                            ),
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          _isPlaying[index]
+                                              ? Icons.pause_rounded
+                                              : Icons.play_arrow_rounded,
+                                          color: Colors.white,
+                                          size: 50,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
                             ],
                           ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+
+                  // Video note/description
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     child: Text(
-                      staticVideos[index]['note'] ?? '',
+                      videoList[index]['note'] ?? '',
                       style: TextStyle(
                         color: _textSecondaryColor,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
                       textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
               );
             },
           ),
-          if (staticVideos.length > 1) ...[
+
+          // Enhanced Navigation buttons for multiple videos
+          if (videoList.length > 1) ...[
             Positioned(
               left: 20,
               top: 0,
-              bottom: 0,
+              bottom: 50, 
               child: Center(
                 child: Container(
                   decoration: BoxDecoration(
@@ -1020,7 +1075,7 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
             Positioned(
               right: 20,
               top: 0,
-              bottom: 0,
+              bottom: 50, // Account for video description
               child: Center(
                 child: Container(
                   decoration: BoxDecoration(
@@ -1044,7 +1099,7 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
                       size: 32,
                     ),
                     onPressed:
-                        currentVideoIndex < staticVideos.length - 1
+                        currentVideoIndex < videoList.length - 1
                             ? nextVideo
                             : null,
                   ),
@@ -1052,6 +1107,8 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
               ),
             ),
           ],
+
+          // Enhanced Share button
           Positioned(
             top: 20,
             right: 20,
@@ -1078,11 +1135,13 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
                 ),
                 onPressed:
                     () => _openEnhancedShareSheet(
-                      staticVideos[currentVideoIndex]['path']!,
+                      imageUrlWithVetICare +
+                         videoList[currentVideoIndex]['VideoName'],
                     ),
               ),
             ),
           ),
+          // Enhanced Video counter
           Positioned(
             top: 20,
             left: 20,
@@ -1108,7 +1167,7 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
                   Icon(Icons.videocam_rounded, color: Colors.white, size: 16),
                   const SizedBox(width: 6),
                   Text(
-                    '${currentVideoIndex + 1}/${staticVideos.length}',
+                    '${currentVideoIndex + 1}/${videoList.length}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -1124,13 +1183,135 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
     );
   }
 
-  Widget _buildEnhancedPageIndicators() {
+  /// Builds the video player widget with loading and error states
+Widget _buildVideoPlayer(int index, BoardingEntryEntity boarding) {
+ final List<Map<String, dynamic>> videoList = boarding.boardingImages
+    .where((vid) => vid['VideoName'] != null && vid['VideoName'].toString().isNotEmpty)
+    .cast<Map<String, dynamic>>()
+    .toList();
+
+  if (index >= videoList.length) {
+    return const Center(child: Text("No video available"));
+  }
+
+  if (_videoControllers[index] == null) {
+    _initializeVideoController(index);
+    return _buildLoadingState();
+  }
+
+  if (!_videoInitialized[index]) {
+    return _buildLoadingState();
+  }
+
+  if (_videoControllers[index]!.value.hasError) {
+    return _buildErrorState(index);
+  }
+
+  return FittedBox(
+    fit: BoxFit.cover,
+    child: SizedBox(
+      width: _videoControllers[index]!.value.size.width,
+      height: _videoControllers[index]!.value.size.height,
+      child: VideoPlayer(_videoControllers[index]!),
+    ),
+  );
+}
+
+Widget _buildLoadingState() {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: [_shimmerBaseColor, _shimmerHighlightColor, _shimmerBaseColor],
+        stops: const [0.0, 0.5, 1.0],
+      ),
+    ),
+    child: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            color: widget.isDarkMode ? Colors.blue.shade400 : Colors.blue.shade600,
+            strokeWidth: 3,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            isArabic() ? 'جاري التحميل...' : 'Loading video...',
+            style: TextStyle(
+              color: _textSecondaryColor,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildErrorState(int index) {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: widget.isDarkMode
+            ? [Colors.grey.shade800, Colors.grey.shade900]
+            : [Colors.grey.shade200, Colors.grey.shade300],
+      ),
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: widget.isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Icon(
+            Icons.error_outline_rounded,
+            size: 60,
+            color: widget.isDarkMode ? Colors.grey.shade500 : Colors.grey.shade600,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          isArabic() ? 'فشل في تحميل الفيديو' : 'Failed to load video',
+          style: TextStyle(
+            color: _textSecondaryColor,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _videoInitialized[index] = false;
+              _videoControllers[index] = null;
+            });
+            _initializeVideoController(index);
+          },
+          child: Text(
+            isArabic() ? 'اضغط لإعادة المحاولة' : 'Tap to retry',
+            style: TextStyle(
+              color: widget.isDarkMode ? Colors.blue.shade400 : Colors.blue.shade600,
+              fontSize: 12,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+  Widget _buildEnhancedPageIndicators(BoardingEntryEntity boarding) {
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(
-          staticVideos.length,
+          boarding.boardingImages.length,
           (index) => AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             margin: const EdgeInsets.symmetric(horizontal: 6),
@@ -1170,6 +1351,7 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
     );
   }
 
+  /// Builds the enhanced close button
   Widget _buildEnhancedCloseButton() {
     return Padding(
       padding: const EdgeInsets.all(28),
@@ -1202,11 +1384,7 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
             ],
           ),
           child: ElevatedButton.icon(
-            onPressed: () {
-              // إيقاف جميع الفيديوهات قبل الإغلاق
-              _stopAllVideos();
-              widget.onOpenChange(false);
-            },
+            onPressed: () => widget.onOpenChange(false),
             icon: Icon(Icons.close_rounded, size: 22, color: _textPrimaryColor),
             label: Text(
               isArabic() ? 'إغلاق' : 'Close',
@@ -1232,19 +1410,20 @@ class _VideoCarouselWidgetState extends State<VideoCarouselWidget>
 
   @override
   void dispose() {
+    // Dispose of all video controllers to prevent memory leaks
+    for (VideoPlayerController? controller in _videoControllers) {
+      controller?.dispose();
+    }
+
+    // Dispose of animation controllers
     _pageController.dispose();
     _animationController.dispose();
     _fadeController.dispose();
     _pulseController.dispose();
 
-    for (var controller in _videoControllers) {
-      controller.pause();
-      controller.dispose();
-    }
     super.dispose();
   }
 }
-
 
 void showEnhancedDarkModeVideoCarousel(
   BuildContext context,
@@ -1269,6 +1448,7 @@ void showEnhancedDarkModeVideoCarousel(
   );
 }
 
+/// Auto-detects theme and shows video carousel
 void showThemeAwareEnhancedVideoCarousel(
   BuildContext context,
   BoardingEntryEntity? boarding,

@@ -20,6 +20,8 @@ class BoardingCubit extends Cubit<BoardingState> {
   final GetBoardingEntriesUseCase getBoardingEntriesUseCase;
   final RateBoardingUseCase rateBoardingUseCase;
   final ShareImageEntriesUseCase shareImageEntriesUseCase;
+  // final ShareImageEntriesUseCase shareVideoEntriesUseCase;
+  
 
   BoardingCubit({
     required this.getBoardingTypesUseCase,
@@ -28,6 +30,7 @@ class BoardingCubit extends Cubit<BoardingState> {
     required this.getBoardingEntriesUseCase,
     required this.rateBoardingUseCase,
     required this.shareImageEntriesUseCase,
+    // required this.shareVideoEntriesUseCase,
   }) : super(BoardingInitial());
 
   static BoardingCubit get(context) => BlocProvider.of<BoardingCubit>(context);

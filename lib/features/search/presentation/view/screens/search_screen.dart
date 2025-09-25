@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
@@ -9,7 +8,6 @@ import 'package:squeak/core/utils/theme/color_mangment/color_manager.dart';
 import 'package:squeak/core/utils/theme/fonts/font_styles.dart';
 import 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
 import 'package:squeak/features/auth/get_started/presentation/view/screnns/welcome_to_squek.dart';
-import 'package:squeak/features/layout/layout/presentation/cubit/layout_cubit.dart';
 import 'package:squeak/features/pets/presentation/controller/pet_cubit.dart';
 import 'package:squeak/generated/l10n.dart';
 
@@ -25,37 +23,44 @@ class _FriendsScreenState extends State<FriendsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screen = MediaQuery.of(context).size; // get width & height
+
     return BlocProvider(
       create: (context) => sl<PetCubit>()..getAllSpecies(),
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
-
-          title: Text(S.of(context).findPetFriends),
+          title: Text(
+            S.of(context).findPetFriends,
+            style: TextStyle(fontSize: screen.width * 0.045),
+          ),
           centerTitle: true,
         ),
         body: Padding(
-          padding: EdgeInsets.all(12),
+          padding: EdgeInsets.all(screen.width * 0.03),
           child: CustomScrollView(
             slivers: [
               SliverToBoxAdapter(child: _buildSearchTextField(context)),
+
+              /// Species List
               BlocConsumer<PetCubit, PetState>(
                 listener: (context, state) {},
                 builder: (context, state) {
                   final cubit = PetCubit.get(context);
+
                   if (state is GetAllSpeciesLoadingState) {
                     return SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
                         return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8.0,
-                            horizontal: 16,
+                          padding: EdgeInsets.symmetric(
+                            vertical: screen.height * 0.01,
+                            horizontal: screen.width * 0.04,
                           ),
                           child: Shimmer.fromColors(
                             baseColor: Colors.grey.shade300,
                             highlightColor: Colors.grey.shade100,
                             child: Container(
-                              height: 100,
+                              height: screen.height * 0.12,
                               decoration: BoxDecoration(
                                 color: Colors.grey,
                                 borderRadius: BorderRadius.circular(12),
@@ -66,9 +71,10 @@ class _FriendsScreenState extends State<FriendsScreen> {
                       }, childCount: 1),
                     );
                   }
+
                   return SliverToBoxAdapter(
                     child: SizedBox(
-                      height: 60,
+                      height: screen.height * 0.08,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: cubit.species.length,
@@ -81,24 +87,24 @@ class _FriendsScreenState extends State<FriendsScreen> {
                               });
                             },
                             child: Container(
+                              width: screen.width * 0.25,
+                              margin: EdgeInsets.all(screen.width * 0.02),
                               decoration: BoxDecoration(
-                                color:
-                                    isSelected
-                                        ? ColorManager.primaryColor
-                                        : Colors.grey.shade300,
+                                color: isSelected
+                                    ? ColorManager.primaryColor
+                                    : Colors.grey.shade300,
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              width: 100,
-                              margin: const EdgeInsets.all(8),
                               child: Center(
-                                child: Text(
-                                  cubit.species[index].type,
-                                  style: TextStyle(
-                                    color:
-                                        isSelected
-                                            ? Colors.white
-                                            : Colors.black,
-                                    fontWeight: FontWeight.bold,
+                                child: FittedBox(
+                                  child: Text(
+                                    cubit.species[index].type,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -111,33 +117,46 @@ class _FriendsScreenState extends State<FriendsScreen> {
                 },
               ),
 
-              SliverToBoxAdapter(child: SizedBox(height: 12)),
+              SliverToBoxAdapter(child: SizedBox(height: screen.height * 0.015)),
+
+              /// Search Results Header
               SliverToBoxAdapter(
                 child: Row(
                   children: [
-                    Icon(Icons.search, size: 32),
-                    SizedBox(width: 6),
-                    Text('Search Results', style: TextStyle(fontSize: 16)),
+                    Icon(Icons.search, size: screen.width * 0.07),
+                    SizedBox(width: screen.width * 0.02),
+                    Text(
+                      'Search Results',
+                      style: TextStyle(fontSize: screen.width * 0.04),
+                    ),
                   ],
                 ),
               ),
+
+              /// Results List
               SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    padding: EdgeInsets.symmetric(vertical: screen.height * 0.012),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ListTile(
-                          leading: const CircleAvatar(radius: 26),
-                          title: Text('Buddy'),
-                          subtitle: const Text(
+                          leading: CircleAvatar(
+                            radius: screen.width * 0.07,
+                          ),
+                          title: Text(
+                            'Buddy',
+                            style: TextStyle(fontSize: screen.width * 0.045),
+                          ),
+                          subtitle: Text(
                             'Golden Retriever • 3 years old',
+                            style: TextStyle(fontSize: screen.width * 0.035),
                           ),
                           trailing: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: screen.width * 0.03,
+                              vertical: screen.height * 0.006,
                             ),
                             decoration: BoxDecoration(
                               color: Colors.blueAccent,
@@ -145,87 +164,114 @@ class _FriendsScreenState extends State<FriendsScreen> {
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                Icon(Icons.pets, size: 16, color: Colors.white),
-                                SizedBox(width: 4),
+                              children: [
+                                Icon(Icons.pets,
+                                    size: screen.width * 0.04,
+                                    color: Colors.white),
+                                SizedBox(width: screen.width * 0.01),
                                 Text(
                                   "Adopt",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: screen.width * 0.035,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
                         ),
+
+                        /// Location + Friends
                         Padding(
-                          padding: const EdgeInsets.only(left: 16),
-                          child: Row(
+                          padding: EdgeInsets.only(left: screen.width * 0.04),
+                          child: Wrap(
+                            spacing: screen.width * 0.02,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: const [
                               Icon(Icons.not_listed_location_sharp),
-                              SizedBox(width: 4),
                               Text('Egypt'),
-                              SizedBox(width: 8),
                               Icon(Icons.people),
-                              SizedBox(width: 4),
                               Text('15 Friends'),
-                              SizedBox(width: 8),
                               Icon(Icons.ac_unit),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: screen.height * 0.015),
+
+                        /// Mutual Friends
                         Padding(
-                          padding: const EdgeInsets.only(left: 16),
+                          padding: EdgeInsets.only(left: screen.width * 0.04),
                           child: Row(
-                            children: const [
-                              CircleAvatar(radius: 12),
-                              CircleAvatar(radius: 12),
-                              SizedBox(width: 12),
-                              Text('2 Mutual Friends'),
+                            children: [
+                              CircleAvatar(radius: screen.width * 0.03),
+                              SizedBox(width: screen.width * 0.01),
+                              CircleAvatar(radius: screen.width * 0.03),
+                              SizedBox(width: screen.width * 0.03),
+                              Text(
+                                '2 Mutual Friends',
+                                style: TextStyle(fontSize: screen.width * 0.035),
+                              ),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: screen.height * 0.015),
+
+                        /// Action Buttons
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             InkWell(
                               onTap: () {
-                                navigateToScreen(context, WelcomeToSquek());
+                                // navigateToScreen(context, WelcomeToSquek());
                               },
                               child: Container(
-                                margin: const EdgeInsets.all(12),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
+                                margin: EdgeInsets.all(screen.width * 0.03),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: screen.width * 0.06,
+                                  vertical: screen.height * 0.015,
                                 ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(24),
                                   color: Colors.green,
                                 ),
                                 child: Row(
-                                  children: const [
-                                    Icon(Icons.check, color: Colors.white),
-                                    SizedBox(width: 6),
+                                  children: [
+                                    Icon(Icons.check,
+                                        color: Colors.white,
+                                        size: screen.width * 0.04),
+                                    SizedBox(width: screen.width * 0.015),
                                     Text(
                                       'Send Request',
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: screen.width * 0.035,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
                             Container(
-                              margin: const EdgeInsets.all(12),
-                              padding: const EdgeInsets.all(12),
+                              margin: EdgeInsets.all(screen.width * 0.03),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: screen.width * 0.04,
+                                vertical: screen.height * 0.012,
+                              ),
                               decoration: BoxDecoration(
                                 border: Border.all(color: Colors.blueAccent),
                                 borderRadius: BorderRadius.circular(24),
                               ),
                               child: Row(
-                                children: const [
-                                  Icon(Icons.remove_red_eye),
-                                  SizedBox(width: 6),
-                                  Text('View Profile'),
+                                children: [
+                                  Icon(Icons.remove_red_eye,
+                                      size: screen.width * 0.04),
+                                  SizedBox(width: screen.width * 0.015),
+                                  Text(
+                                    'View Profile',
+                                    style: TextStyle(
+                                      fontSize: screen.width * 0.035,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -244,32 +290,33 @@ class _FriendsScreenState extends State<FriendsScreen> {
   }
 
   Widget _buildSearchTextField(BuildContext context) {
+    final screen = MediaQuery.of(context).size;
+
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(screen.width * 0.02),
       child: TextField(
         decoration: InputDecoration(
           prefixIcon: const Icon(Icons.search),
-          hintText:
-              isArabic() ? 'ابحث بالاسم او الرقم' : 'Search by name or phone',
+          hintText: isArabic()
+              ? 'ابحث بالاسم او الرقم'
+              : 'Search by name or phone',
           contentPadding: const EdgeInsets.all(0),
           filled: true,
           counterStyle: FontStyleThame.textStyle(
             context: context,
-            fontSize: 13,
+            fontSize: screen.width * 0.032,
           ),
           hintStyle: FontStyleThame.textStyle(
             context: context,
-            fontSize: 14,
+            fontSize: screen.width * 0.034,
             fontWeight: FontWeight.w700,
-            fontColor:
-                MainCubit.get(context).isDark
-                    ? Colors.white54
-                    : const Color.fromRGBO(0, 0, 0, .3),
+            fontColor: MainCubit.get(context).isDark
+                ? Colors.white54
+                : const Color.fromRGBO(0, 0, 0, .3),
           ),
-          fillColor:
-              MainCubit.get(context).isDark
-                  ? Colors.black26
-                  : Colors.grey.shade200,
+          fillColor: MainCubit.get(context).isDark
+              ? Colors.black26
+              : Colors.grey.shade200,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide.none,

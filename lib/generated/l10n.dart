@@ -921,12 +921,12 @@ class S {
 
   /// `breed`
   String get breed {
-    return Intl.message('Breed', name: 'Breed', desc: '', args: []);
+    return Intl.message('breed', name: 'breed', desc: '', args: []);
   }
 
   /// `gender`
   String get gender {
-    return Intl.message('Gender *', name: 'Gender *', desc: '', args: []);
+    return Intl.message('gender', name: 'gender', desc: '', args: []);
   }
 
   /// `Unique Code`
@@ -1836,12 +1836,12 @@ class S {
 
   /// `Spayed`
   String get spayed {
-    return Intl.message('Spayed/Neutered', name: 'spayed', desc: '', args: []);
+    return Intl.message('Spayed', name: 'spayed', desc: '', args: []);
   }
 
   /// `Unspayed`
   String get notSpayed {
-    return Intl.message('Not Spayed/Neutered', name: 'notSpayed', desc: '', args: []);
+    return Intl.message('Unspayed', name: 'notSpayed', desc: '', args: []);
   }
 
   /// `Edit Pet`

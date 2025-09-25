@@ -16,7 +16,6 @@ class BoardingEntryModel extends BoardingEntryEntity {
     required super.petId,
     required super.pet,
     required super.boardingImages,
-    // required super.boardingVideos, // added
     required super.clinicPhone,
     required super.clinicLocation,
     super.clinicLogo,
@@ -44,7 +43,6 @@ class BoardingEntryModel extends BoardingEntryEntity {
       petId: json['petId'],
       pet: PetBoardingModel.fromJson(json['pet']),
       boardingImages: List<dynamic>.from(json['boardingImages']),
-      // boardingVideos: List<dynamic>.from(json['boardingVideos']), // added
       clinicPhone: json['clinicPhone'],
       clinicLocation: json['clinicLocation'],
       clinicLogo: json['clinicLogo'],
@@ -73,7 +71,6 @@ class BoardingEntryModel extends BoardingEntryEntity {
       'petId': petId,
       'pet': (pet as PetBoardingModel).toJson(),
       'boardingImages': boardingImages,
-      // 'boardingVideos': boardingVideos, // added
       'clinicPhone': clinicPhone,
       'clinicLocation': clinicLocation,
       'clinicLogo': clinicLogo,
@@ -102,7 +99,6 @@ class BoardingEntryModel extends BoardingEntryEntity {
       petId: petId,
       pet: (pet as PetBoardingModel).toEntity(),
       boardingImages: boardingImages,
-      // boardingVideos: boardingVideos, // added
       clinicPhone: clinicPhone,
       clinicLocation: clinicLocation,
       clinicLogo: clinicLogo,
@@ -115,5 +111,28 @@ class BoardingEntryModel extends BoardingEntryEntity {
       isRating: isRating,
       tenantId: tenantId,
     );
+  }
+}
+class VideoEntity {
+  final String url;
+  final String? description;
+
+  VideoEntity({
+    required this.url,
+    this.description,
+  });
+
+  factory VideoEntity.fromJson(Map<String, dynamic> json) {
+    return VideoEntity(
+      url: json['url'] as String,
+      description: json['description'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'url': url,
+      'description': description,
+    };
   }
 }
