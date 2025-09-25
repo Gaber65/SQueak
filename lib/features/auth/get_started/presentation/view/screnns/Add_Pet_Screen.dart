@@ -5,8 +5,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import 'package:squeak/core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
 import 'package:squeak/core/utils/enums/upload_place.dart';
@@ -15,8 +13,15 @@ import 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
 import 'package:squeak/features/auth/get_started/presentation/view/screnns/find_friends.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/pets/presentation/controller/pet_cubit.dart';
-
-import '../../../../../pets/presentation/view/widgets/add_pet/birthdate_picker.dart';
+import 'package:squeak/features/pets/presentation/view/widgets/add_pet/birthdate_picker.dart';
+import '../widgets/add_pet_additional_details.dart';
+import '../widgets/add_pet_app_bar.dart';
+import '../widgets/add_pet_breed_dropdown_modal.dart';
+import '../widgets/add_pet_choice.dart';
+import '../widgets/add_pet_image_picker.dart';
+import '../widgets/add_pet_section.dart';
+import '../widgets/add_pet_text_field.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class GetStartedAddPetScreen extends StatefulWidget {
   const GetStartedAddPetScreen({super.key});
@@ -34,8 +39,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
   String? selectedGender;
   String? selectedSpeciesId;
   String? selectedBreedId;
-  
-  bool _isLoadingSpecies =  false;
+  bool _isLoadingSpecies = false;
 
   @override
   void initState() {
@@ -54,9 +58,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
 
   Future<void> _restoreData() async {
     _nameController.text = CacheHelper.getData('pet_name') ?? '';
-    // _breedController.text = CacheHelper.getData('pet_breed') ?? '';
     _dateController.text = CacheHelper.getData('pet_date') ?? '';
-    // selectedGender = CacheHelper.getData('pet_gender');
     final imgBase64 = CacheHelper.getData('pet_image');
     if (imgBase64 != null) {
       try {
@@ -85,7 +87,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
   Widget build(BuildContext context) {
     final petCubit = context.read<PetCubit>();
     return Scaffold(
-      appBar: _buildAppBar(context),
+      appBar: AddPetAppBar(),
       backgroundColor: ColorManager.editScreenTextFieldBaseColor.withValues(
         alpha: .5,
       ),
@@ -132,15 +134,28 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
               ),
             ),
             const SizedBox(height: 24),
-
-            _buildImagePicker(),
-
+            AddPetImagePicker(
+              imagefile: imagefile,
+              onImagePicked: (File? file) {
+                setState(() {
+                  imagefile = file;
+                });
+                if (file != null) {
+                  MainCubit.get(
+                    context,
+                  ).getGlobalImage(file, UploadPlace.petsImages).then((value) {
+                    context.read<PetCubit>().imageNameController.text =
+                        MainCubit.get(context).modelImage!.data;
+                  });
+                }
+              },
+            ),
             const SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
                 children: [
-                  _buildSection(
+                  AddPetSection(
                     icon: Icons.info,
                     title: "Basic Information",
                     children: [
@@ -149,12 +164,11 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                         style: TextStyle(color: Colors.white),
                       ),
                       const SizedBox(height: 8),
-                      _buildTextField(
-                        "Enter your pet's name",
+                      AddPetTextField(
+                        hint: "Enter your pet's name",
                         controller: _nameController,
                       ),
                       const SizedBox(height: 16),
-
                       const Text(
                         "Species *",
                         style: TextStyle(color: Colors.white),
@@ -162,20 +176,51 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          _buildChoice(
+                          AddPetChoice(
                             label: "Dog",
                             icon: FontAwesomeIcons.dog,
                             value: "dog",
+                            isSelected: _isDogSpecies(selectedSpecies),
+                            isLoading: _isLoadingSpecies,
+                            onTap: () => _onSpeciesChanged("dog"),
                           ),
-                          _buildChoice(
+                          AddPetChoice(
                             label: "Cat",
                             icon: FontAwesomeIcons.cat,
                             value: "cat",
+                            isSelected: _isCatSpecies(selectedSpecies),
+                            isLoading: _isLoadingSpecies,
+                            onTap: () => _onSpeciesChanged("cat"),
                           ),
-                          _buildChoice(
-                            label: "Other",
+                          AddPetChoice(
+                            label:
+                                selectedSpecies != "dog" &&
+                                        selectedSpecies != "cat"
+                                    ? selectedSpecies
+                                    : "Other",
                             icon: Icons.more_horiz,
                             value: "other",
+                            isSelected:
+                                !_isDogSpecies(selectedSpecies) &&
+                                !_isCatSpecies(selectedSpecies),
+                            isLoading: _isLoadingSpecies,
+                            onTap: () async {
+                              if (_isLoadingSpecies) return;
+                              setState(() => _isLoadingSpecies = true);
+                              try {
+                                await context.read<PetCubit>().getAllSpecies();
+                                if (mounted) {
+                                  await _openSpeciesPickerModal(
+                                    context,
+                                    context.read<PetCubit>().species,
+                                  );
+                                }
+                              } finally {
+                                if (mounted) {
+                                  setState(() => _isLoadingSpecies = false);
+                                }
+                              }
+                            },
                           ),
                         ],
                       ),
@@ -201,13 +246,25 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                               style: const TextStyle(color: Colors.red),
                             );
                           }
-                          return _buildBreedDropdownModal(cubit.breedData);
+                          return AddPetBreedDropdownModal(
+                            breeds: cubit.breedData,
+                            controller: _breedController,
+                            onBreedSelected: (
+                              String breedId,
+                              String breedName,
+                            ) {
+                              setState(() {
+                                selectedBreedId = breedId;
+                                _breedController.text = breedName;
+                              });
+                            },
+                          );
                         },
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  _buildSection(
+                  AddPetSection(
                     icon: Icons.favorite,
                     title: "Additional Details",
                     children: [
@@ -218,16 +275,22 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          _additionDetails(
+                          AddPetAdditionalDetails(
                             label: "Male",
                             icon: Icons.male,
                             value: "male",
+                            isSelected: selectedGender == "male",
+                            onTap:
+                                () => setState(() => selectedGender = "male"),
                           ),
                           const SizedBox(width: 8),
-                          _additionDetails(
+                          AddPetAdditionalDetails(
                             label: "Female",
                             icon: Icons.female,
                             value: "female",
+                            isSelected: selectedGender == "female",
+                            onTap:
+                                () => setState(() => selectedGender = "female"),
                           ),
                         ],
                       ),
@@ -242,7 +305,6 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                 ],
               ),
             ),
-
             BlocConsumer<PetCubit, PetState>(
               listener: (context, state) {
                 if (state is PetCreateSuccessState) {
@@ -264,7 +326,6 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
               },
               builder: (context, state) {
                 final isLoading = state is PetCreateLoadingState;
-
                 return Container(
                   margin: const EdgeInsets.all(16),
                   width: double.infinity,
@@ -322,7 +383,6 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                                         ? "f1131363-3b9f-40ee-9a89-0573ee274a10"
                                         : selectedSpeciesId,
                               );
-
                               context.read<PetCubit>().createPetGetStarting(
                                 pet: pet,
                               );
@@ -372,502 +432,6 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-      title: const Text("Add Your Pet", style: TextStyle(color: Colors.white)),
-      backgroundColor: ColorManager.editScreenTextFieldBaseColor,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
-        onPressed: () => Navigator.pop(context),
-      ),
-    );
-  }
-
-  Widget _buildImagePicker() {
-    return Center(
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            decoration: const BoxDecoration(shape: BoxShape.circle),
-            child: ClipOval(
-              child:
-                  imagefile != null
-                      ? Image.file(
-                        imagefile!,
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.cover,
-                      )
-                      : const CircleAvatar(
-                        radius: 48,
-                        backgroundColor: ColorManager.white,
-                        child: Icon(
-                          Icons.pets,
-                          color: ColorManager.primaryColor,
-                          size: 42,
-                        ),
-                      ),
-            ),
-          ),
-          Positioned(
-            bottom: -8,
-            right: -12,
-            child: InkWell(
-              onTap: () => _showImagePickerDialog(),
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: const BoxDecoration(
-                  color: ColorManager.primaryColor,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.camera_alt, color: Colors.white),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSection({
-    required IconData icon,
-    required String title,
-    required List<Widget> children,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white10,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: ColorManager.primaryColor.withOpacity(.7)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: ColorManager.primaryColor, size: 18),
-              const SizedBox(width: 6),
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ...children,
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTextField(
-    String hint, {
-    Key? key,
-    TextEditingController? controller,
-    bool readOnly = false,
-    Widget? suffix,
-    void Function()? onTap,
-  }) {
-    return TextField(
-      key: key,
-      controller: controller,
-      readOnly: readOnly,
-      onTap: onTap,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        fillColor: ColorManager.followersShadowLightColor,
-        hintText: hint,
-        hintStyle: const TextStyle(color: Colors.white54),
-        suffixIcon: suffix,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
-            color: ColorManager.primaryColor.withOpacity(.7),
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Colors.blue),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildChoice({
-    required String label,
-    required IconData icon,
-    required String value,
-  }) {
-    String displayLabel = label;
-    bool isSelected = false;
-    
-    // Handle selection logic based on species type
-    if (value == "dog") {
-      isSelected = _isDogSpecies(selectedSpecies);
-    } else if (value == "cat") {
-      isSelected = _isCatSpecies(selectedSpecies);
-    } else if (value == "other") {
-      isSelected = !_isDogSpecies(selectedSpecies) && !_isCatSpecies(selectedSpecies);
-      if (isSelected && selectedSpecies != "other") {
-        displayLabel = selectedSpecies;
-      }
-    }
-
-    // Show loading indicator for "Other" button when loading species
-    final showLoading = value == "other" && _isLoadingSpecies;
-
-    return Expanded(
-      child: GestureDetector(
-        onTap: _isLoadingSpecies ? null : () async {
-          if (value == "other") {
-            // Prevent multiple requests
-            if (_isLoadingSpecies) return;
-            
-            setState(() {
-              _isLoadingSpecies = true;
-            });
-            
-            try {
-              await context.read<PetCubit>().getAllSpecies();
-              if (mounted) {
-                await _openSpeciesPickerModal(context, context.read<PetCubit>().species);
-              }
-            } finally {
-              if (mounted) {
-                setState(() {
-                  _isLoadingSpecies = false;
-                });
-              }
-            }
-          } else {
-            _onSpeciesChanged(value);
-          }
-        },
-        child: Container(
-          margin: const EdgeInsets.only(left: 8),
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: isSelected ? ColorManager.primaryColor : Colors.white10,
-            border: Border.all(
-              color: ColorManager.primaryColor.withOpacity(.7),
-            ),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            children: [
-              showLoading 
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : Icon(icon, color: Colors.white),
-              const SizedBox(height: 4),
-              Text(
-                showLoading ? "Loading..." : displayLabel, 
-                style: const TextStyle(color: Colors.white),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _additionDetails({
-    required String label,
-    required IconData icon,
-    required String value,
-  }) {
-    final isSelected = selectedGender == value;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          setState(() => selectedGender = value);
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            vertical: screenHeight * 0.025,
-            horizontal: screenWidth * 0.05,
-          ),
-          decoration: BoxDecoration(
-            color: isSelected ? ColorManager.primaryColor : Colors.white10,
-            border: Border.all(
-              color: ColorManager.primaryColor.withOpacity(.7),
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: EdgeInsets.all(screenWidth * 0.02), // scaled padding
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(26),
-                  color: ColorManager.editScreenBaseFontColor,
-                ),
-                child: Icon(
-                  icon,
-                  color: Colors.blueAccent,
-                  size: screenWidth * 0.06, // responsive icon size
-                ),
-              ),
-              SizedBox(width: screenWidth * 0.02),
-              Text(
-                label,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: screenWidth * 0.04, // responsive font size
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showImagePickerDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Center(
-                  child: Text(
-                    'Please Choose An Option',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              const Divider(),
-              InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                  pickedImageWithCamera();
-                },
-                child: const Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Camera'),
-                      SizedBox(width: 8),
-                      Icon(Icons.camera, color: Colors.amber),
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                  pickedImageWithGallery();
-                },
-                child: const Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Gallery'),
-                      SizedBox(width: 8),
-                      Icon(Icons.browse_gallery, color: Colors.blue),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void pickedImageWithCamera() async {
-    try {
-      XFile? pickedFile = await ImagePicker().pickImage(
-        source: ImageSource.camera,
-        maxWidth: 1080,
-        maxHeight: 1080,
-      );
-
-      if (pickedFile != null) {
-        setState(() {
-          imagefile = File(pickedFile.path);
-        });
-
-        MainCubit.get(
-          context,
-        ).getGlobalImage(imagefile!, UploadPlace.petsImages).then((value) {
-          context.read<PetCubit>().imageNameController.text =
-              MainCubit.get(context).modelImage!.data;
-
-          // print(context.read<PetCubit>().imageNameController.text);
-        });
-
-        // print("Image File: $imagefile");
-        // print("Image Path: ${imagefile!.path}");
-      }
-    } catch (e) {
-      debugPrint('Error picking image: $e');
-    }
-  }
-
-  void pickedImageWithGallery() async {
-    try {
-      XFile? pickedFile = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1080,
-        maxHeight: 1080,
-      );
-      if (pickedFile != null) {
-        setState(() {
-          imagefile = File(pickedFile.path);
-        });
-
-        MainCubit.get(
-          context,
-        ).getGlobalImage(imagefile!, UploadPlace.petsImages).then((value) {
-          context.read<PetCubit>().imageNameController.text =
-              MainCubit.get(context).modelImage!.data;
-
-          // print(context.read<PetCubit>().imageNameController.text);
-        });
-      }
-    } catch (e) {
-      debugPrint('Error picking image: $e');
-    }
-  }
-
-  Widget _buildBreedDropdownModal(List<BreedEntity> breeds) {
-    return GestureDetector(
-      onTap: () => _openBreedPickerModal(context, breeds),
-      child: AbsorbPointer(
-        child: TextField(
-          controller: _breedController,
-          style: const TextStyle(color: Colors.white),
-          decoration: InputDecoration(
-            fillColor: ColorManager.followersShadowLightColor,
-            filled: true,
-            hintText: "Select breed (optional)",
-            hintStyle: const TextStyle(color: Colors.white54),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(
-                color: ColorManager.primaryColor.withOpacity(.7),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _openBreedPickerModal(
-    BuildContext context,
-    List<BreedEntity> breeds,
-  ) async {
-    String filter = '';
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.6,
-          minChildSize: 0.3,
-          maxChildSize: 0.9,
-          expand: false,
-          builder: (context, scrollController) {
-            List<BreedEntity> filtered = breeds;
-            return StatefulBuilder(
-              builder: (context, setModalState) {
-                filtered =
-                    breeds
-                        .where(
-                          (b) => (b.enType).toLowerCase().contains(
-                            filter.toLowerCase(),
-                          ),
-                        )
-                        .toList();
-                return Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(16),
-                    ),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: TextField(
-                          autofocus: true,
-                          decoration: InputDecoration(
-                            hintText: 'Search breed...',
-                            prefixIcon: const Icon(Icons.search),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onChanged: (v) => setModalState(() => filter = v),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Expanded(
-                        child:
-                            filtered.isEmpty
-                                ? const Center(child: Text('No breeds found'))
-                                : ListView.separated(
-                                  controller: scrollController,
-                                  itemCount: filtered.length,
-                                  separatorBuilder:
-                                      (_, __) => const Divider(height: 1),
-                                  itemBuilder: (context, index) {
-                                    final b = filtered[index];
-                                    return ListTile(
-                                      title: Text(b.enType),
-                                      onTap: () {
-                                        _breedController.text = b.enType;
-                                        selectedBreedId = b.id;
-                                        Navigator.of(context).pop();
-                                        setState(() {});
-                                      },
-                                    );
-                                  },
-                                ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
-          },
-        );
-      },
-    );
-  }
-
   Future<void> _openSpeciesPickerModal(
     BuildContext context,
     List<SpeciesEntity> species,
@@ -887,13 +451,14 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
             List<SpeciesEntity> filtered = species;
             return StatefulBuilder(
               builder: (context, setModalState) {
-                filtered = species
-                    .where(
-                      (s) => s.type.toLowerCase().contains(
-                        filter.toLowerCase(),
-                      ),
-                    )
-                    .toList();
+                filtered =
+                    species
+                        .where(
+                          (s) => s.type.toLowerCase().contains(
+                            filter.toLowerCase(),
+                          ),
+                        )
+                        .toList();
                 return Container(
                   decoration: const BoxDecoration(
                     color: Colors.white,
@@ -907,7 +472,6 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                   ),
                   child: Column(
                     children: [
-                      // Handle bar
                       Container(
                         width: 40,
                         height: 4,
@@ -917,8 +481,6 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
-                      
-                      // Title
                       const Text(
                         'Select Species',
                         style: TextStyle(
@@ -928,8 +490,6 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      
-                      // Search bar
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.grey[100],
@@ -955,81 +515,91 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      
-                      // Species list
                       Expanded(
-                        child: filtered.isEmpty
-                            ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.search_off,
-                                      size: 48,
-                                      color: Colors.grey[400],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      'No species found',
-                                      style: TextStyle(
-                                        color: Colors.grey[600],
-                                        fontSize: 16,
+                        child:
+                            filtered.isEmpty
+                                ? Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.search_off,
+                                        size: 48,
+                                        color: Colors.grey[400],
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'No species found',
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                                : ListView.separated(
+                                  controller: scrollController,
+                                  itemCount: filtered.length,
+                                  separatorBuilder:
+                                      (_, __) => Divider(
+                                        height: 1,
+                                        color: Colors.grey[200],
+                                      ),
+                                  itemBuilder: (context, index) {
+                                    final s = filtered[index];
+                                    return ListTile(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 8,
+                                          ),
+                                      leading: Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: ColorManager.primaryColor
+                                              .withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.pets,
+                                          color: ColorManager.primaryColor,
+                                          size: 20,
+                                        ),
+                                      ),
+                                      title: Text(
+                                        s.type,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      trailing: const Icon(
+                                        Icons.arrow_forward_ios,
+                                        size: 16,
+                                        color: Colors.grey,
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          selectedSpecies = s.type;
+                                          selectedSpeciesId = s.id;
+                                        });
+                                        CacheHelper.saveData(
+                                          "pet_species",
+                                          s.type,
+                                        );
+                                        _onSpeciesChanged(
+                                          s.type,
+                                          speciesId: s.id,
+                                        );
+                                        Navigator.of(context).pop();
+                                      },
+                                    );
+                                  },
                                 ),
-                              )
-                            : ListView.separated(
-                                controller: scrollController,
-                                itemCount: filtered.length,
-                                separatorBuilder: (_, __) => Divider(
-                                  height: 1,
-                                  color: Colors.grey[200],
-                                ),
-                                itemBuilder: (context, index) {
-                                  final s = filtered[index];
-                                  return ListTile(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 8,
-                                    ),
-                                    leading: Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: ColorManager.primaryColor.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Icon(
-                                        Icons.pets,
-                                        color: ColorManager.primaryColor,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    title: Text(
-                                      s.type,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    trailing: const Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 16,
-                                      color: Colors.grey,
-                                    ),
-                                    onTap: () {
-                                      setState(() {
-                                        selectedSpecies = s.type;
-                                        selectedSpeciesId = s.id;
-                                      });
-                                      CacheHelper.saveData("pet_species", s.type);
-                                      _onSpeciesChanged(s.type, speciesId: s.id);
-                                      Navigator.of(context).pop();
-                                    },
-                                  );
-                                },
-                              ),
                       ),
                     ],
                   ),
@@ -1042,26 +612,22 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
     );
   }
 
-  // Helper methods to determine species type
   bool _isDogSpecies(String species) {
-    return species.toLowerCase() == 'dog' || 
-           species.toLowerCase() == 'dogs' ||
-           species.toLowerCase().contains('canine');
+    return species.toLowerCase() == 'dog' ||
+        species.toLowerCase() == 'dogs' ||
+        species.toLowerCase().contains('canine');
   }
 
   bool _isCatSpecies(String species) {
-    return species.toLowerCase() == 'cat' || 
-           species.toLowerCase() == 'cats' ||
-           species.toLowerCase() == 'cow' ||  // Handle the cow -> cat mapping
-           species.toLowerCase() == 'cows' ||
-           species.toLowerCase().contains('feline');
+    return species.toLowerCase() == 'cat' ||
+        species.toLowerCase() == 'cats' ||
+        species.toLowerCase() == 'cow' ||
+        species.toLowerCase().contains('feline');
   }
 
   void _onSpeciesChanged(String species, {String? speciesId}) {
     setState(() => selectedSpecies = species);
-
     final cubit = context.read<PetCubit>();
-
     if (species == 'dog') {
       cubit.getBreedsBySpecies('bca48207-f05d-4e9f-a631-06f34eb5af39');
     } else if (species == 'cat') {
