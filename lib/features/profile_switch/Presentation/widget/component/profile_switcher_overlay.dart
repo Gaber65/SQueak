@@ -84,7 +84,7 @@ Widget buildProfileSwitcherOverlay({
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (owner == null && pets.isEmpty)
+                  if (  pets.isEmpty && owner == null)
                     buildProfileSwitcherShimmer(context) // ✅ shimmer هنا
                   else ...[
                     if (owner != null)
