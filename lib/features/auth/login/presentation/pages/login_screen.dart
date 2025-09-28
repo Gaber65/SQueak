@@ -8,7 +8,6 @@ import 'package:squeak/features/auth/login/domin/usecses/login_use_case.dart';
 import 'package:squeak/features/auth/login/presentation/cubit/login_cubit.dart';
 import 'package:squeak/features/auth/login/presentation/widgets/modern_login_wrapper.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/core/monitoring/advanced_performance_monitor.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,14 +21,10 @@ class _LoginScreenState extends State<LoginScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  final AdvancedPerformanceMonitor _performanceMonitor =
-      AdvancedPerformanceMonitor();
 
   @override
   void initState() {
     super.initState();
-    // TEMPORARILY DISABLED - Performance monitoring causing potential crashes
-    // _performanceMonitor.startOperation('login_screen_init');
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
@@ -48,8 +43,6 @@ class _LoginScreenState extends State<LoginScreen>
     );
 
     _animationController.forward();
-    // TEMPORARILY DISABLED - Performance monitoring causing potential crashes
-    // _performanceMonitor.endOperation('login_screen_init');
   }
 
   @override
@@ -82,11 +75,6 @@ class _LoginScreenState extends State<LoginScreen>
 
   void _handleStateChanges(BuildContext context, LoginState state) {
     if (state is LoginError) {
-      _performanceMonitor.recordException(
-        Exception('Login failed: ${state.error.message}'),
-        StackTrace.current,
-      );
-
       // Enhanced error handling with haptic feedback
       HapticFeedback.mediumImpact();
 
@@ -125,14 +113,6 @@ class _LoginScreenState extends State<LoginScreen>
     }
 
     if (state is LoginSuccess) {
-      _performanceMonitor.endOperation(
-        'login_process',
-        metadata: {
-          'user_id': state.userEntity.id,
-          'role': state.userEntity.role,
-        },
-      );
-
       // Success haptic feedback
       HapticFeedback.lightImpact();
 

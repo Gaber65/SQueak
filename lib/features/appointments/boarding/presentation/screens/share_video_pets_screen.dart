@@ -905,9 +905,10 @@ void _toggleVideoPlayback() {
   /// Builds the main video carousel with navigation and controls
   Widget _buildEnhancedVideoCarousel(BoardingEntryEntity boarding) {
      final List<Map<String, dynamic>> videoList = boarding.boardingImages
-    .where((vid) => vid['VideoName'] != null && vid['VideoName'].toString().isNotEmpty)
+    .where((vid) => vid['videoName'] != null && vid['videoName'].toString().isNotEmpty)
     .cast<Map<String, dynamic>>()
     .toList();
+     print(videoList);
     return SizedBox(
       height: 350,
       child: Stack(
@@ -940,7 +941,7 @@ void _toggleVideoPlayback() {
                           VideoDetailSimple(
                             path:
                                 imageUrlWithVetICare +
-                                videoList[index]['VideoName'],
+                                videoList[index]['videoName'],
                             title:
                                 isArabic() ? 'تفاصيل الفيديو' : 'Video details',
                             description:

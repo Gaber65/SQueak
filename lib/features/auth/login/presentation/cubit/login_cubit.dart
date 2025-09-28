@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/features/auth/login/domin/entities/login_entity.dart';
 import 'package:squeak/features/auth/login/domin/usecses/login_use_case.dart';
-import 'package:squeak/core/monitoring/advanced_performance_monitor.dart';
+
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
@@ -13,7 +13,6 @@ part 'login_state.dart';
 class LoginCubit extends Cubit<LoginState> {
   static LoginCubit get(BuildContext context) => BlocProvider.of(context);
   final LoginUseCase loginUseCase;
-  final AdvancedPerformanceMonitor _performanceMonitor = AdvancedPerformanceMonitor();
 
   LoginCubit(this.loginUseCase) : super(LoginInitial());
 

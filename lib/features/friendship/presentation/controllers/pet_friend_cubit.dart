@@ -1,0 +1,171 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:squeak/features/friendship/domain/entities/friend_request_stats.dart';
+import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
+import 'package:squeak/features/friendship/domain/usecases/update_pet_request.dart';
+import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
+import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
+import '../../../../core/service/service_locator/locatore_export_path.dart';
+
+class PetFriendsCubit extends Cubit<PetFriendsState> {
+  PetFriendsCubit(
+    this.getMyFriendsUseCase,
+    this.getMyRequestsUseCase,
+    this.getSentRequestsUseCase,
+    this.searchFriendsUseCase,
+    this.sendPetRequestUseCase,
+    this.cancelFriendshipUseCase,
+    this.unblockFriendUseCase,
+    this.updatePetRequestUseCase,
+    this.getBlockedFriendsUseCase,
+  ) : super(FriendsInitial());
+
+  static PetFriendsCubit get(BuildContext context) =>
+      BlocProvider.of<PetFriendsCubit>(context);
+
+  final GetMyFriendsUseCase getMyFriendsUseCase;
+  final GetMyRequestsUseCase getMyRequestsUseCase;
+  final GetSentRequestsUseCase getSentRequestsUseCase;
+  final SearchFriendsUseCase searchFriendsUseCase;
+  final SendPetRequestUseCase sendPetRequestUseCase;
+  final CancelFriendshipUseCase cancelFriendshipUseCase;
+  final UnblockFriendUseCase unblockFriendUseCase;
+  final UpdatePetRequestUseCase updatePetRequestUseCase;
+  final GetBlockedFriendsUseCase getBlockedFriendsUseCase;
+
+  List<PetEntities> friends = [];
+  List<PetEntities> suggestedFriends = [];
+  List<PetFriendRequestEntity> pendingRequests = [];
+  List<PetEntities> sentRequests = [];
+
+  int selectedTab = 0;
+
+  void changeTab(int tabIndex) {
+    selectedTab = tabIndex;
+    emit(ChangeTab(tabIndex: tabIndex));
+  }
+
+  Future<void> getFriends({required String petId}) async {
+    emit(FriendsLoading());
+    final result = await getMyFriendsUseCase.call(petId);
+
+    result.fold(
+      (failure) => emit(
+        FriendsLoadFailed(message: "Failed to load friends"),
+      ), // فشل التحميل
+      (friends) {
+        emit(FriendsLoadSuccess(friends: friends)); // تم التحميل بنجاح
+
+        this.friends = friends;
+
+        emit(
+          FriendsLoaded(
+            friends: friends,
+            suggestedFriends: [],
+            pendingRequests: [],
+            sentRequests: [],
+          ),
+        );
+      },
+    );
+  }
+
+  /// Load suggested friends
+  Future<void> loadSuggestedFriends({
+    required String specieId,
+    String? name,
+  }) async {
+    emit(SuggestedFriendsLoading());
+    final result = await searchFriendsUseCase.call(
+      SearchFriendsParams(speciesId: specieId, name: name),
+    );
+
+    result.fold((_) => emit(SuggestedFriendsError()), (friends) {
+      suggestedFriends = friends;
+      emit(SuggestedFriendsLoaded(friends: friends));
+    });
+  }
+
+  /// Load received friends
+  Future<void> loadReceivedFriends({required String petId}) async {
+    emit(SuggestedFriendsLoading());
+    final result = await getMyRequestsUseCase.call(petId);
+
+    result.fold((_) => emit(SuggestedFriendsError()), (friends) {
+      pendingRequests = friends;
+      emit(ReceivedFriendsLoaded(friends: friends));
+    });
+  }
+
+  /// Load sent friends
+  Future<void> loadSentFriends({required String petId}) async {
+    emit(SuggestedFriendsLoading());
+    final result = await getSentRequestsUseCase.call(petId);
+
+    result.fold((_) => emit(SuggestedFriendsError()), (friends) {
+      sentRequests = friends;
+      emit(SuggestedFriendsLoaded(friends: friends));
+    });
+  }
+
+  /// Send friend request
+  Future<void> sendFriendRequest(PetEntities pet, String activeID) async {
+    emit(FriendRequestSending());
+    final result = await sendPetRequestUseCase.call(
+      SendPetRequestParams(petId: activeID, friendPetId: pet.petId!),
+    );
+
+    result.fold((_) => emit(FriendRequestFailed()), (_) {
+      sentRequests.add(pet);
+      emit(FriendRequestSent(pet: pet));
+    });
+  }
+
+  /// Cancel friend request
+  Future<void> cancelRequest(PetEntities pet, String activeID) async {
+    emit(FriendRequestCancelling());
+    final result = await cancelFriendshipUseCase.call(
+      CancelFriendshipParams(myPetId: pet.petId!, friendId: activeID),
+    );
+
+    result.fold((_) => emit(FriendRequestCancelFailed()), (_) {
+      sentRequests.remove(pet);
+
+      emit(FriendRequestCancelled(pet: pet));
+    });
+  }
+
+  /// Accept or decline friend request
+  Future<void> updateFriendRequest(
+    PetFriendRequestEntity pet,
+    FriendshipStatus action,
+  ) async {
+    emit(FriendRequestUpdating());
+    final result = await updatePetRequestUseCase.call(
+      UpdatePetRequestParams(requestId: pet.id, status: action.index),
+    );
+
+    result.fold((_) => emit(FriendRequestUpdateFailed()), (_) {
+      if (action == FriendshipStatus.accepted) {
+        getFriends(petId: pet.myPetId);
+        loadReceivedFriends(petId: pet.myPetId);
+      } else {
+        pendingRequests.remove(pet);
+      }
+
+      emit(FriendRequestUpdated(pet: pet, status: action));
+    });
+  }
+
+  /// Unblock friend
+  Future<void> unblockFriend(PetEntities pet, String activeID) async {
+    emit(FriendUnblocking());
+    final result = await unblockFriendUseCase.call(
+      UnblockFriendParams(friendId: pet.petId!, myPetId: activeID),
+    );
+
+    result.fold((_) => emit(FriendUnblockFailed()), (_) {
+      emit(FriendUnblocked(pet: pet));
+    });
+  }
+}

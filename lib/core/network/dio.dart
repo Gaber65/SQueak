@@ -34,7 +34,7 @@ class DioFinalHelper {
   static Future<Response> getData({
     required String method,
     String? token,
-    required bool language,
+    bool language = false,
   }) async {
     await _ensureValidToken();
     dio.options.headers = {

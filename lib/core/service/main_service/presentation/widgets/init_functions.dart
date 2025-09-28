@@ -24,21 +24,6 @@ class InitFunctions {
     await _initDio();
     await _configureChucker();
     await _setupMessaging();
-    await _initPerformanceMonitoring();
-  }
-
-  /// Initialize performance monitoring
-  static Future<void> _initPerformanceMonitoring() async {
-    try {
-      // Simple performance monitoring setup
-      if (kDebugMode) {
-        debugPrint('Performance monitoring initialized');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Performance monitoring initialization failed: $e');
-      }
-    }
   }
 
   static Future<void> _setupMessaging() async {
