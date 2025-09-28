@@ -201,7 +201,7 @@ class BoardingCard extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                Future.delayed(Duration.zero, () => _showImages(context));
+                Future.delayed(Duration.zero, () => _showImages(context,false));
               },
             ),
            
@@ -222,10 +222,7 @@ class BoardingCard extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                Future.delayed(
-                  Duration.zero,
-                  () => _showVideos(context),
-                ); // استدعاء دالة عرض الفيديوهات
+                Future.delayed(Duration.zero, () => _showImages(context,true));
               },
             ),
           ],
@@ -404,7 +401,7 @@ class BoardingCard extends StatelessWidget {
     );
   }
 
-  void _showImages(context) {
+  void _showImages(context ,isVideo) {
     showDialog(
       context: context,
       builder:
@@ -413,6 +410,7 @@ class BoardingCard extends StatelessWidget {
             isDarkMode: isDarkMode,
             onOpenChange: (open) => Navigator.pop(context),
             boarding: entry,
+            isVideo: isVideo,
             onShare: (imageUrl, platform) {
               cubit.shareImageEntries(
                 ShareImageBoardingEntriesParams(
@@ -426,26 +424,7 @@ class BoardingCard extends StatelessWidget {
   }
 
 
-  void _showVideos(context) {
-    showDialog(
-      context: context,
-      builder:
-          (_) => VideoCarouselWidget(
-            open: true,
-            isDarkMode: isDarkMode,
-            onOpenChange: (open) => Navigator.pop(context),
-            boarding: entry,
-            onShare: (videoUrl, platform) {
-              cubit.shareImageEntries(
-                ShareImageBoardingEntriesParams(
-                  imageUrl: videoUrl,
-                  platform: platform,
-                ),
-              );
-            },
-          ),
-    );
-  }
+
 }
 
 // Simple usage function

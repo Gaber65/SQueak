@@ -199,47 +199,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../widgets/update_dialog.dart';
 
-class LazyIndexedStack extends StatefulWidget {
-  final int index;
-  final List<Widget> children;
 
-  const LazyIndexedStack({
-    super.key,
-    required this.index,
-    required this.children,
-  });
-
-  @override
-  State<LazyIndexedStack> createState() => _LazyIndexedStackState();
-}
-
-class _LazyIndexedStackState extends State<LazyIndexedStack> {
-  late List<bool> _activated;
-
-  @override
-  void initState() {
-    super.initState();
-    _activated = List<bool>.filled(widget.children.length, false);
-    _activated[widget.index] = true;
-  }
-
-  @override
-  void didUpdateWidget(LazyIndexedStack oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _activated[widget.index] = true;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return IndexedStack(
-      index: widget.index,
-      children: [
-        for (int i = 0; i < widget.children.length; i++)
-          _activated[i] ? widget.children[i] : const SizedBox.shrink(),
-      ],
-    );
-  }
-}
 
 class LayoutScreen extends StatefulWidget {
   const LayoutScreen({super.key});
@@ -392,7 +352,6 @@ class _LayoutScreenState extends State<LayoutScreen>
         final icons = [
           IconlyLight.home,
           FontAwesomeIcons.bone,
-          IconlyLight.add_user,
           Icons.pets,
           IconlyLight.time_circle,
           IconlyLight.setting,
@@ -402,7 +361,7 @@ class _LayoutScreenState extends State<LayoutScreen>
           extendBody: false,
           resizeToAvoidBottomInset: false,
 
-          body: LazyIndexedStack(index: selectedIndex, children: cubit.screens),
+          body: cubit.screens[selectedIndex] ,
 
           bottomNavigationBar: BlocConsumer<MainCubit, MainState>(
             listener: (context, state) {},
@@ -425,7 +384,6 @@ class _LayoutScreenState extends State<LayoutScreen>
                   final labels = [
                     'Home',
                     'Friends',
-                    'Add User',
                     'Pets',
                     'History',
                     'Settings',

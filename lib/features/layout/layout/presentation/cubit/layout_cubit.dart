@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/base_usecase/base_usecase.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/all_apointment.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/supplier/get_supplier.dart';
+import 'package:squeak/features/friendship/presentation/pages/pet_friend_layout.dart';
 import 'package:squeak/features/layout/post/presentation/screens/home_screen.dart';
 import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
-import 'package:squeak/features/search/presentation/view/search_screen.dart';
 import 'package:squeak/features/settings/persentaion/view/setting_screen.dart';
 
 import '../../../../../core/network/dio.dart';
@@ -30,7 +30,6 @@ class LayoutCubit extends Cubit<LayoutState> {
   List<Widget> screens = [
     HomeScreen(),
     FriendsScreen(),
-    MySupplierScreen(petSelectFromIcon: null),
     PetScreen(),
     AllAppointment(),
     SettingScreen(),

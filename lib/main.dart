@@ -1,15 +1,11 @@
 import 'package:flutter/services.dart';
-import 'package:squeak/core/service/main_service/presentation/widgets/init_functions.dart';
-import 'package:squeak/core/monitoring/advanced_performance_monitor.dart';
 import 'package:flutter/material.dart';
-import 'core/service/main_service/presentation/screens/app_view.dart';
+import 'core/service/service_locator/locatore_export_path.dart';
 
 Future<void> main() async {
   await InitFunctions.initialize();
-  
-  // TEMPORARILY DISABLED - Performance monitoring causing potential crashes
-  // await AdvancedPerformanceMonitor().initialize();
-  
+
+print(CacheHelper.getData('token'));
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -17,4 +13,3 @@ Future<void> main() async {
     runApp(MyApp());
   });
 }
-

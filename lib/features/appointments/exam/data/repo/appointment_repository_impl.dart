@@ -6,7 +6,7 @@ import 'package:squeak/features/appointments/exam/domain/entities/appointment_en
 import 'package:squeak/features/appointments/exam/domain/entities/availability_entities.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/clinic_entity.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/doctor_entity.dart';
-import 'package:squeak/core/monitoring/advanced_performance_monitor.dart';
+
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../domain/entities/client_clinic.dart';
 import '../../domain/entities/invoice.dart';
@@ -15,7 +15,6 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
   final AppointmentRemoteDataSource remoteDataSource;
   final AppointmentLocalDataSource localDataSource;
   final NetworkInfo networkInfo;
-  final AdvancedPerformanceMonitor _performanceMonitor = AdvancedPerformanceMonitor();
 
   AppointmentRepositoryImpl({
     required this.remoteDataSource,
@@ -27,8 +26,7 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
   Future<Either<Failure, List<Availability>>> getAvailabilities(
     String clinicCode,
   ) async {
-    _performanceMonitor.startOperation('get_availabilities');
-    
+
     try {
       // Step 1: Get from local cache first
       final cachedAvailabilities = await localDataSource.getCachedAvailabilities(clinicCode);
@@ -39,21 +37,12 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
           final remoteAvailabilities = await remoteDataSource.getAvailabilities(clinicCode);
           await localDataSource.cacheAvailabilities(clinicCode, remoteAvailabilities);
           
-          // Return fresh data from remote
-          _performanceMonitor.endOperation('get_availabilities', metadata: {
-            'source': 'remote',
-            'clinic_code': clinicCode,
-            'count': remoteAvailabilities.length,
-          });
+
           return Right(remoteAvailabilities);
         } catch (_) {
           // If remote fails but we have cached data, return cached
           if (cachedAvailabilities != null) {
-            _performanceMonitor.endOperation('get_availabilities', metadata: {
-              'source': 'cached_fallback',
-              'clinic_code': clinicCode,
-              'count': cachedAvailabilities.length,
-            });
+
             return Right(cachedAvailabilities);
           }
           rethrow;
@@ -62,19 +51,11 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
 
       // Step 3: Return cached data if available (offline case)
       if (cachedAvailabilities != null) {
-        _performanceMonitor.endOperation('get_availabilities', metadata: {
-          'source': 'cached',
-          'clinic_code': clinicCode,
-          'count': cachedAvailabilities.length,
-        });
+
         return Right(cachedAvailabilities);
       }
 
-      // Step 4: No cache and no internet
-      _performanceMonitor.endOperation('get_availabilities', metadata: {
-        'source': 'failure_no_cache',
-        'clinic_code': clinicCode,
-      });
+
       return Left(
         ServerFailure(
           ErrorMessageModel(
@@ -86,12 +67,7 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
         ),
       );
     } on ServerException catch (failure) {
-      _performanceMonitor.recordException(failure, StackTrace.current);
-      _performanceMonitor.endOperation('get_availabilities', metadata: {
-        'source': 'server_exception',
-        'clinic_code': clinicCode,
-        'error': failure.errorMessageModel.message,
-      });
+
       
       // Try to return cached data if server fails
       try {
@@ -104,12 +80,7 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
       }
       return Left(ServerFailure(failure.errorMessageModel));
     } catch (e) {
-      _performanceMonitor.recordException(e, StackTrace.current);
-      _performanceMonitor.endOperation('get_availabilities', metadata: {
-        'source': 'general_exception',
-        'clinic_code': clinicCode,
-        'error': e.toString(),
-      });
+
       
       return Left(
         ServerFailure(
@@ -177,8 +148,7 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
 
   @override
   Future<Either<Failure, List<Doctor>>> getDoctors(String clinicCode) async {
-    _performanceMonitor.startOperation('get_doctors');
-    
+
     try {
       // Step 1: Get from local cache first
       final cachedDoctors = await localDataSource.getCachedDoctors(clinicCode);
@@ -189,21 +159,12 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
           final remoteDoctors = await remoteDataSource.getDoctors(clinicCode);
           await localDataSource.cacheDoctors(clinicCode, remoteDoctors);
           
-          // Return fresh data from remote
-          _performanceMonitor.endOperation('get_doctors', metadata: {
-            'source': 'remote',
-            'clinic_code': clinicCode,
-            'count': remoteDoctors.length,
-          });
+
           return Right(remoteDoctors);
         } catch (_) {
           // If remote fails but we have cached data, return cached
           if (cachedDoctors != null) {
-            _performanceMonitor.endOperation('get_doctors', metadata: {
-              'source': 'cached_fallback',
-              'clinic_code': clinicCode,
-              'count': cachedDoctors.length,
-            });
+
             return Right(cachedDoctors);
           }
           rethrow;
