@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 
-import '../../../widgets/find_friends/skip_dialog.dart';
+import '../find_friends/skip_dialog.dart';
 
 
 class BottomButtons extends StatelessWidget {

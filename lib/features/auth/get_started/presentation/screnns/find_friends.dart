@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+// import 'package:squeak/core/utils/theme/color_mangment/color_manager.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
 import '../widgets/send_pets_request/start_sugget_tab.dart';
 import '../widgets/find_friends/bottom_buttons.dart';
 import '../widgets/find_friends/search_bar_widget.dart';
 
-class SuggestionFriendsScreen extends StatelessWidget {
+class SuggestionFriendsScreen extends StatefulWidget {
   final String petId;
   final String specieId;
 
@@ -18,11 +20,30 @@ class SuggestionFriendsScreen extends StatelessWidget {
   });
 
   @override
+  State<SuggestionFriendsScreen> createState() => _SuggestionFriendsScreenState();
+}
+
+class _SuggestionFriendsScreenState extends State<SuggestionFriendsScreen> {
+  late TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create:
           (context) =>
-              sl<PetFriendsCubit>()..loadSuggestedFriends(specieId: specieId),
+              sl<PetFriendsCubit>()..loadSuggestedFriends(specieId: widget.specieId),
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -43,7 +64,21 @@ class SuggestionFriendsScreen extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: SearchBarWidget(specieId: specieId),
+                  child: SearchBarWidget(
+                    controller: _searchController,
+                    specieId: widget.specieId,
+                    onChanged: (value) {
+                      // Trigger search when text changes
+                      cubit.loadSuggestedFriends(
+                        specieId: widget.specieId,
+                        name: value.isEmpty ? null : value,
+                      );
+                    },
+                    onClear: () {
+                      // Reload all suggestions when search is cleared
+                      cubit.loadSuggestedFriends(specieId: widget.specieId);
+                    },
+                  ),
                 ),
                 const SizedBox(height: 25),
                 Container(
@@ -89,8 +124,8 @@ class SuggestionFriendsScreen extends StatelessWidget {
                 Expanded(
                   child: StartSuggetTab(
                     suggested: cubit.suggestedFriends,
-                    specieId: specieId,
-                    activePetId: petId,
+                    specieId: widget.specieId,
+                    activePetId: widget.petId,
                   ),
                 ),
               ],

@@ -65,7 +65,6 @@ class SearchBarWidget extends StatelessWidget {
                     onPressed: () {
                       controller?.clear();
                       if (onClear != null) onClear!();
-                      // Optionally trigger search with empty string on clear
                       if (onChanged != null) onChanged!('');
                     },
                   )

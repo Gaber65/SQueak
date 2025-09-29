@@ -9,8 +9,28 @@ import 'package:squeak/features/friendship/presentation/widgets/ProfileSwitchNot
 import 'package:squeak/features/friendship/presentation/widgets/tab_bar_widget.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
 
-class FriendsScreen extends StatelessWidget {
+import '../../../auth/get_started/presentation/widgets/find_friends/search_bar_widget.dart';
+
+class FriendsScreen extends StatefulWidget {
   const FriendsScreen({super.key});
+
+  @override
+  State<FriendsScreen> createState() => _FriendsScreenState();
+}
+
+class _FriendsScreenState extends State<FriendsScreen> {
+  late TextEditingController _searchController;
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,33 +50,32 @@ class FriendsScreen extends StatelessWidget {
             BlocListener<SwitchProfileCubit, SwitchProfileState>(
               listener: (context, state) {
                 if (state is ProfileLoaded) {
-                  if(state.profile.type == ProfileType.pet){
+                  if (state.profile.type == ProfileType.pet) {
                     PetFriendsCubit.get(context).getFriends(
                       petId:
-                      SwitchProfileCubit.get(
-                        context,
-                      ).activeProfile!.pet!.petId!,
+                          SwitchProfileCubit.get(
+                            context,
+                          ).activeProfile!.pet!.petId!,
                     );
                     PetFriendsCubit.get(context).loadSuggestedFriends(
                       specieId:
-                      SwitchProfileCubit.get(
-                        context,
-                      ).activeProfile!.pet!.specieId!,
+                          SwitchProfileCubit.get(
+                            context,
+                          ).activeProfile!.pet!.specieId!,
                     );
                     PetFriendsCubit.get(context).loadSentFriends(
                       petId:
-                      SwitchProfileCubit.get(
-                        context,
-                      ).activeProfile!.pet!.petId!,
+                          SwitchProfileCubit.get(
+                            context,
+                          ).activeProfile!.pet!.petId!,
                     );
                     PetFriendsCubit.get(context).loadReceivedFriends(
                       petId:
-                      SwitchProfileCubit.get(
-                        context,
-                      ).activeProfile!.pet!.petId!,
+                          SwitchProfileCubit.get(
+                            context,
+                          ).activeProfile!.pet!.petId!,
                     );
                   }
-
                 }
               },
             ),
@@ -74,10 +93,36 @@ class FriendsScreen extends StatelessWidget {
               } else if (activeProfile.type == ProfileType.pet) {
                 return Column(
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SearchBarWidget(
+                        controller: _searchController,
+                        specieId:
+                            context
+                                .read<SwitchProfileCubit>()
+                                .activeProfile!
+                                .pet!
+                                .specieId!,
+                        onChanged: (value) {
+                          cubit.loadSuggestedFriends(
+                            specieId: activeProfile.pet!.specieId!,
+                            name: value.isEmpty ? null : value,
+                          );
+                        },
+                        onClear: () {
+                          cubit.loadSuggestedFriends(
+                            specieId: activeProfile.pet!.specieId!,
+                          );
+                        },
+                      ),
+                    ),
                     const SizedBox(height: 25),
                     Text(
                       isArabic() ? 'الأصدقاء والطلبات' : 'Friends & Requests',
-                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     Text(
                       isArabic()
@@ -92,9 +137,10 @@ class FriendsScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? const Color(0xFF1E1E1E)
-                            : const Color(0xFFE8F2FF),
+                        color:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? const Color(0xFF1E1E1E)
+                                : const Color(0xFFE8F2FF),
                         border: const Border(
                           top: BorderSide(
                             color: ColorManager.primaryColor,
@@ -138,12 +184,9 @@ class FriendsScreen extends StatelessWidget {
                     Expanded(child: buildTabContent(context, cubit)),
                   ],
                 );
-
               } else {
                 return const ProfileSwitchNotificationScreen();
               }
-
-
             },
           ),
         ),
