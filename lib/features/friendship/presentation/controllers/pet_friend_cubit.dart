@@ -125,7 +125,7 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
   Future<void> cancelRequest(PetEntities pet, String activeID) async {
     emit(FriendRequestCancelling());
     final result = await cancelFriendshipUseCase.call(
-      CancelFriendshipParams(myPetId: pet.petId!, friendId: activeID),
+      CancelFriendshipParams(myPetId: activeID, friendId: pet.petId!),
     );
 
     result.fold((_) => emit(FriendRequestCancelFailed()), (_) {

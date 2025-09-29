@@ -26,10 +26,7 @@ class AvailabilityScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => sl<AppointmentCubit>()
-            ..fetchAvailabilities(clinicInfo.data.code)
-            ..fetchDoctors(clinicInfo.data.code),
-        ),
+          create: (context) => sl<AppointmentCubit>()),
         BlocProvider(
           create: (_) => sl<PetCubit>()..getOwnerPets(),
         ),
@@ -190,10 +187,6 @@ class AvailabilityScreen extends StatelessWidget {
                                         navigateToScreen(
                                           context,
                                           BookingScreen(
-                                            timeSlotData:
-                                            appointmentCubit.availabilities,
-                                            selectedDate: selectedDay,
-                                            doctors: appointmentCubit.doctors,
                                             clinicCode: clinicInfo.data.code,
                                             petSelectFromIcon: petSelectFromIcon,
                                             pets: pets,

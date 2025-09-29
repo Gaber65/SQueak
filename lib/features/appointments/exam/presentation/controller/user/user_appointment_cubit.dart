@@ -48,7 +48,11 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
   TextEditingController rateController = TextEditingController();
   bool isLoadingRate = false;
 
+
+  bool isLoadingAppointment = false;
   Future<void> getAppointment(bool applyFilter) async {
+
+    isLoadingAppointment = true;
     emit(GetAppointmentLoading());
     final result = await getUserAppointments(
       GetUserAppointmentsParams(
@@ -58,9 +62,11 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
     );
     result.fold(
       (failure) {
+        isLoadingAppointment = false;
         emit(GetAppointmentError());
       },
       (appointmentsList) {
+        isLoadingAppointment = false;
         appointments = appointmentsList;
 
         filteredList = List.from(appointments);

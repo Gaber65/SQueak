@@ -129,12 +129,16 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
     return _handleRequest(
       () => DioFinalHelper.postData(
         method: cancelFriendshipEndPoint,
-        data: {"myPetId": params.myPetId, "myFrienPetId": params.friendId},
+        data: {"myPetId": params.myPetId, "peFriendId": params.friendId},
       ),
       (json) => true,
     );
   }
 
+  // {
+  // "petId": "46de4602-54bb-4dd9-ab56-220ced66936f",
+  // "friendPetId": "c24afc76-fe8b-4d6a-9019-c3a83af95c8d"
+  // }
   @override
   Future<List<PetData>> searchFriends({
     required String speciesId,

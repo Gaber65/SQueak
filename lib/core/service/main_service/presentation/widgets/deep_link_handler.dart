@@ -20,10 +20,13 @@ enum ParamKey { qrClinicCode, clinicName, clinicLogo }
 
 Map<String, String?> extractQueryParams(String url) {
   // Handle both /QrRegister? and /vetRegister/qrClinicCode=... cases
-  final queryStart = url.contains('?') ? url.indexOf('?') : url.indexOf('/vetRegister/');
+  final queryStart =
+      url.contains('?') ? url.indexOf('?') : url.indexOf('/vetRegister/');
   if (queryStart == -1) return {};
 
-  final queryString = url.substring(queryStart + (url[queryStart] == '?' ? 1 : '/vetRegister/'.length));
+  final queryString = url.substring(
+    queryStart + (url[queryStart] == '?' ? 1 : '/vetRegister/'.length),
+  );
   final params = <String, String>{};
 
   for (final pair in queryString.split('&')) {
@@ -35,10 +38,7 @@ Map<String, String?> extractQueryParams(String url) {
     }
   }
 
-  return {
-    for (final key in ParamKey.values)
-      key.name: params[key.name],
-  };
+  return {for (final key in ParamKey.values) key.name: params[key.name]};
 }
 
 void initDeepLinkHandler(
@@ -61,7 +61,7 @@ void initDeepLinkHandler(
   });
 }
 
-void handleDeepLink(Uri uri, GlobalKey<NavigatorState> navigatorKey)async {
+void handleDeepLink(Uri uri, GlobalKey<NavigatorState> navigatorKey) async {
   final url = uri.toString();
   final params = extractQueryParams(url);
   print(params);
@@ -69,17 +69,16 @@ void handleDeepLink(Uri uri, GlobalKey<NavigatorState> navigatorKey)async {
   print("/******************************/");
   // Handle QR clinic registration
   if (params.values.every((v) => v != null && v.isNotEmpty)) {
-
     final route =
         CacheHelper.getData('token') == null
             ? RegisterQrScreen(
               clinicCode: params[ParamKey.qrClinicCode.name]!,
-              clinicName: params[ParamKey.clinicName.name]!,
+              clinicName: decodeClinicName(params[ParamKey.clinicName.name]!),
               clinicLogo: params[ParamKey.clinicLogo.name]!,
             )
             : ConfirmationScreen(
               clinicCode: params[ParamKey.qrClinicCode.name]!,
-              clinicName: params[ParamKey.clinicName.name]!,
+              clinicName: decodeClinicName(params[ParamKey.clinicName.name]!),
               clinicLogo: params[ParamKey.clinicLogo.name]!,
             );
 
@@ -99,4 +98,16 @@ void handleDeepLink(Uri uri, GlobalKey<NavigatorState> navigatorKey)async {
       (_) => false,
     );
   }
+}
+
+String decodeClinicName(String rawName) {
+  String decoded = rawName.replaceAll('+', ' ');
+
+  decoded = decoded.replaceAllMapped(RegExp(r'%([0-9A-Fa-f]{2})'), (match) {
+    final hex = match.group(1)!;
+    final charCode = int.parse(hex, radix: 16);
+    return String.fromCharCode(charCode);
+  });
+
+  return decoded;
 }

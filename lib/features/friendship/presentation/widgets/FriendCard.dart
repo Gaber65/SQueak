@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
+import 'package:squeak/core/service/global_widget/%20ComingSoonAlert.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 import '../../../../core/network/end-points.dart';
@@ -92,7 +93,9 @@ class FriendCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  AnimatedComingSoonAlert.show(context);
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,

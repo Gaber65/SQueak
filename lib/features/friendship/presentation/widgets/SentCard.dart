@@ -17,7 +17,7 @@ class SentCard extends StatelessWidget {
 
     final cardColor = isDark ? Color(0xFF1E1E1E) : Colors.white;
     final shadowColor =
-    isDark ? Colors.black26 : Colors.black.withOpacity(0.05);
+        isDark ? Colors.black26 : Colors.black.withOpacity(0.05);
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),
@@ -79,7 +79,7 @@ class SentCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          if (pet.isSpayed ?? false)
+          if (pet.isSpayed ?? false) ...[
             Container(
               margin: const EdgeInsets.only(top: 8),
               padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
@@ -88,7 +88,7 @@ class SentCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                'Healthy',
+                isArabic() ? 'معقم' : 'Spayed',
 
                 style: TextStyle(
                   fontSize: 12,
@@ -97,14 +97,38 @@ class SentCard extends StatelessWidget {
                 ),
               ),
             ),
+          ] else...[
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                isArabic() ? 'غير معقم' : 'Unspayed',
+
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.orange,
+                ),
+              ),
+            ),          ],
           if ((pet.mutualFriends ?? 0) > 0) ...[
             const SizedBox(height: 4),
             Row(
               children: [
-                Icon(Icons.people, size: 16, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                Icon(
+                  Icons.people,
+                  size: 16,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                ),
                 const SizedBox(width: 4),
                 Text(
-                isArabic()  ?  '${pet.mutualFriends} صديق${pet.mutualFriends! > 1 ? 's' : ''}'  :  '${pet.mutualFriends} mutual friend${pet.mutualFriends! > 1 ? 's' : ''}',
+                  isArabic()
+                      ? '${pet.mutualFriends} صديق${pet.mutualFriends! > 1 ? 's' : ''}'
+                      : '${pet.mutualFriends} mutual friend${pet.mutualFriends! > 1 ? 's' : ''}',
                   style: TextStyle(
                     fontSize: 12,
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -120,17 +144,25 @@ class SentCard extends StatelessWidget {
               onPressed: () {
                 context.read<PetFriendsCubit>().cancelRequest(
                   pet,
-                  SwitchProfileCubit.get(context).specieId,
+                  SwitchProfileCubit.get(context).activeProfile!.pet!.petId!,
                 );
               },
-              icon: Icon(Icons.close, size: 16, color: isDark ? Colors.grey[300] : Colors.grey[700]),
+              icon: Icon(
+                Icons.close,
+                size: 16,
+                color: isDark ? Colors.grey[300] : Colors.grey[700],
+              ),
               label: Text(
-               isArabic()  ?  'إلغاء طلب الصداقة'  :  'Cancel Friendship Request',
-                style: TextStyle(color: isDark ? Colors.grey[300] : Colors.grey[700]),
+                isArabic() ? 'إلغاء طلب الصداقة' : 'Cancel Friendship Request',
+                style: TextStyle(
+                  color: isDark ? Colors.grey[300] : Colors.grey[700],
+                ),
               ),
               style: OutlinedButton.styleFrom(
                 backgroundColor: isDark ? Colors.grey[900] : Colors.transparent,
-                side: BorderSide(color: isDark ? Colors.grey[700]! : Colors.grey[300]!),
+                side: BorderSide(
+                  color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),

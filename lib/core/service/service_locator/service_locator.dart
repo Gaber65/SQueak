@@ -240,7 +240,6 @@ class ServiceLocator {
     sl.registerLazySingleton<AppointmentRepository>(
       () => AppointmentRepositoryImpl(
         remoteDataSource: sl(),
-        localDataSource: sl(),
         networkInfo: sl(),
       ),
     );
@@ -315,7 +314,7 @@ class ServiceLocator {
     // Repository
     sl.registerLazySingleton<BoardingRepository>(
       () =>
-          BoardingRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()),
+          BoardingRepositoryImpl(remoteDataSource: sl(), ),
     );
 
     // Data sources
