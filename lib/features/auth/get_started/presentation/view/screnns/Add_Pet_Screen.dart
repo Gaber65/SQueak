@@ -220,8 +220,14 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                                       selectedBreedId = null;
                                       _breedController.clear();
                                     });
-                                    CacheHelper.saveData("pet_species", species.type);
-                                    _onSpeciesChanged(species.type, speciesId: species.id);
+                                    CacheHelper.saveData(
+                                      "pet_species",
+                                      species.type,
+                                    );
+                                    _onSpeciesChanged(
+                                      species.type,
+                                      speciesId: species.id,
+                                    );
                                   },
                                 );
                               } finally {
@@ -323,7 +329,16 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                       backgroundColor: Colors.green,
                     ),
                   );
-                  navigateToScreen(context, FindFriendsScreen());
+                  final petCubit = context.read<PetCubit>();
+                  final newPet = petCubit.pets.last; 
+                  navigateAndFinish(
+                    context,
+                    SuggestionFriendsScreen(
+                      petId: newPet.petId ?? '',
+                      specieId: newPet.specieId ?? '',
+                      
+                    ),
+                  );
                 } else if (state is PetCreateErrorState) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

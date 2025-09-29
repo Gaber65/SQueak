@@ -25,7 +25,8 @@ class WelcomeToSquek extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView( // prevents overflow on small devices
+          child: SingleChildScrollView(
+            // prevents overflow on small devices
             child: Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: width * 0.06, // 6% of screen width
@@ -43,8 +44,11 @@ class WelcomeToSquek extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: EdgeInsets.all(width * 0.02),
-                      child: Icon(Icons.pets,
-                          color: Colors.white, size: width * 0.12),
+                      child: Icon(
+                        Icons.pets,
+                        color: Colors.white,
+                        size: width * 0.12,
+                      ),
                     ),
                   ),
                   SizedBox(height: height * 0.03),
@@ -72,9 +76,7 @@ class WelcomeToSquek extends StatelessWidget {
 
                   // Features Box
                   Container(
-                    margin: EdgeInsets.symmetric(
-                      vertical: height * 0.03,
-                    ),
+                    margin: EdgeInsets.symmetric(vertical: height * 0.03),
                     padding: EdgeInsets.all(width * 0.07),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.1),
@@ -84,11 +86,23 @@ class WelcomeToSquek extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildFeatureItem(Icons.add, "Add your first pet", width),
+                        _buildFeatureItem(
+                          Icons.add,
+                          "Add your first pet",
+                          width,
+                        ),
                         SizedBox(height: height * 0.015),
-                        _buildFeatureItem(Icons.group, "Connect with pet friends", width),
+                        _buildFeatureItem(
+                          Icons.group,
+                          "Connect with pet friends",
+                          width,
+                        ),
                         SizedBox(height: height * 0.015),
-                        _buildFeatureItem(Icons.calendar_today, "Schedule appointments", width),
+                        _buildFeatureItem(
+                          Icons.calendar_today,
+                          "Schedule appointments",
+                          width,
+                        ),
                         SizedBox(height: height * 0.015),
                         _buildFeatureItem(Icons.chat, "Start chatting", width),
                       ],
@@ -104,12 +118,10 @@ class WelcomeToSquek extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        padding: EdgeInsets.symmetric(
-                          vertical: height * 0.018,
-                        ),
+                        padding: EdgeInsets.symmetric(vertical: height * 0.018),
                       ),
                       onPressed: () {
-                        navigateToScreen(context, QuickTourScreen());
+                        navigateAndFinish(context, QuickTourScreen());
                       },
                       child: Text(
                         "Let's Get Started!",
@@ -141,10 +153,10 @@ class WelcomeToSquek extends StatelessWidget {
                             width: isActive ? width * 0.025 : width * 0.02,
                             height: isActive ? width * 0.025 : width * 0.02,
                             decoration: BoxDecoration(
-                              color: isActive
-                                  ? Colors.white
-                                  // ignore: deprecated_member_use
-                                  : Colors.white.withOpacity(0.4),
+                              color:
+                                  isActive
+                                      ? Colors.white
+                                      : Colors.white.withOpacity(0.4),
                               shape: BoxShape.circle,
                             ),
                           );
@@ -173,10 +185,7 @@ class WelcomeToSquek extends StatelessWidget {
         SizedBox(width: width * 0.03),
         Text(
           text,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: width * 0.045,
-          ),
+          style: TextStyle(color: Colors.white, fontSize: width * 0.045),
         ),
       ],
     );

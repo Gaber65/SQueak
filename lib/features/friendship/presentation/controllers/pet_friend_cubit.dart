@@ -52,9 +52,9 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     result.fold(
       (failure) => emit(
         FriendsLoadFailed(message: "Failed to load friends"),
-      ), // فشل التحميل
+      ), 
       (friends) {
-        emit(FriendsLoadSuccess(friends: friends)); // تم التحميل بنجاح
+        emit(FriendsLoadSuccess(friends: friends)); 
 
         this.friends = friends;
 
@@ -70,7 +70,7 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     );
   }
 
-  /// Load suggested friends
+  
   Future<void> loadSuggestedFriends({
     required String specieId,
     String? name,

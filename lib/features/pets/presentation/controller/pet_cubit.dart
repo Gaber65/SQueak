@@ -241,6 +241,9 @@ class PetCubit extends Cubit<PetState> {
       },
       (createdPet) {
         pets.add(createdPet);
+        // Update the petId and specieId with the newly created pet's values
+        petId = createdPet.petId ?? '';
+        specieId = createdPet.specieId ?? '';
         emit(PetCreateSuccessState());
       },
     );

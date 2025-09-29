@@ -23,6 +23,7 @@ class TabBarPetFriend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      // ignore: deprecated_member_use
       color: Theme.of(context).brightness == Brightness.dark ? Colors.black.withOpacity(0.1) : Colors.white,
       padding: EdgeInsets.all(16),
       child: Row(

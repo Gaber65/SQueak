@@ -8,7 +8,6 @@ import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 
 import '../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
-import '../../../../core/utils/theme/decorations/decorations.dart';
 import '../controllers/pet_friend_cubit.dart';
 
 class SuggestedCard extends StatelessWidget {
@@ -22,6 +21,7 @@ class SuggestedCard extends StatelessWidget {
 
     final cardColor = isDark ? Color(0xFF1E1E1E) : Colors.white;
     final shadowColor =
+        // ignore: deprecated_member_use
         isDark ? Colors.black26 : Colors.black.withOpacity(0.05);
     final nameColor = isDark ? Colors.white : Colors.black87;
     final subTextColor = isDark ? Colors.grey[400]! : Colors.grey[600]!;
@@ -105,6 +105,7 @@ class SuggestedCard extends StatelessWidget {
             pet: pet,
             onDismiss: () {
               context.read<PetFriendsCubit>().suggestedFriends.remove(pet);
+              // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
               PetFriendsCubit.get(context).emit((SuggestedFriendsLoading()));
             },
             onSent: () {
@@ -192,7 +193,9 @@ class _FriendActionButtonState extends State<FriendActionButton> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(16),
                 onTap:
-                    PetFriendsCubit.get(context).sentRequests.contains(widget.pet)
+                    PetFriendsCubit.get(
+                          context,
+                        ).sentRequests.contains(widget.pet)
                         ? widget.onCancel
                         : widget.onSent,
                 onHighlightChanged: (pressed) {

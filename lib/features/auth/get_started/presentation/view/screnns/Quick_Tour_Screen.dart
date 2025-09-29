@@ -15,14 +15,15 @@ class QuickTourScreen extends StatelessWidget {
     final height = size.height;
 
     return Scaffold(
-      backgroundColor: ColorManager.editScreenTextFieldBaseColor.withValues(alpha: .5),
+      backgroundColor: ColorManager.editScreenTextFieldBaseColor.withValues(
+        alpha: .5,
+      ),
       appBar: AppBar(
-        backgroundColor: ColorManager.editScreenTextFieldBaseColor.withOpacity(.5),
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white, size: width * 0.06),
-          onPressed: () => Navigator.pop(context),
+        backgroundColor: ColorManager.editScreenTextFieldBaseColor.withOpacity(
+          .5,
         ),
+        elevation: 0,
+
         title: Text(
           "Quick Tour",
           style: TextStyle(
@@ -100,7 +101,8 @@ class QuickTourScreen extends StatelessWidget {
                           "title": "My Pets",
                           "description":
                               "Manage multiple pets, track their health records, and share their adorable moments.",
-                          "tryIt": "Add photos, set reminders, track weight & mood",
+                          "tryIt":
+                              "Add photos, set reminders, track weight & mood",
                         },
                         {
                           "icon": Icons.chat,
@@ -108,7 +110,8 @@ class QuickTourScreen extends StatelessWidget {
                           "title": "Pet Chat",
                           "description":
                               "Connect with other pet parents, share experiences, and get advice from the community.",
-                          "tryIt": "Join breed groups, ask questions, share tips",
+                          "tryIt":
+                              "Join breed groups, ask questions, share tips",
                         },
                         {
                           "icon": Icons.calendar_today,
@@ -116,7 +119,8 @@ class QuickTourScreen extends StatelessWidget {
                           "title": "Appointments",
                           "description":
                               "Schedule vet visits, grooming, and training sessions. Never miss important dates!",
-                          "tryIt": "Book nearby vets, set reminders, track history",
+                          "tryIt":
+                              "Book nearby vets, set reminders, track history",
                         },
                         {
                           "icon": Icons.favorite,
@@ -124,7 +128,8 @@ class QuickTourScreen extends StatelessWidget {
                           "title": "Health Tracking",
                           "description":
                               "Monitor vaccinations, medications, and overall wellness with easy tracking tools.",
-                          "tryIt": "Log symptoms, track medications, vaccination alerts",
+                          "tryIt":
+                              "Log symptoms, track medications, vaccination alerts",
                         },
                       ];
 
@@ -150,11 +155,17 @@ class QuickTourScreen extends StatelessWidget {
             children: List.generate(4, (index) {
               bool isActive = index == 1;
               return Container(
-                margin: EdgeInsets.symmetric(horizontal: width * 0.01, vertical: height * 0.015),
+                margin: EdgeInsets.symmetric(
+                  horizontal: width * 0.01,
+                  vertical: height * 0.015,
+                ),
                 width: isActive ? width * 0.025 : width * 0.02,
                 height: isActive ? width * 0.025 : width * 0.02,
                 decoration: BoxDecoration(
-                  color: isActive ? ColorManager.primaryColor : Colors.white.withOpacity(0.4),
+                  color:
+                      isActive
+                          ? ColorManager.primaryColor
+                          : Colors.white.withOpacity(0.4),
                   shape: BoxShape.circle,
                 ),
               );
@@ -176,21 +187,29 @@ class QuickTourScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => BlocProvider(
-                        create: (_) => sl<PetCubit>()
-                          ..getAllSpecies()
-                          ..getBreedsBySpecies("bca48207-f05d-4e9f-a631-06f34eb5af39"),
-                        child: const GetStartedAddPetScreen(),
-                      ),
+                      builder:
+                          (_) => BlocProvider(
+                            create:
+                                (_) =>
+                                    sl<PetCubit>()
+                                      ..getAllSpecies()
+                                      ..getBreedsBySpecies(
+                                        "bca48207-f05d-4e9f-a631-06f34eb5af39",
+                                      ),
+                            child: const GetStartedAddPetScreen(),
+                          ),
                     ),
                   );
                 },
                 child: Text(
                   "Continue to Add Pet",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: width * 0.045),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: width * 0.045,
+                  ),
                 ),
               ),
             ),
