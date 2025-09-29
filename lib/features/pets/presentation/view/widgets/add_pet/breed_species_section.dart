@@ -86,7 +86,7 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
           ),
         ),
         const SizedBox(height: 8),
-        _isLoadingBreeds 
+        _isLoadingBreeds
             ? _buildBreedLoadingField(context)
             : _buildDropDownBreed(widget.cubit.breedData, context),
       ],
@@ -176,7 +176,7 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
 
   Widget _buildSpeciesCard(BuildContext context, String name, IconData icon, String speciesType) {
     final isSelected = widget.cubit.dropdownValueSpecies.toLowerCase() == name.toLowerCase();
-    
+
     return GestureDetector(
       onTap: () async {
         final speciesId = _getSpeciesIdForType(speciesType);
@@ -195,11 +195,11 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
       child: Container(
         height: 80,
         decoration: BoxDecoration(
-          color: isSelected 
+          color: isSelected
               ? (widget.isDark ? ColorManager.primaryColor.withValues(alpha: 0.3) : ColorManager.primaryLight)
               : (widget.isDark ? Colors.black26 : Colors.grey.shade200),
           borderRadius: BorderRadius.circular(12),
-          border: isSelected 
+          border: isSelected
               ? Border.all(color: ColorManager.primaryColor, width: 2)
               : null,
         ),
@@ -209,8 +209,8 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
             Icon(
               icon,
               size: 28,
-              color: isSelected 
-                  ? ColorManager.primaryColor 
+              color: isSelected
+                  ? ColorManager.primaryColor
                   : (widget.isDark ? Colors.white70 : Colors.black54),
             ),
             const SizedBox(height: 4),
@@ -220,8 +220,8 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
                 context: context,
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                fontColor: isSelected 
-                    ? ColorManager.primaryColor 
+                fontColor: isSelected
+                    ? ColorManager.primaryColor
                     : (widget.isDark ? Colors.white70 : Colors.black87),
               ),
             ),
@@ -232,26 +232,29 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
   }
 
   Widget _buildOtherSpeciesCard(BuildContext context) {
-    final hasOtherSpecies = widget.cubit.dropdownValueSpecies.isNotEmpty && 
-        !['dog', 'cat'].contains(widget.cubit.dropdownValueSpecies.toLowerCase());
-    
+    final isCowwSelected = widget.cubit.dropdownValueSpecies.toLowerCase() == 'coww';
+    final hasOtherSpecies = widget.cubit.dropdownValueSpecies.isNotEmpty &&
+        !['dog', 'cat', 'coww'].contains(widget.cubit.dropdownValueSpecies.toLowerCase());
+
     return GestureDetector(
-      onTap: _showingOtherSpeciesLoader ? null : () async {
-        await _handleOtherSpeciesSelection(context);
-      },
+      onTap: _showingOtherSpeciesLoader
+          ? null
+          : () async {
+              await _handleOtherSpeciesSelection(context);
+            },
       child: Container(
         height: 80,
         width: 200,
         decoration: BoxDecoration(
-          color: hasOtherSpecies 
+          color: (hasOtherSpecies || isCowwSelected)
               ? (widget.isDark ? ColorManager.primaryColor.withValues(alpha: 0.3) : ColorManager.primaryLight)
               : (widget.isDark ? Colors.black26 : Colors.grey.shade200),
           borderRadius: BorderRadius.circular(12),
-          border: hasOtherSpecies 
+          border: (hasOtherSpecies || isCowwSelected)
               ? Border.all(color: ColorManager.primaryColor, width: 2)
               : null,
         ),
-        child: _showingOtherSpeciesLoader 
+        child: _showingOtherSpeciesLoader
             ? const Center(
                 child: SizedBox(
                   width: 20,
@@ -268,21 +271,19 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
                   Icon(
                     hasOtherSpecies ? Icons.check_circle : Icons.pets,
                     size: 32,
-                    color: hasOtherSpecies 
-                        ? ColorManager.primaryColor 
+                    color: (hasOtherSpecies || isCowwSelected)
+                        ? ColorManager.primaryColor
                         : (widget.isDark ? Colors.white70 : Colors.black54),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    hasOtherSpecies 
-                        ? widget.cubit.dropdownValueSpecies
-                        : 'Other',
+                    isCowwSelected ? 'Cat' : (hasOtherSpecies ? widget.cubit.dropdownValueSpecies : 'Other'),
                     style: FontStyleThame.textStyle(
                       context: context,
                       fontSize: 12,
-                      fontWeight: hasOtherSpecies ? FontWeight.w600 : FontWeight.w500,
-                      fontColor: hasOtherSpecies 
-                          ? ColorManager.primaryColor 
+                      fontWeight: (hasOtherSpecies || isCowwSelected) ? FontWeight.w600 : FontWeight.w500,
+                      fontColor: (hasOtherSpecies || isCowwSelected)
+                          ? ColorManager.primaryColor
                           : (widget.isDark ? Colors.white70 : Colors.black87),
                     ),
                     textAlign: TextAlign.center,
@@ -301,7 +302,7 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
     widget.cubit.breedData.clear();
     widget.cubit.breedIdController.clear();
     widget.cubit.searchController.clear();
-    
+
     widget.cubit.getBreedsBySpecies(speciesId);
   }
 
@@ -310,10 +311,11 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
       _showingOtherSpeciesLoader = true;
     });
     await Future.delayed(const Duration(milliseconds: 300));
-    
+
     try {
       // Use the improved species selector with search
       await showSpeciesSelector(
+        // ignore: use_build_context_synchronously
         context,
         widget.cubit,
         onSelected: (SpeciesEntity s) {
@@ -338,9 +340,9 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
     }
     switch (speciesType.toLowerCase()) {
       case 'dog':
-        return 'bca48207-f05d-4e9f-a631-06f34eb5af39'; 
+        return 'bca48207-f05d-4e9f-a631-06f34eb5af39';
       case 'cat':
-        return 'f1131363-3b9f-40ee-9a89-0573ee274a10'; 
+        return 'f1131363-3b9f-40ee-9a89-0573ee274a10';
       default:
         return '';
     }
