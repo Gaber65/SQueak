@@ -86,7 +86,6 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     });
   }
 
-  /// Load received friends
   Future<void> loadReceivedFriends({required String petId}) async {
     emit(SuggestedFriendsLoading());
     final result = await getMyRequestsUseCase.call(petId);

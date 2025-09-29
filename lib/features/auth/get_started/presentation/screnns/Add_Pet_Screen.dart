@@ -11,19 +11,18 @@ import 'package:squeak/core/utils/enums/upload_place.dart';
 import 'package:squeak/core/utils/theme/color_mangment/color_manager.dart';
 import 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
 import 'package:squeak/features/auth/get_started/presentation/screnns/find_friends.dart';
-import 'package:squeak/features/auth/get_started/presentation/widgets/add_pets_widgets/add_pet_additional_details.dart';
-import 'package:squeak/features/auth/get_started/presentation/widgets/add_pets_widgets/add_pet_breed_dropdown_modal.dart';
-import 'package:squeak/features/auth/get_started/presentation/widgets/add_pets_widgets/add_pet_choice.dart';
-import 'package:squeak/features/auth/get_started/presentation/widgets/add_pets_widgets/add_pet_section.dart' show AddPetSection;
-import 'package:squeak/features/auth/get_started/presentation/widgets/add_pets_widgets/add_pet_text_field.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/pets/presentation/controller/pet_cubit.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/add_pet/birthdate_picker.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/common/species_selector_sheet.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import '../../widgets/add_pets_widgets/add_pet_app_bar.dart';
-import '../../widgets/add_pets_widgets/add_pet_image_picker.dart';
+import '../widgets/add_pets_widgets/add_pet_additional_details.dart';
+import '../widgets/add_pets_widgets/add_pet_app_bar.dart';
+import '../widgets/add_pets_widgets/add_pet_breed_dropdown_modal.dart';
+import '../widgets/add_pets_widgets/add_pet_choice.dart';
+import '../widgets/add_pets_widgets/add_pet_image_picker.dart';
+import '../widgets/add_pets_widgets/add_pet_section.dart';
+import '../widgets/add_pets_widgets/add_pet_text_field.dart';
 
 class GetStartedAddPetScreen extends StatefulWidget {
   const GetStartedAddPetScreen({super.key});

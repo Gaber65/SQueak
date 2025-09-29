@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../../../../../core/utils/export_path/export_files.dart';
-import '../../../../../../friendship/presentation/controllers/pet_friend_cubit.dart';
-import '../../../../../../friendship/presentation/controllers/pet_friend_state.dart';
+import '../../../../../friendship/presentation/controllers/pet_friend_cubit.dart';
+import '../../../../../friendship/presentation/controllers/pet_friend_state.dart';
 
 class PetsSuggetionRequestCard extends StatelessWidget {
   final PetEntities pet;
@@ -125,13 +125,10 @@ class PetsSuggetionRequestCard extends StatelessWidget {
               ],
             ),
             SizedBox(width: size.width * 0.04),
-
-            // Info + Buttons
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Pet name
                   Row(
                     children: [
                       Expanded(
@@ -151,8 +148,6 @@ class PetsSuggetionRequestCard extends StatelessWidget {
                   ),
 
                   SizedBox(height: size.height * 0.006),
-
-                  // Age & breed
                   Row(
                     children: [
                       Icon(
@@ -266,13 +261,11 @@ class PetsSuggetionRequestCard extends StatelessWidget {
                             ),
                             onPressed: () {
                               if (isSentRequest) {
-                                // إلغاء الطلب
                                 context.read<PetFriendsCubit>().cancelRequest(
                                       pet,
                                       activePetId,
                                     );
                               } else {
-                                // إرسال طلب صداقة
                                 context
                                     .read<PetFriendsCubit>()
                                     .sendFriendRequest(

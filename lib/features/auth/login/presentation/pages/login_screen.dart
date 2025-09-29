@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/features/auth/get_started/presentation/view/screnns/welcome_to_squek.dart';
+import 'package:squeak/features/auth/get_started/presentation/screnns/welcome_to_squek.dart';
 import 'package:squeak/features/auth/login/data/datasources/login_remote_data_source.dart';
 import 'package:squeak/features/auth/login/data/repositories/login_repository.dart';
 import 'package:squeak/features/auth/login/domin/usecses/login_use_case.dart';

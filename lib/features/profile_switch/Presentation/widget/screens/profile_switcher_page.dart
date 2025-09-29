@@ -44,23 +44,27 @@ class _ProfileSwitcherButtonState extends State<ProfileSwitcherButton>
 
     return CompositedTransformTarget(
       link: _controller.layerLink,
-      child: GestureDetector(
-        onTap: _controller.toggleDropdown,
-        child: Container(
-          width: 40,
-          height: 40,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.blue,
-          ),
-          child: Center(
-            child: CircleAvatar(
-              backgroundColor: Colors.blue,
-              backgroundImage: NetworkImage(widget.image == imageUrl ? "" : widget.image,
-              ),
-              child: Text(
-                widget.name,
-                style: const TextStyle(color: Colors.white),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: GestureDetector(
+          onTap: _controller.toggleDropdown,
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.blue,
+            ),
+            child: Center(
+              child: CircleAvatar(
+                backgroundColor: Colors.blue,
+                backgroundImage: NetworkImage(
+                  widget.image == imageUrl ? "" : widget.image,
+                ),
+                child: Text(
+                  widget.name,
+                  style: const TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ),

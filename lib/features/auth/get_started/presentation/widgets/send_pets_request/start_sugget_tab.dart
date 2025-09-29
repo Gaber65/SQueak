@@ -4,8 +4,8 @@ import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
-import '../../../../../../friendship/presentation/widgets/FriendsTab.dart';
-import '../../../../../../friendship/presentation/widgets/SectionHeaderWidget.dart';
+import '../../../../../friendship/presentation/widgets/FriendsTab.dart';
+import '../../../../../friendship/presentation/widgets/SectionHeaderWidget.dart';
 import 'pets_suggetion_card.dart';
 
 class StartSuggetTab extends StatelessWidget {

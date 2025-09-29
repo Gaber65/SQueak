@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
-import 'package:squeak/features/auth/get_started/presentation/view/screnns/Quick_Tour_Screen.dart';
+import 'package:squeak/features/auth/get_started/presentation/screnns/Quick_Tour_Screen.dart';
 
 class WelcomeToSquek extends StatelessWidget {
   const WelcomeToSquek({super.key});

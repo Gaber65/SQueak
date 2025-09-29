@@ -173,11 +173,10 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
           bool isLoadingOther = cubit.isLoading = false;
 
           return Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Drag handle
                 Container(
                   width: 60,
                   height: 4,

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
-import '../widgets/add_pets_request/start_sugget_tab.dart';
+import '../widgets/send_pets_request/start_sugget_tab.dart';
 import '../widgets/find_friends/bottom_buttons.dart';
 import '../widgets/find_friends/search_bar_widget.dart';
 
@@ -43,7 +43,7 @@ class SuggestionFriendsScreen extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: SearchBarWidget(),
+                  child: SearchBarWidget(specieId: specieId),
                 ),
                 const SizedBox(height: 25),
                 Container(
@@ -90,7 +90,7 @@ class SuggestionFriendsScreen extends StatelessWidget {
                   child: StartSuggetTab(
                     suggested: cubit.suggestedFriends,
                     specieId: specieId,
-                    activePetId: petId, 
+                    activePetId: petId,
                   ),
                 ),
               ],
@@ -98,7 +98,6 @@ class SuggestionFriendsScreen extends StatelessWidget {
           },
         ),
         bottomNavigationBar: const BottomButtons(),
-        
       ),
     );
   }

@@ -2,9 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-
-import '../../../widgets/find_friends/skip_dialog.dart';
-
+import 'skip_dialog.dart';
 
 class BottomButtons extends StatelessWidget {
   const BottomButtons({super.key});
@@ -70,7 +68,7 @@ class BottomButtons extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 onPressed: () {
-                  
+                  navigateAndFinish(context, LayoutScreen());
                 },
                 child: const Text(
                   "Complete Setup",

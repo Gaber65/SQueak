@@ -7,7 +7,6 @@ import 'package:squeak/core/base_usecase/base_usecase.dart';
 import 'package:squeak/core/network/dio.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
-import 'package:squeak/features/auth/get_started/domain/entites/request_pet_inteties.dart';
 import '../../../../features/pets/domain/entities/pet_entity.dart';
 import '../../../../features/pets/domain/use_case/get_owner_pets_usecase.dart';
 import '../../../../features/pets/domain/use_case/get_all_breeds_usecase.dart';
@@ -230,13 +229,13 @@ class PetCubit extends Cubit<PetState> {
     isLoading = true;
     emit(PetCreateLoadingState());
 
-    print(pet.toJson());
+    // print(pet.toJson());
     final result = await createPetUseCase(PetParams(pet: pet));
 
     isLoading = false;
     result.fold(
       (error) {
-        print(error.error.toJson());
+        // print(error.error.toJson());
         emit(PetCreateErrorState(extractFirstError(error)));
       },
       (createdPet) {

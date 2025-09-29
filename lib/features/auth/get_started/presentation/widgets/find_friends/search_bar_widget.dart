@@ -1,16 +1,19 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
-import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 
 class SearchBarWidget extends StatelessWidget {
   final TextEditingController? controller;
-  // final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onChanged; 
   final VoidCallback? onClear;
+  final String specieId; 
 
   const SearchBarWidget({
     super.key,
     this.controller,
-    // this.onChanged,
+    this.onChanged,
     this.onClear,
+    required this.specieId, 
   });
 
   @override
@@ -23,7 +26,6 @@ class SearchBarWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.08),
             blurRadius: 6,
             offset: const Offset(0, 3),
@@ -32,7 +34,11 @@ class SearchBarWidget extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
-        // onChanged: onChanged,
+        onChanged: (value) {
+          if (onChanged != null) {
+            onChanged!(value);
+          }
+        },
         style: TextStyle(
           color: isDark ? Colors.white : Colors.black87,
           fontSize: 14,
@@ -59,6 +65,8 @@ class SearchBarWidget extends StatelessWidget {
                     onPressed: () {
                       controller?.clear();
                       if (onClear != null) onClear!();
+                      // Optionally trigger search with empty string on clear
+                      if (onChanged != null) onChanged!('');
                     },
                   )
                   : null,

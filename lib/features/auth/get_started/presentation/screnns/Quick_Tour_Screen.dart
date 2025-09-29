@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import 'package:squeak/features/auth/get_started/presentation/view/screnns/Add_Pet_Screen.dart';
+import 'package:squeak/features/auth/get_started/presentation/screnns/Add_Pet_Screen.dart';
 
 class QuickTourScreen extends StatelessWidget {
   const QuickTourScreen({super.key});
