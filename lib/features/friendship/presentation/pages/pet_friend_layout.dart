@@ -41,7 +41,17 @@ class _FriendsScreenState extends State<FriendsScreen> {
         BlocProvider(create: (_) => sl<SwitchProfileCubit>()..loadProfile()),
       ],
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            isArabic() ? 'أصدقاء الحيوانات الأليفة' : 'Pet Friends',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: ColorManager.black87,
+            ),
+          ),
+        ),
         body: MultiBlocListener(
           listeners: [
             BlocListener<PetFriendsCubit, PetFriendsState>(
