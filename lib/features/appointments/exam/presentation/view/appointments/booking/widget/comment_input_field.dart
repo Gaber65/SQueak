@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
+
+import '../../../../../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
 
 class CommentInputField extends StatelessWidget {
-  final TextEditingController controller;
-  final bool isLoading;
-  final VoidCallback onSubmit;
-
   const CommentInputField({
     super.key,
     required this.controller,
@@ -14,65 +11,61 @@ class CommentInputField extends StatelessWidget {
     required this.onSubmit,
   });
 
+  final TextEditingController controller;
+  final bool isLoading;
+  final VoidCallback onSubmit;
+
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      style: FontStyleThame.textStyle(
-        context: context,
-        fontSize: 15,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: MainCubit.get(context).isDark ? Colors.black : Colors.white,
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      maxLines: 1,
-      decoration: InputDecoration(
-        hintText: S.of(context).addComment,
-        contentPadding: EdgeInsetsDirectional.only(start: 10),
-        counterStyle: FontStyleThame.textStyle(
-          context: context,
-          fontSize: 13,
-        ),
-        hintStyle: FontStyleThame.textStyle(
-          context: context,
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          fontColor: MainCubit.get(context).isDark
-              ? Colors.white54
-              : Colors.black54,
-        ),
-        suffixIcon: IconButton(
-          onPressed: isLoading ? null : onSubmit,
-          icon: isLoading
-              ? const CircularProgressIndicator()
-              : const Icon(IconlyLight.send),
-        ),
-        filled: true,
-        fillColor: MainCubit.get(context).isDark
-            ? ColorManager.myPetsBaseBlackColor
-            : Colors.grey.shade200,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide.none,
-        ),
-        focusColor: Colors.grey.shade200,
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide.none,
-        ),
-        disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide.none,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide.none,
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide.none,
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide.none,
-        ),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller,
+              enabled: !isLoading,
+              decoration: InputDecoration(
+                hintText: 'Add a comment...',
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                fillColor: Colors.transparent,
+                contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                suffixIcon: isLoading
+                    ? const Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                )
+                    : null,
+              ),
+              onSubmitted: (_) => onSubmit(),
+            ),
+          ),
+          if (!isLoading)
+            IconButton(
+              icon:  Icon(IconlyLight.send, color: Colors.blue),
+              onPressed: onSubmit,
+            ),
+        ],
       ),
     );
   }

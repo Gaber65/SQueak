@@ -22,7 +22,10 @@ class SuppliersFilteredScreen extends AppointmentState {}
 
 // Unfollow Clinic States
 class UnFollowLoading extends AppointmentState {}
-class UnFollowSuccess extends AppointmentState {}
+class UnFollowSuccess extends AppointmentState {
+  final ClinicInfo clinic;
+  const UnFollowSuccess(this.clinic);
+}
 class UnFollowError extends AppointmentState {}
 
 // Doctor States

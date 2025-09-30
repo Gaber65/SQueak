@@ -1,11 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/exam/data/models/client_clinic_model.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
-
-import '../../../../../../../pets/data/models/pet_model.dart';
 
 // Extension to add isSelected property to PetClinicModel
 extension PetClinicModelExtension on PetClinicModel {
@@ -24,7 +21,7 @@ final Set<String> _selectedPetIds = {};
 
 class PetCarousel extends StatelessWidget {
   final List<PetEntities> pets;
-  final Function(dynamic) onPetSelected;
+  final Function(PetEntities) onPetSelected;
   final bool initializeFirstPet;
 
   const PetCarousel({
@@ -55,9 +52,7 @@ class PetCarousel extends StatelessWidget {
     if (initializeFirstPet && pets.isNotEmpty) {
       Future.microtask(() {
         final firstPet = pets[0];
-        onPetSelected(
-          firstPet, // Default isSpayed to false since API doesn't provide it
-        );
+        onPetSelected(firstPet);
 
         // Mark first pet as selected
         for (var element in pets) {
@@ -70,15 +65,25 @@ class PetCarousel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          isArabic() ? 'اختر حيوانك الأليف' : 'Select Your Pet',
-          style: FontStyleThame.textStyle(
-            context: context,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          children: [
+            Icon(
+              Icons.pets,
+              color: ColorManager.primaryColor,
+              size: 20,
+            ),
+            SizedBox(width: 8),
+            Text(
+              isArabic() ? 'اختر الأليف' : 'Select Your Pet',
+              style: FontStyleThame.textStyle(
+                context: context,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 20),
         CarouselSlider.builder(
           itemCount: pets.length,
           itemBuilder: (context, index, realIndex) {
@@ -88,44 +93,115 @@ class PetCarousel extends StatelessWidget {
                   element.isSelected = false;
                 }
                 pets[index].isSelected = true;
-
                 onPetSelected(pets[index]);
               },
-              child: Container(
-                width: double.infinity,
-                margin: EdgeInsets.symmetric(horizontal: 5),
-                decoration: Decorations.kDecorationBoxShadow(
-                  context: context,
-                  color:
-                      pets[index].isSelected
-                          ? MainCubit.get(context).isDark
-                              ? Colors.grey[800]!
-                              : Colors.grey[300]!
-                          : MainCubit.get(context).isDark
-                          ? Colors.black38
-                          : Colors.white,
+              child:Container(
+                padding: const EdgeInsets.all(12), // padding: var(--spacing-20)
+                decoration: BoxDecoration(
+                  color: pets[index].isSelected ? ColorManager.primaryColor.withOpacity(0.1) : Theme.of(context).colorScheme.surface, // background: var(--surface-color)
+                  borderRadius: BorderRadius.circular(12), // border-radius: var(--radius-12)
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05), // rgba(0, 0, 0, 0.05)
+                      blurRadius: 8, // 0 2px 8px
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Row(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CircleAvatar(
-                        radius: 30,
-                        backgroundImage: NetworkImage(
-                          AssetImageModel
-                              .defaultPetImage, // Always use default image since API doesn't provide it
+                    // Pet Image Circle
+
+
+                    CircleAvatar(
+                      radius: 33,
+                      backgroundImage: NetworkImage(
+                        imageUrl +
+                            (pets[index].imageName?.isNotEmpty == true ? pets[index].imageName! : ""),
+                      ),
+                      child: Text(
+                        pets[index].imageName?.isNotEmpty == true
+                            ? ""
+                            : pets[index].petName!.substring(0, 1),
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: Text(
-                        pets[index].petName ?? '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                    SizedBox(width: 20),
+                    // Pet Details
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            pets[index].petName ?? 'Unknown Pet',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            pets[index].breed?.enBreed ?? 'Unknown Breed',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: ColorManager.primaryColor
+                                      .withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  pets[index].gender == 2 ? 'Female' : 'Male',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: ColorManager.primaryColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                '• ${formatAge(DateTime.parse(pets[index].birthdate!))}',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
+                    // Checkmark
+                    if (pets[index].isSelected)
+                      Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -136,37 +212,37 @@ class PetCarousel extends StatelessWidget {
               for (var element in pets) {
                 element.isSelected = false;
               }
-
               pets[index].isSelected = true;
-
-              onPetSelected(
-                pets[index], // Default isSpayed to false since API doesn't provide it
-              );
+              onPetSelected(pets[index]);
             },
-            height: 80,
-            aspectRatio: 1.5,
-            viewportFraction: 1,
+            height: 120,
+            viewportFraction: 0.92,
             initialPage: 0,
             enableInfiniteScroll: false,
             reverse: false,
             autoPlay: false,
-            enlargeCenterPage: true,
+            enlargeCenterPage: false,
             scrollDirection: Axis.horizontal,
           ),
         ),
         if (pets.length > 1)
           Padding(
-            padding: const EdgeInsets.only(top: 5),
-            child: Text(
-              isArabic()
-                  ? 'اسحب للتبديل بين الحيوانات'
-                  : 'Swipe to change pets',
-              textAlign: TextAlign.center,
-              style: FontStyleThame.textStyle(
-                context: context,
-                fontSize: 14,
-                fontColor: Colors.grey,
-                fontWeight: FontWeight.bold,
+            padding: const EdgeInsets.only(top: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                pets.length,
+                    (index) => Container(
+                  width: 8,
+                  height: 8,
+                  margin: EdgeInsets.symmetric(horizontal: 4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: pets[index].isSelected
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey.shade300,
+                  ),
+                ),
               ),
             ),
           ),
