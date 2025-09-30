@@ -168,60 +168,75 @@ String convertLocalTimeToUTC(String time) {
   }
 }
 
-String formatAge(DateTime birthDate, {bool isUser = false}) {
-  final today = DateTime.now();
+String formatAge(dynamic birthDate, {bool isUser = false}) {
+  print(birthDate);
+  print('---------------');
+  try {
+    // تأكد إنه DateTime
+    final date = (birthDate is DateTime)
+        ? birthDate
+        : DateTime.tryParse(birthDate.toString());
 
-  int years = today.year - birthDate.year;
-  int months = today.month - birthDate.month;
-  int days = today.day - birthDate.day;
-
-  if (days < 0) {
-    final prevMonth = DateTime(today.year, today.month, 0);
-    days += prevMonth.day;
-    months--;
-  }
-
-  if (months < 0) {
-    months += 12;
-    years--;
-  }
-
-  final arabic = isArabic();
-  final parts = <String>[];
-
-  String pluralizeArabic(int value, String singular, String dual, String plural) {
-    if (value == 1) return "$value $singular";
-    if (value == 2) return dual;
-    return "$value $plural";
-  }
-
-  if (years > 0) {
-    if (arabic) {
-      parts.add(pluralizeArabic(years, "سنة", "سنتين", "سنوات"));
-    } else {
-      parts.add("$years year${years > 1 ? 's' : ''}");
+    if (date == null) {
+      return isArabic() ? "تاريخ غير صالح" : "Invalid date";
     }
-  }
 
-  if (months > 0) {
-    if (arabic) {
-      parts.add(pluralizeArabic(months, "شهر", "شهرين", "شهور"));
-    } else {
-      parts.add("$months month${months > 1 ? 's' : ''}");
+    final today = DateTime.now();
+
+    int years = today.year - date.year;
+    int months = today.month - date.month;
+    int days = today.day - date.day;
+
+    if (days < 0) {
+      final prevMonth = DateTime(today.year, today.month, 0);
+      days += prevMonth.day;
+      months--;
     }
-  }
 
-  if (!isUser && years == 0 && months <= 2 && days > 0) {
-    if (arabic) {
-      parts.add(pluralizeArabic(days, "يوم", "يومين", "أيام"));
-    } else {
-      parts.add("$days day${days > 1 ? 's' : ''}");
+    if (months < 0) {
+      months += 12;
+      years--;
     }
-  }
 
-  if (parts.isEmpty) {
-    return arabic ? "0 أيام" : "0 days";
-  }
+    final arabic = isArabic();
+    final parts = <String>[];
 
-  return arabic ? parts.join(" و ") : parts.join(", ");
+    String pluralizeArabic(int value, String singular, String dual, String plural) {
+      if (value == 1) return "$value $singular";
+      if (value == 2) return dual;
+      return "$value $plural";
+    }
+
+    if (years > 0) {
+      if (arabic) {
+        parts.add(pluralizeArabic(years, "سنة", "سنتين", "سنوات"));
+      } else {
+        parts.add("$years year${years > 1 ? 's' : ''}");
+      }
+    }
+
+    if (months > 0) {
+      if (arabic) {
+        parts.add(pluralizeArabic(months, "شهر", "شهرين", "شهور"));
+      } else {
+        parts.add("$months month${months > 1 ? 's' : ''}");
+      }
+    }
+
+    if (!isUser && years == 0 && months <= 2 && days > 0) {
+      if (arabic) {
+        parts.add(pluralizeArabic(days, "يوم", "يومين", "أيام"));
+      } else {
+        parts.add("$days day${days > 1 ? 's' : ''}");
+      }
+    }
+
+    if (parts.isEmpty) {
+      return arabic ? "0 أيام" : "0 days";
+    }
+
+    return arabic ? parts.join(" و ") : parts.join(", ");
+  } catch (e) {
+    return isArabic() ? "تاريخ غير صالح" : "Invalid date";
+  }
 }
