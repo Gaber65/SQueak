@@ -176,7 +176,7 @@ class PetCarousel extends StatelessWidget {
                               ),
                               SizedBox(width: 8),
                               Text(
-                                '• ${formatAge(DateTime.parse(pets[index].birthdate!))}',
+                                '• ${pets[index].birthdate!.isEmpty ? '' :formatAge(DateTime.parse(pets[index].birthdate!))}',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Colors.grey.shade600,
