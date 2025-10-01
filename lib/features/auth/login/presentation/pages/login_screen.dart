@@ -113,10 +113,7 @@ class _LoginScreenState extends State<LoginScreen>
     }
 
     if (state is LoginSuccess) {
-      // Success haptic feedback
       HapticFeedback.lightImpact();
-
-      // Save user data
       CacheHelper.saveData('role', state.userEntity.role);
       CacheHelper.saveData('clintId', state.userEntity.id);
       CacheHelper.saveData('phone', state.userEntity.phone);
@@ -130,7 +127,6 @@ class _LoginScreenState extends State<LoginScreen>
         state.userEntity.refreshToken,
       );
 
-      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(

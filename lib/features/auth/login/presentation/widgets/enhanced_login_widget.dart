@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
@@ -249,7 +251,7 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
 
               // Enhanced Password Field with accessibility
               AccessibilityHelper.accessibleFormField(
-                label: 'Secure Paw-ssword',
+                label: 'Secure Password',
                 hint: 'Enter your password to continue',
                 required: true,
                 errorText: null, // Password validation removed
