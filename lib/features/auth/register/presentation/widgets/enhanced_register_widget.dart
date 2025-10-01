@@ -20,7 +20,6 @@ class EnhancedRegisterView extends StatefulWidget {
 
 class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     with AccessibilityMixin, TickerProviderStateMixin {
-  // Validation state
   ValidationResult? _nameValidation;
   ValidationResult? _emailValidation;
   ValidationResult? _passwordValidation;
@@ -30,12 +29,11 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
   bool _obscurePassword = true;
   bool _isCountrySelected = false;
 
-  // Animation controllers
+
   late AnimationController _shakeController;
   late AnimationController _fadeController;
   late AnimationController _countryFieldController;
 
-  // Animations
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _countryFieldAnimation;

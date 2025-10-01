@@ -9,11 +9,8 @@ import 'package:squeak/features/auth/password/domin/usecses/forget_password_usec
 import 'package:squeak/features/auth/password/domin/usecses/reset_password_usecase.dart';
 import 'package:squeak/features/auth/password/domin/usecses/verify_user_usecase.dart';
 import 'package:squeak/features/auth/password/presentation/cubit/password_cubit.dart';
-
 import 'package:squeak/features/auth/register/presentation/pages/register_screen.dart';
-
 import '../../../contactus/presentation/pages/contact_us.dart';
-import '../../../login/presentation/pages/login_screen.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 class VerifyUser extends StatelessWidget {
@@ -73,13 +70,14 @@ class VerifyUser extends StatelessWidget {
             errorToast(context, state.error);
           }
           if (state is VerifyUserSuccessState) {
-            navigateAndFinish(context, LoginScreen());
+            navigateAndFinish(context, LayoutScreen());
           }
         },
         builder: (context, state) {
 
           var ifShow = clinicCode.text;
           var cubit = PasswordCubit.get(context);
+          // ignore: deprecated_member_use
           return WillPopScope(
             onWillPop: () async {
               navigateAndFinish(context, RegisterScreen());
