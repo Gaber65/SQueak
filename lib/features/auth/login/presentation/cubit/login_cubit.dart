@@ -57,6 +57,7 @@ class LoginCubit extends Cubit<LoginState> {
           // });
           
           CacheHelper.saveData('token', value.token);
+          // ignore: use_build_context_synchronously
           MainCubit.get(context).saveToken();
           clearFields();
           isLoggedIn = false;

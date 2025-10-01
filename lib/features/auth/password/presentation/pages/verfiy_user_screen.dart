@@ -13,6 +13,8 @@ import 'package:squeak/features/auth/register/presentation/pages/register_screen
 import '../../../contactus/presentation/pages/contact_us.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
+import '../../../get_started/presentation/screnns/welcome_to_squek.dart' show WelcomeToSquek;
+
 class VerifyUser extends StatelessWidget {
   VerifyUser({
     super.key,
@@ -70,7 +72,7 @@ class VerifyUser extends StatelessWidget {
             errorToast(context, state.error);
           }
           if (state is VerifyUserSuccessState) {
-            navigateAndFinish(context, LayoutScreen());
+            navigateAndFinish(context, WelcomeToSquek());
           }
         },
         builder: (context, state) {

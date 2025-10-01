@@ -149,11 +149,11 @@ class _LoginScreenState extends State<LoginScreen>
         ),
       );
 
-      if (CacheHelper.getBool('welcome_seen')) {
+      if (CacheHelper.getData('token') != null &&
+          CacheHelper.getData('token') != '') {
         navigateAndFinish(context, LayoutScreen());
       } else {
         navigateAndFinish(context, WelcomeToSquek());
-        CacheHelper.saveData('welcome_seen', true);
       }
     }
   }
