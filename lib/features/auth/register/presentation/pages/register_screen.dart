@@ -27,8 +27,6 @@ class RegisterScreen extends StatelessWidget {
           registerUseCase: RegisterUseCase(repository),
           registerQrUseCase: RegisterQrUseCase(repository),
         );
-
-        // Initialize necessary data
         cubit.loadCountries().then((value) => cubit.detectCountryCode());
 
         return cubit;

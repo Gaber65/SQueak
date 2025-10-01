@@ -20,34 +20,45 @@ class EnhancedRegisterView extends StatefulWidget {
 
 class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     with AccessibilityMixin, TickerProviderStateMixin {
-  // Validation state variables
+  // Validation state
   ValidationResult? _nameValidation;
   ValidationResult? _emailValidation;
   ValidationResult? _passwordValidation;
-  ValidationResult? _confirmPasswordValidation;
   ValidationResult? _clinicCodeValidation;
 
   bool _isFormValid = false;
   bool _obscurePassword = true;
+  bool _isCountrySelected = false;
 
+  // Animation controllers
   late AnimationController _shakeController;
   late AnimationController _fadeController;
+  late AnimationController _countryFieldController;
+
+  // Animations
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  late AnimationController
-  _countryFieldController; // Controller for country field animation
-  late Animation<double> _countryFieldAnimation; // Animation for country field
-  bool _isCountrySelected = false; // Track if country has been selected
+  late Animation<double> _countryFieldAnimation;
 
-  // Controllers for confirmation password
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _initializeAnimations();
+    _startAnimations();
+    _initializeFormValidation();
+  }
 
-    // Initialize animations with reduced durations for better performance
+  @override
+  void dispose() {
+    _disposeControllers();
+    super.dispose();
+  }
+
+
+
+
+  void _initializeAnimations() {
     _shakeController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
@@ -69,11 +80,11 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
       CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic),
     );
 
-    // Initialize country field animation
     _countryFieldController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
+
     _countryFieldAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
       CurvedAnimation(parent: _countryFieldController, curve: Curves.easeInOut),
     )..addStatusListener((status) {
@@ -85,33 +96,27 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
         }
       }
     });
+  }
 
-    // Start animations
+  void _startAnimations() {
     _fadeController.forward();
     _countryFieldController.forward();
+  }
 
-    // Initialize form validation
+  void _initializeFormValidation() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateFormValidity();
     });
   }
 
-  @override
-  void dispose() {
+  void _disposeControllers() {
     _shakeController.dispose();
     _fadeController.dispose();
-    _confirmPasswordController.dispose();
-    _countryFieldController.dispose(); // Dispose country field controller
+    _countryFieldController.dispose();
     super.dispose();
   }
 
-  @override
-  Duration getAnimationDuration({
-    Duration? defaultDuration,
-    Duration? reducedDuration,
-  }) {
-    return const Duration(milliseconds: 200);
-  }
+    
 
   void _validateName() {
     setState(() {
@@ -156,7 +161,6 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
         (_nameValidation?.isValid ?? false) &&
         (_emailValidation?.isValid ?? false) &&
         (_passwordValidation?.isValid ?? false) &&
-        (_confirmPasswordValidation?.isValid ?? false) &&
         (_clinicCodeValidation?.isValid ?? false) &&
         widget.cubit.countryCode.isNotEmpty;
 
@@ -180,7 +184,6 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     setState(() {
       _obscurePassword = !_obscurePassword;
     });
-
     HapticFeedback.lightImpact();
   }
 
@@ -207,6 +210,30 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     widget.cubit.register();
   }
 
+
+  @override
+  Duration getAnimationDuration({
+    Duration? defaultDuration,
+    Duration? reducedDuration,
+  }) {
+    return const Duration(milliseconds: 200);
+  }
+
+  double get _spacing => getAnimationDuration().inMilliseconds > 200 ? 20 : 13;
+  double get _largeSpacing =>
+      getAnimationDuration().inMilliseconds > 200 ? 24 : 16;
+  double get _extraLargeSpacing =>
+      getAnimationDuration().inMilliseconds > 200 ? 32 : 24;
+
+  Color _getBorderColor(ValidationResult? validation) {
+    if (validation?.isValid == true) {
+      return ColorManager.green.withValues(alpha: 0.7);
+    } else if (validation != null && !validation.isValid) {
+      return ColorManager.red.withValues(alpha: 0.7);
+    }
+    return Theme.of(context).colorScheme.outlineVariant;
+  }
+
   Widget _buildValidationIcon(ValidationResult? validation) {
     if (validation == null) return const SizedBox.shrink();
 
@@ -226,6 +253,295 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                 size: 16,
                 key: ValueKey('invalid'),
               ),
+    );
+  }
+
+  // ==================== UI Building Methods ====================
+
+  Widget _buildWelcomeHeader() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: ColorManager.primaryColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(Icons.pets, size: 32, color: ColorManager.primaryColor),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Join the Pack!',
+            style: FontStyleThame.textStyle(
+              context: context,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              fontColor: ColorManager.primaryColor,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Create your account to connect with the pet care community',
+            style: FontStyleThame.textStyle(
+              context: context,
+              fontSize: 16,
+              fontColor: Theme.of(context).colorScheme.outline,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String hintText,
+    required IconData prefixIcon,
+    required ValidationResult? validation,
+    required VoidCallback onChanged,
+    TextInputType? keyboardType,
+    bool obscureText = false,
+    Widget? suffixIcon,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _getBorderColor(validation), width: 1.5),
+      ),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        obscureText: obscureText,
+        decoration: InputDecoration(
+          hintText: hintText,
+          prefixIcon: Icon(prefixIcon, size: 18),
+          suffixIcon: suffixIcon ?? _buildValidationIcon(validation),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
+        ),
+        onChanged: (_) => onChanged(),
+        validator: (_) => null,
+      ),
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: _getBorderColor(_passwordValidation),
+          width: 1.5,
+        ),
+      ),
+      child: TextFormField(
+        controller: widget.cubit.passwordController,
+        obscureText: _obscurePassword,
+        decoration: InputDecoration(
+          hintText: 'Enter your password',
+          prefixIcon: const Icon(Icons.lock_outlined, size: 18),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+          filled: true,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
+          suffixIcon: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_passwordValidation?.isValid == true)
+                Icon(Icons.check_circle, color: ColorManager.green, size: 20),
+              IconButton(
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+                onPressed: _togglePasswordVisibility,
+              ),
+            ],
+          ),
+        ),
+        onChanged: (_) => _validatePassword(),
+      ),
+    );
+  }
+
+  Widget _buildPhoneField() {
+    return Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: ScaleTransition(
+            scale: _countryFieldAnimation,
+            child: CountryCodeSelector(
+              countries: widget.cubit.countries,
+              registerCubit: widget.cubit,
+              isValid: widget.cubit.countryCode.isNotEmpty,
+              onCountryChanged: _updateFormValidity,
+              onAnimationStop: _stopCountryAnimation,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          flex: 4,
+          child: Container(
+            height: 56,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color:
+                    widget.cubit.countryCode.isNotEmpty
+                        ? ColorManager.green.withValues(alpha: 0.7)
+                        : Theme.of(context).colorScheme.outlineVariant,
+                width: 1.5,
+              ),
+            ),
+            child: PhoneNumberField(
+              controller: widget.cubit.phoneController,
+              hintText: S.of(context).phone_hint,
+              isValid: widget.cubit.countryCode.isNotEmpty,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return S.of(context).phone_validation;
+                }
+                return null;
+              },
+              onChanged: _updateFormValidity,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRegisterButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: VcLoadingButton(
+        onPressed: _isFormValid ? _onRegisterPressed : null,
+        isLoading: widget.cubit.isRegister,
+        backgroundColor:
+            _isFormValid
+                ? ColorManager.primaryColor
+                : Theme.of(
+                  context,
+                ).colorScheme.outlineVariant.withValues(alpha: 0.6),
+        borderRadius: 12,
+        height: 56,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (!widget.cubit.isRegister) ...[
+              const Icon(Icons.pets, color: ColorManager.white, size: 20),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              widget.cubit.isRegister
+                  ? 'Creating Your Account...'
+                  : S.of(context).register,
+              style: const TextStyle(
+                color: ColorManager.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoginLink() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Divider(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'Already part of the pack?',
+                  style: FontStyleThame.textStyle(
+                    context: context,
+                    fontSize: 14,
+                    fontColor: Theme.of(context).colorScheme.outline,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Divider(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          AccessibilityHelper.semanticWrapper(
+            label: 'Switch to login screen',
+            button: true,
+            hint: 'Navigate to login if you already have an account',
+            child: InkWell(
+              onTap: () {
+                HapticFeedback.lightImpact();
+                navigateToScreen(context, LoginScreen());
+              },
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: ColorManager.primaryColor.withValues(alpha: 0.3),
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.login,
+                      size: 18,
+                      color: ColorManager.primaryColor,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      S.of(context).login,
+                      style: FontStyleThame.textStyle(
+                        context: context,
+                        fontSize: 14,
+                        fontColor: ColorManager.primaryColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -257,500 +573,48 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Welcome Header
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 24),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: ColorManager.primaryColor.withValues(
-                                  alpha: 0.1,
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Icon(
-                                Icons.pets,
-                                size: 32,
-                                color: ColorManager.primaryColor,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Join the Pack!',
-                              style: FontStyleThame.textStyle(
-                                context: context,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                fontColor: ColorManager.primaryColor,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Create your account to connect with the pet care community',
-                              style: FontStyleThame.textStyle(
-                                context: context,
-                                fontSize: 16,
-                                fontColor:
-                                    Theme.of(context).colorScheme.outline,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
+                      _buildWelcomeHeader(),
+                      SizedBox(height: _largeSpacing),
 
-                      SizedBox(
-                        height:
-                            getAnimationDuration().inMilliseconds > 200
-                                ? 24
-                                : 16,
+                      _buildInputField(
+                        controller: widget.cubit.nameController,
+                        hintText: S.of(context).enterName,
+                        prefixIcon: Icons.person_outline,
+                        validation: _nameValidation,
+                        onChanged: _validateName,
                       ),
+                      SizedBox(height: _spacing),
 
-                      // Enhanced Name Field
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color:
-                                    _nameValidation?.isValid == false
-                                        ? ColorManager.red.withValues(
-                                          alpha: 0.7,
-                                        )
-                                        : _nameValidation?.isValid == true
-                                        ? ColorManager.green.withValues(
-                                          alpha: 0.7,
-                                        )
-                                        : Theme.of(
-                                          context,
-                                        ).colorScheme.outlineVariant,
-                                width: 1.5,
-                              ),
-                            ),
-                            child: TextFormField(
-                              controller: widget.cubit.nameController,
-                              decoration: InputDecoration(
-                                hintText: S.of(context).enterName,
-                                prefixIcon: const Icon(
-                                  Icons.person_outline,
-                                  size: 18,
-                                ),
-                                suffixIcon: _buildValidationIcon(
-                                  _nameValidation,
-                                ),
-                                border: InputBorder.none,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
-                              ),
-                              onChanged: (value) => _validateName(),
-                              validator: (_) => null,
-                            ),
-                          ),
-                        ],
+                      _buildInputField(
+                        controller: widget.cubit.emailController,
+                        hintText: S.of(context).enterUrEmail,
+                        prefixIcon: Icons.email_outlined,
+                        validation: _emailValidation,
+                        onChanged: _validateEmail,
+                        keyboardType: TextInputType.emailAddress,
                       ),
+                      SizedBox(height: _spacing),
 
-                      SizedBox(
-                        height:
-                            getAnimationDuration().inMilliseconds > 200
-                                ? 20
-                                : 13,
-                      ),
+                      _buildPhoneField(),
+                      SizedBox(height: _spacing),
 
-                      // Enhanced Email Field
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color:
-                                    _emailValidation?.isValid == false
-                                        ? ColorManager.red.withValues(
-                                          alpha: 0.7,
-                                        )
-                                        : _emailValidation?.isValid == true
-                                        ? ColorManager.green.withValues(
-                                          alpha: 0.7,
-                                        )
-                                        : Theme.of(
-                                          context,
-                                        ).colorScheme.outlineVariant,
-                                width: 1.5,
-                              ),
-                            ),
-                            child: TextFormField(
-                              controller: widget.cubit.emailController,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                hintText: S.of(context).enterUrEmail,
-                                prefixIcon: const Icon(
-                                  Icons.email_outlined,
-                                  size: 18,
-                                ),
-                                suffixIcon: _buildValidationIcon(
-                                  _emailValidation,
-                                ),
-                                border: InputBorder.none,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
-                              ),
-                              onChanged: (value) => _validateEmail(),
-                              validator: (_) => null,
-                            ),
-                          ),
-                        ],
-                      ),
+                      _buildPasswordField(),
+                      SizedBox(height: _spacing),
 
-                      SizedBox(
-                        height:
-                            getAnimationDuration().inMilliseconds > 200
-                                ? 20
-                                : 13,
+                      _buildInputField(
+                        controller: widget.cubit.followCodeController,
+                        hintText: S.of(context).followCode,
+                        prefixIcon: Icons.local_hospital_outlined,
+                        validation: _clinicCodeValidation,
+                        onChanged: _validateClinicCode,
                       ),
+                      SizedBox(height: _extraLargeSpacing),
 
-                      // Enhanced Phone Field - Separated Components
-                      Row(
-                        children: [
-                          // Country Code Selector with Animation
-                          Expanded(
-                            flex: 2,
-                            child: ScaleTransition(
-                              scale: _countryFieldAnimation,
-                              child: CountryCodeSelector(
-                                countries: widget.cubit.countries,
-                                registerCubit: widget.cubit,
-                                isValid: widget.cubit.countryCode.isNotEmpty,
-                                onCountryChanged: _updateFormValidity,
-                                onAnimationStop: _stopCountryAnimation,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          // Phone Number Field
-                          Expanded(
-                            flex: 4,
-                            child: Container(
-                              height: 56, // Fixed height to match country field
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color:
-                                      widget.cubit.countryCode.isNotEmpty
-                                          ? ColorManager.green.withValues(
-                                            alpha: 0.7,
-                                          )
-                                          : Theme.of(
-                                            context,
-                                          ).colorScheme.outlineVariant,
-                                  width: 1.5,
-                                ),
-                              ),
-                              child: PhoneNumberField(
-                                controller: widget.cubit.phoneController,
-                                hintText: S.of(context).phone_hint,
-                                isValid: widget.cubit.countryCode.isNotEmpty,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return S.of(context).phone_validation;
-                                  }
-                                  return null;
-                                },
-                                onChanged: _updateFormValidity,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      _buildRegisterButton(),
+                      SizedBox(height: _largeSpacing),
 
-                      SizedBox(
-                        height:
-                            getAnimationDuration().inMilliseconds > 200
-                                ? 20
-                                : 13,
-                      ),
-
-                      // Enhanced Password Field
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color:
-                                _passwordValidation?.isValid == true
-                                    ? ColorManager.green.withValues(alpha: 0.7)
-                                    : _passwordValidation != null &&
-                                        !_passwordValidation!.isValid
-                                    ? ColorManager.red.withValues(alpha: 0.7)
-                                    : Theme.of(
-                                      context,
-                                    ).colorScheme.outlineVariant,
-                            width: 1.5,
-                          ),
-                        ),
-                        child: TextFormField(
-                          controller: widget.cubit.passwordController,
-                          obscureText: _obscurePassword,
-                          decoration: InputDecoration(
-                            hintText: 'Enter your password',
-                            prefixIcon: const Icon(
-                              Icons.lock_outlined,
-                              size: 18,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                            fillColor:
-                                Theme.of(
-                                  context,
-                                ).inputDecorationTheme.fillColor,
-                            filled: true,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 14,
-                            ),
-                            suffixIcon: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (_passwordValidation?.isValid == true)
-                                  Icon(
-                                    Icons.check_circle,
-                                    color: ColorManager.green,
-                                    size: 20,
-                                  ),
-                                IconButton(
-                                  icon: Icon(
-                                    _obscurePassword
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color:
-                                        Theme.of(context).colorScheme.outline,
-                                  ),
-                                  onPressed: _togglePasswordVisibility,
-                                ),
-                              ],
-                            ),
-                          ),
-                          onChanged: (value) {
-                            _validatePassword();
-                          },
-                        ),
-                      ),
-
-                      SizedBox(
-                        height:
-                            getAnimationDuration().inMilliseconds > 200
-                                ? 20
-                                : 13,
-                      ),
-
-                      // Enhanced Clinic Code Field
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color:
-                                    _clinicCodeValidation?.isValid == false
-                                        ? ColorManager.red.withValues(
-                                          alpha: 0.7,
-                                        )
-                                        : _clinicCodeValidation?.isValid == true
-                                        ? ColorManager.green.withValues(
-                                          alpha: 0.7,
-                                        )
-                                        : Theme.of(
-                                          context,
-                                        ).colorScheme.outlineVariant,
-                                width: 1.5,
-                              ),
-                            ),
-                            child: TextFormField(
-                              controller: widget.cubit.followCodeController,
-                              decoration: InputDecoration(
-                                hintText: S.of(context).followCode,
-                                prefixIcon: const Icon(
-                                  Icons.local_hospital_outlined,
-                                  size: 18,
-                                ),
-                                suffixIcon: _buildValidationIcon(
-                                  _clinicCodeValidation,
-                                ),
-                                border: InputBorder.none,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
-                              ),
-                              onChanged: (value) => _validateClinicCode(),
-                              validator: (_) => null,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(
-                        height:
-                            getAnimationDuration().inMilliseconds > 200
-                                ? 32
-                                : 24,
-                      ),
-
-                      // Enhanced Register Button
-                      SizedBox(
-                        width: double.infinity,
-                        child: VcLoadingButton(
-                          onPressed: _isFormValid ? _onRegisterPressed : null,
-                          isLoading: widget.cubit.isRegister,
-                          backgroundColor:
-                              _isFormValid
-                                  ? ColorManager.primaryColor
-                                  : Theme.of(context).colorScheme.outlineVariant
-                                      .withValues(alpha: 0.6),
-                          borderRadius: 12,
-                          height: 56,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              if (!widget.cubit.isRegister) ...[
-                                const Icon(
-                                  Icons.pets,
-                                  color: ColorManager.white,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 8),
-                              ],
-                              Text(
-                                widget.cubit.isRegister
-                                    ? 'Creating Your Account...'
-                                    : S.of(context).register,
-                                style: const TextStyle(
-                                  color: ColorManager.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(
-                        height:
-                            getAnimationDuration().inMilliseconds > 200
-                                ? 24
-                                : 16,
-                      ),
-
-                      // Enhanced Login Link
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Divider(
-                                    color:
-                                        Theme.of(
-                                          context,
-                                        ).colorScheme.outlineVariant,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  child: Text(
-                                    'Already part of the pack?',
-                                    style: FontStyleThame.textStyle(
-                                      context: context,
-                                      fontSize: 14,
-                                      fontColor:
-                                          Theme.of(context).colorScheme.outline,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color:
-                                        Theme.of(
-                                          context,
-                                        ).colorScheme.outlineVariant,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            AccessibilityHelper.semanticWrapper(
-                              label: 'Switch to login screen',
-                              button: true,
-                              hint:
-                                  'Navigate to login if you already have an account',
-                              child: InkWell(
-                                onTap: () {
-                                  HapticFeedback.lightImpact();
-                                  navigateToScreen(context, LoginScreen());
-                                },
-                                borderRadius: BorderRadius.circular(8),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 12,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: ColorManager.primaryColor
-                                          .withValues(alpha: 0.3),
-                                    ),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.login,
-                                        size: 18,
-                                        color: ColorManager.primaryColor,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        S.of(context).login,
-                                        style: FontStyleThame.textStyle(
-                                          context: context,
-                                          fontSize: 14,
-                                          fontColor: ColorManager.primaryColor,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(
-                        height:
-                            getAnimationDuration().inMilliseconds > 200
-                                ? 20
-                                : 13,
-                      ),
+                      _buildLoginLink(),
+                      SizedBox(height: _spacing),
                     ],
                   ),
                 ),

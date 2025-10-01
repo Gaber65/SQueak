@@ -44,12 +44,6 @@ class RegisterCubit extends Cubit<RegisterState> {
   List<CountryEntity> countries = [];
 
   // Initialize controllers with cached data if available
-  void _initializeControllers() {
-    final cachedPhone = CacheHelper.getData('phone');
-    if (cachedPhone != null) {
-      phoneController.text = cachedPhone;
-    }
-  }
 
   // Initialize user data if already logged in
 
