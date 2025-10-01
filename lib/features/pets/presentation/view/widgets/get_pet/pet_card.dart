@@ -16,11 +16,19 @@ class PetCard extends StatefulWidget {
   final PetCubit cubit;
   final QrCubit qrCubit;
 
+  // new
+  final bool selectionMode;
+  final bool isSelected;
+  final ValueChanged<bool> onSelected;
+
   const PetCard({
     super.key,
     required this.pet,
     required this.cubit,
     required this.qrCubit,
+    this.selectionMode = false,
+    this.isSelected = false,
+    required this.onSelected,
   });
 
   @override
@@ -29,35 +37,41 @@ class PetCard extends StatefulWidget {
 
 class _PetCardState extends State<PetCard> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: Decorations.kDecorationBoxShadow(context: context),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () => _navigateToEditPet(context),
+        onTap: widget.selectionMode
+            ? () => widget.onSelected(!widget.isSelected)
+            : () => _navigateToEditPet(context),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              _buildPetHeader(context),
-              const SizedBox(height: 12),
-
-              // QR Status Indicator
-              QrStatusIndicator(pet: widget.pet),
-
-              const SizedBox(height: 12),
-
-              QrActionButtons(
-                pet: widget.pet,
-                petCubit: widget.cubit,
-                c: widget.qrCubit,
+              Row(
+                children: [
+                  if (widget.selectionMode) ...[
+                    Checkbox(
+                      value: widget.isSelected,
+                      onChanged: (val) => widget.onSelected(val ?? false),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  Expanded(child: _buildPetHeader(context)),
+                ],
               ),
-              // QR Action Buttons
+              const SizedBox(height: 12),
+
+              QrStatusIndicator(pet: widget.pet),
+              const SizedBox(height: 12),
+
+              if (!widget.selectionMode)
+                QrActionButtons(
+                  pet: widget.pet,
+                  petCubit: widget.cubit,
+                  c: widget.qrCubit,
+                ),
             ],
           ),
         ),
@@ -72,7 +86,7 @@ class _PetCardState extends State<PetCard> {
           backgroundImage: NetworkImage(
             widget.pet.imageName.toString().contains('PetAvatar') ||
                     widget.pet.imageName.toString().isEmpty
-                ? 'https://img.freepik.com/free-vector/hand-drawn-animal-rescue-illustration_52683-109643.jpg?t=st=1724850971~exp=1724854571~hmac=310725afd1c40b0312d37d37e8cc8982f8cba5177dc34f988d94b9eccae6e977&w=826'
+                ? 'https://img.freepik.com/free-vector/hand-drawn-animal-rescue-illustration_52683-109643.jpg'
                 : '$imageUrl${widget.pet.imageName}',
           ),
         ),
@@ -95,7 +109,6 @@ class _PetCardState extends State<PetCard> {
                     : widget.pet.birthdate!.substring(0, 10),
                 style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
-
               if (widget.pet.breed != null) ...[
                 const SizedBox(height: 2),
                 Text(
@@ -109,7 +122,8 @@ class _PetCardState extends State<PetCard> {
           ),
         ),
         const SizedBox(width: 8),
-        _buildCalendarButton(context),
+        if (!widget.selectionMode)
+          _buildCalendarButton(context), // hide in selection
       ],
     );
   }
@@ -117,17 +131,14 @@ class _PetCardState extends State<PetCard> {
   Widget _buildCalendarButton(BuildContext context) {
     return IconCircle(
       icon: IconlyLight.calendar,
-      onPressed:
-          () => navigateToScreen(
-            context,
-            MySupplierScreen(petSelectFromIcon: widget.pet),
-          ),
+      onPressed: () => navigateToScreen(
+        context,
+        MySupplierScreen(petSelectFromIcon: widget.pet),
+      ),
     );
   }
 
   void _navigateToEditPet(BuildContext context) {
-    print('Pet ID: ${widget.pet.petId}');
-    print('Pet Breed: ${widget.pet.breed}');
     navigateToScreen(
       context,
       EditPet(pets: widget.pet, breedData: widget.cubit.allBreeds),

@@ -16,6 +16,7 @@ import '../../../../features/pets/domain/use_case/create_pet_usecase.dart';
 import '../../../../features/pets/domain/use_case/update_pet_usecase.dart';
 import '../../../../features/pets/domain/use_case/delete_pet_usecase.dart';
 import '../../../../generated/l10n.dart';
+import '../../domain/use_case/merge_pets_usecase.dart';
 
 part 'pet_state.dart';
 
@@ -27,6 +28,7 @@ class PetCubit extends Cubit<PetState> {
   final CreatePetUseCase createPetUseCase;
   final UpdatePetUseCase updatePetUseCase;
   final DeletePetUseCase deletePetUseCase;
+  final MergePetsUsecase mergePetsUseCase;
   // final birthdateController = TextEditingController();
   // final CreatePetLoginScreenUseCase createPetLoginScreenUseCase;
 
@@ -40,6 +42,7 @@ class PetCubit extends Cubit<PetState> {
     required this.createPetUseCase,
     required this.updatePetUseCase,
     required this.deletePetUseCase,
+    required this.mergePetsUseCase,
   }) : super(PetInitial());
 
   static PetCubit get(context) => BlocProvider.of(context);
@@ -396,4 +399,18 @@ class PetCubit extends Cubit<PetState> {
     return super.close();
   }
 
+  // merge pets
+  Future<void> mergePets(List<String> ids) async {
+    emit(MergePetsLoadingState());
+
+    final result = await mergePetsUseCase(ids);
+
+    result.fold(
+      (error) => emit(MergePetsErrorState(extractFirstError(error))),
+      (mergedPet) {
+        pets.add(mergedPet);
+        emit(MergePetsSuccessState());
+      },
+    );
+  }
 }

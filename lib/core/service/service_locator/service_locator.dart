@@ -1,6 +1,7 @@
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
 
 import '../../../features/layout/search/presentation/controller/search_cubit.dart';
+import '../../../features/pets/domain/use_case/merge_pets_usecase.dart';
 import '../../../features/settings/persentaion/controller/setting_cubit.dart';
 import '../../../features/vetcare/presenation/controllers/follow_request/follow_request_cubit.dart';
 import 'locatore_export_path.dart';
@@ -24,6 +25,7 @@ class ServiceLocator {
         createPetUseCase: sl(),
         updatePetUseCase: sl(),
         deletePetUseCase: sl(),
+        mergePetsUseCase: sl(),
       ),
     );
     sl.registerFactory(
@@ -125,6 +127,7 @@ class ServiceLocator {
     sl.registerLazySingleton(() => CreatePetUseCase(sl()));
     sl.registerLazySingleton(() => UpdatePetUseCase(sl()));
     sl.registerLazySingleton(() => DeletePetUseCase(sl()));
+    sl.registerLazySingleton(() => MergePetsUsecase(sl()));
 
     sl.registerLazySingleton(() => GetOwnerDataUseCase(sl()));
     sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
@@ -238,10 +241,8 @@ class ServiceLocator {
 
     // Repository
     sl.registerLazySingleton<AppointmentRepository>(
-      () => AppointmentRepositoryImpl(
-        remoteDataSource: sl(),
-        networkInfo: sl(),
-      ),
+      () =>
+          AppointmentRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
     );
 
     // Data sources
@@ -313,8 +314,7 @@ class ServiceLocator {
 
     // Repository
     sl.registerLazySingleton<BoardingRepository>(
-      () =>
-          BoardingRepositoryImpl(remoteDataSource: sl(), ),
+      () => BoardingRepositoryImpl(remoteDataSource: sl()),
     );
 
     // Data sources

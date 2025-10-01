@@ -13,47 +13,58 @@ class CareHubScreen extends StatelessWidget {
     final locale = Localizations.localeOf(context).languageCode;
     final isArabic = locale == "ar";
 
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
+
+    final textScale = width / 375;
+    final paddingScale = width / 400;
+
     return Directionality(
       textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         appBar: AppBar(
           title: Text(
             isArabic ? "الرعاية" : "Care",
-            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+              fontSize: 18 * textScale.clamp(0.9, 1.3),
+            ),
           ),
           backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
           elevation: 0,
           iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(16.0 * paddingScale.clamp(0.8, 1.2)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 isArabic ? "مركز رعاية صديقك" : "Your Friend's Care Hub",
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 22 * textScale.clamp(0.9, 1.4),
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8 * paddingScale),
               Text(
                 isArabic
                     ? "مرحبًا! من هنا يمكنك إدارة المواعيد، عرض السجلات الصحية، وإيجاد عيادات VetICare الموثوقة لصديقك. اختر خيارًا أدناه للبدء."
                     : "Welcome! From here, you can manage appointments, view health records, and find trusted VetICare clinics for your friend. Select an option below to get started.",
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14 * textScale.clamp(0.9, 1.3),
                   color: isDark ? Colors.grey[300] : Colors.grey[700],
                 ),
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 28 * paddingScale),
 
-              // Clinics Card
               _buildFeatureCard(
                 context: context,
                 isDark: isDark,
+                height: height * 0.32,
+                width: width,
                 title: isArabic ? "العيادات" : "Clinics",
                 description:
                     isArabic
@@ -68,12 +79,13 @@ class CareHubScreen extends StatelessWidget {
                 },
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: 16 * paddingScale),
 
-              // Appointments Card
               _buildFeatureCard(
                 context: context,
                 isDark: isDark,
+                height: height * 0.32,
+                width: width,
                 title: isArabic ? "المواعيد" : "Appointments",
                 description:
                     isArabic
@@ -81,10 +93,7 @@ class CareHubScreen extends StatelessWidget {
                         : "View and manage your friend's upcoming appointments.",
                 icon: IconlyBold.calendar,
                 onTap: () {
-                  navigateToScreen(
-                    context,
-                    AllAppointment(),
-                  );
+                  navigateToScreen(context, AllAppointment());
                 },
               ),
             ],
@@ -101,7 +110,12 @@ class CareHubScreen extends StatelessWidget {
     required String description,
     required IconData icon,
     required VoidCallback onTap,
+    required double width,
+    double? height,
   }) {
+    final textScale = width / 375;
+    final paddingScale = width / 400;
+
     return Card(
       color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -112,46 +126,47 @@ class CareHubScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Icon Section
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(40),
+              padding: EdgeInsets.all(30 * paddingScale.clamp(0.7, 1.3)),
               decoration: BoxDecoration(
-                color: Color.fromRGBO(59, 130, 246, 0.1),
+                color: const Color.fromRGBO(59, 130, 246, 0.1),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
                 ),
               ),
-              child: Icon(icon, color: ColorManager.primaryColor, size: 70),
+              child: Icon(
+                icon,
+                color: ColorManager.primaryColor,
+                size: 60 * textScale.clamp(0.8, 1.4),
+              ),
             ),
-
-            // Title & Description
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Text(
                 title,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16 * textScale.clamp(0.9, 1.4),
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black,
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(
+              padding: EdgeInsets.symmetric(
                 horizontal: 12.0,
-                vertical: 4,
+                vertical: 4 * paddingScale.clamp(0.8, 1.2),
               ),
               child: Text(
                 description,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 13 * textScale.clamp(0.9, 1.3),
                   color: isDark ? Colors.grey[300] : Colors.grey[700],
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12 * paddingScale),
           ],
         ),
       ),

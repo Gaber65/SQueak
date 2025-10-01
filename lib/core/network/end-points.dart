@@ -28,6 +28,7 @@ const String addPetEndPint = '$version/pets';
 const String updatePetEndPint = '$version/pets/';
 const String deletePetEndPint = '$version/pets/';
 const String getOwnerPetEndPoint = '$version/pets/owner';
+const String mergePetsEndPoint = '$version/pets/merge';
 
 /// Clinic Management
 const String addClinicEndPoint = '$version/clinics';

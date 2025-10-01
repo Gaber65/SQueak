@@ -33,6 +33,10 @@ class PetScreenContent extends StatefulWidget {
 class _PetScreenContentState extends State<PetScreenContent> {
   bool _isSnackBarVisible = false;
 
+  // new states for selection mode
+  bool _selectionMode = false;
+  final Set<String> _selectedPets = {};
+
   @override
   Widget build(BuildContext context) {
     // ignore: deprecated_member_use
@@ -50,10 +54,6 @@ class _PetScreenContentState extends State<PetScreenContent> {
           elevation: 0,
           centerTitle: true,
           title: Text(S.of(context).myPets),
-          // leading: IconButton(
-          //   icon: const Icon(Icons.arrow_back_ios),
-          //   onPressed: () => _handleBackPress(),
-          // ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(2.0),
             child:
@@ -61,22 +61,90 @@ class _PetScreenContentState extends State<PetScreenContent> {
                     ? const LinearProgressIndicator()
                     : Container(),
           ),
+          actions: [
+            Container(
+              margin: const EdgeInsets.only(right: 20),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: ColorManager.primaryColor,
+              ),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.merge_type,
+                  size: 30,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _selectionMode = !_selectionMode;
+                    _selectedPets.clear();
+                  });
+                },
+              ),
+            ),
+          ],
         ),
         body: _buildBody(),
-        floatingActionButton:
-            _shouldShowFab()
-                ? FloatingActionButton(
-                  backgroundColor: ColorManager.primaryColor,
-                  child: const Icon(Icons.add, color: Colors.white),
-                  onPressed: () => showPetTypeSelection(context, widget.cubit),
-                )
-                : null,
+        floatingActionButton: _buildFab(),
       ),
     );
   }
 
+  FloatingActionButton? _buildFab() {
+    if (_selectionMode && _selectedPets.isNotEmpty) {
+      return FloatingActionButton(
+        backgroundColor: ColorManager.primaryColor,
+        child: const Icon(Icons.merge_type, color: Colors.white),
+        onPressed: () => _showMergeConfirmDialog(),
+      );
+    }
+
+    // Normal FAB
+    return _shouldShowFab()
+        ? FloatingActionButton(
+          backgroundColor: ColorManager.primaryColor,
+          child: const Icon(Icons.add, color: Colors.white),
+          onPressed: () => showPetTypeSelection(context, widget.cubit),
+        )
+        : null;
+  }
+
+  void _showMergeConfirmDialog() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text(isArabic() ? "تأكيد الدمج" : "Confirm Merge"),
+            content: Text(
+              isArabic()
+                  ? "هل تريد دمج ${_selectedPets.length} حيوانات؟"
+                  : "Do you want to merge ${_selectedPets.length} pets?",
+            ),
+            actions: [
+              TextButton(
+                child: Text(isArabic() ? "إلغاء" : "Cancel"),
+                onPressed: () => Navigator.pop(context),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorManager.primaryColor,
+                ),
+                child: Text(isArabic() ? "تأكيد" : "Confirm"),
+                onPressed: () {
+                  Navigator.pop(context);
+                  widget.cubit.mergePets(_selectedPets.toList());
+                  setState(() {
+                    _selectionMode = false;
+                    _selectedPets.clear();
+                  });
+                },
+              ),
+            ],
+          ),
+    );
+  }
+
   Widget _buildBody() {
-    // Show loading when fetching pets initially
     if (widget.state is GetOwnerPetsLoadingState) {
       return Center(
         child: VcLoadingIndicator(
@@ -89,7 +157,6 @@ class _PetScreenContentState extends State<PetScreenContent> {
       );
     }
 
-    // Show error state if failed to load pets
     if (widget.state is GetOwnerPetsErrorState) {
       return Center(
         child: Column(
@@ -116,19 +183,16 @@ class _PetScreenContentState extends State<PetScreenContent> {
       );
     }
 
-    // Show empty state when no pets exist (after loading is complete)
     if (widget.pets.isEmpty && widget.state is! GetOwnerPetsLoadingState) {
       return EmptyState(
         onAddPetPressed: () => showPetTypeSelection(context, widget.cubit),
       );
     }
 
-    // Show pets list when pets exist
     return _buildPetList(widget.qrCubit);
   }
 
   bool _shouldShowFab() {
-    // Show FAB only when not loading
     return widget.state is! GetOwnerPetsLoadingState;
   }
 
@@ -138,15 +202,28 @@ class _PetScreenContentState extends State<PetScreenContent> {
       itemCount: widget.pets.length,
       separatorBuilder: (_, __) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
+        final pet = widget.pets[index];
         return PetCard(
-          pet: widget.pets[index],
+          pet: pet,
           cubit: widget.cubit,
           qrCubit: qrCubit,
+          selectionMode: _selectionMode,
+          isSelected: _selectedPets.contains(
+            widget.pets.elementAt(index).petId,
+          ),
+          onSelected: (selected) {
+            setState(() {
+              if (selected) {
+                _selectedPets.add(widget.pets.elementAt(index).petId!);
+              } else {
+                _selectedPets.remove(widget.pets.elementAt(index).petId);
+              }
+            });
+          },
         );
       },
     );
   }
-
 
   void _hideSnackBar() {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -167,7 +244,6 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
     backgroundColor:
         MainCubit.get(context).isDark ? Colors.grey[900] : Colors.white,
     builder: (context) {
-      // Add StatefulBuilder to manage loading state
       return StatefulBuilder(
         builder: (context, setState) {
           bool isLoadingOther = cubit.isLoading = false;
@@ -186,7 +262,6 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                   ),
                 ),
                 const SizedBox(height: 24),
-
                 Text(
                   S.of(context).selectPetType,
                   style: TextStyle(
@@ -234,7 +309,6 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                 GestureDetector(
                   onTap: () async {
                     try {
-                      // Show species selector list after response
                       await showSpeciesSelector(
                         context,
                         cubit,
@@ -248,7 +322,6 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                         },
                       );
                     } finally {
-                      // Hide loading indicator
                       setState(() {
                         isLoadingOther = false;
                       });

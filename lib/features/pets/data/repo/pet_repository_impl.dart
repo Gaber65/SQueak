@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:squeak/features/auth/get_started/domain/entites/request_pet_inteties.dart';
 import 'package:squeak/features/pets/data/models/pet_model.dart';
 import '../../../../core/utils/export_path/export_files.dart';
 import '../../domain/base_repo/pet_base_repository.dart';
@@ -195,6 +194,30 @@ class PetRepositoryImpl implements PetRepository {
         await localDataSource.cachePets(pets);
 
         return const Right(null);
+      } on ServerException catch (failure) {
+        return Left(ServerFailure(failure.errorMessageModel));
+      }
+    } else {
+      return const Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: 'No internet connection',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, PetEntities>> mergePets(List<String> ids) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final remotePets = await remoteDataSource.mergePets(ids);
+        await localDataSource.cachePets(remotePets);
+        return Right(remotePets.first);
       } on ServerException catch (failure) {
         return Left(ServerFailure(failure.errorMessageModel));
       }
