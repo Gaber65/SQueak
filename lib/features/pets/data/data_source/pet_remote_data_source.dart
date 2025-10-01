@@ -131,10 +131,10 @@ class PetRemoteDataSourceImpl implements PetRemoteDataSource {
       final response = await DioFinalHelper.postData(
         method: mergePetsEndPoint,
         data: {
-          "petIds": ids,
+          "petsId": ids,
         },
       );
-      return (response.data['data']['petsDto'] as List)
+      return (response.data['data'])
           .map((e) => PetData.fromJson(e))
           .toList();
     } on DioException catch (e) {
@@ -143,7 +143,4 @@ class PetRemoteDataSourceImpl implements PetRemoteDataSource {
       );
     }
   }
-
-  /// merge pets
-
 }

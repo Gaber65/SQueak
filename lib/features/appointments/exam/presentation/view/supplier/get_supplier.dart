@@ -36,7 +36,10 @@ class MySupplierScreen extends StatelessWidget {
           final cubit = AppointmentCubit.get(context);
 
           return Scaffold(
-            appBar: AppBar(title: Text(S.of(context).yourClinic)),
+            appBar: AppBar(
+              centerTitle: true,
+              title: Text(S.of(context).yourClinic),
+            ),
             body: _buildBody(cubit, state, context),
           );
         },

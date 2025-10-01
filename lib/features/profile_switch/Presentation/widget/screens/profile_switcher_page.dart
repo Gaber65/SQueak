@@ -1,13 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:squeak/core/network/end-points.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
-import 'package:squeak/core/utils/enums/profile_type.dart';
 import 'package:squeak/features/profile_switch/Presentation/widget/component/profile_switcher_controller.dart';
-import 'package:squeak/features/profile_switch/domain/entities/profile_type_entity.dart';
 import 'package:squeak/features/profile_switch/source/data/profile_local_data_source.dart';
-
 class ProfileSwitcherButton extends StatefulWidget {
   const ProfileSwitcherButton({
     super.key,

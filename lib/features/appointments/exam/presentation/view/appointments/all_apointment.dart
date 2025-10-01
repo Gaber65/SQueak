@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import '../../../../../pets/domain/entities/pet_entity.dart';
-import '../../../../boarding/presentation/cubit/boarding_cubit.dart';
 import '../../../../boarding/presentation/cubit/boarding_state.dart';
 import '../../../../boarding/presentation/screens/widgets/boarding_card.dart';
 import '../../../../boarding/presentation/screens/widgets/filter_boarding.dart';
-import '../../controller/user/user_appointment_cubit.dart';
 import '../component/filter_component.dart';
 import '../supplier/get_supplier.dart';
 import 'appointmentShimmerItem.dart';
@@ -25,7 +22,11 @@ class AllAppointment extends StatelessWidget {
 
   List<String> _getServiceNames(BuildContext context) {
     final isAr = MainCubit.get(context).language == 'ar';
-    return services.map((service) => isAr ? service['ar'] as String : service['en'] as String).toList();
+    return services
+        .map(
+          (service) => isAr ? service['ar'] as String : service['en'] as String,
+        )
+        .toList();
   }
 
   @override
@@ -33,16 +34,16 @@ class AllAppointment extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => sl<UserAppointmentCubit>()
-            ..fetchSuppliers()
-            ..getAppointment(true),
+          create:
+              (context) =>
+                  sl<UserAppointmentCubit>()
+                    ..fetchSuppliers()
+                    ..getAppointment(true),
         ),
         BlocProvider(
           create: (context) => sl<BoardingCubit>()..getBoardingEntries(true),
         ),
-        BlocProvider(
-          create: (context) => sl<PetCubit>()..getOwnerPets(),
-        ),
+        BlocProvider(create: (context) => sl<PetCubit>()..getOwnerPets()),
       ],
       child: _AllAppointmentContent(services: _getServiceNames(context)),
     );
@@ -65,7 +66,9 @@ class _AllAppointmentContent extends StatelessWidget {
               UserAppointmentCubit.get(context).getAppointment(false);
             }
             if (state is EditAppointment) {
-              UserAppointmentCubit.get(context).deleteAppointments(state.model.id);
+              UserAppointmentCubit.get(
+                context,
+              ).deleteAppointments(state.model.id);
             }
           },
         ),
@@ -99,11 +102,18 @@ class _AllAppointmentContent extends StatelessWidget {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
+      centerTitle: true,
       title: Text(S.of(context).yourAppointments),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.black87),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
       actions: [
         IconButton(
           onPressed: () {
-            navigateToScreen(context,  GetUserAppointment());
+            navigateToScreen(context, GetUserAppointment());
           },
           icon: const Icon(IconlyLight.calendar),
         ),
@@ -120,7 +130,10 @@ class _AllAppointmentContent extends StatelessWidget {
         child: Container(
           height: 50,
           decoration: BoxDecoration(
-            color: MainCubit.get(context).isDark ? Colors.black26 : Colors.grey.shade200,
+            color:
+                MainCubit.get(context).isDark
+                    ? Colors.black26
+                    : Colors.grey.shade200,
             borderRadius: BorderRadius.circular(10),
           ),
           child: TabBar(
@@ -149,10 +162,7 @@ class _AllAppointmentContent extends StatelessWidget {
 
   TabBarView _buildTabBarView(BuildContext context) {
     return TabBarView(
-      children: [
-        _buildExaminationTab(context),
-        _buildBoardingTab(context),
-      ],
+      children: [_buildExaminationTab(context), _buildBoardingTab(context)],
     );
   }
 
@@ -166,9 +176,7 @@ class _AllAppointmentContent extends StatelessWidget {
             children: [
               const SizedBox(height: 10),
               _buildExaminationFilters(context, state),
-              Expanded(
-                child: _buildExaminationList(context, cubit, state),
-              ),
+              Expanded(child: _buildExaminationList(context, cubit, state)),
             ],
           ),
           floatingActionButton: FloatingActionButton(
@@ -177,7 +185,8 @@ class _AllAppointmentContent extends StatelessWidget {
               navigateToScreen(
                 context,
                 MySupplierScreen(petSelectFromIcon: null),
-              );            },
+              );
+            },
             child: const Icon(IconlyLight.calendar, color: Colors.white),
           ),
         );
@@ -185,7 +194,10 @@ class _AllAppointmentContent extends StatelessWidget {
     );
   }
 
-  Widget _buildExaminationFilters(BuildContext context, UserAppointmentState state) {
+  Widget _buildExaminationFilters(
+    BuildContext context,
+    UserAppointmentState state,
+  ) {
     return Row(
       children: [
         Expanded(
@@ -207,7 +219,8 @@ class _AllAppointmentContent extends StatelessWidget {
               visible: state is AppointmentFiltered,
               child: IconButton(
                 icon: const Icon(Icons.clear),
-                onPressed: () => UserAppointmentCubit.get(context).clearFilters(),
+                onPressed:
+                    () => UserAppointmentCubit.get(context).clearFilters(),
               ),
             );
           },
@@ -216,7 +229,11 @@ class _AllAppointmentContent extends StatelessWidget {
     );
   }
 
-  Widget _buildExaminationList(BuildContext context, UserAppointmentCubit cubit, UserAppointmentState state) {
+  Widget _buildExaminationList(
+    BuildContext context,
+    UserAppointmentCubit cubit,
+    UserAppointmentState state,
+  ) {
     if (state is GetAppointmentLoading && cubit.appointments.isEmpty) {
       return _buildShimmerList();
     } else if (cubit.appointments.isEmpty) {
@@ -239,9 +256,15 @@ class _AllAppointmentContent extends StatelessWidget {
     );
   }
 
-  Widget _buildAppointmentList(List<dynamic> appointments, BuildContext context, UserAppointmentCubit cubit) {
+  Widget _buildAppointmentList(
+    List<dynamic> appointments,
+    BuildContext context,
+    UserAppointmentCubit cubit,
+  ) {
     return ListView.builder(
-      itemBuilder: (context, index) => buildItem(appointments[index], context, cubit, index),
+      itemBuilder:
+          (context, index) =>
+              buildItem(appointments[index], context, cubit, index),
       itemCount: appointments.length,
       physics: const BouncingScrollPhysics(),
     );
@@ -292,21 +315,29 @@ class _AllAppointmentContent extends StatelessWidget {
     );
   }
 
-  Widget _buildBoardingList(BuildContext context, BoardingCubit boardingCubit, BoardingState state) {
+  Widget _buildBoardingList(
+    BuildContext context,
+    BoardingCubit boardingCubit,
+    BoardingState state,
+  ) {
     if (boardingCubit.boardingEntries.isEmpty) {
       return emptyBoarding(context);
     }
 
-    final entries = state is BoardingFiltered ? state.filteredEntries : boardingCubit.boardingEntries;
+    final entries =
+        state is BoardingFiltered
+            ? state.filteredEntries
+            : boardingCubit.boardingEntries;
     final isDarkMode = MainCubit.get(context).isDark;
 
     if (state is BoardingFiltered) {
       return ListView.builder(
-        itemBuilder: (context, index) => BoardingCard(
-          isDarkMode: isDarkMode,
-          entry: entries[index],
-          cubit: boardingCubit,
-        ),
+        itemBuilder:
+            (context, index) => BoardingCard(
+              isDarkMode: isDarkMode,
+              entry: entries[index],
+              cubit: boardingCubit,
+            ),
         itemCount: entries.length,
         physics: const BouncingScrollPhysics(),
       );
@@ -314,11 +345,12 @@ class _AllAppointmentContent extends StatelessWidget {
       return RefreshIndicator(
         onRefresh: () async => await boardingCubit.getBoardingEntries(true),
         child: ListView.builder(
-          itemBuilder: (context, index) => BoardingCard(
-            isDarkMode: isDarkMode,
-            entry: entries[index],
-            cubit: boardingCubit,
-          ),
+          itemBuilder:
+              (context, index) => BoardingCard(
+                isDarkMode: isDarkMode,
+                entry: entries[index],
+                cubit: boardingCubit,
+              ),
           itemCount: entries.length,
           physics: const BouncingScrollPhysics(),
         ),

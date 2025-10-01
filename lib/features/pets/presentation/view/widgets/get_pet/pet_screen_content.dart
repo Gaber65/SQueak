@@ -7,8 +7,10 @@ import 'package:squeak/features/qr/presentation/controller/qr_cubit.dart';
 
 import '../../../../../../core/utils/export_path/export_files.dart';
 import '../../../../../../core/service/global_widget/vc_loading_widget.dart';
+import '../../../../../layout/post/presentation/screens/home_screen.dart';
 import '../../../../domain/entities/pet_entity.dart';
 import '../../../controller/pet_cubit.dart';
+import '../../pet_screen.dart';
 import 'empty_state.dart';
 import '../common/species_selector_sheet.dart';
 
@@ -84,6 +86,7 @@ class _PetScreenContentState extends State<PetScreenContent> {
             ),
           ],
         ),
+
         body: _buildBody(),
         floatingActionButton: _buildFab(),
       ),
@@ -99,7 +102,6 @@ class _PetScreenContentState extends State<PetScreenContent> {
       );
     }
 
-    // Normal FAB
     return _shouldShowFab()
         ? FloatingActionButton(
           backgroundColor: ColorManager.primaryColor,
@@ -114,20 +116,59 @@ class _PetScreenContentState extends State<PetScreenContent> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: Text(isArabic() ? "تأكيد الدمج" : "Confirm Merge"),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            title: Row(
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.redAccent,
+                  size: 32,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    isArabic() ? "تأكيد الدمج" : "Confirm Merge",
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             content: Text(
               isArabic()
-                  ? "هل تريد دمج ${_selectedPets.length} حيوانات؟"
-                  : "Do you want to merge ${_selectedPets.length} pets?",
+                  ? "⚠️ سيتم حذف الأليف الأحدث، وسيبقى الأليف الأقدم فقط.\n\n❗ هذا الإجراء لا يمكن التراجع عنه."
+                  : "⚠️ The newest pets will be deleted, and only the oldest will remain.\n\n❗ This action cannot be undone.",
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 18, height: 1.5),
+            ),
+            actionsAlignment: MainAxisAlignment.spaceBetween,
+            actionsPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
             ),
             actions: [
               TextButton(
+                style: TextButton.styleFrom(
+                  textStyle: const TextStyle(fontSize: 16),
+                ),
                 child: Text(isArabic() ? "إلغاء" : "Cancel"),
                 onPressed: () => Navigator.pop(context),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ColorManager.primaryColor,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  textStyle: const TextStyle(fontSize: 16),
                 ),
                 child: Text(isArabic() ? "تأكيد" : "Confirm"),
                 onPressed: () {
@@ -137,6 +178,46 @@ class _PetScreenContentState extends State<PetScreenContent> {
                     _selectionMode = false;
                     _selectedPets.clear();
                   });
+
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) {
+                      Future.delayed(const Duration(seconds: 2), () {
+                        // ignore: use_build_context_synchronously
+                        navigateAndFinish(context, PetScreen());
+                        widget.cubit.getOwnerPets();
+                      });
+
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        backgroundColor: Colors.white,
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              color: Colors.green,
+                              size: 60,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              isArabic()
+                                  ? "تم الدمج بنجاح "
+                                  : "Merge Successful ",
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
             ],

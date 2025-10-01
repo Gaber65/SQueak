@@ -235,32 +235,5 @@ class PetRepositoryImpl implements PetRepository {
     }
   }
 
-  // @override
-  // Future<Either<Failure, PetEntities>> createPetLoginScreen(
-  //   PetEntitiesss pet,
-  // ) async {
-  //   if (await networkInfo.isConnected) {
-  //     try {
-  //       final remotePet = await remoteDataSource.createPetForLoginScreen(pet);
-  //       final pets = await localDataSource.getCachedPets();
-  //       pets.add(remotePet);
-  //       await localDataSource.cachePets(pets);
-
-  //       return Right(remotePet);
-  //     } on ServerException catch (failure) {
-  //       return Left(ServerFailure(failure.errorMessageModel));
-  //     }
-  //   } else {
-  //     return const Left(
-  //       ServerFailure(
-  //         ErrorMessageModel(
-  //           message: 'No internet connection',
-  //           statusCode: 0,
-  //           errors: {},
-  //           success: false,
-  //         ),
-  //       ),
-  //     );
-  //   }
-  // }
+  
 }

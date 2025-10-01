@@ -30,7 +30,7 @@ class AddPetScreen extends StatelessWidget {
       child: BlocConsumer<PetCubit, PetState>(
         listener: (context, state) {
           if (state is PetCreateSuccessState) {
-            navigateAndFinish(context, const PetScreen());
+            navigateAndFinish(context, const LayoutScreen());
           }
 
           if (state is PetCreateErrorState) {

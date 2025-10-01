@@ -25,7 +25,8 @@ class PetScreen extends StatelessWidget {
           } else if (state is QrUnlinkSuccess) {
             successToast(context, state.message);
             PetCubit.get(context).getOwnerPets();
-          } if (state is QrError) {
+          }
+          if (state is QrError) {
             errorToast(context, state.message);
           }
         },

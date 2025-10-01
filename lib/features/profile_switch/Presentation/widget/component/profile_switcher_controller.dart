@@ -30,15 +30,26 @@ class ProfileSwitcherController {
 
   void _showOverlay() {
     final overlay = Overlay.of(context);
+
     _overlayEntry = OverlayEntry(
-      builder: (_) => buildProfileSwitcherOverlay(
-        context: context,
-        layerLink: layerLink,
-        fade: _fade,
-        scale: _scale,
-        onClose: _removeOverlay,
+      builder: (_) => GestureDetector(
+        behavior: HitTestBehavior.translucent, // detect taps anywhere
+        onTap: _removeOverlay, // close if tap outside
+        child: Stack(
+          children: [
+            // the actual dropdown overlay
+            buildProfileSwitcherOverlay(
+              context: context,
+              layerLink: layerLink,
+              fade: _fade,
+              scale: _scale,
+              onClose: _removeOverlay,
+            ),
+          ],
+        ),
       ),
     );
+
     overlay.insert(_overlayEntry!);
     _isOpen = true;
     _controller.forward();
@@ -58,4 +69,13 @@ class ProfileSwitcherController {
     _controller.dispose();
     _removeOverlay();
   }
+  void closeDropdown() {
+  if (_overlayEntry != null) {
+    _controller.reverse().then((_) {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+      _isOpen = false;
+    });
+  }
+}
 }

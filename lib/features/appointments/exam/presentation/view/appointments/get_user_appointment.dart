@@ -2,18 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import 'package:squeak/features/appointments/exam/domain/entities/clinic_entity.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/appointmentShimmerItem.dart';
-import 'package:squeak/features/appointments/exam/presentation/view/appointments/booking/widget/appointment_item.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/card_appoinment_item.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/supplier/get_supplier.dart';
-
-import '../../../../../pets/domain/entities/pet_entity.dart';
-import '../../../../boarding/presentation/cubit/boarding_cubit.dart';
 import '../../../../boarding/presentation/cubit/boarding_state.dart';
 import '../../../../boarding/presentation/screens/widgets/boarding_card.dart';
 import '../../../../boarding/presentation/screens/widgets/filter_boarding.dart';
-import '../../controller/user/user_appointment_cubit.dart';
 import '../component/filter_component.dart';
 
 import 'booking/widget/empty_data.dart';
@@ -106,6 +100,7 @@ class _AllAppointmentContent extends StatelessWidget {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
+      centerTitle: true,
       title: Text(S.of(context).yourAppointments),
       bottom: _buildTabBar(context),
     );

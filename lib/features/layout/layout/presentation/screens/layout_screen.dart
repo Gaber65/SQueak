@@ -21,7 +21,6 @@ class _LayoutScreenState extends State<LayoutScreen>
   int selectedIndex = 0;
 
   late AnimationController _jumpController;
-  late Animation<double> _jumpAnimation;
 
   @override
   void initState() {
@@ -38,78 +37,6 @@ class _LayoutScreenState extends State<LayoutScreen>
       duration: const Duration(seconds: 7),
     );
 
-    _jumpAnimation = TweenSequence([
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 0,
-          end: -8,
-        ).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 10,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: -10,
-          end: 0,
-        ).chain(CurveTween(curve: Curves.easeIn)),
-        weight: 10,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 0,
-          end: -8,
-        ).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 8,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: -8,
-          end: 0,
-        ).chain(CurveTween(curve: Curves.easeIn)),
-        weight: 8,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 0,
-          end: -6,
-        ).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 7,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: -6,
-          end: 0,
-        ).chain(CurveTween(curve: Curves.easeIn)),
-        weight: 7,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 0,
-          end: -4,
-        ).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 6,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: -4,
-          end: 0,
-        ).chain(CurveTween(curve: Curves.bounceOut)),
-        weight: 6,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 0,
-          end: -2,
-        ).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 4,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: -2,
-          end: 0,
-        ).chain(CurveTween(curve: Curves.bounceOut)),
-        weight: 4,
-      ),
-    ]).animate(_jumpController);
 
     if (CacheHelper.getData('havePets') == '[]' ||
         CacheHelper.getData('havePets') == 0) {
