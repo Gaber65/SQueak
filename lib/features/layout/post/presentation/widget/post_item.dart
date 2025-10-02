@@ -26,7 +26,6 @@ class BuildPostItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header (Avatar + Name + Title)
             Row(
               children: [
                 CircleAvatar(
@@ -65,8 +64,6 @@ class BuildPostItem extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-
-            // Post content
             Text(
               postItem.content,
               style: TextStyle(color: textColor),
