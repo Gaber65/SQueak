@@ -6,24 +6,30 @@ class SkipDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AlertDialog(
-      backgroundColor: ColorManager.editScreenTextFieldBaseColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      title: const Text(
+      backgroundColor:
+          isDark ? ColorManager.editScreenTextFieldBaseColor : Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      title: Text(
         "Are you sure you want to skip finding friends?",
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: ColorManager.editScreenBaseFontColor,
+          color:
+              isDark
+                  ? ColorManager.editScreenBaseFontColor
+                  : ColorManager.black87,
         ),
       ),
-      content: const Text(
+      content: Text(
         "You can always connect later.",
         style: TextStyle(
           fontSize: 14,
-          color: ColorManager.editScreenBaseFontColor,
+          color:
+              isDark
+                  ? ColorManager.editScreenBaseFontColor
+                  : ColorManager.black87,
         ),
       ),
       actions: [
@@ -37,7 +43,15 @@ class SkipDialog extends StatelessWidget {
               borderRadius: BorderRadius.circular(6),
               color: ColorManager.bTwitter,
             ),
-            child: const Text("OK", style: TextStyle(color: Colors.black)),
+            child:  Text(
+              "OK",
+              style: TextStyle(
+                color:
+                    isDark
+                        ? ColorManager.editScreenBaseFontColor
+                        : ColorManager.black87,
+              ),
+            ),
           ),
         ),
         TextButton(
@@ -48,9 +62,14 @@ class SkipDialog extends StatelessWidget {
               color: ColorManager.followersShadowLightColor,
               borderRadius: BorderRadius.circular(6),
             ),
-            child: const Text(
+            child: Text(
               "Cancel",
-              style: TextStyle(color: ColorManager.editScreenBaseFontColor),
+              style: TextStyle(
+                color:
+                    isDark
+                        ? ColorManager.editScreenBaseFontColor
+                        : ColorManager.black87,
+              ),
             ),
           ),
         ),

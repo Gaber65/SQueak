@@ -537,7 +537,7 @@ class S {
   /// `Appointments`
   String get yourAppointments {
     return Intl.message(
-      ' Appointments',
+      'Appointments',
       name: 'yourAppointments',
       desc: '',
       args: [],

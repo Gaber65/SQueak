@@ -25,7 +25,6 @@ class BottomButtons extends StatelessWidget {
         top: false,
         child: Row(
           children: [
-            // ⏭ Skip button
             Expanded(
               flex: 2,
               child: OutlinedButton(
