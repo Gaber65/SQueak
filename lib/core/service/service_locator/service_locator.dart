@@ -1,5 +1,4 @@
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
-
 import '../../../features/layout/search/presentation/controller/search_cubit.dart';
 import '../../../features/pets/domain/use_case/merge_pets_usecase.dart';
 import '../../../features/settings/persentaion/controller/setting_cubit.dart';
@@ -115,7 +114,6 @@ class ServiceLocator {
     sl.registerLazySingleton(() => GetSearchListUseCase(sl()));
     sl.registerLazySingleton(() => GetSupplierUseCase(sl()));
     sl.registerLazySingleton(() => UnfollowClinicUseCase(sl()));
-
     sl.registerLazySingleton(() => UpdateNotificationStateUseCase(sl()));
     sl.registerLazySingleton(() => GetAllNotificationsUseCase(sl()));
     sl.registerLazySingleton(() => GetPostNotificationUseCase(sl()));

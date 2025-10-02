@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/layout/post/presentation/controller/post_cubit.dart';
@@ -13,11 +14,30 @@ import '../widget/build_search_box.dart';
 import '../widget/loading_posts.dart';
 import 'package:squeak/features/profile_switch/Presentation/widget/component/profile_switcher_controller.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late ProfileSwitcherController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = ProfileSwitcherController(context, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   void _closeProfileList() {
-    ProfileSwitcherController? controller = sl<ProfileSwitcherController>();
     controller.closeDropdown();
   }
 
@@ -33,19 +53,31 @@ class HomeScreen extends StatelessWidget {
           return GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: _closeProfileList,
-            child: Scaffold(
-              appBar: buildAppBarHome(context),
-              body: NotificationListener<UserScrollNotification>(
-                onNotification: (notification) {
+            child: Listener(
+              onPointerSignal: (event) {
+                if (event is PointerScrollEvent) {
                   _closeProfileList();
-                  return false;
-                },
-                child: Column(
-                  children: [
-                    const _PetTipBanner(),
-                    const _ActivePetSummary(),
-                    Expanded(child: _buildBody(cubit, state)),
-                  ],
+                }
+              },
+              onPointerDown: (_) => _closeProfileList(),
+              child: Scaffold(
+                appBar: buildAppBarHome(context),
+                body: NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    if (notification is ScrollStartNotification ||
+                        notification is UserScrollNotification ||
+                        notification is ScrollUpdateNotification) {
+                      _closeProfileList();
+                    }
+                    return false;
+                  },
+                  child: Column(
+                    children: [
+                      const _PetTipBanner(),
+                      const _ActivePetSummary(),
+                      Expanded(child: _buildBody(cubit, state)),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -68,7 +100,6 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-/// Lightweight tip banner shown at top of Home
 class _PetTipBanner extends StatefulWidget {
   const _PetTipBanner();
 

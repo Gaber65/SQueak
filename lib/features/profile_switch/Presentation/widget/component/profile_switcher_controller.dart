@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'profile_switcher_overlay.dart';
 
@@ -33,19 +34,25 @@ class ProfileSwitcherController {
 
     _overlayEntry = OverlayEntry(
       builder: (_) => GestureDetector(
-        behavior: HitTestBehavior.translucent, // detect taps anywhere
-        onTap: _removeOverlay, // close if tap outside
-        child: Stack(
-          children: [
-            // the actual dropdown overlay
-            buildProfileSwitcherOverlay(
-              context: context,
-              layerLink: layerLink,
-              fade: _fade,
-              scale: _scale,
-              onClose: _removeOverlay,
-            ),
-          ],
+        behavior: HitTestBehavior.translucent,
+        onTap: _removeOverlay, 
+        child: Listener(
+          onPointerSignal: (event) {
+            if (event is PointerScrollEvent) {
+              _removeOverlay(); 
+            }
+          },
+          child: Stack(
+            children: [
+              buildProfileSwitcherOverlay(
+                context: context,
+                layerLink: layerLink,
+                fade: _fade,
+                scale: _scale,
+                onClose: _removeOverlay,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -69,13 +76,6 @@ class ProfileSwitcherController {
     _controller.dispose();
     _removeOverlay();
   }
-  void closeDropdown() {
-  if (_overlayEntry != null) {
-    _controller.reverse().then((_) {
-      _overlayEntry?.remove();
-      _overlayEntry = null;
-      _isOpen = false;
-    });
-  }
-}
+
+  void closeDropdown() => _removeOverlay();
 }
