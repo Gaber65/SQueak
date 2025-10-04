@@ -12,7 +12,7 @@ abstract class PetRemoteDataSource {
   Future<PetData> createPet(PetEntities pet);
   Future<PetData> updatePet(String id, PetData pet);
   Future<void> deletePet(String id);
-  Future<List<PetData>> mergePets(List<String> ids);
+  Future<PetData> mergePets(List<String> ids);
 }
 
 class PetRemoteDataSourceImpl implements PetRemoteDataSource {
@@ -126,7 +126,7 @@ class PetRemoteDataSourceImpl implements PetRemoteDataSource {
   }
   
   @override
-  Future<List<PetData>> mergePets(List<String> ids)async {
+  Future<PetData> mergePets(List<String> ids)async {
     try{
       final response = await DioFinalHelper.postData(
         method: mergePetsEndPoint,
@@ -134,9 +134,7 @@ class PetRemoteDataSourceImpl implements PetRemoteDataSource {
           "petsId": ids,
         },
       );
-      return (response.data['data'])
-          .map((e) => PetData.fromJson(e))
-          .toList();
+      return PetData.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),

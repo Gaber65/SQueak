@@ -402,12 +402,13 @@ class PetCubit extends Cubit<PetState> {
   // merge pets
   Future<void> mergePets(List<String> ids) async {
     emit(MergePetsLoadingState());
-
     final result = await mergePetsUseCase(ids);
-
     result.fold(
-      (error) => emit(MergePetsErrorState(extractFirstError(error))),
+      (error) {
+        emit(MergePetsErrorState(extractFirstError(error)));
+      },
       (mergedPet) {
+        pets.removeWhere((pet) => ids.contains(pet.petId));
         pets.add(mergedPet);
         emit(MergePetsSuccessState());
       },

@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:squeak/features/pets/presentation/view/add_pet_screen.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/get_pet/pet_card.dart';
@@ -7,10 +10,8 @@ import 'package:squeak/features/qr/presentation/controller/qr_cubit.dart';
 
 import '../../../../../../core/utils/export_path/export_files.dart';
 import '../../../../../../core/service/global_widget/vc_loading_widget.dart';
-import '../../../../../layout/post/presentation/screens/home_screen.dart';
 import '../../../../domain/entities/pet_entity.dart';
 import '../../../controller/pet_cubit.dart';
-import '../../pet_screen.dart';
 import 'empty_state.dart';
 import '../common/species_selector_sheet.dart';
 
@@ -41,7 +42,6 @@ class _PetScreenContentState extends State<PetScreenContent> {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         if (_isSnackBarVisible) {
@@ -111,17 +111,120 @@ class _PetScreenContentState extends State<PetScreenContent> {
         : null;
   }
 
-  void _showMergeConfirmDialog() {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
+void _showMergeConfirmDialog() {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (dialogContext) => BlocProvider.value(
+      value: widget.cubit,
+      child: BlocConsumer<PetCubit, PetState>(
+        listener: (listenerContext, state) {
+          if (state is MergePetsSuccessState) {
+            Navigator.of(dialogContext).pop();
+            if (mounted) {
+              setState(() {
+                _selectionMode = false;
+                _selectedPets.clear();
+              });
+            }
+            widget.cubit.getOwnerPets();
+            Future.delayed(const Duration(milliseconds: 300), () {
+              if (mounted) {
+                showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (successContext) => AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    backgroundColor: Colors.white,
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.check_circle,
+                          color: Colors.green,
+                          size: 60,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          isArabic() ? "تم الدمج بنجاح" : "Merge Successful",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(successContext).pop();
+                        },
+                        child: Text(isArabic() ? "موافق" : "OK"),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            });
+          } else if (state is MergePetsErrorState) {
+            Navigator.of(dialogContext).pop();
+            Future.delayed(const Duration(milliseconds: 300), () {
+              if (mounted) {
+                showDialog(
+                  context: context,
+                  builder: (errorContext) => AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    title: Row(
+                      children: [
+                        const Icon(
+                          Icons.error,
+                          color: Colors.red,
+                          size: 28,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            isArabic() ? "فشل الدمج" : "Merge Failed",
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    content: Text(
+                      isArabic()
+                          ? "فشل الدمج. الرجاء المحاولة مرة أخرى"
+                          : "Merge failed. Please try again.",
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(errorContext).pop(),
+                        child: Text(isArabic() ? "موافق" : "OK"),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            });
+          }
+        },
+        builder: (builderContext, state) {
+          final isLoading = state is MergePetsLoadingState;
+          return AlertDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
             title: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.warning_amber_rounded,
                   color: Colors.redAccent,
                   size: 32,
@@ -155,8 +258,10 @@ class _PetScreenContentState extends State<PetScreenContent> {
                 style: TextButton.styleFrom(
                   textStyle: const TextStyle(fontSize: 16),
                 ),
+                onPressed: isLoading
+                    ? null
+                    : () => Navigator.of(dialogContext).pop(),
                 child: Text(isArabic() ? "إلغاء" : "Cancel"),
-                onPressed: () => Navigator.pop(context),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -170,61 +275,30 @@ class _PetScreenContentState extends State<PetScreenContent> {
                   ),
                   textStyle: const TextStyle(fontSize: 16),
                 ),
-                child: Text(isArabic() ? "تأكيد" : "Confirm"),
-                onPressed: () {
-                  Navigator.pop(context);
-                  widget.cubit.mergePets(_selectedPets.toList());
-                  setState(() {
-                    _selectionMode = false;
-                    _selectedPets.clear();
-                  });
-
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (context) {
-                      Future.delayed(const Duration(seconds: 2), () {
-                        // ignore: use_build_context_synchronously
-                        navigateAndFinish(context, PetScreen());
-                        widget.cubit.getOwnerPets();
-                      });
-
-                      return AlertDialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        widget.cubit.mergePets(_selectedPets.toList());
+                      },
+                child: isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
-                        backgroundColor: Colors.white,
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.check_circle,
-                              color: Colors.green,
-                              size: 60,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              isArabic()
-                                  ? "تم الدمج بنجاح "
-                                  : "Merge Successful ",
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
+                      )
+                    : Text(isArabic() ? "تأكيد" : "Confirm"),
               ),
             ],
-          ),
-    );
-  }
-
+          );
+        },
+      ),
+    ),
+  );
+}
   Widget _buildBody() {
     if (widget.state is GetOwnerPetsLoadingState) {
       return Center(

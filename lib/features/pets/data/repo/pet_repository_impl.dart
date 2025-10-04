@@ -215,9 +215,15 @@ class PetRepositoryImpl implements PetRepository {
   Future<Either<Failure, PetEntities>> mergePets(List<String> ids) async {
     if (await networkInfo.isConnected) {
       try {
-        final remotePets = await remoteDataSource.mergePets(ids);
-        await localDataSource.cachePets(remotePets);
-        return Right(remotePets.first);
+        final mergedPet = await remoteDataSource.mergePets(ids);
+        
+        // Update cached pets: remove merged pets and add the result
+        final pets = await localDataSource.getCachedPets();
+        pets.removeWhere((pet) => ids.contains(pet.petId));
+        pets.add(mergedPet);
+        await localDataSource.cachePets(pets);
+        
+        return Right(mergedPet);
       } on ServerException catch (failure) {
         return Left(ServerFailure(failure.errorMessageModel));
       }

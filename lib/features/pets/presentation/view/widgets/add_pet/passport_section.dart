@@ -16,6 +16,7 @@ class PassportSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Microchip Information Section
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -45,41 +46,36 @@ class PassportSection extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Microchip Number',
+                  isArabic() ? 'رقم الشريحة الدقيقة' : 'Microchip Number',
                   style: TextStyle(
                     color: isDark ? Colors.white : Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 10),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: "Enter microship number (optional)",
-                    hintStyle: const TextStyle(color: Colors.black54),
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 14,
-                      horizontal: 12,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFFBFD2FF), // light border
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF4A7CFF), // focus border
-                        width: 1.5,
-                      ),
-                    ),
+                MyTextForm(
+                  controller: cubit.microchipNumberController,
+                  prefixIcon: Icon(
+                    Icons.sim_card_alert_outlined,
+                    size: 20,
+                    color: isDark ? ColorManager.sWhite : ColorManager.black_87,
                   ),
+                  enable: false,
+                  hintText:
+                      isArabic()
+                          ? 'ادخل رقم الشريحة الدقيقة'
+                          : 'Enter Microchip Number',
+                  validatorText: null,
+                  obscureText: false,
                 ),
               ],
             ),
           ),
         ),
+
         const SizedBox(height: 20),
+
+        // Passport Information Section
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -111,102 +107,83 @@ class PassportSection extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 20),
+                Text(
+                  isArabic() ? 'رقم جواز السفر' : 'Passport Number',
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 8),
                 Row(
                   children: [
-                    // Passport Number Field
                     Expanded(
                       flex: 3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Passport Number",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
+                      child: MyTextForm(
+                        controller: cubit.passportNumberController,
+                        prefixIcon: Icon(
+                          Icons.card_membership,
+                          size: 20,
+                          color:
+                              isDark
+                                  ? ColorManager.sWhite
+                                  : ColorManager.black_87,
+                        ),
+                        enable: false,
+                        hintText:
+                            isArabic()
+                                ? 'ادخل رقم جواز السفر'
+                                : 'Enter passport number',
+                        validatorText: null,
+                        obscureText: false,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      flex: 1,
+                      child: GestureDetector(
+                        onTap: () => _handlePassportImageTap(context),
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.blue),
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.blue,
                           ),
-                          const SizedBox(height: 8),
-                          // Input + Button in a row
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                    hintText: "Enter passport number (opt)",
-                                    hintStyle: const TextStyle(
-                                      color: Colors.black54,
+                          child: Center(
+                            child:
+                                cubit.passportImage != null ||
+                                        cubit
+                                            .passportImageNameController
+                                            .text
+                                            .isNotEmpty
+                                    ? Icon(
+                                      Icons.image,
+                                      size: 24,
+                                      color: Colors.white,
+                                    )
+                                    : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          isArabic() ? 'أرفق' : 'Attach',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Icon(
+                                          Icons.attach_file,
+                                          size: 20,
+                                          color: Colors.white,
+                                        ),
+                                      ],
                                     ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 14,
-                                      horizontal: 12,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(
-                                        color: Color(
-                                          0xFFBFD2FF,
-                                        ), // light border
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(
-                                        color: Color(
-                                          0xFF4A7CFF,
-                                        ), // focus border
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              const SizedBox(width: 8),
-                              // Passport Image
-                              Expanded(
-                                flex: 1,
-                                child: GestureDetector(
-                                  onTap: () => _handlePassportImageTap(context),
-                                  child: Container(
-                                    height: 50,
-                                    width: 120,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color:
-                                            isDark ? Colors.blue : Colors.blue,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: isDark ? Colors.blue : Colors.blue,
-                                    ),
-
-                                    child: Center(
-                                      child:
-                                          cubit.passportImage != null ||
-                                                  cubit
-                                                      .passportImageNameController
-                                                      .text
-                                                      .isNotEmpty
-                                              ? Text(
-                                                'Attach',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              )
-                                              : Text(
-                                                'Attach',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ],
@@ -222,10 +199,8 @@ class PassportSection extends StatelessWidget {
   void _handlePassportImageTap(BuildContext context) {
     if (cubit.passportImage != null ||
         cubit.passportImageNameController.text.isNotEmpty) {
-      // Show image in dialog
       _showPassportImageDialog(context);
     } else {
-      // Pick new image
       cubit.getPassportImage();
     }
   }
