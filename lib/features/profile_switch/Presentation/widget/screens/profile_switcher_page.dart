@@ -3,6 +3,7 @@ import 'package:squeak/core/network/end-points.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import 'package:squeak/features/profile_switch/Presentation/widget/component/profile_switcher_controller.dart';
 import 'package:squeak/features/profile_switch/source/data/profile_local_data_source.dart';
+
 class ProfileSwitcherButton extends StatefulWidget {
   const ProfileSwitcherButton({
     super.key,
@@ -23,7 +24,6 @@ class _ProfileSwitcherButtonState extends State<ProfileSwitcherButton>
   @override
   void initState() {
     super.initState();
-
     _controller = ProfileSwitcherController(context, vsync: this);
   }
 
@@ -36,6 +36,8 @@ class _ProfileSwitcherButtonState extends State<ProfileSwitcherButton>
   @override
   Widget build(BuildContext context) {
     CacheHelper.getData(activeProfileKey);
+
+    final hasImage = widget.image.isNotEmpty && widget.image != imageUrl;
 
     return CompositedTransformTarget(
       link: _controller.layerLink,
@@ -51,16 +53,18 @@ class _ProfileSwitcherButtonState extends State<ProfileSwitcherButton>
               color: Colors.blue,
             ),
             child: Center(
-              child: CircleAvatar(
-                backgroundColor: Colors.blue,
-                backgroundImage: NetworkImage(
-                  widget.image == imageUrl ? "" : widget.image,
-                ),
-                child: Text(
-                  widget.name,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ),
+              child: hasImage
+                  ? CircleAvatar(
+                      backgroundColor: Colors.blue,
+                      backgroundImage: NetworkImage(widget.image),
+                    )
+                  : CircleAvatar(
+                      backgroundColor: Colors.blue,
+                      child: Text(
+                        widget.name,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
             ),
           ),
         ),

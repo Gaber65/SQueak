@@ -1,9 +1,9 @@
+// ignore_for_file: deprecated_member_use
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
-import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import 'package:squeak/features/settings/persentaion/controller/setting_cubit.dart';
 import 'package:widget_circular_animator/widget_circular_animator.dart';
 import '../../../../../core/utils/enums/profile_type.dart';
@@ -85,7 +85,7 @@ Widget buildProfileSwitcherOverlay({
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (  pets.isEmpty && owner == null)
-                    buildProfileSwitcherShimmer(context) // ✅ shimmer هنا
+                    buildProfileSwitcherShimmer(context) 
                   else ...[
                     if (owner != null)
                       ProfileSwitcherItem(
