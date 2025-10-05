@@ -1,7 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/network/end-points.dart';
-import 'package:squeak/core/service/global_function/time_format.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
@@ -14,44 +14,69 @@ class SentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final size = MediaQuery.of(context).size;
 
-    final cardColor = isDark ? Color(0xFF1E1E1E) : Colors.white;
-    final shadowColor =
-        isDark ? Colors.black26 : Colors.black.withOpacity(0.05);
+    final shadowColor = isDark
+        ? Colors.black.withOpacity(0.4)
+        : Colors.grey.withOpacity(0.2);
+
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.all(size.width * 0.045),
       decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          colors: isDark
+              ? [const Color(0xFF1E1E1E), const Color(0xFF2A2A2A)]
+              : [Colors.white, const Color(0xFFF9F9F9)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: shadowColor, blurRadius: 4, offset: Offset(0, 2)),
+          BoxShadow(
+            color: shadowColor,
+            blurRadius: 10,
+            spreadRadius: 1,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundImage: NetworkImage(
-                  imageUrl +
-                      (pet.imageName?.isNotEmpty == true ? pet.imageName! : ""),
-                ),
-                child: Text(
-                  pet.imageName?.isNotEmpty == true
-                      ? ""
-                      : pet.petName!.substring(0, 1),
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: isDark
+                        ? [Colors.blueGrey[800]!, Colors.blueGrey[600]!]
+                        : [Colors.blue[500]!, Colors.blue[300]!],
                   ),
                 ),
+                padding: const EdgeInsets.all(3),
+                child: CircleAvatar(
+                  radius: size.width * 0.08,
+                  backgroundImage: (pet.imageName?.isNotEmpty ?? false)
+                      ? NetworkImage(imageUrl + pet.imageName!)
+                      : null,
+                  backgroundColor:
+                      isDark ? Colors.grey[800] : Colors.grey[300],
+                  child: (pet.imageName?.isNotEmpty ?? false)
+                      ? null
+                      : Text(
+                          pet.petName!.substring(0, 1).toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                ),
               ),
-
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,18 +84,21 @@ class SentCard extends StatelessWidget {
                     Text(
                       pet.petName ?? '',
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.3,
                         color: isDark ? Colors.white : Colors.black87,
                       ),
                     ),
+                    const SizedBox(height: 4),
                     Text(
                       (pet.birthdate != null && pet.birthdate != '')
                           ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
                           : pet.breed?.enBreed ?? "",
                       style: TextStyle(
                         fontSize: 14,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                        color: isDark ? Colors.grey[400] : Colors.grey[700],
                       ),
                     ),
                   ],
@@ -78,95 +106,123 @@ class SentCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          if (pet.isSpayed ?? false) ...[
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-              decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                isArabic() ? 'معقم' : 'Spayed',
 
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.green,
-                ),
+          const SizedBox(height: 14),
+          Container(
+            margin: const EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: (pet.isSpayed ?? false)
+                    ? [Colors.green.withOpacity(0.15), Colors.green.withOpacity(0.05)]
+                    : [Colors.orange.withOpacity(0.15), Colors.orange.withOpacity(0.05)],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: (pet.isSpayed ?? false)
+                    ? Colors.green.withOpacity(0.5)
+                    : Colors.orange.withOpacity(0.5),
               ),
             ),
-          ] else...[
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-              decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                isArabic() ? 'غير معقم' : 'Unspayed',
-
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.orange,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  (pet.isSpayed ?? false)
+                      ? Icons.check_circle_rounded
+                      : Icons.warning_amber_rounded,
+                  color: (pet.isSpayed ?? false)
+                      ? Colors.green
+                      : Colors.orange,
+                  size: 18,
                 ),
-              ),
-            ),          ],
+                const SizedBox(width: 6),
+                Text(
+                  (pet.isSpayed ?? false)
+                      ? (isArabic() ? 'معقم' : 'Spayed')
+                      : (isArabic() ? 'غير معقم' : 'Unspayed'),
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: (pet.isSpayed ?? false)
+                        ? Colors.green[700]
+                        : Colors.orange[700],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          /// 🫂 Mutual Friends
           if ((pet.mutualFriends ?? 0) > 0) ...[
-            const SizedBox(height: 4),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Icon(
-                  Icons.people,
-                  size: 16,
+                  Icons.people_alt_outlined,
+                  size: 18,
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
                 ),
-                const SizedBox(width: 4),
-                Text(
-                  isArabic()
-                      ? '${pet.mutualFriends} صديق${pet.mutualFriends! > 1 ? 's' : ''}'
-                      : '${pet.mutualFriends} mutual friend${pet.mutualFriends! > 1 ? 's' : ''}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    isArabic()
+                        ? '${pet.mutualFriends} صديق مشترك'
+                        : '${pet.mutualFriends} mutual friend${pet.mutualFriends! > 1 ? 's' : ''}',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
                   ),
                 ),
               ],
             ),
           ],
-          const SizedBox(height: 12),
+
+          const SizedBox(height: 18),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: () {
                 context.read<PetFriendsCubit>().cancelRequest(
-                  pet,
-                  SwitchProfileCubit.get(context).activeProfile!.pet!.petId!,
-                );
+                      pet,
+                      SwitchProfileCubit.get(context)
+                          .activeProfile!
+                          .pet!
+                          .petId!,
+                    );
               },
               icon: Icon(
-                Icons.close,
-                size: 16,
-                color: isDark ? Colors.grey[300] : Colors.grey[700],
+                Icons.cancel_outlined,
+                size: 18,
+                color: isDark ? Colors.red[300] : Colors.red[400],
               ),
               label: Text(
-                isArabic() ? 'إلغاء طلب الصداقة' : 'Cancel Friendship Request',
+                isArabic()
+                    ? 'إلغاء طلب الصداقة'
+                    : 'Cancel Friendship Request',
                 style: TextStyle(
-                  color: isDark ? Colors.grey[300] : Colors.grey[700],
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.2,
+                  color: isDark ? Colors.red[300] : Colors.red[400],
                 ),
               ),
               style: OutlinedButton.styleFrom(
-                backgroundColor: isDark ? Colors.grey[900] : Colors.transparent,
                 side: BorderSide(
-                  color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                  color: isDark ? Colors.red[300]! : Colors.red[400]!,
+                  width: 1.3,
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                backgroundColor: isDark
+                    ? Colors.red.withOpacity(0.07)
+                    : Colors.red.withOpacity(0.05),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                elevation: 0,
               ),
             ),
           ),

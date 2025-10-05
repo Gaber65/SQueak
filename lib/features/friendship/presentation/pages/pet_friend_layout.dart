@@ -34,6 +34,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => sl<PetFriendsCubit>()),
@@ -44,11 +45,11 @@ class _FriendsScreenState extends State<FriendsScreen> {
         appBar: AppBar(
           centerTitle: true,
           title: Text(
-            isArabic() ? 'أصدقاء الحيوانات الأليفة' : 'Pet Friends',
-            style: const TextStyle(
+            isArabic() ? 'الأصدقاء والطلبات' : 'Friends & Requests',
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: ColorManager.black87,
+              color: isDark ? ColorManager.white : ColorManager.black87,
             ),
           ),
         ),
@@ -127,63 +128,6 @@ class _FriendsScreenState extends State<FriendsScreen> {
                       ),
                     ),
                     const SizedBox(height: 25),
-                    Text(
-                      isArabic() ? 'الأصدقاء والطلبات' : 'Friends & Requests',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      isArabic()
-                          ? 'إدارة أصدقائك و الطلبات'
-                          : 'Manage your pet friends and pending requests',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color:
-                            Theme.of(context).brightness == Brightness.dark
-                                ? const Color(0xFF1E1E1E)
-                                : const Color(0xFFE8F2FF),
-                        border: const Border(
-                          top: BorderSide(
-                            color: ColorManager.primaryColor,
-                            width: 1,
-                          ),
-                          bottom: BorderSide(
-                            color: ColorManager.primaryColor,
-                            width: 1,
-                          ),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.info_outline,
-                            color: Colors.blue[700],
-                            size: 16,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              isArabic()
-                                  ? 'تواصل مع أصدقائك و إدارة الطلبات'
-                                  : 'Connect with your pet friends and manage requests.',
-                              style: TextStyle(
-                                color: Colors.blue[700],
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     TabBarPetFriend(
                       selectedTab: cubit.selectedTab,
                       friendsCount: cubit.friends.length,

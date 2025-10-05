@@ -1,19 +1,20 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_function/format_utils.dart';
 
 class SearchBarWidget extends StatelessWidget {
   final TextEditingController? controller;
-  final ValueChanged<String>? onChanged; 
+  final ValueChanged<String>? onChanged;
   final VoidCallback? onClear;
-  final String specieId; 
+  final String specieId;
 
   const SearchBarWidget({
     super.key,
     this.controller,
     this.onChanged,
     this.onClear,
-    required this.specieId, 
+    required this.specieId,
   });
 
   @override
@@ -45,7 +46,10 @@ class SearchBarWidget extends StatelessWidget {
         ),
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: 'Search pets, breeds...',
+          hintText:
+              isArabic()
+                  ? 'ابحث عن الحيوانات والاصناف...'
+                  : 'Search pets, breeds...',
           hintStyle: TextStyle(
             color: isDark ? Colors.grey[400] : Colors.grey[600],
             fontSize: 14,

@@ -56,7 +56,7 @@ AppBar buildAppBarHome(context) {
           providers: [
             BlocProvider(
               create: (_) => sl<PetCubit>()..getOwnerPets(),
-              lazy: true,
+              lazy: false,
             ),
             BlocProvider(
               create: (_) => sl<SettingCubit>()..getOwnerData(),
