@@ -158,47 +158,48 @@ OverlayEntry buildGlassOverlay(BuildContext context) {
   var cubit = SwitchProfileCubit.get(context);
 
   return OverlayEntry(
-    builder:
-        (_) => Center(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-            child: WidgetCircularAnimator(
-              size: 200,
-              innerIconsSize: 3,
-              outerIconsSize: 3,
-              innerAnimation: Curves.easeInOutBack,
-              outerAnimation: Curves.easeInOutBack,
-              innerColor: Colors.deepPurple,
-              outerColor: Colors.orangeAccent,
-              innerAnimationSeconds: 10,
-              outerAnimationSeconds: 10,
-              child: Container(
-                height: 69,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.grey[200],
-                ),
-                child: CircleAvatar(
-                  backgroundColor:
-                      MainCubit.get(context).isDark
-                          ? Colors.black
-                          : Colors.white,
-                  backgroundImage: NetworkImage(cubit.image),
-                  child: Text(
-                    cubit.name,
-                    style: TextStyle(
-                      color:
-                          MainCubit.get(context).isDark
-                              ? Colors.white
-                              : Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
+    builder: (_) => Center(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        child: WidgetCircularAnimator(
+          size: 200,
+          innerIconsSize: 3,
+          outerIconsSize: 3,
+          innerAnimation: Curves.easeInOutBack,
+          outerAnimation: Curves.easeInOutBack,
+          innerColor: Colors.deepPurple,
+          outerColor: Colors.orangeAccent,
+          innerAnimationSeconds: 10,
+          outerAnimationSeconds: 10,
+          child: Container(
+            height: 69,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey[200],
+            ),
+            child: CircleAvatar(
+              backgroundColor: MainCubit.get(context).isDark
+                  ? Colors.black
+                  : Colors.white,
+              backgroundImage: (cubit.image.isNotEmpty)
+                  ? NetworkImage(cubit.image)
+                  : null,
+              child: (cubit.image.isEmpty)
+                  ? Text(
+                      cubit.name,
+                      style: TextStyle(
+                        color: MainCubit.get(context).isDark
+                            ? Colors.white
+                            : Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  : null,
             ),
           ),
         ),
+      ),
+    ),
   );
 }
