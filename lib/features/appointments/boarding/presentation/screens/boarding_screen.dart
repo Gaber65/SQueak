@@ -80,10 +80,13 @@ class _BoardingScreenState extends State<BoardingScreen> {
   final TextEditingController _entryDateController = TextEditingController();
   final TextEditingController _exitDateController = TextEditingController();
 
-  DateTime? entryDateTime;
-  DateTime? exitDateTime;
-  BoardingTypeEntity? selectedBoardingType;
-  double calculatedCost = 0.0;
+  // ValueNotifiers for better performance
+  final ValueNotifier<DateTime?> _entryDateNotifier = ValueNotifier(null);
+  final ValueNotifier<DateTime?> _exitDateNotifier = ValueNotifier(null);
+  final ValueNotifier<BoardingTypeEntity?> _selectedBoardingTypeNotifier = 
+      ValueNotifier(null);
+  final ValueNotifier<double> _calculatedCostNotifier = ValueNotifier(0.0);
+
   PetEntities? petSelect;
   bool initTheSelectedPetValue = false;
 
@@ -91,15 +94,18 @@ class _BoardingScreenState extends State<BoardingScreen> {
   void initState() {
     super.initState();
     _initializeDates();
-    context.read<BoardingCubit>().getBoardingTypes(widget.clinicCode);
+    // Load boarding types only once
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BoardingCubit>().getBoardingTypes(widget.clinicCode);
+    });
   }
 
   void _initializeDates() {
     final now = DateTime.now();
     final tomorrow = now.add(const Duration(days: 1));
 
-    entryDateTime = now;
-    exitDateTime = tomorrow;
+    _entryDateNotifier.value = now;
+    _exitDateNotifier.value = tomorrow;
 
     _entryDateController.text = _formatDateTime(now);
     _exitDateController.text = _formatDateTime(tomorrow);
@@ -111,76 +117,70 @@ class _BoardingScreenState extends State<BoardingScreen> {
   }
 
   void _calculateCost() {
-    if (selectedBoardingType == null ||
-        entryDateTime == null ||
-        exitDateTime == null) {
+    if (_selectedBoardingTypeNotifier.value == null ||
+        _entryDateNotifier.value == null ||
+        _exitDateNotifier.value == null) {
       return;
     }
 
-    final difference = exitDateTime!.difference(entryDateTime!);
+    final difference = _exitDateNotifier.value!.difference(_entryDateNotifier.value!);
     double cost = 0;
 
-    if (selectedBoardingType!.unit == 1) {
+    if (_selectedBoardingTypeNotifier.value!.unit == 1) {
       // Calculate by days
       int days = difference.inDays;
       days = days == 0 ? 1 : days;
-      cost = days * (selectedBoardingType!.price as double);
+      cost = days * (_selectedBoardingTypeNotifier.value!.price as double);
     } else {
       // Calculate by hours
       int hours = difference.inHours;
       hours = hours == 0 ? 1 : hours;
-      cost = hours * (selectedBoardingType!.price as double);
+      cost = hours * (_selectedBoardingTypeNotifier.value!.price as double);
     }
 
-    setState(() {
-      calculatedCost = cost;
-    });
+    _calculatedCostNotifier.value = cost;
   }
 
   void _onBoardingTypeChanged(BoardingTypeEntity boardingType) {
-    setState(() {
-      selectedBoardingType = boardingType;
-    });
+    _selectedBoardingTypeNotifier.value = boardingType;
     _calculateCost();
   }
 
   void _onDateChanged(DateTime date, bool isEntryDate) {
-    setState(() {
-      if (isEntryDate) {
-        entryDateTime = date;
-        _entryDateController.text = _formatDateTime(date);
-      } else {
-        exitDateTime = date;
-        _exitDateController.text = _formatDateTime(date);
-      }
-    });
+    if (isEntryDate) {
+      _entryDateNotifier.value = date;
+      _entryDateController.text = _formatDateTime(date);
+    } else {
+      _exitDateNotifier.value = date;
+      _exitDateController.text = _formatDateTime(date);
+    }
     _calculateCost();
   }
 
   void _submitBoarding() {
-    if (selectedBoardingType == null) {
+    if (_selectedBoardingTypeNotifier.value == null) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(S.of(context).selectBoarding)));
       return;
     }
 
-    if (entryDateTime == null || exitDateTime == null) {
+    if (_entryDateNotifier.value == null || _exitDateNotifier.value == null) {
       return;
     }
 
-    final difference = exitDateTime!.difference(entryDateTime!);
+    final difference = _exitDateNotifier.value!.difference(_entryDateNotifier.value!);
     var createParams = CreateBoardingParams(
       clinicCode: widget.clinicCode,
-      entryDate: entryDateTime!.toUtc().toIso8601String(),
-      existDate: exitDateTime!.toUtc().toIso8601String(),
+      entryDate: _entryDateNotifier.value!.toUtc().toIso8601String(),
+      existDate: _exitDateNotifier.value!.toUtc().toIso8601String(),
       period: difference.inDays,
       comment: _commentController.text,
-      boardingTypeId: selectedBoardingType!.id,
+      boardingTypeId: _selectedBoardingTypeNotifier.value!.id,
       vetICarePetId: petSelect!.petId ?? '',
     );
     context.read<BoardingCubit>().createBoarding(
-      createParams, // This should come from selected pet
+      createParams, 
     );
   }
 
@@ -203,6 +203,11 @@ class _BoardingScreenState extends State<BoardingScreen> {
         var cubit = BoardingCubit.get(context);
         final petCubit = PetCubit.get(context);
         final pets = petCubit.pets;
+        
+        // Show loading indicator while fetching boarding types
+        final isLoadingBoardingTypes = state is GetBoardingTypesLoading;
+        final hasBoardingTypes = cubit.boardingTypes.isNotEmpty;
+
         return Scaffold(
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
@@ -230,7 +235,10 @@ class _BoardingScreenState extends State<BoardingScreen> {
                       state is CreateBoardingLoading ? null : _submitBoarding,
                   child:
                       state is CreateBoardingLoading
-                          ? const CircularProgressIndicator()
+                          ? const CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            )
                           : const Icon(IconlyLight.send),
                 ),
               ],
@@ -244,8 +252,9 @@ class _BoardingScreenState extends State<BoardingScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Pet Selection Widget (only rebuild when needed)
                     if (widget.petSelectFromIcon == null)
-                      PetCarousel(
+                      _PetSelectionWidget(
                         pets: pets,
                         onPetSelected: (firstPet) {
                           setState(() {
@@ -255,48 +264,128 @@ class _BoardingScreenState extends State<BoardingScreen> {
                         },
                         initializeFirstPet: !initTheSelectedPetValue,
                       ),
-                    SizedBox(height: 16),
-                    BoardingTypeDropdown(
-                      boardingTypes: cubit.boardingTypes,
-                      selectedBoardingType: selectedBoardingType,
-                      onChanged: _onBoardingTypeChanged,
-                    ),
-
                     const SizedBox(height: 16),
 
-                    if (selectedBoardingType != null)
-                      Text(
-                        selectedBoardingType!.unit == 0
-                            ? 'Hourly rate'
-                            : 'Daily rate',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey.shade600,
+                    // Boarding Type Dropdown with loading state
+                    if (isLoadingBoardingTypes)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              const CircularProgressIndicator(),
+                              const SizedBox(height: 8),
+                              Text(
+                                isArabic() 
+                                    ? 'جاري تحميل أنواع الإقامة...'
+                                    : 'Loading boarding types...',
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
+                      )
+                    else if (!hasBoardingTypes)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.orange.shade50,
+                          border: Border.all(color: Colors.orange.shade200),
+                        ),
+                        child: Text(
+                          isArabic()
+                              ? 'لا توجد أنواع إقامة متاحة'
+                              : 'No boarding types available',
+                          style: TextStyle(
+                            color: Colors.orange.shade700,
+                            fontSize: 14,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    else
+                      ValueListenableBuilder<BoardingTypeEntity?>(
+                        valueListenable: _selectedBoardingTypeNotifier,
+                        builder: (context, selectedBoardingType, child) {
+                          return BoardingTypeDropdown(
+                            boardingTypes: cubit.boardingTypes,
+                            selectedBoardingType: selectedBoardingType,
+                            onChanged: _onBoardingTypeChanged,
+                          );
+                        },
                       ),
 
                     const SizedBox(height: 16),
 
-                    DateFieldWidget(
-                      title: isArabic() ? 'تاريخ الدخول' : 'Entry Date',
-                      controller: _entryDateController,
-                      selectedDateTime: entryDateTime,
-                      boardingType: selectedBoardingType,
-                      onDateChanged: (date) => _onDateChanged(date, true),
+                    // Boarding rate type indicator
+                    ValueListenableBuilder<BoardingTypeEntity?>(
+                      valueListenable: _selectedBoardingTypeNotifier,
+                      builder: (context, selectedBoardingType, child) {
+                        if (selectedBoardingType == null) {
+                          return const SizedBox.shrink();
+                        }
+                        return Text(
+                          selectedBoardingType.unit == 0
+                              ? 'Hourly rate'
+                              : 'Daily rate',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade600,
+                          ),
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 16),
 
-                    DateFieldWidget(
-                      title: isArabic() ? 'تاريخ الخروج' : 'Exit Date',
-                      controller: _exitDateController,
-                      selectedDateTime: exitDateTime,
-                      boardingType: selectedBoardingType,
-                      onDateChanged: (date) => _onDateChanged(date, false),
+                    // Entry Date Field
+                    ValueListenableBuilder<BoardingTypeEntity?>(
+                      valueListenable: _selectedBoardingTypeNotifier,
+                      builder: (context, selectedBoardingType, child) {
+                        return ValueListenableBuilder<DateTime?>(
+                          valueListenable: _entryDateNotifier,
+                          builder: (context, entryDateTime, child) {
+                            return DateFieldWidget(
+                              title: isArabic() ? 'تاريخ الدخول' : 'Entry Date',
+                              controller: _entryDateController,
+                              selectedDateTime: entryDateTime,
+                              boardingType: selectedBoardingType,
+                              onDateChanged: (date) => _onDateChanged(date, true),
+                            );
+                          },
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 16),
 
+                    // Exit Date Field
+                    ValueListenableBuilder<BoardingTypeEntity?>(
+                      valueListenable: _selectedBoardingTypeNotifier,
+                      builder: (context, selectedBoardingType, child) {
+                        return ValueListenableBuilder<DateTime?>(
+                          valueListenable: _exitDateNotifier,
+                          builder: (context, exitDateTime, child) {
+                            return DateFieldWidget(
+                              title: isArabic() ? 'تاريخ الخروج' : 'Exit Date',
+                              controller: _exitDateController,
+                              selectedDateTime: exitDateTime,
+                              boardingType: selectedBoardingType,
+                              onDateChanged: (date) => _onDateChanged(date, false),
+                            );
+                          },
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Price Label
                     Text(
                       S.of(context).boardingPrice,
                       style: const TextStyle(
@@ -307,29 +396,38 @@ class _BoardingScreenState extends State<BoardingScreen> {
 
                     const SizedBox(height: 8),
 
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.grey.shade200,
-                      ),
-                      child: Text(
-                        selectedBoardingType == null
-                            ? isArabic()
-                                ? 'الرجاء تحديد نوع الإقامة'
-                                : 'Please select boarding type'
-                            : '\$${calculatedCost.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        ),
-                      ),
+                    // Calculated Cost Display
+                    ValueListenableBuilder<BoardingTypeEntity?>(
+                      valueListenable: _selectedBoardingTypeNotifier,
+                      builder: (context, selectedBoardingType, child) {
+                        return ValueListenableBuilder<double>(
+                          valueListenable: _calculatedCostNotifier,
+                          builder: (context, calculatedCost, child) {
+                            return Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.grey.shade200,
+                              ),
+                              child: Text(
+                                selectedBoardingType == null
+                                    ? isArabic()
+                                        ? 'الرجاء تحديد نوع الإقامة'
+                                        : 'Please select boarding type'
+                                    : '\$${calculatedCost.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
 
-                    const SizedBox(
-                      height: 100,
-                    ), // Space for floating action button
+                    const SizedBox(height: 100),
                   ],
                 ),
               ),
@@ -345,6 +443,32 @@ class _BoardingScreenState extends State<BoardingScreen> {
     _commentController.dispose();
     _entryDateController.dispose();
     _exitDateController.dispose();
+    _entryDateNotifier.dispose();
+    _exitDateNotifier.dispose();
+    _selectedBoardingTypeNotifier.dispose();
+    _calculatedCostNotifier.dispose();
     super.dispose();
+  }
+}
+
+// Separate widget to prevent unnecessary rebuilds of pet carousel
+class _PetSelectionWidget extends StatelessWidget {
+  const _PetSelectionWidget({
+    required this.pets,
+    required this.onPetSelected,
+    required this.initializeFirstPet,
+  });
+
+  final List<PetEntities> pets;
+  final Function(PetEntities) onPetSelected;
+  final bool initializeFirstPet;
+
+  @override
+  Widget build(BuildContext context) {
+    return PetCarousel(
+      pets: pets,
+      onPetSelected: onPetSelected,
+      initializeFirstPet: initializeFirstPet,
+    );
   }
 }

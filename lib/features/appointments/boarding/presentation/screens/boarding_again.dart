@@ -3,11 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/features/appointments/boarding/domain/entities/boarding_status.dart';
 import 'package:squeak/features/appointments/boarding/domain/entities/boarding_type_entity.dart';
-import 'package:squeak/features/appointments/boarding/domain/repositories/boarding_repository.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../domain/entities/boarding_entry_entity.dart';
-
-import '../cubit/boarding_cubit.dart';
 import '../cubit/boarding_state.dart';
 import 'boarding_screen.dart';
 

@@ -6,6 +6,7 @@ import 'package:squeak/core/network/end-points.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/global_widget/ImageDetail.dart';
 import 'package:squeak/core/service/global_widget/video_detail.dart';
+
 import 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
 import '../../domain/entities/boarding_entry_entity.dart';
 
@@ -577,18 +578,18 @@ class _MediaItem extends StatelessWidget {
   }
 
   String _getVideoUrl(String fileName) {
-    // Try imageUrlWithVetICare first (VetICare server)
-    // If that fails, the VideoStringApp widget will handle the error
     return imageUrlWithVetICare + fileName;
   }
 
   Widget _buildVideo(String url, String fileName) {
+    print(fileName);
+    print("url: $url");
     return Container(
       color: Colors.black,
       child: Center(
         child: _VideoPlayerWithFallback(
           primaryUrl: url,
-          fallbackUrl: imageUrl + fileName, // Try Squeak server as fallback
+          fallbackUrl: imageUrlWithVetICare + fileName, 
           theme: theme,
         ),
       ),

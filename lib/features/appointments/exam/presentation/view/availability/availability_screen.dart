@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/service/global_widget/vc_loading_widget.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/component/CustomCalendarDatePicker.dart';
 import '../../../../../pets/domain/entities/pet_entity.dart';
 import '../../../domain/entities/clinic_entity.dart';
-import '../../controller/clinic/appointment_cubit.dart';
 import '../appointments/booking/booking_screen.dart';
 import '../component/whatsAppBar.dart';
 import '../appointments/book_again_screen.dart';

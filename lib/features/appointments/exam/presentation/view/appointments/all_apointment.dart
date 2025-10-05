@@ -40,9 +40,7 @@ class AllAppointment extends StatelessWidget {
                     ..fetchSuppliers()
                     ..getAppointment(true),
         ),
-        BlocProvider(
-          create: (context) => sl<BoardingCubit>()..getBoardingEntries(true),
-        ),
+        BlocProvider(create: (context) => sl<BoardingCubit>()),
         BlocProvider(create: (context) => sl<PetCubit>()..getOwnerPets()),
       ],
       child: _AllAppointmentContent(services: _getServiceNames(context)),
@@ -50,16 +48,45 @@ class AllAppointment extends StatelessWidget {
   }
 }
 
-class _AllAppointmentContent extends StatelessWidget {
+class _AllAppointmentContent extends StatefulWidget {
   final List<String> services;
 
   const _AllAppointmentContent({required this.services});
 
   @override
+  State<_AllAppointmentContent> createState() => _AllAppointmentContentState();
+}
+
+class _AllAppointmentContentState extends State<_AllAppointmentContent>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  bool _boardingDataLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_onTabChanged);
+  }
+
+  void _onTabChanged() {
+    if (_tabController.index == 1 && !_boardingDataLoaded) {
+      context.read<BoardingCubit>().getBoardingEntries(true);
+      _boardingDataLoaded = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_onTabChanged);
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        // Listen for UserAppointmentCubit state changes
         BlocListener<UserAppointmentCubit, UserAppointmentState>(
           listener: (context, state) {
             if (state is DeleteAppointmentSuccess) {
@@ -72,30 +99,26 @@ class _AllAppointmentContent extends StatelessWidget {
             }
           },
         ),
-        // Listen for BoardingCubit state changes if needed
         BlocListener<BoardingCubit, BoardingState>(
           listener: (context, state) {
             // Add boarding-specific listeners here if needed
-            // For example: show snackbars, navigate, etc.
           },
         ),
-        // Listen for PetCubit state changes if needed
         BlocListener<PetCubit, PetState>(
           listener: (context, state) {
             // Add pet-specific listeners here if needed
           },
         ),
       ],
-      child: Builder(
-        builder: (context) {
-          return DefaultTabController(
-            length: 2,
-            child: Scaffold(
-              appBar: _buildAppBar(context),
-              body: _buildTabBarView(context),
-            ),
-          );
-        },
+      child: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: _buildAppBar(context),
+          body: TabBarView(
+            controller: _tabController,
+            children: [_ExaminationTab(), _BoardingTab()],
+          ),
+        ),
       ),
     );
   }
@@ -106,15 +129,11 @@ class _AllAppointmentContent extends StatelessWidget {
       title: Text(S.of(context).yourAppointments),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.black87),
-        onPressed: () {
-          Navigator.pop(context);
-        },
+        onPressed: () => Navigator.pop(context),
       ),
       actions: [
         IconButton(
-          onPressed: () {
-            navigateToScreen(context, GetUserAppointment());
-          },
+          onPressed: () => navigateToScreen(context, GetUserAppointment()),
           icon: const Icon(IconlyLight.calendar),
         ),
       ],
@@ -137,6 +156,7 @@ class _AllAppointmentContent extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           child: TabBar(
+            controller: _tabController,
             isScrollable: false,
             indicatorColor: ColorManager.primaryColor,
             indicatorSize: TabBarIndicatorSize.tab,
@@ -153,20 +173,18 @@ class _AllAppointmentContent extends StatelessWidget {
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
-            tabs: services.map((service) => Tab(text: service)).toList(),
+            tabs: widget.services.map((service) => Tab(text: service)).toList(),
           ),
         ),
       ),
     );
   }
+}
 
-  TabBarView _buildTabBarView(BuildContext context) {
-    return TabBarView(
-      children: [_buildExaminationTab(context), _buildBoardingTab(context)],
-    );
-  }
-
-  Widget _buildExaminationTab(BuildContext context) {
+// Separate Examination Tab Widget
+class _ExaminationTab extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
       builder: (context, state) {
         final cubit = UserAppointmentCubit.get(context);
@@ -175,8 +193,8 @@ class _AllAppointmentContent extends StatelessWidget {
           body: Column(
             children: [
               const SizedBox(height: 10),
-              _buildExaminationFilters(context, state),
-              Expanded(child: _buildExaminationList(context, cubit, state)),
+              _ExaminationFilters(),
+              Expanded(child: _ExaminationList(cubit: cubit, state: state)),
             ],
           ),
           floatingActionButton: FloatingActionButton(
@@ -193,11 +211,12 @@ class _AllAppointmentContent extends StatelessWidget {
       },
     );
   }
+}
 
-  Widget _buildExaminationFilters(
-    BuildContext context,
-    UserAppointmentState state,
-  ) {
+// Separate Examination Filters Widget
+class _ExaminationFilters extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -228,63 +247,160 @@ class _AllAppointmentContent extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget _buildExaminationList(
-    BuildContext context,
-    UserAppointmentCubit cubit,
-    UserAppointmentState state,
-  ) {
-    if (state is GetAppointmentLoading && cubit.appointments.isEmpty) {
-      return _buildShimmerList();
-    } else if (cubit.appointments.isEmpty) {
-      return emptyAppointment(context);
-    } else if (state is AppointmentFiltered) {
-      return _buildAppointmentList(state.appointments, context, cubit);
-    } else {
-      return RefreshIndicator(
-        onRefresh: () async => await cubit.getAppointment(false),
-        child: _buildAppointmentList(cubit.appointments, context, cubit),
-      );
+// Separate Examination List Widget with Pagination
+class _ExaminationList extends StatefulWidget {
+  final UserAppointmentCubit cubit;
+  final UserAppointmentState state;
+
+  const _ExaminationList({required this.cubit, required this.state});
+
+  @override
+  State<_ExaminationList> createState() => _ExaminationListState();
+}
+
+class _ExaminationListState extends State<_ExaminationList> {
+  final ScrollController _scrollController = ScrollController();
+  static const int _pageSize = 10;
+  int _currentPage = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      _loadMore();
     }
   }
 
-  Widget _buildShimmerList() {
-    return ListView.builder(
-      itemCount: 6,
-      itemBuilder: (context, index) => appointmentShimmerItem(context),
-      physics: const BouncingScrollPhysics(),
-    );
+  void _loadMore() {
+    final appointments = widget.state is AppointmentFiltered
+        ? (widget.state as AppointmentFiltered).appointments
+        : widget.cubit.appointments;
+
+    if (_currentPage * _pageSize < appointments.length) {
+      setState(() {
+        _currentPage++;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.state is GetAppointmentLoading &&
+        widget.cubit.appointments.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 10),
+            Text('Loading Appointements...'),
+          ],
+        ),
+      );
+    } else if (widget.cubit.appointments.isEmpty) {
+      return emptyAppointment(context);
+    } else if (widget.state is AppointmentFiltered &&
+        widget.cubit.appointments.isNotEmpty) {
+      final filteredAppointments =
+          (widget.state as AppointmentFiltered).appointments;
+      return _buildAppointmentList(filteredAppointments, context);
+    } else {
+      return RefreshIndicator(
+        onRefresh: () async {
+          setState(() {
+            _currentPage = 1;
+          });
+          await widget.cubit.getAppointment(false);
+        },
+        child: _buildAppointmentList(widget.cubit.appointments, context),
+      );
+    }
   }
 
   Widget _buildAppointmentList(
     List<dynamic> appointments,
     BuildContext context,
-    UserAppointmentCubit cubit,
   ) {
+    final itemsToShow = (_currentPage * _pageSize).clamp(0, appointments.length);
+    final displayedAppointments = appointments.sublist(0, itemsToShow);
+
     return ListView.builder(
-      itemBuilder:
-          (context, index) =>
-              buildItem(appointments[index], context, cubit, index),
-      itemCount: appointments.length,
-      physics: const BouncingScrollPhysics(),
+      key: const PageStorageKey('examination_list'),
+      controller: _scrollController,
+      itemBuilder: (context, index) {
+        if (index < displayedAppointments.length) {
+          return buildItem(
+              displayedAppointments[index], context, widget.cubit, index);
+        } else {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      },
+      itemCount: displayedAppointments.length +
+          (itemsToShow < appointments.length ? 1 : 0),
+      physics: const AlwaysScrollableScrollPhysics(),
     );
   }
+}
 
-  Widget _buildBoardingTab(BuildContext context) {
+// Separate Boarding Tab Widget
+class _BoardingTab extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<BoardingCubit, BoardingState>(
       builder: (context, state) {
         final boardingCubit = BoardingCubit.get(context);
+
+        // Show loading indicator for initial load
+        if (state is GetBoardingEntriesLoading &&
+            boardingCubit.boardingEntries.isEmpty) {
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Loading boarding entries...'),
+              ],
+            ),
+          );
+        }
+
         return Column(
           children: [
-            _buildBoardingFilters(context, state),
-            Expanded(child: _buildBoardingList(context, boardingCubit, state)),
+            _BoardingFilters(),
+            Expanded(
+              child: _BoardingList(boardingCubit: boardingCubit, state: state),
+            ),
           ],
         );
       },
     );
   }
+}
 
-  Widget _buildBoardingFilters(BuildContext context, BoardingState state) {
+// Separate Boarding Filters Widget
+class _BoardingFilters extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -314,47 +430,112 @@ class _AllAppointmentContent extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget _buildBoardingList(
-    BuildContext context,
-    BoardingCubit boardingCubit,
-    BoardingState state,
-  ) {
-    if (boardingCubit.boardingEntries.isEmpty) {
+// Separate Boarding List Widget with Pagination
+class _BoardingList extends StatefulWidget {
+  final BoardingCubit boardingCubit;
+  final BoardingState state;
+
+  const _BoardingList({required this.boardingCubit, required this.state});
+
+  @override
+  State<_BoardingList> createState() => _BoardingListState();
+}
+
+class _BoardingListState extends State<_BoardingList> {
+  final ScrollController _scrollController = ScrollController();
+  static const int _pageSize = 10;
+  int _currentPage = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      _loadMore();
+    }
+  }
+
+  void _loadMore() {
+    final entries = widget.state is BoardingFiltered
+        ? (widget.state as BoardingFiltered).filteredEntries
+        : widget.boardingCubit.boardingEntries;
+
+    if (_currentPage * _pageSize < entries.length) {
+      setState(() {
+        _currentPage++;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.boardingCubit.boardingEntries.isEmpty) {
       return emptyBoarding(context);
     }
 
-    final entries =
-        state is BoardingFiltered
-            ? state.filteredEntries
-            : boardingCubit.boardingEntries;
+    final entries = widget.state is BoardingFiltered
+        ? (widget.state as BoardingFiltered).filteredEntries
+        : widget.boardingCubit.boardingEntries;
     final isDarkMode = MainCubit.get(context).isDark;
 
-    if (state is BoardingFiltered) {
-      return ListView.builder(
-        itemBuilder:
-            (context, index) => BoardingCard(
-              isDarkMode: isDarkMode,
-              entry: entries[index],
-              cubit: boardingCubit,
-            ),
-        itemCount: entries.length,
-        physics: const BouncingScrollPhysics(),
-      );
+    if (widget.state is BoardingFiltered) {
+      return _buildBoardingListView(entries, isDarkMode, context);
     } else {
       return RefreshIndicator(
-        onRefresh: () async => await boardingCubit.getBoardingEntries(true),
-        child: ListView.builder(
-          itemBuilder:
-              (context, index) => BoardingCard(
-                isDarkMode: isDarkMode,
-                entry: entries[index],
-                cubit: boardingCubit,
-              ),
-          itemCount: entries.length,
-          physics: const BouncingScrollPhysics(),
-        ),
+        onRefresh: () async {
+          setState(() {
+            _currentPage = 1;
+          });
+          await widget.boardingCubit.getBoardingEntries(true);
+        },
+        child: _buildBoardingListView(entries, isDarkMode, context),
       );
     }
+  }
+
+  Widget _buildBoardingListView(
+    List<dynamic> entries,
+    bool isDarkMode,
+    BuildContext context,
+  ) {
+    final itemsToShow = (_currentPage * _pageSize).clamp(0, entries.length);
+    final displayedEntries = entries.sublist(0, itemsToShow);
+
+    return ListView.builder(
+      key: const PageStorageKey('boarding_list'),
+      controller: _scrollController,
+      itemBuilder: (context, index) {
+        if (index < displayedEntries.length) {
+          return BoardingCard(
+            isDarkMode: isDarkMode,
+            entry: displayedEntries[index],
+            cubit: widget.boardingCubit,
+          );
+        } else {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      },
+      itemCount:
+          displayedEntries.length + (itemsToShow < entries.length ? 1 : 0),
+      physics: const AlwaysScrollableScrollPhysics(),
+    );
   }
 }

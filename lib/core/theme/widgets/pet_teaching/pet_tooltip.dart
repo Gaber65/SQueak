@@ -298,7 +298,6 @@ class _TooltipOverlay extends StatelessWidget {
     
     switch (placement) {
       case TooltipPlacement.auto:
-        final spaceAbove = targetOffset.dy;
         final spaceBelow = screenSize.height - targetOffset.dy - targetSize.height;
         
         if (spaceBelow >= estimatedTooltipHeight + padding) {
