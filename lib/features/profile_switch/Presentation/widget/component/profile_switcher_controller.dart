@@ -20,9 +20,10 @@ class ProfileSwitcherController {
       duration: const Duration(milliseconds: 200),
     );
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
-    _scale = Tween<double>(begin: 0.9, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
+    _scale = Tween<double>(
+      begin: 0.9,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
   }
 
   bool get isOpen => _isOpen;
@@ -33,41 +34,35 @@ class ProfileSwitcherController {
 
   void _showOverlay() {
     final overlay = Overlay.of(context);
-
     _overlayEntry = OverlayEntry(
-      builder: (_) => GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: _removeOverlay,
-        child: Listener(
-          behavior: HitTestBehavior.translucent, // KEY CHANGE: Allow events to pass through
-          onPointerSignal: (event) {
-            if (event is PointerScrollEvent) {
-              _removeOverlay();
-            }
-          },
-          onPointerDown: (event) {
-            // Close on any pointer down event outside the dropdown
-            _removeOverlay();
-          },
-          child: Stack(
-            children: [
-              // Full-screen invisible barrier to catch all interactions
-              Positioned.fill(
-                child: Container(
-                  color: Colors.transparent,
-                ),
+      builder:
+          (_) => GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: _removeOverlay,
+            child: Listener(
+              behavior: HitTestBehavior.translucent,
+              onPointerSignal: (event) {
+                if (event is PointerScrollEvent) {
+                  _removeOverlay();
+                }
+              },
+              onPointerDown: (event) {
+                _removeOverlay();
+              },
+              child: Stack(
+                children: [
+                  Positioned.fill(child: Container(color: Colors.transparent)),
+                  buildProfileSwitcherOverlay(
+                    context: context,
+                    layerLink: layerLink,
+                    fade: _fade,
+                    scale: _scale,
+                    onClose: _removeOverlay,
+                  ),
+                ],
               ),
-              buildProfileSwitcherOverlay(
-                context: context,
-                layerLink: layerLink,
-                fade: _fade,
-                scale: _scale,
-                onClose: _removeOverlay,
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
 
     overlay.insert(_overlayEntry!);
@@ -77,7 +72,7 @@ class ProfileSwitcherController {
 
   void _removeOverlay() {
     if (_overlayEntry != null && _isOpen) {
-      _isOpen = false; // Set this immediately to prevent multiple calls
+      _isOpen = false;
       _controller.reverse().then((_) {
         _overlayEntry?.remove();
         _overlayEntry?.dispose();
