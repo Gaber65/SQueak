@@ -13,7 +13,7 @@ import '../../../domain/usecases/share_image_usecase.dart';
 import '../../cubit/boarding_cubit.dart';
 import '../boarding_rating.dart';
 import '../share_image_pet_screen.dart';
-import '../share_video_pets_screen.dart';
+
 
 // Helper function to check if the current language is Arabic
 bool isArabic() {

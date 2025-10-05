@@ -25,6 +25,8 @@ class ProfileSwitcherController {
     );
   }
 
+  bool get isOpen => _isOpen;
+
   void toggleDropdown() {
     _isOpen ? _removeOverlay() : _showOverlay();
   }
@@ -35,15 +37,26 @@ class ProfileSwitcherController {
     _overlayEntry = OverlayEntry(
       builder: (_) => GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: _removeOverlay, 
+        onTap: _removeOverlay,
         child: Listener(
+          behavior: HitTestBehavior.translucent, // KEY CHANGE: Allow events to pass through
           onPointerSignal: (event) {
             if (event is PointerScrollEvent) {
-              _removeOverlay(); 
+              _removeOverlay();
             }
+          },
+          onPointerDown: (event) {
+            // Close on any pointer down event outside the dropdown
+            _removeOverlay();
           },
           child: Stack(
             children: [
+              // Full-screen invisible barrier to catch all interactions
+              Positioned.fill(
+                child: Container(
+                  color: Colors.transparent,
+                ),
+              ),
               buildProfileSwitcherOverlay(
                 context: context,
                 layerLink: layerLink,
@@ -63,18 +76,19 @@ class ProfileSwitcherController {
   }
 
   void _removeOverlay() {
-    if (_overlayEntry != null) {
+    if (_overlayEntry != null && _isOpen) {
+      _isOpen = false; // Set this immediately to prevent multiple calls
       _controller.reverse().then((_) {
         _overlayEntry?.remove();
+        _overlayEntry?.dispose();
         _overlayEntry = null;
-        _isOpen = false;
       });
     }
   }
 
   void dispose() {
-    _controller.dispose();
     _removeOverlay();
+    _controller.dispose();
   }
 
   void closeDropdown() => _removeOverlay();

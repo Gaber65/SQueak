@@ -38,7 +38,16 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void _closeProfileList() {
+    // Close the local controller
     controller.closeDropdown();
+    
+    // Also try to close the service locator instance if it exists
+    try {
+      final globalController = sl<ProfileSwitcherController>();
+      globalController.closeDropdown();
+    } catch (e) {
+      // Service locator instance might not exist, that's okay
+    }
   }
 
   @override
@@ -64,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen>
                 appBar: buildAppBarHome(context),
                 body: NotificationListener<ScrollNotification>(
                   onNotification: (notification) {
+                    // Close profile list on any scroll event
                     if (notification is ScrollStartNotification ||
                         notification is UserScrollNotification ||
                         notification is ScrollUpdateNotification) {
@@ -151,8 +161,12 @@ class _ActivePetSummary extends StatelessWidget {
     final theme = Theme.of(context);
     return VcCard(
       onTap: () {
-        ProfileSwitcherController? controller = sl<ProfileSwitcherController>();
-        controller.closeDropdown();
+        try {
+          ProfileSwitcherController? controller = sl<ProfileSwitcherController>();
+          controller.closeDropdown();
+        } catch (e) {
+          // Controller might not be registered
+        }
         navigateToScreen(context, const PetScreen());
       },
       child: Row(

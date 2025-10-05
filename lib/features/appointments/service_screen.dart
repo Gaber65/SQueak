@@ -24,11 +24,13 @@ class CareHubScreen extends StatelessWidget {
       textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             isArabic ? "الرعاية" : "Care",
             style: TextStyle(
               color: isDark ? Colors.white : Colors.black,
-              fontSize: 18 * textScale.clamp(0.9, 1.3),
+              fontSize: 24 * textScale.clamp(0.9, 1.3),
+              fontWeight: FontWeight.bold,
             ),
           ),
           backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,

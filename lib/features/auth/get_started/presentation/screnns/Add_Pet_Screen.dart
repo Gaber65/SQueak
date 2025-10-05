@@ -2,17 +2,10 @@
 
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
-import 'package:squeak/core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
-import 'package:squeak/core/utils/enums/upload_place.dart';
-import 'package:squeak/core/utils/theme/color_mangment/color_manager.dart';
-import 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
-import 'package:squeak/features/auth/get_started/presentation/screnns/find_friends.dart';
+import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
-import 'package:squeak/features/pets/presentation/controller/pet_cubit.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/add_pet/birthdate_picker.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/common/species_selector_sheet.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -329,15 +322,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                       backgroundColor: Colors.green,
                     ),
                   );
-                  final petCubit = context.read<PetCubit>();
-                  final newPet = petCubit.pets.last;
-                  navigateAndFinish(
-                    context,
-                    SuggestionFriendsScreen(
-                      petId: newPet.petId ?? '',
-                      specieId: newPet.specieId ?? '',
-                    ),
-                  );
+                  navigateAndFinish(context, LayoutScreen());
                 } else if (state is PetCreateErrorState) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
