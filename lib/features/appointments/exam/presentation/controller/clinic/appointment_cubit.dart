@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// ignore: depend_on_referenced_packages
 import 'package:equatable/equatable.dart';
 import 'package:squeak/core/utils/enums/dayOfWeek_enum.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/availability_entities.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/client_clinic.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/clinic_entity.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/doctor_entity.dart';
-import 'package:squeak/features/layout/post/domain/entities/post_entity.dart';
 
 import '../../../../../../../core/service/service_locator/locatore_export_path.dart';
 
@@ -134,8 +134,8 @@ class AppointmentCubit extends Cubit<AppointmentState> {
       },
       (clientClinicList) {
         clientInClinic = clientClinicList.isNotEmpty;
-        print(clientInClinic);
-        print(clientClinicList.isNotEmpty);
+        // print(clientInClinic);
+        // print(clientClinicList.isNotEmpty);
         petListInVet = clientClinicList;
         emit(GetClientInClinicSuccess());
       },

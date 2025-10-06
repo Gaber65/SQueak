@@ -47,7 +47,7 @@ class _DoctorDropdownState extends State<DoctorDropdown> {
                       child: Row(
                         children: [
                           CircleAvatar(
-                            backgroundImage: NetworkImage(doctor.image!),
+                            backgroundImage: NetworkImage(doctor.image),
                             radius: 20,
                           ),
                           const SizedBox(width: 12),

@@ -7,9 +7,11 @@ import '../../controller/user/user_appointment_cubit.dart';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
+// ignore: depend_on_referenced_packages
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
+// ignore: must_be_immutable
 class PrintScreen extends StatelessWidget {
   final String id;
   String clinicPhone;

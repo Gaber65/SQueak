@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, invalid_use_of_protected_member
+
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -410,6 +412,7 @@ List<Widget> _buildActionButtons(
                       width: MediaQuery.of(context).size.width / 3,
                       child: ElevatedButton(
                         onPressed: () async {
+                          // ignore: invalid_use_of_visible_for_testing_member
                           cubit.emit(EditAppointment(appointments));
                           Navigator.of(context).pop(false);
                           cubit.findClinic(
@@ -691,8 +694,8 @@ List<PopupMenuEntry<int>> _buildMenuItems(
   BuildContext context,
   UserAppointmentCubit cubit,
 ) {
-  print('appointment.appointment: $appointment');
-  print('appointment.appointmentState: $appointmentState');
+  // print('appointment.appointment: $appointment');
+  // print('appointment.appointmentState: $appointmentState');
 
   List<PopupMenuEntry<int>> items = [];
 

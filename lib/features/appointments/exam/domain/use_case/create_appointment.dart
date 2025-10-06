@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+// ignore: depend_on_referenced_packages
 import 'package:equatable/equatable.dart';
 
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
@@ -15,6 +16,7 @@ class CreateAppointmentUseCase
   }
 }
 
+// ignore: must_be_immutable
 class CreateAppointmentParams extends Equatable {
   final String petId;
   final String? doctorId;
