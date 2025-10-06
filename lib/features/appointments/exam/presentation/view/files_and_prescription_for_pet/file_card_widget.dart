@@ -31,6 +31,7 @@ class FileCardWidget extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
+              
               children: [
                 Icon(
                   Icons.attach_file_rounded,

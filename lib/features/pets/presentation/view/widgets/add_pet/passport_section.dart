@@ -163,24 +163,28 @@ class PassportSection extends StatelessWidget {
                                       size: 24,
                                       color: Colors.white,
                                     )
-                                    : Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          isArabic() ? 'أرفق' : 'Attach',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
+                                    : Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                         crossAxisAlignment: CrossAxisAlignment.center,   
+                                        children: [
+                                          Text(
+                                            isArabic() ? 'أرفق' : 'Attach',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(width: 10),
-                                        Icon(
-                                          Icons.attach_file,
-                                          size: 20,
-                                          color: Colors.white,
-                                        ),
-                                      ],
+                                          SizedBox(width: 10),
+                                          Icon(
+                                            Icons.attach_file,
+                                            size: 20,
+                                            color: Colors.white,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                           ),
                         ),
