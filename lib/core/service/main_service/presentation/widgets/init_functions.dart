@@ -143,7 +143,7 @@ class InitFunctions {
   }
 
   static Future<void> _configureChucker() async {
-    ChuckerFlutter.showOnRelease = false;
+    ChuckerFlutter.showOnRelease = true;
     ChuckerFlutter.showNotification = true;
   }
 }
