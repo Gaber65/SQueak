@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import '../export_path/export_files.dart';
 
 enum DayOfWeek {

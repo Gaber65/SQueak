@@ -31,6 +31,7 @@ class GetUserAppointment extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
+          lazy: false,
           create:
               (context) =>
                   sl<UserAppointmentCubit>()
@@ -38,6 +39,7 @@ class GetUserAppointment extends StatelessWidget {
                     ..getAppointment(false),
         ),
         BlocProvider(
+          lazy: true,
           create: (context) => sl<BoardingCubit>()..getBoardingEntries(true),
         ),
         BlocProvider(
@@ -219,11 +221,11 @@ class _AllAppointmentContent extends StatelessWidget {
     UserAppointmentCubit cubit,
     UserAppointmentState state,
   ) {
-    if (state is GetAppointmentLoading && cubit.appointments.isEmpty) {
-      return LoadingWidget(message: 'Loading All appointments...',);
-    } else if (cubit.appointments.isEmpty &&  state is! GetAppointmentLoading) {
+    if (state is GetAppointmentLoading && state is! GetAppointmentSuccess) {
+      return LoadingWidget(message: 'Loading All appointments...');
+    } else if (cubit.appointments.isEmpty && state is! GetSupplierSuccess) {
       return emptyAppointment(context);
-    } else if (state is AppointmentFiltered) {
+    } else if (state is AppointmentFiltered && state is GetAppointmentSuccess) {
       return _buildAppointmentList(state.appointments, context, cubit);
     } else {
       return RefreshIndicator(

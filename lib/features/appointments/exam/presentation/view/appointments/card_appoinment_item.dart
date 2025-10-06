@@ -502,7 +502,7 @@ List<Widget> _buildActionButtons(
     Expanded(
       child: ElevatedButton(
         onPressed: () {
-          launchUrl(Uri.parse('tel:${appointments.clinicPhone}'));
+          launchUrl(Uri.parse('tel:0${appointments.clinicPhone}'));
         },
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.blue,
