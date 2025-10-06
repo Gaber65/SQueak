@@ -6,8 +6,8 @@ import '../../../../boarding/presentation/cubit/boarding_state.dart';
 import '../../../../boarding/presentation/screens/widgets/boarding_card.dart';
 import '../../../../boarding/presentation/screens/widgets/filter_boarding.dart';
 import '../component/filter_component.dart';
+import '../component/loading_widget.dart';
 import '../supplier/get_supplier.dart';
-import 'appointmentShimmerItem.dart';
 import 'booking/widget/empty_data.dart';
 import 'card_appoinment_item.dart';
 import 'get_user_appointment.dart';
@@ -34,14 +34,12 @@ class AllAppointment extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create:
-              (context) =>
-                  sl<UserAppointmentCubit>()
-                    ..fetchSuppliers()
-                    ..getAppointment(true),
+          create: (context) => sl<UserAppointmentCubit>()..fetchSuppliers(),
         ),
         BlocProvider(create: (context) => sl<BoardingCubit>()),
-        BlocProvider(create: (context) => sl<PetCubit>()..getOwnerPets()),
+        BlocProvider(
+          lazy: true,
+          create: (context) => sl<PetCubit>()..getOwnerPets()),
       ],
       child: _AllAppointmentContent(services: _getServiceNames(context)),
     );
@@ -60,6 +58,7 @@ class _AllAppointmentContent extends StatefulWidget {
 class _AllAppointmentContentState extends State<_AllAppointmentContent>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _examinationDataLoaded = false;
   bool _boardingDataLoaded = false;
 
   @override
@@ -67,10 +66,20 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_onTabChanged);
+    // Load examination data initially since it's the first tab
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && !_examinationDataLoaded) {
+        context.read<UserAppointmentCubit>().getAppointment(true);
+        _examinationDataLoaded = true;
+      }
+    });
   }
 
   void _onTabChanged() {
-    if (_tabController.index == 1 && !_boardingDataLoaded) {
+    if (_tabController.index == 0 && !_examinationDataLoaded) {
+      context.read<UserAppointmentCubit>().getAppointment(true);
+      _examinationDataLoaded = true;
+    } else if (_tabController.index == 1 && !_boardingDataLoaded) {
       context.read<BoardingCubit>().getBoardingEntries(true);
       _boardingDataLoaded = true;
     }
@@ -188,26 +197,30 @@ class _ExaminationTab extends StatelessWidget {
     return BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
       builder: (context, state) {
         final cubit = UserAppointmentCubit.get(context);
-
-        return Scaffold(
-          body: Column(
-            children: [
-              const SizedBox(height: 10),
-              _ExaminationFilters(),
-              Expanded(child: _ExaminationList(cubit: cubit, state: state)),
-            ],
-          ),
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: ColorManager.primaryColor,
-            onPressed: () {
-              navigateToScreen(
-                context,
-                MySupplierScreen(petSelectFromIcon: null),
-              );
-            },
-            child: const Icon(IconlyLight.calendar, color: Colors.white),
-          ),
-        );
+        // Show loading indicator for initial load
+        if (state is GetAppointmentLoading && cubit.appointments.isEmpty) {
+          return LoadingWidget(message: 'Loading appointments...');
+        } else {
+          return Scaffold(
+            body: Column(
+              children: [
+                const SizedBox(height: 10),
+                _ExaminationFilters(),
+                Expanded(child: _ExaminationList(cubit: cubit, state: state)),
+              ],
+            ),
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: ColorManager.primaryColor,
+              onPressed: () {
+                navigateToScreen(
+                  context,
+                  MySupplierScreen(petSelectFromIcon: null),
+                );
+              },
+              child: const Icon(IconlyLight.calendar, color: Colors.white),
+            ),
+          );
+        }
       },
     );
   }
@@ -286,9 +299,10 @@ class _ExaminationListState extends State<_ExaminationList> {
   }
 
   void _loadMore() {
-    final appointments = widget.state is AppointmentFiltered
-        ? (widget.state as AppointmentFiltered).appointments
-        : widget.cubit.appointments;
+    final appointments =
+        widget.state is AppointmentFiltered
+            ? (widget.state as AppointmentFiltered).appointments
+            : widget.cubit.appointments;
 
     if (_currentPage * _pageSize < appointments.length) {
       setState(() {
@@ -301,23 +315,19 @@ class _ExaminationListState extends State<_ExaminationList> {
   Widget build(BuildContext context) {
     if (widget.state is GetAppointmentLoading &&
         widget.cubit.appointments.isEmpty) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 10),
-            Text('Loading Appointements...'),
-          ],
-        ),
-      );
-    } else if (widget.cubit.appointments.isEmpty) {
+      return LoadingWidget(message: 'Loading appointments...');
+    } else if (widget.cubit.appointments.isEmpty &&
+        widget.state is! GetSupplierSuccess) {
       return emptyAppointment(context);
-    } else if (widget.state is AppointmentFiltered &&
-        widget.cubit.appointments.isNotEmpty) {
-      final filteredAppointments =
-          (widget.state as AppointmentFiltered).appointments;
-      return _buildAppointmentList(filteredAppointments, context);
+    }
+
+    final appointments =
+        widget.state is AppointmentFiltered
+            ? (widget.state as AppointmentFiltered).appointments
+            : widget.cubit.appointments;
+
+    if (widget.state is AppointmentFiltered && appointments.isNotEmpty) {
+      return _buildAppointmentList(appointments, context);
     } else {
       return RefreshIndicator(
         onRefresh: () async {
@@ -326,7 +336,7 @@ class _ExaminationListState extends State<_ExaminationList> {
           });
           await widget.cubit.getAppointment(false);
         },
-        child: _buildAppointmentList(widget.cubit.appointments, context),
+        child: _buildAppointmentList(appointments, context),
       );
     }
   }
@@ -335,7 +345,10 @@ class _ExaminationListState extends State<_ExaminationList> {
     List<dynamic> appointments,
     BuildContext context,
   ) {
-    final itemsToShow = (_currentPage * _pageSize).clamp(0, appointments.length);
+    final itemsToShow = (_currentPage * _pageSize).clamp(
+      0,
+      appointments.length,
+    );
     final displayedAppointments = appointments.sublist(0, itemsToShow);
 
     return ListView.builder(
@@ -344,17 +357,17 @@ class _ExaminationListState extends State<_ExaminationList> {
       itemBuilder: (context, index) {
         if (index < displayedAppointments.length) {
           return buildItem(
-              displayedAppointments[index], context, widget.cubit, index);
-        } else {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: CircularProgressIndicator(),
-            ),
+            displayedAppointments[index],
+            context,
+            widget.cubit,
+            index,
           );
+        } else {
+          return LoadingItem();
         }
       },
-      itemCount: displayedAppointments.length +
+      itemCount:
+          displayedAppointments.length +
           (itemsToShow < appointments.length ? 1 : 0),
       physics: const AlwaysScrollableScrollPhysics(),
     );
@@ -372,16 +385,7 @@ class _BoardingTab extends StatelessWidget {
         // Show loading indicator for initial load
         if (state is GetBoardingEntriesLoading &&
             boardingCubit.boardingEntries.isEmpty) {
-          return const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('Loading boarding entries...'),
-              ],
-            ),
-          );
+          return LoadingWidget(message: 'Loading boarding entries...');
         }
 
         return Column(
@@ -469,9 +473,10 @@ class _BoardingListState extends State<_BoardingList> {
   }
 
   void _loadMore() {
-    final entries = widget.state is BoardingFiltered
-        ? (widget.state as BoardingFiltered).filteredEntries
-        : widget.boardingCubit.boardingEntries;
+    final entries =
+        widget.state is BoardingFiltered
+            ? (widget.state as BoardingFiltered).filteredEntries
+            : widget.boardingCubit.boardingEntries;
 
     if (_currentPage * _pageSize < entries.length) {
       setState(() {
@@ -486,9 +491,10 @@ class _BoardingListState extends State<_BoardingList> {
       return emptyBoarding(context);
     }
 
-    final entries = widget.state is BoardingFiltered
-        ? (widget.state as BoardingFiltered).filteredEntries
-        : widget.boardingCubit.boardingEntries;
+    final entries =
+        widget.state is BoardingFiltered
+            ? (widget.state as BoardingFiltered).filteredEntries
+            : widget.boardingCubit.boardingEntries;
     final isDarkMode = MainCubit.get(context).isDark;
 
     if (widget.state is BoardingFiltered) {
@@ -525,12 +531,7 @@ class _BoardingListState extends State<_BoardingList> {
             cubit: widget.boardingCubit,
           );
         } else {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: CircularProgressIndicator(),
-            ),
-          );
+          return LoadingItem();
         }
       },
       itemCount:

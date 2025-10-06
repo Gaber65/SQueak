@@ -71,6 +71,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "address_validation": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال عنوانك",
     ),
+    "allYourAppointments": MessageLookupByLibrary.simpleMessage("جميع مواعيدك"),
     "alreadyHaveAccount": MessageLookupByLibrary.simpleMessage(
       "هل لديك حساب بالفعل؟",
     ),

@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import 'package:squeak/features/appointments/exam/presentation/view/appointments/appointmentShimmerItem.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/card_appoinment_item.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/supplier/get_supplier.dart';
 import '../../../../boarding/presentation/cubit/boarding_state.dart';
 import '../../../../boarding/presentation/screens/widgets/boarding_card.dart';
 import '../../../../boarding/presentation/screens/widgets/filter_boarding.dart';
 import '../component/filter_component.dart';
-
+import '../component/loading_widget.dart';
 import 'booking/widget/empty_data.dart';
 
 class GetUserAppointment extends StatelessWidget {
@@ -41,7 +40,9 @@ class GetUserAppointment extends StatelessWidget {
         BlocProvider(
           create: (context) => sl<BoardingCubit>()..getBoardingEntries(true),
         ),
-        BlocProvider(create: (context) => sl<PetCubit>()..getOwnerPets()),
+        BlocProvider(
+           lazy: true,
+          create: (context) => sl<PetCubit>()..getOwnerPets()),
       ],
       child: _AllAppointmentContent(services: _getServiceNames(context)),
     );
@@ -101,7 +102,7 @@ class _AllAppointmentContent extends StatelessWidget {
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       centerTitle: true,
-      title: Text(S.of(context).yourAppointments),
+      title: Text(S.of(context).allYourAppointments),
       bottom: _buildTabBar(context),
     );
   }
@@ -219,8 +220,8 @@ class _AllAppointmentContent extends StatelessWidget {
     UserAppointmentState state,
   ) {
     if (state is GetAppointmentLoading && cubit.appointments.isEmpty) {
-      return _buildShimmerList();
-    } else if (cubit.appointments.isEmpty) {
+      return LoadingWidget(message: 'Loading All appointments...',);
+    } else if (cubit.appointments.isEmpty &&  state is! GetAppointmentLoading) {
       return emptyAppointment(context);
     } else if (state is AppointmentFiltered) {
       return _buildAppointmentList(state.appointments, context, cubit);
@@ -232,13 +233,6 @@ class _AllAppointmentContent extends StatelessWidget {
     }
   }
 
-  Widget _buildShimmerList() {
-    return ListView.builder(
-      itemCount: 6,
-      itemBuilder: (context, index) => appointmentShimmerItem(context),
-      physics: const BouncingScrollPhysics(),
-    );
-  }
 
   Widget _buildAppointmentList(
     List<dynamic> appointments,

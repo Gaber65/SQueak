@@ -544,6 +544,16 @@ class S {
     );
   }
 
+  /// `All Appointments`
+  String get allYourAppointments {
+    return Intl.message(
+      'All Appointments',
+      name: 'allYourAppointments',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Add Service Supplier`
   String get AddServiceSupplier {
     return Intl.message(
