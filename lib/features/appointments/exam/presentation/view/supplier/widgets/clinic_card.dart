@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
@@ -191,10 +193,51 @@ class ClinicActionsRow extends StatelessWidget {
           icon: Icons.person_remove,
           color: Colors.red,
           isDark: isDark,
-          onPressed:
-              () => AppointmentCubit.get(
-                context,
-              ).unfollowClinicById(clinic.data.id, clinic: clinic),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder:
+                  (context) => UnfollowConfirmationDialog(
+                    onConfirm: () {
+                      AppointmentCubit.get(
+                        context,
+                      ).unfollowClinicById(clinic.data.id, clinic: clinic);
+                    },
+                  ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class UnfollowConfirmationDialog extends StatelessWidget {
+  final VoidCallback onConfirm;
+
+  const UnfollowConfirmationDialog({super.key, required this.onConfirm});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(isArabic() ? 'إلغاء المتابعة للعيادة' : 'Unfollow Clinic'),
+      content: Text(
+        isArabic()
+            ? "هل تريد الغاء المتابعة لهذه العيادة؟"
+            : 'Are you sure you want to unfollow this clinic?',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(isArabic() ? 'إلغاء' : 'Cancel'),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          onPressed: () {
+            Navigator.pop(context);
+            onConfirm();
+          },
+          child: Text(isArabic() ? 'إلغاء المتابعة' : 'Unfollow'),
         ),
       ],
     );

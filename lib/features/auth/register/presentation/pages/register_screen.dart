@@ -6,12 +6,10 @@ import 'package:squeak/features/auth/register/data/repositories/register_reposit
 import 'package:squeak/features/auth/register/domin/usecses/get_countries_use_case.dart';
 import 'package:squeak/features/auth/register/domin/usecses/register_qr_use_case.dart';
 import 'package:squeak/features/auth/register/domin/usecses/register_use_case.dart';
-
 import 'package:squeak/features/auth/register/presentation/cubit/register_cubit.dart';
 import 'package:squeak/features/auth/register/presentation/widgets/enhanced_register_widget.dart';
 import 'package:squeak/features/auth/register/presentation/widgets/enhanced_auth_header.dart';
-
-import '../../../get_started/presentation/screnns/welcome_to_squek.dart';
+import '../../../login/presentation/pages/login_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -39,13 +37,12 @@ class RegisterScreen extends StatelessWidget {
           if (state is RegistrationSuccessState) {
             navigateAndFinish(
               context,
-             WelcomeToSquek(),
+             LoginScreen(),
             );
           }
         },
         builder: (context, state) {
           final cubit = RegisterCubit.get(context);
-
           return EnhancedAuthHeader(
             title: 'Join the Pack! 🐾',
             subtitle: 'Create your account to connect with pet care',
