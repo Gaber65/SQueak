@@ -14,7 +14,6 @@ import '../../cubit/boarding_cubit.dart';
 import '../boarding_rating.dart';
 import '../share_image_pet_screen.dart';
 
-
 // Helper function to check if the current language is Arabic
 bool isArabic() {
   return MainCubit.get(navigatorKey.currentContext!).language == 'ar';
@@ -201,10 +200,13 @@ class BoardingCard extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                Future.delayed(Duration.zero, () => _showImages(context,false));
+                Future.delayed(
+                  Duration.zero,
+                  () => _showImages(context, false),
+                );
               },
             ),
-           
+
             PopupMenuItem(
               value: 3, // قيمة فريدة لخيار "الفيديوهات"
               child: Row(
@@ -222,7 +224,7 @@ class BoardingCard extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                Future.delayed(Duration.zero, () => _showImages(context,true));
+                Future.delayed(Duration.zero, () => _showImages(context, true));
               },
             ),
           ],
@@ -372,7 +374,11 @@ class BoardingCard extends StatelessWidget {
               child: InkWell(
                 onTap: () {
                   HapticFeedback.lightImpact();
-                  launchUrl(Uri.parse('tel:${entry.clinicPhone}'));
+                  final phone = entry.clinicPhone;
+                  final formattedPhone =
+                      phone.startsWith('0') ? phone : '0$phone';
+                  launchUrl(Uri.parse('tel:$formattedPhone'));
+                  // launchUrl(Uri.parse('tel:${entry.clinicPhone}'));
                 },
                 borderRadius: BorderRadius.circular(8),
                 child: const Padding(
@@ -401,7 +407,7 @@ class BoardingCard extends StatelessWidget {
     );
   }
 
-  void _showImages(context ,isVideo) {
+  void _showImages(context, isVideo) {
     showDialog(
       context: context,
       builder:
@@ -422,9 +428,6 @@ class BoardingCard extends StatelessWidget {
           ),
     );
   }
-
-
-
 }
 
 // Simple usage function

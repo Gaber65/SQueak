@@ -51,7 +51,7 @@ class ClinicCard extends StatelessWidget {
             const SizedBox(height: 12),
             PremiumInfoRow(
               icon: Icons.phone_outlined,
-              text: clinic.data.phone,
+              text: clinic.data.phone.startsWith('0') ? clinic.data.phone : '0${clinic.data.phone}',
               isDark: isDark,
             ),
             const SizedBox(height: 20),
