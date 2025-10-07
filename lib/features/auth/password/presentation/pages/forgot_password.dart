@@ -23,7 +23,14 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     with SingleTickerProviderStateMixin {
   final List<String> petEmojis = [
-    '🐶', '🐱', '🐰', '🐹', '🦊', '🐻', '🐨', '🐸',
+    '🐶',
+    '🐱',
+    '🐰',
+    '🐹',
+    '🦊',
+    '🐻',
+    '🐨',
+    '🐸',
   ];
   final List<String> motivationalMessages = [
     '"Squeak! Everyone forgets sometimes!" 🐭',
@@ -72,29 +79,31 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     final scaleFactor = isTablet ? 1.2 : 1.0;
 
     return BlocProvider(
-      create: (_) => PasswordCubit(
-        forgetPasswordUseCase: ForgetPasswordUseCase(
-          PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
-        ),
-        resetPasswordUseCase: ResetPasswordUseCase(
-          PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
-        ),
-        verifyUserUseCase: VerifyUserUseCase(
-          PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
-        ),
-      ),
+      create:
+          (_) => PasswordCubit(
+            forgetPasswordUseCase: ForgetPasswordUseCase(
+              PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
+            ),
+            resetPasswordUseCase: ResetPasswordUseCase(
+              PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
+            ),
+            verifyUserUseCase: VerifyUserUseCase(
+              PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
+            ),
+          ),
       child: BlocConsumer<PasswordCubit, PasswordState>(
         listener: (context, state) {
           if (state is ForgetPasswordErrorState) {
             errorToast(context, state.error);
           }
           if (state is ForgetPasswordSuccessState) {
-            navigateToScreen(
+            navigateAndFinish(
               context,
               ResetPasswordScreen(
                 emailController: context.read<PasswordCubit>().emailController,
               ),
             );
+            context.read<PasswordCubit>().emailController.clear();
           }
         },
         builder: (context, state) {
@@ -297,71 +306,87 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             ),
           ),
           const SizedBox(height: 24),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Email Address',
-              style: TextStyle(
-                fontSize: 14 * scaleFactor,
-                color: Colors.grey[800],
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          const SizedBox(height: 6),
-          TextFormField(
-            controller: cubit.emailController,
-            style: const TextStyle(color: Colors.black87),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.grey[200],
-              prefixIcon: const Icon(Icons.email_outlined, color: Colors.grey),
-              hintText: 'Enter your email address',
-              hintStyle: const TextStyle(color: Colors.grey),
-              contentPadding: const EdgeInsets.symmetric(vertical: 14),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your email';
-              }
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                return 'Please enter a valid email';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: VcLoadingButton(
-              onPressed: () {
-                if (cubit.formKey.currentState!.validate()) {
-                  cubit.forgetPassword();
-                }
-              },
-              isLoading: cubit.isForgetPassword,
-              backgroundColor: const Color(0xFF7B5CE6),
-              borderRadius: 12,
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text(
-                    'Send OTP',
+          Form(
+            key: cubit.formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Email Address',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 14 * scaleFactor,
+                      color: Colors.grey[800],
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(width: 8),
-                  Icon(Icons.send_rounded, color: Colors.white, size: 18),
-                ],
-              ),
+                ),
+                const SizedBox(height: 6),
+                TextFormField(
+                  controller: cubit.emailController,
+                  style: const TextStyle(color: Colors.black87),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    prefixIcon: const Icon(
+                      Icons.email_outlined,
+                      color: Colors.grey,
+                    ),
+                    hintText: 'Enter your email address',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    if (!RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    ).hasMatch(value)) {
+                      return 'Please enter a valid email';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: VcLoadingButton(
+                    onPressed: () {
+                      // Validate form then call cubit's forgetPassword
+                      if (cubit.formKey.currentState?.validate() ?? false) {
+                        FocusScope.of(context).unfocus();
+                        cubit.forgetPassword();
+                        cubit.emailController.text.trim();
+                      }
+                    },
+                    isLoading: cubit.isForgetPassword,
+                    backgroundColor: const Color(0xFF7B5CE6),
+                    borderRadius: 12,
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Text(
+                          'Send OTP',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Icon(Icons.send_rounded, color: Colors.white, size: 18),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 16),

@@ -9,7 +9,6 @@ import 'package:squeak/features/auth/password/domin/usecses/verify_user_usecase.
 import 'package:squeak/features/auth/password/presentation/cubit/password_cubit.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-import '../../../../../generated/l10n.dart';
 import '../../../contactus/presentation/pages/contact_us.dart';
 import '../../../login/presentation/pages/login_screen.dart';
 
@@ -45,6 +44,9 @@ class ResetPasswordScreen extends StatelessWidget {
           var cubit = context.read<PasswordCubit>();
           return Scaffold(
             appBar: AppBar(
+              leading: IconButton(onPressed:(){
+                navigateAndFinish(context, LoginScreen());
+              } , icon: Icon(Icons.arrow_back_ios)),
               elevation: 0,
               actions: [
                 InkWell(
