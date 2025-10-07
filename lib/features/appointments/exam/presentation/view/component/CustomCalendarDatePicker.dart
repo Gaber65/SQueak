@@ -33,7 +33,6 @@ class _CalendarScreenState extends State<CalendarScreen>
   Map<DayOfWeek, List<Availability>> _timeSlots = {};
   int? _selectedIntervalIndex;
   late AnimationController _animationController;
-  late Animation<double> _animation;
 
   List<String> intervals = [];
   @override
@@ -46,9 +45,6 @@ class _CalendarScreenState extends State<CalendarScreen>
       vsync: this,
     );
 
-    _animation = Tween<double>(begin: 1.0, end: 1.2).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
     print('${widget.selectedDate}-----------------');
 
     if (widget.selectedDate != null) {
