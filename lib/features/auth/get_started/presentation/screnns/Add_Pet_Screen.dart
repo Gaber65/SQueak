@@ -81,7 +81,15 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
   Widget build(BuildContext context) {
     final petCubit = context.read<PetCubit>();
     return Scaffold(
-      appBar: AddPetAppBar(),
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text(
+          "Add Your Pet",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: ColorManager.editScreenTextFieldBaseColor,
+        leading: null,
+      ),
       backgroundColor: ColorManager.editScreenTextFieldBaseColor.withValues(
         alpha: .5,
       ),
@@ -316,13 +324,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
             BlocConsumer<PetCubit, PetState>(
               listener: (context, state) {
                 if (state is PetCreateSuccessState) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Pet created successfully!"),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                  navigateAndFinish(context, LayoutScreen());
+                  navigateAndFinish(context, const LayoutScreen());
                 } else if (state is PetCreateErrorState) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

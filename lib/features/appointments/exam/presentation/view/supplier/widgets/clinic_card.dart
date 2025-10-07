@@ -185,7 +185,12 @@ class ClinicActionsRow extends StatelessWidget {
           color: Colors.green,
           isDark: isDark,
           onPressed: () {
-            launchUrl(Uri.parse('tel:${clinic.data.phone}'));
+            final phone = clinic.data.phone;
+
+            // Check if number starts with 0
+            final formattedPhone = phone.startsWith('0') ? phone : '0$phone';
+            launchUrl(Uri.parse('tel:$formattedPhone'));
+            // launchUrl(Uri.parse('tel:0${clinic.data.phone}'));
           },
         ),
         const SizedBox(width: 10),
@@ -194,13 +199,14 @@ class ClinicActionsRow extends StatelessWidget {
           color: Colors.red,
           isDark: isDark,
           onPressed: () {
+            final parentContext = context; 
             showDialog(
-              context: context,
+              context: parentContext,
               builder:
-                  (context) => UnfollowConfirmationDialog(
+                  (dialogContext) => UnfollowConfirmationDialog(
                     onConfirm: () {
                       AppointmentCubit.get(
-                        context,
+                        parentContext,
                       ).unfollowClinicById(clinic.data.id, clinic: clinic);
                     },
                   ),

@@ -50,6 +50,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
   @override
   void dispose() {
     _disposeControllers();
+    _stopCountryAnimation();
     super.dispose();
   }
 

@@ -87,7 +87,11 @@ class MainCubit extends Cubit<MainState> {
       emit(SaveTokenError());
     }
   }
-
+// في MainCubit
+void resetState() {
+  isNotificationEnabled = false;
+  emit(MainInitial());
+}
 
 
   bool isNotificationEnabled = false;

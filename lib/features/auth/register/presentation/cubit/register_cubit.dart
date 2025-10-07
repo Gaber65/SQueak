@@ -4,6 +4,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/features/auth/login/data/datasources/login_remote_data_source.dart';
+import 'package:squeak/features/auth/login/data/repositories/login_repository.dart';
+import 'package:squeak/features/auth/login/domin/usecses/login_use_case.dart';
 import 'package:squeak/features/auth/login/presentation/cubit/login_cubit.dart';
 import 'package:squeak/features/auth/register/domin/entities/country_entity.dart';
 import 'package:squeak/features/auth/register/domin/entities/register_entity.dart';
@@ -207,10 +210,52 @@ class RegisterCubit extends Cubit<RegisterState> {
     );
     await registerUseCase
         .execute(entity)
-        .then((value) {
+        .then((value) async {
           isRegister = false;
-          CacheHelper.saveData("followCode", followCodeController.text.trim());
-          emit(RegistrationSuccessState());
+          debugPrint('[Register] Registration successful - saving followCode');
+          await CacheHelper.saveData("followCode", followCodeController.text.trim());
+
+          // Automatically log in the user after successful registration
+          try {
+            debugPrint('[Register] Starting auto-login after registration');
+            final loginUseCase = LoginUseCase(
+              LoginRepositoryImpl(
+                remoteDataSource: LoginRemoteDataSource(),
+              ),
+            );
+
+            final loginResult = await loginUseCase(
+              emailOrPhoneNumber: emailController.text,
+              password: passwordController.text,
+            );
+
+            debugPrint('[Register] Auto-login succeeded - persisting login data');
+            // Save token and user data (await to avoid race conditions)
+            await Future.wait([
+              CacheHelper.saveData('token', loginResult.token),
+              CacheHelper.saveData('role', loginResult.role),
+              CacheHelper.saveData('clintId', loginResult.id),
+              CacheHelper.saveData('phone', loginResult.phone),
+              CacheHelper.saveData('name', loginResult.fullName),
+              CacheHelper.saveData('clientName', loginResult.fullName),
+              CacheHelper.saveData('username', loginResult.fullName),
+              CacheHelper.saveData('email', loginResult.email),
+            ]);
+
+            await TokenManager.saveToken(
+              loginResult.token,
+              loginResult.expiresIn,
+              loginResult.refreshToken,
+            );
+
+            debugPrint('[Register] Auto-login persistence complete');
+            emit(RegistrationSuccessState());
+          } catch (loginError) {
+            debugPrint('[Register] Auto-login failed: $loginError');
+            // If automatic login fails, still emit success but show error
+            emit(RegistrationSuccessState());
+            // The user will be redirected to login screen where they can manually log in
+          }
         })
         .catchError((error) {
           isRegister = false;
@@ -247,11 +292,14 @@ class RegisterCubit extends Cubit<RegisterState> {
         .execute(entity, clinicCode)
         .then((value) async {
           emit(RegistrationSuccessState());
+          emit(RegistrationSuccessState());
+          debugPrint('[Register][QR] Registration success - invoking LoginCubit.login');
           await LoginCubit.get(context).login(
             context,
             email: emailController.text,
             password: passwordController.text,
           );
+          debugPrint('[Register][QR] LoginCubit.login returned');
         })
         .catchError((error) {
           isRegister = false;

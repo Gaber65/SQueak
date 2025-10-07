@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/features/auth/get_started/presentation/screnns/welcome_to_squek.dart';
 import 'package:squeak/features/auth/login/data/datasources/login_remote_data_source.dart';
 import 'package:squeak/features/auth/login/data/repositories/login_repository.dart';
 import 'package:squeak/features/auth/login/domin/usecses/login_use_case.dart';
@@ -21,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  bool _isNavigating = false; // Prevent multiple navigation calls
 
   @override
   void initState() {
@@ -53,14 +53,12 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
-    // TEMPORARILY DISABLED - Performance monitoring wrapper causing potential crashes
     return BlocProvider(
-      create:
-          (context) => LoginCubit(
-            LoginUseCase(
-              LoginRepositoryImpl(remoteDataSource: LoginRemoteDataSource()),
-            ),
-          ),
+      create: (context) => LoginCubit(
+        LoginUseCase(
+          LoginRepositoryImpl(remoteDataSource: LoginRemoteDataSource()),
+        ),
+      ),
       child: BlocConsumer<LoginCubit, LoginState>(
         listener: (context, state) {
           _handleStateChanges(context, state);
@@ -78,83 +76,105 @@ class _LoginScreenState extends State<LoginScreen>
       // Enhanced error handling with haptic feedback
       HapticFeedback.mediumImpact();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.error_outline, color: Colors.white),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  state.error.errors.isNotEmpty
-                      ? state.error.errors.values.first.first
-                      : state.error.message,
-                  style: const TextStyle(color: Colors.white),
+      if (!mounted) return;
+
+      // Use app-level navigator key context to show SnackBar safely in case local context is deactivated
+      final rootContext = navigatorKey.currentContext ?? context;
+      final messenger = ScaffoldMessenger.maybeOf(rootContext);
+      if (messenger != null) {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    state.error.errors.isNotEmpty
+                        ? state.error.errors.values.first.first
+                        : state.error.message,
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
+            backgroundColor: Colors.red.shade600,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: const EdgeInsets.all(16),
+            duration: const Duration(seconds: 4),
+            action: SnackBarAction(
+              label: 'Dismiss',
+              textColor: Colors.white,
+              onPressed: () {
+                messenger.hideCurrentSnackBar();
+              },
+            ),
           ),
-          backgroundColor: Colors.red.shade600,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          margin: const EdgeInsets.all(16),
-          duration: const Duration(seconds: 4),
-          action: SnackBarAction(
-            label: 'Dismiss',
-            textColor: Colors.white,
-            onPressed: () {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            },
-          ),
-        ),
-      );
+        );
+      } else {
+        debugPrint('[Login] No ScaffoldMessenger available to show error SnackBar');
+      }
     }
 
-    if (state is LoginSuccess) {
+    if (state is LoginSuccess && !_isNavigating) {
+      _isNavigating = true; // Prevent multiple calls
       HapticFeedback.lightImpact();
-      CacheHelper.saveData('role', state.userEntity.role);
-      CacheHelper.saveData('clintId', state.userEntity.id);
-      CacheHelper.saveData('phone', state.userEntity.phone);
-      CacheHelper.saveData('name', state.userEntity.fullName);
-      CacheHelper.saveData('clientName', state.userEntity.fullName);
-      CacheHelper.saveData('username', state.userEntity.fullName);
-      CacheHelper.saveData('email', state.userEntity.email);
-      TokenManager.saveToken(
-        state.userEntity.token,
-        state.userEntity.expiresIn,
-        state.userEntity.refreshToken,
-      );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.check_circle_outline, color: Colors.white),
-              const SizedBox(width: 8),
-              Text(
-                'Welcome back, ${state.userEntity.fullName}!',
-                style: const TextStyle(color: Colors.white),
-              ),
-            ],
-          ),
-          backgroundColor: Colors.green.shade600,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          margin: const EdgeInsets.all(16),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+      // Persist user data and token before navigating. Await to avoid race conditions
+      Future<void> _persistLogin() async {
+        try {
+          debugPrint('[Login] Persisting login data...');
+          await Future.wait([
+            CacheHelper.saveData('role', state.userEntity.role),
+            CacheHelper.saveData('clintId', state.userEntity.id),
+            CacheHelper.saveData('phone', state.userEntity.phone),
+            CacheHelper.saveData('name', state.userEntity.fullName),
+            CacheHelper.saveData('clientName', state.userEntity.fullName),
+            CacheHelper.saveData('username', state.userEntity.fullName),
+            CacheHelper.saveData('email', state.userEntity.email),
+            CacheHelper.saveData('token', state.userEntity.token),
+          ]);
 
-      if (CacheHelper.getData('token') != null &&
-          CacheHelper.getData('token') != '') {
-        navigateAndFinish(context, LayoutScreen());
-      } else {
-        navigateAndFinish(context, WelcomeToSquek());
+          debugPrint('[Login] Saved user fields to CacheHelper. Saving tokens...');
+          await TokenManager.saveToken(
+            state.userEntity.token,
+            state.userEntity.expiresIn,
+            state.userEntity.refreshToken,
+          );
+          debugPrint('[Login] TokenManager.saveToken completed');
+        } catch (e) {
+          debugPrint('[Login] Error saving login data: $e');
+          // If saving fails, still proceed but ensure flag resets later
+        }
       }
+
+      // Ensure persistence completes before UI navigation
+      _persistLogin().whenComplete(() async {
+        // Reset MainCubit state safely and navigate. Avoid showing SnackBar from possibly-deactivated context.
+        debugPrint('[Login] Persistence complete, resetting MainCubit and navigating');
+        try {
+          BlocProvider.of<MainCubit>(context).resetState();
+        } catch (e) {
+          debugPrint('[Login] Error resetting MainCubit: $e');
+        }
+
+        if (!mounted || !context.mounted) {
+          _isNavigating = false;
+          return;
+        }
+
+        try {
+          debugPrint('[Login] Navigating to LayoutScreen');
+          navigateAndFinish(context, const LayoutScreen());
+        } catch (e) {
+          debugPrint('[Login] Navigation error: $e');
+        } finally {
+          if (mounted) _isNavigating = false;
+        }
+      });
     }
   }
 

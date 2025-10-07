@@ -19,9 +19,11 @@ class QuickTourScreen extends StatelessWidget {
         alpha: .5,
       ),
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: ColorManager.editScreenTextFieldBaseColor.withOpacity(
           .5,
         ),
+        leading: null,
         elevation: 0,
 
         title: Text(

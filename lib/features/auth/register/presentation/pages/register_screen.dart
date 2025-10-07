@@ -9,7 +9,9 @@ import 'package:squeak/features/auth/register/domin/usecses/register_use_case.da
 import 'package:squeak/features/auth/register/presentation/cubit/register_cubit.dart';
 import 'package:squeak/features/auth/register/presentation/widgets/enhanced_register_widget.dart';
 import 'package:squeak/features/auth/register/presentation/widgets/enhanced_auth_header.dart';
-import '../../../login/presentation/pages/login_screen.dart';
+
+import '../../../get_started/presentation/screnns/welcome_to_squek.dart';
+
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -35,9 +37,10 @@ class RegisterScreen extends StatelessWidget {
             errorToast(context, state.error);
           }
           if (state is RegistrationSuccessState) {
+            // After successful registration and automatic login, navigate to layout screen
             navigateAndFinish(
               context,
-             LoginScreen(),
+             WelcomeToSquek(),
             );
           }
         },
