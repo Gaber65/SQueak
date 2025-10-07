@@ -138,7 +138,7 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
       title: Text(S.of(context).yourAppointments),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.black87),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => navigateAndFinish(context, LayoutScreen())
       ),
       actions: [
         IconButton(

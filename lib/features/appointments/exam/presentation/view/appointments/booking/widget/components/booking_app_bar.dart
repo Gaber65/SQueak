@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
@@ -18,6 +20,7 @@ class BookingAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      centerTitle: true,
       title: Text(S.of(context).startAppointment),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
