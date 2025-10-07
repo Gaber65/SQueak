@@ -11,7 +11,7 @@ class EnhancedAuthValidator {
         severity: ValidationSeverity.error,
       );
     }
-    
+
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
       return ValidationResult(
         isValid: false,
@@ -19,11 +19,11 @@ class EnhancedAuthValidator {
         severity: ValidationSeverity.error,
       );
     }
-    
+
     return ValidationResult(isValid: true, message: 'Valid email');
   }
 
-    /// Validate email or phone number input
+  /// Validate email or phone number input
   static ValidationResult validateEmailOrPhone(String input) {
     if (input.trim().isEmpty) {
       return ValidationResult(
@@ -34,30 +34,27 @@ class EnhancedAuthValidator {
     }
 
     final cleanInput = input.trim();
-    
+
     // Check if input is an email
     if (cleanInput.contains('@')) {
       final emailResult = validateEmail(cleanInput);
-      return emailResult.copyWith(
-        metadata: {'inputType': 'email'},
-      );
+      return emailResult.copyWith(metadata: {'inputType': 'email'});
     }
-    
+
     // Check if input is a phone number
     final phoneRegex = RegExp(r'^\+?[\d\s\-\(\)]+$');
     if (phoneRegex.hasMatch(cleanInput)) {
       final phoneResult = validatePhone(cleanInput);
-      return phoneResult.copyWith(
-        metadata: {'inputType': 'phone'},
-      );
+      return phoneResult.copyWith(metadata: {'inputType': 'phone'});
     }
-    
+
     return ValidationResult(
       isValid: false,
       message: 'Please enter a valid email address or phone number',
       severity: ValidationSeverity.error,
     );
   }
+
   static ValidationResult validatePhone(String phone) {
     if (phone.isEmpty) {
       return ValidationResult(
@@ -66,7 +63,7 @@ class EnhancedAuthValidator {
         severity: ValidationSeverity.error,
       );
     }
-    
+
     // Enhanced phone validation with international support
     final cleanPhone = phone.replaceAll(RegExp(r'[^\d+]'), '');
     if (cleanPhone.length < 10 || cleanPhone.length > 15) {
@@ -76,11 +73,12 @@ class EnhancedAuthValidator {
         severity: ValidationSeverity.error,
       );
     }
-    
+
     return ValidationResult(isValid: true, message: 'Valid phone number');
   }
 
   /// Enhanced password validation with strength indicator
+  
   static ValidationResult validatePassword(String password) {
     if (password.isEmpty) {
       return ValidationResult(
@@ -89,42 +87,20 @@ class EnhancedAuthValidator {
         severity: ValidationSeverity.error,
       );
     }
-    
-    if (password.length < 8) {
+
+    if (password.length < 6) {
       return ValidationResult(
         isValid: false,
-        message: 'Password must be at least 8 characters',
+        message: 'Password must be at least 6 characters',
         severity: ValidationSeverity.error,
       );
     }
-    
-    // Password strength calculation
-    int strength = 0;
-    if (password.length >= 8) strength++;
-    if (RegExp(r'[A-Z]').hasMatch(password)) strength++;
-    if (RegExp(r'[a-z]').hasMatch(password)) strength++;
-    if (RegExp(r'[0-9]').hasMatch(password)) strength++;
-    if (RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password)) strength++;
-    
-    String strengthText = '';
-    Color strengthColor = Colors.red;
-    
-    if (strength >= 4) {
-      strengthText = 'Strong password';
-      strengthColor = Colors.green;
-    } else if (strength >= 3) {
-      strengthText = 'Good password';
-      strengthColor = Colors.orange;
-    } else {
-      strengthText = 'Weak password - add uppercase, numbers, symbols';
-      strengthColor = Colors.red;
-    }
-    
+
+    // No need for strength check, accept any kind of password
     return ValidationResult(
-      isValid: strength >= 3,
-      message: strengthText,
-      severity: strength >= 3 ? ValidationSeverity.success : ValidationSeverity.warning,
-      metadata: {'strength': strength, 'color': strengthColor},
+      isValid: true,
+      message: 'Password accepted',
+      severity: ValidationSeverity.success,
     );
   }
 
@@ -137,7 +113,7 @@ class EnhancedAuthValidator {
         severity: ValidationSeverity.error,
       );
     }
-    
+
     if (name.trim().length < 2) {
       return ValidationResult(
         isValid: false,
@@ -145,7 +121,7 @@ class EnhancedAuthValidator {
         severity: ValidationSeverity.error,
       );
     }
-    
+
     if (name.trim().length > 50) {
       return ValidationResult(
         isValid: false,
@@ -153,16 +129,17 @@ class EnhancedAuthValidator {
         severity: ValidationSeverity.error,
       );
     }
-    
+
     // Check for valid name characters (letters, spaces, apostrophes, hyphens)
     if (!RegExp(r"^[a-zA-Z\s'-]+$").hasMatch(name.trim())) {
       return ValidationResult(
         isValid: false,
-        message: 'Name can only contain letters, spaces, apostrophes, and hyphens',
+        message:
+            'Name can only contain letters, spaces, apostrophes, and hyphens',
         severity: ValidationSeverity.error,
       );
     }
-    
+
     return ValidationResult(isValid: true, message: 'Valid name');
   }
 
@@ -175,7 +152,7 @@ class EnhancedAuthValidator {
   //       severity: ValidationSeverity.error,
   //     );
   //   }
-    
+
   //   if (password != confirmPassword) {
   //     return ValidationResult(
   //       isValid: false,
@@ -194,7 +171,7 @@ class EnhancedAuthValidator {
         severity: ValidationSeverity.error,
       );
     }
-    
+
     if (clinicCode.trim().length < 3) {
       return ValidationResult(
         isValid: false,
@@ -202,7 +179,7 @@ class EnhancedAuthValidator {
         severity: ValidationSeverity.error,
       );
     }
-    
+
     if (clinicCode.trim().length > 20) {
       return ValidationResult(
         isValid: false,
@@ -210,16 +187,17 @@ class EnhancedAuthValidator {
         severity: ValidationSeverity.error,
       );
     }
-    
+
     // Allow alphanumeric characters, hyphens, and underscores
     if (!RegExp(r'^[a-zA-Z0-9_-]+$').hasMatch(clinicCode.trim())) {
       return ValidationResult(
         isValid: false,
-        message: 'Clinic code can only contain letters, numbers, hyphens, and underscores',
+        message:
+            'Clinic code can only contain letters, numbers, hyphens, and underscores',
         severity: ValidationSeverity.error,
       );
     }
-    
+
     return ValidationResult(isValid: true, message: 'Valid clinic code');
   }
 }

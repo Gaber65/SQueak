@@ -140,7 +140,7 @@ class _MyTextFormState extends State<MyTextForm> {
 
   String? _validatePassword(String? value, S s) {
     if (value == null || value.isEmpty) return s.enterUrPassword;
-    if (value.length < 6) return s.PASSWORD_MIN_LENGTH;
+    if (value.length <= 6) return s.PASSWORD_MIN_LENGTH;
     return null;
   }
 
