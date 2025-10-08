@@ -56,6 +56,7 @@ Widget buildProfileSwitcherOverlay({
   final pets = petCubit.pets;
   final owner = SettingCubit.get(context).profile;
   final switchProfileCubit = SwitchProfileCubit.get(context);
+  
 
   return Positioned(
     width: 260,
@@ -71,7 +72,7 @@ Widget buildProfileSwitcherOverlay({
             scale: scale,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: const [
                   BoxShadow(

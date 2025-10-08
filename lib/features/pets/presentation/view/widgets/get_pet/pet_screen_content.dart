@@ -314,6 +314,7 @@ class _PetScreenContentState extends State<PetScreenContent> {
     if (widget.state is GetOwnerPetsLoadingState) {
       return Center(
         child: VcLoadingIndicator(
+          color: ColorManager.primaryColor,
           message:
               isArabic()
                   ? "جاري تحميل اصدقائك  الأليفة..."

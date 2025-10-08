@@ -69,6 +69,7 @@ class _EditCommentState extends State<EditComment>
 
           return Scaffold(
             appBar: AppBar(
+              centerTitle: true,
               title: Text(widget.comment.parentId == null ? S.of(context).editCommentPost : S.of(context).editReplyCommentPost),
             ),
             body: Padding(

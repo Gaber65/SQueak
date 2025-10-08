@@ -6,6 +6,7 @@ import '../../controller/comment_cubit.dart';
 
 AppBar buildAppBar(BuildContext context, CommentState state) {
   return AppBar(
+    centerTitle: true,
     title: Text(S.of(context).comments),
     leading: IconButton(
       onPressed: () {

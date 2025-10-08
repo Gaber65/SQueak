@@ -22,7 +22,9 @@ class VcLoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final indicatorColor = color ?? Theme.of(context).primaryColor;
+    // ignore: deprecated_member_use
     final bgColor = backgroundColor ?? Colors.white.withOpacity(0.9);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     Widget loadingContent = Column(
       mainAxisSize: MainAxisSize.min,
@@ -44,7 +46,7 @@ class VcLoadingIndicator extends StatelessWidget {
               context: context,
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              fontColor: ColorManager.black87,
+              fontColor: isDark ? Colors.white : ColorManager.black87,
             ),
             textAlign: TextAlign.center,
           ),
@@ -53,10 +55,7 @@ class VcLoadingIndicator extends StatelessWidget {
     );
 
     if (overlay) {
-      return Container(
-        color: bgColor,
-        child: Center(child: loadingContent),
-      );
+      return Container(color: bgColor, child: Center(child: loadingContent));
     }
 
     return Center(child: loadingContent);
@@ -155,18 +154,19 @@ class VcLoadingButton extends StatelessWidget {
           backgroundColor: backgroundColor ?? ColorManager.primaryColor,
         ),
         onPressed: isLoading ? null : onPressed,
-        child: isLoading
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    loadingColor ?? Colors.white,
+        child:
+            isLoading
+                ? SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      loadingColor ?? Colors.white,
+                    ),
                   ),
-                ),
-              )
-            : child,
+                )
+                : child,
       ),
     );
   }

@@ -29,7 +29,7 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
   Future<void> _loadPets() async {
     setState(() {
       isLoading = true;
-      resultMessage = 'Loading pets...';
+      resultMessage = isArabic() ? 'جاري تحميل أصدقائك الأليفة...' : 'Loading pets...';
     });
     
     try {
