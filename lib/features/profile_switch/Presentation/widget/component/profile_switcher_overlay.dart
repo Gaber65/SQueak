@@ -58,8 +58,13 @@ Widget buildProfileSwitcherOverlay({
   final switchProfileCubit = SwitchProfileCubit.get(context);
   
 
+  final mq = MediaQuery.of(context);
+  // Use a responsive width up to a cap and a larger max height for the list
+  final targetWidth = (mq.size.width * 0.50).clamp(260.0, 400.0);
+  final maxListHeight = mq.size.height * 0.5; 
+
   return Positioned(
-    width: 260,
+    width: targetWidth,
     child: CompositedTransformFollower(
       link: layerLink,
       offset: Offset(isArabic() ? 10 : -210, 50),
@@ -85,66 +90,73 @@ Widget buildProfileSwitcherOverlay({
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (  pets.isEmpty && owner == null)
-                    buildProfileSwitcherShimmer(context) 
-                  else ...[
-                    if (owner != null)
-                      ProfileSwitcherItem(
-                        title: owner.fullName,
-                        subtitle: isArabic() ? "مالك الحساب" : "Profile owner",
-                        image:
-                            imageUrl +
-                            (owner.imageName.isEmpty ? "" : owner.imageName),
-                        onTap: () {
-                          switchProfileCubit.switchProfile(
-                            ActiveProfile(type: ProfileType.user, user: owner),
-                          );
-                          final overlay = Overlay.of(context);
-                          final entry = buildGlassOverlay(context);
-                          overlay.insert(entry);
-                          Future.delayed(const Duration(seconds: 2), () {
-                            entry.remove();
-                          });
-                          onClose();
-                        },
-                      ),
-                    for (final pet in pets)
-                      ProfileSwitcherItem(
-                        title: pet.petName ?? "Pet",
-                        subtitle:
-                            (pet.birthdate != null && pet.birthdate != '')
-                                ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
-                                : pet.breed?.enBreed ?? "",
-                        image:
-                            imageUrl +
-                            (pet.imageName?.isNotEmpty == true
-                                ? pet.imageName!
-                                : ""),
-                        onTap: () {
-                          switchProfileCubit.switchProfile(
-                            ActiveProfile(type: ProfileType.pet, pet: pet),
-                          );
-                          final overlay = Overlay.of(context);
-                          final entry = buildGlassOverlay(context);
-                          overlay.insert(entry);
-                          Future.delayed(const Duration(seconds: 2), () {
-                            entry.remove();
-                          });
-                          onClose();
-                        },
-                      ),
-                    const Divider(height: 1),
-                    ListTile(
-                      leading: const Icon(Icons.pets, color: Colors.blue),
-                      title: Text(
-                        isArabic() ? " إدارة اصدقائك الصغار  " : "Manage Pets",
-                      ),
-                      onTap: () {
-                        navigateToScreen(context, const PetScreen());
-                        onClose();
-                      },
+                  // Constrain the list height so only the dropdown content scrolls
+                  // while taps outside still close the overlay.
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      // Make the dropdown take more height on larger screens
+                      maxHeight: maxListHeight,
+                      minWidth: 240,
                     ),
-                  ],
+                    child: (pets.isEmpty && owner == null)
+                        ? buildProfileSwitcherShimmer(context)
+                        : ListView(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            physics: const ClampingScrollPhysics(),
+                            children: [
+                              if (owner != null)
+                                ProfileSwitcherItem(
+                                  title: owner.fullName,
+                                  subtitle: isArabic() ? "مالك الحساب" : "Profile owner",
+                                  image: imageUrl + (owner.imageName.isEmpty ? "" : owner.imageName),
+                                  onTap: () {
+                                    switchProfileCubit.switchProfile(
+                                      ActiveProfile(type: ProfileType.user, user: owner),
+                                    );
+                                    final overlay = Overlay.of(context);
+                                    final entry = buildGlassOverlay(context);
+                                    overlay.insert(entry);
+                                    Future.delayed(const Duration(seconds: 2), () {
+                                      entry.remove();
+                                    });
+                                    onClose();
+                                  },
+                                ),
+                              for (final pet in pets)
+                                ProfileSwitcherItem(
+                                  title: pet.petName ?? "Pet",
+                                  subtitle: (pet.birthdate != null && pet.birthdate != '')
+                                      ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
+                                      : pet.breed?.enBreed ?? "",
+                                  image: imageUrl + (pet.imageName?.isNotEmpty == true ? pet.imageName! : ""),
+                                  onTap: () {
+                                    switchProfileCubit.switchProfile(
+                                      ActiveProfile(type: ProfileType.pet, pet: pet),
+                                    );
+                                    final overlay = Overlay.of(context);
+                                    final entry = buildGlassOverlay(context);
+                                    overlay.insert(entry);
+                                    Future.delayed(const Duration(seconds: 2), () {
+                                      entry.remove();
+                                    });
+                                    onClose();
+                                  },
+                                ),
+                              const Divider(height: 1),
+                              ListTile(
+                                leading: const Icon(Icons.pets, color: Colors.blue),
+                                title: Text(
+                                  isArabic() ? " إدارة اصدقائك الصغار  " : "Manage Pets",
+                                ),
+                                onTap: () {
+                                  navigateToScreen(context, const PetScreen());
+                                  onClose();
+                                },
+                              ),
+                            ],
+                          ),
+                  ),
                 ],
               ),
             ),

@@ -1,12 +1,25 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
+import 'package:squeak/features/profile_switch/Presentation/widget/screens/profile_switcher_page.dart';
+import 'package:squeak/features/settings/persentaion/controller/setting_cubit.dart';
 
-class ProfileSwitchNotificationScreen extends StatelessWidget {
+bool hasPlayedProfileAnimation = false;
+
+class ProfileSwitchNotificationScreen extends StatefulWidget {
   const ProfileSwitchNotificationScreen({super.key});
 
+  @override
+  State<ProfileSwitchNotificationScreen> createState() =>
+      _ProfileSwitchNotificationScreenState();
+}
+
+class _ProfileSwitchNotificationScreenState
+    extends State<ProfileSwitchNotificationScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -42,53 +55,94 @@ class ProfileSwitchNotificationScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // top icon with paw + sparkles
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    height: 80,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [ColorManager.primaryColor, Colors.pink],
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: ColorManager.primaryColor.withOpacity(0.3),
-                          blurRadius: 12,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
+              Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (_) => sl<PetCubit>()..getOwnerPets(),
+                      lazy: false,
                     ),
-                    child: const Icon(
-                      IconlyBold.heart,
-                      size: 40,
-                      color: Colors.white,
+                    BlocProvider(
+                      create: (_) => sl<SettingCubit>()..getOwnerData(),
+                      lazy: true,
                     ),
+                    BlocProvider(
+                      create: (_) => sl<SwitchProfileCubit>()..loadProfile(),
+                      lazy: true,
+                    ),
+                  ],
+                  child: BlocConsumer<SwitchProfileCubit, SwitchProfileState>(
+                    listener: (context, state) {},
+                    builder: (context, state) {
+                      var cubit = SwitchProfileCubit.get(context);
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Stack(
+                            alignment: Alignment.center,
+                            clipBehavior: Clip.none,
+                            children: [
+                              // Profile button container
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color:
+                                        isDark
+                                            ? Colors.grey.shade800
+                                            : Colors.grey.shade200,
+                                    width: 2,
+                                  ),
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: ColorManager.primaryColor
+                                          .withOpacity(0.3),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: _StaticProfileButton(
+                                  isDark: isDark,
+                                  image: cubit.image,
+                                  name: cubit.name,
+                                ),
+                              ),
+
+                              // Swap icon positioned at bottom center
+                              Positioned(
+                                bottom: -8, // move slightly below the circle
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: ColorManager.primaryColor
+                                            .withOpacity(0.3),
+                                        blurRadius: 6,
+                                      ),
+                                    ],
+                                  ),
+                                  padding: const EdgeInsets.all(4),
+                                  child: Icon(
+                                    Icons.swap_horiz,
+                                    color: ColorManager.primaryColor,
+                                    size: 22,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                  Positioned(
-                    top: -6,
-                    right: -6,
-                    child: _AnimatedIcon(
-                      icon: Icons.pets,
-                      color: ColorManager.primaryColor.withOpacity(0.6),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: -6,
-                    left: -6,
-                    child: _AnimatedIcon(
-                      icon: IconlyBold.star,
-                      color: Colors.pink.withOpacity(0.6),
-                    ),
-                  ),
-                ],
+                ),
               ),
               const SizedBox(height: 16),
 
-              // title
               ShaderMask(
                 shaderCallback:
                     (bounds) => const LinearGradient(
@@ -107,7 +161,6 @@ class ProfileSwitchNotificationScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
-              // description
               Text(
                 isArabic()
                     ? "اربط  الأليف مع أصدقاء آخرين في منطقتك وابنِ صداقات تدوم."
@@ -119,7 +172,6 @@ class ProfileSwitchNotificationScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // alert box
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -190,26 +242,43 @@ class ProfileSwitchNotificationScreen extends StatelessWidget {
   }
 }
 
-/// bouncing small icons
-class _AnimatedIcon extends StatelessWidget {
-  final IconData icon;
-  final Color color;
+/// Static Profile Button (no animation)
+class _StaticProfileButton extends StatelessWidget {
+  final bool isDark;
+  final String? image;
+  final String? name;
 
-  const _AnimatedIcon({required this.icon, required this.color});
+  const _StaticProfileButton({
+    required this.isDark,
+    required this.image,
+    required this.name,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return TweenAnimationBuilder<double>(
-      duration: const Duration(seconds: 2),
-      tween: Tween(begin: 0.0, end: 8.0),
-      curve: Curves.easeInOut,
-      builder: (context, value, child) {
-        return Transform.translate(
-          offset: Offset(0, -value),
-          child: Icon(icon, size: 20, color: color),
-        );
-      },
-      onEnd: () {},
+    var cubit = SwitchProfileCubit.get(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+          width: 2,
+        ),
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: ColorManager.primaryColor.withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ProfileSwitcherButton(
+        width: 80,
+        height: 80,
+        image: cubit.image,
+        name: cubit.name,
+      ),
     );
   }
 }

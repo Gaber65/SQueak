@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'profile_switcher_overlay.dart';
 
@@ -35,34 +34,28 @@ class ProfileSwitcherController {
   void _showOverlay() {
     final overlay = Overlay.of(context);
     _overlayEntry = OverlayEntry(
-      builder:
-          (_) => GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: _removeOverlay,
-            child: Listener(
+      builder: (_) => Stack(
+        children: [
+          // Only the background area handles taps to close the overlay.
+          Positioned.fill(
+            child: GestureDetector(
               behavior: HitTestBehavior.translucent,
-              onPointerSignal: (event) {
-                if (event is PointerScrollEvent) {
-                  _removeOverlay();
-                }
-              },
-              onPointerDown: (event) {
-                _removeOverlay();
-              },
-              child: Stack(
-                children: [
-                  Positioned.fill(child: Container(color: Colors.transparent)),
-                  buildProfileSwitcherOverlay(
-                    context: context,
-                    layerLink: layerLink,
-                    fade: _fade,
-                    scale: _scale,
-                    onClose: _removeOverlay,
-                  ),
-                ],
-              ),
+              onTap: _removeOverlay,
+              child: Container(color: Colors.transparent),
             ),
           ),
+          // The overlay content sits above and will receive gestures itself
+          // (so taps/scrolls inside won't be intercepted by the background
+          // tap handler).
+          buildProfileSwitcherOverlay(
+            context: context,
+            layerLink: layerLink,
+            fade: _fade,
+            scale: _scale,
+            onClose: _removeOverlay,
+          ),
+        ],
+      ),
     );
 
     overlay.insert(_overlayEntry!);
