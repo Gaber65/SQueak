@@ -56,12 +56,11 @@ Widget buildProfileSwitcherOverlay({
   final pets = petCubit.pets;
   final owner = SettingCubit.get(context).profile;
   final switchProfileCubit = SwitchProfileCubit.get(context);
-  
 
   final mq = MediaQuery.of(context);
   // Use a responsive width up to a cap and a larger max height for the list
   final targetWidth = (mq.size.width * 0.50).clamp(260.0, 400.0);
-  final maxListHeight = mq.size.height * 0.5; 
+  final maxListHeight = mq.size.height * 0.5;
 
   return Positioned(
     width: targetWidth,
@@ -77,7 +76,10 @@ Widget buildProfileSwitcherOverlay({
             scale: scale,
             child: Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade900 : Colors.white,
+                color:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey.shade900
+                        : Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: const [
                   BoxShadow(
@@ -98,64 +100,108 @@ Widget buildProfileSwitcherOverlay({
                       maxHeight: maxListHeight,
                       minWidth: 240,
                     ),
-                    child: (pets.isEmpty && owner == null)
-                        ? buildProfileSwitcherShimmer(context)
-                        : ListView(
-                            padding: EdgeInsets.zero,
-                            shrinkWrap: true,
-                            physics: const ClampingScrollPhysics(),
-                            children: [
-                              if (owner != null)
-                                ProfileSwitcherItem(
-                                  title: owner.fullName,
-                                  subtitle: isArabic() ? "مالك الحساب" : "Profile owner",
-                                  image: imageUrl + (owner.imageName.isEmpty ? "" : owner.imageName),
+                    child:
+                        (pets.isEmpty && owner == null)
+                            ? buildProfileSwitcherShimmer(context)
+                            : ListView(
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              physics: const ClampingScrollPhysics(),
+                              children: [
+                                if (owner != null)
+                                  ProfileSwitcherItem(
+                                    title: owner.fullName,
+                                    subtitle:
+                                        isArabic()
+                                            ? "مالك الحساب"
+                                            : "Profile owner",
+                                    image:
+                                        imageUrl +
+                                        (owner.imageName.isEmpty
+                                            ? ""
+                                            : owner.imageName),
+                                    onTap: () {
+                                      switchProfileCubit.switchProfile(
+                                        ActiveProfile(
+                                          type: ProfileType.user,
+                                          user: owner,
+                                        ),
+                                      );
+                                      final overlay = Overlay.of(context);
+                                      final entry = buildGlassOverlay(context);
+                                      overlay.insert(entry);
+                                      Future.delayed(
+                                        const Duration(seconds: 2),
+                                        () {
+                                          entry.remove();
+                                        },
+                                      );
+                                      onClose();
+                                    },
+                                  ),
+                                for (final pet in pets)
+                                  ProfileSwitcherItem(
+                                    title: pet.petName ?? "Pet",
+                                    subtitle:
+                                        (pet.birthdate != null &&
+                                                pet.birthdate != '')
+                                            ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
+                                            : pet.breed?.enBreed ?? "",
+                                    image:
+                                        imageUrl +
+                                        (pet.imageName?.isNotEmpty == true
+                                            ? pet.imageName!
+                                            : ""),
+                                    onTap: () {
+                                      switchProfileCubit.switchProfile(
+                                        ActiveProfile(
+                                          type: ProfileType.pet,
+                                          pet: pet,
+                                        ),
+                                      );
+                                      final overlay = Overlay.of(context);
+                                      final entry = buildGlassOverlay(context);
+                                      overlay.insert(entry);
+                                      Future.delayed(
+                                        const Duration(seconds: 2),
+                                        () {
+                                          entry.remove();
+                                        },
+                                      );
+                                      onClose();
+                                      Future.delayed(
+                                        const Duration(seconds: 2),
+                                        () {
+                                           navigateAndFinish(
+                                        // ignore: use_build_context_synchronously
+                                        context,
+                                        const LayoutScreen(),
+                                      );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                const Divider(height: 1),
+                                ListTile(
+                                  leading: const Icon(
+                                    Icons.pets,
+                                    color: Colors.blue,
+                                  ),
+                                  title: Text(
+                                    isArabic()
+                                        ? " إدارة اصدقائك الصغار  "
+                                        : "Manage Pets",
+                                  ),
                                   onTap: () {
-                                    switchProfileCubit.switchProfile(
-                                      ActiveProfile(type: ProfileType.user, user: owner),
+                                    navigateToScreen(
+                                      context,
+                                      const PetScreen(),
                                     );
-                                    final overlay = Overlay.of(context);
-                                    final entry = buildGlassOverlay(context);
-                                    overlay.insert(entry);
-                                    Future.delayed(const Duration(seconds: 2), () {
-                                      entry.remove();
-                                    });
                                     onClose();
                                   },
                                 ),
-                              for (final pet in pets)
-                                ProfileSwitcherItem(
-                                  title: pet.petName ?? "Pet",
-                                  subtitle: (pet.birthdate != null && pet.birthdate != '')
-                                      ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
-                                      : pet.breed?.enBreed ?? "",
-                                  image: imageUrl + (pet.imageName?.isNotEmpty == true ? pet.imageName! : ""),
-                                  onTap: () {
-                                    switchProfileCubit.switchProfile(
-                                      ActiveProfile(type: ProfileType.pet, pet: pet),
-                                    );
-                                    final overlay = Overlay.of(context);
-                                    final entry = buildGlassOverlay(context);
-                                    overlay.insert(entry);
-                                    Future.delayed(const Duration(seconds: 2), () {
-                                      entry.remove();
-                                    });
-                                    onClose();
-                                  },
-                                ),
-                              const Divider(height: 1),
-                              ListTile(
-                                leading: const Icon(Icons.pets, color: Colors.blue),
-                                title: Text(
-                                  isArabic() ? " إدارة اصدقائك الصغار  " : "Manage Pets",
-                                ),
-                                onTap: () {
-                                  navigateToScreen(context, const PetScreen());
-                                  onClose();
-                                },
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
                   ),
                 ],
               ),
@@ -171,48 +217,53 @@ OverlayEntry buildGlassOverlay(BuildContext context) {
   var cubit = SwitchProfileCubit.get(context);
 
   return OverlayEntry(
-    builder: (_) => Center(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-        child: WidgetCircularAnimator(
-          size: 200,
-          innerIconsSize: 3,
-          outerIconsSize: 3,
-          innerAnimation: Curves.easeInOutBack,
-          outerAnimation: Curves.easeInOutBack,
-          innerColor: Colors.deepPurple,
-          outerColor: Colors.orangeAccent,
-          innerAnimationSeconds: 10,
-          outerAnimationSeconds: 10,
-          child: Container(
-            height: 69,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey[200],
-            ),
-            child: CircleAvatar(
-              backgroundColor: MainCubit.get(context).isDark
-                  ? Colors.black
-                  : Colors.white,
-              backgroundImage: (cubit.image.isNotEmpty)
-                  ? NetworkImage(cubit.image)
-                  : null,
-              child: (cubit.image.isEmpty)
-                  ? Text(
-                      cubit.name,
-                      style: TextStyle(
-                        color: MainCubit.get(context).isDark
-                            ? Colors.white
-                            : Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  : null,
+    builder:
+        (_) => Center(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            child: WidgetCircularAnimator(
+              size: 200,
+              innerIconsSize: 3,
+              outerIconsSize: 3,
+              innerAnimation: Curves.easeInOutBack,
+              outerAnimation: Curves.easeInOutBack,
+              innerColor: Colors.deepPurple,
+              outerColor: Colors.orangeAccent,
+              innerAnimationSeconds: 10,
+              outerAnimationSeconds: 10,
+              child: Container(
+                height: 69,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey[200],
+                ),
+                child: CircleAvatar(
+                  backgroundColor:
+                      MainCubit.get(context).isDark
+                          ? Colors.black
+                          : Colors.white,
+                  backgroundImage:
+                      (cubit.image.isNotEmpty)
+                          ? NetworkImage(cubit.image)
+                          : null,
+                  child:
+                      (cubit.image.isEmpty)
+                          ? Text(
+                            cubit.name,
+                            style: TextStyle(
+                              color:
+                                  MainCubit.get(context).isDark
+                                      ? Colors.white
+                                      : Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                          : null,
+                ),
+              ),
             ),
           ),
         ),
-      ),
-    ),
   );
 }
