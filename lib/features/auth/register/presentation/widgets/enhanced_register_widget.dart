@@ -29,7 +29,6 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
   bool _obscurePassword = true;
   bool _isCountrySelected = false;
 
-
   late AnimationController _shakeController;
   late AnimationController _fadeController;
   late AnimationController _countryFieldController;
@@ -37,7 +36,6 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _countryFieldAnimation;
-
 
   @override
   void initState() {
@@ -53,9 +51,6 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     _stopCountryAnimation();
     super.dispose();
   }
-
-
-
 
   void _initializeAnimations() {
     _shakeController = AnimationController(
@@ -115,8 +110,6 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     super.dispose();
   }
 
-    
-
   void _validateName() {
     setState(() {
       _nameValidation = EnhancedAuthValidator.validateName(
@@ -155,12 +148,10 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
 
   void _updateFormValidity() {
     final wasValid = _isFormValid;
-
     _isFormValid =
         (_nameValidation?.isValid ?? false) &&
         (_emailValidation?.isValid ?? false) &&
         (_passwordValidation?.isValid ?? false) &&
-        (_clinicCodeValidation?.isValid ?? false) &&
         widget.cubit.countryCode.isNotEmpty;
 
     debugPrint('Form valid: $_isFormValid');
@@ -208,7 +199,6 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     HapticFeedback.lightImpact();
     widget.cubit.register();
   }
-
 
   @override
   Duration getAnimationDuration({

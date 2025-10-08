@@ -79,18 +79,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     final scaleFactor = isTablet ? 1.2 : 1.0;
 
     return BlocProvider(
-      create:
-          (_) => PasswordCubit(
-            forgetPasswordUseCase: ForgetPasswordUseCase(
-              PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
-            ),
-            resetPasswordUseCase: ResetPasswordUseCase(
-              PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
-            ),
-            verifyUserUseCase: VerifyUserUseCase(
-              PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
-            ),
-          ),
+      create: (_) => PasswordCubit(
+        forgetPasswordUseCase: ForgetPasswordUseCase(
+          PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
+        ),
+        resetPasswordUseCase: ResetPasswordUseCase(
+          PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
+        ),
+        verifyUserUseCase: VerifyUserUseCase(
+          PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
+        ),
+      ),
       child: BlocConsumer<PasswordCubit, PasswordState>(
         listener: (context, state) {
           if (state is ForgetPasswordErrorState) {
@@ -109,7 +108,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         builder: (context, state) {
           final cubit = context.read<PasswordCubit>();
           return Scaffold(
-            backgroundColor: const Color(0xFF1A1A2E),
+            backgroundColor: Colors.white,
             extendBodyBehindAppBar: true,
             appBar: AppBar(
               backgroundColor: Colors.transparent,
@@ -172,7 +171,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 SafeArea(
                   child: Column(
                     children: [
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20 * scaleFactor),
                       Container(
                         width: 110 * scaleFactor,
                         height: 110 * scaleFactor,
@@ -205,7 +204,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16 * scaleFactor),
                       Text(
                         "Don't Worry!",
                         style: TextStyle(
@@ -214,20 +213,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           color: Colors.white,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "Even the smartest pets forget where they\nburied their bones sometimes 🦴",
-                        style: TextStyle(
-                          fontSize: 14 * scaleFactor,
-                          color: Colors.white70,
+                      SizedBox(height: 10 * scaleFactor),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          "Even the smartest pets forget where they\nburied their bones sometimes 🦴",
+                          style: TextStyle(
+                            fontSize: 14 * scaleFactor,
+                            color: Colors.white70,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20 * scaleFactor),
                       Expanded(
-                        child: SingleChildScrollView(
-                          child: _buildResetCard(cubit, scaleFactor),
-                        ),
+                        child: _buildResetCard(cubit, scaleFactor),
                       ),
                     ],
                   ),
@@ -240,14 +240,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     );
   }
 
-  /// Light themed reset card
+  /// Light themed reset card with proper scrolling
   Widget _buildResetCard(PasswordCubit cubit, double scaleFactor) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(top: 10),
-      padding: EdgeInsets.all(20 * scaleFactor),
       decoration: BoxDecoration(
-        color: Colors.white, // Light background
+        color: Colors.white,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(24),
           topRight: Radius.circular(24),
@@ -260,60 +258,46 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           ),
         ],
       ),
-      child: Column(
-        children: [
-          Text(
-            'Reset Your Password',
-            style: TextStyle(
-              fontSize: 22 * scaleFactor,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF2A2A3E),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Enter your email address and we\'ll send you a OTP to reset your password.',
-            style: TextStyle(
-              fontSize: 14 * scaleFactor,
-              color: Colors.grey[700],
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          Text(
-            petEmojis[(currentPetIndex + 2) % petEmojis.length],
-            style: TextStyle(fontSize: 36 * scaleFactor),
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              child: Text(
-                motivationalMessages[currentMessageIndex],
-                key: ValueKey(currentMessageIndex),
-                style: TextStyle(
-                  fontSize: 13 * scaleFactor,
-                  color: Colors.deepPurple,
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(24 * scaleFactor),
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Reset Your Password',
+              style: TextStyle(
+                fontSize: 22 * scaleFactor,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF2A2A3E),
               ),
             ),
-          ),
-          const SizedBox(height: 24),
-          Form(
-            key: cubit.formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
+            SizedBox(height: 10 * scaleFactor),
+            Text(
+              'Enter your email address and we\'ll send you a OTP to reset your password.',
+              style: TextStyle(
+                fontSize: 14 * scaleFactor,
+                color: Colors.grey[700],
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 24 * scaleFactor),
+            
+            // Reusable Motivational Widget
+            MotivationalPetWidget(
+              petEmoji: petEmojis[(currentPetIndex + 2) % petEmojis.length],
+              message: motivationalMessages[currentMessageIndex],
+              messageKey: ValueKey(currentMessageIndex),
+              scaleFactor: scaleFactor,
+            ),
+            
+            SizedBox(height: 24 * scaleFactor),
+            Form(
+              key: cubit.formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
                     'Email Address',
                     style: TextStyle(
                       fontSize: 14 * scaleFactor,
@@ -321,84 +305,183 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),
-                const SizedBox(height: 6),
-                TextFormField(
-                  controller: cubit.emailController,
-                  style: const TextStyle(color: Colors.black87),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    prefixIcon: const Icon(
-                      Icons.email_outlined,
-                      color: Colors.grey,
-                    ),
-                    hintText: 'Enter your email address',
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!RegExp(
-                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                    ).hasMatch(value)) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: VcLoadingButton(
-                    onPressed: () {
-                      // Validate form then call cubit's forgetPassword
-                      if (cubit.formKey.currentState?.validate() ?? false) {
-                        FocusScope.of(context).unfocus();
-                        cubit.forgetPassword();
-                        cubit.emailController.text.trim();
-                      }
-                    },
-                    isLoading: cubit.isForgetPassword,
-                    backgroundColor: const Color(0xFF7B5CE6),
-                    borderRadius: 12,
-                    height: 50,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text(
-                          'Send OTP',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                  SizedBox(height: 8 * scaleFactor),
+                  TextFormField(
+                    controller: cubit.emailController,
+                    style: const TextStyle(color: Colors.black87),
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      prefixIcon: const Icon(
+                        Icons.email_outlined,
+                        color: Colors.grey,
+                      ),
+                      hintText: 'Enter your email address',
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 16 * scaleFactor,
+                        horizontal: 12,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: Color(0xFF7B5CE6),
+                          width: 2,
                         ),
-                        SizedBox(width: 8),
-                        Icon(Icons.send_rounded, color: Colors.white, size: 18),
-                      ],
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: Colors.red,
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 24 * scaleFactor),
+                  SizedBox(
+                    width: double.infinity,
+                    child: VcLoadingButton(
+                      onPressed: () {
+                        if (cubit.formKey.currentState?.validate() ?? false) {
+                          FocusScope.of(context).unfocus();
+                          cubit.forgetPassword();
+                        }
+                      },
+                      isLoading: cubit.isForgetPassword,
+                      backgroundColor: const Color(0xFF7B5CE6),
+                      borderRadius: 12,
+                      height: 52 * scaleFactor,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Send OTP',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16 * scaleFactor,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(
+                            Icons.send_rounded,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
+                ],
+              ),
+            ),
+            SizedBox(height: 16 * scaleFactor),
+            TextButton(
+              onPressed: () => navigateToScreen(context, const LoginScreen()),
+              child: Text(
+                'Remember your password? Sign In',
+                style: TextStyle(
+                  color: const Color(0xFF7B5CE6),
+                  fontSize: 14 * scaleFactor,
+                  fontWeight: FontWeight.w500,
                 ),
-              ],
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          TextButton.icon(
-            onPressed: () => navigateToScreen(context, const LoginScreen()),
-            label: const Text(
-              'Remember your password? Sign In',
-              style: TextStyle(color: Color(0xFF7B5CE6)),
-            ),
-          ),
-        ],
+            SizedBox(height: 16 * scaleFactor),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+/// Reusable Motivational Pet Widget
+/// Can be used across different screens
+class MotivationalPetWidget extends StatelessWidget {
+  final String petEmoji;
+  final String message;
+  final Key messageKey;
+  final double scaleFactor;
+  final Color? backgroundColor;
+  final Color? textColor;
+
+  const MotivationalPetWidget({
+    super.key,
+    required this.petEmoji,
+    required this.message,
+    required this.messageKey,
+    this.scaleFactor = 1.0,
+    this.backgroundColor,
+    this.textColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          petEmoji,
+          style: TextStyle(fontSize: 48 * scaleFactor),
+        ),
+        SizedBox(height: 12 * scaleFactor),
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 16 * scaleFactor,
+            vertical: 12 * scaleFactor,
+          ),
+          decoration: BoxDecoration(
+            color: backgroundColor ?? Colors.grey[100],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.1),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: child,
+                ),
+              );
+            },
+            child: Text(
+              message,
+              key: messageKey,
+              style: TextStyle(
+                fontSize: 13 * scaleFactor,
+                color: textColor ?? Colors.deepPurple,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
