@@ -59,7 +59,7 @@ Widget buildProfileSwitcherOverlay({
 
   final mq = MediaQuery.of(context);
   // Use a responsive width up to a cap and a larger max height for the list
-  final targetWidth = (mq.size.width * 0.50).clamp(260.0, 400.0);
+  final targetWidth = (mq.size.width * 0.20).clamp(260.0, 400.0);
   final maxListHeight = mq.size.height * 0.5;
 
   return Positioned(
