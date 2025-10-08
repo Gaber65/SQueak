@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/auth/password/data/datasources/password_remote_data_source.dart';
