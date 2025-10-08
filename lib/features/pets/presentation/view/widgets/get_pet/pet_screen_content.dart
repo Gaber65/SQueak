@@ -111,201 +111,212 @@ class _PetScreenContentState extends State<PetScreenContent> {
         : null;
   }
 
-void _showMergeConfirmDialog() {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (dialogContext) => BlocProvider.value(
-      value: widget.cubit,
-      child: BlocConsumer<PetCubit, PetState>(
-        listener: (listenerContext, state) {
-          if (state is MergePetsSuccessState) {
-            Navigator.of(dialogContext).pop();
-            if (mounted) {
-              setState(() {
-                _selectionMode = false;
-                _selectedPets.clear();
-              });
-            }
-            widget.cubit.getOwnerPets();
-            Future.delayed(const Duration(milliseconds: 300), () {
-              if (mounted) {
-                showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (successContext) => AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    backgroundColor: Colors.white,
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                          size: 60,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          isArabic() ? "تم الدمج بنجاح" : "Merge Successful",
-                          textAlign: TextAlign.center,
+  void _showMergeConfirmDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (dialogContext) => BlocProvider.value(
+            value: widget.cubit,
+            child: BlocConsumer<PetCubit, PetState>(
+              listener: (listenerContext, state) {
+                if (state is MergePetsSuccessState) {
+                  Navigator.of(dialogContext).pop();
+                  if (mounted) {
+                    setState(() {
+                      _selectionMode = false;
+                      _selectedPets.clear();
+                    });
+                  }
+                  widget.cubit.getOwnerPets();
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    if (mounted) {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        builder:
+                            (successContext) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              backgroundColor: Colors.white,
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.check_circle,
+                                    color: Colors.green,
+                                    size: 60,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    isArabic()
+                                        ? "تم الدمج بنجاح"
+                                        : "Merge Successful",
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(successContext).pop();
+                                  },
+                                  child: Text(isArabic() ? "موافق" : "OK"),
+                                ),
+                              ],
+                            ),
+                      );
+                    }
+                  });
+                } else if (state is MergePetsErrorState) {
+                  Navigator.of(dialogContext).pop();
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    if (mounted) {
+                      showDialog(
+                        context: context,
+                        builder:
+                            (errorContext) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              title: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.error,
+                                    color: Colors.red,
+                                    size: 28,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      isArabic() ? "فشل الدمج" : "Merge Failed",
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              content: Text(
+                                isArabic()
+                                    ? "فشل الدمج. الرجاء المحاولة مرة أخرى"
+                                    : "Merge failed. Please try again.",
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.of(errorContext).pop(),
+                                  child: Text(isArabic() ? "موافق" : "OK"),
+                                ),
+                              ],
+                            ),
+                      );
+                    }
+                  });
+                }
+              },
+              builder: (builderContext, state) {
+                final isLoading = state is MergePetsLoadingState;
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  title: Row(
+                    children: [
+                      const Icon(
+                        Icons.warning_amber_rounded,
+                        color: Colors.redAccent,
+                        size: 32,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          isArabic() ? "تأكيد الدمج" : "Confirm Merge",
                           style: const TextStyle(
-                            fontSize: 20,
+                            fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ],
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(successContext).pop();
-                        },
-                        child: Text(isArabic() ? "موافق" : "OK"),
                       ),
                     ],
                   ),
-                );
-              }
-            });
-          } else if (state is MergePetsErrorState) {
-            Navigator.of(dialogContext).pop();
-            Future.delayed(const Duration(milliseconds: 300), () {
-              if (mounted) {
-                showDialog(
-                  context: context,
-                  builder: (errorContext) => AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    title: Row(
-                      children: [
-                        const Icon(
-                          Icons.error,
-                          color: Colors.red,
-                          size: 28,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            isArabic() ? "فشل الدمج" : "Merge Failed",
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    content: Text(
-                      isArabic()
-                          ? "فشل الدمج. الرجاء المحاولة مرة أخرى"
-                          : "Merge failed. Please try again.",
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(errorContext).pop(),
-                        child: Text(isArabic() ? "موافق" : "OK"),
+                  content: Text(
+                    isArabic()
+                        ? "⚠️ سيتم حذف الأليف الأحدث، وسيبقى الأليف الأقدم فقط.\n\n❗ هذا الإجراء لا يمكن التراجع عنه."
+                        : "⚠️ The newest pets will be deleted, and only the oldest will remain.\n\n❗ This action cannot be undone.",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 18, height: 1.5),
+                  ),
+                  actionsAlignment: MainAxisAlignment.spaceBetween,
+                  actionsPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  actions: [
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 16),
                       ),
-                    ],
-                  ),
-                );
-              }
-            });
-          }
-        },
-        builder: (builderContext, state) {
-          final isLoading = state is MergePetsLoadingState;
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            title: Row(
-              children: [
-                const Icon(
-                  Icons.warning_amber_rounded,
-                  color: Colors.redAccent,
-                  size: 32,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    isArabic() ? "تأكيد الدمج" : "Confirm Merge",
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                      onPressed:
+                          isLoading
+                              ? null
+                              : () => Navigator.of(dialogContext).pop(),
+                      child: Text(isArabic() ? "إلغاء" : "Cancel"),
                     ),
-                  ),
-                ),
-              ],
-            ),
-            content: Text(
-              isArabic()
-                  ? "⚠️ سيتم حذف الأليف الأحدث، وسيبقى الأليف الأقدم فقط.\n\n❗ هذا الإجراء لا يمكن التراجع عنه."
-                  : "⚠️ The newest pets will be deleted, and only the oldest will remain.\n\n❗ This action cannot be undone.",
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 18, height: 1.5),
-            ),
-            actionsAlignment: MainAxisAlignment.spaceBetween,
-            actionsPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
-            actions: [
-              TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: const TextStyle(fontSize: 16),
-                ),
-                onPressed: isLoading
-                    ? null
-                    : () => Navigator.of(dialogContext).pop(),
-                child: Text(isArabic() ? "إلغاء" : "Cancel"),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorManager.primaryColor,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  textStyle: const TextStyle(fontSize: 16),
-                ),
-                onPressed: isLoading
-                    ? null
-                    : () {
-                        widget.cubit.mergePets(_selectedPets.toList());
-                      },
-                child: isLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorManager.primaryColor,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
                         ),
-                      )
-                    : Text(isArabic() ? "تأكيد" : "Confirm"),
-              ),
-            ],
-          );
-        },
-      ),
-    ),
-  );
-}
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        textStyle: const TextStyle(fontSize: 16),
+                      ),
+                      onPressed:
+                          isLoading
+                              ? null
+                              : () {
+                                widget.cubit.mergePets(_selectedPets.toList());
+                              },
+                      child:
+                          isLoading
+                              ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              )
+                              : Text(isArabic() ? "تأكيد" : "Confirm"),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+    );
+  }
+
   Widget _buildBody() {
     if (widget.state is GetOwnerPetsLoadingState) {
       return Center(
         child: VcLoadingIndicator(
           message:
               isArabic()
-                  ? "جاري تحميل حيواناتك الأليفة..."
+                  ? "جاري تحميل اصدقائك  الأليفة..."
                   : "Loading your pets...",
           size: 32.0,
         ),
