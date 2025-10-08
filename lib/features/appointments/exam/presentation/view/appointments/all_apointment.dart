@@ -134,11 +134,12 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
   }
 
   AppBar _buildAppBar(BuildContext context) {
+    final isDark = MainCubit.get(context).isDark;
     return AppBar(
       centerTitle: true,
       title: Text(S.of(context).yourAppointments),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.black87),
+        icon:  Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black87),
         onPressed: () => navigateAndFinish(context, LayoutScreen()),
       ),
       actions: [
