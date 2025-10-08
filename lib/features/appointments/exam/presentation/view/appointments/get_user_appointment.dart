@@ -43,8 +43,9 @@ class GetUserAppointment extends StatelessWidget {
           create: (context) => sl<BoardingCubit>()..getBoardingEntries(true),
         ),
         BlocProvider(
-           lazy: true,
-          create: (context) => sl<PetCubit>()..getOwnerPets()),
+          lazy: true,
+          create: (context) => sl<PetCubit>()..getOwnerPets(),
+        ),
       ],
       child: _AllAppointmentContent(services: _getServiceNames(context)),
     );
@@ -222,7 +223,10 @@ class _AllAppointmentContent extends StatelessWidget {
     UserAppointmentState state,
   ) {
     if (state is GetAppointmentLoading && state is! GetAppointmentSuccess) {
-      return LoadingWidget(message: 'Loading All appointments...');
+      return LoadingWidget(
+        enMessage: 'Loading All appointments...',
+        arMessage: 'جاري تحميل جميع المواعيد...',
+      );
     } else if (cubit.appointments.isEmpty && state is! GetSupplierSuccess) {
       return emptyAppointment(context);
     } else if (state is AppointmentFiltered && state is GetAppointmentSuccess) {
@@ -234,7 +238,6 @@ class _AllAppointmentContent extends StatelessWidget {
       );
     }
   }
-
 
   Widget _buildAppointmentList(
     List<dynamic> appointments,

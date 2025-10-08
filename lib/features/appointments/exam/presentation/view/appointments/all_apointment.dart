@@ -39,7 +39,8 @@ class AllAppointment extends StatelessWidget {
         BlocProvider(create: (context) => sl<BoardingCubit>()),
         BlocProvider(
           lazy: true,
-          create: (context) => sl<PetCubit>()..getOwnerPets()),
+          create: (context) => sl<PetCubit>()..getOwnerPets(),
+        ),
       ],
       child: _AllAppointmentContent(services: _getServiceNames(context)),
     );
@@ -138,7 +139,7 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
       title: Text(S.of(context).yourAppointments),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.black87),
-        onPressed: () => navigateAndFinish(context, LayoutScreen())
+        onPressed: () => navigateAndFinish(context, LayoutScreen()),
       ),
       actions: [
         IconButton(
@@ -199,7 +200,10 @@ class _ExaminationTab extends StatelessWidget {
         final cubit = UserAppointmentCubit.get(context);
         // Show loading indicator for initial load
         if (state is GetAppointmentLoading && cubit.appointments.isEmpty) {
-          return LoadingWidget(message: 'Loading appointments...');
+          return LoadingWidget(
+            enMessage: 'Loading appointments...',
+            arMessage: 'جارٍ تحميل المواعيد...',
+          );
         } else {
           return Scaffold(
             body: Column(
@@ -315,7 +319,10 @@ class _ExaminationListState extends State<_ExaminationList> {
   Widget build(BuildContext context) {
     if (widget.state is GetAppointmentLoading &&
         widget.cubit.appointments.isEmpty) {
-      return LoadingWidget(message: 'Loading appointments...');
+      return LoadingWidget(
+        enMessage: 'Loading appointments...',
+        arMessage: 'جارٍ تحميل المواعيد...',
+      );
     } else if (widget.cubit.appointments.isEmpty &&
         widget.state is! GetSupplierSuccess) {
       return emptyAppointment(context);
@@ -385,7 +392,10 @@ class _BoardingTab extends StatelessWidget {
         // Show loading indicator for initial load
         if (state is GetBoardingEntriesLoading &&
             boardingCubit.boardingEntries.isEmpty) {
-          return LoadingWidget(message: 'Loading boarding entries...');
+          return LoadingWidget(
+            enMessage: 'Loading boarding entries...',
+            arMessage: 'جارٍ تحميل مواعيد الإقامة...',
+          );
         }
 
         return Column(
