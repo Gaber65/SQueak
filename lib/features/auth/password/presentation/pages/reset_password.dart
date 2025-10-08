@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,23 +24,21 @@ class ResetPasswordScreen extends StatefulWidget {
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen>
     with SingleTickerProviderStateMixin {
-  final List<String> petEmojis = [
+ final List<String> petEmojis = [
     '🐶',
     '🐱',
     '🐰',
-    '🐹',
-    '🦊',
-    '🐻',
-    '🐨',
-    '🐸',
+    '🐭',
+    '🐦',
+    '🦁',
   ];
   final List<String> motivationalMessages = [
-    '"Almost there! Create a strong password!" 🔒',
-    '"Woof! Make it secure!" 🐕',
-    '"Meow! Keep it safe!" 🐈',
-    '"Hop! You\'re doing great!" 🐰',
-    '"Roar! Strong passwords protect!" 🦁',
-    '"Chirp! Just one more step!" 🐦',
+    '"Woof! We\'re here to help!" 🐕',
+    '"Meow! You\'ll be back in no time!" 🐈',
+    '"Hop! Just a few steps away!" 🐰',
+    '"Squeak! Everyone forgets sometimes!" 🐭',
+    '"Chirp! Reset passwords are easy!" 🐦',
+    '"Roar! Stay pawsitive!" 🦁',
   ];
 
   int currentMessageIndex = 0;

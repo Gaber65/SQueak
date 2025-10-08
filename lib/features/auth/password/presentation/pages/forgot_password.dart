@@ -26,18 +26,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     '🐶',
     '🐱',
     '🐰',
-    '🐹',
-    '🦊',
-    '🐻',
-    '🐨',
-    '🐸',
+    '🐭',
+    '🐦',
+    '🦁',
   ];
   final List<String> motivationalMessages = [
-    '"Squeak! Everyone forgets sometimes!" 🐭',
-    '"Chirp! Reset passwords are easy!" 🐦',
     '"Woof! We\'re here to help!" 🐕',
     '"Meow! You\'ll be back in no time!" 🐈',
     '"Hop! Just a few steps away!" 🐰',
+    '"Squeak! Everyone forgets sometimes!" 🐭',
+    '"Chirp! Reset passwords are easy!" 🐦',
     '"Roar! Stay pawsitive!" 🦁',
   ];
 

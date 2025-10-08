@@ -28,6 +28,7 @@ class SettingScreen extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
+              centerTitle: true,
               title: Text(S.of(context).settings),
               automaticallyImplyLeading: false,
             ),
