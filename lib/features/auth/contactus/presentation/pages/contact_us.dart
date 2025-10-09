@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/global_widget/vc_loading_widget.dart';
 import 'dart:math' as math;
@@ -12,6 +13,8 @@ import 'package:squeak/features/auth/contactus/presentation/cubit/contact_us_cub
 import 'package:squeak/features/auth/register/domin/usecses/register_qr_use_case.dart';
 import 'package:squeak/features/auth/register/domin/usecses/register_use_case.dart';
 import 'package:squeak/features/auth/register/presentation/cubit/register_cubit.dart';
+import 'package:squeak/core/service/global_widget/country_code_selector.dart';
+import 'package:squeak/core/service/global_widget/phone_number_field.dart';
 
 import '../../../../../core/utils/export_path/export_files.dart';
 import '../../../register/data/datasources/register_remote_data_source.dart';
@@ -333,7 +336,7 @@ class _ContactScreenState extends State<ContactScreen>
                       ),
                       SizedBox(height: 16 * scaleFactor),
 
-                      // Phone Field
+                      // Phone Field - Split into two fields
                       _buildLabel(
                         isArabic() ? 'رقم الهاتف' : 'Phone Number',
                         scaleFactor,
@@ -342,10 +345,11 @@ class _ContactScreenState extends State<ContactScreen>
                       BlocConsumer<RegisterCubit, RegisterState>(
                         listener: (context, state) {},
                         builder: (context, state) {
-                          return PhoneTextField(
-                            controller: cubit.phoneController,
-                            countries: RegisterCubit.get(context).countries,
-                            registerCubit: registerCubit,
+                          return _buildPhoneFields(
+                            context,
+                            cubit,
+                            registerCubit,
+                            scaleFactor,
                           );
                         },
                       ),
@@ -447,6 +451,50 @@ class _ContactScreenState extends State<ContactScreen>
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPhoneFields(
+    BuildContext context,
+    ContactUsCubit cubit,
+    RegisterCubit registerCubit,
+    double scaleFactor,
+  ) {
+    // Use the shared CountryCodeSelector and PhoneNumberField
+    return Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: CountryCodeSelector(
+            countries: registerCubit.countries,
+            registerCubit: registerCubit,
+            isValid: registerCubit.countryCode.isNotEmpty,
+            onCountryChanged: () {},
+            onAnimationStop: () {},
+          ),
+        ),
+        SizedBox(width: 12 * scaleFactor),
+        Expanded(
+          flex: 3,
+          child: PhoneNumberField(
+            controller: cubit.phoneController,
+            hintText: isArabic() ? 'رقم الهاتف' : 'Phone Number',
+            isValid: registerCubit.countryCode.isNotEmpty,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return isArabic() ? 'ادخل رقم الهاتف' : 'Enter phone number';
+              }
+              if (value.length < 7) {
+                return isArabic()
+                    ? 'رقم هاتف غير صالح'
+                    : 'Invalid phone number';
+              }
+              return null;
+            },
+            onChanged: () {},
+          ),
+        ),
+      ],
     );
   }
 
