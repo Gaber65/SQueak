@@ -169,10 +169,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 SafeArea(
                   child: Column(
                     children: [
-                      SizedBox(height: 20 * scaleFactor),
+                      SizedBox(height: 12 * scaleFactor),
                       Container(
-                        width: 110 * scaleFactor,
-                        height: 110 * scaleFactor,
+                        width: 84 * scaleFactor,
+                        height: 84 * scaleFactor,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           gradient: const LinearGradient(
@@ -196,34 +196,34 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           child: Text(
                             '🐾',
                             style: TextStyle(
-                              fontSize: 50 * scaleFactor,
+                              fontSize: 38 * scaleFactor,
                               color: Colors.white,
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(height: 16 * scaleFactor),
+                      SizedBox(height: 12 * scaleFactor),
                       Text(
                         "Don't Worry!",
                         style: TextStyle(
-                          fontSize: 28 * scaleFactor,
+                          fontSize: 20 * scaleFactor,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(height: 10 * scaleFactor),
+                      SizedBox(height: 8 * scaleFactor),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 18),
                         child: Text(
                           "Even the smartest pets forget where they\nburied their bones sometimes 🦴",
                           style: TextStyle(
-                            fontSize: 14 * scaleFactor,
+                            fontSize: 12 * scaleFactor,
                             color: Colors.white70,
                           ),
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      SizedBox(height: 20 * scaleFactor),
+                      SizedBox(height: 12 * scaleFactor),
                       Expanded(
                         child: _buildResetCard(cubit, scaleFactor),
                       ),

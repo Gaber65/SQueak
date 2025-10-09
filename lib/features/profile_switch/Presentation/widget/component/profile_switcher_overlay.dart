@@ -59,14 +59,14 @@ Widget buildProfileSwitcherOverlay({
 
   final mq = MediaQuery.of(context);
   // Use a responsive width up to a cap and a larger max height for the list
-  final targetWidth = (mq.size.width * 0.20).clamp(260.0, 400.0);
+  final targetWidth = (mq.size.width * 0.1).clamp(260.0, 400.0);
   final maxListHeight = mq.size.height * 0.5;
 
   return Positioned(
     width: targetWidth,
     child: CompositedTransformFollower(
       link: layerLink,
-      offset: Offset(isArabic() ? 10 : -210, 50),
+      offset: Offset(isArabic() ? 10 : -150, 50),
       showWhenUnlinked: false,
       child: Material(
         color: Colors.transparent,
@@ -98,7 +98,7 @@ Widget buildProfileSwitcherOverlay({
                     constraints: BoxConstraints(
                       // Make the dropdown take more height on larger screens
                       maxHeight: maxListHeight,
-                      minWidth: 240,
+                      minWidth: 200,
                     ),
                     child:
                         (pets.isEmpty && owner == null)
@@ -172,11 +172,11 @@ Widget buildProfileSwitcherOverlay({
                                       Future.delayed(
                                         const Duration(seconds: 2),
                                         () {
-                                           navigateAndFinish(
-                                        // ignore: use_build_context_synchronously
-                                        context,
-                                        const LayoutScreen(),
-                                      );
+                                          navigateAndFinish(
+                                            // ignore: use_build_context_synchronously
+                                            context,
+                                            const LayoutScreen(),
+                                          );
                                         },
                                       );
                                     },
