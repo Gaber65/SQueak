@@ -199,9 +199,17 @@ class RegisterCubit extends Cubit<RegisterState> {
     emit(RegistrationLoadingState());
     phoneController.text = normalizePhoneNumber(phoneController.text);
 
+    // Trim the email and write it back to the controller so the UI shows the trimmed value.
+    final trimmedEmail = emailController.text.trim();
+    if (emailController.text != trimmedEmail) {
+      emailController.text = trimmedEmail;
+      emailController.selection = TextSelection.fromPosition(
+        TextPosition(offset: trimmedEmail.length),
+      );
+    }
     final entity = RegisterEntity(
       fullName: nameController.text,
-      email: emailController.text,
+      email: trimmedEmail,
       password: passwordController.text,
       phone: phoneController.text,
       countryId: countryIdToServer,
@@ -225,7 +233,7 @@ class RegisterCubit extends Cubit<RegisterState> {
             );
 
             final loginResult = await loginUseCase(
-              emailOrPhoneNumber: emailController.text,
+              emailOrPhoneNumber: trimmedEmail,
               password: passwordController.text,
             );
 
@@ -277,6 +285,15 @@ class RegisterCubit extends Cubit<RegisterState> {
     emit(RegistrationLoadingState());
     phoneController.text = normalizePhoneNumber(phoneController.text);
 
+    // Trim email for QR registration too and update controller so UI reflects it.
+    final qrEmailTrimmed = emailController.text.trim();
+    if (emailController.text != qrEmailTrimmed) {
+      emailController.text = qrEmailTrimmed;
+      emailController.selection = TextSelection.fromPosition(
+        TextPosition(offset: qrEmailTrimmed.length),
+      );
+    }
+
     final entity = RegisterEntity(
       fullName: nameController.text,
       email: emailController.text,
@@ -288,6 +305,7 @@ class RegisterCubit extends Cubit<RegisterState> {
 
     print(entity.toMap());
 
+    final qrEmail = emailController.text.trim();
     await registerQrUseCase
         .execute(entity, clinicCode)
         .then((value) async {
@@ -296,7 +314,7 @@ class RegisterCubit extends Cubit<RegisterState> {
           debugPrint('[Register][QR] Registration success - invoking LoginCubit.login');
           await LoginCubit.get(context).login(
             context,
-            email: emailController.text,
+            email: qrEmail,
             password: passwordController.text,
           );
           debugPrint('[Register][QR] LoginCubit.login returned');

@@ -41,6 +41,11 @@
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>INSendMessageIntent</string>
+		<string>INStartCallIntent</string>
+	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -48,6 +53,8 @@
 	</dict>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>We need your location to determine your country code.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Squeak needs access to your location to provide location-based pet services, find nearby veterinarians, and enhance your pet care experience with location-aware features.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need your location to determine your country code.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -60,6 +67,12 @@
 	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.softicare.squeak.refresh</string>
+		<string>com.softicare.squeak.processing</string>
+		<string>com.softicare.squeak.notification</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

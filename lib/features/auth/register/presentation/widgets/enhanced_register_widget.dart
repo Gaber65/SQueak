@@ -24,6 +24,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
   ValidationResult? _emailValidation;
   ValidationResult? _passwordValidation;
   ValidationResult? _clinicCodeValidation;
+  late FocusNode _emailFocusNode;
 
   bool _isFormValid = false;
   bool _obscurePassword = true;
@@ -43,6 +44,17 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     _initializeAnimations();
     _startAnimations();
     _initializeFormValidation();
+    // Trim any prefilled email value after the first frame so UI reflects trimmed value
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final current = widget.cubit.emailController.text;
+      final trimmed = current.trim();
+      if (current != trimmed) {
+        widget.cubit.emailController.text = trimmed;
+        widget.cubit.emailController.selection = TextSelection.fromPosition(
+          TextPosition(offset: trimmed.length),
+        );
+      }
+    });
   }
 
   @override
@@ -92,9 +104,14 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     });
   }
 
+  void _initializeFocusNodes() {
+    _emailFocusNode = FocusNode()..addListener(_onEmailFocusChange);
+  }
+
   void _startAnimations() {
     _fadeController.forward();
     _countryFieldController.forward();
+    _initializeFocusNodes();
   }
 
   void _initializeFormValidation() {
@@ -107,7 +124,25 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     _shakeController.dispose();
     _fadeController.dispose();
     _countryFieldController.dispose();
-    super.dispose();
+    try {
+      _emailFocusNode.removeListener(_onEmailFocusChange);
+      _emailFocusNode.dispose();
+    } catch (_) {}
+  }
+
+  void _onEmailFocusChange() {
+    // When the email field loses focus, trim leading/trailing spaces and update UI
+    if (!_emailFocusNode.hasFocus) {
+      final current = widget.cubit.emailController.text;
+      final trimmed = current.trim();
+      if (current != trimmed) {
+        widget.cubit.emailController.text = trimmed;
+        widget.cubit.emailController.selection = TextSelection.fromPosition(
+          TextPosition(offset: trimmed.length),
+        );
+        _validateEmail();
+      }
+    }
   }
 
   void _validateName() {
@@ -178,6 +213,17 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
   }
 
   void _onRegisterPressed() async {
+    // Ensure the email is trimmed right before validation/submit so UI reflects it
+    final currentEmail = widget.cubit.emailController.text;
+    final trimmedEmail = currentEmail.trim();
+    if (currentEmail != trimmedEmail) {
+      widget.cubit.emailController.text = trimmedEmail;
+      widget.cubit.emailController.selection = TextSelection.fromPosition(
+        TextPosition(offset: trimmedEmail.length),
+      );
+      _validateEmail();
+    }
+
     if (!_isFormValid) {
       _shakeController.forward().then((_) {
         _shakeController.reset();
@@ -293,6 +339,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     required IconData prefixIcon,
     required ValidationResult? validation,
     required VoidCallback onChanged,
+    FocusNode? focusNode,
     TextInputType? keyboardType,
     bool obscureText = false,
     Widget? suffixIcon,
@@ -303,6 +350,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
         border: Border.all(color: _getBorderColor(validation), width: 1.5),
       ),
       child: TextFormField(
+        focusNode: focusNode,
         controller: controller,
         keyboardType: keyboardType,
         obscureText: obscureText,
@@ -316,7 +364,26 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
             vertical: 16,
           ),
         ),
-        onChanged: (_) => onChanged(),
+        onChanged: (value) {
+          // For the email field, proactively trim leading/trailing spaces while typing so
+          // the UI matches the login page behavior and avoids lingering spaces.
+          try {
+            if (controller == widget.cubit.emailController && value != null) {
+              final trimmed = value.trim();
+              if (value != trimmed) {
+                // Preserve cursor position as best-effort (place at end of trimmed text)
+                controller.text = trimmed;
+                controller.selection = TextSelection.fromPosition(
+                  TextPosition(offset: trimmed.length),
+                );
+                // Update validation after trimming
+                onChanged();
+                return;
+              }
+            }
+          } catch (_) {}
+          onChanged();
+        },
         validator: (_) => null,
       ),
     );
@@ -580,6 +647,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                         prefixIcon: Icons.email_outlined,
                         validation: _emailValidation,
                         onChanged: _validateEmail,
+                        focusNode: _emailFocusNode,
                         keyboardType: TextInputType.emailAddress,
                       ),
                       SizedBox(height: _spacing),

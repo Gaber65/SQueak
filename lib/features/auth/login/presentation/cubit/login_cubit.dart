@@ -33,7 +33,19 @@ class LoginCubit extends Cubit<LoginState> {
     isLoggedIn = true;
     emit(LoginLoading());
     
-    String emailOrPhone = email ?? emailController.text;
+    String emailOrPhone = (email ?? emailController.text).trim();
+    // If we trimmed the controller's text, update the controller so the UI reflects
+    // the trimmed value while preserving the cursor at the end.
+    if (email == null) {
+      final current = emailController.text;
+      final trimmed = current.trim();
+      if (current != trimmed) {
+        emailController.text = trimmed;
+        emailController.selection = TextSelection.fromPosition(
+          TextPosition(offset: trimmed.length),
+        );
+      }
+    }
     if (!isEmail(emailOrPhone)) {
       emailOrPhone = normalizePhoneNumber(emailOrPhone);
     }
