@@ -60,11 +60,12 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
     final width = size.width;
     final height = size.height;
 
+    // Make header more compact by reducing vertical padding
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
         horizontal: width * 0.06,
-        vertical: height * 0.03,
+        vertical: height * 0.018,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -79,76 +80,78 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
       ),
       child: Stack(
         children: [
+          // Reduce paw sizes/positions for a tighter header
           _buildFloatingPaw(
-            top: height * 0.02,
-            right: width * 0.08,
-            angle: 0.3,
-            size: width * 0.06,
-            opacity: 0.3,
+            top: height * 0.01,
+            right: width * 0.06,
+            angle: 0.25,
+            size: width * 0.045,
+            opacity: 0.28,
             reverse: false,
           ),
           _buildFloatingPaw(
-            top: height * 0.1,
-            left: width * 0.1,
-            angle: -0.2,
-            size: width * 0.05,
-            opacity: 0.2,
+            top: height * 0.06,
+            left: width * 0.08,
+            angle: -0.18,
+            size: width * 0.04,
+            opacity: 0.18,
             reverse: true,
           ),
           _buildFloatingPaw(
-            top: height * 0.06,
-            right: width * 0.2,
-            angle: 0.5,
-            size: width * 0.04,
-            opacity: 0.25,
+            top: height * 0.04,
+            right: width * 0.16,
+            angle: 0.45,
+            size: width * 0.035,
+            opacity: 0.22,
             factor: 0.7,
           ),
           Column(
             children: [
-              _buildMascot(width),
-              SizedBox(height: height * 0.02),
+              // Smaller mascot and text for compact header
+              _buildMascot(width, compact: true),
+              SizedBox(height: height * 0.01),
 
               const Text(
                 'Welcome Back!',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                   shadows: [
                     Shadow(
                       color: Colors.black26,
-                      blurRadius: 10,
-                      offset: Offset(0, 2),
+                      blurRadius: 8,
+                      offset: Offset(0, 1.5),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: height * 0.01),
+              SizedBox(height: height * 0.008),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.pets, color: Colors.white, size: 16),
+                  const Icon(Icons.pets, color: Colors.white, size: 14),
                   SizedBox(width: width * 0.02),
                   Text(
                     'Your furry friends are waiting for you!',
                     style: TextStyle(
-                      fontSize: width * 0.04,
+                      fontSize: width * 0.032,
                       color: Colors.white.withOpacity(0.9),
                       fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(width: width * 0.02),
-                  const Icon(Icons.pets, color: Colors.white, size: 16),
+                  const Icon(Icons.pets, color: Colors.white, size: 14),
                 ],
               ),
-              SizedBox(height: height * 0.005),
+              SizedBox(height: height * 0.006),
 
               Text(
                 'Sign in to continue your pet care journey',
                 style: TextStyle(
-                  fontSize: width * 0.035,
+                  fontSize: width * 0.033,
                   color: Colors.white.withOpacity(0.8),
                   fontWeight: FontWeight.w400,
                 ),
@@ -193,49 +196,51 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
     );
   }
 
-  Widget _buildMascot(double width) {
+  Widget _buildMascot(double width, {bool compact = false}) {
+    final sizeFactor = compact ? 0.12 : 0.18;
+    final iconSize = compact ? 40.0 : 50.0;
     return AnimatedBuilder(
       animation: _mascotBounceAnimation,
       builder: (_, __) {
         return Transform.translate(
           offset: Offset(0, -_mascotBounceAnimation.value),
           child: Container(
-            width: width * 0.18,
-            height: width * 0.18,
+            width: width * sizeFactor,
+            height: width * sizeFactor,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(25),
+              borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
-                  blurRadius: 25,
-                  offset: const Offset(0, 12),
+                  color: Colors.black.withOpacity(0.12),
+                  blurRadius: compact ? 18 : 25,
+                  offset: Offset(0, compact ? 8 : 12),
                 ),
               ],
             ),
             child: Stack(
               alignment: Alignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.pets,
-                  size: 50,
+                  size: iconSize,
                   color: ColorManager.secondColor,
                 ),
                 Positioned(
-                  top: width * 0.03,
-                  left: width * 0.03,
+                  top: width * 0.02,
+                  left: width * 0.02,
                   child: Icon(
                     Icons.favorite,
-                    size: width * 0.025,
+                    size: width * 0.02,
                     color: Colors.red.withOpacity(0.8),
                   ),
                 ),
                 Positioned(
-                  top: width * 0.03,
-                  right: width * 0.04,
+                  top: width * 0.02,
+                  right: width * 0.03,
                   child: Icon(
                     Icons.favorite,
-                    size: width * 0.025,
+                    size: width * 0.02,
                     color: Colors.red.withOpacity(0.8),
                   ),
                 ),
