@@ -170,17 +170,21 @@ class PassportSection extends StatelessWidget {
                                             MainAxisAlignment.center,
                                          crossAxisAlignment: CrossAxisAlignment.center,   
                                         children: [
-                                          Text(
-                                            isArabic() ? 'أرفق' : 'Attach',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
+                                          Flexible(
+                                            child: Text(
+                                              isArabic() ? 'أرفق' : 'Attach',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12, // Reduced font size to fit better
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
-                                          SizedBox(width: 10),
+                                          SizedBox(width: 4), // Reduced spacing
                                           Icon(
                                             Icons.attach_file,
-                                            size: 20,
+                                            size: 16, // Reduced icon size
                                             color: Colors.white,
                                           ),
                                         ],
