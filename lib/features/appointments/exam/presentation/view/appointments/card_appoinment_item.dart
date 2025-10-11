@@ -25,6 +25,7 @@ Widget buildItem(
       width: double.infinity,
       decoration: Decorations.kDecorationBoxShadow(context: context),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           /// data
           Container(
@@ -35,13 +36,14 @@ Widget buildItem(
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(14.0),
+              padding: const EdgeInsets.all(10.0),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Handle all appointment states
                   _buildStatusRow(appointments, context, cubit),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 3),
                   if (appointments.status == 3 &&
                       appointments.doctorServiceRate != 0)
                     Center(
@@ -51,7 +53,7 @@ Widget buildItem(
                             isArabic() ? 'تقييم الطبيب' : 'Doctor rating : ',
                             style: FontStyleThame.textStyle(
                               context: context,
-                              fontSize: 14,
+                              fontSize: 13,
                             ),
                           ),
                           Row(
@@ -62,10 +64,12 @@ Widget buildItem(
                                       ? const Icon(
                                         Icons.star,
                                         color: Colors.amber,
+                                        size: 18,
                                       )
                                       : const Icon(
                                         Icons.star_border,
                                         color: Colors.amber,
+                                        size: 18,
                                       ),
                             ),
                           ),
@@ -79,87 +83,79 @@ Widget buildItem(
 
           /// image + name
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CircleAvatar(
-                  radius: 30,
+                  radius: 25,
                   backgroundImage: NetworkImage(
                     ConfigModel.serverFirstHalfOfImageUrl +
                         (appointments.clinicLogo ?? ''),
                   ),
                 ),
                 SizedBox(width: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: Text(
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
                         appointments.clinicName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: FontStyleThame.textStyle(
                           context: context,
-                          fontSize: 16,
+                          fontSize: 15,
                         ),
                       ),
-                    ),
-                    SizedBox(height: 7),
+                      SizedBox(height: 4),
 
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: Text(
+                      Text(
                         appointments.pet.name!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: FontStyleThame.textStyle(
                           context: context,
-                          fontSize: 16,
+                          fontSize: 15,
                         ),
                       ),
-                    ),
-                    if (appointments.status == 3) ...[
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.5,
-                            child: _buildVitalsSection(appointments, context),
-                          ),
-                        ],
-                      ),
+                      if (appointments.status == 3) ...[
+                        SizedBox(height: 3),
+                        _buildVitalsSection(appointments, context),
+                      ],
                     ],
-                  ],
-                ),
-                const Spacer(),
-                InkWell(
-                  onTap: () {
-                    if (appointments.clinicLocation.isEmpty) {
-                      infoToast(
-                        context,
-                        isArabic()
-                            ? 'الموقع مفقود، يرجى مطالبة المشرف بإضافة موقعه'
-                            : 'the location is missing , please ask the admin to add his location',
-                      );
-                    } else {
-                      launchUrl((Uri.parse(appointments.clinicLocation)));
-                    }
-                  },
-                  child: FastCachedImage(
-                    url:
-                        'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/google-maps.png?alt=media&token=17b77d3f-92a8-4339-bc65-80cf49dff79e',
-                    height: 20,
-                    width: 20,
-                    fit: BoxFit.fill,
                   ),
                 ),
-              ],
+                const SizedBox(width: 8),
+                InkWell(
+                    onTap: () {
+                      if (appointments.clinicLocation.isEmpty) {
+                        infoToast(
+                          context,
+                          isArabic()
+                              ? 'الموقع مفقود، يرجى مطالبة المشرف بإضافة موقعه'
+                              : 'the location is missing , please ask the admin to add his location',
+                        );
+                      } else {
+                        launchUrl((Uri.parse(appointments.clinicLocation)));
+                      }
+                    },
+                    child: FastCachedImage(
+                      url:
+                          'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/google-maps.png?alt=media&token=17b77d3f-92a8-4339-bc65-80cf49dff79e',
+                      height: 20,
+                      width: 20,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
 
           /// bottom row
           Padding(
-            padding: const EdgeInsets.all(14.0),
+            padding: const EdgeInsets.fromLTRB(10.0, 6.0, 10.0, 10.0),
             child: Row(
               children: _buildActionButtons(appointments, context, cubit),
             ),
@@ -756,7 +752,9 @@ List<PopupMenuEntry<int>> _buildMenuItems(
 }
 
 Widget _buildVitalsSection(appointment, context) {
-  return Row(
+  return Wrap(
+    spacing: 8.0,
+    runSpacing: 4.0,
     children: [
       _buildVitalItem(
         'Temp',
@@ -765,7 +763,6 @@ Widget _buildVitalsSection(appointment, context) {
         Colors.red,
         context,
       ),
-      const SizedBox(width: 20),
       _buildVitalItem(
         'Weight',
         '${appointment.weight} kg',
@@ -785,16 +782,18 @@ Widget _buildVitalItem(
   context,
 ) {
   return Row(
+    mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(icon, size: 16, color: color),
-      const SizedBox(width: 6),
+      Icon(icon, size: 14, color: color),
+      const SizedBox(width: 4),
       Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 10,
               color:
                   MainCubit.get(context).isDark
                       ? Colors.grey.shade400
@@ -805,7 +804,7 @@ Widget _buildVitalItem(
           Text(
             value,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               color:
                   MainCubit.get(context).isDark ? Colors.white : Colors.black87,
               fontWeight: FontWeight.bold,
