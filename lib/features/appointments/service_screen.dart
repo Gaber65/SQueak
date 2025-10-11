@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iconly/iconly.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
@@ -18,6 +19,7 @@ class _CareHubScreenState extends State<CareHubScreen>
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  late AnimationController _listAnimationController;
 
   @override
   void initState() {
@@ -42,14 +44,21 @@ class _CareHubScreenState extends State<CareHubScreen>
       CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
     );
 
+    _listAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+
     _fadeController.forward();
     _slideController.forward();
+    _listAnimationController.forward();
   }
 
   @override
   void dispose() {
     _fadeController.dispose();
     _slideController.dispose();
+    _listAnimationController.dispose();
     super.dispose();
   }
 
@@ -134,114 +143,67 @@ class _CareHubScreenState extends State<CareHubScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 20 * paddingScale),
+                      SizedBox(height: 12 * paddingScale),
 
-                      // Hero Section
+                      // Hero Section - Compact
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.all(24 * paddingScale),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16 * paddingScale,
+                          vertical: 16 * paddingScale,
+                        ),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              ColorManager.primaryColor.withOpacity(0.1),
-                              ColorManager.primaryColor.withOpacity(0.05),
+                              ColorManager.primaryColor.withOpacity(0.08),
+                              ColorManager.primaryColor.withOpacity(0.03),
                             ],
                           ),
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: ColorManager.primaryColor.withOpacity(0.2),
+                            color: ColorManager.primaryColor.withOpacity(0.15),
                             width: 1,
                           ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Row(
                           children: [
-                            Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: ColorManager.primaryColor
-                                        .withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Icon(
-                                    Icons.favorite_rounded,
-                                    color: ColorManager.primaryColor,
-                                    size: 28,
-                                  ),
-                                ),
-                                SizedBox(width: 16),
-                                Expanded(
-                                  child: Text(
-                                    isArabic
-                                        ? "مركز رعاية صديقك"
-                                        : "Your Friend's Care Hub",
-                                    style: TextStyle(
-                                      fontSize: 24 * textScale.clamp(0.9, 1.4),
-                                      fontWeight: FontWeight.w800,
-                                      color:
-                                          isDark
-                                              ? Colors.white
-                                              : Colors.black87,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: ColorManager.primaryColor
+                                    .withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                Icons.favorite_rounded,
+                                color: ColorManager.primaryColor,
+                                size: 22,
+                              ),
                             ),
-                            SizedBox(height: 16 * paddingScale),
-                            RichText(
-                              text: TextSpan(
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                isArabic
+                                    ? "مركز رعاية صديقك"
+                                    : "Care Hub",
                                 style: TextStyle(
-                                  fontSize: 15 * textScale.clamp(0.9, 1.3),
+                                  fontSize: 18 * textScale.clamp(0.9, 1.2),
+                                  fontWeight: FontWeight.w700,
                                   color:
                                       isDark
-                                          ? Colors.grey[300]
-                                          : Colors.grey[700],
-                                  height: 1.5,
+                                          ? Colors.white
+                                          : Colors.black87,
                                   letterSpacing: 0.3,
                                 ),
-                                children: [
-                                  TextSpan(
-                                    text:
-                                        isArabic
-                                            ? "مرحبًا! من هنا يمكنك إدارة المواعيد، عرض السجلات الصحية، وإيجاد عيادات "
-                                            : "Welcome! From here, you can manage appointments, view health records, and find trusted ",
-                                  ),
-                                  WidgetSpan(
-                                    child: GestureDetector(
-                                      onTap: _launchVetICareWebsite,
-                                      child: Text(
-                                        "VetICare",
-                                        style: TextStyle(
-                                          fontSize:
-                                              15 * textScale.clamp(0.9, 1.3),
-                                          color: ColorManager.primaryColor,
-                                          fontWeight: FontWeight.w600,
-                                          decoration: TextDecoration.underline,
-                                          decorationColor:
-                                              ColorManager.primaryColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text:
-                                        isArabic
-                                            ? " الموثوقة لصديقك. اختر خيارًا أدناه للبدء."
-                                            : " clinics for your friend. Select an option below to get started.",
-                                  ),
-                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
 
-                      SizedBox(height: 32 * paddingScale),
+                      SizedBox(height: 24 * paddingScale),
 
                       // Services Grid
                       Text(
@@ -255,54 +217,58 @@ class _CareHubScreenState extends State<CareHubScreen>
                       ),
                       SizedBox(height: 20 * paddingScale),
 
-                      _buildModernFeatureCard(
-                        context: context,
-                        isDark: isDark,
-                        isArabic: isArabic,
-                        height: height * 0.28,
-                        width: width,
-                        title: isArabic ? "العيادات" : "Clinics",
-                        subtitle: isArabic ? "ابحث واحجز" : "Find & Book",
-                        description:
-                            isArabic
-                                ? "اعثر بسهولة واحجز مواعيد في العيادات البيطرية الموثوقة عبر VetICare لصديقك"
-                                : "Easily find and book appointments at trusted veterinary clinics through VetICare for your friend",
-                        icon: Icons.health_and_safety_rounded,
-                        gradientColors: [
-                          const Color(0xFF667EEA),
-                          const Color(0xFF764BA2),
-                        ],
-                        onTap: () {
-                          navigateToScreen(
-                            context,
-                            MySupplierScreen(petSelectFromIcon: null),
-                          );
-                        },
+                      _buildAnimatedListItem(
+                        index: 0,
+                        child: _buildModernFeatureCard(
+                          context: context,
+                          isDark: isDark,
+                          isArabic: isArabic,
+                          height: height * 0.18,
+                          width: width,
+                          title: isArabic ? "العيادات" : "Clinics",
+                          subtitle: isArabic ? "ابحث واحجز" : "Find & Book",
+                          description: isArabic
+                              ? "اعثر بسهولة واحجز مواعيد في العيادات البيطرية الموثوقة عبر VetICare لصديقك"
+                              : "Easily find and book appointments at trusted veterinary clinics through VetICare for your friend",
+                          icon: Icons.health_and_safety_rounded,
+                          gradientColors: [
+                            const Color(0xFF667EEA),
+                            const Color(0xFF764BA2),
+                          ],
+                          onTap: () {
+                            navigateToScreen(
+                              context,
+                              MySupplierScreen(petSelectFromIcon: null),
+                            );
+                          },
+                        ),
                       ),
 
-                      SizedBox(height: 20 * paddingScale),
+                      SizedBox(height: 16 * paddingScale),
 
-                      _buildModernFeatureCard(
-                        context: context,
-                        isDark: isDark,
-                        isArabic: isArabic,
-                        height: height * 0.28,
-                        width: width,
-                        title: isArabic ? "المواعيد" : "Appointments",
-                        subtitle:
-                            isArabic ? "إدارة المواعيد" : "Manage Schedule",
-                        description:
-                            isArabic
-                                ? "عرض وإدارة مواعيد صديقك القادمة."
-                                : "View and manage your friend's upcoming appointments.",
-                        icon: IconlyBold.calendar,
-                        gradientColors: [
-                          const Color(0xFFF093FB),
-                          const Color(0xFFF5576C),
-                        ],
-                        onTap: () {
-                          navigateToScreen(context, AllAppointment());
-                        },
+                      _buildAnimatedListItem(
+                        index: 1,
+                        child: _buildModernFeatureCard(
+                          context: context,
+                          isDark: isDark,
+                          isArabic: isArabic,
+                          height: height * 0.18,
+                          width: width,
+                          title: isArabic ? "المواعيد" : "Appointments",
+                          subtitle:
+                              isArabic ? "إدارة المواعيد" : "Manage Schedule",
+                          description: isArabic
+                              ? "عرض وإدارة مواعيد صديقك القادمة."
+                              : "View and manage your friend's upcoming appointments.",
+                          icon: IconlyBold.calendar,
+                          gradientColors: [
+                            const Color(0xFFF093FB),
+                            const Color(0xFFF5576C),
+                          ],
+                          onTap: () {
+                            navigateToScreen(context, const AllAppointment());
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -337,13 +303,12 @@ class _CareHubScreenState extends State<CareHubScreen>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color:
-                isDark
-                    ? Colors.black.withOpacity(0.3)
-                    : Colors.grey.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-            spreadRadius: 0,
+            color: isDark
+                ? Colors.black.withOpacity(0.4)
+                : Colors.grey.withOpacity(0.15),
+            blurRadius: 25,
+            offset: const Offset(0, 10),
+            spreadRadius: -5,
           ),
         ],
       ),
@@ -351,7 +316,10 @@ class _CareHubScreenState extends State<CareHubScreen>
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(24),
-          onTap: onTap,
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -397,7 +365,7 @@ class _CareHubScreenState extends State<CareHubScreen>
 
                 // Content
                 Padding(
-                  padding: EdgeInsets.all(20 * paddingScale),
+                  padding: EdgeInsets.all(16 * paddingScale),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -405,21 +373,21 @@ class _CareHubScreenState extends State<CareHubScreen>
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(colors: gradientColors),
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
                                   color: gradientColors[0].withOpacity(0.3),
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 4),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 3),
                                 ),
                               ],
                             ),
-                            child: Icon(icon, color: Colors.white, size: 32),
+                            child: Icon(icon, color: Colors.white, size: 28),
                           ),
-                          SizedBox(width: 16),
+                          SizedBox(width: 14),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -427,21 +395,21 @@ class _CareHubScreenState extends State<CareHubScreen>
                                 Text(
                                   title,
                                   style: TextStyle(
-                                    fontSize: 20 * textScale.clamp(0.9, 1.3),
-                                    fontWeight: FontWeight.w800,
+                                    fontSize: 18 * textScale.clamp(0.9, 1.2),
+                                    fontWeight: FontWeight.w700,
                                     color:
                                         isDark ? Colors.white : Colors.black87,
-                                    letterSpacing: 0.5,
+                                    letterSpacing: 0.3,
                                   ),
                                 ),
-                                SizedBox(height: 4),
+                                SizedBox(height: 3),
                                 Text(
                                   subtitle,
                                   style: TextStyle(
-                                    fontSize: 14 * textScale.clamp(0.9, 1.2),
+                                    fontSize: 13 * textScale.clamp(0.9, 1.1),
                                     fontWeight: FontWeight.w600,
                                     color: gradientColors[0],
-                                    letterSpacing: 0.3,
+                                    letterSpacing: 0.2,
                                   ),
                                 ),
                               ],
@@ -450,53 +418,16 @@ class _CareHubScreenState extends State<CareHubScreen>
                         ],
                       ),
 
-                      SizedBox(height: 20 * paddingScale),
+                      SizedBox(height: 12 * paddingScale),
 
                       // Description
-                      _buildDescriptionText(
-                        description: description,
-                        isDark: isDark,
-                        textScale: textScale,
-                        isArabic: isArabic,
-                      ),
-
-                      const Spacer(),
-
-                      // Action indicator
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(colors: gradientColors),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  isArabic ? "ابدأ" : "Start",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.3,
-                                  ),
-                                ),
-                                SizedBox(width: 4),
-                                Icon(
-                                  Icons.arrow_forward_rounded,
-                                  color: Colors.white,
-                                  size: 16,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                      Flexible(
+                        child: _buildDescriptionText(
+                          description: description,
+                          isDark: isDark,
+                          textScale: textScale,
+                          isArabic: isArabic,
+                        ),
                       ),
                     ],
                   ),
@@ -506,6 +437,27 @@ class _CareHubScreenState extends State<CareHubScreen>
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildAnimatedListItem({required int index, required Widget child}) {
+    return AnimatedBuilder(
+      animation: _listAnimationController,
+      builder: (context, child) {
+        final delay = (index * 0.1).clamp(0.0, 1.0);
+        final animation = CurvedAnimation(
+          parent: _listAnimationController,
+          curve: Interval(delay, 1.0, curve: Curves.easeOutCubic),
+        );
+        return FadeTransition(
+          opacity: animation,
+          child: Transform.translate(
+            offset: Offset(0, 50 * (1 - animation.value)),
+            child: child,
+          ),
+        );
+      },
+      child: child,
     );
   }
 
