@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -87,76 +88,6 @@ class _PetScreenContentState extends State<PetScreenContent> {
                 : Container(),
           ),
           actions: [
-            if (!_selectionMode) ...[
-              Container(
-                margin: const EdgeInsets.only(right: 8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: MainCubit.get(context).isDark 
-                      ? Colors.grey[800]!.withOpacity(0.8)
-                      : Colors.white.withOpacity(0.9),
-                  border: Border.all(
-                    color: ColorManager.primaryColor.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: PopupMenuButton<String>(
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: ColorManager.primaryColor,
-                    size: 20,
-                  ),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  color: MainCubit.get(context).isDark ? Colors.grey[800] : Colors.white,
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 'sort',
-                      child: Row(
-                        children: [
-                          Icon(Icons.sort, size: 18, color: ColorManager.primaryColor),
-                          const SizedBox(width: 8),
-                          Text(isArabic() ? 'ترتيب الحيوانات' : 'Sort Pets'),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: 'filter',
-                      child: Row(
-                        children: [
-                          Icon(Icons.filter_list, size: 18, color: ColorManager.primaryColor),
-                          const SizedBox(width: 8),
-                          Text(isArabic() ? 'تصفية' : 'Filter'),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: 'backup',
-                      child: Row(
-                        children: [
-                          Icon(Icons.cloud_upload, size: 18, color: ColorManager.primaryColor),
-                          const SizedBox(width: 8),
-                          Text(isArabic() ? 'نسخ احتياطي' : 'Backup'),
-                        ],
-                      ),
-                    ),
-                  ],
-                  onSelected: (value) {
-                    // Handle menu actions
-                    switch (value) {
-                      case 'sort':
-                        _showSortOptions(context);
-                        break;
-                      case 'filter':
-                        _showFilterOptions(context);
-                        break;
-                      case 'backup':
-                        _showBackupDialog(context);
-                        break;
-                    }
-                  },
-                ),
-              ),
-            ],
             Container(
               margin: const EdgeInsets.only(right: 16),
               decoration: BoxDecoration(
@@ -213,41 +144,74 @@ class _PetScreenContentState extends State<PetScreenContent> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         onPressed: () => _showMergeConfirmDialog(),
-        label: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                ColorManager.primaryColor,
-                ColorManager.secondColor,
-              ],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: ColorManager.primaryColor.withOpacity(0.4),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.merge_type, color: Colors.white, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                'Merge ${_selectedPets.length} pets',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+        label: TweenAnimationBuilder<double>(
+          duration: const Duration(milliseconds: 1200),
+          tween: Tween(begin: 0.0, end: 1.0),
+          builder: (context, value, child) {
+            final pulseScale = 1.0 + (math.sin(value * 2 * math.pi) * 0.03);
+            final glowIntensity = 0.3 + (math.sin(value * 2 * math.pi) * 0.2);
+            
+            return Transform.scale(
+              scale: pulseScale,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(28),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      ColorManager.primaryColor,
+                      ColorManager.secondColor,
+                      ColorManager.primaryColor.withOpacity(0.8),
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorManager.primaryColor.withOpacity(glowIntensity),
+                      blurRadius: 16,
+                      spreadRadius: 2,
+                      offset: const Offset(0, 8),
+                    ),
+                    BoxShadow(
+                      color: ColorManager.secondColor.withOpacity(0.3),
+                      blurRadius: 20,
+                      spreadRadius: -2,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.merge_type, 
+                        color: Colors.white, 
+                        size: 18
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Merge ${_selectedPets.length} pets',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            );
+          },
         ),
       );
     }
@@ -257,41 +221,98 @@ class _PetScreenContentState extends State<PetScreenContent> {
             backgroundColor: Colors.transparent,
             elevation: 0,
             onPressed: () => showPetTypeSelection(context, widget.cubit),
-            label: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    ColorManager.primaryColor,
-                    ColorManager.secondColor,
-                  ],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: ColorManager.primaryColor.withOpacity(0.4),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.add, color: Colors.white, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    S.of(context).addPet,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
+            label: TweenAnimationBuilder<double>(
+              duration: const Duration(milliseconds: 1500),
+              tween: Tween(begin: 0.0, end: 1.0),
+              builder: (context, value, child) {
+                final pulseScale = 1.0 + (math.sin(value * 2 * math.pi) * 0.05);
+                final glowIntensity = 0.4 + (math.sin(value * 2 * math.pi) * 0.3);
+                final rotationAngle = math.sin(value * 2 * math.pi) * 0.1;
+                
+                return Transform.scale(
+                  scale: pulseScale,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          ColorManager.primaryColor,
+                          ColorManager.secondColor,
+                          ColorManager.primaryColor.withOpacity(0.9),
+                        ],
+                        stops: const [0.0, 0.6, 1.0],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ColorManager.primaryColor.withOpacity(glowIntensity),
+                          blurRadius: 20,
+                          spreadRadius: 3,
+                          offset: const Offset(0, 10),
+                        ),
+                        BoxShadow(
+                          color: ColorManager.secondColor.withOpacity(0.4),
+                          blurRadius: 25,
+                          spreadRadius: -3,
+                          offset: const Offset(0, 6),
+                        ),
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.1),
+                          blurRadius: 8,
+                          spreadRadius: -1,
+                          offset: const Offset(0, -2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Transform.rotate(
+                          angle: rotationAngle,
+                          child: Container(
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.25),
+                              borderRadius: BorderRadius.circular(14),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              FontAwesomeIcons.paw, 
+                              color: Colors.white, 
+                              size: 18
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          S.of(context).addPet,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                            letterSpacing: 0.8,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black26,
+                                offset: Offset(0, 1),
+                                blurRadius: 2,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                );
+              },
             ),
           )
         : null;
@@ -532,25 +553,7 @@ class _PetScreenContentState extends State<PetScreenContent> {
                 ),
                 child: Column(
                   children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        gradient: LinearGradient(
-                          colors: [
-                            ColorManager.primaryColor,
-                            ColorManager.secondColor,
-                          ],
-                        ),
-                      ),
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 3,
-                        ),
-                      ),
-                    ),
+                    _buildPawLoadingIndicator(),
                     const SizedBox(height: 16),
                     Text(
                       isArabic()
@@ -940,111 +943,80 @@ class _PetScreenContentState extends State<PetScreenContent> {
     navigateAndFinish(context, const LayoutScreen());
   }
 
-  void _showSortOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          color: MainCubit.get(context).isDark ? Colors.grey[900] : Colors.white,
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              isArabic() ? 'ترتيب الحيوانات' : 'Sort Pets',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              leading: const Icon(Icons.abc),
-              title: Text(isArabic() ? 'حسب الاسم' : 'By Name'),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.cake),
-              title: Text(isArabic() ? 'حسب العمر' : 'By Age'),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.pets),
-              title: Text(isArabic() ? 'حسب النوع' : 'By Species'),
-              onTap: () => Navigator.pop(context),
-            ),
-          ],
-        ),
-      ),
+  Widget _buildPawLoadingIndicator() {
+    return TweenAnimationBuilder<double>(
+      duration: const Duration(milliseconds: 1500),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, value, child) {
+        return SizedBox(
+          width: 80,
+          height: 80,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Central paw
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(
+                    colors: [
+                      ColorManager.primaryColor,
+                      ColorManager.secondColor,
+                    ],
+                  ),
+                ),
+                child: const Icon(
+                  Icons.pets,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              // Animated paws around the center
+              ...List.generate(4, (index) {
+                final angle = (index * 90) * (3.14159 / 180); // Convert to radians
+                final animationOffset = (value + (index * 0.25)) % 1.0;
+                final opacity = (math.sin(animationOffset * 2 * math.pi) + 1) / 2;
+                final scale = 0.5 + (opacity * 0.5);
+                
+                return Positioned(
+                  left: 40 + (25 * math.cos(angle)) - 10,
+                  top: 40 + (25 * math.sin(angle)) - 10,
+                  child: Transform.scale(
+                    scale: scale,
+                    child: Opacity(
+                      opacity: opacity.clamp(0.3, 1.0),
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: ColorManager.primaryColor.withOpacity(0.6),
+                        ),
+                        child: const Icon(
+                          Icons.pets,
+                          color: Colors.white,
+                          size: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+        );
+      },
+      onEnd: () {
+        // Restart the animation
+        if (mounted) {
+          setState(() {});
+        }
+      },
     );
   }
 
-  void _showFilterOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          color: MainCubit.get(context).isDark ? Colors.grey[900] : Colors.white,
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              isArabic() ? 'تصفية الحيوانات' : 'Filter Pets',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              leading: const Icon(Icons.male),
-              title: Text(isArabic() ? 'ذكور فقط' : 'Males Only'),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.female),
-              title: Text(isArabic() ? 'إناث فقط' : 'Females Only'),
-              onTap: () => Navigator.pop(context),
-            ),
-            ListTile(
-              leading: const Icon(Icons.health_and_safety),
-              title: Text(isArabic() ? 'معقمة فقط' : 'Spayed Only'),
-              onTap: () => Navigator.pop(context),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showBackupDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(isArabic() ? 'نسخ احتياطي' : 'Backup'),
-        content: Text(
-          isArabic() 
-              ? 'هل تريد إنشاء نسخة احتياطية من بيانات حيواناتك الأليفة؟'
-              : 'Would you like to create a backup of your pets data?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(isArabic() ? 'إلغاء' : 'Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // Implement backup logic
-            },
-            child: Text(isArabic() ? 'نسخ احتياطي' : 'Backup'),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 void showPetTypeSelection(BuildContext context, PetCubit cubit) {
@@ -1227,15 +1199,29 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               isLoadingOther
-                                  ? SizedBox(
-                                    width: 40,
-                                    height: 40,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 3,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        ColorManager.primaryColor,
-                                      ),
-                                    ),
+                                  ? TweenAnimationBuilder<double>(
+                                    duration: const Duration(milliseconds: 800),
+                                    tween: Tween(begin: 0.0, end: 1.0),
+                                    builder: (context, value, child) {
+                                      final scale = 0.8 + (math.sin(value * 2 * math.pi) * 0.2);
+                                      return Transform.scale(
+                                        scale: scale,
+                                        child: Container(
+                                          width: 40,
+                                          height: 40,
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: ColorManager.primaryColor.withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          child: Icon(
+                                            FontAwesomeIcons.paw,
+                                            size: 20,
+                                            color: ColorManager.primaryColor,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   )
                                   : Container(
                                     padding: const EdgeInsets.all(12),
