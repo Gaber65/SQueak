@@ -582,7 +582,7 @@ class _ExaminationListState extends State<_ExaminationList>
       addRepaintBoundaries: true,
       addSemanticIndexes: false,
       cacheExtent: 100.0, // Reduced for better memory usage
-      itemExtent: 200.0, // Fixed height for better performance
+      itemExtent: 260.0, // Increased fixed height to fit updated card height
     );
   }
 
@@ -804,7 +804,7 @@ class _BoardingListState extends State<_BoardingList> with PaginationMixin {
       addRepaintBoundaries: true,
       addSemanticIndexes: false,
       cacheExtent: 100.0, // Reduced for better memory usage
-      itemExtent: 180.0, // Fixed height for better performance
+      itemExtent: 240.0, // Increased fixed height to fit updated boarding card height
     );
   }
 }

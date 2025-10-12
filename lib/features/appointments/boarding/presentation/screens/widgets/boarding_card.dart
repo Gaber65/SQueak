@@ -55,7 +55,16 @@ class BoardingCard extends StatelessWidget {
         ],
       ),
       child: Column(
-        children: [_buildHeader(), _buildContent(), _buildFooter()],
+        // Use min main axis size so children can size themselves and avoid
+        // forcing the Column to expand beyond available space. Make the
+        // content section flexible so it can scroll when needed.
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          _buildHeader(),
+       
+           _buildContent(),
+         
+            _buildFooter()],
       ),
     );
   }
@@ -250,7 +259,6 @@ class BoardingCard extends StatelessWidget {
             isArabic() ? 'المدة' : 'Duration',
             '${entry.period} ${entry.period == 1 ? (isArabic() ? 'يوم' : 'day') : (isArabic() ? 'أيام' : 'days')}',
           ),
-
           // Doctor rating if available
           if (entry.status == 3 && entry.doctorServiceRate != 0)
             _buildDoctorRating(),

@@ -125,7 +125,7 @@ class _LayoutScreenState extends State<LayoutScreen>
                   final labelsAR = [
                     'الرئيسية',
                     'الأصدقاء',
-                    'الصفار',
+                    'الصغار',
                     'العناية',
                     'الإعدادات',
                   ];
