@@ -368,7 +368,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
           // For the email field, proactively trim leading/trailing spaces while typing so
           // the UI matches the login page behavior and avoids lingering spaces.
           try {
-            if (controller == widget.cubit.emailController && value != null) {
+            if (controller == widget.cubit.emailController) {
               final trimmed = value.trim();
               if (value != trimmed) {
                 // Preserve cursor position as best-effort (place at end of trimmed text)

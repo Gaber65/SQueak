@@ -303,7 +303,7 @@ class RegisterCubit extends Cubit<RegisterState> {
       shareData: isAccept,
     );
 
-    print(entity.toMap());
+    // print(entity.toMap());
 
     final qrEmail = emailController.text.trim();
     await registerQrUseCase

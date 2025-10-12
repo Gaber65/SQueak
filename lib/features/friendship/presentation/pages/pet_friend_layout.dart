@@ -4,8 +4,8 @@ import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/core/utils/enums/profile_type.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
-import 'package:squeak/features/friendship/presentation/widgets/FriendsTab.dart';
-import 'package:squeak/features/friendship/presentation/widgets/ProfileSwitchNotificationScreen.dart';
+import 'package:squeak/features/friendship/presentation/widgets/friends_tab.dart';
+import 'package:squeak/features/friendship/presentation/widgets/profile_switch_notification_screen.dart';
 import 'package:squeak/features/friendship/presentation/widgets/tab_bar_widget.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
 

@@ -1,9 +1,5 @@
 import 'package:dartz/dartz.dart';
-
-
 import '../../../../core/service/service_locator/locatore_export_path.dart';
-import '../../domain/repositories/qr_repository.dart';
-import '../datasources/qr_remote_datasource.dart';
 
 class QrRepositoryImpl implements QrRepository {
   final QrRemoteDataSource remoteDataSource;

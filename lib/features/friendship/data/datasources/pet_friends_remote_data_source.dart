@@ -34,8 +34,8 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
       ) async {
     try {
       final result = await request();
-      print(result.data);
-      print('-------------------------------------------');
+      // print(result.data);
+      // print('-------------------------------------------');
 
       final data = result.data['data'];
 

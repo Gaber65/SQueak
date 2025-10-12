@@ -1,7 +1,7 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../../network/end-points.dart';
+import '../../network/end_points.dart';
 
 class GlobalImage extends StatelessWidget {
 

@@ -40,13 +40,13 @@ class ConfirmationScreen extends StatelessWidget {
       child: BlocConsumer<UserAppointmentCubit, UserAppointmentState>(
         listener: (context, state) {
           if (state is GetSupplierSuccess) {
-            print('suppliers ${state.suppliers}');
-            print('suppliers $clinicCode*************************');
+            // print('suppliers ${state.suppliers}');
+            // print('suppliers $clinicCode*************************');
             QRCubit.get(
               context,
             ).checkClinicInMySupplier(clinicCode, state.suppliers);
             suppliers = state.suppliers;
-            print('suppliers ${state.suppliers}' '*************************');
+            // print('suppliers ${state.suppliers}' '*************************');
           }
         },
         builder: (context, state) {
@@ -189,73 +189,6 @@ class ConfirmationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFollowingWidget(BuildContext context, QRCubit cubit) {
-    return Center(
-      child: Card(
-        margin: EdgeInsets.all(16),
-        elevation: 4,
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(imageUrl + clinicLogo),
-                onBackgroundImageError: (_, __) => Container(),
-                child:
-                    clinicLogo.isEmpty
-                        ? Icon(Icons.local_hospital, size: 50)
-                        : null,
-              ),
-              SizedBox(height: 16),
-              Text(
-                clinicName,
-                style: FontStyleThame.textStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  context: context,
-                ),
-              ),
-              SizedBox(height: 24),
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  ColorManager.primaryColor,
-                ),
-              ),
-              SizedBox(height: 16),
-              Text(
-                isArabic()
-                    ? 'تم تأكيد متابعة العيادة'
-                    : 'Following clinic confirmed!',
-                style: FontStyleThame.textStyle(
-                  context: context,
-                  fontColor: Colors.green,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                isArabic()
-                    ? "التحويل في ${cubit.countdown} ثانية"
-                    : 'Redirecting in ${cubit.countdown} seconds...',
-                style: FontStyleThame.textStyle(context: context, fontSize: 14),
-              ),
-              SizedBox(height: 12),
-              LinearProgressIndicator(
-                value: cubit.countdown > 0 ? (5 - cubit.countdown) / 5 : 1.0,
-                backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  ColorManager.primaryColor,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildAlreadyFollowWidget(BuildContext context, QRCubit cubit) {
     cubit.getVetClients(clinicCode, false);
@@ -273,6 +206,7 @@ class ConfirmationScreen extends StatelessWidget {
                 height: 120,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
+                  // ignore: deprecated_member_use
                   color: Colors.green.withOpacity(0.1),
                   border: Border.all(color: Colors.green, width: 2),
                 ),
@@ -347,44 +281,6 @@ class ConfirmationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorWidget(BuildContext context, String message) {
-    return Center(
-      child: Card(
-        margin: EdgeInsets.all(16),
-        elevation: 4,
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.error_outline, color: Colors.red, size: 80),
-              SizedBox(height: 16),
-              Text(
-                isArabic() ? 'حدث خطأ' : 'Error Occurred',
-                style: FontStyleThame.textStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  context: context,
-                  fontColor: Colors.red,
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                message,
-                textAlign: TextAlign.center,
-                style: FontStyleThame.textStyle(fontSize: 14, context: context),
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => navigateAndFinish(context, LayoutScreen()),
-                child: Text(isArabic() ? 'العودة' : 'Go Back'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildShimmerPlaceholder() {
     return Center(

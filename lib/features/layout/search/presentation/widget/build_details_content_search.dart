@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
-import 'package:lottie/lottie.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/layout/search/domain/entities/clinic_search_entity.dart';
 

@@ -27,7 +27,7 @@ String formatTimeToAmPm(String time) {
 
     return '$hour:$formattedMinutes $suffix';
   } catch (e) {
-    print('Error in formatTimeToAmPm: $e');
+    // print('Error in formatTimeToAmPm: $e');
     return '';
   }
 }
@@ -98,8 +98,8 @@ String formatBILL(String createdAt) {
 }
 
 String formatTimeToAmPmReminder(String time) {
-  print('time: $time');
-  print('time.trim().isEmpty: ${time.trim().isEmpty}');
+  // print('time: $time');
+  // print('time.trim().isEmpty: ${time.trim().isEmpty}');
   if (time.trim().isEmpty) return '';
   final parts = time.trim().split(':').map((e) => e.trim()).toList();
   if (parts.length < 2) return '';
@@ -116,7 +116,7 @@ String formatTimeToAmPmReminder(String time) {
 }
 
 String formatBoarding(String createdAt) {
-  print("Input date string: $createdAt");
+  // print("Input date string: $createdAt");
 
   try {
     // لو السيرفر بيرسل التوقيت كـ UTC بدون 'Z' في آخره
@@ -129,7 +129,7 @@ String formatBoarding(String createdAt) {
     // ننسق الناتج
     return DateFormat('MMM dd yyyy, hh:mm a', 'en_US').format(localTime);
   } catch (e) {
-    print('Error parsing date: $e');
+    // print('Error parsing date: $e');
     return createdAt;
   }
 }
@@ -163,14 +163,14 @@ String convertLocalTimeToUTC(String time) {
 
     return '$utcHours:$utcMinutes:$utcSeconds';
   } catch (e) {
-    print('Error in convertLocalTimeToUTC: $e');
+    // print('Error in convertLocalTimeToUTC: $e');
     return '';
   }
 }
 
 String formatAge(dynamic birthDate, {bool isUser = false}) {
-  print(birthDate);
-  print('---------------');
+  // print(birthDate);
+  // print('---------------');
   try {
     // تأكد إنه DateTime
     final date = (birthDate is DateTime)

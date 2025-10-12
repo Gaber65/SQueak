@@ -93,6 +93,7 @@ class LoginCubit extends Cubit<LoginState> {
             );
 
             // إعادة تهيئة حالة التطبيق
+            // ignore: use_build_context_synchronously
             MainCubit.get(context).resetState();
 
             // Reset MainCubit state first
@@ -105,7 +106,7 @@ class LoginCubit extends Cubit<LoginState> {
             // ignore: use_build_context_synchronously
             await MainCubit.get(context).saveToken();
           } catch (e) {
-            print('Error during login data saving: $e');
+            // print('Error during login data saving: $e');
             // إذا فشل حفظ البيانات، نقوم بمسح كل شيء ونرمي خطأ
             await CacheHelper.clearData();
             throw Exception('Failed to save login data');

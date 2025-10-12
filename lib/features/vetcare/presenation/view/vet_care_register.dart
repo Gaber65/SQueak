@@ -4,7 +4,7 @@ import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../auth/login/domin/entities/login_entity.dart';
-import '../../../auth/register/presentation/widgets/authItem.dart';
+import '../../../auth/register/presentation/widgets/auth_item.dart';
 import '../controllers/vet_register/vet_register_cubit.dart';
 import 'pet_merge_screen.dart';
 

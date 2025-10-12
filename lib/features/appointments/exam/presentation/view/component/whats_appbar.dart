@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:math';
 
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
@@ -228,6 +230,7 @@ class ProfileIconButtons extends StatelessWidget {
                       CacheHelper.removeData('posts');
                       SearchCubit.get(context).unfollowClinic(clinics.id);
 
+                      // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
                       AppointmentCubit.get(context).emit(UnfollowSuccess());
                     },
                     style: ElevatedButton.styleFrom(

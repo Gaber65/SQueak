@@ -1,9 +1,11 @@
+// ignore_for_file: library_private_types_in_public_api, non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/availability_entities.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../../../../../../core/utils/enums/dayOfWeek_enum.dart';
+import '../../../../../../core/utils/enums/day_of_week_enum.dart';
 
 class CalendarScreen extends StatefulWidget {
   final bool isShowTime;
@@ -45,11 +47,11 @@ class _CalendarScreenState extends State<CalendarScreen>
       vsync: this,
     );
 
-    print('${widget.selectedDate}-----------------');
+    // print('${widget.selectedDate}-----------------');
 
     if (widget.selectedDate != null) {
       _selectedDate = widget.selectedDate;
-      print('$_selectedDate-----------------');
+      // print('$_selectedDate-----------------');
       setState(() {});
       final slot =
           _timeSlots[DayOfWeek.values[(_selectedDate!.weekday - 1 + 7) % 7]]!
@@ -124,7 +126,7 @@ class _CalendarScreenState extends State<CalendarScreen>
           lastDay: DateTime(2030),
 
           onFormatChanged: (format) {
-            print('Calendar format changed to $format');
+            // print('Calendar format changed to $format');
           },
           selectedDayPredicate: (day) => isSameDay(_selectedDate, day),
           onDaySelected: (selectedDay, focusedDay) {
@@ -286,7 +288,7 @@ class _CalendarScreenState extends State<CalendarScreen>
       );
     }
 
-    print(intervals);
+    // print(intervals);
     return intervals;
   }
 }

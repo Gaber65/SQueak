@@ -1,6 +1,8 @@
+// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member, deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/network/end-points.dart';
+import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
@@ -398,9 +400,7 @@ class _FriendActionButtonState extends State<FriendActionButton>
 
     // Professional color schemes
     final primaryColor = isDark ? Color(0xFF0A84FF) : Color(0xFF007AFF);
-    final successColor = isDark ? Color(0xFF32D74B) : Color(0xFF34C759);
     final dangerColor = isDark ? Color(0xFFFF453A) : Color(0xFFFF3B30);
-    final neutralColor = isDark ? Color(0xFF48484A) : Color(0xFFE5E5EA);
 
     final rejectGradient = isDark
         ? [Color(0xFF3A3A3C), Color(0xFF2C2C2E)]

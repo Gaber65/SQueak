@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 
 class MyBlocObserver extends BlocObserver {

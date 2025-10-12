@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
@@ -37,6 +39,7 @@ Future<void> getAppointment({
         break;
 
       case AppointmentNavigationAction.goToRate:
+        // ignore: unnecessary_null_comparison
         if (model.id == null) {
           throw Exception('Appointment model not found for rating.');
         }

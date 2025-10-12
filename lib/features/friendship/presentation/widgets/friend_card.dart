@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
-import 'package:squeak/core/service/global_widget/%20ComingSoonAlert.dart';
+import 'package:squeak/core/service/global_widget/coming_soon_alert.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
-import '../../../../core/network/end-points.dart';
+import '../../../../core/network/end_points.dart';
 
 class FriendCard extends StatelessWidget {
   final PetEntities pet;

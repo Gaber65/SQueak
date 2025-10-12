@@ -1,4 +1,4 @@
-import 'package:squeak/core/utils/enums/dayOfWeek_enum.dart';
+import 'package:squeak/core/utils/enums/day_of_week_enum.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/availability_entities.dart';
 
 class AvailabilityModel extends Availability {

@@ -6,7 +6,6 @@ import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/qr/presentation/widgets/qr_save.dart';
 import 'package:squeak/features/qr/presentation/widgets/qr_unlink_dialog.dart';
 import '../../../vaccination/presentation/pages/pet_vaccination_page.dart';
-import '../controller/qr_cubit.dart';
 import '../../../pets/domain/entities/pet_entity.dart';
 import 'qr_link_dialog.dart';
 

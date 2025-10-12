@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -10,7 +12,7 @@ import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../../../../../../../core/service/global_function/format_utils.dart';
 import '../../../../../../../../../core/service/global_widget/toast.dart';
 import '../../../../../controller/clinic/appointment_cubit.dart';
-import '../../../../component/CustomCalendarDatePicker.dart';
+import '../../../../component/custom_calendar_date_picker.dart';
 import '../../../book_again_screen.dart';
 import '../doctor_dropdown.dart';
 
@@ -84,7 +86,7 @@ class _BookingContentBodyState extends State<BookingContentBody> {
 
             BlocConsumer<AppointmentCubit, AppointmentState>(
               listener: (context, state) {
-                // TODO: implement listener
+                
               },
               builder: (context, state) {
                 return Container(
@@ -113,7 +115,7 @@ class _BookingContentBodyState extends State<BookingContentBody> {
 
             BlocConsumer<AppointmentCubit, AppointmentState>(
               listener: (context, state) {
-                // TODO: implement listener
+                
               },
               builder: (context, state) {
                 if (AppointmentCubit.get(context).availabilities.isEmpty) {
@@ -152,9 +154,9 @@ class _BookingContentBodyState extends State<BookingContentBody> {
                         }
                       },
                       onIntervalSelected: (p0) {
-                        print("DEBUG: Original time selection: $p0");
+                        // print("DEBUG: Original time selection: $p0");
                         p0 = convertTo24Hour(p0);
-                        print("DEBUG: After conversion to 24-hour format: $p0");
+                        // print("DEBUG: After conversion to 24-hour format: $p0");
                         if (AppointmentCubit.get(
                           context,
                         ).dateController.text.isEmpty) {
@@ -213,9 +215,9 @@ class _BookingContentBodyState extends State<BookingContentBody> {
                                 );
                               }
                             } else {
-                              print(
-                                "DEBUG: Selected time is before current time",
-                              );
+                              // print(
+                              //   "DEBUG: Selected time is before current time",
+                              // );
                               infoToast(
                                 context,
                                 isArabic()
@@ -224,7 +226,7 @@ class _BookingContentBodyState extends State<BookingContentBody> {
                               );
                             }
                           } catch (e) {
-                            print("DEBUG: Error parsing time: $e");
+                            // print("DEBUG: Error parsing time: $e");
                             infoToast(
                               context,
                               isArabic()
@@ -233,7 +235,7 @@ class _BookingContentBodyState extends State<BookingContentBody> {
                             );
                           }
                         } else {
-                          print("DEBUG: Selected date is in the past.");
+                          // print("DEBUG: Selected date is in the past.");
                           infoToast(
                             context,
                             isArabic()

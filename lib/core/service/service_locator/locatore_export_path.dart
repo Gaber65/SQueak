@@ -127,7 +127,7 @@ export 'package:squeak/features/profile_switch/domain/repositories/profile_type_
 export 'package:squeak/features/profile_switch/domain/usecase/get_active_profile.dart';
 export 'package:squeak/features/profile_switch/domain/usecase/save_active_profile.dart';
 export 'package:squeak/features/profile_switch/source/data/profile_local_data_source.dart';
-export 'package:squeak/features/profile_switch/source/repo/ProfileTypeRepositoryImpl.dart';
+export 'package:squeak/features/profile_switch/source/repo/profile_type_repository_impl.dart';
 export 'package:squeak/features/qr/data/datasources/qr_remote_datasource.dart';
 export 'package:squeak/features/qr/data/repositories/qr_repository_impl.dart';
 export 'package:squeak/features/qr/domain/repositories/qr_repository.dart';

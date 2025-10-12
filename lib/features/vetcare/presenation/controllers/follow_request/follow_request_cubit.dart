@@ -1,12 +1,9 @@
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../../core/utils/export_path/export_files.dart';
 import '../../../../appointments/exam/data/models/clinic_model.dart';
-import '../../../../appointments/exam/domain/entities/clinic_entity.dart';
 import '../../../domain/use_case/follow_request_usecase.dart';
 
 part 'follow_request_state.dart';
@@ -68,8 +65,8 @@ class FollowRequestCubit extends Cubit<FollowRequestState> {
 
       entities = ClinicModel.fromJson(response.data['data']['clinic']);
       getClientInapp(entities!.code);
-    } on DioException catch (e) {
-      print(e);
+    } on DioException {
+      // print(e);
     }
   }
 
@@ -90,20 +87,21 @@ class FollowRequestCubit extends Cubit<FollowRequestState> {
           headers: {'accept': '*/*', 'Authorization': basicAuth},
         ),
       );
-      print(response.data);
-      print(
-        '${ConfigModel.baseApiUrlSqueak}$version/vetcare/client/${CacheHelper.getData('phone')}/$code',
-      );
+      // print(response.data);
+      // print(
+      //   '${ConfigModel.baseApiUrlSqueak}$version/vetcare/client/${CacheHelper.getData('phone')}/$code',
+      // );
       clintId = response.data['data']['vetICareId'];
-      print(clintId);
+      // print(clintId);
       emit(SuccessGetClientState());
-    } on DioException catch (e) {
-      print(e.response);
+    } on DioException {
+      // print(e.response);
       emit(ErrorGetClientState());
     }
   }
 
   String? password;
+  // ignore: non_constant_identifier_names
   String? Username;
   Future getTokenFormFirebase() async {
     try {
@@ -112,12 +110,12 @@ class FollowRequestCubit extends Cubit<FollowRequestState> {
           .doc('Is0fJjcbMCqOrWmQdKoj')
           .snapshots()
           .listen((event) {
-            print(event.data());
+            // print(event.data());
             Username = event.data()!['Username'];
             password = event.data()!['password'];
           });
-    } on Exception catch (e) {
-      print(e);
+    } on Exception {
+      // print(e);
     }
   }
 

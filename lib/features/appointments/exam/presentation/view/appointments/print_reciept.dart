@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,7 +33,6 @@ class PrintScreen extends StatelessWidget {
       create: (context) => sl<UserAppointmentCubit>()..fetchInvoice(id),
       child: BlocConsumer<UserAppointmentCubit, UserAppointmentState>(
         listener: (context, state) {
-          // TODO: implement listener
         },
         builder: (context, state) {
           var cubit = UserAppointmentCubit.get(context);
@@ -523,7 +524,7 @@ class PrintScreen extends StatelessWidget {
         throw Exception("Failed to convert image to ByteData.");
       }
     } catch (e) {
-      print(e);
+      // print(e);
       throw Exception("Failed to capture image.");
     }
   }

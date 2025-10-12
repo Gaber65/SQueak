@@ -10,7 +10,7 @@ import 'package:squeak/features/appointments/exam/presentation/view/appointments
 import 'package:squeak/features/appointments/exam/presentation/view/files_and_prescription_for_pet/files_for_pet_screen.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/files_and_prescription_for_pet/prescription_for_pet_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../../../../core/utils/enums/dayOfWeek_enum.dart';
+import '../../../../../../core/utils/enums/day_of_week_enum.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 
 Widget buildItem(

@@ -20,11 +20,11 @@ class NotificationNavigation {
       final BuildContext? context = navigatorKey.currentContext;
 
       if (context == null || type == null) {
-        print('Navigation failed: context or type is null');
+        // print('Navigation failed: context or type is null');
         return;
       }
 
-      print('Navigating for type: $typeName, id: $id');
+      // print('Navigating for type: $typeName, id: $id');
 
       switch (type) {
         case NotificationType.NewAppointmentOrReservation:
@@ -48,11 +48,11 @@ class NotificationNavigation {
           break;
 
         default:
-          print('Unknown notification type: $typeName');
+          // print('Unknown notification type: $typeName');
           break;
       }
     } catch (e) {
-      print('Error handling navigation: $e');
+      // print('Error handling navigation: $e');
     }
   }
 

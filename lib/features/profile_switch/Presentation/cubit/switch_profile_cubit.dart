@@ -6,7 +6,7 @@ import 'package:squeak/features/profile_switch/domain/entities/profile_type_enti
 import 'package:squeak/features/profile_switch/domain/usecase/get_active_profile.dart';
 import 'package:squeak/features/profile_switch/domain/usecase/save_active_profile.dart';
 
-import '../../../../core/network/end-points.dart';
+import '../../../../core/network/end_points.dart';
 import '../../../../core/utils/enums/profile_type.dart';
 
 

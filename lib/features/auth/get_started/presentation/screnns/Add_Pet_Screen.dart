@@ -1,4 +1,5 @@
-// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
+// ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
 import 'dart:io';
@@ -10,7 +11,6 @@ import 'package:squeak/features/pets/presentation/view/widgets/add_pet/birthdate
 import 'package:squeak/features/pets/presentation/view/widgets/common/species_selector_sheet.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../widgets/add_pets_widgets/add_pet_additional_details.dart';
-import '../widgets/add_pets_widgets/add_pet_app_bar.dart';
 import '../widgets/add_pets_widgets/add_pet_breed_dropdown_modal.dart';
 import '../widgets/add_pets_widgets/add_pet_choice.dart';
 import '../widgets/add_pets_widgets/add_pet_image_picker.dart';

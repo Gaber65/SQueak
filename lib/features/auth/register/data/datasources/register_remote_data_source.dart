@@ -21,8 +21,8 @@ class RegisterRemoteDataSource {
             username = event.data()!['Username'];
             password = event.data()!['password'];
           });
-    } on Exception catch (e) {
-      print(e);
+    } on Exception {
+      // print(e);
     }
   }
 
@@ -44,8 +44,8 @@ class RegisterRemoteDataSource {
           .map((e) => CountryModel.fromJson(e))
           .where((e) => e.id != 2)
           .toList();
-    } on DioException catch (e) {
-      print(e.response);
+    } on DioException {
+      // print(e.response);
       rethrow;
     }
   }

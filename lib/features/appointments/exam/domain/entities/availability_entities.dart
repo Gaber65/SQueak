@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:squeak/core/utils/enums/dayOfWeek_enum.dart';
+import 'package:squeak/core/utils/enums/day_of_week_enum.dart';
 
 class Availability extends Equatable {
   final String id;

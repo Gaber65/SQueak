@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import 'package:squeak/core/utils/enums/profile_type.dart';
-import 'package:squeak/features/comments/data/model/comment_model.dart';
 import 'package:squeak/features/pets/data/models/pet_model.dart';
 import 'package:squeak/features/profile_switch/domain/entities/profile_type_entity.dart';
 import 'package:squeak/features/settings/data/models/owner_model.dart';

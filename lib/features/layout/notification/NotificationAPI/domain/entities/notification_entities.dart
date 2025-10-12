@@ -1,3 +1,5 @@
+// ignore_for_file: unrelated_type_equality_checks
+
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 class NotificationEntities {

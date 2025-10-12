@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import '../../../../../core/service/global_widget/ImageDetail.dart';
+import '../../../../../core/service/global_widget/image_detail.dart';
 import '../../../../comments/presentation/screens/comment.dart';
 import '../../domain/entities/post_entity.dart';
 

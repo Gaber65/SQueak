@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:squeak/core/network/end-points.dart';
+import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
-import 'package:squeak/core/service/global_widget/ImageDetail.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:squeak/core/service/global_widget/video_detail.dart';
 
 import 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
@@ -582,8 +582,8 @@ class _MediaItem extends StatelessWidget {
   }
 
   Widget _buildVideo(String url, String fileName) {
-    print(fileName);
-    print("url: $url");
+    // print(fileName);
+    // print("url: $url");
     return Container(
       color: Colors.black,
       child: Center(

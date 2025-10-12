@@ -1,3 +1,4 @@
+// ignore: depend_on_referenced_packages
 import 'package:equatable/equatable.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 

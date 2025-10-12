@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:squeak/core/network/end-points.dart';
+import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import 'package:squeak/features/profile_switch/Presentation/widget/component/profile_switcher_controller.dart';
 import 'package:squeak/features/profile_switch/source/data/profile_local_data_source.dart';

@@ -39,7 +39,7 @@ class RequestCard extends StatelessWidget {
               CircleAvatar(
                 radius: 24,
                 backgroundImage: NetworkImage(
-                  imageUrl + (pet.friendPetImage ?? ""),
+                  imageUrl + (pet.friendPetImage),
                 ),
                 child: (pet.friendPetImage.isEmpty)
                     ? Text(

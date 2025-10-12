@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // ignore: depend_on_referenced_packages
 import 'package:equatable/equatable.dart';
-import 'package:squeak/core/utils/enums/dayOfWeek_enum.dart';
+import 'package:squeak/core/utils/enums/day_of_week_enum.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/availability_entities.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/client_clinic.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/clinic_entity.dart';

@@ -2,9 +2,6 @@ import 'package:dartz/dartz.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../domain/entities/boarding_entry_entity.dart';
 import '../../domain/entities/boarding_type_entity.dart';
-import '../../domain/repositories/boarding_repository.dart';
-import '../../domain/usecases/share_image_usecase.dart';
-import '../datasources/boarding_remote_data_source.dart';
 
 class BoardingRepositoryImpl implements BoardingRepository {
   final BoardingRemoteDataSource remoteDataSource;

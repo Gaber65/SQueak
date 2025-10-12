@@ -12,7 +12,7 @@ import '../../../auth/register/data/repositories/register_repository_impl.dart';
 import '../../../auth/register/domin/usecses/get_countries_use_case.dart';
 import '../../../auth/register/domin/usecses/register_qr_use_case.dart';
 import '../../../auth/register/domin/usecses/register_use_case.dart';
-import '../../../auth/register/presentation/widgets/authItem.dart';
+import '../../../auth/register/presentation/widgets/auth_item.dart';
 import '../controllers/qr_register/qr_cubit.dart';
 import 'widgets/register_view.dart';
 import 'handlers/login_handler.dart';

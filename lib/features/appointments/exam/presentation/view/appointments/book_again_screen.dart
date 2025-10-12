@@ -9,7 +9,7 @@ import 'package:dio/dio.dart';
 import 'package:squeak/features/appointments/exam/data/models/availability_model.dart';
 import 'package:squeak/features/appointments/exam/data/models/client_clinic_model.dart';
 import '../../../data/models/doctor_model.dart';
-import '../component/CustomCalendarDatePicker.dart';
+import '../component/custom_calendar_date_picker.dart';
 
 /// Booking again Screen melkerm
 class BooKAgainScreen extends StatefulWidget {

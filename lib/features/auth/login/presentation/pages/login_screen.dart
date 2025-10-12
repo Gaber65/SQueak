@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -124,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen>
       HapticFeedback.lightImpact();
 
       // Persist user data and token before navigating. Await to avoid race conditions
-      Future<void> _persistLogin() async {
+      Future<void> persistLogin() async {
         try {
           debugPrint('[Login] Persisting login data...');
           await Future.wait([
@@ -152,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen>
       }
 
       // Ensure persistence completes before UI navigation
-      _persistLogin().whenComplete(() async {
+      persistLogin().whenComplete(() async {
         // Reset MainCubit state safely and navigate. Avoid showing SnackBar from possibly-deactivated context.
         debugPrint('[Login] Persistence complete, resetting MainCubit and navigating');
         try {
