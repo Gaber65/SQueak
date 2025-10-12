@@ -30,7 +30,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
   final _breedController = TextEditingController();
   File? imagefile;
   String selectedSpecies = "dog";
-  String? selectedGender;
+  String? selectedGender = "male";
   String? selectedSpeciesId;
   String? selectedBreedId;
   bool _isLoadingSpecies = false;

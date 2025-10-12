@@ -73,7 +73,7 @@ class RegisterRemoteDataSource {
       // The register endpoint returns the same shape as login (AuthModel-like).
       // Parse and return it so callers can handle tokens/user info similarly to login.
       final authModel = AuthModel.fromJson(response.data);
-      print('[RegisterRemote] Received auth-like response from register: token=${authModel.data?.token ?? 'null'} id=${authModel.data?.id}');
+      // print('[RegisterRemote] Received auth-like response from register: token=${authModel.data?.token ?? 'null'} id=${authModel.data?.id}');
       return authModel;
     } on DioException catch (e) {
       throw ServerException(
@@ -100,7 +100,7 @@ class RegisterRemoteDataSource {
       final response = await DioFinalHelper.putData(method: registerQrEndPoint, data: enhancedData);
 
       final authModel = AuthModel.fromJson(response.data);
-      print('[RegisterRemote][QR] Received auth-like response from registerQr: token=${authModel.data?.token ?? 'null'} id=${authModel.data?.id}');
+      // print('[RegisterRemote][QR] Received auth-like response from registerQr: token=${authModel.data?.token ?? 'null'} id=${authModel.data?.id}');
       return authModel;
     } on DioException catch (e) {
       throw ServerException(
