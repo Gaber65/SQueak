@@ -804,7 +804,7 @@ class _BoardingListState extends State<_BoardingList> with PaginationMixin {
       addRepaintBoundaries: true,
       addSemanticIndexes: false,
       cacheExtent: 100.0, // Reduced for better memory usage
-      itemExtent: 240.0, // Increased fixed height to fit updated boarding card height
+      itemExtent: 300.0, // Increased fixed height to fit updated boarding card height
     );
   }
 }

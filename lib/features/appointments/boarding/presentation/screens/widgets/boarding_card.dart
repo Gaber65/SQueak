@@ -56,15 +56,18 @@ class BoardingCard extends StatelessWidget {
       ),
       child: Column(
         // Use min main axis size so children can size themselves and avoid
-        // forcing the Column to expand beyond available space. Make the
-        // content section flexible so it can scroll when needed.
-        mainAxisSize: MainAxisSize.max,
+        // forcing the Column to expand beyond available space.
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildHeader(),
-       
-           _buildContent(),
-         
-            _buildFooter()],
+
+          // Make content flexible so it can take available space but not
+          // force the whole card to grow beyond its parent constraints.
+          Flexible(child: _buildContent()),
+
+          _buildFooter(),
+        ],
       ),
     );
   }
