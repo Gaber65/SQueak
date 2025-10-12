@@ -94,12 +94,13 @@ class AddPetBreedDropdownModal extends StatelessWidget {
       child: AbsorbPointer(
         child: TextField(
           controller: controller,
-          style: const TextStyle(color: Colors.white),
+          // show black text when a breed is selected (controller has text), otherwise show hint color
+          style: TextStyle(color: controller.text.isNotEmpty ? Colors.black : Colors.grey[700]),
           decoration: InputDecoration(
-            fillColor: ColorManager.followersShadowLightColor,
+            fillColor: ColorManager.white,
             filled: true,
             hintText: "Select breed (optional)",
-            hintStyle: const TextStyle(color: Colors.white54),
+            hintStyle: TextStyle(color: Colors.grey[400]),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(

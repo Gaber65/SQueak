@@ -110,20 +110,27 @@ class AddPetImagePicker extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
+          // Outer circular border
           Container(
-            decoration: const BoxDecoration(shape: BoxShape.circle),
+            width: 104,
+            height: 104,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: ColorManager.primaryColor, width: 3),
+            ),
             child: ClipOval(
               child: imagefile != null
                   ? Image.file(
                       imagefile!,
-                      width: 80,
-                      height: 80,
+                      width: 96,
+                      height: 96,
                       fit: BoxFit.cover,
                     )
-                  : const CircleAvatar(
-                      radius: 48,
-                      backgroundColor: ColorManager.white,
-                      child: Icon(
+                  : Container(
+                      width: 96,
+                      height: 96,
+                      color: ColorManager.white,
+                      child: const Icon(
                         Icons.pets,
                         color: ColorManager.primaryColor,
                         size: 42,

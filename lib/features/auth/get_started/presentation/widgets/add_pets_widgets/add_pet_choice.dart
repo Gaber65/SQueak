@@ -28,7 +28,7 @@ class AddPetChoice extends StatelessWidget {
           margin: const EdgeInsets.only(left: 8),
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? ColorManager.primaryColor : Colors.white10,
+            color: isSelected ? ColorManager.primaryColor : Colors.white,
             border: Border.all(
               // ignore: deprecated_member_use
               color: ColorManager.primaryColor.withOpacity(.7),
@@ -46,11 +46,11 @@ class AddPetChoice extends StatelessWidget {
                         color: Colors.white,
                       ),
                     )
-                  : Icon(icon, color: Colors.white),
+                  : Icon(icon, color:isSelected ? Colors.white : Colors.black),
               const SizedBox(height: 4),
               Text(
                 isLoading && value == "other" ? "Loading..." : label,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: isSelected ? Colors.white : Colors.black),
               ),
             ],
           ),

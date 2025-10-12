@@ -1,4 +1,3 @@
-
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
@@ -80,19 +79,23 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
   @override
   Widget build(BuildContext context) {
     final petCubit = context.read<PetCubit>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final titleColor = isDark ? Colors.white : ColorManager.black_87;
+    final bodyBg =
+        isDark
+            ? ColorManager.editScreenTextFieldBaseColor.withValues(alpha: .5)
+            : Colors.grey.shade50;
+    final sectionTextColor = isDark ? Colors.white : ColorManager.black_87;
+    final progressBg = isDark ? Colors.white24 : Colors.black12;
+    final progressColor = ColorManager.primaryColor;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
-          "Add Your Pet",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: ColorManager.editScreenTextFieldBaseColor,
+        title: Text("Add Your Pet", style: TextStyle(color: titleColor)),
+        backgroundColor: isDark ? ColorManager.editScreenTextFieldBaseColor : ColorManager.white,
         leading: null,
       ),
-      backgroundColor: ColorManager.editScreenTextFieldBaseColor.withValues(
-        alpha: .5,
-      ),
+      backgroundColor: bodyBg,
       body: SafeArea(
         child: ListView(
           physics: const BouncingScrollPhysics(),
@@ -101,13 +104,13 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
             LinearProgressIndicator(
               value: 0.75,
               minHeight: 2,
-              backgroundColor: Colors.white24,
-              valueColor: const AlwaysStoppedAnimation(Colors.blue),
+              backgroundColor: progressBg,
+              valueColor: AlwaysStoppedAnimation(progressColor),
             ),
             const SizedBox(height: 24),
             CircleAvatar(
-              radius: 16,
-              backgroundColor: ColorManager.primaryColor,
+              radius: 20,
+              backgroundColor: ColorManager.black_87,
               child: const Text(
                 "3",
                 style: TextStyle(
@@ -117,40 +120,46 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               "Tell Us About Your Pet",
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white,
+                color: sectionTextColor,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 32),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Text(
                 "Add some basic information about your furry friend to get started.",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white, fontSize: 14),
+                style: TextStyle(color: sectionTextColor, fontSize: 14),
               ),
             ),
             const SizedBox(height: 24),
-            AddPetImagePicker(
-              imagefile: imagefile,
-              onImagePicked: (File? file) {
-                setState(() {
-                  imagefile = file;
-                });
-                if (file != null) {
-                  MainCubit.get(
-                    context,
-                  ).getGlobalImage(file, UploadPlace.petsImages).then((value) {
-                    context.read<PetCubit>().imageNameController.text =
-                        MainCubit.get(context).modelImage!.data;
+            Container(
+              decoration: BoxDecoration(
+                color: isDark ? ColorManager.bTwitter : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: AddPetImagePicker(
+                imagefile: imagefile,
+                onImagePicked: (File? file) {
+                  setState(() {
+                    imagefile = file;
                   });
-                }
-              },
+                  if (file != null) {
+                    MainCubit.get(
+                      context,
+                    ).getGlobalImage(file, UploadPlace.petsImages).then((value) {
+                      context.read<PetCubit>().imageNameController.text =
+                          MainCubit.get(context).modelImage!.data;
+                    });
+                  }
+                },
+              ),
             ),
             const SizedBox(height: 24),
             Padding(
@@ -161,9 +170,9 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                     icon: Icons.info,
                     title: "Basic Information",
                     children: [
-                      const Text(
+                      Text(
                         "Pet Name *",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: sectionTextColor),
                       ),
                       const SizedBox(height: 8),
                       AddPetTextField(
@@ -171,9 +180,9 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                         controller: _nameController,
                       ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         "Species *",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: sectionTextColor),
                       ),
                       const SizedBox(height: 8),
                       Row(
@@ -241,10 +250,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        "Breed",
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      Text("Breed", style: TextStyle(color: sectionTextColor)),
                       const SizedBox(height: 6),
                       BlocBuilder<PetCubit, PetState>(
                         builder: (context, state) {
@@ -284,9 +290,9 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                     icon: Icons.favorite,
                     title: "Additional Details",
                     children: [
-                      const Text(
+                      Text(
                         "Gender *",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: sectionTextColor),
                       ),
                       const SizedBox(height: 8),
                       Row(
@@ -313,7 +319,10 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                       const SizedBox(height: 16),
                       BlocBuilder<PetCubit, PetState>(
                         builder: (context, state) {
-                          return BirthdatePicker(cubit: petCubit, isDark: true);
+                          return BirthdatePicker(
+                            cubit: petCubit,
+                            isDark: isDark,
+                          );
                         },
                       ),
                     ],

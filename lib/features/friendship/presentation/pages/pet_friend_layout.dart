@@ -1,165 +1,436 @@
+// import 'package:flutter/material.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+// import 'package:squeak/core/utils/enums/profile_type.dart';
+// import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
+// import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
+// import 'package:squeak/features/friendship/presentation/widgets/friends_tab.dart';
+// import 'package:squeak/features/friendship/presentation/widgets/profile_switch_notification_screen.dart';
+// import 'package:squeak/features/friendship/presentation/widgets/tab_bar_widget.dart';
+// import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
+
+// import '../../../auth/get_started/presentation/widgets/find_friends/search_bar_widget.dart';
+
+// class FriendsScreen extends StatefulWidget {
+//   const FriendsScreen({super.key});
+
+//   @override
+//   State<FriendsScreen> createState() => _FriendsScreenState();
+// }
+
+// class _FriendsScreenState extends State<FriendsScreen> {
+//   late TextEditingController _searchController;
+//   @override
+//   void initState() {
+//     super.initState();
+//     _searchController = TextEditingController();
+//   }
+
+//   @override
+//   void dispose() {
+//     _searchController.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final isDark = Theme.of(context).brightness == Brightness.dark;
+//     return MultiBlocProvider(
+//       providers: [
+//         BlocProvider(create: (context) => sl<PetFriendsCubit>()),
+
+//         BlocProvider(create: (_) => sl<SwitchProfileCubit>()..loadProfile()),
+//       ],
+//       child: Scaffold(
+//         appBar: AppBar(
+//           centerTitle: true,
+//           title: Text(
+//             isArabic() ? 'الأصدقاء والطلبات' : 'Friends & Requests',
+//             style: TextStyle(
+//               fontSize: 20,
+//               fontWeight: FontWeight.bold,
+//               color: isDark ? ColorManager.white : ColorManager.black87,
+//             ),
+//           ),
+//         ),
+//         body: MultiBlocListener(
+//           listeners: [
+//             BlocListener<PetFriendsCubit, PetFriendsState>(
+//               listener: (context, state) {},
+//             ),
+//             BlocListener<SwitchProfileCubit, SwitchProfileState>(
+//               listener: (context, state) {
+//                 if (state is ProfileLoaded) {
+//                   if (state.profile.type == ProfileType.pet) {
+//                     PetFriendsCubit.get(context).getFriends(
+//                       petId:
+//                           SwitchProfileCubit.get(
+//                             context,
+//                           ).activeProfile!.pet!.petId!,
+//                     );
+//                     PetFriendsCubit.get(context).loadSuggestedFriends(
+//                       specieId:
+//                           SwitchProfileCubit.get(
+//                             context,
+//                           ).activeProfile!.pet!.specieId!,
+//                     );
+//                     PetFriendsCubit.get(context).loadSentFriends(
+//                       petId:
+//                           SwitchProfileCubit.get(
+//                             context,
+//                           ).activeProfile!.pet!.petId!,
+//                     );
+//                     PetFriendsCubit.get(context).loadReceivedFriends(
+//                       petId:
+//                           SwitchProfileCubit.get(
+//                             context,
+//                           ).activeProfile!.pet!.petId!,
+//                     );
+//                   }
+//                 }
+//               },
+//             ),
+//           ],
+//           child: BlocConsumer<PetFriendsCubit, PetFriendsState>(
+//             listener: (context, state) {},
+//             builder: (context, state) {
+//               var cubit = PetFriendsCubit.get(context);
+
+//               final cubits = SwitchProfileCubit.get(context);
+//               final activeProfile = cubits.activeProfile;
+
+//               if (activeProfile == null) {
+//                 return const ProfileSwitchNotificationScreen();
+//               } else if (activeProfile.type == ProfileType.pet) {
+//                 return Column(
+//                   children: [
+//                     Padding(
+//                       padding: const EdgeInsets.all(8.0),
+//                       child: SearchBarWidget(
+//                         controller: _searchController,
+//                         specieId:
+//                             context
+//                                 .read<SwitchProfileCubit>()
+//                                 .activeProfile!
+//                                 .pet!
+//                                 .specieId!,
+//                         onChanged: (value) {
+//                           cubit.loadSuggestedFriends(
+//                             specieId: activeProfile.pet!.specieId!,
+//                             name: value.isEmpty ? null : value,
+//                           );
+//                         },
+//                         onClear: () {
+//                           cubit.loadSuggestedFriends(
+//                             specieId: activeProfile.pet!.specieId!,
+//                           );
+//                         },
+//                       ),
+//                     ),
+//                     const SizedBox(height: 25),
+//                     TabBarPetFriend(
+//                       selectedTab: cubit.selectedTab,
+//                       friendsCount: cubit.friends.length,
+//                       suggestedCount: cubit.suggestedFriends.length,
+//                       receivedCount: cubit.pendingRequests.length,
+//                       sentCount: cubit.sentRequests.length,
+//                     ),
+//                     Expanded(child: buildTabContent(context, cubit)),
+//                   ],
+//                 );
+//               } else {
+//                 return const ProfileSwitchNotificationScreen();
+//               }
+//             },
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget buildTabContent(BuildContext context, PetFriendsCubit state) {
+//     switch (state.selectedTab) {
+//       case 0:
+//         return FriendsTab(friends: state.friends);
+//       case 1:
+//         return SuggestedTab(suggested: state.suggestedFriends);
+//       case 2:
+//         return ReceivedTab(requests: state.pendingRequests);
+//       case 3:
+//         return SentTab(requests: state.sentRequests);
+//       default:
+//         return FriendsTab(friends: state.friends);
+//     }
+//   }
+// }
+
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import 'package:squeak/core/utils/enums/profile_type.dart';
-import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
-import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
-import 'package:squeak/features/friendship/presentation/widgets/friends_tab.dart';
-import 'package:squeak/features/friendship/presentation/widgets/profile_switch_notification_screen.dart';
-import 'package:squeak/features/friendship/presentation/widgets/tab_bar_widget.dart';
-import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
+import 'package:squeak/core/service/global_function/format_utils.dart';
 
-import '../../../auth/get_started/presentation/widgets/find_friends/search_bar_widget.dart';
-
-class FriendsScreen extends StatefulWidget {
+class FriendsScreen extends StatelessWidget {
   const FriendsScreen({super.key});
-
-  @override
-  State<FriendsScreen> createState() => _FriendsScreenState();
-}
-
-class _FriendsScreenState extends State<FriendsScreen> {
-  late TextEditingController _searchController;
-  @override
-  void initState() {
-    super.initState();
-    _searchController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => sl<PetFriendsCubit>()),
-
-        BlocProvider(create: (_) => sl<SwitchProfileCubit>()..loadProfile()),
-      ],
+    final arabic = isArabic();
+    
+    // Define colors based on theme
+    final backgroundColor = isDark ? const Color(0xFF121212) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.grey.shade800;
+    final subtitleColor = isDark ? Colors.grey.shade400 : Colors.grey.shade600;
+    final primaryColor = isDark ? const Color(0xFFFFB74D) : Colors.amber.shade700;
+    final circleBackground = isDark ? const Color(0xFF2C2C2C) : Colors.amber.shade50;
+    final pawPrintColor = isDark ? const Color(0xFF3D3D3D) : Colors.amber.shade200;
+    
+    return Directionality(
+      textDirection: arabic ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: Text(
-            isArabic() ? 'الأصدقاء والطلبات' : 'Friends & Requests',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: isDark ? ColorManager.white : ColorManager.black87,
-            ),
+            arabic ? 'الأصدقاء والطلبات' : 'Friends & Requests',
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
-        body: MultiBlocListener(
-          listeners: [
-            BlocListener<PetFriendsCubit, PetFriendsState>(
-              listener: (context, state) {},
-            ),
-            BlocListener<SwitchProfileCubit, SwitchProfileState>(
-              listener: (context, state) {
-                if (state is ProfileLoaded) {
-                  if (state.profile.type == ProfileType.pet) {
-                    PetFriendsCubit.get(context).getFriends(
-                      petId:
-                          SwitchProfileCubit.get(
-                            context,
-                          ).activeProfile!.pet!.petId!,
-                    );
-                    PetFriendsCubit.get(context).loadSuggestedFriends(
-                      specieId:
-                          SwitchProfileCubit.get(
-                            context,
-                          ).activeProfile!.pet!.specieId!,
-                    );
-                    PetFriendsCubit.get(context).loadSentFriends(
-                      petId:
-                          SwitchProfileCubit.get(
-                            context,
-                          ).activeProfile!.pet!.petId!,
-                    );
-                    PetFriendsCubit.get(context).loadReceivedFriends(
-                      petId:
-                          SwitchProfileCubit.get(
-                            context,
-                          ).activeProfile!.pet!.petId!,
-                    );
-                  }
-                }
-              },
-            ),
-          ],
-          child: BlocConsumer<PetFriendsCubit, PetFriendsState>(
-            listener: (context, state) {},
-            builder: (context, state) {
-              var cubit = PetFriendsCubit.get(context);
+        backgroundColor: backgroundColor,
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Animated paw prints decoration
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildPawPrint(size: 30, rotation: -0.3, color: pawPrintColor),
+                      const SizedBox(width: 20),
+                      _buildPawPrint(size: 40, rotation: 0.2, color: pawPrintColor),
+                      const SizedBox(width: 20),
+                      _buildPawPrint(size: 30, rotation: -0.1, color: pawPrintColor),
+                    ],
+                  ),
 
-              final cubits = SwitchProfileCubit.get(context);
-              final activeProfile = cubits.activeProfile;
+                  const SizedBox(height: 40),
 
-              if (activeProfile == null) {
-                return const ProfileSwitchNotificationScreen();
-              } else if (activeProfile.type == ProfileType.pet) {
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SearchBarWidget(
-                        controller: _searchController,
-                        specieId:
-                            context
-                                .read<SwitchProfileCubit>()
-                                .activeProfile!
-                                .pet!
-                                .specieId!,
-                        onChanged: (value) {
-                          cubit.loadSuggestedFriends(
-                            specieId: activeProfile.pet!.specieId!,
-                            name: value.isEmpty ? null : value,
-                          );
-                        },
-                        onClear: () {
-                          cubit.loadSuggestedFriends(
-                            specieId: activeProfile.pet!.specieId!,
-                          );
-                        },
+                  // Main illustration
+                  Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: circleBackground,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.pets,
+                        size: 100,
+                        color: primaryColor,
                       ),
                     ),
-                    const SizedBox(height: 25),
-                    TabBarPetFriend(
-                      selectedTab: cubit.selectedTab,
-                      friendsCount: cubit.friends.length,
-                      suggestedCount: cubit.suggestedFriends.length,
-                      receivedCount: cubit.pendingRequests.length,
-                      sentCount: cubit.sentRequests.length,
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  // Title
+                  Text(
+                    arabic ? 'الأصدقاء' : 'Friends Feature',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
                     ),
-                    Expanded(child: buildTabContent(context, cubit)),
-                  ],
-                );
-              } else {
-                return const ProfileSwitchNotificationScreen();
-              }
-            },
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Coming Soon badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: isDark
+                            ? [const Color(0xFFFFB74D), const Color(0xFFFF9800)]
+                            : [Colors.amber.shade400, Colors.orange.shade400],
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      arabic ? 'قريبًا' : 'COMING SOON',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Description
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      arabic
+                          ? 'تواصل مع أصحاب الحيوانات الأليفة، وشارك لحظاتك اللطيفة، وابنِ مجتمعًا من محبي الصغار الأليفة!'
+                          : 'Connect with fellow pet parents, share adorable moments, and build a community of pet lovers!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: subtitleColor,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  // Features preview
+                  _buildFeatureItem(
+                    icon: Icons.people_outline,
+                    text: arabic ? 'تواصل مع أصحاب الصغار الأليفة' : 'Connect with pet owners',
+                    color: isDark ? const Color(0xFF64B5F6) : Colors.blue.shade400,
+                    isDark: isDark,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildFeatureItem(
+                    icon: Icons.photo_library_outlined,
+                    text: arabic ? 'شارك صور وقصص الصغار ' : 'Share pet photos & stories',
+                    color: isDark ? const Color(0xFFF06292) : Colors.pink.shade400,
+                    isDark: isDark,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildFeatureItem(
+                    icon: Icons.chat_bubble_outline,
+                    text: arabic ? 'الدردشة وتبادل النصائح' : 'Chat and exchange tips',
+                    color: isDark ? const Color(0xFF81C784) : Colors.green.shade400,
+                    isDark: isDark,
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  // Notify button
+                  ElevatedButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            arabic ? 'سنخبرك عندما تصبح متاحة! 🐾' : 'We\'ll notify you when it\'s ready! 🐾',
+                          ),
+                          backgroundColor: primaryColor,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 16,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 2,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: arabic
+                          ? [
+                              const Text(
+                                'أعلمني',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Icon(Icons.notifications_outlined),
+                            ]
+                          : const [
+                              Icon(Icons.notifications_outlined),
+                              SizedBox(width: 8),
+                              Text(
+                                'Notify Me',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget buildTabContent(BuildContext context, PetFriendsCubit state) {
-    switch (state.selectedTab) {
-      case 0:
-        return FriendsTab(friends: state.friends);
-      case 1:
-        return SuggestedTab(suggested: state.suggestedFriends);
-      case 2:
-        return ReceivedTab(requests: state.pendingRequests);
-      case 3:
-        return SentTab(requests: state.sentRequests);
-      default:
-        return FriendsTab(friends: state.friends);
-    }
+  Widget _buildPawPrint({
+    required double size,
+    required double rotation,
+    required Color color,
+  }) {
+    return Transform.rotate(
+      angle: rotation,
+      child: Icon(Icons.pets, size: size, color: color),
+    );
+  }
+
+  Widget _buildFeatureItem({
+    required IconData icon,
+    required String text,
+    required Color color,
+    required bool isDark,
+  }) {
+    final textColor = isDark ? Colors.grey.shade300 : Colors.grey.shade700;
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(isDark ? 0.15 : 0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: color.withOpacity(isDark ? 0.4 : 0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(isDark ? 0.25 : 0.2),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 16,
+                color: textColor,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
