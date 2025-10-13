@@ -87,3 +87,13 @@ final class ChangeSpeciesState extends PetState {}
 final class PitsImagePickedSuccessState extends PetState {}
 
 final class PitsImagePickedErrorState extends PetState {}
+
+final class MergePetsLoadingState extends PetState {}
+
+final class MergePetsSuccessState extends PetState {}
+
+final class MergePetsErrorState extends PetState {
+  final String message;
+
+  MergePetsErrorState(this.message);
+}

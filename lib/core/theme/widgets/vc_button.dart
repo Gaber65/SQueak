@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import '../app_theme.dart';
 
@@ -40,13 +42,13 @@ class VcButton extends StatelessWidget {
     return VcButton(
       key: key,
       onPressed: onPressed,
-      child: child,
       variant: VcButtonVariant.elevated,
       size: size,
       width: width,
       isLoading: isLoading,
       icon: icon,
       suffixIcon: suffixIcon,
+      child: child,
     );
   }
 
@@ -64,13 +66,13 @@ class VcButton extends StatelessWidget {
     return VcButton(
       key: key,
       onPressed: onPressed,
-      child: child,
       variant: VcButtonVariant.outlined,
       size: size,
       width: width,
       isLoading: isLoading,
       icon: icon,
       suffixIcon: suffixIcon,
+      child: child,
     );
   }
 
@@ -88,13 +90,13 @@ class VcButton extends StatelessWidget {
     return VcButton(
       key: key,
       onPressed: onPressed,
-      child: child,
       variant: VcButtonVariant.text,
       size: size,
       width: width,
       isLoading: isLoading,
       icon: icon,
       suffixIcon: suffixIcon,
+      child: child,
     );
   }
 
@@ -112,13 +114,13 @@ class VcButton extends StatelessWidget {
     return VcButton(
       key: key,
       onPressed: onPressed,
-      child: child,
       variant: VcButtonVariant.destructive,
       size: size,
       width: width,
       isLoading: isLoading,
       icon: icon,
       suffixIcon: suffixIcon,
+      child: child,
     );
   }
 

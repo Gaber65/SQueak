@@ -1,6 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:squeak/features/auth/get_started/domain/entites/request_pet_inteties.dart';
-import 'package:squeak/features/auth/get_started/domain/model/create_pets_modell.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
@@ -12,9 +10,9 @@ abstract class PetRemoteDataSource {
   Future<List<BreedData>> getBreedsBySpeciesId(String speciesId);
   Future<List<BreedData>> getAllSpecies();
   Future<PetData> createPet(PetEntities pet);
-
   Future<PetData> updatePet(String id, PetData pet);
   Future<void> deletePet(String id);
+  Future<PetData> mergePets(List<String> ids);
 }
 
 class PetRemoteDataSourceImpl implements PetRemoteDataSource {
@@ -120,6 +118,23 @@ class PetRemoteDataSourceImpl implements PetRemoteDataSource {
   Future<void> deletePet(String id) async {
     try {
       await DioFinalHelper.deleteData(method: deletePetEndPint + id);
+    } on DioException catch (e) {
+      throw ServerException(
+        errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
+      );
+    }
+  }
+  
+  @override
+  Future<PetData> mergePets(List<String> ids)async {
+    try{
+      final response = await DioFinalHelper.postData(
+        method: mergePetsEndPoint,
+        data: {
+          "petsId": ids,
+        },
+      );
+      return PetData.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),

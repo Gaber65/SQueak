@@ -7,7 +7,6 @@ import 'package:squeak/core/base_usecase/base_usecase.dart';
 import 'package:squeak/core/network/dio.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
-import 'package:squeak/features/auth/get_started/domain/entites/request_pet_inteties.dart';
 import '../../../../features/pets/domain/entities/pet_entity.dart';
 import '../../../../features/pets/domain/use_case/get_owner_pets_usecase.dart';
 import '../../../../features/pets/domain/use_case/get_all_breeds_usecase.dart';
@@ -17,6 +16,7 @@ import '../../../../features/pets/domain/use_case/create_pet_usecase.dart';
 import '../../../../features/pets/domain/use_case/update_pet_usecase.dart';
 import '../../../../features/pets/domain/use_case/delete_pet_usecase.dart';
 import '../../../../generated/l10n.dart';
+import '../../domain/use_case/merge_pets_usecase.dart';
 
 part 'pet_state.dart';
 
@@ -28,6 +28,7 @@ class PetCubit extends Cubit<PetState> {
   final CreatePetUseCase createPetUseCase;
   final UpdatePetUseCase updatePetUseCase;
   final DeletePetUseCase deletePetUseCase;
+  final MergePetsUsecase mergePetsUseCase;
   // final birthdateController = TextEditingController();
   // final CreatePetLoginScreenUseCase createPetLoginScreenUseCase;
 
@@ -41,6 +42,7 @@ class PetCubit extends Cubit<PetState> {
     required this.createPetUseCase,
     required this.updatePetUseCase,
     required this.deletePetUseCase,
+    required this.mergePetsUseCase,
   }) : super(PetInitial());
 
   static PetCubit get(context) => BlocProvider.of(context);
@@ -230,17 +232,20 @@ class PetCubit extends Cubit<PetState> {
     isLoading = true;
     emit(PetCreateLoadingState());
 
-    print(pet.toJson());
+    // print(pet.toJson());
     final result = await createPetUseCase(PetParams(pet: pet));
 
     isLoading = false;
     result.fold(
       (error) {
-        print(error.error.toJson());
+        // print(error.error.toJson());
         emit(PetCreateErrorState(extractFirstError(error)));
       },
       (createdPet) {
         pets.add(createdPet);
+        // Update the petId and specieId with the newly created pet's values
+        petId = createdPet.petId ?? '';
+        specieId = createdPet.specieId ?? '';
         emit(PetCreateSuccessState());
       },
     );
@@ -394,4 +399,19 @@ class PetCubit extends Cubit<PetState> {
     return super.close();
   }
 
+  // merge pets
+  Future<void> mergePets(List<String> ids) async {
+    emit(MergePetsLoadingState());
+    final result = await mergePetsUseCase(ids);
+    result.fold(
+      (error) {
+        emit(MergePetsErrorState(extractFirstError(error)));
+      },
+      (mergedPet) {
+        pets.removeWhere((pet) => ids.contains(pet.petId));
+        pets.add(mergedPet);
+        emit(MergePetsSuccessState());
+      },
+    );
+  }
 }

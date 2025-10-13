@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// ignore: depend_on_referenced_packages
 import 'package:equatable/equatable.dart';
-import 'package:squeak/core/utils/enums/dayOfWeek_enum.dart';
+import 'package:squeak/core/utils/enums/day_of_week_enum.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/availability_entities.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/client_clinic.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/clinic_entity.dart';
@@ -33,6 +34,8 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   static AppointmentCubit get(context) => BlocProvider.of(context);
   List<Availability> availabilities = [];
   TextEditingController commentController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController time = TextEditingController();
   Availability? selectedTime;
   List<TimeOfDay> timeSlots = [];
   TimeOfDay? selectedTimeSlot;
@@ -97,12 +100,12 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     });
   }
 
-  Future<void> unfollowClinicById(String clinicId) async {
+  Future<void> unfollowClinicById(String clinicId , {ClinicInfo? clinic}) async {
     emit(UnFollowLoading());
     final result = await unfollowClinicUseCase(clinicId);
     result.fold(
       (failure) => emit(UnFollowError()),
-      (_) => emit(UnFollowSuccess()),
+      (_) => emit(UnFollowSuccess(clinic!)),
     );
   }
 
@@ -131,8 +134,8 @@ class AppointmentCubit extends Cubit<AppointmentState> {
       },
       (clientClinicList) {
         clientInClinic = clientClinicList.isNotEmpty;
-        print(clientInClinic);
-        print(clientClinicList.isNotEmpty);
+        // print(clientInClinic);
+        // print(clientClinicList.isNotEmpty);
         petListInVet = clientClinicList;
         emit(GetClientInClinicSuccess());
       },

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import '../../../../../core/service/global_widget/ImageDetail.dart';
+import '../../../../../core/service/global_widget/image_detail.dart';
 import '../../../../comments/presentation/screens/comment.dart';
 import '../../domain/entities/post_entity.dart';
 
@@ -26,7 +26,6 @@ class BuildPostItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header (Avatar + Name + Title)
             Row(
               children: [
                 CircleAvatar(
@@ -65,8 +64,6 @@ class BuildPostItem extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-
-            // Post content
             Text(
               postItem.content,
               style: TextStyle(color: textColor),

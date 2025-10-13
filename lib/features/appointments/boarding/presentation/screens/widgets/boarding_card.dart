@@ -4,16 +4,11 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:squeak/core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
-
 import '../../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../domain/entities/boarding_entry_entity.dart';
 import '../../../domain/entities/boarding_status.dart';
-import '../../../domain/usecases/share_image_usecase.dart';
-import '../../cubit/boarding_cubit.dart';
 import '../boarding_rating.dart';
 import '../share_image_pet_screen.dart';
-import '../share_video_pets_screen.dart';
 
 // Helper function to check if the current language is Arabic
 bool isArabic() {
@@ -60,7 +55,19 @@ class BoardingCard extends StatelessWidget {
         ],
       ),
       child: Column(
-        children: [_buildHeader(), _buildContent(), _buildFooter()],
+        // Use min main axis size so children can size themselves and avoid
+        // forcing the Column to expand beyond available space.
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildHeader(),
+
+          // Make content flexible so it can take available space but not
+          // force the whole card to grow beyond its parent constraints.
+          Flexible(child: _buildContent()),
+
+          _buildFooter(),
+        ],
       ),
     );
   }
@@ -201,10 +208,13 @@ class BoardingCard extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                Future.delayed(Duration.zero, () => _showImages(context));
+                Future.delayed(
+                  Duration.zero,
+                  () => _showImages(context, false),
+                );
               },
             ),
-           
+
             PopupMenuItem(
               value: 3, // قيمة فريدة لخيار "الفيديوهات"
               child: Row(
@@ -222,10 +232,7 @@ class BoardingCard extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                Future.delayed(
-                  Duration.zero,
-                  () => _showVideos(context),
-                ); // استدعاء دالة عرض الفيديوهات
+                Future.delayed(Duration.zero, () => _showImages(context, true));
               },
             ),
           ],
@@ -255,7 +262,6 @@ class BoardingCard extends StatelessWidget {
             isArabic() ? 'المدة' : 'Duration',
             '${entry.period} ${entry.period == 1 ? (isArabic() ? 'يوم' : 'day') : (isArabic() ? 'أيام' : 'days')}',
           ),
-
           // Doctor rating if available
           if (entry.status == 3 && entry.doctorServiceRate != 0)
             _buildDoctorRating(),
@@ -375,7 +381,11 @@ class BoardingCard extends StatelessWidget {
               child: InkWell(
                 onTap: () {
                   HapticFeedback.lightImpact();
-                  launchUrl(Uri.parse('tel:${entry.clinicPhone}'));
+                  final phone = entry.clinicPhone;
+                  final formattedPhone =
+                      phone.startsWith('0') ? phone : '0$phone';
+                  launchUrl(Uri.parse('tel:$formattedPhone'));
+                  // launchUrl(Uri.parse('tel:${entry.clinicPhone}'));
                 },
                 borderRadius: BorderRadius.circular(8),
                 child: const Padding(
@@ -404,7 +414,7 @@ class BoardingCard extends StatelessWidget {
     );
   }
 
-  void _showImages(context) {
+  void _showImages(context, isVideo) {
     showDialog(
       context: context,
       builder:
@@ -413,32 +423,11 @@ class BoardingCard extends StatelessWidget {
             isDarkMode: isDarkMode,
             onOpenChange: (open) => Navigator.pop(context),
             boarding: entry,
+            isVideo: isVideo,
             onShare: (imageUrl, platform) {
               cubit.shareImageEntries(
                 ShareImageBoardingEntriesParams(
                   imageUrl: imageUrl,
-                  platform: platform,
-                ),
-              );
-            },
-          ),
-    );
-  }
-
-
-  void _showVideos(context) {
-    showDialog(
-      context: context,
-      builder:
-          (_) => VideoCarouselWidget(
-            open: true,
-            isDarkMode: isDarkMode,
-            onOpenChange: (open) => Navigator.pop(context),
-            boarding: entry,
-            onShare: (videoUrl, platform) {
-              cubit.shareImageEntries(
-                ShareImageBoardingEntriesParams(
-                  imageUrl: videoUrl,
                   platform: platform,
                 ),
               );

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -347,7 +349,6 @@ class AppTheme {
       outline: Color(0xFF938F99),
       outlineVariant: Color(0xFF49454F),
     ),
-    
   // Typography (same family as light theme)
   textTheme: GoogleFonts.notoSansTextTheme(ThemeData.dark().textTheme).copyWith(
       displayLarge: GoogleFonts.inter(

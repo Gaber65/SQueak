@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     final appLinks = AppLinks();
     sub = appLinks.uriLinkStream.listen(
       (uri) => handleDeepLink(uri, navigatorKey),
-      onError: (e) => print('DeepLink Error: $e'),
+      // onError: (e) => print('DeepLink Error: $e'),
     );
     appLinks.getInitialLink().then((uri) {
       if (uri != null) handleDeepLink(uri, navigatorKey);

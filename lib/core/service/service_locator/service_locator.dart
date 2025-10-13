@@ -1,23 +1,6 @@
-import 'package:squeak/features/qr/data/datasources/qr_remote_datasource.dart';
-import 'package:squeak/features/qr/data/repositories/qr_repository_impl.dart';
-import 'package:squeak/features/qr/domain/repositories/qr_repository.dart';
-import 'package:squeak/features/qr/domain/usecases/link_pet_to_qr_usecase.dart';
-import 'package:squeak/features/qr/domain/usecases/unlink_pet_from_qr_usecase.dart';
-
-import 'package:squeak/features/appointments/boarding/data/repositories/boarding_repository_impl.dart';
-import 'package:squeak/features/appointments/boarding/domain/usecases/get_boarding_types_usecase.dart';
-import 'package:squeak/features/appointments/boarding/presentation/cubit/boarding_cubit.dart';
-import '../../../features/appointments/boarding/data/datasources/boarding_local_data_source.dart';
-import '../../../features/appointments/boarding/data/datasources/boarding_remote_data_source.dart';
-import '../../../features/appointments/boarding/domain/repositories/boarding_repository.dart';
-import '../../../features/appointments/boarding/domain/usecases/create_boarding_usecase.dart';
-import '../../../features/appointments/boarding/domain/usecases/edit_boarding_usecase.dart';
-import '../../../features/appointments/boarding/domain/usecases/get_boarding_entries_usecase.dart';
-import '../../../features/appointments/boarding/domain/usecases/rate_boarding_usecase.dart';
-import '../../../features/appointments/boarding/domain/usecases/share_image_usecase.dart';
-import '../../../features/appointments/exam/presentation/controller/user/user_appointment_cubit.dart';
+import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
 import '../../../features/layout/search/presentation/controller/search_cubit.dart';
-import '../../../features/qr/presentation/controller/qr_cubit.dart';
+import '../../../features/pets/domain/use_case/merge_pets_usecase.dart';
 import '../../../features/settings/persentaion/controller/setting_cubit.dart';
 import '../../../features/vetcare/presenation/controllers/follow_request/follow_request_cubit.dart';
 import 'locatore_export_path.dart';
@@ -41,6 +24,7 @@ class ServiceLocator {
         createPetUseCase: sl(),
         updatePetUseCase: sl(),
         deletePetUseCase: sl(),
+        mergePetsUseCase: sl(),
       ),
     );
     sl.registerFactory(
@@ -130,7 +114,6 @@ class ServiceLocator {
     sl.registerLazySingleton(() => GetSearchListUseCase(sl()));
     sl.registerLazySingleton(() => GetSupplierUseCase(sl()));
     sl.registerLazySingleton(() => UnfollowClinicUseCase(sl()));
-
     sl.registerLazySingleton(() => UpdateNotificationStateUseCase(sl()));
     sl.registerLazySingleton(() => GetAllNotificationsUseCase(sl()));
     sl.registerLazySingleton(() => GetPostNotificationUseCase(sl()));
@@ -142,6 +125,7 @@ class ServiceLocator {
     sl.registerLazySingleton(() => CreatePetUseCase(sl()));
     sl.registerLazySingleton(() => UpdatePetUseCase(sl()));
     sl.registerLazySingleton(() => DeletePetUseCase(sl()));
+    sl.registerLazySingleton(() => MergePetsUsecase(sl()));
 
     sl.registerLazySingleton(() => GetOwnerDataUseCase(sl()));
     sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
@@ -255,11 +239,8 @@ class ServiceLocator {
 
     // Repository
     sl.registerLazySingleton<AppointmentRepository>(
-      () => AppointmentRepositoryImpl(
-        remoteDataSource: sl(),
-        localDataSource: sl(),
-        networkInfo: sl(),
-      ),
+      () =>
+          AppointmentRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
     );
 
     // Data sources
@@ -318,7 +299,6 @@ class ServiceLocator {
         getBoardingEntriesUseCase: sl(),
         rateBoardingUseCase: sl(),
         shareImageEntriesUseCase: sl(),
-        
       ),
     );
 
@@ -332,8 +312,7 @@ class ServiceLocator {
 
     // Repository
     sl.registerLazySingleton<BoardingRepository>(
-      () =>
-          BoardingRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()),
+      () => BoardingRepositoryImpl(remoteDataSource: sl()),
     );
 
     // Data sources
@@ -341,18 +320,18 @@ class ServiceLocator {
       () => BoardingLocalDataSourceImpl(),
     );
     sl.registerLazySingleton<BoardingRemoteDataSource>(
-          () => BoardingRemoteDataSourceImpl(),
+      () => BoardingRemoteDataSourceImpl(),
     );
 
     // UI Cubit
 
     sl.registerLazySingleton<QRRemoteDataSource>(
-          () => QRRemoteDataSourceImpl(),
+      () => QRRemoteDataSourceImpl(),
     );
 
     // Repository
     sl.registerLazySingleton<QRRepository>(
-          () => QRRepositoryImpl(remoteDataSource: sl()),
+      () => QRRepositoryImpl(remoteDataSource: sl()),
     );
 
     // Use cases
@@ -362,7 +341,7 @@ class ServiceLocator {
 
     // Cubit
     sl.registerFactory(
-          () => QRCubit(
+      () => QRCubit(
         checkClinicInSupplierUseCase: sl(),
         followClinicUseCase: sl(),
         getVetClientsUseCase: sl(),
@@ -371,27 +350,66 @@ class ServiceLocator {
 
     // External
 
-
     sl.registerLazySingleton<QrRemoteDataSource>(
-          () => QrRemoteDataSourceImpl(),
+      () => QrRemoteDataSourceImpl(),
     );
 
     // Repositories
-    sl.registerLazySingleton<QrRepository>(
-          () => QrRepositoryImpl(sl()),
-    );
+    sl.registerLazySingleton<QrRepository>(() => QrRepositoryImpl(sl()));
 
     // Use cases
 
     sl.registerLazySingleton(() => LinkPetToQrUseCase(sl()));
     sl.registerLazySingleton(() => UnlinkPetFromQrUseCase(sl()));
 
-
     // Cubits
-    sl.registerFactory(() => QrCubit(
-      linkPetToQrUseCase: sl(),
-      unlinkPetFromQrUseCase: sl(),
+    sl.registerFactory(
+      () => QrCubit(linkPetToQrUseCase: sl(), unlinkPetFromQrUseCase: sl()),
+    );
 
-    ));
+    /// 🔹 Data sources
+    sl.registerLazySingleton<ProfileSwitchLocalDataSource>(
+      () => ProfileSwitchLocalDataSourceImpl(),
+    );
+
+    /// 🔹 Repository
+    sl.registerLazySingleton<ProfileSwitchRepository>(
+      () => ProfileSwitchRepositoryImpl(sl()),
+    );
+
+    /// 🔹 UseCases
+    sl.registerLazySingleton(() => GetActiveProfileUseCase(sl()));
+    sl.registerLazySingleton(() => SaveActiveProfileUseCase(sl()));
+
+    /// 🔹 Cubit
+    sl.registerFactory(() => SwitchProfileCubit(sl(), sl()));
+
+    /// 🔹 Pet Friends
+    /// 🔹 Repository
+    sl.registerLazySingleton<PetFriendRepository>(
+      () => PetFriendRepositoryImpl(sl()),
+    );
+
+    /// 🔹 use cases
+    sl.registerLazySingleton(() => SendPetRequestUseCase(sl()));
+    sl.registerLazySingleton(() => UpdatePetRequestUseCase(sl()));
+    sl.registerLazySingleton(() => CancelFriendshipUseCase(sl()));
+    sl.registerLazySingleton(() => UnblockFriendUseCase(sl()));
+    sl.registerLazySingleton(() => GetMyRequestsUseCase(sl()));
+    sl.registerLazySingleton(() => GetMyFriendsUseCase(sl()));
+    sl.registerLazySingleton(() => GetBlockedFriendsUseCase(sl()));
+    sl.registerLazySingleton(() => GetSentRequestsUseCase(sl()));
+    sl.registerLazySingleton(() => SearchFriendsUseCase(sl()));
+
+    /// 🔹 Data sources
+    sl.registerLazySingleton<PetFriendRemoteDataSource>(
+      () => PetFriendRemoteDataSourceImpl(),
+    );
+
+    /// 🔹 Cubit
+    sl.registerFactory(
+      () =>
+          PetFriendsCubit(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+    );
   }
 }

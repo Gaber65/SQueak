@@ -94,7 +94,9 @@ class BoardingCubit extends Cubit<BoardingState> {
     );
   }
 
+  bool isLoadingEntries = false;
   Future<void> getBoardingEntries( bool applyFilter) async {
+    isLoadingEntries = true;
     emit(GetBoardingEntriesLoading());
 
     final params = GetBoardingEntriesParams(
@@ -105,8 +107,12 @@ class BoardingCubit extends Cubit<BoardingState> {
     final result = await getBoardingEntriesUseCase(params);
 
     result.fold(
-      (failure) => emit(GetBoardingEntriesError(failure.error.message)),
+      (failure) {
+        isLoadingEntries = false;
+        emit(GetBoardingEntriesError(failure.error.message));
+      },
       (entries) {
+        isLoadingEntries = false;
         boardingEntries = entries;
         filteredEntries = List.from(entries);
         emit(GetBoardingEntriesSuccess(entries));

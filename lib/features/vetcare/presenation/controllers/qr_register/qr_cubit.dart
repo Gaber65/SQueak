@@ -46,7 +46,7 @@ class QRCubit extends Cubit<QRState> {
         isAlreadyFollow = isFollow;
         isLoading = false;
         suppliersList = suppliers;
-        print('isAlreadyFollow $isAlreadyFollow');
+        // print('isAlreadyFollow $isAlreadyFollow');
         emit(QRLoaded(isAlreadyFollow: isAlreadyFollow));
       },
     );

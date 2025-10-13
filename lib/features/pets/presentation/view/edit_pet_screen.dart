@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
-import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/add_pet/passport_section.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/add_pet/pet_form_section.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/birthdate_section.dart';
@@ -44,7 +43,7 @@ class EditPet extends StatelessWidget {
       child: BlocConsumer<PetCubit, PetState>(
         listener: (context, state) {
           if (state is PetCreateSuccessState) {
-            navigateAndFinish(context, const PetScreen());
+            navigateAndFinish(context, const LayoutScreen());
           }
           if (state is PetCreateErrorState) {
             errorToast(context, state.message);
@@ -85,6 +84,7 @@ class EditPet extends StatelessWidget {
                     PassportSection(cubit: cubit, isDark: isDark),
                     SizedBox(height: responsiveHeight(30, context)),
                     SaveButton(cubit: cubit),
+                    SizedBox(height: responsiveHeight(30, context)),
                   ],
                 ),
               ),

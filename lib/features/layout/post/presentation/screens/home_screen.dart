@@ -1,40 +1,95 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/layout/post/presentation/controller/post_cubit.dart';
 import 'package:squeak/features/layout/post/presentation/widget/appbar_home_item.dart';
 import 'package:squeak/features/layout/post/presentation/widget/get_posts_when_user_follow.dart';
-
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/theme/widgets/pet_teaching/did_you_know_card.dart';
 import 'package:squeak/core/theme/widgets/pet_teaching/pet_tips_repository.dart';
 import 'package:squeak/core/theme/widgets/vc_card.dart';
 import 'package:squeak/core/theme/widgets/pet_teaching/pet_avatar.dart';
 import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
-
 import '../widget/build_search_box.dart';
 import '../widget/loading_posts.dart';
+import 'package:squeak/features/profile_switch/Presentation/widget/component/profile_switcher_controller.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late ProfileSwitcherController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = ProfileSwitcherController(context, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  void _closeProfileList() {
+    // Close the local controller
+    controller.closeDropdown();
+    
+    // Also try to close the service locator instance if it exists
+    try {
+      final globalController = sl<ProfileSwitcherController>();
+      globalController.closeDropdown();
+    } catch (e) {
+      // Service locator instance might not exist, that's okay
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<PostCubit>(),
       child: BlocConsumer<PostCubit, PostState>(
-        listener: (context, state) {
-          // TODO: implement listener
-        },
+        listener: (context, state) {},
         builder: (context, state) {
           var cubit = PostCubit.get(context);
-          return Scaffold(
-            appBar: buildAppBarHome(context),
-            body: Column(
-              children: [
-                const _PetTipBanner(),
-                const _ActivePetSummary(),
-                Expanded(child: _buildBody(cubit, state)),
-              ],
+
+          return GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: _closeProfileList,
+            child: Listener(
+              onPointerSignal: (event) {
+                if (event is PointerScrollEvent) {
+                  _closeProfileList();
+                }
+              },
+              onPointerDown: (_) => _closeProfileList(),
+              child: Scaffold(
+                appBar: buildAppBarHome(context),
+                body: NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    // Close profile list on any scroll event
+                    if (notification is ScrollStartNotification ||
+                        notification is UserScrollNotification ||
+                        notification is ScrollUpdateNotification) {
+                      _closeProfileList();
+                    }
+                    return false;
+                  },
+                  child: Column(
+                    children: [
+                      const _PetTipBanner(),
+                      const _ActivePetSummary(),
+                      Expanded(child: _buildBody(cubit, state)),
+                    ],
+                  ),
+                ),
+              ),
             ),
           );
         },
@@ -55,7 +110,6 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-/// Lightweight tip banner shown at top of Home
 class _PetTipBanner extends StatefulWidget {
   const _PetTipBanner();
 
@@ -99,7 +153,6 @@ class _PetTipBannerState extends State<_PetTipBanner> {
   }
 }
 
-/// Minimal “Active Pet” summary card (UI-only)
 class _ActivePetSummary extends StatelessWidget {
   const _ActivePetSummary();
 
@@ -107,7 +160,15 @@ class _ActivePetSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return VcCard(
-      onTap: () => navigateToScreen(context, const PetScreen()),
+      onTap: () {
+        try {
+          ProfileSwitcherController? controller = sl<ProfileSwitcherController>();
+          controller.closeDropdown();
+        } catch (e) {
+          // Controller might not be registered
+        }
+        navigateToScreen(context, const PetScreen());
+      },
       child: Row(
         children: [
           PetAvatar.small(petName: 'Pet'),

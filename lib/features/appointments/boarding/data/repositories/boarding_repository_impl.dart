@@ -2,24 +2,18 @@ import 'package:dartz/dartz.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../domain/entities/boarding_entry_entity.dart';
 import '../../domain/entities/boarding_type_entity.dart';
-import '../../domain/repositories/boarding_repository.dart';
-import '../../domain/usecases/share_image_usecase.dart';
-import '../datasources/boarding_local_data_source.dart';
-import '../datasources/boarding_remote_data_source.dart';
 
 class BoardingRepositoryImpl implements BoardingRepository {
   final BoardingRemoteDataSource remoteDataSource;
-  final BoardingLocalDataSource localDataSource;
 
   BoardingRepositoryImpl({
     required this.remoteDataSource,
-    required this.localDataSource,
   });
 
   @override
   Future<Either<Failure, List<BoardingTypeEntity>>> getBoardingTypes(
-    String clinicCode,
-  ) async {
+      String clinicCode,
+      ) async {
     try {
       final result = await remoteDataSource.getBoardingTypes(clinicCode);
       return Right(result.map((model) => model.toEntity()).toList());
@@ -30,8 +24,8 @@ class BoardingRepositoryImpl implements BoardingRepository {
 
   @override
   Future<Either<Failure, void>> createBoarding(
-    CreateBoardingParams params,
-  ) async {
+      CreateBoardingParams params,
+      ) async {
     try {
       await remoteDataSource.createBoarding(params);
       return const Right(null);
@@ -52,15 +46,14 @@ class BoardingRepositoryImpl implements BoardingRepository {
 
   @override
   Future<Either<Failure, List<BoardingEntryEntity>>> getBoardingEntries(
-    String phone,
-    bool applyFilter, // ← مش هنستخدمه، ممكن تشيله كمان
-  ) async {
+      String phone,
+      bool applyFilter,
+      ) async {
     try {
       final remoteEntries = await remoteDataSource.getBoardingEntries(
         phone,
-        false,
+        applyFilter,
       );
-
       final result = remoteEntries.map((e) => e.toEntity()).toList();
       return Right(result);
     } on ServerException catch (e) {
@@ -80,8 +73,8 @@ class BoardingRepositoryImpl implements BoardingRepository {
 
   @override
   Future<Either<Failure, void>> shareImage(
-    ShareImageBoardingEntriesParams params,
-  ) async {
+      ShareImageBoardingEntriesParams params,
+      ) async {
     try {
       await remoteDataSource.shareImage(params);
       return const Right(null);

@@ -48,8 +48,7 @@ IconData getNotificationIcon(NotificationEntities notification) {
     case NotificationType.NewBoardingImage:
       return Icons.image;
     case NotificationType.Unknown:
-    default:
-      return Icons.notifications;
+    return Icons.notifications;
   }
 }
 
@@ -98,7 +97,6 @@ Color getNotificationColor(NotificationEntities notification) {
     case NotificationType.QrCodeNotification:
       return Colors.blueGrey;
     case NotificationType.Unknown:
-    default:
-      return Colors.grey;
+    return Colors.grey;
   }
 }

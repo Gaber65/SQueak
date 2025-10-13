@@ -1,14 +1,11 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/appointment_entity.dart';
 import 'package:squeak/features/appointments/exam/presentation/controller/user/user_appointment_cubit.dart';
-
-import 'package:squeak/generated/l10n.dart';
 
 class RateAppointment extends StatefulWidget {
   final AppointmentEntity model;
@@ -59,6 +56,7 @@ class _RateAppointmentState extends State<RateAppointment> {
           }
 
           var cubit = UserAppointmentCubit.get(context);
+          // ignore: deprecated_member_use
           return WillPopScope(
             onWillPop: () async {
               if (widget.isNav || widget.model.isRating) {

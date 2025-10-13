@@ -42,11 +42,29 @@ class MyTextForm extends StatefulWidget {
 class _MyTextFormState extends State<MyTextForm> {
   String? _validatorText;
   bool _obscureText = false;
+  late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _obscureText = widget.obscureText ?? false;
+    _focusNode = FocusNode()..addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    // When losing focus, trim email inputs so UI reflects trimmed value
+    if (!_focusNode.hasFocus) {
+      try {
+        final current = widget.controller.text;
+        final trimmed = current.trim();
+        if (current != trimmed) {
+          widget.controller.text = trimmed;
+          widget.controller.selection = TextSelection.fromPosition(
+            TextPosition(offset: trimmed.length),
+          );
+        }
+      } catch (_) {}
+    }
   }
 
   @override
@@ -54,6 +72,7 @@ class _MyTextFormState extends State<MyTextForm> {
     return Directionality(
       textDirection: _getTextDirection(context),
       child: TextFormField(
+        focusNode: _focusNode,
         controller: widget.controller,
         keyboardType: widget.keyboardType,
         obscureText: _obscureText,
@@ -140,7 +159,7 @@ class _MyTextFormState extends State<MyTextForm> {
 
   String? _validatePassword(String? value, S s) {
     if (value == null || value.isEmpty) return s.enterUrPassword;
-    if (value.length < 6) return s.PASSWORD_MIN_LENGTH;
+    if (value.length <= 6) return s.PASSWORD_MIN_LENGTH;
     return null;
   }
 
@@ -148,5 +167,14 @@ class _MyTextFormState extends State<MyTextForm> {
     if (value == null || value.isEmpty) return s.other_valid;
     if (value.length > 30) return s.other_valid_more_than_30_char;
     return null;
+  }
+
+  @override
+  void dispose() {
+    try {
+      _focusNode.removeListener(_onFocusChange);
+      _focusNode.dispose();
+    } catch (_) {}
+    super.dispose();
   }
 }

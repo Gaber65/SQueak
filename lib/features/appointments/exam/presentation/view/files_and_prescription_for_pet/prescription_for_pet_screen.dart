@@ -23,7 +23,6 @@ class PrescriptionForPetScreen extends StatelessWidget {
       child: BlocConsumer<FilesAndPrescriptionForPetCubit,
           FilesAndPrescriptionForPetState>(
         listener: (context, state) {
-          // TODO: implement listener
         },
         builder: (context, state) {
           var filesAndPrescriptionForPetCubit =
@@ -125,19 +124,17 @@ class PrescriptionForPetScreen extends StatelessWidget {
                                             ),
                                             TableSingleRecord(
                                               tableRecordName:
-                                                  record.numberOfUnit! ?? '',
+                                                  record.numberOfUnit!,
                                             ),
                                             TableSingleRecord(
                                               tableRecordName: record
                                                       .numberOfTime
-                                                      .toString() ??
-                                                  '',
+                                                      .toString(),
                                             ),
                                             TableSingleRecord(
                                               tableRecordName: record
                                                       .numberOfDay
-                                                      .toString() ??
-                                                  '',
+                                                      .toString(),
                                             ),
                                           ],
                                         ),
@@ -148,7 +145,7 @@ class PrescriptionForPetScreen extends StatelessWidget {
                                   ),
                                   BlocConsumer<MainCubit, MainState>(
                                     listener: (context, state) {
-                                      // TODO: implement listener
+                               
                                     },
                                     builder: (context, state) {
                                       return Center(
@@ -203,7 +200,6 @@ class TableHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<MainCubit, MainState>(
       listener: (context, state) {
-        // TODO: implement listener
       },
       builder: (context, state) {
         var mainCubit = BlocProvider.of<MainCubit>(context);
@@ -236,7 +232,6 @@ class TableSingleRecord extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<MainCubit, MainState>(
       listener: (context, state) {
-        // TODO: implement listener
       },
       builder: (context, state) {
         var mainCubit = BlocProvider.of<MainCubit>(context);

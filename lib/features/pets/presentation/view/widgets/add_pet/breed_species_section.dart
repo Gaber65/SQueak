@@ -19,10 +19,7 @@ class BreedSpeciesSection extends StatefulWidget {
 }
 
 class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
-
-  // Track if we're currently loading breeds for the selected species
   bool _isLoadingBreeds = false;
-  // Track if user clicked "Other" and we're showing the species selector
   bool _showingOtherSpeciesLoader = false;
 
   @override
@@ -34,7 +31,6 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
         return BlocListener<PetCubit, PetState>(
           bloc: widget.cubit,
           listener: (context, state) {
-            // Listen for breed loading states to show/hide loading indicator
             if (state is GetAllBreedsLoadingState) {
               setState(() {
                 _isLoadingBreeds = true;
@@ -44,8 +40,6 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
                 _isLoadingBreeds = false;
               });
             }
-            
-            // Listen for species loading states
             if (state is GetAllSpeciesLoadingState) {
               setState(() {
                 _showingOtherSpeciesLoader = true;
@@ -60,12 +54,10 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (isSmallScreen) ...[
-                // Stack vertically on small screens
                 _buildSpeciesSelection(context),
                 const SizedBox(height: 16),
                 _buildBreedDropdown(context),
               ] else ...[
-                // Side by side on larger screens
                 Row(
                   children: [
                     Expanded(child: _buildSpeciesSelection(context)),
@@ -94,15 +86,13 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
           ),
         ),
         const SizedBox(height: 8),
-        // Show loading indicator while breeds are being fetched
-        _isLoadingBreeds 
+        _isLoadingBreeds
             ? _buildBreedLoadingField(context)
             : _buildDropDownBreed(widget.cubit.breedData, context),
       ],
     );
   }
 
-  /// Builds a loading field for breed selection
   Widget _buildBreedLoadingField(BuildContext context) {
     return Container(
       height: 56,
@@ -137,7 +127,6 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
     );
   }
 
-  /// Builds the modern species selection with visual cards
   Widget _buildSpeciesSelection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,13 +140,10 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
           ),
         ),
         const SizedBox(height: 8),
-        // Modern species selection cards
         LayoutBuilder(
           builder: (context, constraints) {
             final isSmallScreen = constraints.maxWidth < 400;
-            
             if (isSmallScreen) {
-              // Stack vertically on very small screens
               return Column(
                 children: [
                   Row(
@@ -172,7 +158,6 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
                 ],
               );
             } else {
-              // Side by side layout
               return Row(
                 children: [
                   Expanded(child: _buildSpeciesCard(context, 'Dog', FontAwesomeIcons.dog, 'dog')),
@@ -189,18 +174,19 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
     );
   }
 
-  /// Builds individual species card (Dog/Cat)
   Widget _buildSpeciesCard(BuildContext context, String name, IconData icon, String speciesType) {
-    final isSelected = widget.cubit.dropdownValueSpecies.toLowerCase() == name.toLowerCase();
-    
+    // Treat 'coww' as 'cat' for selection purposes so that when the backend
+    // returns 'coww' the Cat card still appears selected.
+    final current = widget.cubit.dropdownValueSpecies.toLowerCase();
+    final normalizedCurrent = current == 'coww' ? 'cat' : current;
+    final isSelected = normalizedCurrent == name.toLowerCase();
+
     return GestureDetector(
       onTap: () async {
-        // Handle direct selection for Dog/Cat
         final speciesId = _getSpeciesIdForType(speciesType);
         if (speciesId.isNotEmpty) {
           _handleSpeciesSelection(name, speciesId);
         } else {
-          // If we don't have the species ID, load species first
           if (widget.cubit.species.isEmpty) {
             await widget.cubit.getAllSpecies();
           }
@@ -213,11 +199,11 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
       child: Container(
         height: 80,
         decoration: BoxDecoration(
-          color: isSelected 
+          color: isSelected
               ? (widget.isDark ? ColorManager.primaryColor.withValues(alpha: 0.3) : ColorManager.primaryLight)
               : (widget.isDark ? Colors.black26 : Colors.grey.shade200),
           borderRadius: BorderRadius.circular(12),
-          border: isSelected 
+          border: isSelected
               ? Border.all(color: ColorManager.primaryColor, width: 2)
               : null,
         ),
@@ -227,8 +213,8 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
             Icon(
               icon,
               size: 28,
-              color: isSelected 
-                  ? ColorManager.primaryColor 
+              color: isSelected
+                  ? ColorManager.primaryColor
                   : (widget.isDark ? Colors.white70 : Colors.black54),
             ),
             const SizedBox(height: 4),
@@ -238,8 +224,8 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
                 context: context,
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                fontColor: isSelected 
-                    ? ColorManager.primaryColor 
+                fontColor: isSelected
+                    ? ColorManager.primaryColor
                     : (widget.isDark ? Colors.white70 : Colors.black87),
               ),
             ),
@@ -249,29 +235,29 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
     );
   }
 
-  /// Builds the "Other" species card that opens the selector
   Widget _buildOtherSpeciesCard(BuildContext context) {
-    final hasOtherSpecies = widget.cubit.dropdownValueSpecies.isNotEmpty && 
-        !['dog', 'cat'].contains(widget.cubit.dropdownValueSpecies.toLowerCase());
-    
+    final current = widget.cubit.dropdownValueSpecies.toLowerCase();
+    // hasOtherSpecies is true only for truly other species (not dog/cat or the 'coww' alias)
+    final hasOtherSpecies = widget.cubit.dropdownValueSpecies.isNotEmpty &&
+        !['dog', 'cat', 'coww'].contains(current);
+
     return GestureDetector(
-      onTap: _showingOtherSpeciesLoader ? null : () async {
-        // Show species selector for other animals
-        await _handleOtherSpeciesSelection(context);
-      },
+      onTap: _showingOtherSpeciesLoader
+          ? null
+          : () async {
+              await _handleOtherSpeciesSelection(context);
+            },
       child: Container(
         height: 80,
         width: 200,
         decoration: BoxDecoration(
-          color: hasOtherSpecies 
-              ? (widget.isDark ? ColorManager.primaryColor.withValues(alpha: 0.3) : ColorManager.primaryLight)
-              : (widget.isDark ? Colors.black26 : Colors.grey.shade200),
+      color: hasOtherSpecies
+        ? (widget.isDark ? ColorManager.primaryColor.withValues(alpha: 0.3) : ColorManager.primaryLight)
+        : (widget.isDark ? Colors.black26 : Colors.grey.shade200),
           borderRadius: BorderRadius.circular(12),
-          border: hasOtherSpecies 
-              ? Border.all(color: ColorManager.primaryColor, width: 2)
-              : null,
+      border: hasOtherSpecies ? Border.all(color: ColorManager.primaryColor, width: 2) : null,
         ),
-        child: _showingOtherSpeciesLoader 
+        child: _showingOtherSpeciesLoader
             ? const Center(
                 child: SizedBox(
                   width: 20,
@@ -288,22 +274,17 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
                   Icon(
                     hasOtherSpecies ? Icons.check_circle : Icons.pets,
                     size: 32,
-                    color: hasOtherSpecies 
-                        ? ColorManager.primaryColor 
-                        : (widget.isDark ? Colors.white70 : Colors.black54),
+                    color: hasOtherSpecies ? ColorManager.primaryColor : (widget.isDark ? Colors.white70 : Colors.black54),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    hasOtherSpecies 
-                        ? widget.cubit.dropdownValueSpecies
-                        : 'Other',
+                    // Only show the actual other species name when it's truly an other species.
+                    hasOtherSpecies ? widget.cubit.dropdownValueSpecies : 'Other',
                     style: FontStyleThame.textStyle(
                       context: context,
                       fontSize: 12,
                       fontWeight: hasOtherSpecies ? FontWeight.w600 : FontWeight.w500,
-                      fontColor: hasOtherSpecies 
-                          ? ColorManager.primaryColor 
-                          : (widget.isDark ? Colors.white70 : Colors.black87),
+                      fontColor: hasOtherSpecies ? ColorManager.primaryColor : (widget.isDark ? Colors.white70 : Colors.black87),
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 1,
@@ -315,29 +296,24 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
     );
   }
 
-  /// Handles species selection and triggers breed loading
   void _handleSpeciesSelection(String speciesName, String speciesId) {
     widget.cubit.changeSpecies(speciesName, speciesId);
     widget.cubit.dropdownValueBreed = '';
     widget.cubit.breedData.clear();
     widget.cubit.breedIdController.clear();
     widget.cubit.searchController.clear();
-    
-    // Trigger breed loading
+
     widget.cubit.getBreedsBySpecies(speciesId);
   }
 
-  /// Handles "Other" species selection by showing the species selector
   Future<void> _handleOtherSpeciesSelection(BuildContext context) async {
-    // Show loading indicator
     setState(() {
       _showingOtherSpeciesLoader = true;
     });
-    
-    // Small delay to show the loading indicator
     await Future.delayed(const Duration(milliseconds: 300));
-    
+
     try {
+      // Use the improved species selector with search
       await showSpeciesSelector(
         // ignore: use_build_context_synchronously
         context,
@@ -347,7 +323,6 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
         },
       );
     } finally {
-      // Hide loading indicator when done
       if (mounted) {
         setState(() {
           _showingOtherSpeciesLoader = false;
@@ -356,24 +331,18 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
     }
   }
 
-  /// Gets the species ID for common species types from loaded species list
   String _getSpeciesIdForType(String speciesType) {
-    // Try to find the species in the loaded species list first
     final speciesList = widget.cubit.species;
-    
-    // Look for exact or partial matches in the species list
     for (final species in speciesList) {
       if (species.type.toLowerCase().contains(speciesType.toLowerCase())) {
         return species.id;
       }
     }
-    
-    // Fallback to commonly known IDs if species list is not loaded yet
     switch (speciesType.toLowerCase()) {
       case 'dog':
-        return 'bca48207-f05d-4e9f-a631-06f34eb5af39'; // Use the actual ID from pet_screen_content
+        return 'bca48207-f05d-4e9f-a631-06f34eb5af39';
       case 'cat':
-        return 'f1131363-3b9f-40ee-9a89-0573ee274a10'; // Use the actual ID from pet_screen_content
+        return 'f1131363-3b9f-40ee-9a89-0573ee274a10';
       default:
         return '';
     }
@@ -381,7 +350,6 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
 
   final suggestionBoxController = SuggestionsBoxController();
 
-  /// Builds the breed dropdown with search functionality
   Widget _buildDropDownBreed(
     List<BreedEntity> breedData,
     BuildContext context,

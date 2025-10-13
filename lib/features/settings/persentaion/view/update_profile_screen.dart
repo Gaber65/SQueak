@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use, invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/utils/export_path/export_files.dart';
@@ -8,207 +10,207 @@ class UpProfileScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<SettingCubit>()..init(context),
-      child: BlocConsumer<SettingCubit, SettingState>(
-        listener: (context, state) {
-          if (state is UpdateProfileSuccessState) {
-            successToast(context, S.of(context).updateSuccess);
-            CacheHelper.saveData('name', state.owner.fullName);
-            SettingCubit.get(context).getOwnerData();
-            LayoutCubit.get(context).changeBottomNav(3);
-            navigateAndFinish(context, LayoutScreen());
-          }
-          if (state is UpdateProfileErrorState) {
-            errorToast(context, state.message);
-          }
-        },
-        builder: (context, state) {
-          var cubit = SettingCubit.get(context);
+Widget build(BuildContext context) {
+  return BlocProvider(
+    create: (context) => sl<SettingCubit>()..init(context),
+    child: BlocConsumer<SettingCubit, SettingState>(
+      listener: (context, state) {
+        if (state is UpdateProfileSuccessState) {
+          successToast(context, S.of(context).updateSuccess);
+          CacheHelper.saveData('name', state.owner.fullName);
+          SettingCubit.get(context).getOwnerData();
+          // Changed from index 3 to index 0 for first tab
+          LayoutCubit.get(context).changeBottomNav(0);
+          navigateAndFinish(context, LayoutScreen());
+        }
+        if (state is UpdateProfileErrorState) {
+          errorToast(context, state.message);
+        }
+      },
+      builder: (context, state) {
+        var cubit = SettingCubit.get(context);
 
-          if (state is GetOwnerDataLoading) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
+        if (state is GetOwnerDataLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
 
-          return Scaffold(
-            key: scaffoldKey,
-            appBar: AppBar(
-              centerTitle: true,
-              title: Text(S.of(context).updateProfile),
-            ),
-            body: Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Form(
-                  key: cubit.formKey,
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 20),
+        return Scaffold(
+          key: scaffoldKey,
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text(S.of(context).updateProfile),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Form(
+                key: cubit.formKey,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
 
-                      // Profile Image Section
-                      Center(
-                        child: Stack(
-                          children: [
-                            CircleAvatar(
-                              radius: 52,
-                              backgroundColor:
-                                  (CacheHelper.getData('isDark')) == true
-                                      ? ColorManager.editScreenBaseBlueColors
-                                      : ColorManager.sWhite,
-                              child: CircleAvatar(
-                                radius: 50,
-                                backgroundImage:
-                                    cubit.profileImage == null
-                                        ? NetworkImage(
-                                          cubit.imageController.text.isNotEmpty
-                                              ? '$imageUrl${cubit.imageController.text}'
-                                              : AssetImageModel
-                                                  .defaultUserImage,
-                                        )
-                                        : FileImage(cubit.profileImage!)
-                                            as ImageProvider,
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: CircleAvatar(
-                                radius: 15,
-                                child: IconButton(
-                                  icon: const Icon(Icons.settings),
-                                  iconSize: 15,
-                                  onPressed: () {
-                                    scaffoldKey.currentState!.showBottomSheet(
-                                      backgroundColor: Colors.white.withOpacity(
-                                        0,
-                                      ),
-                                      elevation: 0,
-                                      (context) {
-                                        return _buildImageOptions(
-                                          context,
-                                          cubit,
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Name Field
-                      SizedBox(height: 10),
-                      _buildTextField(
-                        controller: cubit.nameController,
-                        icon: Icons.person,
-                        hintText: S.of(context).name_hint,
-                        validatorText: S.of(context).name_validation,
-                      ),
-
-                      // Address Field
-                      SizedBox(height: 10),
-                      _buildTextField(
-                        controller: cubit.addressController,
-                        icon: Icons.location_on,
-                        hintText: S.of(context).address_hint,
-                        validatorText: S.of(context).address_validation,
-                      ),
-
-                      // Birthdate Field
-                      SizedBox(height: 10),
-                      _buildDateSelector(context, cubit),
-
-                      // Phone Field
-                      SizedBox(height: 20),
-                      _buildTextField(
-                        controller: cubit.phoneController,
-                        icon: Icons.phone,
-                        hintText: S.of(context).phone_hint,
-                        validatorText: S.of(context).phone_validation,
-                        enabled: false,
-                      ),
-
-                      // Email Field (if available)
-                      if (cubit.emailController.text.isNotEmpty) ...[
-                        SizedBox(height: 20),
-                        _buildTextField(
-                          controller: cubit.emailController,
-                          icon: Icons.email,
-                          hintText: S.of(context).email_hint,
-                          validatorText: S.of(context).email_validation,
-                          enabled: false,
-                        ),
-                      ],
-
-                      // Gender Selection
-                      SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    // Profile Image Section
+                    Center(
+                      child: Stack(
                         children: [
-                          Expanded(
-                            child: _buildGenderSelect(
-                              S.of(context).male,
-                              1,
-                              cubit,
+                          CircleAvatar(
+                            radius: 52,
+                            backgroundColor:
+                                (CacheHelper.getData('isDark')) == true
+                                    ? ColorManager.editScreenBaseBlueColors
+                                    : ColorManager.sWhite,
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundImage:
+                                  cubit.profileImage == null
+                                      ? NetworkImage(
+                                        cubit.imageController.text.isNotEmpty
+                                            ? '$imageUrl${cubit.imageController.text}'
+                                            : AssetImageModel
+                                                .defaultUserImage,
+                                      )
+                                      : FileImage(cubit.profileImage!)
+                                          as ImageProvider,
                             ),
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: _buildGenderSelect(
-                              S.of(context).female,
-                              2,
-                              cubit,
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: CircleAvatar(
+                              radius: 15,
+                              child: IconButton(
+                                icon: const Icon(Icons.settings),
+                                iconSize: 15,
+                                onPressed: () {
+                                  scaffoldKey.currentState!.showBottomSheet(
+                                    backgroundColor: Colors.white.withOpacity(
+                                      0,
+                                    ),
+                                    elevation: 0,
+                                    (context) {
+                                      return _buildImageOptions(
+                                        context,
+                                        cubit,
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ],
                       ),
+                    ),
 
-                      // Save Button
-                      SizedBox(height: 30),
-                      CustomElevatedButton(
-                        isLoading: cubit.isLoading,
-                        formKey: cubit.formKey,
-                        onPressed: () async {
-                          if (cubit.formKey.currentState!.validate()) {
-                            if (cubit.profileImage == null) {
-                              await cubit.updateProfile();
-                            } else {
-                              cubit.isLoading = true;
-                              cubit.emit(ChangeBirthdateState());
-                              MainCubit.get(context)
-                                  .getGlobalImage(
-                                    cubit.profileImage!,
-                                    UploadPlace.petsImages,
-                                  )
-                                  .then((value) {
-                                    cubit.imageController.text =
-                                        MainCubit.get(context).modelImage!.data;
-                                    cubit.updateProfile();
-                                  });
-                            }
-                          }
-                        },
-                        buttonText: S.of(context).save,
+                    const SizedBox(height: 20),
+
+                    // Name Field
+                    SizedBox(height: 10),
+                    _buildTextField(
+                      controller: cubit.nameController,
+                      icon: Icons.person,
+                      hintText: S.of(context).name_hint,
+                      validatorText: S.of(context).name_validation,
+                    ),
+
+                    // Address Field
+                    SizedBox(height: 10),
+                    _buildTextField(
+                      controller: cubit.addressController,
+                      icon: Icons.location_on,
+                      hintText: S.of(context).address_hint,
+                      validatorText: S.of(context).address_validation,
+                    ),
+
+                    // Birthdate Field
+                    SizedBox(height: 10),
+                    _buildDateSelector(context, cubit),
+
+                    // Phone Field
+                    SizedBox(height: 20),
+                    _buildTextField(
+                      controller: cubit.phoneController,
+                      icon: Icons.phone,
+                      hintText: S.of(context).phone_hint,
+                      validatorText: S.of(context).phone_validation,
+                      enabled: false,
+                    ),
+
+                    // Email Field (if available)
+                    if (cubit.emailController.text.isNotEmpty) ...[
+                      SizedBox(height: 20),
+                      _buildTextField(
+                        controller: cubit.emailController,
+                        icon: Icons.email,
+                        hintText: S.of(context).email_hint,
+                        validatorText: S.of(context).email_validation,
+                        enabled: false,
                       ),
                     ],
-                  ),
+
+                    // Gender Selection
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: _buildGenderSelect(
+                            S.of(context).male,
+                            1,
+                            cubit,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _buildGenderSelect(
+                            S.of(context).female,
+                            2,
+                            cubit,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // Save Button
+                    SizedBox(height: 30),
+                    CustomElevatedButton(
+                      isLoading: cubit.isLoading,
+                      formKey: cubit.formKey,
+                      onPressed: () async {
+                        if (cubit.formKey.currentState!.validate()) {
+                          if (cubit.profileImage == null) {
+                            await cubit.updateProfile();
+                          } else {
+                            cubit.isLoading = true;
+                            cubit.emit(ChangeBirthdateState());
+                            MainCubit.get(context)
+                                .getGlobalImage(
+                                  cubit.profileImage!,
+                                  UploadPlace.petsImages,
+                                )
+                                .then((value) {
+                                  cubit.imageController.text =
+                                      MainCubit.get(context).modelImage!.data;
+                                  cubit.updateProfile();
+                                });
+                          }
+                        }
+                      },
+                      buttonText: S.of(context).save,
+                    ),
+                  ],
                 ),
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
-
+          ),
+        );
+      },
+    ),
+  );
+}
   Widget _buildTextField({
     required TextEditingController controller,
     required IconData icon,

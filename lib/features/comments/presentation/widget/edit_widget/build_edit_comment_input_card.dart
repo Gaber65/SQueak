@@ -21,6 +21,7 @@ Widget buildEditCommentInputCard(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 1,
@@ -29,6 +30,7 @@ Widget buildEditCommentInputCard(
       ),
       padding: const EdgeInsets.all(12),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TextFormField(
             controller: commentController,
@@ -46,17 +48,25 @@ Widget buildEditCommentInputCard(
             },
             maxLines: 4,
             minLines: 3,
+            keyboardType: TextInputType.multiline,
+            textAlignVertical: TextAlignVertical.top,
+            cursorHeight: 20,
+            style: TextStyle(
+              fontSize: 14,
+              height: 1.4, // line height to improve multi-line spacing
+              color: MainCubit.get(context).isDark ? Colors.white : Colors.black87,
+            ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             decoration: InputDecoration(
               hintText: comment.parentId == null
                   ? isArabic()
-                  ? 'تعديل تعليقك'
-                  : "Edit your comment"
+                      ? 'تعديل تعليقك'
+                      : "Edit your comment"
                   : isArabic()
-                  ? 'تعديل ردك'
-                  : "Edit your reply",
+                      ? 'تعديل ردك'
+                      : "Edit your reply",
               border: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
+              contentPadding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
             ),
           ),
           const Divider(height: 16, thickness: 1, color: Color(0xFFF5F5F5)),

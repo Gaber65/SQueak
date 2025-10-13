@@ -20,9 +20,9 @@ Widget buildColumnSearchBody(
         MyTextForm(
           controller: cubit.searchController,
           onFieldSubmitted: (value) {
-            print("Searching for: $value");
+            // print("Searching for: $value");
             if (value.isNotEmpty) {
-              print("Searching for: $value");
+              // print("Searching for: $value");
               cubit
                   .getSearchList(); // Make sure this method filters results based on the input
             }

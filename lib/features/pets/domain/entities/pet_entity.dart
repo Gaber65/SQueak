@@ -13,6 +13,8 @@ class PetEntities {
   final String? qrCode;
   final String? qrCodeId;
   final BreedPetEntity? breed;
+  final int? mutualFriends;
+
   bool isSelected;
 
   PetEntities({
@@ -26,6 +28,7 @@ class PetEntities {
     this.birthdate,
     this.passportNumber,
     this.microShipNumber,
+    this.mutualFriends,
     this.qrCode,
     this.qrCodeId,
     this.passportImage,
@@ -41,6 +44,7 @@ class PetEntities {
       'isSpayed': isSpayed,
       'gender': gender,
       'specieId': specieId,
+      'mutualFriends': mutualFriends,
       'imageName': imageName,
       'birthdate': birthdate,
       'passportnumber': passportNumber,

@@ -14,6 +14,7 @@ class PetData extends PetEntities {
     super.breed,
     super.isSelected,
     super.passportImage,
+    super.mutualFriends,
     super.passportNumber,
     super.microShipNumber,
     super.qrCode,
@@ -24,6 +25,7 @@ class PetData extends PetEntities {
     return PetData(
       petId: json['id'],
       petName: json['petName'],
+      mutualFriends: json['mutualFriends'] ?? 0,
       breed: json["breed"] == null ? null : BreedModel.fromJson(json["breed"]),
 
       breedId: json['breedId'] ?? '',

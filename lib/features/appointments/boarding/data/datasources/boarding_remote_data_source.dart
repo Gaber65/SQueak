@@ -1,10 +1,10 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:squeak/features/appointments/boarding/domain/repositories/boarding_repository.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
-import '../../domain/usecases/share_image_usecase.dart';
 import '../models/boarding_entry_model.dart';
 import '../models/boarding_type_model.dart';
 

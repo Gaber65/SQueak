@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_protected_member
+// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
@@ -7,7 +7,6 @@ import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 import '../../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../domain/entities/boarding_status.dart';
-import '../../cubit/boarding_cubit.dart';
 
 Widget buildPetFilterBoarding(BuildContext context, List<PetEntities> pets) {
   return Padding(

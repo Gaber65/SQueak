@@ -61,6 +61,7 @@
   "DateOfRecord": "Data",
   "TimeOfRecord": "Time",
   "yourAppointments": "Appointments",
+  "allYourAppointments": "All Appointments",
   "AddServiceSupplier": "Add Service Supplier",
   "ServiceName": "Service Name",
   "ServicePhone": "Service Phone",

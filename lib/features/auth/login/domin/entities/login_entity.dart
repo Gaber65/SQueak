@@ -7,6 +7,8 @@ class LoginEntity {
   final String phone;
   final int role;
   final DateTime expiresIn;
+  final bool? loggedInBefore;
+ 
 
   const LoginEntity({
     required this.token,
@@ -17,5 +19,6 @@ class LoginEntity {
     required this.role,
     required this.refreshToken,
     required this.expiresIn,
+    this.loggedInBefore = false,
   });
 }

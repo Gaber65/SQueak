@@ -34,7 +34,7 @@ class DioFinalHelper {
   static Future<Response> getData({
     required String method,
     String? token,
-    required bool language,
+    bool language = false,
   }) async {
     await _ensureValidToken();
     dio.options.headers = {
@@ -114,7 +114,7 @@ String extractFirstErrorAuth(ErrorMessageModel error) {
         return firstValues.first;
       }
     }
-    return error.message ?? "Unknown error";
+    return error.message;
   } catch (_) {
     return "Unknown error";
   }

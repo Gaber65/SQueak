@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
 
@@ -14,7 +16,7 @@ void showCustomConfirmationDialog({
   required String imageUrl,
   required VoidCallback onConfirm,
 
-  ///TODO : Mohamed Elkerm -> make the title of the alert more reuse
+ 
 
   String titleOfAlertAR = 'تأكيد الحذف',
   String titleOfAlertEN = 'Delete Confirmation',

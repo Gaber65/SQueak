@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import 'package:squeak/core/monitoring/advanced_performance_monitor.dart';
+
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../models/appointment_model.dart';
 import '../models/availability_model.dart';
@@ -33,12 +33,10 @@ abstract class AppointmentRemoteDataSource {
 }
 
 class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
-  final AdvancedPerformanceMonitor _performanceMonitor =
-      AdvancedPerformanceMonitor();
+
 
   @override
   Future<List<AvailabilityModel>> getAvailabilities(String clinicCode) async {
-    final stopwatch = Stopwatch()..start();
 
     try {
       final response = await DioFinalHelper.getData(
@@ -46,12 +44,6 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
         language: true,
       );
 
-      stopwatch.stop();
-      _performanceMonitor.trackNetworkRequest(
-        'get_availabilities',
-        stopwatch.elapsedMilliseconds,
-        statusCode: response.statusCode,
-      );
 
       final List data = response.data['data'];
       return data
@@ -60,13 +52,7 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
           .toList()
           .cast<AvailabilityModel>();
     } on DioException catch (e) {
-      stopwatch.stop();
-      _performanceMonitor.trackNetworkRequest(
-        'get_availabilities',
-        stopwatch.elapsedMilliseconds,
-        statusCode: e.response?.statusCode,
-        error: e.message,
-      );
+
 
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
@@ -120,10 +106,10 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
           .map((e) => PetClinicModel.fromJson(e))
           .toList();
     } on DioException catch (e) {
-      print('***********error**********');
-      print('***********error**********');
+      // print('***********error**********');
+      // print('***********error**********');
 
-      print(e.response!.data);
+      // print(e.response!.data);
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

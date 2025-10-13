@@ -19,7 +19,7 @@ class FileCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<MainCubit, MainState>(
       listener: (context, state) {
-        // TODO: implement listener
+       
       },
       builder: (context, state) {
         var mainCubit = BlocProvider.of<MainCubit>(context);
@@ -31,6 +31,7 @@ class FileCardWidget extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
+              
               children: [
                 Icon(
                   Icons.attach_file_rounded,

@@ -64,7 +64,7 @@ class SettingCubit extends Cubit<SettingState> {
   void init(BuildContext context) async {
     profile = await loadProfile();
     nameController.text = profile!.fullName;
-    phoneController.text = profile!.phone;
+    phoneController.text = profile!.phone.startsWith('0')? profile!.phone : '0${profile!.phone}';
     addressController.text = profile!.address;
     emailController.text = profile!.email;
     imageController.text = profile!.imageName;
