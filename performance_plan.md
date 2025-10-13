@@ -12,11 +12,110 @@ Transform the app from good to excellent by reducing load times, minimizing memo
 ### Step A: Frontend Performance (App Size, Widgets, State Management, Navigation)
 
 #### A1. App Size Optimization
-- **Remove unused imports** across all Dart files
-- **Analyze and remove unused assets** from `assets/` folder
-- **Enable tree-shaking** in build configuration
-- **Compress images** in assets folder using tools like TinyPNG
-- **Remove debug code** and console logs from production builds
+
+##### Remove unused imports across all Dart files
+**What to do:**
+1. **Run Flutter analyzer** to detect unused imports:
+   ```bash
+   flutter analyze
+   ```
+2. **Use VS Code auto-fix** (Ctrl+Shift+P → "Organize Imports") on each file
+3. **Manual scan** for these common unused imports:
+   - `dart:developer` (used for debug logging)
+   - `package:flutter/foundation.dart` (if kDebugMode not used)
+   - Unused BLoC imports in presentation layers
+   - Unused model imports in widget files
+4. **Priority files to check first:**
+   - `lib/main.dart`
+   - All files in `lib/features/*/presentation/pages/`
+   - All files in `lib/features/*/presentation/widgets/`
+   - `lib/core/service/service_locator/service_locator.dart`
+
+##### Analyze and remove unused assets from assets folder
+**What to do:**
+1. **Create asset inventory script:**
+   ```bash
+   find assets/ -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.svg" \) > asset_list.txt
+   ```
+2. **Search for asset usage** in codebase:
+   ```bash
+   grep -r "assets/" lib/ --include="*.dart" | grep -v "pubspec.yaml"
+   ```
+3. **Check these specific assets for usage:**
+   - `assets/cat-with-gold.jpg` → Search for "cat-with-gold"
+   - `assets/paw_background.png` vs `assets/paw_background_modified.png` (remove duplicate)
+   - `assets/react/cat/` folder → Verify if React assets are needed in Flutter
+4. **Remove unused assets** and update `pubspec.yaml` accordingly
+
+##### Enable tree-shaking in build configuration
+**What to do:**
+1. **Update `android/app/build.gradle`** add these lines in `buildTypes.release`:
+   ```gradle
+   buildTypes {
+       release {
+           shrinkResources true
+           minifyEnabled true
+           proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+       }
+   }
+   ```
+2. **Update `pubspec.yaml`** to enable tree-shaking for fonts:
+   ```yaml
+   flutter:
+     fonts:
+       - family: NotoSans
+         fonts:
+           - asset: fonts/NotoSans-Regular.ttf
+         # Remove unused font weights
+   ```
+3. **Add to `analysis_options.yaml`:**
+   ```yaml
+   analyzer:
+     exclude:
+       - "**/*.g.dart"
+       - "**/*.freezed.dart"
+   ```
+
+##### Compress images in assets folder using tools
+**What to do:**
+1. **Install TinyPNG CLI** or use online tool for these specific files:
+   - `assets/Logo.png` → Target: <50KB
+   - `assets/squeaklogo.PNG` → Target: <30KB  
+   - `assets/paw_background_modified.png` → Target: <100KB
+   - `assets/vtl_logo.png` → Target: <20KB
+2. **Use ImageOptim/TinyPNG** to reduce file sizes by 60-80%
+3. **Convert PNG to WebP** where supported:
+   ```bash
+   cwebp assets/Logo.png -o assets/Logo.webp -q 80
+   ```
+4. **Update asset references** in code to use compressed versions
+
+##### Remove debug code and console logs from production builds
+**What to do:**
+1. **Search and remove** these patterns across all `.dart` files:
+   ```bash
+   grep -r "print(" lib/ --include="*.dart"
+   grep -r "debugPrint(" lib/ --include="*.dart"
+   grep -r "developer.log(" lib/ --include="*.dart"
+   ```
+2. **Replace with proper logging:**
+   - Replace `print()` → Remove or wrap in `kDebugMode`
+   - Replace `debugPrint()` → Remove or use Firebase Crashlytics
+3. **Specific files to clean:**
+   - `lib/core/network/dio.dart` → Remove API logging
+   - `lib/features/*/presentation/cubit/*_cubit.dart` → Remove state logging
+   - `lib/main.dart` → Remove initialization logs
+4. **Add conditional logging:**
+   ```dart
+   if (kDebugMode) {
+     print('Debug info');
+   }
+   ```
+
+**Expected Results:**
+- **Bundle size reduction:** 15-25% smaller APK/IPA
+- **Faster builds:** Reduced compilation time by 10-20%
+- **Cleaner code:** Improved maintainability and performance
 
 #### A2. Widget Performance
 - **Add `const` constructors** to all static widgets (buttons, icons, text)
