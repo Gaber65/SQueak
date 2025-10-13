@@ -425,6 +425,10 @@ class _ExaminationFilters extends StatelessWidget {
           ),
           Expanded(
             child: BlocBuilder<PetCubit, PetState>(
+              buildWhen: (previous, current) =>
+                  current is GetOwnerPetsSuccessState ||
+                  current is PetCreateSuccessState ||
+                  current is DeletePetSuccessState,
               builder: (context, state) {
                 final pets = PetCubit.get(context).pets;
                 return buildPetFilter(context, pets);
@@ -582,7 +586,7 @@ class _ExaminationListState extends State<_ExaminationList>
       addRepaintBoundaries: true,
       addSemanticIndexes: false,
       cacheExtent: 100.0, // Reduced for better memory usage
-      itemExtent: 260.0, // Increased fixed height to fit updated card height
+      itemExtent: 300.0, // Increased fixed height to fit updated card height
     );
   }
 
@@ -642,6 +646,10 @@ class _BoardingFilters extends StatelessWidget {
         children: [
           Expanded(
             child: BlocBuilder<PetCubit, PetState>(
+              buildWhen: (previous, current) =>
+                  current is GetOwnerPetsSuccessState ||
+                  current is PetCreateSuccessState ||
+                  current is DeletePetSuccessState,
               builder: (context, state) {
                 final pets = PetCubit.get(context).pets;
                 return buildPetFilterBoarding(context, pets);
