@@ -393,12 +393,25 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         border: Border(
-          top: BorderSide(color: _getBorderColor(_passwordValidation), width: 1.5),
-          left: BorderSide(color: _getBorderColor(_passwordValidation), width: 1.5),
-          right: BorderSide(color: _getBorderColor(_passwordValidation), width: 1.5),
-          bottom: (_passwordValidation?.isValid == true)
-              ? BorderSide.none
-              : BorderSide(color: _getBorderColor(_passwordValidation), width: 1.5),
+          top: BorderSide(
+            color: _getBorderColor(_passwordValidation),
+            width: 1.5,
+          ),
+          left: BorderSide(
+            color: _getBorderColor(_passwordValidation),
+            width: 1.5,
+          ),
+          right: BorderSide(
+            color: _getBorderColor(_passwordValidation),
+            width: 1.5,
+          ),
+          bottom:
+              (_passwordValidation?.isValid == true)
+                  ? BorderSide.none
+                  : BorderSide(
+                    color: _getBorderColor(_passwordValidation),
+                    width: 1.5,
+                  ),
         ),
       ),
       child: Column(
@@ -415,9 +428,10 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
               // Hide the inner filled background once the field is valid so it
               // doesn't create a rounded inner shape that expands the sides.
               filled: (_passwordValidation?.isValid == true) ? false : true,
-              fillColor: (_passwordValidation?.isValid == true)
-                  ? Colors.transparent
-                  : Theme.of(context).inputDecorationTheme.fillColor,
+              fillColor:
+                  (_passwordValidation?.isValid == true)
+                      ? Colors.transparent
+                      : Theme.of(context).inputDecorationTheme.fillColor,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 14,
@@ -426,10 +440,16 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (_passwordValidation?.isValid == true)
-                    Icon(Icons.check_circle, color: ColorManager.green, size: 20),
+                    Icon(
+                      Icons.check_circle,
+                      color: ColorManager.green,
+                      size: 20,
+                    ),
                   IconButton(
                     icon: Icon(
-                      _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                       color: Theme.of(context).colorScheme.outline,
                     ),
                     onPressed: _togglePasswordVisibility,
@@ -448,22 +468,23 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
           // Hide it when the field is valid (_passwordValidation?.isValid == true).
           AnimatedSwitcher(
             duration: getAnimationDuration(),
-            child: (_passwordValidation?.isValid == true)
-                ? const SizedBox.shrink()
-                : Padding(
-                    key: ValueKey('pwd_helper'),
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                    child: Text(
-                      isArabic()
-                          ? 'يجب أن تكون كلمة المرور 6 أحرف على الأقل'
-                          : 'Password must be at least 6 characters',
-                      style: FontStyleThame.textStyle(
-                        context: context,
-                        fontSize: 12,
-                        fontColor: ColorManager.red,
+            child:
+                (_passwordValidation?.isValid == true)
+                    ? const SizedBox.shrink()
+                    : Padding(
+                      key: ValueKey('pwd_helper'),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                      child: Text(
+                        isArabic()
+                            ? 'يجب أن تكون كلمة المرور 6 أحرف على الأقل'
+                            : 'Password must be at least 6 characters',
+                        style: FontStyleThame.textStyle(
+                          context: context,
+                          fontSize: 12,
+                          fontColor: ColorManager.red,
+                        ),
                       ),
                     ),
-                  ),
           ),
         ],
       ),
