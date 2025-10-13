@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen>
   void _closeProfileList() {
     // Close the local controller
     controller.closeDropdown();
-    
+
     // Also try to close the service locator instance if it exists
     try {
       final globalController = sl<ProfileSwitcherController>();
@@ -119,6 +119,7 @@ class _PetTipBanner extends StatefulWidget {
 
 class _PetTipBannerState extends State<_PetTipBanner> {
   static bool _isDismissed = false;
+  late final Future<List<PetTip>> _tipsFuture;
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +128,8 @@ class _PetTipBannerState extends State<_PetTipBanner> {
     }
 
     return FutureBuilder<List<PetTip>>(
-      future: const PetTipsRepository().loadTips(),
+      // future: const PetTipsRepository().loadTips(),
+      future: _tipsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const SizedBox(height: 0);
@@ -151,6 +153,12 @@ class _PetTipBannerState extends State<_PetTipBanner> {
       },
     );
   }
+
+  @override
+  void initState() {
+    super.initState();
+    _tipsFuture = const PetTipsRepository().loadTips();
+  }
 }
 
 class _ActivePetSummary extends StatelessWidget {
@@ -162,7 +170,8 @@ class _ActivePetSummary extends StatelessWidget {
     return VcCard(
       onTap: () {
         try {
-          ProfileSwitcherController? controller = sl<ProfileSwitcherController>();
+          ProfileSwitcherController? controller =
+              sl<ProfileSwitcherController>();
           controller.closeDropdown();
         } catch (e) {
           // Controller might not be registered
