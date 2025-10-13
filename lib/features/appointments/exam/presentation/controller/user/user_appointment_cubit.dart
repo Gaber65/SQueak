@@ -203,4 +203,11 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
       ),
     );
   }
+
+  @override
+  Future<void> close() {
+    // Dispose controllers to avoid leaks
+    rateController.dispose();
+    return super.close();
+  }
 }

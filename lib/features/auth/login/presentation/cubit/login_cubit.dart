@@ -162,4 +162,12 @@ class LoginCubit extends Cubit<LoginState> {
     emailController.clear();
     passwordController.clear();
   }
+
+  @override
+  Future<void> close() {
+    // Dispose controllers when cubit is closed to avoid memory leaks
+    emailController.dispose();
+    passwordController.dispose();
+    return super.close();
+  }
 }

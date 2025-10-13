@@ -396,6 +396,10 @@ class PetCubit extends Cubit<PetState> {
     birthdateController.dispose();
     petNameController.dispose();
     imageNameController.dispose();
+    // Dispose additional controllers that were missing
+    passportNumberController.dispose();
+    microchipNumberController.dispose();
+    passportImageNameController.dispose();
     return super.close();
   }
 

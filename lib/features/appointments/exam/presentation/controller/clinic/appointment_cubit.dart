@@ -193,4 +193,14 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     isNoSelect = error;
     emit(NoSelectState());
   }
+
+  @override
+  Future<void> close() {
+    // Dispose controllers to prevent memory/resource leaks
+    commentController.dispose();
+    dateController.dispose();
+    time.dispose();
+    searchController.dispose();
+    return super.close();
+  }
 }

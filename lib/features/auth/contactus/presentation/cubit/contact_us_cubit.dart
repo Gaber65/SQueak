@@ -65,4 +65,15 @@ class ContactUsCubit extends Cubit<ContactUsState> {
     commentController.clear();
     emailController.clear();
   }
+
+  @override
+  Future<void> close() {
+    // Dispose controllers to free resources
+    emailController.dispose();
+    phoneController.dispose();
+    commentController.dispose();
+    titleController.dispose();
+    nameController.dispose();
+    return super.close();
+  }
 }

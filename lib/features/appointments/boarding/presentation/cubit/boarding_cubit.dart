@@ -175,6 +175,7 @@ class BoardingCubit extends Cubit<BoardingState> {
   @override
   Future<void> close() {
     rateController.dispose();
+    
     return super.close();
   }
 }

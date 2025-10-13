@@ -140,4 +140,16 @@ class SettingCubit extends Cubit<SettingState> {
       },
     );
   }
+
+  @override
+  Future<void> close() {
+    // Dispose all controllers to prevent memory leaks
+    nameController.dispose();
+    phoneController.dispose();
+    emailController.dispose();
+    addressController.dispose();
+    imageController.dispose();
+    birthDateController.dispose();
+    return super.close();
+  }
 }
