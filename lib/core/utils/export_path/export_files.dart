@@ -50,9 +50,6 @@ export 'package:squeak/core/service/main_service/presentation/widgets/deep_link_
 export 'package:squeak/core/service/main_service/presentation/widgets/init_functions.dart';
 export 'package:squeak/core/service/main_service/presentation/widgets/route_generator.dart';
 
-// observer
-export 'package:squeak/core/service/observer/observe.dart';
-
 // refresh_token_manger
 export  'package:squeak/core/service/refresh_token_manger/token_manager.dart';
 
