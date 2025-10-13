@@ -748,7 +748,7 @@ class _PetScreenContentState extends State<PetScreenContent> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isArabic() ? "لوحة معلومات الحيوانات الأليفة" : "Pet Dashboard",
+                      isArabic() ? "لوحة معلومات أصدقائك الأليفة" : "Pet Dashboard",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -776,7 +776,7 @@ class _PetScreenContentState extends State<PetScreenContent> {
               Expanded(
                 child: _buildStatCard(
                   totalPets.toString(),
-                  isArabic() ? "إجمالي الحيوانات" : "Total Pets",
+                  isArabic() ? "إجمالي الأصدقاء الأليفة" : "Total Pets",
                   Icons.pets_outlined,
                   Colors.blue,
                 ),

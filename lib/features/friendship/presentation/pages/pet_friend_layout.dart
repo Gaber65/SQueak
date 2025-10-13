@@ -174,6 +174,12 @@ class FriendsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final arabic = isArabic();
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    
+    // Responsive sizing based on screen height
+    final isSmallScreen = screenHeight < 700;
+    final isTinyScreen = screenHeight < 600;
     
     // Define colors based on theme
     final backgroundColor = isDark ? const Color(0xFF121212) : Colors.white;
@@ -183,6 +189,27 @@ class FriendsScreen extends StatelessWidget {
     final circleBackground = isDark ? const Color(0xFF2C2C2C) : Colors.amber.shade50;
     final pawPrintColor = isDark ? const Color(0xFF3D3D3D) : Colors.amber.shade200;
     
+    // Responsive measurements
+    final pawSize1 = isTinyScreen ? 20.0 : (isSmallScreen ? 25.0 : 30.0);
+    final pawSize2 = isTinyScreen ? 28.0 : (isSmallScreen ? 35.0 : 40.0);
+    final pawSpacing = isTinyScreen ? 12.0 : (isSmallScreen ? 16.0 : 20.0);
+    
+    final circleSize = isTinyScreen ? 120.0 : (isSmallScreen ? 150.0 : 200.0);
+    final iconSize = isTinyScreen ? 60.0 : (isSmallScreen ? 75.0 : 100.0);
+    
+    final titleSize = isTinyScreen ? 24.0 : (isSmallScreen ? 28.0 : 32.0);
+    final badgeTextSize = isTinyScreen ? 11.0 : (isSmallScreen ? 12.0 : 14.0);
+    final descriptionSize = isTinyScreen ? 13.0 : (isSmallScreen ? 14.0 : 16.0);
+    final featureTextSize = isTinyScreen ? 13.0 : (isSmallScreen ? 14.0 : 16.0);
+    final buttonTextSize = isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0);
+    
+    final verticalSpacing1 = isTinyScreen ? 16.0 : (isSmallScreen ? 24.0 : 40.0);
+    final verticalSpacing2 = isTinyScreen ? 8.0 : (isSmallScreen ? 10.0 : 12.0);
+    final verticalSpacing3 = isTinyScreen ? 12.0 : (isSmallScreen ? 16.0 : 24.0);
+    final featureSpacing = isTinyScreen ? 8.0 : (isSmallScreen ? 12.0 : 16.0);
+    
+    final horizontalPadding = screenWidth < 360 ? 16.0 : 24.0;
+    
     return Directionality(
       textDirection: arabic ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
@@ -190,14 +217,21 @@ class FriendsScreen extends StatelessWidget {
           centerTitle: true,
           title: Text(
             arabic ? 'الأصدقاء والطلبات' : 'Friends & Requests',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: isTinyScreen ? 18 : 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         backgroundColor: backgroundColor,
         body: SafeArea(
-          child: Center(
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: isTinyScreen ? 16.0 : 24.0,
+              ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -205,20 +239,20 @@ class FriendsScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildPawPrint(size: 30, rotation: -0.3, color: pawPrintColor),
-                      const SizedBox(width: 20),
-                      _buildPawPrint(size: 40, rotation: 0.2, color: pawPrintColor),
-                      const SizedBox(width: 20),
-                      _buildPawPrint(size: 30, rotation: -0.1, color: pawPrintColor),
+                      _buildPawPrint(size: pawSize1, rotation: -0.3, color: pawPrintColor),
+                      SizedBox(width: pawSpacing),
+                      _buildPawPrint(size: pawSize2, rotation: 0.2, color: pawPrintColor),
+                      SizedBox(width: pawSpacing),
+                      _buildPawPrint(size: pawSize1, rotation: -0.1, color: pawPrintColor),
                     ],
                   ),
 
-                  const SizedBox(height: 40),
+                  SizedBox(height: verticalSpacing1),
 
                   // Main illustration
                   Container(
-                    width: 200,
-                    height: 200,
+                    width: circleSize,
+                    height: circleSize,
                     decoration: BoxDecoration(
                       color: circleBackground,
                       shape: BoxShape.circle,
@@ -226,31 +260,31 @@ class FriendsScreen extends StatelessWidget {
                     child: Center(
                       child: Icon(
                         Icons.pets,
-                        size: 100,
+                        size: iconSize,
                         color: primaryColor,
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 40),
+                  SizedBox(height: verticalSpacing1),
 
                   // Title
                   Text(
                     arabic ? 'الأصدقاء' : 'Friends Feature',
                     style: TextStyle(
-                      fontSize: 32,
+                      fontSize: titleSize,
                       fontWeight: FontWeight.bold,
                       color: textColor,
                     ),
                   ),
 
-                  const SizedBox(height: 12),
+                  SizedBox(height: verticalSpacing2),
 
                   // Coming Soon badge
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 8,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isTinyScreen ? 16 : 20,
+                      vertical: isTinyScreen ? 6 : 8,
                     ),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -262,8 +296,8 @@ class FriendsScreen extends StatelessWidget {
                     ),
                     child: Text(
                       arabic ? 'قريبًا' : 'COMING SOON',
-                      style: const TextStyle(
-                        fontSize: 14,
+                      style: TextStyle(
+                        fontSize: badgeTextSize,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         letterSpacing: 1.2,
@@ -271,25 +305,27 @@ class FriendsScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 24),
+                  SizedBox(height: verticalSpacing3),
 
                   // Description
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth < 360 ? 8.0 : 16.0,
+                    ),
                     child: Text(
                       arabic
-                          ? 'تواصل مع أصحاب الحيوانات الأليفة، وشارك لحظاتك اللطيفة، وابنِ مجتمعًا من محبي الصغار الأليفة!'
+                          ? 'تواصل مع أصحاب الصغار الأليفة، وشارك لحظاتك اللطيفة، وابنِ مجتمعًا من محبي الصغار الأليفة!'
                           : 'Connect with fellow pet parents, share adorable moments, and build a community of pet lovers!',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: descriptionSize,
                         color: subtitleColor,
                         height: 1.5,
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 40),
+                  SizedBox(height: verticalSpacing1),
 
                   // Features preview
                   _buildFeatureItem(
@@ -297,23 +333,29 @@ class FriendsScreen extends StatelessWidget {
                     text: arabic ? 'تواصل مع أصحاب الصغار الأليفة' : 'Connect with pet owners',
                     color: isDark ? const Color(0xFF64B5F6) : Colors.blue.shade400,
                     isDark: isDark,
+                    isSmallScreen: isTinyScreen,
+                    fontSize: featureTextSize,
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: featureSpacing),
                   _buildFeatureItem(
                     icon: Icons.photo_library_outlined,
                     text: arabic ? 'شارك صور وقصص الصغار ' : 'Share pet photos & stories',
                     color: isDark ? const Color(0xFFF06292) : Colors.pink.shade400,
                     isDark: isDark,
+                    isSmallScreen: isTinyScreen,
+                    fontSize: featureTextSize,
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: featureSpacing),
                   _buildFeatureItem(
                     icon: Icons.chat_bubble_outline,
                     text: arabic ? 'الدردشة وتبادل النصائح' : 'Chat and exchange tips',
                     color: isDark ? const Color(0xFF81C784) : Colors.green.shade400,
                     isDark: isDark,
+                    isSmallScreen: isTinyScreen,
+                    fontSize: featureTextSize,
                   ),
 
-                  const SizedBox(height: 40),
+                  SizedBox(height: verticalSpacing1),
 
                   // Notify button
                   ElevatedButton(
@@ -334,9 +376,9 @@ class FriendsScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryColor,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 40,
-                        vertical: 16,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isTinyScreen ? 32 : 40,
+                        vertical: isTinyScreen ? 12 : 16,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -347,29 +389,37 @@ class FriendsScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: arabic
                           ? [
-                              const Text(
+                              Text(
                                 'أعلمني',
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: buttonTextSize,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              const Icon(Icons.notifications_outlined),
+                              Icon(
+                                Icons.notifications_outlined,
+                                size: isTinyScreen ? 18 : 20,
+                              ),
                             ]
-                          : const [
-                              Icon(Icons.notifications_outlined),
-                              SizedBox(width: 8),
+                          : [
+                              Icon(
+                                Icons.notifications_outlined,
+                                size: isTinyScreen ? 18 : 20,
+                              ),
+                              const SizedBox(width: 8),
                               Text(
                                 'Notify Me',
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: buttonTextSize,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
                     ),
                   ),
+                  
+                  SizedBox(height: isTinyScreen ? 16.0 : 24.0),
                 ],
               ),
             ),
@@ -395,11 +445,16 @@ class FriendsScreen extends StatelessWidget {
     required String text,
     required Color color,
     required bool isDark,
+    required bool isSmallScreen,
+    required double fontSize,
   }) {
     final textColor = isDark ? Colors.grey.shade300 : Colors.grey.shade700;
+    final iconSize = isSmallScreen ? 20.0 : 24.0;
+    final padding = isSmallScreen ? 12.0 : 16.0;
+    final iconPadding = isSmallScreen ? 6.0 : 8.0;
     
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: color.withOpacity(isDark ? 0.15 : 0.1),
         borderRadius: BorderRadius.circular(16),
@@ -411,19 +466,19 @@ class FriendsScreen extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(iconPadding),
             decoration: BoxDecoration(
               color: color.withOpacity(isDark ? 0.25 : 0.2),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: color, size: iconSize),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: isSmallScreen ? 12 : 16),
           Expanded(
             child: Text(
               text,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: fontSize,
                 color: textColor,
                 fontWeight: FontWeight.w500,
               ),

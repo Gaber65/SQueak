@@ -186,7 +186,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
         // print("DEBUG: No matching pet found for ID: ${widget.petId}");
         errorToast(
           context,
-          isArabic() ? 'لم يتم العثور على الحيوانات الأليفة' : 'No pets found',
+          isArabic() ? 'لم يتم العثور على الصغار الأليفة' : 'No pets found',
         );
         if (mounted) setState(() => isCreatingAppointment = false);
         return;
