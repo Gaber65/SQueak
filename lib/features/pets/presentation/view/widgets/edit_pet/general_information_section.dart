@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../controller/pet_cubit.dart';
+import '../add_pet/pet_name_field.dart';
 
 class GeneralInformationSection extends StatelessWidget {
   const GeneralInformationSection({
@@ -57,23 +58,7 @@ class GeneralInformationSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        Text(
-          S.of(context).petName,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: isDark ? Colors.white : Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 8),
-        MyTextForm(
-          controller: cubit.petNameController,
-          prefixIcon: Icon(Icons.pets, size: 20),
-          enable: false,
-          hintText: S.of(context).enterPetName,
-          validatorText: S.of(context).enterPetNameValidation,
-          obscureText: false,
-        ),
+        PetNameField(cubit: cubit, isDark: isDark),
       ],
     );
   }
