@@ -36,6 +36,28 @@ class AddPetScreen extends StatelessWidget {
             errorToast(context, state.message);
           }
         },
+        // ✅ Only rebuild when necessary states change
+        buildWhen: (previous, current) {
+          // Rebuild for loading, success, error states
+          if (current is PetCreateLoadingState ||
+              current is PetCreateSuccessState ||
+              current is PetCreateErrorState) {
+            return true;
+          }
+          // Rebuild for breeds/species data changes
+          if (current is GetAllBreedsSuccessState ||
+              current is GetAllSpeciesSuccessState ||
+              current is PetFormState) {
+            return true;
+          }
+          // Rebuild for image picker states
+          if (current is PetImagePickedSuccessState ||
+              current is PetImagePickedErrorState) {
+            return true;
+          }
+          // Don't rebuild for other states (like form field changes)
+          return false;
+        },
         builder: (context, state) {
           final cubit = PetCubit.get(context);
           final isDark = MainCubit.get(context).isDark;

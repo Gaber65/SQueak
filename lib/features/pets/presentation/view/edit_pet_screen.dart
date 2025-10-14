@@ -50,6 +50,28 @@ class EditPet extends StatelessWidget {
             errorToast(context, state.message);
           }
         },
+        // ✅ Only rebuild when necessary for edit screen
+        buildWhen: (previous, current) {
+          // Rebuild for loading, success, error states
+          if (current is PetCreateLoadingState ||
+              current is PetCreateSuccessState ||
+              current is PetCreateErrorState) {
+            return true;
+          }
+          // Rebuild for data loading states
+          if (current is GetAllSpeciesSuccessState ||
+              current is GetAllBreedsSuccessState ||
+              current is PetFormState) {
+            return true;
+          }
+          // Rebuild for image picker states
+          if (current is PetImagePickedSuccessState ||
+              current is PetImagePickedErrorState) {
+            return true;
+          }
+          // Don't rebuild for individual form field changes
+          return false;
+        },
         builder: (context, state) {
           final cubit = PetCubit.get(context);
           final isDark = Theme.of(context).brightness == Brightness.dark;

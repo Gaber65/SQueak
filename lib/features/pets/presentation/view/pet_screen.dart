@@ -42,6 +42,15 @@ class PetScreen extends StatelessWidget {
                 );
               }
             },
+            // ✅ Only rebuild when pets list actually changes
+            buildWhen: (previous, current) {
+              return current is GetOwnerPetsLoadingState ||
+                  current is GetOwnerPetsSuccessState ||
+                  current is GetOwnerPetsErrorState ||
+                  current is PetCreateSuccessState ||
+                  current is DeletePetSuccessState ||
+                  current is MergePetsSuccessState;
+            },
             builder: (context, state) {
               final cubit = PetCubit.get(context);
               final qrCubit = QrCubit.get(context);
