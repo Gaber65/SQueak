@@ -37,7 +37,7 @@ class ProfileImageSection extends StatelessWidget {
                       ? Image.network(
                         (cubit.imageNameController.text.isEmpty)
                             ? AssetImageModel.defaultPetImage
-                            : imageUrl + (pets.imageName ?? ''), // 👈 fallback
+                            : imageUrl + (pets.imageName ?? ''),
                         fit: BoxFit.cover,
                         errorBuilder:
                             (_, __, ___) => Image.asset(

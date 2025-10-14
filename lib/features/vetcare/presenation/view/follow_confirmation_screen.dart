@@ -108,15 +108,18 @@ class ConfirmationScreen extends StatelessWidget {
           padding: EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(imageUrl + clinicLogo),
-                onBackgroundImageError: (_, __) => Container(),
-                child:
-                    clinicLogo.isEmpty
-                        ? Icon(Icons.local_hospital, size: 50)
-                        : null,
+              Center(
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: NetworkImage(imageUrl + clinicLogo),
+                  onBackgroundImageError: (_, __) => Container(),
+                  child:
+                      clinicLogo.isEmpty
+                          ? Icon(Icons.local_hospital, size: 50)
+                          : null,
+                ),
               ),
               SizedBox(height: 16),
               Text(
