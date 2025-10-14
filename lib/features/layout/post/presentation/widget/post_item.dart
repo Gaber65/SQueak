@@ -70,29 +70,42 @@ class BuildPostItem extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // Post image
+            // Post image (cached)
             if (postItem.image != null && postItem.image!.isNotEmpty)
               InkWell(
                 onTap: () {
                   navigateToScreen(
                     context,
                     ImageDetailSimple(
-                      path:
-                       imageUrl + postItem.image!,
-                      title:
-                      postItem.title,
+                      path: imageUrl + postItem.image!,
+                      title: postItem.title,
                       description: postItem.content,
                     ),
                   );
                 },
-                child: Container(
-                  height: 250,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    image: DecorationImage(
-                      image: NetworkImage(imageUrl + postItem.image!),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: SizedBox(
+                    height: 250,
+                    width: double.infinity,
+                    child: FastCachedImage(
+                      url: imageUrl + postItem.image!,
                       fit: BoxFit.cover,
+                      fadeInDuration: const Duration(milliseconds: 200),
+                      loadingBuilder: (context, progress) {
+                        return Container(
+                          height: 250,
+                          color: Colors.grey[300],
+                          child: const Center(child: CircularProgressIndicator()),
+                        );
+                      },
+                      errorBuilder: (context, exception, stacktrace) {
+                        return Container(
+                          height: 250,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.broken_image, size: 50),
+                        );
+                      },
                     ),
                   ),
                 ),
