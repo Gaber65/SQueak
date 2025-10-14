@@ -131,7 +131,7 @@ class AllAppointment extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => sl<UserAppointmentCubit>(),
+          create: (context) => sl<UserAppointmentCubit>()..fetchSuppliers(),
         ),
         BlocProvider(
           lazy: true,
@@ -139,7 +139,7 @@ class AllAppointment extends StatelessWidget {
         ),
         BlocProvider(
           lazy: true,
-          create: (context) => sl<PetCubit>(),
+          create: (context) => sl<PetCubit>()..getOwnerPets(),
         ),
       ],
       child: _AllAppointmentContent(services: _getServiceNames(context)),

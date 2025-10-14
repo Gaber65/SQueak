@@ -346,9 +346,9 @@ class AccessibilityConfig {
   static const Size minimumTouchTarget = Size(48.0, 48.0);
   static const double minimumFontSize = 14.0;
   static const double largeFontSize = 18.0;
-  
-  static const EdgeInsets minimumPadding = EdgeInsets.all(8.0);
-  static const EdgeInsets largePadding = EdgeInsets.all(16.0);
+
+  static const EdgeInsets minimumPadding =  EdgeInsets.all(8.0);
+  static const EdgeInsets largePadding =  EdgeInsets.all(16.0);
 }
 
 /// Mixin for widgets that need accessibility support
