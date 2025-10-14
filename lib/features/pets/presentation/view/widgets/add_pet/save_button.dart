@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member, use_build_context_synchronously
+// ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member, use_build_context_synchronously, deprecated_member_use_from_same_package
 
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';

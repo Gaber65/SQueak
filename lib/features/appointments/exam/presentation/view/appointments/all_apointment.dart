@@ -18,32 +18,27 @@ import 'get_user_appointment.dart';
 // Performance constants
 class _AppointmentConstants {
   static const int pageSize = 5; // Reduced for faster initial load
-  static const double scrollThreshold =
-      100.0; // Reduced for more responsive loading
+  static const double scrollThreshold = 100.0; // Reduced for responsive load
   static const int maxVisibleItems = 15; // Limit visible items
   static const Duration debounceDelay = Duration(milliseconds: 300);
 }
 
-// Caching utility for expensive operations
+// Simple in-memory cache for small computed values
 class _AppointmentCache {
   static final Map<String, dynamic> _cache = {};
   static const int _maxCacheSize = 50;
 
-  static T? get<T>(String key) {
-    return _cache[key] as T?;
-  }
+  static T? get<T>(String key) => _cache[key] as T?;
 
   static void set<T>(String key, T value) {
-    if (_cache.length >= _maxCacheSize) {
-      _cache.remove(_cache.keys.first);
-    }
+    if (_cache.length >= _maxCacheSize) _cache.remove(_cache.keys.first);
     _cache[key] = value;
   }
 }
 
-// Enhanced pagination mixin with virtual scrolling and performance optimizations
+// Pagination mixin with debounce and light-weight virtual loading
 mixin PaginationMixin<T extends StatefulWidget> on State<T> {
-  late ScrollController _scrollController;
+  late final ScrollController _scrollController;
   int _currentPage = 1;
   bool _isLoadingMore = false;
   Timer? _debounceTimer;
@@ -78,41 +73,34 @@ mixin PaginationMixin<T extends StatefulWidget> on State<T> {
   void _loadMore() {
     if (!_isLoadingMore &&
         _currentPage * _AppointmentConstants.pageSize < _getTotalItems()) {
-      setState(() {
-        _isLoadingMore = true;
-        _currentPage++;
-      });
+      if (mounted) setState(() => _isLoadingMore = true);
+      _currentPage++;
       loadMoreData();
     }
   }
 
   void resetPagination() {
     _debounceTimer?.cancel();
-    setState(() {
-      _currentPage = 1;
-      _isLoadingMore = false;
-      _loadedItems.clear();
-    });
-  }
-
-  void setLoadingMore(bool loading) {
     if (mounted) {
       setState(() {
-        _isLoadingMore = loading;
+        _currentPage = 1;
+        _isLoadingMore = false;
+        _loadedItems.clear();
       });
     }
   }
 
-  bool isItemLoaded(int index) {
-    return _loadedItems.contains(index);
+  void setLoadingMore(bool loading) {
+    if (mounted) setState(() => _isLoadingMore = loading);
   }
 
-  void markItemAsLoaded(int index) {
-    _loadedItems.add(index);
-  }
+  bool isItemLoaded(int index) => _loadedItems.contains(index);
 
-  // Override these methods in implementing classes
+  void markItemAsLoaded(int index) => _loadedItems.add(index);
+
+  // Implement these in subclasses
   void loadMoreData();
+
   int _getTotalItems();
 }
 
@@ -128,18 +116,12 @@ class AllAppointment extends StatelessWidget {
     final isAr = MainCubit.get(context).language == 'ar';
     final cacheKey = 'service_names_${isAr ? 'ar' : 'en'}';
 
-    // Check cache first
-    final cachedNames = _AppointmentCache.get<List<String>>(cacheKey);
-    if (cachedNames != null) {
-      return cachedNames;
-    }
+    final cached = _AppointmentCache.get<List<String>>(cacheKey);
+    if (cached != null) return cached;
 
-    // Generate and cache the result
-    final names =
-        _services
-            .map((service) => isAr ? service['ar']! : service['en']!)
-            .toList();
-
+    final names = _services
+        .map((service) => isAr ? service['ar']! : service['en']!)
+        .toList();
     _AppointmentCache.set(cacheKey, names);
     return names;
   }
@@ -149,12 +131,15 @@ class AllAppointment extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => sl<UserAppointmentCubit>()..fetchSuppliers(),
+          create: (context) => sl<UserAppointmentCubit>(),
         ),
-        BlocProvider(create: (context) => sl<BoardingCubit>()),
         BlocProvider(
           lazy: true,
-          create: (context) => sl<PetCubit>()..getOwnerPets(),
+          create: (context) => sl<BoardingCubit>(),
+        ),
+        BlocProvider(
+          lazy: true,
+          create: (context) => sl<PetCubit>(),
         ),
       ],
       child: _AllAppointmentContent(services: _getServiceNames(context)),
@@ -173,7 +158,7 @@ class _AllAppointmentContent extends StatefulWidget {
 
 class _AllAppointmentContentState extends State<_AllAppointmentContent>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  late TabController _tabController;
+  late final TabController _tabController;
   bool _examinationDataLoaded = false;
   bool _boardingDataLoaded = false;
   Timer? _backgroundRefreshTimer;
@@ -187,7 +172,6 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_onTabChanged);
 
-    // Load examination data initially since it's the first tab
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && !_examinationDataLoaded) {
         _loadExaminationDataInBackground();
@@ -195,41 +179,28 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
       }
     });
 
-    // Set up background refresh timer
     _setupBackgroundRefresh();
   }
 
   void _setupBackgroundRefresh() {
-    _backgroundRefreshTimer = Timer.periodic(
-      const Duration(minutes: 5), // Refresh every 5 minutes
-      (timer) {
-        if (mounted) {
-          _refreshDataInBackground();
-        }
-      },
-    );
+    _backgroundRefreshTimer = Timer.periodic(const Duration(minutes: 5), (_) {
+      if (mounted) _refreshDataInBackground();
+    });
   }
 
   void _loadExaminationDataInBackground() {
-    // Load data without blocking UI
     Future.microtask(() {
-      if (mounted) {
-        context.read<UserAppointmentCubit>().getAppointment(true);
-      }
+      if (mounted) context.read<UserAppointmentCubit>().getAppointment(true);
     });
   }
 
   void _refreshDataInBackground() {
-    // Refresh data in background without showing loading states
     Future.microtask(() {
-      if (mounted) {
-        final examinationCubit = context.read<UserAppointmentCubit>();
-        final boardingCubit = context.read<BoardingCubit>();
-
-        // Silent refresh - don't emit loading states
-        examinationCubit.getAppointment(false);
-        boardingCubit.getBoardingEntries(false);
-      }
+      if (!mounted) return;
+      final exam = context.read<UserAppointmentCubit>();
+      final boarding = context.read<BoardingCubit>();
+      exam.getAppointment(false);
+      boarding.getBoardingEntries(false);
     });
   }
 
@@ -239,9 +210,7 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
       _examinationDataLoaded = true;
     } else if (_tabController.index == 1 && !_boardingDataLoaded) {
       Future.microtask(() {
-        if (mounted) {
-          context.read<BoardingCubit>().getBoardingEntries(true);
-        }
+        if (mounted) context.read<BoardingCubit>().getBoardingEntries(true);
       });
       _boardingDataLoaded = true;
     }
@@ -257,36 +226,28 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // Required for AutomaticKeepAliveClientMixin
+    super.build(context);
     return MultiBlocListener(
       listeners: [
         BlocListener<UserAppointmentCubit, UserAppointmentState>(
-          listenWhen:
-              (previous, current) =>
-                  current is DeleteAppointmentSuccess ||
-                  current is EditAppointment,
+          listenWhen: (previous, current) =>
+              current is DeleteAppointmentSuccess || current is EditAppointment,
           listener: (context, state) {
             if (state is DeleteAppointmentSuccess) {
               UserAppointmentCubit.get(context).getAppointment(false);
             }
             if (state is EditAppointment) {
-              UserAppointmentCubit.get(
-                context,
-              ).deleteAppointments(state.model.id);
+              UserAppointmentCubit.get(context).deleteAppointments(state.model.id);
             }
           },
         ),
         BlocListener<BoardingCubit, BoardingState>(
-          listenWhen: (previous, current) => false, // Disabled for now
-          listener: (context, state) {
-            // Add boarding-specific listeners here if needed
-          },
+          listenWhen: (previous, current) => false,
+          listener: (context, state) {},
         ),
         BlocListener<PetCubit, PetState>(
-          listenWhen: (previous, current) => false, // Disabled for now
-          listener: (context, state) {
-            // Add pet-specific listeners here if needed
-          },
+          listenWhen: (previous, current) => false,
+          listener: (context, state) {},
         ),
       ],
       child: DefaultTabController(
@@ -295,7 +256,10 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
           appBar: _buildAppBar(context),
           body: TabBarView(
             controller: _tabController,
-            children: [const _ExaminationTab(), const _BoardingTab()],
+            children: const [
+              _ExaminationTab(),
+              _BoardingTab(),
+            ],
           ),
         ),
       ),
@@ -332,10 +296,9 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
         child: Container(
           height: 50,
           decoration: BoxDecoration(
-            color:
-                MainCubit.get(context).isDark
-                    ? Colors.black26
-                    : Colors.grey.shade200,
+            color: MainCubit.get(context).isDark
+                ? Colors.black26
+                : Colors.grey.shade200,
             borderRadius: BorderRadius.circular(10),
           ),
           child: TabBar(
@@ -364,7 +327,6 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
   }
 }
 
-// Separate Examination Tab Widget with performance optimizations
 class _ExaminationTab extends StatelessWidget {
   const _ExaminationTab();
 
@@ -373,39 +335,37 @@ class _ExaminationTab extends StatelessWidget {
     return BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
       builder: (context, state) {
         final cubit = UserAppointmentCubit.get(context);
-        // Show loading indicator for initial load
         if (state is GetAppointmentLoading && cubit.appointments.isEmpty) {
-          return LoadingWidget(
+          return const LoadingWidget(
             enMessage: 'Loading appointments...',
             arMessage: 'جارٍ تحميل المواعيد...',
           );
-        } else {
-          return Scaffold(
-            body: Column(
-              children: [
-                const SizedBox(height: 10),
-                const _ExaminationFilters(),
-                Expanded(child: _ExaminationList(cubit: cubit, state: state)),
-              ],
-            ),
-            floatingActionButton: FloatingActionButton(
-              backgroundColor: ColorManager.primaryColor,
-              onPressed: () {
-                navigateToScreen(
-                  context,
-                  MySupplierScreen(petSelectFromIcon: null),
-                );
-              },
-              child: const Icon(IconlyLight.calendar, color: Colors.white),
-            ),
-          );
         }
+
+        return Scaffold(
+          body: Column(
+            children: const [
+              SizedBox(height: 10),
+              _ExaminationFilters(),
+              Expanded(child: _ExaminationListPlaceholder()),
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: ColorManager.primaryColor,
+            onPressed: () {
+              navigateToScreen(
+                context,
+                MySupplierScreen(petSelectFromIcon: null),
+              );
+            },
+            child: const Icon(IconlyLight.calendar, color: Colors.white),
+          ),
+        );
       },
     );
   }
 }
 
-// Separate Examination Filters Widget with performance optimizations
 class _ExaminationFilters extends StatelessWidget {
   const _ExaminationFilters();
 
@@ -416,10 +376,8 @@ class _ExaminationFilters extends StatelessWidget {
         children: [
           Expanded(
             child: BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
-              buildWhen:
-                  (previous, current) =>
-                      current is AppointmentFiltered ||
-                      current is GetAppointmentSuccess,
+              buildWhen: (previous, current) =>
+                  current is AppointmentFiltered || current is GetAppointmentSuccess,
               builder: (context, state) => buildStateFilter(context),
             ),
           ),
@@ -436,17 +394,14 @@ class _ExaminationFilters extends StatelessWidget {
             ),
           ),
           BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
-            buildWhen:
-                (previous, current) =>
-                    current is AppointmentFiltered ||
-                    current is GetAppointmentSuccess,
+            buildWhen: (previous, current) =>
+                current is AppointmentFiltered || current is GetAppointmentSuccess,
             builder: (context, state) {
               return Visibility(
                 visible: state is AppointmentFiltered,
                 child: IconButton(
                   icon: const Icon(Icons.clear),
                   onPressed: () {
-                    // Debounced clear to prevent rapid calls
                     Future.microtask(() {
                       UserAppointmentCubit.get(context).clearFilters();
                     });
@@ -461,18 +416,15 @@ class _ExaminationFilters extends StatelessWidget {
   }
 }
 
-// Separate Examination List Widget with Optimized Pagination
-class _ExaminationList extends StatefulWidget {
-  final UserAppointmentCubit cubit;
-  final UserAppointmentState state;
-
-  const _ExaminationList({required this.cubit, required this.state});
+// Placeholder that wires into the real list via Bloc to keep file small and focused
+class _ExaminationListPlaceholder extends StatefulWidget {
+  const _ExaminationListPlaceholder();
 
   @override
-  State<_ExaminationList> createState() => _ExaminationListState();
+  State<_ExaminationListPlaceholder> createState() => _ExaminationListPlaceholderState();
 }
 
-class _ExaminationListState extends State<_ExaminationList>
+class _ExaminationListPlaceholderState extends State<_ExaminationListPlaceholder>
     with PaginationMixin {
   List<dynamic> _cachedAppointments = [];
 
@@ -490,26 +442,26 @@ class _ExaminationListState extends State<_ExaminationList>
 
   @override
   void loadMoreData() {
-    // Simulate async loading
     Future.delayed(const Duration(milliseconds: 100), () {
       setLoadingMore(false);
     });
   }
 
   @override
-  int _getTotalItems() {
-    return _cachedAppointments.length;
-  }
+  int _getTotalItems() => _cachedAppointments.length;
 
-  List<dynamic> _getAppointments() {
-    final appointments =
-        widget.state is AppointmentFiltered
-            ? (widget.state as AppointmentFiltered).appointments
-            : widget.cubit.appointments;
+  List<dynamic> _getAppointments(UserAppointmentState state) {
+    final cubit = UserAppointmentCubit.get(context);
+  final appointments = state is AppointmentFiltered
+    ? state.appointments
+    : cubit.appointments;
 
     if (_cachedAppointments != appointments) {
       _cachedAppointments = appointments;
-      resetPagination();
+      // schedule resetPagination after current frame to avoid calling setState during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) resetPagination();
+      });
     }
 
     return _cachedAppointments;
@@ -517,93 +469,65 @@ class _ExaminationListState extends State<_ExaminationList>
 
   @override
   Widget build(BuildContext context) {
-    final appointments = _getAppointments();
+    return BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
+      builder: (context, state) {
+        final appointments = _getAppointments(state);
 
-    if (widget.state is GetAppointmentLoading && appointments.isEmpty) {
-      return const LoadingWidget(
-        enMessage: 'Loading appointments...',
-        arMessage: 'جارٍ تحميل المواعيد...',
-      );
-    } else if (appointments.isEmpty && widget.state is! GetSupplierSuccess) {
-      return emptyAppointment(context);
-    }
-
-    if (widget.state is AppointmentFiltered && appointments.isNotEmpty) {
-      return _buildOptimizedAppointmentList(appointments, context);
-    } else {
-      return RefreshIndicator(
-        onRefresh: () async {
-          resetPagination();
-          await widget.cubit.getAppointment(false);
-        },
-        child: _buildOptimizedAppointmentList(appointments, context),
-      );
-    }
-  }
-
-  Widget _buildOptimizedAppointmentList(
-    List<dynamic> appointments,
-    BuildContext context,
-  ) {
-    final itemsToShow = (currentPage * _AppointmentConstants.pageSize).clamp(
-      0,
-      appointments.length,
-    );
-
-    // Limit visible items for performance
-    final maxItems = _AppointmentConstants.maxVisibleItems;
-    final displayedAppointments = appointments.sublist(
-      0,
-      itemsToShow.clamp(0, maxItems),
-    );
-
-    return ListView.builder(
-      key: const PageStorageKey('examination_list'),
-      controller: scrollController,
-      itemBuilder: (context, index) {
-        if (index < displayedAppointments.length) {
-          return _buildOptimizedAppointmentItem(
-            displayedAppointments[index],
-            context,
-            widget.cubit,
-            index,
+        if (state is GetAppointmentLoading && appointments.isEmpty) {
+          return const LoadingWidget(
+            enMessage: 'Loading appointments...',
+            arMessage: 'جارٍ تحميل المواعيد...',
           );
-        } else if (index == displayedAppointments.length && isLoadingMore) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else {
-          return const SizedBox.shrink();
         }
-      },
-      itemCount: displayedAppointments.length + (isLoadingMore ? 1 : 0),
-      physics: const AlwaysScrollableScrollPhysics(),
-      // Enhanced performance optimizations
-      addAutomaticKeepAlives: true,
-      addRepaintBoundaries: true,
-      addSemanticIndexes: false,
-      cacheExtent: 100.0, // Reduced for better memory usage
-      itemExtent: 300.0, // Increased fixed height to fit updated card height
-    );
-  }
 
-  Widget _buildOptimizedAppointmentItem(
-    dynamic appointment,
-    BuildContext context,
-    UserAppointmentCubit cubit,
-    int index,
-  ) {
-    return RepaintBoundary(
-      key: ValueKey('appointment_${appointment.id}_$index'),
-      child: buildItem(appointment, context, cubit, index),
+        if (appointments.isEmpty && state is! GetSupplierSuccess) {
+          return emptyAppointment(context);
+        }
+
+        final itemsToShow = (currentPage * _AppointmentConstants.pageSize).clamp(0, appointments.length);
+        final maxItems = _AppointmentConstants.maxVisibleItems;
+        final displayed = appointments.sublist(0, itemsToShow.clamp(0, maxItems));
+
+        return RefreshIndicator(
+          onRefresh: () async {
+            resetPagination();
+            await UserAppointmentCubit.get(context).getAppointment(false);
+          },
+          child: ListView.builder(
+            key: const PageStorageKey('examination_list'),
+            controller: scrollController,
+            itemCount: displayed.length + (isLoadingMore ? 1 : 0),
+            itemBuilder: (context, index) {
+              if (index < displayed.length) {
+                final appointment = displayed[index];
+                return RepaintBoundary(
+                  key: ValueKey('appointment_${appointment.id}_$index'),
+                  child: buildItem(appointment, context, UserAppointmentCubit.get(context), index),
+                );
+              }
+              if (index == displayed.length && isLoadingMore) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+            physics: const AlwaysScrollableScrollPhysics(),
+            addAutomaticKeepAlives: true,
+            addRepaintBoundaries: true,
+            addSemanticIndexes: false,
+            cacheExtent: 100.0,
+            itemExtent: 300.0,
+          ),
+        );
+      },
     );
   }
 }
 
-// Separate Boarding Tab Widget with performance optimizations
 class _BoardingTab extends StatelessWidget {
   const _BoardingTab();
 
@@ -613,10 +537,8 @@ class _BoardingTab extends StatelessWidget {
       builder: (context, state) {
         final boardingCubit = BoardingCubit.get(context);
 
-        // Show loading indicator for initial load
-        if (state is GetBoardingEntriesLoading &&
-            boardingCubit.boardingEntries.isEmpty) {
-          return LoadingWidget(
+        if (state is GetBoardingEntriesLoading && boardingCubit.boardingEntries.isEmpty) {
+          return const LoadingWidget(
             enMessage: 'Loading boarding entries...',
             arMessage: 'جارٍ تحميل مواعيد الإقامة...',
           );
@@ -635,7 +557,6 @@ class _BoardingTab extends StatelessWidget {
   }
 }
 
-// Separate Boarding Filters Widget with performance optimizations
 class _BoardingFilters extends StatelessWidget {
   const _BoardingFilters();
 
@@ -658,25 +579,20 @@ class _BoardingFilters extends StatelessWidget {
           ),
           Expanded(
             child: BlocBuilder<LayoutCubit, LayoutState>(
-              buildWhen:
-                  (previous, current) =>
-                      current is BoardingFiltered ||
-                      current is GetBoardingEntriesSuccess,
+              buildWhen: (previous, current) =>
+                  current is BoardingFiltered || current is GetBoardingEntriesSuccess,
               builder: (context, state) => buildStateFilterBoarding(context),
             ),
           ),
           BlocBuilder<BoardingCubit, BoardingState>(
-            buildWhen:
-                (previous, current) =>
-                    current is BoardingFiltered ||
-                    current is GetBoardingEntriesSuccess,
+            buildWhen: (previous, current) =>
+                current is BoardingFiltered || current is GetBoardingEntriesSuccess,
             builder: (context, state) {
               return Visibility(
                 visible: state is BoardingFiltered,
                 child: IconButton(
                   icon: const Icon(Icons.clear),
                   onPressed: () {
-                    // Debounced clear to prevent rapid calls
                     Future.microtask(() {
                       BoardingCubit.get(context).clearFilters();
                     });
@@ -691,7 +607,6 @@ class _BoardingFilters extends StatelessWidget {
   }
 }
 
-// Separate Boarding List Widget with Optimized Pagination
 class _BoardingList extends StatefulWidget {
   final BoardingCubit boardingCubit;
   final BoardingState state;
@@ -719,26 +634,25 @@ class _BoardingListState extends State<_BoardingList> with PaginationMixin {
 
   @override
   void loadMoreData() {
-    // Simulate async loading
     Future.delayed(const Duration(milliseconds: 100), () {
       setLoadingMore(false);
     });
   }
 
   @override
-  int _getTotalItems() {
-    return _cachedEntries.length;
-  }
+  int _getTotalItems() => _cachedEntries.length;
 
   List<dynamic> _getEntries() {
-    final entries =
-        widget.state is BoardingFiltered
-            ? (widget.state as BoardingFiltered).filteredEntries
-            : widget.boardingCubit.boardingEntries;
+    final entries = widget.state is BoardingFiltered
+        ? (widget.state as BoardingFiltered).filteredEntries
+        : widget.boardingCubit.boardingEntries;
 
     if (_cachedEntries != entries) {
       _cachedEntries = entries;
-      resetPagination();
+      // schedule resetPagination after current frame to avoid calling setState during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) resetPagination();
+      });
     }
 
     return _cachedEntries;
@@ -748,71 +662,51 @@ class _BoardingListState extends State<_BoardingList> with PaginationMixin {
   Widget build(BuildContext context) {
     final entries = _getEntries();
 
-    if (entries.isEmpty) {
-      return emptyBoarding(context);
-    }
+    if (entries.isEmpty) return emptyBoarding(context);
 
     final isDarkMode = MainCubit.get(context).isDark;
 
-    if (widget.state is BoardingFiltered) {
-      return _buildOptimizedBoardingListView(entries, isDarkMode, context);
-    } else {
-      return RefreshIndicator(
-        onRefresh: () async {
-          resetPagination();
-          await widget.boardingCubit.getBoardingEntries(true);
-        },
-        child: _buildOptimizedBoardingListView(entries, isDarkMode, context),
-      );
-    }
-  }
-
-  Widget _buildOptimizedBoardingListView(
-    List<dynamic> entries,
-    bool isDarkMode,
-    BuildContext context,
-  ) {
-    final itemsToShow = (currentPage * _AppointmentConstants.pageSize).clamp(
-      0,
-      entries.length,
-    );
-
-    // Limit visible items for performance
+    final itemsToShow = (currentPage * _AppointmentConstants.pageSize).clamp(0, entries.length);
     final maxItems = _AppointmentConstants.maxVisibleItems;
-    final displayedEntries = entries.sublist(0, itemsToShow.clamp(0, maxItems));
+    final displayed = entries.sublist(0, itemsToShow.clamp(0, maxItems));
 
-    return ListView.builder(
-      key: const PageStorageKey('boarding_list'),
-      controller: scrollController,
-      itemBuilder: (context, index) {
-        if (index < displayedEntries.length) {
-          return RepaintBoundary(
-            key: ValueKey('boarding_${displayedEntries[index].id}_$index'),
-            child: BoardingCard(
-              isDarkMode: isDarkMode,
-              entry: displayedEntries[index],
-              cubit: widget.boardingCubit,
-            ),
-          );
-        } else if (index == displayedEntries.length && isLoadingMore) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else {
-          return const SizedBox.shrink();
-        }
+    return RefreshIndicator(
+      onRefresh: () async {
+        resetPagination();
+        await widget.boardingCubit.getBoardingEntries(true);
       },
-      itemCount: displayedEntries.length + (isLoadingMore ? 1 : 0),
-      physics: const AlwaysScrollableScrollPhysics(),
-      // Enhanced performance optimizations
-      addAutomaticKeepAlives: true,
-      addRepaintBoundaries: true,
-      addSemanticIndexes: false,
-      cacheExtent: 100.0, // Reduced for better memory usage
-      itemExtent: 300.0, // Increased fixed height to fit updated boarding card height
+      child: ListView.builder(
+        key: const PageStorageKey('boarding_list'),
+        controller: scrollController,
+        itemCount: displayed.length + (isLoadingMore ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index < displayed.length) {
+            return RepaintBoundary(
+              key: ValueKey('boarding_${displayed[index].id}_$index'),
+              child: BoardingCard(
+                isDarkMode: isDarkMode,
+                entry: displayed[index],
+                cubit: widget.boardingCubit,
+              ),
+            );
+          }
+          if (index == displayed.length && isLoadingMore) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+          return const SizedBox.shrink();
+        },
+        physics: const AlwaysScrollableScrollPhysics(),
+        addAutomaticKeepAlives: true,
+        addRepaintBoundaries: true,
+        addSemanticIndexes: false,
+        cacheExtent: 100.0,
+        itemExtent: 300.0,
+      ),
     );
   }
 }
