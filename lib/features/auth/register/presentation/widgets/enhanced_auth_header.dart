@@ -69,7 +69,7 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
                 children: [
                   // Background Pattern
                   Positioned.fill(
-                    child: CustomPaint(painter: PawPatternPainter()),
+                    child: RepaintBoundary(child: CustomPaint(painter: PawPatternPainter())),
                   ),
 
                   // Help Button

@@ -920,25 +920,27 @@ class _PetScreenContentState extends State<PetScreenContent> {
               tag: 'pet_card_${pet.petId}',
               child: Material(
                 color: Colors.transparent,
-                child: PetCard(
-                  pet: pet,
-                  cubit: widget.cubit,
-                  qrCubit: qrCubit,
-                  selectionMode: _selectionMode,
-                  isSelected: _selectedPets.contains(
-                    widget.pets.elementAt(index).petId,
+                child: RepaintBoundary(
+                  child: PetCard(
+                    pet: pet,
+                    cubit: widget.cubit,
+                    qrCubit: qrCubit,
+                    selectionMode: _selectionMode,
+                    isSelected: _selectedPets.contains(
+                      widget.pets.elementAt(index).petId,
+                    ),
+                    onSelected: (selected) {
+                      setState(() {
+                        if (selected) {
+                          _selectedPets.add(widget.pets.elementAt(index).petId!);
+                        } else {
+                          _selectedPets.remove(
+                            widget.pets.elementAt(index).petId,
+                          );
+                        }
+                      });
+                    },
                   ),
-                  onSelected: (selected) {
-                    setState(() {
-                      if (selected) {
-                        _selectedPets.add(widget.pets.elementAt(index).petId!);
-                      } else {
-                        _selectedPets.remove(
-                          widget.pets.elementAt(index).petId,
-                        );
-                      }
-                    });
-                  },
                 ),
               ),
             ),

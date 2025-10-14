@@ -37,101 +37,103 @@ class PetCard extends StatefulWidget {
 class _PetCardState extends State<PetCard> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            MainCubit.get(context).isDark 
-                ? Colors.grey[800]!.withOpacity(0.9)
-                : Colors.white,
-            MainCubit.get(context).isDark 
-                ? Colors.grey[850]!.withOpacity(0.8)
-                : Colors.grey[50]!.withOpacity(0.5),
-          ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: MainCubit.get(context).isDark 
-                ? Colors.black.withOpacity(0.3)
-                : ColorManager.primaryColor.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: MainCubit.get(context).isDark 
-                ? Colors.transparent
-                : Colors.white.withOpacity(0.8),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-            spreadRadius: 0,
-          ),
-        ],
-        border: Border.all(
-          color: MainCubit.get(context).isDark 
-              ? Colors.grey[700]!.withOpacity(0.3)
-              : Colors.white.withOpacity(0.5),
-          width: 1,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
+    return RepaintBoundary(
+      child: Container(
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          onTap: widget.selectionMode
-              ? () => widget.onSelected(!widget.isSelected)
-              : () => _navigateToEditPet(context),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    if (widget.selectionMode) ...[
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              MainCubit.get(context).isDark 
+                  ? Colors.grey[800]!.withOpacity(0.9)
+                  : Colors.white,
+              MainCubit.get(context).isDark 
+                  ? Colors.grey[850]!.withOpacity(0.8)
+                  : Colors.grey[50]!.withOpacity(0.5),
+            ],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: MainCubit.get(context).isDark 
+                  ? Colors.black.withOpacity(0.3)
+                  : ColorManager.primaryColor.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+              spreadRadius: 0,
+            ),
+            BoxShadow(
+              color: MainCubit.get(context).isDark 
+                  ? Colors.transparent
+                  : Colors.white.withOpacity(0.8),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+              spreadRadius: 0,
+            ),
+          ],
+          border: Border.all(
+            color: MainCubit.get(context).isDark 
+                ? Colors.grey[700]!.withOpacity(0.3)
+                : Colors.white.withOpacity(0.5),
+            width: 1,
+          ),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            onTap: widget.selectionMode
+                ? () => widget.onSelected(!widget.isSelected)
+                : () => _navigateToEditPet(context),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      if (widget.selectionMode) ...[
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: widget.isSelected 
+                                  ? ColorManager.primaryColor 
+                                  : Colors.grey.withOpacity(0.3),
+                              width: 2,
+                            ),
                             color: widget.isSelected 
                                 ? ColorManager.primaryColor 
-                                : Colors.grey.withOpacity(0.3),
-                            width: 2,
+                                : Colors.transparent,
                           ),
-                          color: widget.isSelected 
-                              ? ColorManager.primaryColor 
-                              : Colors.transparent,
-                        ),
-                        child: Transform.scale(
-                          scale: 1.2,
-                          child: Checkbox(
-                            value: widget.isSelected,
-                            onChanged: (val) => widget.onSelected(val ?? false),
-                            activeColor: Colors.transparent,
-                            checkColor: Colors.white,
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          child: Transform.scale(
+                            scale: 1.2,
+                            child: Checkbox(
+                              value: widget.isSelected,
+                              onChanged: (val) => widget.onSelected(val ?? false),
+                              activeColor: Colors.transparent,
+                              checkColor: Colors.white,
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
+                        const SizedBox(width: 16),
+                      ],
+                      Expanded(child: _buildPetHeader(context)),
                     ],
-                    Expanded(child: _buildPetHeader(context)),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                QrStatusIndicator(pet: widget.pet),
-                const SizedBox(height: 16),
-
-                if (!widget.selectionMode)
-                  QrActionButtons(
-                    pet: widget.pet,
-                    petCubit: widget.cubit,
-                    c: widget.qrCubit,
                   ),
-              ],
+                  const SizedBox(height: 16),
+      
+                  QrStatusIndicator(pet: widget.pet),
+                  const SizedBox(height: 16),
+      
+                  if (!widget.selectionMode)
+                    QrActionButtons(
+                      pet: widget.pet,
+                      petCubit: widget.cubit,
+                      c: widget.qrCubit,
+                    ),
+                ],
+              ),
             ),
           ),
         ),

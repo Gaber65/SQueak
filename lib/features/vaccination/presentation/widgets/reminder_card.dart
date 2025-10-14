@@ -243,8 +243,10 @@ class _ReminderCardState extends State<ReminderCard>
 
   Widget _buildBackgroundPattern(Color color) {
     return Positioned.fill(
-      child: CustomPaint(
-        painter: PatternPainter(color: color.withOpacity(0.1)),
+      child: RepaintBoundary(
+        child: CustomPaint(
+          painter: PatternPainter(color: color.withOpacity(0.1)),
+        ),
       ),
     );
   }
