@@ -717,7 +717,10 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
 
                       _buildInputField(
                         controller: widget.cubit.followCodeController,
-                        hintText: S.of(context).followCode,
+                        hintText:
+                            isArabic()
+                                ? 'رمز المتابعة (اختياري)'
+                                : 'Follow Code (Optional)',
                         prefixIcon: Icons.local_hospital_outlined,
                         validation: _clinicCodeValidation,
                         onChanged: _validateClinicCode,

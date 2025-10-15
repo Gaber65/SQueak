@@ -40,7 +40,8 @@ class EditPet extends StatelessWidget {
               sl<PetCubit>()
                 ..initEdit(pets)
                 ..init(dropdownValueSpecies, species ?? '')
-                ..getAllSpecies(),
+                ..getAllSpecies()
+                ..getBreedsBySpecies(species ?? ''),
       child: BlocConsumer<PetCubit, PetState>(
         listener: (context, state) {
           if (state is PetCreateSuccessState) {
@@ -50,7 +51,6 @@ class EditPet extends StatelessWidget {
             errorToast(context, state.message);
           }
         },
-        // ✅ Only rebuild when necessary for edit screen
         buildWhen: (previous, current) {
           // Rebuild for loading, success, error states
           if (current is PetCreateLoadingState ||

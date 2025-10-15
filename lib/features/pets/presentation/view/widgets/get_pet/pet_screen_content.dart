@@ -1096,7 +1096,7 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                   const SizedBox(height: 8),
                   Text(
                     isArabic()
-                        ? "اختر نوع حيوانك الأليف لبدء الرحلة"
+                        ? "اختر نوع صغيرك الأليف لبدء الرحلة"
                         : "Choose your pet type to get started",
                     style: TextStyle(
                       fontSize: 14,

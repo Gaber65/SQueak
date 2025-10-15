@@ -23,6 +23,21 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
   bool _showingOtherSpeciesLoader = false;
 
   @override
+  void initState() {
+    super.initState();
+    // Initialize loading flags from the cubit's current state so that if
+    // the AddPetScreen was pushed while the cubit was already loading
+    // breeds or species, the UI shows the appropriate loader immediately.
+    final state = widget.cubit.state;
+    if (state is GetAllBreedsLoadingState) {
+      _isLoadingBreeds = true;
+    }
+    if (state is GetAllSpeciesLoadingState) {
+      _showingOtherSpeciesLoader = true;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
