@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/utils/image_picker_utils.dart';
 
@@ -32,23 +33,63 @@ class ProfileImageSection extends StatelessWidget {
               ),
             ),
             child: ClipOval(
-              child:
-                  cubit.petImage == null
-                      ? Image.network(
-                        (cubit.imageNameController.text.isEmpty)
-                            ? AssetImageModel.defaultPetImage
-                            : imageUrl + (pets.imageName ?? ''),
-                        fit: BoxFit.cover,
-                        errorBuilder:
-                            (_, __, ___) => Image.asset(
-                              pets.specieId ==
-                                      'f1131363-3b9f-40ee-9a89-0573ee274a10'
-                                  ? 'assets/cat-with-gold.jpg'
-                                  : 'assets/dog.png',
-                              fit: BoxFit.cover,
+              child: cubit.petImage == null
+                  ? (cubit.imageNameController.text.isEmpty
+                      // No image name -> show species icon + label inside the circle
+                      ? Container(
+                          color: MainCubit.get(context).isDark
+                              ? Colors.grey[850]
+                              : Colors.grey[200],
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                FaIcon(
+                                  pets.specieId ==
+                                          'f1131363-3b9f-40ee-9a89-0573ee274a10'
+                                      ? FontAwesomeIcons.cat
+                                      : FontAwesomeIcons.dog,
+                                  size: 40,
+                                  color: ColorManager.primaryColor,
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  pets.specieId ==
+                                          'f1131363-3b9f-40ee-9a89-0573ee274a10'
+                                      ? (isArabic() ? 'قطة' : 'Cat')
+                                      : (isArabic() ? 'كلب' : 'Dog'),
+                                  style: TextStyle(
+                                    color: MainCubit.get(context).isDark
+                                        ? Colors.white
+                                        : Colors.black87,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
-                      )
-                      : Image.file(cubit.petImage!, fit: BoxFit.cover),
+                          ),
+                        )
+                      // There is an image name -> load from network
+                      : Image.network(
+                          imageUrl + (pets.imageName ?? ''),
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            color: MainCubit.get(context).isDark
+                                ? Colors.grey[850]
+                                : Colors.grey[200],
+                            child: Center(
+                              child: FaIcon(
+                                pets.specieId ==
+                                        'f1131363-3b9f-40ee-9a89-0573ee274a10'
+                                    ? FontAwesomeIcons.cat
+                                    : FontAwesomeIcons.dog,
+                                size: 40,
+                                color: ColorManager.primaryColor,
+                              ),
+                            ),
+                          ),
+                        ))
+                  : Image.file(cubit.petImage!, fit: BoxFit.cover),
             ),
           ),
           Container(

@@ -3,6 +3,7 @@ import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:drop_down_search_field/drop_down_search_field.dart';
+import 'dart:convert';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../controller/pet_cubit.dart';
@@ -34,6 +35,35 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
     }
     if (state is GetAllSpeciesLoadingState) {
       _showingOtherSpeciesLoader = true;
+    }
+
+    // If the selected species is dog or cat, try to load cached breeds
+    // immediately to avoid waiting for a network call.
+    final selectedSpeciesId = widget.cubit.dropdownValueSpeciesId;
+    if (selectedSpeciesId.isNotEmpty) {
+      final isDog = selectedSpeciesId == PetCubit.dogSpeciesId;
+      final isCat = selectedSpeciesId == PetCubit.catSpeciesId;
+      if (isDog || isCat) {
+        final cacheKey = 'breeds_$selectedSpeciesId';
+        final cached = CacheHelper.getData(cacheKey);
+        if (cached != null && (cached as String).isNotEmpty) {
+          try {
+            final List<dynamic> decoded = jsonDecode(cached);
+            final cachedBreeds = decoded
+                .map<BreedEntity>((m) => BreedEntity(
+                      enType: m['enType'] ?? '',
+                      id: m['id'] ?? '',
+                      specieId: m['specieId'] ?? '',
+                    ))
+                .toList();
+            // populate cubit's breedData so UI can use it immediately
+            widget.cubit.breedData = cachedBreeds;
+            _isLoadingBreeds = false;
+          } catch (_) {
+            // ignore parse errors and let normal flow load from network
+          }
+        }
+      }
     }
   }
 

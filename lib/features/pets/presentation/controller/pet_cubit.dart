@@ -47,6 +47,10 @@ class PetCubit extends Cubit<PetState> {
 
   static PetCubit get(context) => BlocProvider.of(context);
 
+  // Species constants (used in multiple places across the UI)
+  static const String dogSpeciesId = 'bca48207-f05d-4e9f-a631-06f34eb5af39';
+  static const String catSpeciesId = 'f1131363-3b9f-40ee-9a89-0573ee274a10';
+
   // Lists to store data
   List<PetEntities> pets = [];
   List<BreedEntity> allBreeds = [];
@@ -118,15 +122,54 @@ class PetCubit extends Cubit<PetState> {
   Future<void> getBreedsBySpecies(String speciesId) async {
     emit(const GetAllBreedsLoadingState());
 
-    final result = await getBreedsBySpeciesUseCase(speciesId);
+    // For dog and cat species, attempt to load from cache first to improve
+    // perceived performance and avoid repeated network calls.
+    try {
+      final isCacheable = speciesId == dogSpeciesId || speciesId == catSpeciesId;
+      final cacheKey = 'breeds_$speciesId';
 
-    result.fold(
-      (error) => emit(GetAllBreedsErrorState(extractFirstError(error))),
-      (breedsList) {
-        breedData = breedsList;
-        emit(const GetAllBreedsSuccessState());
-      },
-    );
+      if (isCacheable) {
+        final cached = CacheHelper.getData(cacheKey);
+        if (cached != null && (cached as String).isNotEmpty) {
+          try {
+            final List<dynamic> decoded = jsonDecode(cached);
+            breedData = decoded
+                .map<BreedEntity>((m) => BreedEntity(
+                      enType: m['enType'] ?? '',
+                      id: m['id'] ?? '',
+                      specieId: m['specieId'] ?? '',
+                    ))
+                .toList();
+            emit(const GetAllBreedsSuccessState());
+            return;
+          } catch (_) {
+            // Fall through to network fetch on parse error
+          }
+        }
+      }
+
+      final result = await getBreedsBySpeciesUseCase(speciesId);
+
+      result.fold(
+        (error) => emit(GetAllBreedsErrorState(extractFirstError(error))),
+        (breedsList) async {
+          breedData = breedsList;
+          emit(const GetAllBreedsSuccessState());
+
+          // Save cache for dog and cat
+          if (speciesId == dogSpeciesId || speciesId == catSpeciesId) {
+            try {
+              final jsonList = jsonEncode(breedsList.map((b) => b.toJson()).toList());
+              await CacheHelper.saveData(cacheKey, jsonList);
+            } catch (_) {
+              // ignore cache save errors
+            }
+          }
+        },
+      );
+    } catch (e) {
+      emit(GetAllBreedsErrorState(e.toString()));
+    }
   }
 
   // Get all species
