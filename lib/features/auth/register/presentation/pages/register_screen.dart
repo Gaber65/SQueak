@@ -47,8 +47,10 @@ class RegisterScreen extends StatelessWidget {
         builder: (context, state) {
           final cubit = RegisterCubit.get(context);
           return EnhancedAuthHeader(
-            title: 'Join the Pack! 🐾',
-            subtitle: 'Create your account to connect with pet care',
+            title: isArabic() ? 'انضم الى مجتمع الصغار الأليفة🐾' : 'Join the Pack! 🐾',
+            subtitle: isArabic()
+                ? 'أنشئ حسابك للتواصل مع رعاية الصغار الأليفة'
+                : 'Create your account to connect with pet care',
             child: EnhancedRegisterView(cubit: cubit),
           );
         },

@@ -116,8 +116,7 @@ Widget buildDetailsContentSearch(
                             Row(
                               children: [
                                 const Icon(IconlyLight.call, size: 14),
-                                const SizedBox(width: 2),
-                                const SizedBox(width: 3),
+                                const SizedBox(width: 5),
                                 Text(
                                   entities.phone.startsWith('0')
                                       ? entities.phone

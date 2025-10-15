@@ -309,7 +309,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
           ),
           const SizedBox(height: 16),
           Text(
-            'Join the Pack!',
+            isArabic() ? ' انضم الى مجتمع الصغار الأليفة ' : 'Join the Pack!',
             style: FontStyleThame.textStyle(
               context: context,
               fontSize: 28,
@@ -319,7 +319,9 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
           ),
           const SizedBox(height: 8),
           Text(
-            'Create your account to connect with the pet care community',
+            isArabic()
+                ? 'أنشئ حسابك للتواصل مع رعاية الصغار الأليفة'
+                : 'Create your account to connect with pet care',
             style: FontStyleThame.textStyle(
               context: context,
               fontSize: 16,
@@ -421,7 +423,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
             controller: widget.cubit.passwordController,
             obscureText: _obscurePassword,
             decoration: InputDecoration(
-              hintText: 'Enter your password',
+              hintText: isArabic() ? 'ادخل كلمة المرور' : 'Enter your password',
               prefixIcon: const Icon(Icons.lock_outlined, size: 18),
               // No inner border so the outer container controls the visual border
               border: InputBorder.none,
@@ -593,7 +595,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  'Already part of the pack?',
+                  isArabic() ? 'هل أنت بالفعل جزء من المجتمع؟' : 'Already part of the pack?',
                   style: FontStyleThame.textStyle(
                     context: context,
                     fontSize: 14,

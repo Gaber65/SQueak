@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/auth/login/presentation/widgets/enhanced_login_widget.dart';
 import 'package:squeak/features/auth/login/presentation/cubit/login_cubit.dart';
 
@@ -80,6 +81,59 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
       ),
       child: Stack(
         children: [
+          // Language toggle in the top-right
+          Positioned(
+            top: 12,
+            right: 16,
+            child: BlocBuilder<MainCubit, MainState>(
+              builder: (context, state) {
+                final mainCubit = MainCubit.get(context);
+                final lang =
+                    (mainCubit.language ??
+                            CacheHelper.getData('language') ??
+                            'en')
+                        .toString();
+                final isArabicLang = lang == 'ar';
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(28),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.language, color: Colors.white, size: 18),
+                      const SizedBox(width: 8),
+                      Text(
+                        isArabicLang ? 'عربي' : 'English',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Switch(
+                        value: isArabicLang,
+                        activeColor: Colors.white,
+                        activeTrackColor: Colors.white24,
+                        inactiveThumbColor: Colors.white,
+                        inactiveTrackColor: Colors.white24,
+                        onChanged: (v) {
+                          final newLang = v ? 'ar' : 'en';
+                          mainCubit.changeAppLang(langMode: newLang);
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
           // Reduce paw sizes/positions for a tighter header
           _buildFloatingPaw(
             top: height * 0.01,
@@ -110,9 +164,8 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
               // Smaller mascot and text for compact header
               _buildMascot(width, compact: true),
               SizedBox(height: height * 0.01),
-
-              const Text(
-                'Welcome Back!',
+              Text(
+                isArabic() ? 'مرحبا بك!' : 'Welcome Back!',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -127,14 +180,15 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
                 ),
               ),
               SizedBox(height: height * 0.008),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(Icons.pets, color: Colors.white, size: 14),
                   SizedBox(width: width * 0.02),
                   Text(
-                    'Your furry friends are waiting for you!',
+                    isArabic()
+                        ? 'الصغار الأليفة تنتظرك!'
+                        : 'Your furry friends are waiting for you!',
                     style: TextStyle(
                       fontSize: width * 0.032,
                       color: Colors.white.withOpacity(0.9),
@@ -147,9 +201,10 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
                 ],
               ),
               SizedBox(height: height * 0.006),
-
               Text(
-                'Sign in to continue your pet care journey',
+                isArabic()
+                    ? 'سجّل الدخول لمتابعة رحلتك في رعاية صغيرك الأليف'
+                    : 'Sign in to continue your pet care journey',
                 style: TextStyle(
                   fontSize: width * 0.033,
                   color: Colors.white.withOpacity(0.8),
@@ -308,49 +363,57 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       body: SafeArea(
-        child: Column(
-          children: [
-            FadeTransition(
-              opacity: _fadeAnimation,
-              child: const ModernLoginHeader(),
-            ),
-            Expanded(
-              child: SlideTransition(
-                position: _slideAnimation,
-                child: FadeTransition(
+        child: BlocBuilder<MainCubit, MainState>(
+          builder: (context, mainState) {
+            // Use the MainState so that the entire page rebuilds on change
+            // Ensure the animations still drive in; the widgets will rebuild when MainState changes
+            return Column(
+              children: [
+                FadeTransition(
                   opacity: _fadeAnimation,
-                  child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(width * 0.06), //  Changed
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(height: width * 0.03), //  Changed
-                          Container(
-                            padding: EdgeInsets.all(width * 0.06), //  Changed
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 10),
+                  // Rebuild header when language changes by reading from mainState inside ModernLoginHeader
+                  child: ModernLoginHeader(),
+                ),
+                Expanded(
+                  child: SlideTransition(
+                    position: _slideAnimation,
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(width * 0.06), //  Changed
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              SizedBox(height: width * 0.03), //  Changed
+                              // Wrap the form container so it rebuilds when language changes
+                              Container(
+                                padding: EdgeInsets.all(width * 0.06), //  Changed
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 10),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            child: EnhancedLoginView(cubit: widget.cubit),
+                                child: EnhancedLoginView(cubit: widget.cubit),
+                              ),
+                              SizedBox(height: width * 0.04),
+                              _buildFooter(),
+                            ],
                           ),
-                          SizedBox(height: width * 0.04), 
-                          _buildFooter(),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
     );
@@ -370,7 +433,9 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
             const Icon(Icons.pets, color: Colors.grey, size: 16),
             SizedBox(width: width * 0.02), //  Changed
             Text(
-              'Trusted by Pet Parents Worldwide',
+              isArabic()
+                  ? ' موثوق به من قِبل مالكي الصغار الأليفة'
+                  : 'Trusted by Pet Parents Worldwide',
               style: TextStyle(
                 fontSize: width * 0.035, //  Changed
                 color: Colors.grey.shade600,
@@ -385,11 +450,15 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildPetFeatureItem(Icons.pets, 'Pet Care', Icons.favorite_border),
+            _buildPetFeatureItem(
+              Icons.pets,
+              isArabic() ? 'رعاية الصغار' : 'Pet Care',
+              Icons.favorite_border,
+            ),
             SizedBox(width: width * 0.08), //  Changed
-            _buildPetFeatureItem(Icons.favorite, 'Love', Icons.favorite),
+            _buildPetFeatureItem(Icons.favorite, isArabic() ? 'حب' : 'Love', Icons.favorite),
             SizedBox(width: width * 0.08), //  Changed
-            _buildPetFeatureItem(Icons.shield, 'Safe', Icons.security),
+            _buildPetFeatureItem(Icons.shield, isArabic() ? 'حماية' : 'Safe', Icons.security),
           ],
         ),
         SizedBox(height: width * 0.03), //  Changed
