@@ -38,6 +38,40 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
   void initState() {
     super.initState();
     _restoreData();
+    // Try to restore cached species and breeds to avoid extra network calls
+    // This mirrors behavior in `breed_species_section.dart` which prefers cached breeds.
+    final cachedSpecies = CacheHelper.getData('pet_species');
+    if (cachedSpecies != null && (cachedSpecies as String).isNotEmpty) {
+      selectedSpecies = cachedSpecies;
+    }
+    // If species is dog or cat, try to load cached breeds immediately
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final cubit = context.read<PetCubit>();
+      final speciesId = selectedSpecies == 'dog'
+          ? PetCubit.dogSpeciesId
+          : selectedSpecies == 'cat'
+              ? PetCubit.catSpeciesId
+              : null;
+      if (speciesId != null) {
+        final cacheKey = 'breeds_$speciesId';
+        final cached = CacheHelper.getData(cacheKey);
+        if (cached != null && (cached as String).isNotEmpty) {
+          try {
+            final List<dynamic> decoded = jsonDecode(cached);
+            final cachedBreeds = decoded
+                .map<BreedEntity>((m) => BreedEntity(
+                      enType: m['enType'] ?? '',
+                      id: m['id'] ?? '',
+                      specieId: m['specieId'] ?? '',
+                    ))
+                .toList();
+            cubit.breedData = cachedBreeds;
+          } catch (_) {
+            // ignore parse errors and let normal flow load from network
+          }
+        }
+      }
+    });
     _nameController.addListener(() {
       CacheHelper.saveData('pet_name', _nameController.text);
     });
@@ -80,6 +114,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
   Widget build(BuildContext context) {
     final petCubit = context.read<PetCubit>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isArabicLang = isArabic();
     final titleColor = isDark ? Colors.white : ColorManager.black_87;
     final bodyBg =
         isDark
@@ -88,10 +123,14 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
     final sectionTextColor = isDark ? Colors.white : ColorManager.black_87;
     final progressBg = isDark ? Colors.white24 : Colors.black12;
     final progressColor = ColorManager.primaryColor;
+    
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Add Your Pet", style: TextStyle(color: titleColor)),
+        title: Text(
+          isArabicLang ? "أضف صغيرك الأليف" : "Add Your Pet",
+          style: TextStyle(color: titleColor),
+        ),
         backgroundColor: isDark ? ColorManager.editScreenTextFieldBaseColor : ColorManager.white,
         leading: null,
       ),
@@ -121,7 +160,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              "Tell Us About Your Pet",
+              isArabicLang ? "أخبرنا عن صغيرك الأليف" : "Tell Us About Your Pet",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: sectionTextColor,
@@ -133,7 +172,9 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Text(
-                "Add some basic information about your furry friend to get started.",
+                isArabicLang
+                    ? "أضف بعض المعلومات الأساسية عن صديقك الأليف للبدء."
+                    : "Add some basic information about your furry friend to get started.",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: sectionTextColor, fontSize: 14),
               ),
@@ -168,27 +209,27 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                 children: [
                   AddPetSection(
                     icon: Icons.info,
-                    title: "Basic Information",
+                    title: isArabicLang ? "المعلومات الأساسية" : "Basic Information",
                     children: [
                       Text(
-                        "Pet Name *",
+                        isArabicLang ? "اسم صغيرك الأليف *" : "Pet Name *",
                         style: TextStyle(color: sectionTextColor),
                       ),
                       const SizedBox(height: 8),
                       AddPetTextField(
-                        hint: "Enter your pet's name",
+                        hint: isArabicLang ? "أدخل اسم صغيرك الأليف" : "Enter your pet's name",
                         controller: _nameController,
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        "Species *",
+                        isArabicLang ? "الفصيلة *" : "Species *",
                         style: TextStyle(color: sectionTextColor),
                       ),
                       const SizedBox(height: 8),
                       Row(
                         children: [
                           AddPetChoice(
-                            label: "Dog",
+                            label: isArabicLang ? "كلب" : "Dog",
                             icon: FontAwesomeIcons.dog,
                             value: "dog",
                             isSelected: _isDogSpecies(selectedSpecies),
@@ -196,7 +237,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                             onTap: () => _onSpeciesChanged("dog"),
                           ),
                           AddPetChoice(
-                            label: "Cat",
+                            label: isArabicLang ? "قطة" : "Cat",
                             icon: FontAwesomeIcons.cat,
                             value: "cat",
                             isSelected: _isCatSpecies(selectedSpecies),
@@ -208,7 +249,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                                 selectedSpecies != "dog" &&
                                         selectedSpecies != "cat"
                                     ? selectedSpecies
-                                    : "Other",
+                                    : (isArabicLang ? "آخر" : "Other"),
                             icon: Icons.more_horiz,
                             value: "other",
                             isSelected:
@@ -250,7 +291,10 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      Text("Breed", style: TextStyle(color: sectionTextColor)),
+                      Text(
+                        isArabicLang ? "السلالة" : "Breed",
+                        style: TextStyle(color: sectionTextColor),
+                      ),
                       const SizedBox(height: 6),
                       BlocBuilder<PetCubit, PetState>(
                         builder: (context, state) {
@@ -288,17 +332,17 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                   const SizedBox(height: 16),
                   AddPetSection(
                     icon: Icons.favorite,
-                    title: "Additional Details",
+                    title: isArabicLang ? "تفاصيل إضافية" : "Additional Details",
                     children: [
                       Text(
-                        "Gender *",
+                        isArabicLang ? " النوع*" : "Gender *",
                         style: TextStyle(color: sectionTextColor),
                       ),
                       const SizedBox(height: 8),
                       Row(
                         children: [
                           AddPetAdditionalDetails(
-                            label: "Male",
+                            label: isArabicLang ? "ذكر" : "Male",
                             icon: Icons.male,
                             value: "male",
                             isSelected: selectedGender == "male",
@@ -307,7 +351,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                           ),
                           const SizedBox(width: 8),
                           AddPetAdditionalDetails(
-                            label: "Female",
+                            label: isArabicLang ? "أنثى" : "Female",
                             icon: Icons.female,
                             value: "female",
                             isSelected: selectedGender == "female",
@@ -416,9 +460,9 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                                 color: Colors.white,
                               ),
                             )
-                            : const Text(
-                              "Add Pet",
-                              style: TextStyle(
+                            : Text(
+                              isArabicLang ? "إضافة صغير أليف" : "Add Pet",
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -434,16 +478,21 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
   }
 
   void _showValidationDialog() {
+    final isArabicLang = isArabic();
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Missing Information"),
-          content: const Text("Please enter your pet's name."),
+          title: Text(isArabicLang ? "معلومات مفقودة" : "Missing Information"),
+          content: Text(
+            isArabicLang
+                ? "يرجى إدخال اسم حيوانك الأليف."
+                : "Please enter your pet's name.",
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
+              child: Text(isArabicLang ? "موافق" : "OK"),
             ),
           ],
         );
@@ -467,12 +516,37 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
   void _onSpeciesChanged(String species, {String? speciesId}) {
     setState(() => selectedSpecies = species);
     final cubit = context.read<PetCubit>();
+    // Prefer cached breed list when available. If not, fall back to network.
+    String? idToUse;
     if (species == 'dog') {
-      cubit.getBreedsBySpecies('bca48207-f05d-4e9f-a631-06f34eb5af39');
+      idToUse = 'bca48207-f05d-4e9f-a631-06f34eb5af39';
     } else if (species == 'cat') {
-      cubit.getBreedsBySpecies('f1131363-3b9f-40ee-9a89-0573ee274a10');
+      idToUse = 'f1131363-3b9f-40ee-9a89-0573ee274a10';
     } else if (speciesId != null) {
-      cubit.getBreedsBySpecies(speciesId);
+      idToUse = speciesId;
+    }
+
+    if (idToUse != null) {
+      final cacheKey = 'breeds_$idToUse';
+      final cached = CacheHelper.getData(cacheKey);
+      if (cached != null && (cached as String).isNotEmpty) {
+        try {
+          final List<dynamic> decoded = jsonDecode(cached);
+          final cachedBreeds = decoded
+              .map<BreedEntity>((m) => BreedEntity(
+                    enType: m['enType'] ?? '',
+                    id: m['id'] ?? '',
+                    specieId: m['specieId'] ?? '',
+                  ))
+              .toList();
+          cubit.breedData = cachedBreeds;
+          // ensure UI shows no loading state
+          return;
+        } catch (_) {
+          // fall through to network call
+        }
+      }
+      cubit.getBreedsBySpecies(idToUse);
     }
   }
 }

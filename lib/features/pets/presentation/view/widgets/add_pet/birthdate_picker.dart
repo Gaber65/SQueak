@@ -6,62 +6,61 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import '../../../controller/pet_cubit.dart';
 
 class BirthdatePicker extends StatelessWidget {
-  const BirthdatePicker({
-    super.key,
-    required this.cubit,
-    required this.isDark,
-  });
+  const BirthdatePicker({super.key, required this.cubit, required this.isDark});
 
   final PetCubit cubit;
   final bool isDark;
 
   /// Calculates age from birthdate to current date
   String _calculateAge(String birthdate) {
-    if (birthdate.isEmpty) return isArabic() ? 'سيتم حسابه' : 'Age will be calculated';
-    
+    if (birthdate.isEmpty)
+      return isArabic() ? 'سيتم حسابه' : 'Age will be calculated';
+
     try {
       final DateTime birthDate = DateTime.parse(birthdate);
       final DateTime currentDate = DateTime.now();
-      
+
       int years = currentDate.year - birthDate.year;
       int months = currentDate.month - birthDate.month;
       int days = currentDate.day - birthDate.day;
-      
+
       // Adjust for negative months or days
       if (days < 0) {
         months--;
         days += DateTime(currentDate.year, currentDate.month - 1, 0).day;
       }
-      
+
       if (months < 0) {
         years--;
         months += 12;
       }
-      
+
       // Format the age string
       if (years > 0) {
-        return isArabic() 
-            ? '$years سنة و $months شهر' 
+        return isArabic()
+            ? '$years سنة و $months شهر'
             : '$years years, $months months';
       } else if (months > 0) {
-        return isArabic() 
-            ? '$months شهر و $days يوم' 
+        return isArabic()
+            ? '$months شهر و $days يوم'
             : '$months months, $days days';
       } else {
-        return isArabic() 
-            ? '$days يوم' 
-            : '$days days';
+        return isArabic() ? '$days يوم' : '$days days';
       }
     } catch (e) {
       return isArabic() ? 'سيتم حسابه' : 'Age will be calculated';
     }
   }
-  
+
   /// Sets date by subtracting the specified months/years from current date
   void _setQuickDate(BuildContext context, int months) {
     final DateTime now = DateTime.now();
     // Subtract the specified months from current date
-    final DateTime selectedDate = DateTime(now.year, now.month - months, now.day);
+    final DateTime selectedDate = DateTime(
+      now.year,
+      now.month - months,
+      now.day,
+    );
     // Format date as YYYY-MM-DD and update the birthdate
     cubit.changeBirthdate(selectedDate.toString().substring(0, 10));
   }
@@ -91,7 +90,10 @@ class BirthdatePicker extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDark ? Colors.white.withOpacity(0.2) : Colors.grey.shade300,
+                    color:
+                        isDark
+                            ? Colors.white.withOpacity(0.2)
+                            : Colors.grey.shade300,
                     width: 1,
                   ),
                 ),
@@ -106,20 +108,26 @@ class BirthdatePicker extends StatelessWidget {
                         Icon(
                           Icons.calendar_today,
                           size: 20,
-                          color: isDark ? ColorManager.sWhite : ColorManager.black_87,
+                          color:
+                              isDark
+                                  ? ColorManager.sWhite
+                                  : ColorManager.black_87,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             cubit.birthdateController.text.isEmpty
                                 ? (isArabic() ? 'اختر التاريخ' : 'MM/DD/YYYY')
-                                : cubit.birthdateController.text ,
+                                : cubit.birthdateController.text,
                             style: FontStyleThame.textStyle(
                               context: context,
                               fontSize: 14,
-                              fontColor: cubit.birthdateController.text.isEmpty
-                                  ? (isDark ? Colors.white54 : Colors.grey)
-                                  : isDark ? Colors.white : Colors.black,
+                              fontColor:
+                                  cubit.birthdateController.text.isEmpty
+                                      ? (isDark ? Colors.white54 : Colors.grey)
+                                      : isDark
+                                      ? Colors.white
+                                      : Colors.black,
                             ),
                           ),
                         ),
@@ -134,12 +142,21 @@ class BirthdatePicker extends StatelessWidget {
             Expanded(
               flex: 2,
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 12,
+                ),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.blue.withOpacity(0.1) : Colors.blue.shade50,
+                  color:
+                      isDark
+                          ? Colors.blue.withOpacity(0.1)
+                          : Colors.blue.shade50,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDark ? Colors.blue.withOpacity(0.3) : Colors.blue.shade100,
+                    color:
+                        isDark
+                            ? Colors.blue.withOpacity(0.3)
+                            : Colors.blue.shade100,
                     width: 1,
                   ),
                 ),
@@ -149,7 +166,8 @@ class BirthdatePicker extends StatelessWidget {
                     style: FontStyleThame.textStyle(
                       context: context,
                       fontSize: 14,
-                      fontColor: isDark ? Colors.blue.shade300 : Colors.blue.shade700,
+                      fontColor:
+                          isDark ? Colors.blue.shade300 : Colors.blue.shade700,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -162,19 +180,31 @@ class BirthdatePicker extends StatelessWidget {
         // Quick date selection buttons
         Row(
           children: [
-            _buildQuickDateButton(context, '6 months', 6),
+            _buildQuickDateButton(
+              context,
+              isArabic() ? '6 شهور' : '6 months',
+              6,
+            ),
             const SizedBox(width: 8),
-            _buildQuickDateButton(context, '1 year', 12),
+            _buildQuickDateButton(context, isArabic() ? 'سنة' : '1 year', 12),
             const SizedBox(width: 8),
-            _buildQuickDateButton(context, '3 years', 36),
+            _buildQuickDateButton(
+              context,
+              isArabic() ? '3 سنوات' : '3 years',
+              36,
+            ),
             const SizedBox(width: 8),
-            _buildQuickDateButton(context, '5 years', 60),
+            _buildQuickDateButton(
+              context,
+              isArabic() ? '5 سنوات' : '5 years',
+              60,
+            ),
           ],
         ),
       ],
     );
   }
-  
+
   /// Builds a quick date selection button
   Widget _buildQuickDateButton(BuildContext context, String label, int months) {
     return Expanded(
@@ -185,7 +215,8 @@ class BirthdatePicker extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
             border: Border.all(
-              color: isDark ? Colors.white.withOpacity(0.2) : Colors.grey.shade300,
+              color:
+                  isDark ? Colors.white.withOpacity(0.2) : Colors.grey.shade300,
               width: 1,
             ),
             borderRadius: BorderRadius.circular(8),

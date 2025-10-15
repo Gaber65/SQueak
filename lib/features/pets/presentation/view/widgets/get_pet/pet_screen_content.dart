@@ -1134,7 +1134,7 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                             onTap:
                                 () => navigateToAddPet(
                                   isArabic() ? 'قطة' : 'Cat',
-                                  'assets/avatar7.jpg',
+                                  'assets/avatar_new.webp',
                                   'f1131363-3b9f-40ee-9a89-0573ee274a10',
                                   context,
                                 ),
@@ -1165,7 +1165,7 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                             onTap:
                                 () => navigateToAddPet(
                                   isArabic() ? 'كلب' : 'Dog',
-                                  'assets/avatar7.jpg',
+                                  'assets/avatar_new.webp',
                                   'bca48207-f05d-4e9f-a631-06f34eb5af39',
                                   context,
                                 ),
@@ -1204,7 +1204,7 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                               onSelected: (species) {
                                 navigateToAddPet(
                                   species.type,
-                                  'assets/avatar7.jpg',
+                                  'assets/avatar_new.webp',
                                   species.id,
                                   context,
                                 );
