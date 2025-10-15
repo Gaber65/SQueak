@@ -206,9 +206,20 @@ class BirthdatePicker extends StatelessWidget {
 
   /// Opens date picker dialog and updates the birthdate
   Future<void> _selectDate(BuildContext context) async {
+    // Use the currently selected birthdate if available, otherwise default
+    // to today. This ensures the calendar opens at the selected date.
+    DateTime initial = DateTime.now();
+    try {
+      if (cubit.birthdateController.text.isNotEmpty) {
+        initial = DateTime.parse(cubit.birthdateController.text);
+      }
+    } catch (_) {
+      initial = DateTime.now();
+    }
+
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: initial,
       initialEntryMode: DatePickerEntryMode.calendarOnly,
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
