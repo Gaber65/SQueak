@@ -139,7 +139,7 @@ class AllAppointment extends StatelessWidget {
         ),
         BlocProvider(
           lazy: true,
-          create: (context) => sl<PetCubit>()..getOwnerPets(),
+          create: (context) => sl<PetCubit>(),
         ),
       ],
       child: _AllAppointmentContent(services: _getServiceNames(context)),
@@ -168,11 +168,13 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
 
   @override
   void initState() {
+    debugPrint('AllAppointment:initState → ${DateTime.now().toIso8601String()}');
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_onTabChanged);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('AllAppointment:postFrameCallback → ${DateTime.now().toIso8601String()}');
       if (mounted && !_examinationDataLoaded) {
         _loadExaminationDataInBackground();
         _examinationDataLoaded = true;

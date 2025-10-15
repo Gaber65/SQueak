@@ -52,20 +52,27 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
   bool isLoadingAppointment = false;
   Future<void> getAppointment(bool applyFilter) async {
 
+    debugPrint('UserAppointmentCubit:getAppointment START → ${DateTime.now().toIso8601String()} (applyFilter=$applyFilter)');
     isLoadingAppointment = true;
     emit(GetAppointmentLoading());
-    final result = await getUserAppointments(
-      GetUserAppointmentsParams(
-        phone: CacheHelper.getData('phone'),
-        applyFilter: applyFilter,
-      ),
+
+    final params = GetUserAppointmentsParams(
+      phone: CacheHelper.getData('phone'),
+      applyFilter: applyFilter,
     );
+
+    debugPrint('UserAppointmentCubit:calling usecase → ${DateTime.now().toIso8601String()} params=$params');
+
+    final result = await getUserAppointments(params);
+
+    debugPrint('UserAppointmentCubit:getAppointment AFTER usecase → ${DateTime.now().toIso8601String()}');
     result.fold(
       (failure) {
         isLoadingAppointment = false;
         emit(GetAppointmentError());
       },
       (appointmentsList) {
+        debugPrint('UserAppointmentCubit:getAppointment SUCCESS → ${DateTime.now().toIso8601String()} count=${appointmentsList.length}');
         isLoadingAppointment = false;
         appointments = appointmentsList;
 

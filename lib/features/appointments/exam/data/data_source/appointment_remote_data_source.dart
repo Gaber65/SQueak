@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
@@ -224,10 +225,32 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
     bool applyFilter,
   ) async {
     try {
+      final endpoint = createAndGetAppointmentsEndPoint(phone, applyFilter);
+      if (kDebugMode) {
+        // Log the request endpoint and timestamp
+        debugPrint('🛰️ ➜ [${DateTime.now().toIso8601String()}] Requesting user appointments: $endpoint');
+      }
+
+      final requestStart = DateTime.now();
       final response = await DioFinalHelper.getData(
-        method: createAndGetAppointmentsEndPoint(phone, applyFilter),
+        method: endpoint,
         language: true,
       );
+      final requestEnd = DateTime.now();
+      if (kDebugMode) {
+        debugPrint('🛰️ ← [${requestEnd.toIso8601String()}] Response received for $endpoint (duration: ${requestEnd.difference(requestStart).inMilliseconds} ms)');
+      }
+
+      if (kDebugMode) {
+        try {
+          final data = response.data;
+          // Log brief response info (size and keys). Avoid huge prints.
+          final keys = data is Map ? data.keys.toList() : ['non-map-response'];
+          debugPrint('✅ ← Response received for appointments (${keys.length} keys)');
+        } catch (e) {
+          debugPrint('⚠️ ← Response received but failed to parse debug info: $e');
+        }
+      }
 
       List<AppointmentModel> appointments =
           (response.data['data']['result'] as List)

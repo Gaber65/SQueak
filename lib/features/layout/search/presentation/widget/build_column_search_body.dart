@@ -40,7 +40,7 @@ Widget buildColumnSearchBody(
         SizedBox(height: 20),
         if (cubit.searchController.text.isEmpty)
           YoutubeCardWidget(
-            videoImage: 'assets/squeak_intro.png',
+            videoImage: 'assets/squeak_intro.webp',
             videoUrl:
                 'https://www.youtube.com/watch?v=fb1f8-ZE-fE&list=PLaXhNu0x-iCSzM9AhzBUVc-n5JnNpC_MQ',
           ),

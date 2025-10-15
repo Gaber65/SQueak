@@ -174,7 +174,7 @@ class QuickTourScreen extends StatelessWidget {
                   );
                 },
                 child: Text(
-                  isArabicLang ? "متابعة لإضافة حيوان أليف" : "Continue to Add Pet",
+                  isArabicLang ? "متابعة لإضافة صغيرأليف" : "Continue to Add Pet",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: width * 0.045,
@@ -204,7 +204,7 @@ class QuickTourScreen extends StatelessWidget {
       {
         "icon": Icons.chat,
         "color": Colors.teal,
-        "title": isArabic ? "محادثة الحيوانات" : "Pet Chat",
+        "title": isArabic ? "محادثة الصغار" : "Pet Chat",
         "description": isArabic
             ? "تواصل مع أصحاب الحيوانات الأليفة الآخرين، وشارك التجارب، واحصل على نصائح من المجتمع"
             : "Connect with other pet parents, share experiences, and get advice from the community.",

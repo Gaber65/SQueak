@@ -40,7 +40,7 @@ void showNotificationDialog(
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.25), // Light theme
                   image: DecorationImage(
-                    image: AssetImage('assets/paw_background_modified.png'),
+                    image: AssetImage('assets/paw_background_modified.webp'),
                     fit: BoxFit.cover,
                     colorFilter: ColorFilter.mode(
                       Colors.white.withOpacity(0.7),
