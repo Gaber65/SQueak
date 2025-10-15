@@ -5,7 +5,12 @@ import 'package:squeak/features/layout/search/domain/entities/clinic_search_enti
 
 import '../controller/search_cubit.dart';
 
-Widget buildDetailsContentSearch(ClinicEntitySearch entities, SearchCubit cubit, context, index) {
+Widget buildDetailsContentSearch(
+  ClinicEntitySearch entities,
+  SearchCubit cubit,
+  context,
+  index,
+) {
   return Container(
     margin: const EdgeInsets.symmetric(vertical: 5),
     width: double.infinity,
@@ -47,120 +52,203 @@ Widget buildDetailsContentSearch(ClinicEntitySearch entities, SearchCubit cubit,
               ),
             ),
             const Spacer(),
-            CircleAvatar(
-              backgroundColor: cubit.isFollowBefore ? Colors.red : Colors.green,
-              radius: 15,
-              child: IconButton(
-                iconSize: 15,
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: cubit.isFollowBefore
-                            ? Text(S.of(context).unfollowConfirmation)
-                            : Text(S.of(context).followConfirmation),
-                        content: SizedBox(
-                          width: MediaQuery.of(context).size.width + 100,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    entities.name,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const Spacer(),
-                                  const Spacer(),
-                                  CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                      '$imageUrl${entities.image}',
-                                    ),
-                                    radius: 20,
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                entities.specialities.isNotEmpty
-                                    ? entities.specialities[0].name
-                                    : '',
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontFamily: 'bold',
-                                  fontSize: 15,
+            InkWell(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title:
+                          cubit.isFollowBefore
+                              ? Text(S.of(context).unfollowConfirmation)
+                              : Text(S.of(context).followConfirmation),
+                      content: SizedBox(
+                        width: MediaQuery.of(context).size.width + 100,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  entities.name,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
+                                const Spacer(),
+                                const Spacer(),
+                                CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    '$imageUrl${entities.image}',
+                                  ),
+                                  radius: 20,
+                                ),
+                              ],
+                            ),
+                            Text(
+                              entities.specialities.isNotEmpty
+                                  ? entities.specialities[0].name
+                                  : '',
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontFamily: 'bold',
+                                fontSize: 15,
                               ),
-                              const SizedBox(height: 20),
-                              Row(
-                                children: [
-                                  const Icon(IconlyLight.location, size: 14),
-                                  const SizedBox(width: 2),
-                                  SizedBox(
-                                    width: MediaQuery.sizeOf(context).width / 2,
-                                    child: Text(
-                                      '${entities.location} , ${entities.address} , ${entities.city} ',
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontFamily: 'bold',
-                                      ),
+                            ),
+                            const SizedBox(height: 20),
+                            Row(
+                              children: [
+                                const Icon(IconlyLight.location, size: 14),
+                                const SizedBox(width: 2),
+                                SizedBox(
+                                  width: MediaQuery.sizeOf(context).width / 2,
+                                  child: Text(
+                                    '${entities.location} , ${entities.address} , ${entities.city} ',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontFamily: 'bold',
                                     ),
                                   ),
-                                ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            Row(
+                              children: [
+                                const Icon(IconlyLight.call, size: 14),
+                                const SizedBox(width: 2),
+                                const SizedBox(width: 3),
+                                Text(
+                                  entities.phone.startsWith('0')
+                                      ? entities.phone
+                                      : '0${entities.phone}',
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: TextButton(
+                            child: Text(
+                              cubit.isFollowBefore
+                                  ? S.of(context).unfollow
+                                  : isArabic()
+                                  ? "متابعة"
+                                  : "Follow",
+                              style: TextStyle(
+                                color:
+                                    cubit.isFollowBefore
+                                        ? Colors.red
+                                        : Colors.green,
                               ),
-                              const SizedBox(height: 20),
-                              Row(
-                                children: [
-                                  const Icon(IconlyLight.call, size: 14),
-                                  const SizedBox(width: 2),
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    entities.phone,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ],
+                            ),
+                            onPressed: () {
+                              if (cubit.isFollowBefore) {
+                                cubit.unfollowClinic(entities.id);
+                              } else {
+                                cubit.followClinic(entities.id);
+                              }
+                              Navigator.of(context).pop(true);
+                            },
                           ),
                         ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(true),
-                            child: TextButton(
-                              child: Text(
-                                cubit.isFollowBefore
-                                    ? S.of(context).unfollow
-                                    : isArabic()
-                                    ? "متابعة"
-                                    : "Follow",
-                                style: TextStyle(color: Colors.green),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text(
+                            isArabic() ? "الغاء " : "cancel",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child:
+                  cubit.isFollowBefore
+                      ? Container(
+                        key: const ValueKey('following'),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.red.shade400, Colors.red.shade600],
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.red.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              S.of(context).unfollow,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
                               ),
-                              onPressed: () {
-                                if (cubit.isFollowBefore) {
-                                  cubit.unfollowClinic(entities.id);
-                                } else {
-                                  cubit.followClinic(entities.id,);
-                                }
-                                Navigator.of(context).pop(true);
-                              },
                             ),
+                          ],
+                        ),
+                      )
+                      : Container(
+                        key: const ValueKey('follow'),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.green.shade400,
+                              Colors.green.shade600,
+                            ],
                           ),
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(false),
-                            child: Text(
-                              isArabic() ? "الغاء " : "cancel",
-                              style: TextStyle(color: Colors.red),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.green.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
                             ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                icon: const Icon(Icons.person_add),
-              ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.person_add_alt,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              isArabic() ? 'متابعة' : 'Follow',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
             ),
           ],
         ),

@@ -305,6 +305,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "findPotentialMates": MessageLookupByLibrary.simpleMessage(
       "Search for pets...",
     ),
+    "follow": MessageLookupByLibrary.simpleMessage("Follow"),
     "followCode": MessageLookupByLibrary.simpleMessage("Follow Code"),
     "followConfirmation": MessageLookupByLibrary.simpleMessage(
       "Follow Confirmation",

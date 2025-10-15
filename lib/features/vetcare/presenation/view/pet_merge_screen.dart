@@ -100,7 +100,12 @@ class _PetMergeContent extends StatelessWidget {
 
   AppBar _buildAppBar(BuildContext context, PetAsyncState state) {
     return AppBar(
-      automaticallyImplyLeading: false,
+      centerTitle: true,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios),
+        onPressed: () => navigateAndFinish(context, LayoutScreen()),
+      ),
+      // automaticallyImplyLeading: false,
       title: Text(S.of(context).petsVetICare),
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1.0),

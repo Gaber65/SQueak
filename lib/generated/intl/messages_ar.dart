@@ -292,6 +292,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "findPotentialMates": MessageLookupByLibrary.simpleMessage(
       "ابحث عن صديقك الاليف...",
     ),
+    "follow": MessageLookupByLibrary.simpleMessage("متابعة"),
     "followCode": MessageLookupByLibrary.simpleMessage("كود العياده"),
     "followConfirmation": MessageLookupByLibrary.simpleMessage(
       "تأكيد المتابعة",
@@ -520,6 +521,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "معلومات العلامة التجارية",
     ),
     "unfollow": MessageLookupByLibrary.simpleMessage("الغاء المتابعة"),
+    
     "unfollowConfirmation": MessageLookupByLibrary.simpleMessage(
       "تأكيد الغاء  المتابعة",
     ),

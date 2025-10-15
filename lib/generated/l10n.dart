@@ -694,6 +694,11 @@ class S {
     return Intl.message('Unfollow', name: 'unfollow', desc: '', args: []);
   }
 
+  /// `Follow`
+  String get follow {
+    return Intl.message('Follow', name: 'follow', desc: '', args: []);
+  }
+
   /// `Cancel`
   String get cancelFollow {
     return Intl.message('Cancel', name: 'cancelFollow', desc: '', args: []);
