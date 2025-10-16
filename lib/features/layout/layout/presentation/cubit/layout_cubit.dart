@@ -24,7 +24,6 @@ class LayoutCubit extends Cubit<LayoutState> {
     required this.getVersionUseCase,
     required this.getCurrentAppVersionUseCase,
   }) : super(LayoutInitial()) {
-    // Initialize screens once to avoid recreating widget instances repeatedly.
     screens = [
       HomeScreen(),
       FriendsScreen(),
