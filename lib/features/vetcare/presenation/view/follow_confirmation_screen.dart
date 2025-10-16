@@ -46,7 +46,7 @@ class ConfirmationScreen extends StatelessWidget {
               context,
             ).checkClinicInMySupplier(clinicCode, state.suppliers);
             suppliers = state.suppliers;
-            print('suppliers ${state.suppliers}' + '*************************');
+            print('suppliers ${state.suppliers}' '*************************');
           }
         },
         builder: (context, state) {

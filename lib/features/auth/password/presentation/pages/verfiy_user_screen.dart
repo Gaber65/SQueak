@@ -12,7 +12,6 @@ import 'package:squeak/features/auth/password/presentation/cubit/password_cubit.
 
 import 'package:squeak/features/auth/register/presentation/pages/register_screen.dart';
 
-import '../../../../../generated/l10n.dart';
 import '../../../contactus/presentation/pages/contact_us.dart';
 import '../../../login/presentation/pages/login_screen.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';

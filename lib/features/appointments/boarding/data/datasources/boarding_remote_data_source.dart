@@ -76,8 +76,8 @@ class BoardingRemoteDataSourceImpl implements BoardingRemoteDataSource {
     String phone,
     bool applyFilter,
   ) async {
-    print('***************************************');
-    print('getBoardingEntries');
+    // print('***************************************');
+    // print('getBoardingEntries');
     try {
       Response response = await DioFinalHelper.getData(
         method: getAllBoardingEndPoint(CacheHelper.getData('phone')),

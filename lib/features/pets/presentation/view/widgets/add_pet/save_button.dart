@@ -5,7 +5,7 @@ import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../controller/pet_cubit.dart';
 
 class SaveButton extends StatelessWidget {
-  const SaveButton({Key? key, required this.cubit}) : super(key: key);
+  const SaveButton({super.key, required this.cubit});
 
   final PetCubit cubit;
 
@@ -24,23 +24,23 @@ class SaveButton extends StatelessWidget {
         ),
         onPressed: () => _handleSave(context),
         child:
-        cubit.isLoading
-            ? const SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator(
-            color: Colors.white,
-            strokeWidth: 2,
-          ),
-        )
-            : Text(
-          S.of(context).save,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
+            cubit.isLoading
+                ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                )
+                : Text(
+                  S.of(context).save,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
       ),
     );
   }
@@ -61,9 +61,9 @@ class SaveButton extends StatelessWidget {
     // Upload pet image if exists
     if (cubit.petImage != null) {
       uploadTasks.add(
-        MainCubit.get(context)
-            .getGlobalImage(cubit.petImage!, UploadPlace.petsImages)
-            .then((value) {
+        MainCubit.get(
+          context,
+        ).getGlobalImage(cubit.petImage!, UploadPlace.petsImages).then((value) {
           cubit.imageNameController.text =
               MainCubit.get(context).modelImage!.data;
         }),
@@ -76,24 +76,26 @@ class SaveButton extends StatelessWidget {
         MainCubit.get(context)
             .getGlobalImage(cubit.passportImage!, UploadPlace.petsImages)
             .then((value) {
-          cubit.passportImageNameController.text =
-              MainCubit.get(context).modelImage!.data;
-        }),
+              cubit.passportImageNameController.text =
+                  MainCubit.get(context).modelImage!.data;
+            }),
       );
     }
 
     if (uploadTasks.isNotEmpty) {
       // Wait for all image uploads to complete
-      Future.wait(uploadTasks).then((_) {
-        _proceedWithSave(context);
-      }).catchError((error) {
-        cubit.isLoading = false;
-        cubit.emit(PetCreateErrorState(error.toString()));
-        errorToast(
-          context,
-          isArabic() ? "فشل في رفع الصور" : "Failed to upload images",
-        );
-      });
+      Future.wait(uploadTasks)
+          .then((_) {
+            _proceedWithSave(context);
+          })
+          .catchError((error) {
+            cubit.isLoading = false;
+            cubit.emit(PetCreateErrorState(error.toString()));
+            errorToast(
+              context,
+              isArabic() ? "فشل في رفع الصور" : "Failed to upload images",
+            );
+          });
     } else {
       _proceedWithSave(context);
     }
@@ -104,7 +106,7 @@ class SaveButton extends StatelessWidget {
       cubit.createPet();
     } else {
       if (cubit.breedData.any(
-            (BreedEntity data) => data.enType == cubit.searchController.text,
+        (BreedEntity data) => data.enType == cubit.searchController.text,
       )) {
         cubit.createPet();
       } else {
@@ -115,9 +117,7 @@ class SaveButton extends StatelessWidget {
         cubit.emit(ChangeBreedState());
         errorToast(
           context,
-          isArabic()
-              ? "هذه السلاله غير موجوده"
-              : 'this breed doesn\'t exist',
+          isArabic() ? "هذه السلاله غير موجوده" : 'this breed doesn\'t exist',
         );
       }
     }

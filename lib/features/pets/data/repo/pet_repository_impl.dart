@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:squeak/features/auth/get_started/domain/entites/request_pet_inteties.dart';
 import 'package:squeak/features/pets/data/models/pet_model.dart';
 import '../../../../core/utils/export_path/export_files.dart';
 import '../../domain/base_repo/pet_base_repository.dart';
@@ -32,7 +33,6 @@ class PetRepositoryImpl implements PetRepository {
       return Left(ServerFailure(failure.errorMessageModel));
     }
   }
-
 
   @override
   Future<Either<Failure, List<BreedEntity>>> getAllBreeds() async {
@@ -211,4 +211,33 @@ class PetRepositoryImpl implements PetRepository {
       );
     }
   }
+
+  // @override
+  // Future<Either<Failure, PetEntities>> createPetLoginScreen(
+  //   PetEntitiesss pet,
+  // ) async {
+  //   if (await networkInfo.isConnected) {
+  //     try {
+  //       final remotePet = await remoteDataSource.createPetForLoginScreen(pet);
+  //       final pets = await localDataSource.getCachedPets();
+  //       pets.add(remotePet);
+  //       await localDataSource.cachePets(pets);
+
+  //       return Right(remotePet);
+  //     } on ServerException catch (failure) {
+  //       return Left(ServerFailure(failure.errorMessageModel));
+  //     }
+  //   } else {
+  //     return const Left(
+  //       ServerFailure(
+  //         ErrorMessageModel(
+  //           message: 'No internet connection',
+  //           statusCode: 0,
+  //           errors: {},
+  //           success: false,
+  //         ),
+  //       ),
+  //     );
+  //   }
+  // }
 }

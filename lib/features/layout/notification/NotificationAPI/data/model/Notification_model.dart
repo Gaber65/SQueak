@@ -18,7 +18,7 @@ class NotificationModel extends NotificationEntities {
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
       message: json['message'],
-      eventType: getNotificationType(json['eventType'])!,
+      eventType: getNotificationType(json['eventType']),
       eventTypeId: json['eventTypeId'],
       title: json['title'],
       logo: json['logo'] ?? '',

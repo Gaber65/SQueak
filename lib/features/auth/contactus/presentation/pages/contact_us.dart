@@ -1,6 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:squeak/core/service/global_widget/vc_loading_widget.dart';
 
 import 'package:squeak/features/auth/contactus/data/datasources/contact_us_remote_data_source.dart';
 import 'package:squeak/features/auth/contactus/data/repositories/contact_us_repository_impl.dart';
@@ -10,9 +10,7 @@ import 'package:squeak/features/auth/register/domin/usecses/register_qr_use_case
 import 'package:squeak/features/auth/register/domin/usecses/register_use_case.dart';
 import 'package:squeak/features/auth/register/presentation/cubit/register_cubit.dart';
 
-import '../../../../../core/service/global_widget/toast.dart';
 import '../../../../../core/utils/export_path/export_files.dart';
-import '../../../../../generated/l10n.dart';
 import '../../../register/data/datasources/register_remote_data_source.dart';
 import '../../../register/data/repositories/register_repository_impl.dart';
 import '../../../register/domin/usecses/get_countries_use_case.dart';
@@ -225,28 +223,16 @@ class _ContactScreenState extends State<ContactScreen> {
                   obscureText: false,
                 ),
                 SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      backgroundColor: ColorManager.primaryColor,
-                    ),
-                    onPressed:
-                        cubit.isContactUs
-                            ? null
-                            : () {
-                              if (cubit.formKey.currentState!.validate()) {
-                                cubit.contactUs();
-                              }
-                            },
-                    child:
-                        cubit.isContactUs
-                            ? CircularProgressIndicator()
-                            : Text(S.of(context).send),
+                VcLoadingButton(
+                  onPressed: () {
+                    if (cubit.formKey.currentState!.validate()) {
+                      cubit.contactUs();
+                    }
+                  },
+                  isLoading: cubit.isContactUs,
+                  child: Text(
+                    S.of(context).send,
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ],

@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:squeak/features/auth/login/data/models/auth_model.dart';
+import 'package:squeak/core/utils/firebase_token_helper.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
@@ -11,9 +11,9 @@ class LoginRemoteDataSource {
     required String emailOrPhoneNumber,
     required String password,
   }) async {
-    final fbToken =
-        CacheHelper.getData('DeviceToken') ??
-        await FirebaseMessaging.instance.getToken();
+    // Get Firebase token using the enhanced helper
+    final fbToken = await FirebaseTokenHelper.getFirebaseToken() ?? 
+                   'fallback_token_${DateTime.now().millisecondsSinceEpoch}';
 
     try {
       final response = await DioFinalHelper.postData(

@@ -71,7 +71,7 @@ class LocalDatabaseHelper {
   }
 
   static Future<int> updateReminder(ReminderModel reminder) async {
-    final db = await LocalDatabaseHelper._database;
+    final db = LocalDatabaseHelper._database;
     return await db!.update(tableName, reminder.toMap(),
         where: 'id = ?', whereArgs: [reminder.id]);
   }

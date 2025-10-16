@@ -8,10 +8,10 @@ class AppointmentEntity extends Equatable {
   final String? visitId;
   final bool isRating;
   final bool isBillSqueakVisible;
-  final int cleanlinessRate;
-  final int doctorServiceRate;
+  final dynamic cleanlinessRate;
+  final dynamic doctorServiceRate;
   final String? feedbackComment;
-  final int status;
+  final dynamic status;
   final String clientId;
   final String petId;
   final String clinicPhone;
@@ -20,12 +20,12 @@ class AppointmentEntity extends Equatable {
   final String clinicCode;
   final String clinicId;
   final String clinicName;
-  final int source;
+  final dynamic source;
   final ClientEntity client;
   final PetEntityAppointment pet;
   final DoctorUserEntity? doctorUser;
-  final int weight;
-  final int temperature;
+  final dynamic weight;
+  final dynamic temperature;
 
   const AppointmentEntity({
     required this.id,

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 import 'package:squeak/core/network/end-points.dart';
 import 'package:squeak/core/utils/enums/upload_place.dart';
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/availability_entities.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../../../../../core/utils/enums/dayOfWeek_enum.dart';
-
 
 class CalendarScreen extends StatefulWidget {
   final bool isShowTime;
@@ -49,11 +49,11 @@ class _CalendarScreenState extends State<CalendarScreen>
     _animation = Tween<double>(begin: 1.0, end: 1.2).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
-    print(widget.selectedDate.toString() + '-----------------');
+    print('${widget.selectedDate}-----------------');
 
     if (widget.selectedDate != null) {
       _selectedDate = widget.selectedDate;
-      print(_selectedDate.toString() + '-----------------');
+      print('$_selectedDate-----------------');
       setState(() {});
       final slot =
           _timeSlots[DayOfWeek.values[(_selectedDate!.weekday - 1 + 7) % 7]]!
@@ -96,7 +96,19 @@ class _CalendarScreenState extends State<CalendarScreen>
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Row(
+          children: [
+            Icon(IconlyLight.calendar, color: ColorManager.primaryColor),
+            const SizedBox(width: 10),
+            Text(
+              isArabic() ? 'اختر التاريخ و الوقت' : 'Select Date & Time',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
         if (widget.isShowDate) BuildCalendar(context),
         if (widget.isShowTime && _selectedDate != null) buildTimeSlots(),
       ],
@@ -107,7 +119,6 @@ class _CalendarScreenState extends State<CalendarScreen>
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        padding: EdgeInsets.all(16.0),
         decoration: Decorations.kDecorationBoxShadow(context: context),
         child: TableCalendar(
           weekNumbersVisible: false,
@@ -115,6 +126,7 @@ class _CalendarScreenState extends State<CalendarScreen>
           focusedDay: _selectedDate ?? DateTime.now(),
           firstDay: DateTime.now(),
           lastDay: DateTime(2030),
+
           onFormatChanged: (format) {
             print('Calendar format changed to $format');
           },
@@ -122,9 +134,10 @@ class _CalendarScreenState extends State<CalendarScreen>
           onDaySelected: (selectedDay, focusedDay) {
             widget.onDaySelected?.call(selectedDay, focusedDay);
             _selectedDate = selectedDay;
-            final slot = _timeSlots[
-                    DayOfWeek.values[(_selectedDate!.weekday - 1 + 7) % 7]]!
-                .first;
+            final slot =
+                _timeSlots[DayOfWeek.values[(_selectedDate!.weekday - 1 + 7) %
+                        7]]!
+                    .first;
             intervals = _generateHourlyIntervals(slot.startTime, slot.endTime);
             setState(() {});
           },
@@ -132,6 +145,14 @@ class _CalendarScreenState extends State<CalendarScreen>
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
             titleCentered: true,
+            titleTextStyle: TextStyle(color: Colors.white ,fontSize: 16,fontWeight: FontWeight.bold),
+            decoration: BoxDecoration(
+              color: ColorManager.primaryColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+            ),
           ),
           enabledDayPredicate: (day) {
             DayOfWeek dayOfWeek = DayOfWeek.values[(day.weekday - 1 + 7) % 7];
@@ -144,9 +165,7 @@ class _CalendarScreenState extends State<CalendarScreen>
                 child: Center(
                   child: Text(
                     '${day.day}',
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
+                    style: TextStyle(color: Colors.black),
                   ),
                 ),
               );
@@ -161,9 +180,7 @@ class _CalendarScreenState extends State<CalendarScreen>
                 child: Center(
                   child: Text(
                     '${day.day}',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               );
@@ -216,9 +233,10 @@ class _CalendarScreenState extends State<CalendarScreen>
                   duration: const Duration(milliseconds: 600),
                   decoration: Decorations.kDecorationBoxShadow(
                     context: context,
-                    color: isActive
-                        ? ColorManager.primaryColor
-                        : MainCubit.get(context).isDark
+                    color:
+                        isActive
+                            ? ColorManager.primaryColor
+                            : MainCubit.get(context).isDark
                             ? Colors.black54
                             : Colors.white,
                   ),
@@ -229,7 +247,9 @@ class _CalendarScreenState extends State<CalendarScreen>
                       style: TextStyle(
                         fontSize: 12,
                         color:
-                            !isActive ? ColorManager.primaryColor : Colors.white,
+                            !isActive
+                                ? ColorManager.primaryColor
+                                : Colors.white,
                       ),
                     ),
                   ),

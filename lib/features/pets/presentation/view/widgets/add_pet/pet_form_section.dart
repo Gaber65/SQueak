@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
 import '../../../controller/pet_cubit.dart';
 import 'spayed_toggle.dart';
 import 'pet_name_field.dart';
@@ -24,24 +23,46 @@ class PetFormSection extends StatelessWidget {
         children: [
           SpayedToggle(cubit: cubit),
           SizedBox(height: responsiveHeight(20, context)),
-
-          PetNameField(cubit: cubit, isDark: isDark),
-          SizedBox(height: responsiveHeight(20, context)),
-
-
-          BreedSpeciesSection(cubit: cubit, isDark: isDark),
-          SizedBox(height: responsiveHeight(20, context)),
-
-          GenderSelection(cubit: cubit),
-          SizedBox(height: responsiveHeight(20, context)),
-
-
-          BirthdatePicker(cubit: cubit, isDark: isDark),
-          SizedBox(height: responsiveHeight(20, context)),
-
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.blue),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.error, color: Colors.blue),
+                      SizedBox(width: 8),
+                      Text(
+                        'Basic Information',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: responsiveHeight(20, context)),
+                  PetNameField(cubit: cubit, isDark: isDark),
+                  SizedBox(height: responsiveHeight(20, context)),
+                  BreedSpeciesSection(cubit: cubit, isDark: isDark),
+                  SizedBox(height: responsiveHeight(20, context)),
+                  GenderSelection(cubit: cubit),
+                  SizedBox(height: responsiveHeight(20, context)),
+                  BirthdatePicker(cubit: cubit, isDark: isDark),
+                  SizedBox(height: responsiveHeight(20, context)),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: responsiveHeight(30, context)),
           PassportSection(cubit: cubit, isDark: isDark),
           SizedBox(height: responsiveHeight(30, context)),
-
           SaveButton(cubit: cubit),
           SizedBox(height: responsiveHeight(30, context)),
         ],

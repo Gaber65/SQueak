@@ -226,10 +226,10 @@ class SelectDateVacForEdit extends StatefulWidget {
   final DateTime initDate;
 
   const SelectDateVacForEdit({
-    Key? key,
+    super.key,
     required this.cubit,
     required this.initDate,
-  }) : super(key: key);
+  });
 
   @override
   _SelectDateVacForEditState createState() => _SelectDateVacForEditState();

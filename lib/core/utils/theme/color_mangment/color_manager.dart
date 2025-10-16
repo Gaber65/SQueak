@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 class ColorManager {
-  static const Color primaryColor = Color(0xFF0D6EFD);
-  static const Color secondColor = Color.fromRGBO(255, 112, 41, 1.0);
+  // Clinical Blue → Purple theme
+  // Primary: Indigo Blue, Secondary: Soft Purple
+  static const Color primaryColor = Color(0xFF4E6BFF); // Indigo Blue
+  static const Color secondColor = Color(0xFF7A57D1); // Soft Purple
   static const Color gray = Color.fromRGBO(242, 242, 242, 1);
   static const Color white = Colors.white;
   // Optional: subtle variations
-  static const Color primaryLight = Color(0xFFE3F2FD); // Light background
-  static const Color primaryBorder = Color(0xFFBBDEFB);
+  static const Color primaryLight = Color(0xFFE8EDFF); // Light tint of primary
+  static const Color primaryBorder = Color(0xFFBAC5FF); // Subtle border tint
   static const Color black87 = Colors.black87;
   static const Color black54 = Colors.black54;
 

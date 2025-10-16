@@ -106,7 +106,6 @@
   "reply": "رد",
   "view1Reply": "عرض رد واحد",
   "viewReplies": "عرض {count} ردود",
-
   "comments": "التعليقات",
   "deleteComment": "حذف التعليق",
   "commentReply": "رد التعليق",
@@ -295,11 +294,11 @@
   "followRequest": "طلبات المتابعة",
   "followRequestUnAvailable": "طلب المتابعة غير متوفر",
   "petsVetICare": " أصدقائك الصغار في vetIcare",
-  "noPetsInVetICare" : "لا يوجد اصدقاء أليفة في هذه العيادة، أو قد تم إضافتها بالفعل على SQueak",
-  "addToSqueak" : "اضافة الى Squeak",
-  "linkAnotherPet" : "الارتباط أليف آخر",
-  "yourPets" : "اصدقاءك الصغار",
-  "compeleteSqueakRegister" : "أكمل نموذج التسجيل دعوة vetIcare",
+  "noPetsInVetICare": "لا يوجد اصدقاء أليفة في هذه العيادة، أو قد تم إضافتها بالفعل على SQueak",
+  "addToSqueak": "اضافة الى Squeak",
+  "linkAnotherPet": "الارتباط أليف آخر",
+  "yourPets": "اصدقاءك الصغار",
+  "compeleteSqueakRegister": "أكمل نموذج التسجيل دعوة vetIcare",
   "selectPet": "يرجى اختيار أليف لبدء الخدمة",
   "pleaseSelectBoarding": "يرجى اختيار نوع الإقامة",
   "pleaseSelectCage": "يرجى اختيار القفص",
@@ -315,5 +314,6 @@
   "boardingBy": "الإقامة بواسطة",
   "selectBoardingBy": "اختر طبيبًا",
   "ShareImagesPet": "شارك صور الالأليف",
-  "findPotentialMates": "ابحث عن صديقك الاليف..."
+  "findPotentialMates": "ابحث عن صديقك الاليف...",
+  "findPetFriends": "ابحث عن الأصدقاء"
 }

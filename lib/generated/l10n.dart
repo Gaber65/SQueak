@@ -3229,6 +3229,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Find Pet Friends`
+  String get findPetFriends {
+    return Intl.message(
+      'Find Pet Friends',
+      name: 'findPetFriends',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -1,5 +1,5 @@
+import 'dart:convert';
 import 'dart:io';
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,8 +27,12 @@ class PetCubit extends Cubit<PetState> {
   final CreatePetUseCase createPetUseCase;
   final UpdatePetUseCase updatePetUseCase;
   final DeletePetUseCase deletePetUseCase;
+  // final birthdateController = TextEditingController();
+  // final CreatePetLoginScreenUseCase createPetLoginScreenUseCase;
 
-  PetCubit({
+  PetCubit(
+  // this.createPetLoginScreenUseCase,
+  {
     required this.getOwnerPetsUseCase,
     required this.getAllBreedsUseCase,
     required this.getBreedsBySpeciesUseCase,
@@ -146,16 +150,18 @@ class PetCubit extends Cubit<PetState> {
 
   // Initialize form for editing an existing pet
   void initEdit(PetEntities pet) {
-    print(pet.toJson());
-    print(pet.breed);
     searchController.text =
         (isArabic()
             ? pet.breed?.arBreed
-            : pet.breed?.enBreed ?? S.current.breed) ?? '';
-    petNameController.text = pet.petName;
-    breedIdController.text = pet.breedId;
+            : pet.breed?.enBreed ?? S.current.breed) ??
+        '';
+    petNameController.text = pet.petName ?? '';
+    breedIdController.text = pet.breedId ?? '';
     birthdateController.text =
-        pet.birthdate.isEmpty ? '' : pet.birthdate.substring(0, 10);
+        (pet.birthdate?.isNotEmpty ?? false)
+            ? pet.birthdate!.substring(0, 10)
+            : '';
+
     imageNameController.text =
         pet.imageName.toString().contains('freepik')
             ? ''
@@ -165,11 +171,11 @@ class PetCubit extends Cubit<PetState> {
     passportImageNameController.text = pet.passportImage ?? '';
     microchipNumberController.text = pet.microShipNumber ?? '';
 
-    gender = pet.gender;
+    gender = pet.gender ?? 0;
     petId = pet.petId.toString();
     specieId = pet.specieId.toString();
-    spayed = pet.isSpayed;
-    dropdownValueBreed = pet.breedId;
+    spayed = pet.isSpayed ?? false;
+    dropdownValueBreed = pet.breedId ?? '';
     emit(PetFormUpdatedState());
   }
 
@@ -199,15 +205,16 @@ class PetCubit extends Cubit<PetState> {
               ? ''
               : passportNumberController.text,
       microShipNumber:
-          microchipNumberController.text.isEmpty ? '' : microchipNumberController.text,
+          microchipNumberController.text.isEmpty
+              ? ''
+              : microchipNumberController.text,
     );
-    print(pet.toJson());
+
     final result = await createPetUseCase(PetParams(pet: pet));
 
     isLoading = false;
     result.fold(
       (error) {
-        print(error.error.toJson());
         emit(PetCreateErrorState(extractFirstError(error)));
       },
       (createdPet) {
@@ -217,11 +224,34 @@ class PetCubit extends Cubit<PetState> {
     );
   }
 
+  // Create a new pet
+  Future<void> createPetGetStarting({required PetEntities pet}) async {
+    isLoading = true;
+    emit(PetCreateLoadingState());
+
+    // print(pet.toJson());
+    final result = await createPetUseCase(PetParams(pet: pet));
+
+    isLoading = false;
+    result.fold(
+      (error) {
+        // print(error.error.toJson());
+        emit(PetCreateErrorState(extractFirstError(error)));
+      },
+      (createdPet) {
+        pets.add(createdPet);
+        // Update the petId and specieId with the newly created pet's values
+        petId = createdPet.petId ?? '';
+        specieId = createdPet.specieId ?? '';
+        emit(PetCreateSuccessState());
+      },
+    );
+  }
+
   // Update an existing pet
   Future<void> updatePet() async {
     isLoading = true;
     emit(PetCreateLoadingState());
-print(microchipNumberController.text);
     final pet = PetEntities(
       petId: petId,
       petName: petNameController.text,
@@ -242,7 +272,10 @@ print(microchipNumberController.text);
           passportNumberController.text.isEmpty
               ? ''
               : passportNumberController.text,
-      microShipNumber: microchipNumberController.text.isEmpty ? '' : microchipNumberController.text,
+      microShipNumber:
+          microchipNumberController.text.isEmpty
+              ? ''
+              : microchipNumberController.text,
     );
 
     final result = await updatePetUseCase(PetParams(pet: pet));
@@ -268,8 +301,19 @@ print(microchipNumberController.text);
 
     result.fold(
       (error) => emit(DeletePetErrorState(extractFirstError(error))),
-      (_) {
+      (_) async {
+        // Remove pet from in-memory list
         pets.removeWhere((pet) => pet.petId.toString() == id);
+
+        // Remove old cached data
+        await CacheHelper.removeData('pets');
+
+        // Save updated list in cache
+        await CacheHelper.saveData(
+          'havePets',
+          jsonEncode(pets.map((e) => e.toJson()).toList()),
+        );
+
         emit(DeletePetSuccessState());
       },
     );
@@ -351,4 +395,5 @@ print(microchipNumberController.text);
     imageNameController.dispose();
     return super.close();
   }
+
 }

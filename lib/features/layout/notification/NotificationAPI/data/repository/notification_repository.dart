@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:squeak/features/layout/notification/NotificationAPI/data/model/notification_model.dart';
 
 import '../../../../../../core/utils/export_path/export_files.dart';
 import '../../../../post/data/model/post_model.dart';

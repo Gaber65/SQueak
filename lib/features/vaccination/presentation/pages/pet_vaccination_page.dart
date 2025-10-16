@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
-import '../../../../generated/l10n.dart';
 import '../../../pets/domain/entities/pet_entity.dart';
 import '../cubit/ui/vaccination_ui_cubit.dart';
 import '../widgets/vaccination_form.dart';
 import '../widgets/vaccination_list.dart';
 import '../widgets/vaccination_loading.dart';
-import 'package:get_it/get_it.dart';
 import '../cubit/data/vaccination_data_cubit.dart';
 
 class PetVaccinationPage extends StatelessWidget {
@@ -33,7 +31,7 @@ class PetVaccinationPage extends StatelessWidget {
                   sl<VaccinationUiCubit>()
                     ..listenToDataCubit()
                     ..loadVaccinationNames()
-                    ..loadPetReminders(petModel.petId),
+                    ..loadPetReminders(petModel.petId ?? ''),
         ),
       ],
       child: BlocConsumer<VaccinationUiCubit, VaccinationUiState>(
@@ -145,7 +143,7 @@ class PetVaccinationPage extends StatelessWidget {
     );
     uiCubit
         .createReminder(
-          petId: petModel.petId,
+          petId: petModel.petId ?? '',
           data:
               (uiCubit.currentDateItem.toString().substring(0, 10) ==
                       DateTime.now().toString().substring(0, 10))
@@ -155,7 +153,7 @@ class PetVaccinationPage extends StatelessWidget {
           typeId: uiCubit.valueIdItem,
           valueVacItem: uiCubit.valueVacItem,
           context: context,
-          petName: petModel.petName,
+          petName: petModel.petName ?? '',
         )
         .then((_) {
           commentController.clear();

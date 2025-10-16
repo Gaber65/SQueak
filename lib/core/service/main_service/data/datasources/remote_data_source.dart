@@ -36,15 +36,25 @@ class MainRemoteDataSource {
 
   Future<void> saveToken() async {
     try {
+      String? fbToken = CacheHelper.getData('DeviceToken');
+      
+      if (fbToken == null || fbToken.isEmpty) {
+        try {
+          fbToken = await FirebaseMessaging.instance.getToken();
+        } catch (tokenError) {
+          print('Error getting Firebase token in saveToken: $tokenError');
+          fbToken = 'fallback_token_${DateTime.now().millisecondsSinceEpoch}';
+        }
+      }
+      
       await DioFinalHelper.postData(
         method: sendtoken,
         data: {
-          "fbToken":
-              CacheHelper.getData('DeviceToken') ??
-              await FirebaseMessaging.instance.getToken(),
+          "fbToken": fbToken ?? 'default_token',
         },
       );
     } catch (e) {
+      print('Failed to save token: $e');
       throw Exception('Failed to save token');
     }
   }
@@ -61,13 +71,28 @@ class MainRemoteDataSource {
   }
 
   Future<void> requestNotificationPermissions() async {
-    await FirebaseMessaging.instance.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-    final token = await FirebaseMessaging.instance.getToken();
-    CacheHelper.saveData('DeviceToken', token);
+    try {
+      await FirebaseMessaging.instance.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      
+      try {
+        final token = await FirebaseMessaging.instance.getToken();
+        if (token != null) {
+          CacheHelper.saveData('DeviceToken', token);
+        }
+      } catch (tokenError) {
+        print('Error getting Firebase token: $tokenError');
+        // Save a fallback token
+        final fallbackToken = 'fallback_token_${DateTime.now().millisecondsSinceEpoch}';
+        CacheHelper.saveData('DeviceToken', fallbackToken);
+      }
+    } catch (permissionError) {
+      print('Error requesting notification permissions: $permissionError');
+      // Continue without Firebase token
+    }
   }
 
   Future<ImageModel> uploadFile(

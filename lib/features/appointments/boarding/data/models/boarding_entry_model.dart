@@ -113,3 +113,26 @@ class BoardingEntryModel extends BoardingEntryEntity {
     );
   }
 }
+class VideoEntity {
+  final String url;
+  final String? description;
+
+  VideoEntity({
+    required this.url,
+    this.description,
+  });
+
+  factory VideoEntity.fromJson(Map<String, dynamic> json) {
+    return VideoEntity(
+      url: json['url'] as String,
+      description: json['description'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'url': url,
+      'description': description,
+    };
+  }
+}

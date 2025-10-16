@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import '../../../../core/service/global_function/format_utils.dart';
-import '../../../../core/service/global_widget/custom_text_form_field.dart';
 import '../../../../core/service/global_widget/toast.dart';
-import '../../../../core/service/service_locator/service_locator.dart';
 import '../../../../core/utils/theme/color_mangment/color_manager.dart';
-import '../../../pets/presentation/controller/pet_cubit.dart';
 import '../controller/qr_cubit.dart';
 import '../../../pets/domain/entities/pet_entity.dart';
-import '../view/new_scanner.dart';
+// import '../view/new_scanner.dart';  // Temporarily disabled due to mobile_scanner dependency conflict
 import 'package:flutter/services.dart'; // مهم للـ Clipboard
 
 class QrLinkDialog extends StatefulWidget {
@@ -28,7 +24,8 @@ class QrLinkDialog extends StatefulWidget {
   State<QrLinkDialog> createState() => _QrLinkDialogState();
 }
 
-class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMixin {
+class _QrLinkDialogState extends State<QrLinkDialog>
+    with TickerProviderStateMixin {
   final TextEditingController qrController = TextEditingController();
   bool isScanning = false;
   late AnimationController _animationController;
@@ -43,21 +40,13 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutBack,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
 
     _animationController.forward();
   }
@@ -83,24 +72,23 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: widget.isDarkMode
-                        ? [
-                      Colors.grey.shade900,
-                      Colors.grey.shade800,
-                      Colors.grey.shade900,
-                    ]
-                        : [
-                      ColorManager.primaryColor.withOpacity(0.05),
-                      Colors.white,
-                      Colors.blue.shade50,
-                    ],
+                    colors:
+                        widget.isDarkMode
+                            ? [
+                              Colors.grey.shade900,
+                              Colors.grey.shade800,
+                              Colors.grey.shade900,
+                            ]
+                            : [
+                              ColorManager.primaryColor.withOpacity(0.05),
+                              Colors.white,
+                              Colors.blue.shade50,
+                            ],
                   ),
-                  border: widget.isDarkMode
-                      ? Border.all(
-                    color: Colors.grey.shade700,
-                    width: 1,
-                  )
-                      : null,
+                  border:
+                      widget.isDarkMode
+                          ? Border.all(color: Colors.grey.shade700, width: 1)
+                          : null,
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -130,16 +118,13 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: widget.isDarkMode
-                ? ColorManager.primaryColor.withOpacity(0.2)
-                : ColorManager.primaryColor.withOpacity(0.1),
+            color:
+                widget.isDarkMode
+                    ? ColorManager.primaryColor.withOpacity(0.2)
+                    : ColorManager.primaryColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: Icon(
-            Icons.link,
-            color: ColorManager.primaryColor,
-            size: 24,
-          ),
+          child: Icon(Icons.link, color: ColorManager.primaryColor, size: 24),
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -159,9 +144,10 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
                 '${isArabic() ? "الأليف" : "Pet"}: ${widget.pet.petName}',
                 style: TextStyle(
                   fontSize: 14,
-                  color: widget.isDarkMode
-                      ? Colors.grey.shade400
-                      : Colors.grey.shade600,
+                  color:
+                      widget.isDarkMode
+                          ? Colors.grey.shade400
+                          : Colors.grey.shade600,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -184,15 +170,14 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: widget.isDarkMode
-            ? Colors.grey.shade800
-            : Colors.white,
+        color: widget.isDarkMode ? Colors.grey.shade800 : Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: widget.isDarkMode
-                ? Colors.black.withOpacity(0.3)
-                : Colors.black.withOpacity(0.08),
+            color:
+                widget.isDarkMode
+                    ? Colors.black.withOpacity(0.3)
+                    : Colors.black.withOpacity(0.08),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -210,23 +195,22 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: widget.isDarkMode
-            ? Colors.grey.shade800.withOpacity(0.5)
-            : Colors.grey.shade50,
+        color:
+            widget.isDarkMode
+                ? Colors.grey.shade800.withOpacity(0.5)
+                : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: widget.isDarkMode
-              ? Colors.grey.shade700
-              : Colors.grey.shade200,
+          color:
+              widget.isDarkMode ? Colors.grey.shade700 : Colors.grey.shade200,
         ),
       ),
       child: Row(
         children: [
           Icon(
             Icons.info_outline_rounded,
-            color: widget.isDarkMode
-                ? Colors.blue.shade300
-                : Colors.blue.shade600,
+            color:
+                widget.isDarkMode ? Colors.blue.shade300 : Colors.blue.shade600,
             size: 20,
           ),
           const SizedBox(width: 12),
@@ -237,9 +221,10 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
                   : 'Link your pet to a QR code by scanning it ',
               style: TextStyle(
                 fontSize: 13,
-                color: widget.isDarkMode
-                    ? Colors.grey.shade300
-                    : Colors.grey.shade700,
+                color:
+                    widget.isDarkMode
+                        ? Colors.grey.shade300
+                        : Colors.grey.shade700,
                 height: 1.4,
               ),
             ),
@@ -253,20 +238,18 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: widget.isDarkMode
-            ? Colors.grey.shade800
-            : Colors.white,
+        color: widget.isDarkMode ? Colors.grey.shade800 : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: widget.isDarkMode
-              ? Colors.grey.shade700
-              : Colors.grey.shade200,
+          color:
+              widget.isDarkMode ? Colors.grey.shade700 : Colors.grey.shade200,
         ),
         boxShadow: [
           BoxShadow(
-            color: widget.isDarkMode
-                ? Colors.black.withOpacity(0.2)
-                : Colors.black.withOpacity(0.05),
+            color:
+                widget.isDarkMode
+                    ? Colors.black.withOpacity(0.2)
+                    : Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -293,7 +276,9 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
                       Clipboard.setData(ClipboardData(text: qrController.text));
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(isArabic() ? 'تم نسخ الرمز' : 'Code copied'),
+                          content: Text(
+                            isArabic() ? 'تم نسخ الرمز' : 'Code copied',
+                          ),
                           duration: Duration(seconds: 1),
                         ),
                       );
@@ -301,38 +286,44 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: widget.isDarkMode
-                          ? Colors.grey.shade900
-                          : Colors.grey.shade50,
+                      color:
+                          widget.isDarkMode
+                              ? Colors.grey.shade900
+                              : Colors.grey.shade50,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: qrController.text.isNotEmpty
-                            ? ColorManager.primaryColor
-                            : (widget.isDarkMode
-                            ? Colors.grey.shade600
-                            : Colors.grey.shade300),
+                        color:
+                            qrController.text.isNotEmpty
+                                ? ColorManager.primaryColor
+                                : (widget.isDarkMode
+                                    ? Colors.grey.shade600
+                                    : Colors.grey.shade300),
                       ),
                     ),
                     child: TextField(
                       controller: qrController,
                       enabled: false, // ما يتكتبش فيه
                       style: TextStyle(
-                        color: widget.isDarkMode ? Colors.white : Colors.black87,
+                        color:
+                            widget.isDarkMode ? Colors.white : Colors.black87,
                       ),
                       decoration: InputDecoration(
-                        hintText: isArabic()
-                            ? 'أدخل معرف رمز QR'
-                            : 'Enter QR code ID',
+                        hintText:
+                            isArabic()
+                                ? 'أدخل معرف رمز QR'
+                                : 'Enter QR code ID',
                         hintStyle: TextStyle(
-                          color: widget.isDarkMode
-                              ? Colors.grey.shade500
-                              : Colors.grey.shade500,
+                          color:
+                              widget.isDarkMode
+                                  ? Colors.grey.shade500
+                                  : Colors.grey.shade500,
                         ),
                         prefixIcon: Icon(
                           Icons.qr_code_2_rounded,
-                          color: widget.isDarkMode
-                              ? Colors.grey.shade400
-                              : Colors.grey.shade600,
+                          color:
+                              widget.isDarkMode
+                                  ? Colors.grey.shade400
+                                  : Colors.grey.shade600,
                           size: 20,
                         ),
                         border: InputBorder.none,
@@ -344,7 +335,8 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
                     ),
                   ),
                 ),
-              ),              const SizedBox(width: 12),
+              ),
+              const SizedBox(width: 12),
               _buildScanButton(),
             ],
           ),
@@ -378,20 +370,21 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
           borderRadius: BorderRadius.circular(12),
           child: Container(
             padding: const EdgeInsets.all(12),
-            child: isScanning
-                ? const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            )
-                : const Icon(
-              IconlyBold.camera,
-              color: Colors.white,
-              size: 24,
-            ),
+            child:
+                isScanning
+                    ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                    : const Icon(
+                      IconlyBold.camera,
+                      color: Colors.white,
+                      size: 24,
+                    ),
           ),
         ),
       ),
@@ -412,13 +405,15 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
                 borderRadius: BorderRadius.circular(12),
               ),
               side: BorderSide(
-                color: widget.isDarkMode
-                    ? Colors.grey.shade600
-                    : Colors.grey.shade300,
+                color:
+                    widget.isDarkMode
+                        ? Colors.grey.shade600
+                        : Colors.grey.shade300,
               ),
-              foregroundColor: widget.isDarkMode
-                  ? Colors.grey.shade300
-                  : Colors.grey.shade700,
+              foregroundColor:
+                  widget.isDarkMode
+                      ? Colors.grey.shade300
+                      : Colors.grey.shade700,
             ),
           ),
         ),
@@ -426,34 +421,40 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
         Expanded(
           child: Container(
             decoration: BoxDecoration(
-              gradient: qrController.text.isNotEmpty
-                  ? LinearGradient(
-                colors: [
-                  ColorManager.primaryColor,
-                  ColorManager.primaryColor.withOpacity(0.8),
-                ],
-              )
-                  : null,
-              color: qrController.text.isEmpty
-                  ? (widget.isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300)
-                  : null,
+              gradient:
+                  qrController.text.isNotEmpty
+                      ? LinearGradient(
+                        colors: [
+                          ColorManager.primaryColor,
+                          ColorManager.primaryColor.withOpacity(0.8),
+                        ],
+                      )
+                      : null,
+              color:
+                  qrController.text.isEmpty
+                      ? (widget.isDarkMode
+                          ? Colors.grey.shade700
+                          : Colors.grey.shade300)
+                      : null,
               borderRadius: BorderRadius.circular(12),
-              boxShadow: qrController.text.isNotEmpty
-                  ? [
-                BoxShadow(
-                  color: ColorManager.primaryColor.withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-                  : null,
+              boxShadow:
+                  qrController.text.isNotEmpty
+                      ? [
+                        BoxShadow(
+                          color: ColorManager.primaryColor.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
+                      : null,
             ),
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: qrController.text.isNotEmpty
-                    ? () => _linkQr(widget.cubit)
-                    : null,
+                onTap:
+                    qrController.text.isNotEmpty
+                        ? () => _linkQr(widget.cubit)
+                        : null,
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 14),
@@ -463,17 +464,23 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
                       Icon(
                         Icons.link,
                         size: 18,
-                        color: qrController.text.isNotEmpty
-                            ? Colors.white
-                            : (widget.isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500),
+                        color:
+                            qrController.text.isNotEmpty
+                                ? Colors.white
+                                : (widget.isDarkMode
+                                    ? Colors.grey.shade500
+                                    : Colors.grey.shade500),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         isArabic() ? 'ربط رمز QR' : 'Link QR Code',
                         style: TextStyle(
-                          color: qrController.text.isNotEmpty
-                              ? Colors.white
-                              : (widget.isDarkMode ? Colors.grey.shade500 : Colors.grey.shade500),
+                          color:
+                              qrController.text.isNotEmpty
+                                  ? Colors.white
+                                  : (widget.isDarkMode
+                                      ? Colors.grey.shade500
+                                      : Colors.grey.shade500),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -489,6 +496,18 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
   }
 
   Future<void> _simulateScan(context) async {
+    // Temporarily disabled due to mobile_scanner dependency conflict
+    // TODO: Re-enable when mobile_scanner is compatible with Firebase
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'QR Scanner temporarily unavailable. Please enter QR code manually.',
+        ),
+        duration: Duration(seconds: 3),
+      ),
+    );
+
+    /* Original implementation:
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) =>  ScannerScreen()),
@@ -499,17 +518,24 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
         qrController.text = result;
       });
     }
+    */
   }
 
   void _linkQr(QrCubit cubit) {
     final uuid = extractFirstUuidFromUrl(qrController.text);
 
     if (uuid != null) {
-      cubit.linkPetToQr(widget.pet.petId, qrController.text);
+      cubit.linkPetToQr(widget.pet.petId ?? '', qrController.text);
     } else {
-      errorToast(context, isArabic() ? 'رمز QR غير صالح. هذا الرمز غير مسجل في نظامنا.' : 'Invalid QR Code. This code is not registered in our system');
+      errorToast(
+        context,
+        isArabic()
+            ? 'رمز QR غير صالح. هذا الرمز غير مسجل في نظامنا.'
+            : 'Invalid QR Code. This code is not registered in our system',
+      );
     }
   }
+
   @override
   void dispose() {
     _animationController.dispose();
@@ -517,4 +543,3 @@ class _QrLinkDialogState extends State<QrLinkDialog> with TickerProviderStateMix
     super.dispose();
   }
 }
-

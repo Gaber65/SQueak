@@ -1,7 +1,6 @@
+// ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:squeak/core/network/end-points.dart';
-import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/global_widget/ImageDetail.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import '../../domain/entities/boarding_entry_entity.dart';
@@ -12,6 +11,7 @@ class ImageCarouselWidget extends StatefulWidget {
   final BoardingEntryEntity? boarding;
   final void Function(String imageUrl, String platform) onShare;
   final bool isDarkMode;
+  final bool isVideo;
 
   const ImageCarouselWidget({
     super.key,
@@ -19,6 +19,7 @@ class ImageCarouselWidget extends StatefulWidget {
     required this.onOpenChange,
     required this.boarding,
     required this.onShare,
+    required this.isVideo,
     required this.isDarkMode,
   });
 
@@ -36,32 +37,15 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   late AnimationController _pulseController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
-  late Animation<double> _pulseAnimation;
+
+  bool get isVideo => widget.isVideo;
 
   // Enhanced Dark Mode Color Scheme
-  ColorScheme get _colorScheme =>
-      widget.isDarkMode ? const ColorScheme.dark() : const ColorScheme.light();
-
-  Color get _backgroundColor =>
-      widget.isDarkMode ? Colors.grey.shade900 : Colors.white;
-
-  Color get _surfaceColor =>
-      widget.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade50;
-
-  Color get _cardColor =>
-      widget.isDarkMode ? Colors.grey.shade800 : Colors.white;
-
-  Color get _borderColor =>
-      widget.isDarkMode ? Colors.grey.shade700 : Colors.grey.shade200;
-
   Color get _textPrimaryColor =>
       widget.isDarkMode ? Colors.white : Colors.black87;
 
   Color get _textSecondaryColor =>
       widget.isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600;
-
-  Color get _iconColor =>
-      widget.isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700;
 
   Color get _overlayColor =>
       widget.isDarkMode
@@ -105,10 +89,6 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
-
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
 
     if (widget.open) {
       _animationController.forward();
@@ -432,12 +412,10 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   @override
   Widget build(BuildContext context) {
     if (!widget.open) return const SizedBox();
-
     final boarding = widget.boarding;
     if (boarding == null || boarding.boardingImages.isEmpty) {
       return _buildNoImagesDialog();
     }
-
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
@@ -566,7 +544,9 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                         ),
                       ),
                       child: Icon(
-                        Icons.image_not_supported_rounded,
+                        isVideo
+                            ? Icons.videocam_off_outlined
+                            : Icons.image_not_supported_rounded,
                         size: 70,
                         color:
                             widget.isDarkMode
@@ -576,7 +556,13 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      isArabic() ? 'لا توجد صور' : 'No Images Found',
+                      isVideo
+                          ? isArabic()
+                              ? 'لا توجد فيديو'
+                              : 'No Video Found'
+                          : isArabic()
+                          ? 'لا توجد صور'
+                          : 'No Images Found',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -598,7 +584,11 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        isArabic()
+                        isVideo
+                            ? isArabic()
+                                ? 'لا توجد فيديو لهذه الإقامة.'
+                                : 'No Video found for this boarding.'
+                            : isArabic()
                             ? 'لا توجد صور لهذه الإقامة.'
                             : 'No images found for this boarding.',
                         style: TextStyle(
@@ -668,6 +658,15 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   }
 
   Widget _buildEnhancedHeader(BoardingEntryEntity boarding) {
+    final List<Map<String, dynamic>> imageList =
+        boarding.boardingImages
+            .where(
+              (img) =>
+                  img['imageName'] != null &&
+                  img['imageName'].toString().isNotEmpty,
+            )
+            .cast<Map<String, dynamic>>()
+            .toList();
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
@@ -710,8 +709,10 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                 ),
               ],
             ),
-            child: const Icon(
-              Icons.photo_library_rounded,
+            child: Icon(
+              isVideo
+                  ? Icons.video_camera_back_outlined
+                  : Icons.photo_library_rounded,
               color: Colors.white,
               size: 28,
             ),
@@ -722,9 +723,13 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isArabic()
-                      ? 'صور إقامة ${boarding.pet.name}'
-                      : "${boarding.pet.name}'s Boarding Photos",
+                  !isVideo
+                      ? isArabic()
+                          ? 'صور إقامة ${boarding.pet.name}'
+                          : "${boarding.pet.name}'s Boarding Photos"
+                      : isArabic()
+                      ? 'فيديو إقامة ${boarding.pet.name}'
+                      : "${boarding.pet.name}'s Boarding Videos",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -757,7 +762,9 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        Icons.photo_rounded,
+                        isVideo
+                            ? Icons.video_camera_back_outlined
+                            : Icons.photo_rounded,
                         size: 16,
                         color:
                             widget.isDarkMode
@@ -766,7 +773,13 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        '${boarding.boardingImages.length} ${isArabic() ? "صورة" : "photos"}',
+                        '${imageList.length} ${isVideo
+                            ? isArabic()
+                                ? "فيديو"
+                                : "videos"
+                            : isArabic()
+                            ? "صورة"
+                            : "photos"}',
                         style: TextStyle(
                           fontSize: 14,
                           color:
@@ -788,7 +801,34 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   }
 
   Widget _buildEnhancedImageCarousel(BoardingEntryEntity boarding) {
-    return Container(
+    final List<Map<String, dynamic>> imageList;
+    if (widget.isVideo) {
+      imageList =
+          boarding.boardingImages
+              .where(
+                (img) =>
+                    img['videoName'] != null &&
+                    img['videoName'].toString().isNotEmpty,
+              )
+              .cast<Map<String, dynamic>>()
+              .toList();
+    } else {
+      imageList =
+          boarding.boardingImages
+              .where(
+                (img) =>
+                    img['imageName'] != null &&
+                    img['imageName'].toString().isNotEmpty,
+              )
+              .cast<Map<String, dynamic>>()
+              .toList();
+    }
+
+    if (imageList.isEmpty) {
+      return _buildNoImagesDialog();
+    }
+
+    return SizedBox(
       height: 350,
       child: Stack(
         children: [
@@ -800,7 +840,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
               });
               HapticFeedback.selectionClick();
             },
-            itemCount: boarding.boardingImages.length,
+            itemCount: imageList.length,
             itemBuilder: (context, index) {
               return Column(
                 children: [
@@ -812,10 +852,10 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                           ImageDetailSimple(
                             path:
                                 imageUrlWithVetICare +
-                                boarding.boardingImages[index]['imageName'],
+                                imageList[index]['imageName'],
                             title:
                                 isArabic() ? 'تفاصيل الصورة' : 'Image details',
-                            description: boarding.boardingImages[index]['note'] ?? '',
+                            description: imageList[index]['note'] ?? '',
                           ),
                         );
                       },
@@ -826,128 +866,136 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                           child: Stack(
                             fit: StackFit.expand,
                             children: [
-                              Image.network(
-                                imageUrlWithVetICare +
-                                    boarding.boardingImages[index]['imageName'],
-                                fit: BoxFit.cover,
-                                loadingBuilder: (
-                                  context,
-                                  child,
-                                  loadingProgress,
-                                ) {
-                                  if (loadingProgress == null) return child;
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          _shimmerBaseColor,
-                                          _shimmerHighlightColor,
-                                          _shimmerBaseColor,
-                                        ],
-                                        stops: const [0.0, 0.5, 1.0],
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          CircularProgressIndicator(
-                                            value:
-                                                loadingProgress
-                                                            .expectedTotalBytes !=
-                                                        null
-                                                    ? loadingProgress
-                                                            .cumulativeBytesLoaded /
-                                                        loadingProgress
-                                                            .expectedTotalBytes!
-                                                    : null,
-                                            color:
-                                                widget.isDarkMode
-                                                    ? Colors.blue.shade400
-                                                    : Colors.blue.shade600,
-                                            strokeWidth: 3,
-                                          ),
-                                          const SizedBox(height: 16),
-                                          Text(
-                                            isArabic()
-                                                ? 'جاري التحميل...'
-                                                : 'Loading...',
-                                            style: TextStyle(
-                                              color: _textSecondaryColor,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                                errorBuilder:
-                                    (context, error, _) => Container(
+                              if (widget.isVideo) ...[
+                                VideoStringApp(
+                                  video:
+                                      imageUrlWithVetICare +
+                                      imageList[index]['videoName'],
+                                ),
+                              ] else ...[
+                                Image.network(
+                                  imageUrlWithVetICare +
+                                      imageList[index]['imageName'],
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (
+                                    context,
+                                    child,
+                                    loadingProgress,
+                                  ) {
+                                    if (loadingProgress == null) return child;
+                                    return Container(
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
-                                          colors:
-                                              widget.isDarkMode
-                                                  ? [
-                                                    Colors.grey.shade800,
-                                                    Colors.grey.shade900,
-                                                  ]
-                                                  : [
-                                                    Colors.grey.shade200,
-                                                    Colors.grey.shade300,
-                                                  ],
+                                          colors: [
+                                            _shimmerBaseColor,
+                                            _shimmerHighlightColor,
+                                            _shimmerBaseColor,
+                                          ],
+                                          stops: const [0.0, 0.5, 1.0],
                                         ),
                                       ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.all(20),
-                                            decoration: BoxDecoration(
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            CircularProgressIndicator(
+                                              value:
+                                                  loadingProgress
+                                                              .expectedTotalBytes !=
+                                                          null
+                                                      ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!
+                                                      : null,
                                               color:
                                                   widget.isDarkMode
-                                                      ? Colors.grey.shade700
-                                                      : Colors.grey.shade100,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
+                                                      ? Colors.blue.shade400
+                                                      : Colors.blue.shade600,
+                                              strokeWidth: 3,
                                             ),
-                                            child: Icon(
-                                              Icons.broken_image_rounded,
-                                              size: 60,
-                                              color:
-                                                  widget.isDarkMode
-                                                      ? Colors.grey.shade500
-                                                      : Colors.grey.shade600,
+                                            const SizedBox(height: 16),
+                                            Text(
+                                              isArabic()
+                                                  ? 'جاري التحميل...'
+                                                  : 'Loading...',
+                                              style: TextStyle(
+                                                color: _textSecondaryColor,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(height: 16),
-                                          Text(
-                                            isArabic()
-                                                ? 'فشل في تحميل الصورة'
-                                                : 'Failed to load image',
-                                            style: TextStyle(
-                                              color: _textSecondaryColor,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            isArabic()
-                                                ? 'اضغط لإعادة المحاولة'
-                                                : 'Tap to retry',
-                                            style: TextStyle(
-                                              color: _textSecondaryColor,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                              ),
+                                    );
+                                  },
+                                  errorBuilder:
+                                      (context, error, _) => Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors:
+                                                widget.isDarkMode
+                                                    ? [
+                                                      Colors.grey.shade800,
+                                                      Colors.grey.shade900,
+                                                    ]
+                                                    : [
+                                                      Colors.grey.shade200,
+                                                      Colors.grey.shade300,
+                                                    ],
+                                          ),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(20),
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    widget.isDarkMode
+                                                        ? Colors.grey.shade700
+                                                        : Colors.grey.shade100,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: Icon(
+                                                Icons.broken_image_rounded,
+                                                size: 60,
+                                                color:
+                                                    widget.isDarkMode
+                                                        ? Colors.grey.shade500
+                                                        : Colors.grey.shade600,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Text(
+                                              isArabic()
+                                                  ? 'فشل في تحميل الصورة'
+                                                  : 'Failed to load image',
+                                              style: TextStyle(
+                                                color: _textSecondaryColor,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              isArabic()
+                                                  ? 'اضغط لإعادة المحاولة'
+                                                  : 'Tap to retry',
+                                              style: TextStyle(
+                                                color: _textSecondaryColor,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                ),
+                              ],
                               // Enhanced gradient overlay
                               Container(
                                 decoration: BoxDecoration(
@@ -970,7 +1018,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                     ),
                   ),
                   Text(
-                    boarding.boardingImages[index]['note'] ?? '',
+                    imageList[index]['note'] ?? '',
                     style: TextStyle(
                       color: _textSecondaryColor,
                       fontSize: 16,
@@ -983,7 +1031,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
           ),
 
           // Enhanced Navigation buttons
-          if (boarding.boardingImages.length > 1) ...[
+          if (imageList.length > 1) ...[
             Positioned(
               left: 20,
               top: 0,
@@ -1042,7 +1090,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                       size: 32,
                     ),
                     onPressed:
-                        currentImageIndex < boarding.boardingImages.length - 1
+                        currentImageIndex < imageList.length - 1
                             ? nextImage
                             : null,
                   ),
@@ -1078,7 +1126,8 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                 ),
                 onPressed:
                     () => _openEnhancedShareSheet(
-                      boarding.boardingImages[currentImageIndex],
+                      imageUrlWithVetICare +
+                          imageList[currentImageIndex]['imageName'],
                     ),
               ),
             ),
@@ -1110,7 +1159,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
                   Icon(Icons.photo_rounded, color: Colors.white, size: 16),
                   const SizedBox(width: 6),
                   Text(
-                    '${currentImageIndex + 1}/${boarding.boardingImages.length}',
+                    '${currentImageIndex + 1}/${imageList.length}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -1127,12 +1176,21 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   }
 
   Widget _buildEnhancedPageIndicators(BoardingEntryEntity boarding) {
+    final List<Map<String, dynamic>> imageList =
+        boarding.boardingImages
+            .where(
+              (img) =>
+                  img['imageName'] != null &&
+                  img['imageName'].toString().isNotEmpty,
+            )
+            .cast<Map<String, dynamic>>()
+            .toList();
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(
-          boarding.boardingImages.length,
+          imageList.length,
           (index) => AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             margin: const EdgeInsets.symmetric(horizontal: 6),
@@ -1242,7 +1300,9 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
 void showEnhancedDarkModeImageCarousel(
   BuildContext context,
   BoardingEntryEntity? boarding,
-  void Function(String imageUrl, String platform) onShare, {
+
+  void Function(String imageUrl, String platform) onShare,
+  bool isVideo, {
   bool isDarkMode = false,
 }) {
   showDialog(
@@ -1251,6 +1311,7 @@ void showEnhancedDarkModeImageCarousel(
     barrierColor: isDarkMode ? Colors.black87 : Colors.black54,
     builder:
         (context) => ImageCarouselWidget(
+          isVideo: isVideo,
           open: true,
           onOpenChange: (open) {
             if (!open) Navigator.of(context).pop();
@@ -1265,6 +1326,8 @@ void showEnhancedDarkModeImageCarousel(
 // Auto-detect theme version
 void showThemeAwareEnhancedImageCarousel(
   BuildContext context,
+  bool isVideo,
+
   BoardingEntryEntity? boarding,
   void Function(String imageUrl, String platform) onShare,
 ) {
@@ -1273,6 +1336,7 @@ void showThemeAwareEnhancedImageCarousel(
     context,
     boarding,
     onShare,
+    isVideo,
     isDarkMode: isDark,
   );
 }

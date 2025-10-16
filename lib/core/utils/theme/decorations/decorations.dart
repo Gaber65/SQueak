@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../service/main_service/presentation/controller/main_cubit/main_cubit.dart';
-import '../../../service/service_locator/service_locator.dart';
 
 
 class Decorations {

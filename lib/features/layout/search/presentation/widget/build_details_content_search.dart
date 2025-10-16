@@ -61,7 +61,7 @@ Widget buildDetailsContentSearch(ClinicEntitySearch entities, SearchCubit cubit,
                         title: cubit.isFollowBefore
                             ? Text(S.of(context).unfollowConfirmation)
                             : Text(S.of(context).followConfirmation),
-                        content: Container(
+                        content: SizedBox(
                           width: MediaQuery.of(context).size.width + 100,
                           child: Column(
                             mainAxisSize: MainAxisSize.min,

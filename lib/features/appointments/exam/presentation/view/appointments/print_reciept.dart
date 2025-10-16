@@ -639,7 +639,7 @@ class PrintScreen extends StatelessWidget {
                   );
                 }).toList(),
           );
-        }).toList(),
+        }),
       ],
     );
   }

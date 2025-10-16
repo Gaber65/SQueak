@@ -67,6 +67,7 @@ class EditBoardingParams extends CreateBoardingParams {
     required this.boardingStatus,
   });
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'id': id,

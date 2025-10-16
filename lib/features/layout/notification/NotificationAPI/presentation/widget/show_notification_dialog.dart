@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../domain/entities/notification_entities.dart';
 import 'navigate_based_on_notification.dart';
 
-void showNotificationDialog(BuildContext contextNav, NotificationEntities model) {
+void showNotificationDialog(
+  BuildContext contextNav,
+  NotificationEntities model,
+) {
   final player = AudioPlayer();
   player.play(AssetSource('sounds/dog_bark.mp3')); // Play pet sound
 
   // Retrieve username from cache
   String userName = CacheHelper.getData('name') ?? "Pet Lover";
-print( model.message);
-print( '***********************');
+  print(model.message);
+  print('***********************');
   // Extract clinic name from the notification title (assuming "Clinic XYZ: Message")
   String extractedClinicName = model.title.split(":").first.trim();
   // Remove the word "Notification" if it appears
@@ -78,8 +79,8 @@ print( '***********************');
                               shape: BoxShape.circle,
                             ),
                             child: ClipOval(
-                              child: Image.asset(
-                                'assets/vtl_logo.png',
+                              child: Image.network(
+                                model.logo,
                                 width: 100,
                                 height: 100,
                                 fit: BoxFit.contain,
@@ -93,7 +94,7 @@ print( '***********************');
 
                       // Personalized Greeting with extracted clinic name
                       Text(
-                        "Hey, $userName! 🐾 Here's a message from $extractedClinicName!",
+                        "Hey, $userName! Here's a message from $extractedClinicName!",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -172,10 +173,9 @@ print( '***********************');
                             onPressed: () {
                               Navigator.of(context).pop();
                               navigateBasedOnNotification(model, contextNav);
-
                             },
                             child: Text(
-                              "Got it! 🐾",
+                              "Got it!",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

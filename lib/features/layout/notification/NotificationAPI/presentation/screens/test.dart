@@ -10,17 +10,14 @@ import '../widget/show_notification_dialog.dart';
 class NotificationCard extends StatelessWidget {
   final NotificationEntities notification;
 
-  const NotificationCard({
-    Key? key,
-    required this.notification,
-  }) : super(key: key);
+  const NotificationCard({super.key, required this.notification});
 
   @override
   Widget build(BuildContext context) {
     final IconData icon = getNotificationIcon(notification);
     final Color iconBgColor = getNotificationColor(notification);
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
+    print(notification.title);
     return GestureDetector(
       onTap: () {
         showNotificationDialog(context, notification);
@@ -30,7 +27,10 @@ class NotificationCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.0),
           border: Border.all(
-            color: isDarkMode ? Colors.white.withOpacity(0.1) : Colors.white.withOpacity(0.8),
+            color:
+                isDarkMode
+                    ? Colors.white.withOpacity(0.1)
+                    : Colors.white.withOpacity(0.8),
             width: 1.0,
           ),
           boxShadow: [
@@ -47,7 +47,8 @@ class NotificationCard extends StatelessWidget {
             filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
             child: Container(
               padding: const EdgeInsets.all(16.0),
-              color: (isDarkMode ? Colors.grey[800] : Colors.white)!.withOpacity(0.1),
+              color: (isDarkMode ? Colors.grey[800] : Colors.white)!
+                  .withOpacity(0.1),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -67,38 +68,59 @@ class NotificationCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          notification.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: isDarkMode ? Colors.white : Colors.grey[800],
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                notification.title.trim().replaceAll(
+                                  RegExp(r'\s+'),
+                                  ' ',
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      isDarkMode
+                                          ? Colors.white
+                                          : Colors.grey[800],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                formatFacebookTimePost(notification.createdAt),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color:
+                                      isDarkMode
+                                          ? Colors.grey[400]
+                                          : Colors.grey[500],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 4.0),
                         Text(
-                          notification.message,
+                          notification.message.trim().replaceAll(
+                            RegExp(r'\s+'),
+                            ' ',
+                          ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 14,
-                            color: isDarkMode ? Colors.grey[300] : Colors.grey[600],
+                            color:
+                                isDarkMode
+                                    ? Colors.grey[300]
+                                    : Colors.grey[600],
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                  const SizedBox(width: 16.0),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Text(
-                      formatFacebookTimePost(notification.createdAt),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isDarkMode ? Colors.grey[400] : Colors.grey[500],
-                      ),
                     ),
                   ),
                 ],

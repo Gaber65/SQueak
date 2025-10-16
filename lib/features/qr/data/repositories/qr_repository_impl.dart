@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 
-import 'package:squeak/core/error/failure.dart';
 
 import '../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../domain/repositories/qr_repository.dart';

@@ -63,7 +63,6 @@ class _RateBoardingState extends State<RateBoarding> {
           return Scaffold(
             appBar: AppBar(
               title: const Text('Rate Boarding'),
-              automaticallyImplyLeading: widget.boardingEntryEntity.isRating,
             ),
             floatingActionButton:
             !widget.boardingEntryEntity.isRating
@@ -259,6 +258,7 @@ class _RateBoardingState extends State<RateBoarding> {
         petId: widget.boardingEntryEntity.petId,
         pet: widget.boardingEntryEntity.pet,
         boardingImages: widget.boardingEntryEntity.boardingImages,
+        // boardingVideos: widget.boardingEntryEntity.boardingVideos, // added
         clinicPhone: widget.boardingEntryEntity.clinicPhone,
         clinicLocation: widget.boardingEntryEntity.clinicLocation,
         clinicLogo: widget.boardingEntryEntity.clinicLogo,

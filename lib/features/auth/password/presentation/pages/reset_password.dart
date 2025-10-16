@@ -14,8 +14,7 @@ import '../../../contactus/presentation/pages/contact_us.dart';
 import '../../../login/presentation/pages/login_screen.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
-  ResetPasswordScreen({Key? key, required this.emailController})
-    : super(key: key);
+  const ResetPasswordScreen({super.key, required this.emailController});
   final TextEditingController emailController;
 
   @override

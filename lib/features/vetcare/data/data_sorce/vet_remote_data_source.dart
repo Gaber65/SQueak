@@ -258,7 +258,7 @@ class VetRemoteDataSource implements BaseVetRemoteDataSource {
   // Helper methods
   Future<void> _getTokenFromFirebase() async {
     try {
-      await FirebaseFirestore.instance
+      FirebaseFirestore.instance
           .collection('UserToken')
           .doc('Is0fJjcbMCqOrWmQdKoj')
           .snapshots()

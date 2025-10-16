@@ -108,6 +108,47 @@ export '../../../features/vetcare/domain/use_case/check_clinic_usecase.dart';
 export '../../../features/vetcare/domain/use_case/get_vet_clients_usecase.dart';
 export '../../../features/vetcare/presenation/controllers/qr_register/qr_cubit.dart';
 
+
+
+
+export 'package:squeak/features/friendship/data/datasources/pet_friends_remote_data_source.dart';
+export 'package:squeak/features/friendship/data/repositories/pet_friends_repository_impl.dart';
+export 'package:squeak/features/friendship/domain/repositories/pet_friends_repository.dart';
+export 'package:squeak/features/friendship/domain/usecases/cancel_friendship.dart';
+export 'package:squeak/features/friendship/domain/usecases/get_blocked_friends.dart';
+export 'package:squeak/features/friendship/domain/usecases/get_my_friends.dart';
+export 'package:squeak/features/friendship/domain/usecases/get_my_requests.dart';
+export 'package:squeak/features/friendship/domain/usecases/get_sent_requests.dart';
+export 'package:squeak/features/friendship/domain/usecases/search_friends.dart';
+export 'package:squeak/features/friendship/domain/usecases/send_pet_request.dart';
+export 'package:squeak/features/friendship/domain/usecases/unblock_friend.dart';
+export 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
+export 'package:squeak/features/profile_switch/domain/repositories/profile_type_base_repo.dart';
+export 'package:squeak/features/profile_switch/domain/usecase/get_active_profile.dart';
+export 'package:squeak/features/profile_switch/domain/usecase/save_active_profile.dart';
+export 'package:squeak/features/profile_switch/source/data/profile_local_data_source.dart';
+export 'package:squeak/features/profile_switch/source/repo/ProfileTypeRepositoryImpl.dart';
+export 'package:squeak/features/qr/data/datasources/qr_remote_datasource.dart';
+export 'package:squeak/features/qr/data/repositories/qr_repository_impl.dart';
+export 'package:squeak/features/qr/domain/repositories/qr_repository.dart';
+export 'package:squeak/features/qr/domain/usecases/link_pet_to_qr_usecase.dart';
+export 'package:squeak/features/qr/domain/usecases/unlink_pet_from_qr_usecase.dart';
+
+export 'package:squeak/features/appointments/boarding/data/repositories/boarding_repository_impl.dart';
+export 'package:squeak/features/appointments/boarding/domain/usecases/get_boarding_types_usecase.dart';
+export 'package:squeak/features/appointments/boarding/presentation/cubit/boarding_cubit.dart';
+export '../../../features/appointments/boarding/data/datasources/boarding_local_data_source.dart';
+export '../../../features/appointments/boarding/data/datasources/boarding_remote_data_source.dart';
+export '../../../features/appointments/boarding/domain/repositories/boarding_repository.dart';
+export '../../../features/appointments/boarding/domain/usecases/create_boarding_usecase.dart';
+export '../../../features/appointments/boarding/domain/usecases/edit_boarding_usecase.dart';
+export '../../../features/appointments/boarding/domain/usecases/get_boarding_entries_usecase.dart';
+export '../../../features/appointments/boarding/domain/usecases/rate_boarding_usecase.dart';
+export '../../../features/appointments/boarding/domain/usecases/share_image_usecase.dart';
+export '../../../features/appointments/exam/presentation/controller/user/user_appointment_cubit.dart';
+export '../../../features/friendship/domain/usecases/update_pet_request.dart' show UpdatePetRequestUseCase;
+export '../../../features/qr/presentation/controller/qr_cubit.dart';
+
 export '../../../features/mating/chat/domain/repositories/chat_repository.dart';
 export '../../../features/mating/chat/domain/usecases/get_chats_usecase.dart';
 export '../../../features/mating/chat/domain/usecases/get_messages_usecase.dart';

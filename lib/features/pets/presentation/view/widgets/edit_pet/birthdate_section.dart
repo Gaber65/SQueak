@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/utils/date_picker_utils.dart';
-import 'package:squeak/generated/l10n.dart';
 
 import '../../../controller/pet_cubit.dart';
 

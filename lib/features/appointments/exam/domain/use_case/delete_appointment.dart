@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import '../base_repo/appointment_base_repository.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 
 class DeleteAppointmentUseCase implements BaseUseCase<Unit, DeleteAppointmentParams> {

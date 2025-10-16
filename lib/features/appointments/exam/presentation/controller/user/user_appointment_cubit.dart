@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// ignore: depend_on_referenced_packages
 import 'package:equatable/equatable.dart';
 import 'package:printing/printing.dart';
 
@@ -9,7 +10,6 @@ import 'package:squeak/features/appointments/exam/domain/entities/clinic_entity.
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/print_reciept.dart';
 import 'dart:typed_data';
 import '../../../../../../../core/service/service_locator/locatore_export_path.dart';
-import '../../../data/models/invoice_model.dart';
 import '../../../domain/entities/invoice.dart';
 
 part 'user_appointment_state.dart';
@@ -48,7 +48,11 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
   TextEditingController rateController = TextEditingController();
   bool isLoadingRate = false;
 
+
+  bool isLoadingAppointment = false;
   Future<void> getAppointment(bool applyFilter) async {
+
+    isLoadingAppointment = true;
     emit(GetAppointmentLoading());
     final result = await getUserAppointments(
       GetUserAppointmentsParams(
@@ -58,9 +62,11 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
     );
     result.fold(
       (failure) {
+        isLoadingAppointment = false;
         emit(GetAppointmentError());
       },
       (appointmentsList) {
+        isLoadingAppointment = false;
         appointments = appointmentsList;
 
         filteredList = List.from(appointments);

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iconly/iconly.dart';
 import 'package:squeak/features/comments/presentation/widget/edit_widget/build_animated_avatar_edit_comment.dart';
 import 'package:squeak/features/comments/presentation/widget/edit_widget/build_edit_comment_input_card.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
-import '../../../../generated/l10n.dart';
 import '../../domain/entities/comment_entity.dart';
 import '../controller/comment_cubit.dart';
 import '../screens/comment.dart';

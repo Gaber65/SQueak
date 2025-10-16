@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 
 import '../../../domain/entities/boarding_entry_entity.dart';

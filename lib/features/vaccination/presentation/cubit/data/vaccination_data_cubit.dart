@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../../../../core/base_usecase/base_usecase.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../domain/entities/reminder_entity.dart';
 import '../../../domain/entities/vaccination_entity.dart';
-import '../../../domain/usecases/create_reminder_usecase.dart';
-import '../../../domain/usecases/delete_reminder_usecase.dart';
-import '../../../domain/usecases/get_pet_reminders_usecase.dart';
-import '../../../domain/usecases/get_vaccination_names_usecase.dart';
-import '../../../domain/usecases/update_reminder_usecase.dart';
 
 part 'vaccination_data_state.dart';
 
@@ -146,44 +140,44 @@ class VaccinationDataCubit extends Cubit<VaccinationDataState> {
 
     Map<String, String> messagesEn = {
       "Feed":
-          "🍽️ Hungry alert! $petName is giving you the \"feed me now\" look!",
+          "Hungry alert! $petName is giving you the \"feed me now\" look!",
       "Grooming":
-          "✂️ Spa day! $petName is ready for some pampering. Time for grooming!",
+          "Spa day! $petName is ready for some pampering. Time for grooming!",
       "Clean Potty":
-          "🚽 Uh-oh! $petName would appreciate a fresh, clean space... if you know what we mean! 😹",
+          "Uh-oh! $petName would appreciate a fresh, clean space... if you know what we mean!",
       "Outdoor Walk":
-          "🐕 Adventure time! $petName is ready to explore the world—let's go for a walk!",
+          "Adventure time! $petName is ready to explore the world—let's go for a walk!",
       "Exercise":
-          "🏃‍♂️ Workout buddy alert! $petName needs some playtime—time to burn some energy!",
+          "Workout buddy alert! $petName needs some playtime—time to burn some energy!",
       "Buy Food":
-          "🛒 Stock up time! $petName just realized the food stash is running low. Better refill before the \"sad eyes\" start!",
+          "Stock up time! $petName just realized the food stash is running low. Better refill before the \"sad eyes\" start!",
       "Flea":
-          "🥟 Tiny invaders detected! Time to protect $petName from unwanted guests. Flea treatment time!",
+          "Tiny invaders detected! Time to protect $petName from unwanted guests. Flea treatment time!",
       "Deworming":
-          "💊 Health check! $petName needs deworming to stay happy and healthy!",
+          "Health check! $petName needs deworming to stay happy and healthy!",
     };
 
     Map<String, String> messagesAr = {
       "Feed":
-          "🍽️ جوعان Alert! $petName ينظر إليك بنظرة \"أطْعِمْني حالًا\"! 😹",
+          "جوعان Alert! $petName ينظر إليك بنظرة \"أطْعِمْني حالًا\"!",
       "Grooming":
-          "✂️ يوم الدلال! $petName مستعد لجلسة عناية وتجميل. حان وقت التهذيب!",
+          "يوم الدلال! $petName مستعد لجلسة عناية وتجميل. حان وقت التهذيب!",
       "Clean Potty":
-          "🚽 أوه لا! $petName يفضل حمامًا نظيفًا... وأنت تعرف ماذا يعني ذلك! 😹",
+          "أوه لا! $petName يفضل حمامًا نظيفًا... وأنت تعرف ماذا يعني ذلك!",
       "Outdoor Walk":
-          "🐕 وقت المغامرة! $petName متحمّس لاستكشاف العالم – لنذهب في نزهة!",
+          "وقت المغامرة! $petName متحمّس لاستكشاف العالم – لنذهب في نزهة!",
       "Exercise":
-          "🏃‍♂️ شريك التمارين مستعد! $petName بحاجة لبعض الحركة واللعب. هيا نبدأ التمارين!",
+          "شريك التمارين مستعد! $petName بحاجة لبعض الحركة واللعب. هيا نبدأ التمارين!",
       "Buy Food":
-          "🛒 مخزون الطعام في خطر! $petName لاحظ أن الأكل قرب يخلص… تصرف قبل أن يبدأ بنظرات الاستعطاف! 👀",
+          "مخزون الطعام في خطر! $petName لاحظ أن الأكل قرب يخلص… تصرف قبل أن يبدأ بنظرات الاستعطاف!",
       "Flea":
-          "🥟 الغزاة الصغار وصلوا! حان وقت حماية $petName من الضيوف غير المرغوب فيهم!",
+          "الغزاة الصغار وصلوا! حان وقت حماية $petName من الضيوف غير المرغوب فيهم!",
       "Deworming":
-          "💊 وقت العناية الصحية! $petName يحتاج جرعة التخلص من الديدان ليبقى بصحة وسعادة!",
+          "وقت العناية الصحية! $petName يحتاج جرعة التخلص من الديدان ليبقى بصحة وسعادة!",
     };
 
     return isArabicLang
-        ? (messagesAr[type] ?? "⚠️ تذكير! حان وقت العناية بـ $petName!")
-        : (messagesEn[type] ?? "⚠️ Reminder! Time to take care of $petName!");
+        ? (messagesAr[type] ?? "تذكير! حان وقت العناية بـ $petName!")
+        : (messagesEn[type] ?? "Reminder! Time to take care of $petName!");
   }
 }

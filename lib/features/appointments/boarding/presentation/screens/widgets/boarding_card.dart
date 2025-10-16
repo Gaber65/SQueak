@@ -1,17 +1,24 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:squeak/features/appointments/boarding/domain/repositories/boarding_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:squeak/core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
 
 import '../../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../domain/entities/boarding_entry_entity.dart';
 import '../../../domain/entities/boarding_status.dart';
 import '../../../domain/usecases/share_image_usecase.dart';
 import '../../cubit/boarding_cubit.dart';
-import '../boarding_again.dart';
 import '../boarding_rating.dart';
 import '../share_image_pet_screen.dart';
+import '../share_video_pets_screen.dart';
+
+// Helper function to check if the current language is Arabic
+bool isArabic() {
+  return MainCubit.get(navigatorKey.currentContext!).language == 'ar';
+}
 
 class BoardingCard extends StatelessWidget {
   final BoardingEntryEntity entry;
@@ -28,8 +35,10 @@ class BoardingCard extends StatelessWidget {
   // Simple color getters
   Color get _cardColor => isDarkMode ? Colors.grey.shade900 : Colors.white;
   Color get _textColor => isDarkMode ? Colors.white : Colors.black87;
-  Color get _subtitleColor => isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600;
-  Color get _borderColor => isDarkMode ? Colors.grey.shade700 : Colors.grey.shade200;
+  Color get _subtitleColor =>
+      isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600;
+  Color get _borderColor =>
+      isDarkMode ? Colors.grey.shade700 : Colors.grey.shade200;
 
   @override
   Widget build(BuildContext context) {
@@ -41,20 +50,17 @@ class BoardingCard extends StatelessWidget {
         border: Border.all(color: _borderColor),
         boxShadow: [
           BoxShadow(
-            color: isDarkMode
-                ? Colors.black.withOpacity(0.3)
-                : Colors.black.withOpacity(0.1),
+            color:
+                isDarkMode
+                    ? Colors.black.withOpacity(0.3)
+                    : Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
-        children: [
-          _buildHeader(),
-          _buildContent(),
-          _buildFooter(),
-        ],
+        children: [_buildHeader(), _buildContent(), _buildFooter()],
       ),
     );
   }
@@ -63,9 +69,10 @@ class BoardingCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode
-            ? Colors.grey.shade800.withOpacity(0.5)
-            : Colors.grey.shade50,
+        color:
+            isDarkMode
+                ? Colors.grey.shade800.withOpacity(0.5)
+                : Colors.grey.shade50,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Row(
@@ -86,14 +93,15 @@ class BoardingCard extends StatelessWidget {
               child: FastCachedImage(
                 url: imageUrlWithVetICare + (entry.clinicLogo ?? ''),
                 fit: BoxFit.cover,
-                errorBuilder: (context, exception, stacktrace) => Container(
-                  color: ColorManager.primaryColor.withOpacity(0.1),
-                  child: Icon(
-                    Icons.local_hospital,
-                    color: ColorManager.primaryColor,
-                    size: 24,
-                  ),
-                ),
+                errorBuilder:
+                    (context, exception, stacktrace) => Container(
+                      color: ColorManager.primaryColor.withOpacity(0.1),
+                      child: Icon(
+                        Icons.local_hospital,
+                        color: ColorManager.primaryColor,
+                        size: 24,
+                      ),
+                    ),
               ),
             ),
           ),
@@ -116,10 +124,7 @@ class BoardingCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   entry.clinicName,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: _subtitleColor,
-                  ),
+                  style: TextStyle(fontSize: 14, color: _subtitleColor),
                 ),
               ],
             ),
@@ -156,53 +161,71 @@ class BoardingCard extends StatelessWidget {
 
   Widget _buildSimpleMenu() {
     return PopupMenuButton<int>(
-      icon: Icon(
-        Icons.more_vert,
-        color: _subtitleColor,
-        size: 20,
-      ),
+      icon: Icon(Icons.more_vert, color: _subtitleColor, size: 20),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       color: _cardColor,
-      itemBuilder: (context) => [
-        if (entry.status == BoardingStatusEnums.paid.index)
-          PopupMenuItem(
-            value: 1,
-            child: Row(
-              children: [
-                Icon(Icons.star, color: Colors.amber, size: 18),
-                const SizedBox(width: 8),
-                Text(
-                  isArabic() ? 'تقييم' : 'Rate',
-                  style: TextStyle(color: _textColor),
+      itemBuilder:
+          (context) => [
+            if (entry.status == BoardingStatusEnums.paid.index)
+              PopupMenuItem(
+                value: 1,
+                child: Row(
+                  children: [
+                    Icon(Icons.star, color: Colors.amber, size: 18),
+                    const SizedBox(width: 8),
+                    Text(
+                      isArabic() ? 'تقييم' : 'Rate',
+                      style: TextStyle(color: _textColor),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            onTap: () {
-              Future.delayed(Duration.zero, () {
-                navigateToScreen(
-                  context,
-                  RateBoarding(boardingEntryEntity: entry, isNav: true),
-                );
-              });
-            },
-          ),
-        PopupMenuItem(
-          value: 2,
-          child: Row(
-            children: [
-              Icon(Icons.image, color: ColorManager.primaryColor, size: 18),
-              const SizedBox(width: 8),
-              Text(
-                isArabic() ? 'الصور' : 'Images',
-                style: TextStyle(color: _textColor),
+                onTap: () {
+                  Future.delayed(Duration.zero, () {
+                    navigateToScreen(
+                      context,
+                      RateBoarding(boardingEntryEntity: entry, isNav: true),
+                    );
+                  });
+                },
               ),
-            ],
-          ),
-          onTap: () {
-            Future.delayed(Duration.zero, () => _showImages(context));
-          },
-        ),
-      ],
+            PopupMenuItem(
+              value: 2,
+              child: Row(
+                children: [
+                  Icon(Icons.image, color: ColorManager.primaryColor, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    isArabic() ? 'الصور' : 'Images',
+                    style: TextStyle(color: _textColor),
+                  ),
+                ],
+              ),
+              onTap: () {
+                Future.delayed(Duration.zero, () => _showImages(context,false));
+              },
+            ),
+           
+            PopupMenuItem(
+              value: 3, // قيمة فريدة لخيار "الفيديوهات"
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.videocam,
+                    color: ColorManager.primaryColor,
+                    size: 18,
+                  ), // أيقونة الفيديو
+                  const SizedBox(width: 8),
+                  Text(
+                    isArabic() ? 'الفيديوهات' : 'Videos', // نص الخيار حسب اللغة
+                    style: TextStyle(color: _textColor),
+                  ),
+                ],
+              ),
+              onTap: () {
+                Future.delayed(Duration.zero, () => _showImages(context,true));
+              },
+            ),
+          ],
     );
   }
 
@@ -227,9 +250,7 @@ class BoardingCard extends StatelessWidget {
           _buildInfoRow(
             Icons.schedule,
             isArabic() ? 'المدة' : 'Duration',
-            '${entry.period} ${entry.period == 1
-                ? (isArabic() ? 'يوم' : 'day')
-                : (isArabic() ? 'أيام' : 'days')}',
+            '${entry.period} ${entry.period == 1 ? (isArabic() ? 'يوم' : 'day') : (isArabic() ? 'أيام' : 'days')}',
           ),
 
           // Doctor rating if available
@@ -243,11 +264,7 @@ class BoardingCard extends StatelessWidget {
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: ColorManager.primaryColor,
-        ),
+        Icon(icon, size: 16, color: ColorManager.primaryColor),
         const SizedBox(width: 8),
         Text(
           '$label: ',
@@ -258,13 +275,7 @@ class BoardingCard extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: Text(
-            value,
-            style: TextStyle(
-              color: _textColor,
-              fontSize: 14,
-            ),
-          ),
+          child: Text(value, style: TextStyle(color: _textColor, fontSize: 14)),
         ),
       ],
     );
@@ -295,7 +306,7 @@ class BoardingCard extends StatelessWidget {
           Row(
             children: List.generate(
               5,
-                  (index) => Icon(
+              (index) => Icon(
                 index < entry.doctorServiceRate
                     ? Icons.star
                     : Icons.star_border,
@@ -313,9 +324,10 @@ class BoardingCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode
-            ? Colors.grey.shade800.withOpacity(0.3)
-            : Colors.grey.shade50,
+        color:
+            isDarkMode
+                ? Colors.grey.shade800.withOpacity(0.3)
+                : Colors.grey.shade50,
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
       ),
       child: Row(
@@ -333,11 +345,7 @@ class BoardingCard extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.pets,
-                  size: 16,
-                  color: ColorManager.primaryColor,
-                ),
+                Icon(Icons.pets, size: 16, color: ColorManager.primaryColor),
                 const SizedBox(width: 6),
                 Text(
                   entry.boardingType.name,
@@ -393,55 +401,47 @@ class BoardingCard extends StatelessWidget {
     );
   }
 
-  bool _shouldShowMenu() {
-    return entry.status == BoardingStatusEnums.paid.index ||
-        entry.status == BoardingStatusEnums.inProgress.index;
-  }
-
-  void _showImages(context) {
+  void _showImages(context ,isVideo) {
     showDialog(
       context: context,
-      builder: (_) => ImageCarouselWidget(
-        open: true,
-        isDarkMode: isDarkMode,
-        onOpenChange: (open) => Navigator.pop(context),
-        boarding: entry,
-        onShare: (imageUrl, platform) {
-          cubit.shareImageEntries(
-            ShareImageBoardingEntriesParams(
-              imageUrl: imageUrl,
-              platform: platform,
-            ),
-          );
-        },
-      ),
+      builder:
+          (_) => ImageCarouselWidget(
+            open: true,
+            isDarkMode: isDarkMode,
+            onOpenChange: (open) => Navigator.pop(context),
+            boarding: entry,
+            isVideo: isVideo,
+            onShare: (imageUrl, platform) {
+              cubit.shareImageEntries(
+                ShareImageBoardingEntriesParams(
+                  imageUrl: imageUrl,
+                  platform: platform,
+                ),
+              );
+            },
+          ),
     );
   }
+
+
+
 }
 
 // Simple usage function
 Widget buildSimpleBoardingCard(
-    BoardingEntryEntity entry,
-    BoardingCubit cubit, {
-      bool isDarkMode = false,
-    }) {
-  return BoardingCard(
-    entry: entry,
-    cubit: cubit,
-    isDarkMode: isDarkMode,
-  );
+  BoardingEntryEntity entry,
+  BoardingCubit cubit, {
+  bool isDarkMode = false,
+}) {
+  return BoardingCard(entry: entry, cubit: cubit, isDarkMode: isDarkMode);
 }
 
 // Auto-detect theme version
 Widget buildSimpleThemeAwareBoardingCard(
-    BuildContext context,
-    BoardingEntryEntity entry,
-    BoardingCubit cubit,
-    ) {
+  BuildContext context,
+  BoardingEntryEntity entry,
+  BoardingCubit cubit,
+) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
-  return BoardingCard(
-    entry: entry,
-    cubit: cubit,
-    isDarkMode: isDark,
-  );
+  return BoardingCard(entry: entry, cubit: cubit, isDarkMode: isDark);
 }

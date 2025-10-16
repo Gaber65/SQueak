@@ -33,7 +33,7 @@ class AppointmentHandler {
 
     // Format date and time
     String formatDate = DateFormat('yyyy-MM-dd', 'en_US').format(selectedDate);
-    final appointmentTime = time + ':00';
+    final appointmentTime = '$time:00';
     final appointmentDate = formatDate;
 
     // Check if user ID is available

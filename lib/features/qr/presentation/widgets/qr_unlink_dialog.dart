@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import '../../../../core/service/global_function/format_utils.dart';
-import '../../../../core/utils/theme/color_mangment/color_manager.dart';
 import '../controller/qr_cubit.dart';
 import '../../../pets/domain/entities/pet_entity.dart';
 
@@ -240,8 +238,6 @@ class _QrUnlinkDialogState extends State<QrUnlinkDialog>
     );
   }
 
-
-
   Widget _buildWarningMessage() {
     return Container(
       padding: const EdgeInsets.all(18),
@@ -434,7 +430,10 @@ class _QrUnlinkDialogState extends State<QrUnlinkDialog>
       await Future.delayed(const Duration(milliseconds: 800));
 
       // Perform the actual unlink
-      widget.cubit.unlinkPetFromQr(widget.pet.petId, widget.pet.qrCodeId!);
+      widget.cubit.unlinkPetFromQr(
+        widget.pet.petId ?? '',
+        widget.pet.qrCodeId!,
+      );
 
       // Close dialog
       if (mounted) {

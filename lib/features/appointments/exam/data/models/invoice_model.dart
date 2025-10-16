@@ -46,7 +46,7 @@ class InvoiceModel extends Invoice {
         clientPhone.startsWith('10') ||
         clientPhone.startsWith('12') ||
         clientPhone.startsWith('15')) {
-      clientPhone = '0' + clientPhone;
+      clientPhone = '0$clientPhone';
     }
 
     return InvoiceModel(

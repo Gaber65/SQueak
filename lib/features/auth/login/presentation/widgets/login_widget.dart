@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:squeak/core/service/global_widget/vc_loading_widget.dart';
 
 import 'package:squeak/features/auth/login/presentation/cubit/login_cubit.dart';
 import 'package:squeak/features/auth/password/presentation/pages/forgot_password.dart';
 import 'package:squeak/features/auth/register/presentation/pages/register_screen.dart';
 import 'package:squeak/features/auth/register/presentation/widgets/phone_or_email_form.dart';
-import 'package:squeak/generated/l10n.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LoginView extends StatelessWidget {
@@ -57,28 +57,16 @@ class LoginView extends StatelessWidget {
             ),
             SizedBox(height: 13),
 
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  backgroundColor: ColorManager.primaryColor,
-                ),
-                onPressed:
-                    cubit.isLoggedIn
-                        ? null
-                        : () {
-                          if (cubit.formKey.currentState!.validate()) {
-                            cubit.login(context);
-                          }
-                        },
-                child:
-                    cubit.isLoggedIn
-                        ? CircularProgressIndicator()
-                        : Text(S.of(context).login),
+            VcLoadingButton(
+              onPressed: () {
+                if (cubit.formKey.currentState!.validate()) {
+                  cubit.login(context);
+                }
+              },
+              isLoading: cubit.isLoggedIn,
+              child: Text(
+                S.of(context).login,
+                style: const TextStyle(color: Colors.white),
               ),
             ),
             SizedBox(height: 13),

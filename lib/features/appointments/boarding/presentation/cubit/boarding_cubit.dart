@@ -1,4 +1,3 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
@@ -21,6 +20,8 @@ class BoardingCubit extends Cubit<BoardingState> {
   final GetBoardingEntriesUseCase getBoardingEntriesUseCase;
   final RateBoardingUseCase rateBoardingUseCase;
   final ShareImageEntriesUseCase shareImageEntriesUseCase;
+  // final ShareImageEntriesUseCase shareVideoEntriesUseCase;
+  
 
   BoardingCubit({
     required this.getBoardingTypesUseCase,
@@ -29,6 +30,7 @@ class BoardingCubit extends Cubit<BoardingState> {
     required this.getBoardingEntriesUseCase,
     required this.rateBoardingUseCase,
     required this.shareImageEntriesUseCase,
+    // required this.shareVideoEntriesUseCase,
   }) : super(BoardingInitial());
 
   static BoardingCubit get(context) => BlocProvider.of<BoardingCubit>(context);
@@ -92,7 +94,9 @@ class BoardingCubit extends Cubit<BoardingState> {
     );
   }
 
+  bool isLoadingEntries = false;
   Future<void> getBoardingEntries( bool applyFilter) async {
+    isLoadingEntries = true;
     emit(GetBoardingEntriesLoading());
 
     final params = GetBoardingEntriesParams(
@@ -103,8 +107,12 @@ class BoardingCubit extends Cubit<BoardingState> {
     final result = await getBoardingEntriesUseCase(params);
 
     result.fold(
-      (failure) => emit(GetBoardingEntriesError(failure.error.message)),
+      (failure) {
+        isLoadingEntries = false;
+        emit(GetBoardingEntriesError(failure.error.message));
+      },
       (entries) {
+        isLoadingEntries = false;
         boardingEntries = entries;
         filteredEntries = List.from(entries);
         emit(GetBoardingEntriesSuccess(entries));
@@ -112,6 +120,7 @@ class BoardingCubit extends Cubit<BoardingState> {
     );
   }
 
+  // ignore: non_constant_identifier_names
   Future<void> rateBoarding(BoardingEntryEntity BoardingEntryEntity) async {
     emit(RateBoardingLoading());
 
@@ -133,6 +142,7 @@ class BoardingCubit extends Cubit<BoardingState> {
   void shareImageEntries(ShareImageBoardingEntriesParams entries) =>
       shareImageEntriesUseCase(entries);
 
+  // ignore: non_constant_identifier_names
   void initRating(BoardingEntryEntity BoardingEntryEntity) {
     ratingCleanliness = BoardingEntryEntity.cleanlinessRate;
     ratingDoctor = BoardingEntryEntity.doctorServiceRate;

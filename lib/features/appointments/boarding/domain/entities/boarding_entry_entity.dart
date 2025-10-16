@@ -55,11 +55,29 @@ class BoardingEntryEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-    id, entryDate, existDate, period, paymentDate, comment, status,
-    boardingTypeId, boardingType, petId, pet, boardingImages,
-    clinicPhone, clinicLocation, clinicLogo, clinicCode, clinicName,
-    clinicId, cleanlinessRate, doctorServiceRate, feedbackComment,
-    isRating, tenantId
+    id,
+    entryDate,
+    existDate,
+    period,
+    paymentDate,
+    comment,
+    status,
+    boardingTypeId,
+    boardingType,
+    petId,
+    pet,
+    boardingImages,
+    clinicPhone,
+    clinicLocation,
+    clinicLogo,
+    clinicCode,
+    clinicName,
+    clinicId,
+    cleanlinessRate,
+    doctorServiceRate,
+    feedbackComment,
+    isRating,
+    tenantId,
   ];
 
   BoardingEntryEntity copyWith({

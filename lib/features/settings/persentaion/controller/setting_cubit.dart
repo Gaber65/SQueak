@@ -1,16 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:meta/meta.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/settings/domain/use_case/update_profile_usecase.dart';
 import 'package:squeak/features/settings/data/models/owner_model.dart';
 
-import '../../../../core/base_usecase/base_usecase.dart';
 import '../../domain/entities/owner_entite.dart';
 import '../../domain/use_case/get_owner_data_usecase.dart';
 

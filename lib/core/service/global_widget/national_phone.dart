@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/auth/register/domin/entities/country_entity.dart';
 import 'package:squeak/features/auth/register/presentation/cubit/register_cubit.dart';
 
-import '../../../generated/l10n.dart';
 
 import '../../utils/export_path/export_files.dart';
 
@@ -88,6 +87,16 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
             id: widget.registerCubit.countryIdToServer,
             phoneCode: widget.registerCubit.countryPhoneCode,
           );
+          setState(() {});
+        }
+        if (state is CountryCodeDetectionErrorState) {
+          // We already fallback in cubit; just ensure UI reflects latest state
+          _selectedCountry = CountryEntity(
+            name: widget.registerCubit.countryCode,
+            id: widget.registerCubit.countryIdToServer,
+            phoneCode: widget.registerCubit.countryPhoneCode,
+          );
+          setState(() {});
         }
       },
       builder: (context, state) {

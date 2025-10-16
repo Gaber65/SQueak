@@ -1,0 +1,105 @@
+{
+  "tips": [
+  {
+    "category": "health",
+    "title": "Regular Vet Checkups",
+    "content": "Schedule routine checkups every 3-6 months to catch issues early and keep vaccinations up to date."
+  },
+  {
+    "category": "nutrition",
+    "title": "Hydration Matters",
+    "content": "Ensure fresh water is available at all times; aim for 50-60ml per kg of body weight daily."
+  },
+  {
+    "category": "behavior",
+    "title": "Positive Reinforcement",
+    "content": "Reward good behavior with treats and praise to build healthy habits and trust."
+  },
+  {
+    "category": "safety",
+    "title": "Pet-Proof Your Home",
+    "content": "Secure trash bins, keep toxic plants and foods out of reach, and use child-proof latches where needed."
+  },
+  {
+    "category": "grooming",
+    "title": "Brushing Routine",
+    "content": "Regular brushing reduces shedding and prevents matting; adjust frequency by breed and coat type."
+  },
+  {
+    "category": "exercise",
+    "title": "Daily Walks",
+    "content": "Dogs benefit from at least 30 minutes of walking or play daily to stay fit and mentally stimulated."
+  },
+  {
+    "category": "dental",
+    "title": "Dental Care",
+    "content": "Brush your pet’s teeth or provide dental chews to reduce plaque and prevent gum disease."
+  },
+  {
+    "category": "training",
+    "title": "Consistency is Key",
+    "content": "Use the same commands and signals to avoid confusion and help pets learn faster."
+  },
+  {
+    "category": "safety",
+    "title": "ID Tags and Microchips",
+    "content": "Ensure pets wear an ID tag and are microchipped in case they get lost."
+  },
+  {
+    "category": "nutrition",
+    "title": "Balanced Diet",
+    "content": "Feed species-appropriate, vet-recommended diets; avoid overfeeding to prevent obesity."
+  },
+  {
+    "category": "health",
+    "title": "Parasite Prevention",
+    "content": "Use vet-approved flea, tick, and worm preventives regularly to protect your pet’s health."
+  },
+  {
+    "category": "grooming",
+    "title": "Bathing Guidelines",
+    "content": "Bathe pets every 4–6 weeks (or as needed) using pet-safe shampoos to maintain coat and skin health."
+  },
+  {
+    "category": "behavior",
+    "title": "Socialization",
+    "content": "Expose pets to different people, places, and other animals early to build confidence and reduce fear."
+  },
+  {
+    "category": "emergency",
+    "title": "First Aid Kit",
+    "content": "Keep a pet-specific first aid kit at home and learn basic emergency procedures."
+  },
+  {
+    "category": "environment",
+    "title": "Comfortable Space",
+    "content": "Provide a quiet, safe resting spot with clean bedding where your pet can relax undisturbed."
+  },
+  {
+    "category": "training",
+    "title": "Short Sessions",
+    "content": "Keep training sessions brief (5–10 minutes) but frequent to hold your pet’s attention."
+  },
+  {
+    "category": "health",
+    "title": "Weight Monitoring",
+    "content": "Weigh your pet monthly and track body condition to prevent obesity-related health issues."
+  },
+  {
+    "category": "safety",
+    "title": "Seasonal Hazards",
+    "content": "Protect pets from heatstroke in summer and frostbite in winter; adjust walks and playtime accordingly."
+  },
+  {
+    "category": "bonding",
+    "title": "Playtime Together",
+    "content": "Daily play strengthens the bond and keeps pets mentally stimulated and happy."
+  },
+  {
+    "category": "aging",
+    "title": "Senior Pet Care",
+    "content": "Older pets may need softer bedding, joint supplements, and more frequent vet visits."
+  }
+]
+
+}

@@ -27,7 +27,7 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
       return Right(result);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.errorMessageModel));
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       return Left(ServerFailure(
         ErrorMessageModel.fromJson({
           'errors': {},

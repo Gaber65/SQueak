@@ -246,6 +246,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("فرز حسب الحالة"),
         "filter_hint_pets":
             MessageLookupByLibrary.simpleMessage("فرز حسب اسم الأليف"),
+        "findPetFriends":
+            MessageLookupByLibrary.simpleMessage("ابحث عن الأصدقاء"),
         "findPotentialMates":
             MessageLookupByLibrary.simpleMessage("ابحث عن صديقك الاليف..."),
         "followCode": MessageLookupByLibrary.simpleMessage("كود العياده"),

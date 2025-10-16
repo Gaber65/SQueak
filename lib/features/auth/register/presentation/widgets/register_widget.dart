@@ -1,10 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-
+import 'package:squeak/core/service/global_widget/vc_loading_widget.dart';
 import 'package:squeak/features/auth/login/presentation/pages/login_screen.dart';
 import 'package:squeak/features/auth/register/presentation/cubit/register_cubit.dart';
-import 'package:squeak/generated/l10n.dart';
 
 class RegisterView extends StatelessWidget {
   const RegisterView({super.key, required this.cubit});
@@ -83,37 +81,25 @@ class RegisterView extends StatelessWidget {
 
             /// Register
             SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  backgroundColor: ColorManager.primaryColor,
-                ),
-                onPressed:
-                    cubit.isRegister
-                        ? null
-                        : () {
-                          if (cubit.formKey.currentState!.validate()) {
-                            if (cubit.countryCode.isEmpty) {
-                              infoToast(
-                                context,
-                                isArabic()
-                                    ? 'يرجى اختيار دولتك قبل متابعة التسجيل.'
-                                    : 'Please select your country before proceeding with registration.',
-                              );
-                            } else {
-                              cubit.register();
-                            }
-                          }
-                        },
-                child:
-                    cubit.isRegister
-                        ? CircularProgressIndicator()
-                        : Text(S.of(context).register),
+            VcLoadingButton(
+              onPressed: () {
+                if (cubit.formKey.currentState!.validate()) {
+                  if (cubit.countryCode.isEmpty) {
+                    infoToast(
+                      context,
+                      isArabic()
+                          ? 'يرجى اختيار دولتك قبل متابعة التسجيل.'
+                          : 'Please select your country before proceeding with registration.',
+                    );
+                  } else {
+                    cubit.register();
+                  }
+                }
+              },
+              isLoading: cubit.isRegister,
+              child: Text(
+                S.of(context).register,
+                style: const TextStyle(color: Colors.white),
               ),
             ),
             SizedBox(height: 20),

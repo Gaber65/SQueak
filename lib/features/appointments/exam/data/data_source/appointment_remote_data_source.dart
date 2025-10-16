@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
+
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
-import '../../domain/use_case/create_appointment.dart';
 import '../models/appointment_model.dart';
 import '../models/availability_model.dart';
 import '../models/client_clinic_model.dart';
@@ -33,13 +33,18 @@ abstract class AppointmentRemoteDataSource {
 }
 
 class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
+
+
   @override
   Future<List<AvailabilityModel>> getAvailabilities(String clinicCode) async {
+
     try {
       final response = await DioFinalHelper.getData(
         method: getAvailabilitiesEndPoint(clinicCode),
         language: true,
       );
+
+
       final List data = response.data['data'];
       return data
           .map((e) => AvailabilityModel.fromJson(e))
@@ -47,6 +52,8 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
           .toList()
           .cast<AvailabilityModel>();
     } on DioException catch (e) {
+
+
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );
@@ -222,10 +229,12 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
         language: true,
       );
 
-      List<AppointmentModel> appointments = (response.data['data']['result'] as List).map((e) => AppointmentModel.fromJson(e)).toList();
+      List<AppointmentModel> appointments =
+          (response.data['data']['result'] as List)
+              .map((e) => AppointmentModel.fromJson(e))
+              .toList();
 
-      appointments.sort((a, b) => a.date.compareTo(b.date));
-
+      appointments.sort((a, b) => b.date.compareTo(a.date));
 
       return appointments;
     } on DioException catch (e) {

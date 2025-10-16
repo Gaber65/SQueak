@@ -1,31 +1,34 @@
 class PetEntities {
-  final String petId;
-  final String petName;
-  final String breedId;
-  final bool isSpayed;
-  final int gender;
-  final String specieId;
-  final String imageName;
-  final String birthdate;
+  final String? petId;
+  final String? petName;
+  final String? breedId;
+  final bool? isSpayed;
+  final int? gender;
+  final String? specieId;
+  final String? imageName;
+  final String? birthdate;
   final String? passportNumber;
   final String? passportImage;
   final String? microShipNumber;
   final String? qrCode;
   final String? qrCodeId;
   final BreedPetEntity? breed;
+  final int? mutualFriends;
+
   bool isSelected;
 
   PetEntities({
-    required this.petId,
-    required this.petName,
-    required this.breedId,
-    required this.isSpayed,
-    required this.gender,
-    required this.specieId,
-    required this.imageName,
-    required this.birthdate,
+    this.petId,
+    this.petName,
+    this.breedId,
+    this.isSpayed,
+    this.gender,
+    this.specieId,
+    this.imageName,
+    this.birthdate,
     this.passportNumber,
     this.microShipNumber,
+    this.mutualFriends,
     this.qrCode,
     this.qrCodeId,
     this.passportImage,
@@ -37,15 +40,16 @@ class PetEntities {
     return {
       'id': petId,
       'petName': petName,
-      if (breedId.isNotEmpty) 'breedId': breedId,
+      if (breedId != null && breedId!.isNotEmpty) 'breedId': breedId,
       'isSpayed': isSpayed,
       'gender': gender,
       'specieId': specieId,
+      'mutualFriends': mutualFriends,
       'imageName': imageName,
       'birthdate': birthdate,
       'passportnumber': passportNumber,
       'passportImage': passportImage,
-      'microShipNumber': microShipNumber
+      'microShipNumber': microShipNumber,
     };
   }
 }
@@ -74,14 +78,12 @@ class SpeciesEntity {
 
   const SpeciesEntity({required this.id, required this.type});
 }
+
 class BreedPetEntity {
   final String enBreed;
   final String arBreed;
 
   BreedPetEntity({required this.enBreed, required this.arBreed});
 
-  Map<String, dynamic> toJson() => {
-    'enBreed': enBreed,
-    'arBreed': arBreed,
-  };
+  Map<String, dynamic> toJson() => {'enBreed': enBreed, 'arBreed': arBreed};
 }

@@ -13,11 +13,11 @@ class VaccinationForm extends StatelessWidget {
   final PetEntities petModel;
 
   const VaccinationForm({
-    Key? key,
+    super.key,
     required this.formKey,
     required this.commentController,
     required this.petModel,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +84,8 @@ class VaccinationForm extends StatelessWidget {
                       ),
                     ),
                   ],
-                  if (cubit.valueVacItem == "Feed" || cubit.valueVacItem.contains('إطعام')) ...[
+                  if (cubit.valueVacItem == "Feed" ||
+                      cubit.valueVacItem.contains('إطعام')) ...[
                     const SizedBox(height: 10),
                     GestureDetector(
                       onTap: () {
@@ -153,7 +154,7 @@ class VaccinationForm extends StatelessWidget {
     );
     cubit
         .createReminder(
-          petId: petModel.petId,
+          petId: petModel.petId ?? '',
           data:
               (cubit.currentDateItem.toString().substring(0, 10) ==
                       DateTime.now().toString().substring(0, 10))
@@ -163,7 +164,7 @@ class VaccinationForm extends StatelessWidget {
           typeId: cubit.valueIdItem,
           valueVacItem: cubit.valueVacItem,
           context: context,
-          petName: petModel.petName,
+          petName: petModel.petName ?? '',
         )
         .then((_) {
           commentController.clear();

@@ -96,32 +96,6 @@ class SettingScreen extends StatelessWidget {
 
                   SizedBox(height: 25),
 
-                  // Management pet  Section
-                  Text(
-                    isArabic() ? 'ادارة صديقك الاليف' : 'Manage Pets',
-                    style: FontStyleThame.textStyle(
-                      context: context,
-                      fontSize: 18,
-                    ),
-                  ),
-                  SizedBox(height: 12),
-
-                  // MatingLayout pet  Section
-                  _buildSettingItem(
-                    context: context,
-                    icon:
-                        'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/rb_49299.png?alt=media&token=3f7daec5-e664-43bc-9e62-0ef2b7f018f3',
-                    title: 'Mating shows',
-
-                    subtitle: '',
-                    trailingWidget: IconButton(
-                      onPressed: () {
-                        navigateToScreen(context, MatingLayoutScreen());
-                      },
-                      icon: Icon(Icons.chevron_right),
-                    ),
-                  ),
-
                   // Personalization Section
                   Text(
                     S.of(context).personalization,
@@ -356,7 +330,6 @@ class SettingScreen extends StatelessWidget {
       ),
     );
   }
-
   Widget buildImage(BuildContext context) {
     final profile = SettingCubit.get(context).profile;
     final imageActive = CacheHelper.getData('ImageActive');
@@ -366,23 +339,21 @@ class SettingScreen extends StatelessWidget {
 
     if (imageActive != null && imageActive != '') {
       backgroundImage = NetworkImage('$imageUrl$imageActive');
-    } else if (profile != null && profile.imageName != '') {
+    } else if (profile != null && profile.imageName !=  '') {
       backgroundImage = NetworkImage('$imageUrl${profile.imageName}');
     } else {
       backgroundImage = AssetImage(
-        isPet
-            ? AssetImageModel.defaultPetImage
-            : AssetImageModel.defaultUserImage,
+        isPet ? AssetImageModel.defaultPetImage : AssetImageModel.defaultUserImage,
       );
     }
 
     return CircleAvatar(
       radius: 37,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor:
+      Theme.of(context).scaffoldBackgroundColor,
       backgroundImage: backgroundImage,
     );
   }
-
   Widget _buildSettingItem({
     required BuildContext context,
     required String icon,

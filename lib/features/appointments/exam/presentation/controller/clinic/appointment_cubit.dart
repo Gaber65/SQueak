@@ -6,6 +6,7 @@ import 'package:squeak/features/appointments/exam/domain/entities/availability_e
 import 'package:squeak/features/appointments/exam/domain/entities/client_clinic.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/clinic_entity.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/doctor_entity.dart';
+import 'package:squeak/features/layout/post/domain/entities/post_entity.dart';
 
 import '../../../../../../../core/service/service_locator/locatore_export_path.dart';
 
@@ -33,6 +34,8 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   static AppointmentCubit get(context) => BlocProvider.of(context);
   List<Availability> availabilities = [];
   TextEditingController commentController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController time = TextEditingController();
   Availability? selectedTime;
   List<TimeOfDay> timeSlots = [];
   TimeOfDay? selectedTimeSlot;
@@ -48,6 +51,16 @@ class AppointmentCubit extends Cubit<AppointmentState> {
 
   void initialize() {
     getSuppliersList();
+  }
+
+  // New method to load both availabilities and doctors in parallel
+  Future<void> loadAvailabilityPageData(String clinicCode) async {
+    // Start both operations in parallel
+    final availabilityFuture = fetchAvailabilities(clinicCode);
+    final doctorsFuture = fetchDoctors(clinicCode);
+    
+    // Don't wait for both - let them complete independently
+    await Future.wait([availabilityFuture, doctorsFuture]);
   }
 
   Future<void> fetchAvailabilities(String clinicCode) async {
@@ -87,12 +100,12 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     });
   }
 
-  Future<void> unfollowClinicById(String clinicId) async {
+  Future<void> unfollowClinicById(String clinicId , {ClinicInfo? clinic}) async {
     emit(UnFollowLoading());
     final result = await unfollowClinicUseCase(clinicId);
     result.fold(
       (failure) => emit(UnFollowError()),
-      (_) => emit(UnFollowSuccess()),
+      (_) => emit(UnFollowSuccess(clinic!)),
     );
   }
 
