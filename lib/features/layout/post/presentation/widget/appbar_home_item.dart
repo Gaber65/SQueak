@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/screens/notification_page.dart';
 import 'package:squeak/features/layout/search/presentation/screens/search_screen.dart';
-import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
-import 'package:squeak/features/profile_switch/Presentation/widget/screens/profile_switcher_page.dart';
-import 'package:squeak/features/settings/persentaion/controller/setting_cubit.dart';
 
 AppBar buildAppBarHome(context) {
   return AppBar(
@@ -49,38 +45,39 @@ AppBar buildAppBarHome(context) {
                 : const Icon(IconlyLight.notification),
       ),
 
-      Padding(
-        padding: EdgeInsets.only(right: 12),
+      // Padding(
+      //   padding: EdgeInsets.only(right: 12),
 
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (_) => sl<PetCubit>()..getOwnerPets(),
-              lazy: false,
-            ),
-            BlocProvider(
-              create: (_) => sl<SettingCubit>()..getOwnerData(),
-              lazy: true,
-            ),
-            BlocProvider(
-              create: (_) => sl<SwitchProfileCubit>()..loadProfile(),
-              lazy: true,
-            ),
-          ],
-          child: BlocConsumer<SwitchProfileCubit, SwitchProfileState>(
-            listener: (context, state) {
+      //   child: MultiBlocProvider(
+      //     providers: [
+      //       BlocProvider(
+      //         create: (_) => sl<PetCubit>()..getOwnerPets(),
+      //         lazy: false,
+      //       ),
+      //       BlocProvider(
+      //         create: (_) => sl<SettingCubit>()..getOwnerData(),
+      //         lazy: true,
+      //       ),
+      //       BlocProvider(
+      //         create: (_) => sl<SwitchProfileCubit>()..loadProfile(),
+      //         lazy: true,
+      //       ),
+      //     ],
+      //     child: BlocConsumer<SwitchProfileCubit, SwitchProfileState>(
+      //       listener: (context, state) {
               
-            },
-            builder: (context, state) {
-              var cubit = SwitchProfileCubit.get(context);
-              return ProfileSwitcherButton(
-                image: cubit.image,
-                name: cubit.name,
-              );
-            },
-          ),
-        ),
-      ),
+      //       },
+      //       builder: (context, state) {
+      //         var cubit = SwitchProfileCubit.get(context);
+      //         return ProfileSwitcherButton(
+      //           image: cubit.image,
+      //           name: cubit.name,
+      //         );
+      //       },
+      //     ),
+      //   ),
+      // ),
+   
     ],
   );
 }
