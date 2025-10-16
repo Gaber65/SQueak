@@ -216,6 +216,38 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
       });
       _boardingDataLoaded = true;
     }
+    // Clear filters from the tab we're leaving so fields reset when switching
+    if (mounted) {
+      if (_tabController.index == 0) {
+        // moved to examination tab -> clear boarding filters
+        Future.microtask(() {
+          try {
+            BoardingCubit.get(context).clearFilters();
+          } catch (_) {}
+        });
+      } else if (_tabController.index == 1) {
+        // moved to boarding tab -> clear appointment filters
+        Future.microtask(() {
+          try {
+            UserAppointmentCubit.get(context).clearFilters();
+          } catch (_) {}
+        });
+      }
+    }
+  }
+
+  @override
+  void deactivate() {
+    // Clear filters when this page is deactivated (navigated away or covered)
+    Future.microtask(() {
+      try {
+        UserAppointmentCubit.get(context).clearFilters();
+      } catch (_) {}
+      try {
+        BoardingCubit.get(context).clearFilters();
+      } catch (_) {}
+    });
+    super.deactivate();
   }
 
   @override
@@ -237,7 +269,6 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
               current is EditAppointment ||
               current is GetAppointmentSuccess,
           listener: (context, state) {
-            // keep existing behaviors
             if (state is DeleteAppointmentSuccess) {
               UserAppointmentCubit.get(context).getAppointment(false);
             }
@@ -296,7 +327,17 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
       ),
       actions: [
         IconButton(
-          onPressed: () => navigateToScreen(context, GetUserAppointment()),
+          onPressed: () {
+            Future.microtask(() {
+              try {
+                UserAppointmentCubit.get(context).clearFilters();
+              } catch (_) {}
+              try {
+                BoardingCubit.get(context).clearFilters();
+              } catch (_) {}
+            });
+            navigateToScreen(context, GetUserAppointment());
+          },
           icon: const Icon(IconlyLight.calendar),
         ),
       ],
@@ -393,16 +434,19 @@ class _ExaminationFilters extends StatelessWidget {
           Expanded(
             child: BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
               buildWhen: (previous, current) =>
-                  current is AppointmentFiltered || current is GetAppointmentSuccess,
+                  current is AppointmentFiltered ||
+                  current is GetAppointmentSuccess ||
+                  current is AppointmentFilterCleared,
               builder: (context, state) => buildStateFilter(context),
             ),
           ),
+          // Rebuild pet filter when appointment filters change so the pet label updates
           Expanded(
-            child: BlocBuilder<PetCubit, PetState>(
+            child: BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
               buildWhen: (previous, current) =>
-                  current is GetOwnerPetsSuccessState ||
-                  current is PetCreateSuccessState ||
-                  current is DeletePetSuccessState,
+                  current is AppointmentFiltered ||
+                  current is AppointmentFilterCleared ||
+                  current is GetAppointmentSuccess,
               builder: (context, state) {
                 final pets = PetCubit.get(context).pets;
                 return buildPetFilter(context, pets);
@@ -411,7 +455,9 @@ class _ExaminationFilters extends StatelessWidget {
           ),
           BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
             buildWhen: (previous, current) =>
-                current is AppointmentFiltered || current is GetAppointmentSuccess,
+                current is AppointmentFiltered ||
+                current is GetAppointmentSuccess ||
+                current is AppointmentFilterCleared,
             builder: (context, state) {
               return Visibility(
                 visible: state is AppointmentFiltered,
@@ -432,7 +478,6 @@ class _ExaminationFilters extends StatelessWidget {
   }
 }
 
-// Placeholder that wires into the real list via Bloc to keep file small and focused
 class _ExaminationListPlaceholder extends StatefulWidget {
   const _ExaminationListPlaceholder();
 
@@ -582,11 +627,11 @@ class _BoardingFilters extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: BlocBuilder<PetCubit, PetState>(
+            child: BlocBuilder<BoardingCubit, BoardingState>(
               buildWhen: (previous, current) =>
-                  current is GetOwnerPetsSuccessState ||
-                  current is PetCreateSuccessState ||
-                  current is DeletePetSuccessState,
+                  current is BoardingFiltered ||
+                  current is BoardingFilteredClear ||
+                  current is GetBoardingEntriesSuccess,
               builder: (context, state) {
                 final pets = PetCubit.get(context).pets;
                 return buildPetFilterBoarding(context, pets);
@@ -594,15 +639,19 @@ class _BoardingFilters extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: BlocBuilder<LayoutCubit, LayoutState>(
+            child: BlocBuilder<BoardingCubit, BoardingState>(
               buildWhen: (previous, current) =>
-                  current is BoardingFiltered || current is GetBoardingEntriesSuccess,
+                  current is BoardingFiltered ||
+                  current is GetBoardingEntriesSuccess ||
+                  current is BoardingFilteredClear,
               builder: (context, state) => buildStateFilterBoarding(context),
             ),
           ),
           BlocBuilder<BoardingCubit, BoardingState>(
             buildWhen: (previous, current) =>
-                current is BoardingFiltered || current is GetBoardingEntriesSuccess,
+                current is BoardingFiltered ||
+                current is GetBoardingEntriesSuccess ||
+                current is BoardingFilteredClear,
             builder: (context, state) {
               return Visibility(
                 visible: state is BoardingFiltered,
