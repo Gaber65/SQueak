@@ -85,7 +85,6 @@ class _PetProfileScreenState extends State<PetProfileScreen>
     );
 
     return Scaffold(
-      backgroundColor: _backgroundColor,
       body: AnimatedBuilder(
         animation: _animationController,
         builder: (context, child) {

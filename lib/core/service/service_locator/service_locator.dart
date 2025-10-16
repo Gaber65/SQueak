@@ -394,5 +394,29 @@ class ServiceLocator {
       unlinkPetFromQrUseCase: sl(),
 
     ));
+
+    // Data sources
+    sl.registerLazySingleton<BaseChatRemoteDataSource>(
+          () => ChatRemoteDataSource(),
+    );
+
+    // Repository
+    sl.registerLazySingleton<BaseChatRepository>(
+          () => ChatRepository(sl()),
+    );
+
+    // Use cases
+    sl.registerLazySingleton(() => GetChatsUseCase(sl()));
+    sl.registerLazySingleton(() => GetMessagesUseCase(sl()));
+    sl.registerLazySingleton(() => SendMessageUseCase(sl()));
+    sl.registerLazySingleton(() => UpdateChatStatusUseCase(sl()));
+    sl.registerLazySingleton(() => MarkMessagesReadUseCase(sl()));
+
+    // Cubits
+    sl.registerFactory(() => ChatListCubit(getChatsUseCase: sl()));
+    sl.registerFactory(() => ChatMessagesCubit(
+      getMessagesUseCase: sl(),
+      sendMessageUseCase: sl(),
+    ));
   }
 }

@@ -110,7 +110,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             themeMode: cubit.isDark ? ThemeMode.dark : ThemeMode.light,
             debugShowCheckedModeBanner: false,
             navigatorKey: navigatorKey,
-            home: MatingLayoutScreen(),
+            home: appStartPoint,
             locale:
                 cubit.language == 'en'
                     ? const Locale('en')

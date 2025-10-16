@@ -107,3 +107,14 @@ export '../../../features/vetcare/domain/base_repo/qr_base_repo.dart';
 export '../../../features/vetcare/domain/use_case/check_clinic_usecase.dart';
 export '../../../features/vetcare/domain/use_case/get_vet_clients_usecase.dart';
 export '../../../features/vetcare/presenation/controllers/qr_register/qr_cubit.dart';
+
+export '../../../features/mating/chat/domain/repositories/chat_repository.dart';
+export '../../../features/mating/chat/domain/usecases/get_chats_usecase.dart';
+export '../../../features/mating/chat/domain/usecases/get_messages_usecase.dart';
+export '../../../features/mating/chat/domain/usecases/send_message_usecase.dart';
+export '../../../features/mating/chat/domain/usecases/update_chat_status_usecase.dart';
+export '../../../features/mating/chat/domain/usecases/mark_messages_read_usecase.dart';
+export '../../../features/mating/chat/data/datasources/chat_remote_data_source.dart';
+export '../../../features/mating/chat/data/repositories/chat_repository_impl.dart';
+export '../../../features/mating/chat/presentation/controllers/chat_list_cubit.dart';
+export '../../../features/mating/chat/presentation/controllers/chat_messages_cubit.dart';
