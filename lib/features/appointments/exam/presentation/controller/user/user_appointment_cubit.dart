@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // ignore: depend_on_referenced_packages
@@ -51,33 +53,49 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
 
   bool isLoadingAppointment = false;
   Future<void> getAppointment(bool applyFilter) async {
-
-    debugPrint('UserAppointmentCubit:getAppointment START → ${DateTime.now().toIso8601String()} (applyFilter=$applyFilter)');
+    final cubitStart = DateTime.now();
+    debugPrint('🔍 [Cubit:getAppointment] START → ${cubitStart.toIso8601String()} (applyFilter=$applyFilter)');
+    
     isLoadingAppointment = true;
+    
+    final emitStart = DateTime.now();
     emit(GetAppointmentLoading());
+    debugPrint('🔍 [Cubit] Emitted GetAppointmentLoading in ${emitStart.difference(cubitStart).inMilliseconds}ms');
 
+    final paramsStart = DateTime.now();
+    final phone = CacheHelper.getData('phone');
+    debugPrint('🔍 [Cubit] Retrieved phone from cache in ${DateTime.now().difference(paramsStart).inMilliseconds}ms: $phone');
+    
     final params = GetUserAppointmentsParams(
-      phone: CacheHelper.getData('phone'),
+      phone: phone,
       applyFilter: applyFilter,
     );
 
-    debugPrint('UserAppointmentCubit:calling usecase → ${DateTime.now().toIso8601String()} params=$params');
+    final useCaseCallStart = DateTime.now();
+    debugPrint('🔍 [Cubit] Calling useCase → ${useCaseCallStart.toIso8601String()}');
+    debugPrint('🔍 [Cubit] Time before useCase call: ${useCaseCallStart.difference(cubitStart).inMilliseconds}ms');
 
     final result = await getUserAppointments(params);
 
-    debugPrint('UserAppointmentCubit:getAppointment AFTER usecase → ${DateTime.now().toIso8601String()}');
+    final afterUseCase = DateTime.now();
+    debugPrint('🔍 [Cubit] UseCase returned → ${afterUseCase.toIso8601String()}');
+    
     result.fold(
       (failure) {
         isLoadingAppointment = false;
+        debugPrint('❌ [Cubit] Error: ${failure.toString()}');
         emit(GetAppointmentError());
       },
       (appointmentsList) {
-        debugPrint('UserAppointmentCubit:getAppointment SUCCESS → ${DateTime.now().toIso8601String()} count=${appointmentsList.length}');
+        final successStart = DateTime.now();
+        debugPrint('✅ [Cubit] SUCCESS → ${successStart.toIso8601String()} count=${appointmentsList.length}');
         isLoadingAppointment = false;
         appointments = appointmentsList;
 
         filteredList = List.from(appointments);
+        
         emit(GetAppointmentSuccess());
+        debugPrint('✅ [Cubit] TOTAL TIME: ${DateTime.now().difference(cubitStart).inMilliseconds}ms');
       },
     );
   }

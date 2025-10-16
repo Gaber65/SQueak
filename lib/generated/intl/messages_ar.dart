@@ -521,7 +521,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "معلومات العلامة التجارية",
     ),
     "unfollow": MessageLookupByLibrary.simpleMessage("الغاء المتابعة"),
-    
     "unfollowConfirmation": MessageLookupByLibrary.simpleMessage(
       "تأكيد الغاء  المتابعة",
     ),

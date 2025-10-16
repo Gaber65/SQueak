@@ -224,11 +224,18 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
     String phone,
     bool applyFilter,
   ) async {
+    final startTime = DateTime.now();
     try {
-      final endpoint = createAndGetAppointmentsEndPoint(phone, applyFilter);
       if (kDebugMode) {
-        // Log the request endpoint and timestamp
-        debugPrint('🛰️ ➜ [${DateTime.now().toIso8601String()}] Requesting user appointments: $endpoint');
+        debugPrint('🔍 [DataSource:getUserAppointments] START → ${startTime.toIso8601String()}');
+      }
+
+      final endpoint = createAndGetAppointmentsEndPoint(phone, applyFilter);
+      
+      if (kDebugMode) {
+        final endpointCreated = DateTime.now();
+        debugPrint('🔍 [DataSource] Endpoint created in ${endpointCreated.difference(startTime).inMilliseconds}ms');
+        debugPrint('🛰️ ➜ [${endpointCreated.toIso8601String()}] Requesting: $endpoint');
       }
 
       final requestStart = DateTime.now();
@@ -237,30 +244,31 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
         language: true,
       );
       final requestEnd = DateTime.now();
+      
       if (kDebugMode) {
-        debugPrint('🛰️ ← [${requestEnd.toIso8601String()}] Response received for $endpoint (duration: ${requestEnd.difference(requestStart).inMilliseconds} ms)');
+        debugPrint('🛰️ ← [${requestEnd.toIso8601String()}] Response received (network: ${requestEnd.difference(requestStart).inMilliseconds}ms)');
       }
 
-      if (kDebugMode) {
-        try {
-          final data = response.data;
-          // Log brief response info (size and keys). Avoid huge prints.
-          final keys = data is Map ? data.keys.toList() : ['non-map-response'];
-          debugPrint('✅ ← Response received for appointments (${keys.length} keys)');
-        } catch (e) {
-          debugPrint('⚠️ ← Response received but failed to parse debug info: $e');
-        }
-      }
-
+      final parseStart = DateTime.now();
       List<AppointmentModel> appointments =
           (response.data['data']['result'] as List)
               .map((e) => AppointmentModel.fromJson(e))
               .toList();
 
       appointments.sort((a, b) => b.date.compareTo(a.date));
+      
+      final parseEnd = DateTime.now();
+      if (kDebugMode) {
+        debugPrint('✅ [DataSource] Parsed ${appointments.length} appointments in ${parseEnd.difference(parseStart).inMilliseconds}ms');
+        debugPrint('✅ [DataSource] TOTAL TIME: ${parseEnd.difference(startTime).inMilliseconds}ms');
+      }
 
       return appointments;
     } on DioException catch (e) {
+      if (kDebugMode) {
+        final errorTime = DateTime.now();
+        debugPrint('❌ [DataSource] Error after ${errorTime.difference(startTime).inMilliseconds}ms');
+      }
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

@@ -33,10 +33,7 @@ class GetUserAppointment extends StatelessWidget {
         BlocProvider(
           lazy: false,
           create:
-              (context) =>
-                  sl<UserAppointmentCubit>()
-                    ..fetchSuppliers()
-                    ..getAppointment(false),
+              (context) => sl<UserAppointmentCubit>()..getAppointment(false),
         ),
         BlocProvider(
           lazy: true,

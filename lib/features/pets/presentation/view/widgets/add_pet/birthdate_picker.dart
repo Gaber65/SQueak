@@ -13,8 +13,9 @@ class BirthdatePicker extends StatelessWidget {
 
   /// Calculates age from birthdate to current date
   String _calculateAge(String birthdate) {
-    if (birthdate.isEmpty)
+    if (birthdate.isEmpty) {
       return isArabic() ? 'سيتم حسابه' : 'Age will be calculated';
+    }
 
     try {
       final DateTime birthDate = DateTime.parse(birthdate);
