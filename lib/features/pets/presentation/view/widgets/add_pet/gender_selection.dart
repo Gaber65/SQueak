@@ -6,9 +6,10 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import '../../../controller/pet_cubit.dart';
 
 class GenderSelection extends StatelessWidget {
-  const GenderSelection({super.key, required this.cubit});
+  const GenderSelection({super.key, required this.cubit, this.isDark});
 
   final PetCubit cubit;
+  final bool? isDark;
 
   @override
   Widget build(BuildContext context) {
@@ -55,26 +56,30 @@ class GenderSelection extends StatelessWidget {
     int id,
     bool isSelected,
   ) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isSelected
+        ? ColorManager.primaryColor
+        : (dark ? Colors.black26 : ColorManager.white);
+    final borderColor = isSelected ? ColorManager.primaryColor : Colors.grey.withOpacity(0.3);
+    final textColor = isSelected ? Colors.white : (dark ? Colors.white70 : ColorManager.black_87);
+
     return InkWell(
       onTap: () => cubit.changeGender(id),
       borderRadius: BorderRadius.circular(12),
       child: Container(
         height: 60,
         decoration: BoxDecoration(
-          color: isSelected ? ColorManager.primaryColor : ColorManager.white,
+          color: bgColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color:
-                isSelected
-                    ? ColorManager.primaryColor
-                    : Colors.grey.withOpacity(0.3),
+            color: borderColor,
           ),
         ),
         child: Center(
           child: Text(
             title,
             style: TextStyle(
-              color: isSelected ? Colors.white : ColorManager.black_87,
+              color: textColor,
               fontWeight: FontWeight.w600,
               fontSize: 16,
             ),

@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:squeak/core/network/dio.dart';
 
 import '../../../../core/error/exception.dart';
-import '../../../../core/network/end-points.dart';
+import '../../../../core/network/end_points.dart';
 import '../../../../core/network/error_message_model.dart';
 import '../models/vaccination_model.dart';
 

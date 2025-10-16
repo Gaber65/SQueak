@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-
-import 'package:squeak/features/auth/password/presentation/pages/verfiy_user_screen.dart';
 import 'package:squeak/features/auth/register/data/datasources/register_remote_data_source.dart';
 import 'package:squeak/features/auth/register/data/repositories/register_repository_impl.dart';
 import 'package:squeak/features/auth/register/domin/usecses/get_countries_use_case.dart';
 import 'package:squeak/features/auth/register/domin/usecses/register_qr_use_case.dart';
 import 'package:squeak/features/auth/register/domin/usecses/register_use_case.dart';
-
 import 'package:squeak/features/auth/register/presentation/cubit/register_cubit.dart';
 import 'package:squeak/features/auth/register/presentation/widgets/enhanced_register_widget.dart';
 import 'package:squeak/features/auth/register/presentation/widgets/enhanced_auth_header.dart';
+
+import '../../../get_started/presentation/screnns/welcome_to_squek.dart';
+
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -27,8 +27,6 @@ class RegisterScreen extends StatelessWidget {
           registerUseCase: RegisterUseCase(repository),
           registerQrUseCase: RegisterQrUseCase(repository),
         );
-
-        // Initialize necessary data
         cubit.loadCountries().then((value) => cubit.detectCountryCode());
 
         return cubit;
@@ -39,21 +37,20 @@ class RegisterScreen extends StatelessWidget {
             errorToast(context, state.error);
           }
           if (state is RegistrationSuccessState) {
+            // After successful registration and automatic login, navigate to layout screen
             navigateAndFinish(
               context,
-              VerifyUser(
-                emailController: RegisterCubit.get(context).emailController,
-                clinicCode: RegisterCubit.get(context).followCodeController,
-              ),
+             WelcomeToSquek(),
             );
           }
         },
         builder: (context, state) {
           final cubit = RegisterCubit.get(context);
-
           return EnhancedAuthHeader(
-            title: 'Join the Pack! 🐾',
-            subtitle: 'Create your account to connect with pet care',
+            title: isArabic() ? 'انضم الى مجتمع الصغار الأليفة🐾' : 'Join the Pack! 🐾',
+            subtitle: isArabic()
+                ? 'أنشئ حسابك للتواصل مع رعاية الصغار الأليفة'
+                : 'Create your account to connect with pet care',
             child: EnhancedRegisterView(cubit: cubit),
           );
         },

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// ignore: depend_on_referenced_packages
 import 'package:equatable/equatable.dart';
-import 'package:squeak/core/utils/enums/dayOfWeek_enum.dart';
+import 'package:squeak/core/utils/enums/day_of_week_enum.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/availability_entities.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/client_clinic.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/clinic_entity.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/doctor_entity.dart';
-import 'package:squeak/features/layout/post/domain/entities/post_entity.dart';
 
 import '../../../../../../../core/service/service_locator/locatore_export_path.dart';
 
@@ -55,11 +55,8 @@ class AppointmentCubit extends Cubit<AppointmentState> {
 
   // New method to load both availabilities and doctors in parallel
   Future<void> loadAvailabilityPageData(String clinicCode) async {
-    // Start both operations in parallel
     final availabilityFuture = fetchAvailabilities(clinicCode);
     final doctorsFuture = fetchDoctors(clinicCode);
-    
-    // Don't wait for both - let them complete independently
     await Future.wait([availabilityFuture, doctorsFuture]);
   }
 
@@ -134,8 +131,8 @@ class AppointmentCubit extends Cubit<AppointmentState> {
       },
       (clientClinicList) {
         clientInClinic = clientClinicList.isNotEmpty;
-        print(clientInClinic);
-        print(clientClinicList.isNotEmpty);
+        // print(clientInClinic);
+        // print(clientClinicList.isNotEmpty);
         petListInVet = clientClinicList;
         emit(GetClientInClinicSuccess());
       },
@@ -192,5 +189,15 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   void setNoSelect(bool error) {
     isNoSelect = error;
     emit(NoSelectState());
+  }
+
+  @override
+  Future<void> close() {
+    // Dispose controllers to prevent memory/resource leaks
+    commentController.dispose();
+    dateController.dispose();
+    time.dispose();
+    searchController.dispose();
+    return super.close();
   }
 }

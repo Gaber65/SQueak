@@ -64,7 +64,7 @@ class SettingCubit extends Cubit<SettingState> {
   void init(BuildContext context) async {
     profile = await loadProfile();
     nameController.text = profile!.fullName;
-    phoneController.text = profile!.phone;
+    phoneController.text = profile!.phone.startsWith('0')? profile!.phone : '0${profile!.phone}';
     addressController.text = profile!.address;
     emailController.text = profile!.email;
     imageController.text = profile!.imageName;
@@ -139,5 +139,17 @@ class SettingCubit extends Cubit<SettingState> {
         emit(UpdateProfileSuccessState(owner));
       },
     );
+  }
+
+  @override
+  Future<void> close() {
+    // Dispose all controllers to prevent memory leaks
+    nameController.dispose();
+    phoneController.dispose();
+    emailController.dispose();
+    addressController.dispose();
+    imageController.dispose();
+    birthDateController.dispose();
+    return super.close();
   }
 }

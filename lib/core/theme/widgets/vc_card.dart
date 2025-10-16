@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import '../app_theme.dart';
 
@@ -17,7 +19,7 @@ class VcCard extends StatelessWidget {
   });
 
   final Widget child;
-  final EdgeInsets? margin;
+  final  EdgeInsets? margin;
   final EdgeInsets? padding;
   final double? elevation;
   final Color? color;

@@ -1,5 +1,7 @@
+// ignore: depend_on_referenced_packages
 import 'package:equatable/equatable.dart';
 
+// ignore: must_be_immutable
 class PetClinic extends Equatable {
   final String petId;
   final String petName;

@@ -114,7 +114,7 @@ String extractFirstErrorAuth(ErrorMessageModel error) {
         return firstValues.first;
       }
     }
-    return error.message ?? "Unknown error";
+    return error.message;
   } catch (_) {
     return "Unknown error";
   }

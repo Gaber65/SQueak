@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:equatable/equatable.dart';
 import 'boarding_type_entity.dart';
 import 'pet_boarding_entity.dart';

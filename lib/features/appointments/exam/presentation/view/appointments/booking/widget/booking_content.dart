@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -167,7 +169,7 @@ class _BookingContentState extends State<BookingContent> {
         final cubit = AppointmentCubit.get(context);
 
         return WillPopScope(
-          onWillPop: () async {
+          onWillPop: () async  {
             Navigator.pop(context);
             return false;
           },

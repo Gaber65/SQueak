@@ -25,7 +25,8 @@ class PetScreen extends StatelessWidget {
           } else if (state is QrUnlinkSuccess) {
             successToast(context, state.message);
             PetCubit.get(context).getOwnerPets();
-          } if (state is QrError) {
+          }
+          if (state is QrError) {
             errorToast(context, state.message);
           }
         },
@@ -41,6 +42,15 @@ class PetScreen extends StatelessWidget {
                 );
               }
             },
+            // ✅ Only rebuild when pets list actually changes
+            buildWhen: (previous, current) {
+              return current is GetOwnerPetsLoadingState ||
+                  current is GetOwnerPetsSuccessState ||
+                  current is GetOwnerPetsErrorState ||
+                  current is PetCreateSuccessState ||
+                  current is DeletePetSuccessState ||
+                  current is MergePetsSuccessState;
+            },
             builder: (context, state) {
               final cubit = PetCubit.get(context);
               final qrCubit = QrCubit.get(context);
@@ -49,7 +59,7 @@ class PetScreen extends StatelessWidget {
                 cubit: cubit,
                 state: state,
                 qrCubit: qrCubit,
-              );
+              ); 
             },
           );
         },

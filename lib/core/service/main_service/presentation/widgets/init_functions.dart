@@ -1,5 +1,6 @@
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+// ignore: depend_on_referenced_packages
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class InitFunctions {
   static Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
     ConfigModel.setEnvironment(Environment.test);
-    Bloc.observer = MyBlocObserver();
+        Bloc.observer = MyBlocObserver();
     await _initServiceLocator();
     await _initCache(); // Initialize cache first
     await NotificationInitializer.initialize();
@@ -34,7 +35,7 @@ class InitFunctions {
 
   static void _listenToForegroundMessages() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print('app foreground');
+      // print('app foreground');
       _handleMessage(message);
     });
   }
@@ -42,7 +43,7 @@ class InitFunctions {
   @pragma('vm:entry-point')
   static void _listenToMessageOpenedApp() {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      print('app opened');
+      // print('app opened');
       _handleMessage(message);
     });
   }
@@ -56,14 +57,14 @@ class InitFunctions {
   static Future<void> _firebaseMessagingBackgroundHandler(
     RemoteMessage message,
   ) async {
-    print('app Terminated');
+    // print('app Terminated');
 
     _handleMessage(message);
   }
 
   @pragma('vm:entry-point')
   static void _handleMessage(RemoteMessage message) async {
-    print('Message received: ${message.toMap()}\n \n \n');
+    // print('Message received: ${message.toMap()}\n \n \n');
     final model = NotificationMessage.fromJson(message.toMap());
 
     NotificationScheduler.scheduleInstantNotification(
@@ -143,7 +144,7 @@ class InitFunctions {
   }
 
   static Future<void> _configureChucker() async {
-    ChuckerFlutter.showOnRelease = false;
+    ChuckerFlutter.showOnRelease = true;
     ChuckerFlutter.showNotification = true;
   }
 }

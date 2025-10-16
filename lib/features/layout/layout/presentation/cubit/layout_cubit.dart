@@ -1,9 +1,8 @@
+// ignore_for_file: depend_on_referenced_packages
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/base_usecase/base_usecase.dart';
-import 'package:squeak/features/appointments/exam/presentation/view/appointments/all_apointment.dart';
-import 'package:squeak/features/appointments/exam/presentation/view/supplier/get_supplier.dart';
 import 'package:squeak/features/appointments/service_screen.dart';
 import 'package:squeak/features/friendship/presentation/pages/pet_friend_layout.dart';
 import 'package:squeak/features/layout/post/presentation/screens/home_screen.dart';
@@ -24,17 +23,19 @@ class LayoutCubit extends Cubit<LayoutState> {
   LayoutCubit({
     required this.getVersionUseCase,
     required this.getCurrentAppVersionUseCase,
-  }) : super(LayoutInitial());
+  }) : super(LayoutInitial()) {
+    screens = [
+      HomeScreen(),
+      FriendsScreen(),
+      PetScreen(),
+      CareHubScreen(),
+      SettingScreen(),
+    ];
+  }
 
   static LayoutCubit get(context) => BlocProvider.of(context);
 
-  List<Widget> screens = [
-    HomeScreen(),
-    FriendsScreen(),
-    PetScreen(),
-    CareHubScreen(),
-    SettingScreen(),
-  ];
+  late final List<Widget> screens;
 
   int selectedIndex = 0;
   String currentVersion = '';
@@ -42,8 +43,10 @@ class LayoutCubit extends Cubit<LayoutState> {
   bool getVersionFromBackLoading = true;
 
   void changeBottomNav(int index) {
-    selectedIndex = index;
-    emit(ChangeBottomNavState());
+    if (selectedIndex != index) {
+      selectedIndex = index;
+      emit(ChangeBottomNavState());
+    }
   }
 
   Future<void> getVersion() async {

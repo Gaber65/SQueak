@@ -6,10 +6,11 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:squeak/core/error/exception.dart';
 
 import '../../../../network/dio.dart';
-import '../../../../network/end-points.dart';
+import '../../../../network/end_points.dart';
 import '../../../../network/error_message_model.dart';
 import '../../../cache/shared_preferences/cache_helper.dart';
 import 'dart:async';
+// ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
 
 import '../models/image_model.dart';
@@ -36,62 +37,114 @@ class MainRemoteDataSource {
 
   Future<void> saveToken() async {
     try {
+      // أولاً، نحاول الحصول على التوكن المخزن محلياً
       String? fbToken = CacheHelper.getData('DeviceToken');
       
+      // إذا لم يكن هناك توكن محلي، نحاول الحصول عليه من Firebase
       if (fbToken == null || fbToken.isEmpty) {
         try {
           fbToken = await FirebaseMessaging.instance.getToken();
+          if (fbToken != null) {
+            // حفظ التوكن الجديد محلياً
+            await CacheHelper.saveData('DeviceToken', fbToken);
+          }
         } catch (tokenError) {
-          print('Error getting Firebase token in saveToken: $tokenError');
-          fbToken = 'fallback_token_${DateTime.now().millisecondsSinceEpoch}';
+          // print('Error getting Firebase token in saveToken: $tokenError');
+          // في حالة الفشل، نستخدم توكن مؤقت
+          fbToken = 'temp_token_${DateTime.now().millisecondsSinceEpoch}';
+          await CacheHelper.saveData('DeviceToken', fbToken);
         }
       }
       
-      await DioFinalHelper.postData(
+      // إرسال التوكن للسيرفر
+      final response = await DioFinalHelper.postData(
         method: sendtoken,
         data: {
-          "fbToken": fbToken ?? 'default_token',
+          "fbToken": fbToken,
         },
       );
+      
+      // التحقق من نجاح العملية
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        // print('Token saved successfully');
+      } else {
+        throw Exception('Failed to save token: unexpected status code ${response.statusCode}');
+      }
     } catch (e) {
-      print('Failed to save token: $e');
+      // print('Failed to save token: $e');
+      // حذف التوكن المحلي في حالة الفشل لإتاحة المحاولة مرة أخرى
+      await CacheHelper.removeData('DeviceToken');
       throw Exception('Failed to save token');
     }
   }
 
   Future<void> removeToken() async {
     try {
+      final fbToken = CacheHelper.getData('DeviceToken');
+      if (fbToken == null || fbToken.isEmpty) {
+        // لا يوجد توكن للحذف
+        return;
+      }
       await DioFinalHelper.deleteData(
         method: sendtoken,
-        data: {"fbToken": CacheHelper.getData('DeviceToken')},
+        data: {"fbToken": fbToken},
       );
+      // حذف التوكن من التخزين المحلي بعد نجاح الحذف
+      CacheHelper.removeData('DeviceToken');
     } catch (e) {
+      // print('Failed to remove token: $e');
+      // حذف التوكن من التخزين المحلي حتى لو فشل الطلب
+      CacheHelper.removeData('DeviceToken');
       throw Exception('Failed to remove token');
     }
   }
 
   Future<void> requestNotificationPermissions() async {
     try {
-      await FirebaseMessaging.instance.requestPermission(
+      final status = await FirebaseMessaging.instance.requestPermission(
         alert: true,
         badge: true,
         sound: true,
       );
       
-      try {
-        final token = await FirebaseMessaging.instance.getToken();
-        if (token != null) {
-          CacheHelper.saveData('DeviceToken', token);
+      if (status.authorizationStatus == AuthorizationStatus.authorized) {
+        try {
+          final token = await FirebaseMessaging.instance.getToken();
+          if (token != null) {
+            await CacheHelper.saveData('DeviceToken', token);
+            // محاولة حفظ التوكن مباشرة بعد الحصول على الإذن
+            await saveToken();
+          }
+        } catch (tokenError) {
+          // print('Error getting Firebase token: $tokenError');
+          // في حالة الفشل، نحاول استخدام التوكن المؤقت
+          final tempToken = 'temp_token_${DateTime.now().millisecondsSinceEpoch}';
+          await CacheHelper.saveData('DeviceToken', tempToken);
         }
-      } catch (tokenError) {
-        print('Error getting Firebase token: $tokenError');
-        // Save a fallback token
-        final fallbackToken = 'fallback_token_${DateTime.now().millisecondsSinceEpoch}';
-        CacheHelper.saveData('DeviceToken', fallbackToken);
+      } else {
+        // print('Notification permissions not granted: ${status.authorizationStatus}');
       }
     } catch (permissionError) {
-      print('Error requesting notification permissions: $permissionError');
-      // Continue without Firebase token
+      // print('Error requesting notification permissions: $permissionError');
+      // الاستمرار بدون توكن Firebase
+    }
+  }
+  
+  // دالة جديدة للتحقق من صلاحية التوكن وتحديثه إذا لزم الأمر
+  Future<bool> validateAndRefreshToken() async {
+    try {
+      final currentToken = CacheHelper.getData('DeviceToken');
+      final newToken = await FirebaseMessaging.instance.getToken();
+      
+      if (newToken != null && newToken != currentToken) {
+        await CacheHelper.saveData('DeviceToken', newToken);
+        await saveToken();
+        return true;
+      }
+      return currentToken != null;
+    } catch (e) {
+      // print('Error validating token: $e');
+      return false;
     }
   }
 

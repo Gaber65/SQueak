@@ -57,8 +57,8 @@ class MainCubit extends Cubit<MainState> {
     } else {
       isDark = !isDark;
       CacheHelper.saveData('isDark', isDark);
-      print(isDark);
-      print(CacheHelper.getData('isDark'));
+      // print(isDark);
+      // print(CacheHelper.getData('isDark'));
       emit(AppChangeModeState());
     }
   }
@@ -87,7 +87,11 @@ class MainCubit extends Cubit<MainState> {
       emit(SaveTokenError());
     }
   }
-
+// في MainCubit
+void resetState() {
+  isNotificationEnabled = false;
+  emit(MainInitial());
+}
 
 
   bool isNotificationEnabled = false;

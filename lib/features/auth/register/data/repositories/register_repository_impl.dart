@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:squeak/features/auth/register/data/datasources/register_remote_data_source.dart';
+import 'package:squeak/features/auth/login/data/models/auth_model.dart';
 import 'package:squeak/features/auth/register/domin/entities/country_entity.dart';
 import 'package:squeak/features/auth/register/domin/entities/register_entity.dart';
 import 'package:squeak/features/auth/register/domin/repositries/register_repository.dart';
@@ -26,9 +27,9 @@ class RegisterRepositoryImpl implements RegisterRepository {
   }
 
   @override
-  Future<void> register(RegisterEntity entity) async {
+  Future<AuthModel> register(RegisterEntity entity) async {
     try {
-      await remoteDataSource.register(entity.toMapRegister());
+      return await remoteDataSource.register(entity.toMapRegister());
     } on DioException catch (e) {
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
@@ -37,9 +38,9 @@ class RegisterRepositoryImpl implements RegisterRepository {
   }
 
   @override
-  Future<void> registerWithQr(RegisterEntity entity, String clinicCode) async {
+  Future<AuthModel> registerWithQr(RegisterEntity entity, String clinicCode) async {
     try {
-      await remoteDataSource.registerQr({
+      return await remoteDataSource.registerQr({
         ...entity.toMap(),
         'clinicCode': clinicCode,
       });

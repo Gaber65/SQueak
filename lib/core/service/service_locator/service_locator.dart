@@ -1,7 +1,6 @@
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
-
 import '../../../features/layout/search/presentation/controller/search_cubit.dart';
-import '../../../features/qr/presentation/controller/qr_cubit.dart';
+import '../../../features/pets/domain/use_case/merge_pets_usecase.dart';
 import '../../../features/settings/persentaion/controller/setting_cubit.dart';
 import '../../../features/vetcare/presenation/controllers/follow_request/follow_request_cubit.dart';
 import 'locatore_export_path.dart';
@@ -25,6 +24,7 @@ class ServiceLocator {
         createPetUseCase: sl(),
         updatePetUseCase: sl(),
         deletePetUseCase: sl(),
+        mergePetsUseCase: sl(),
       ),
     );
     sl.registerFactory(

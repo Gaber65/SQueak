@@ -20,9 +20,9 @@ Widget buildColumnSearchBody(
         MyTextForm(
           controller: cubit.searchController,
           onFieldSubmitted: (value) {
-            print("Searching for: $value");
+            // print("Searching for: $value");
             if (value.isNotEmpty) {
-              print("Searching for: $value");
+              // print("Searching for: $value");
               cubit
                   .getSearchList(); // Make sure this method filters results based on the input
             }
@@ -40,7 +40,7 @@ Widget buildColumnSearchBody(
         SizedBox(height: 20),
         if (cubit.searchController.text.isEmpty)
           YoutubeCardWidget(
-            videoImage: 'assets/squeak_intro.png',
+            videoImage: 'assets/squeak_intro.webp',
             videoUrl:
                 'https://www.youtube.com/watch?v=fb1f8-ZE-fE&list=PLaXhNu0x-iCSzM9AhzBUVc-n5JnNpC_MQ',
           ),

@@ -41,7 +41,7 @@ class InvoiceModel extends Invoice {
   });
 
   factory InvoiceModel.fromJson(Map<String, dynamic> json) {
-    String clientPhone = json['clientPhone'].toString() ?? '-';
+    String clientPhone = json['clientPhone'].toString();
     if (clientPhone.startsWith('11') ||
         clientPhone.startsWith('10') ||
         clientPhone.startsWith('12') ||

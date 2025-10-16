@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:squeak/core/network/end-points.dart';
+import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/utils/enums/upload_place.dart';
 
 import '../../../../error/exception.dart';

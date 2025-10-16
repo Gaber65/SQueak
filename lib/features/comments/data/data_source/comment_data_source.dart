@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import '../../../../core/error/exception.dart';
 import '../../../../core/network/dio.dart';
-import '../../../../core/network/end-points.dart';
+import '../../../../core/network/end_points.dart';
 import '../../../../core/network/error_message_model.dart';
 import '../../domain/repository/base_comment_repository.dart';
 import '../model/comment_model.dart';
@@ -98,7 +98,7 @@ class CommentRemoteDataSource extends BaseCommentRemoteDataSource {
           .map((e) => CommentModel.fromJson(e))
           .toList();
     } on DioException catch (e) {
-      print(e.response!.data);
+      // print(e.response!.data);
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

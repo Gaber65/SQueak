@@ -1,8 +1,9 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
-import 'package:squeak/features/auth/get_started/presentation/screnns/Quick_Tour_Screen.dart';
+import 'package:squeak/features/auth/get_started/presentation/screnns/quick_tour_screen.dart';
 
 class WelcomeToSquek extends StatelessWidget {
   const WelcomeToSquek({super.key});
@@ -53,7 +54,7 @@ class WelcomeToSquek extends StatelessWidget {
                   ),
                   SizedBox(height: height * 0.03),
                   Text(
-                    'Welcome To Squeak',
+                    isArabic() ? 'مرحبًا بك في سكويك' : 'Welcome To Squeak',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: width * 0.065, // dynamic font
@@ -65,7 +66,9 @@ class WelcomeToSquek extends StatelessWidget {
                     width: width * 0.65,
                     child: Text(
                       textAlign: TextAlign.center,
-                      "Your pet's social network is ready. Let's get you started with a quick tour.",
+                      isArabic()
+                          ? 'شبكة التواصل الاجتماعي لصغيرك الأليف جاهزة. لنبدأ بجولة سريعة.'
+                          : "Your pet's social network is ready. Let's get you started with a quick tour.",
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: width * 0.045,
@@ -88,23 +91,33 @@ class WelcomeToSquek extends StatelessWidget {
                       children: [
                         _buildFeatureItem(
                           Icons.add,
-                          "Add your first pet",
+                          isArabic()
+                              ? 'أضف صغيرك الأليف الأول'
+                              : "Add your first pet",
                           width,
                         ),
                         SizedBox(height: height * 0.015),
                         _buildFeatureItem(
                           Icons.group,
-                          "Connect with pet friends",
+                          isArabic()
+                              ? 'تواصل مع أصدقاء الصغار الأليفة'
+                              : "Connect with pet friends",
                           width,
                         ),
                         SizedBox(height: height * 0.015),
                         _buildFeatureItem(
                           Icons.calendar_today,
-                          "Schedule appointments",
+                          isArabic()
+                              ? 'احجز المواعيد'
+                              : "Schedule appointments",
                           width,
                         ),
                         SizedBox(height: height * 0.015),
-                        _buildFeatureItem(Icons.chat, "Start chatting", width),
+                        _buildFeatureItem(
+                          Icons.chat,
+                          isArabic() ? 'ابدأ الدردشة' : "Start chatting",
+                          width,
+                        ),
                       ],
                     ),
                   ),
@@ -124,6 +137,7 @@ class WelcomeToSquek extends StatelessWidget {
                         navigateAndFinish(context, QuickTourScreen());
                       },
                       child: Text(
+                        isArabic()? 'هيا بنا نبدأ': 
                         "Let's Get Started!",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -137,6 +151,7 @@ class WelcomeToSquek extends StatelessWidget {
                   Column(
                     children: [
                       Text(
+                        isArabic() ?"الخطوة 1 من 4" :
                         "Step 1 of 4",
                         style: TextStyle(
                           color: Colors.white,

@@ -1,17 +1,15 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // ignore: depend_on_referenced_packages
 import 'package:equatable/equatable.dart';
 import 'package:printing/printing.dart';
-
 import 'package:squeak/features/appointments/exam/domain/entities/appointment_entity.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/clinic_entity.dart';
-
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/print_reciept.dart';
 import 'dart:typed_data';
 import '../../../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../domain/entities/invoice.dart';
-
 part 'user_appointment_state.dart';
 
 class UserAppointmentCubit extends Cubit<UserAppointmentState> {
@@ -47,19 +45,16 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
   int ratingDoctor = 0;
   TextEditingController rateController = TextEditingController();
   bool isLoadingRate = false;
-
-
   bool isLoadingAppointment = false;
   Future<void> getAppointment(bool applyFilter) async {
-
     isLoadingAppointment = true;
     emit(GetAppointmentLoading());
-    final result = await getUserAppointments(
-      GetUserAppointmentsParams(
-        phone: CacheHelper.getData('phone'),
-        applyFilter: applyFilter,
-      ),
+    final phone = CacheHelper.getData('phone');
+    final params = GetUserAppointmentsParams(
+      phone: phone,
+      applyFilter: applyFilter,
     );
+    final result = await getUserAppointments(params);
     result.fold(
       (failure) {
         isLoadingAppointment = false;
@@ -68,9 +63,8 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
       (appointmentsList) {
         isLoadingAppointment = false;
         appointments = appointmentsList;
-
         filteredList = List.from(appointments);
-        emit(GetAppointmentSuccess());
+        emit(GetAppointmentSuccess());     
       },
     );
   }
@@ -202,5 +196,12 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
         clinicImage: model.clinicLogo ?? '',
       ),
     );
+  }
+
+  @override
+  Future<void> close() {
+    // Dispose controllers to avoid leaks
+    rateController.dispose();
+    return super.close();
   }
 }

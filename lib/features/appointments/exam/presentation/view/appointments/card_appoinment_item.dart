@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, invalid_use_of_protected_member
+
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,7 +10,7 @@ import 'package:squeak/features/appointments/exam/presentation/view/appointments
 import 'package:squeak/features/appointments/exam/presentation/view/files_and_prescription_for_pet/files_for_pet_screen.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/files_and_prescription_for_pet/prescription_for_pet_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../../../../core/utils/enums/dayOfWeek_enum.dart';
+import '../../../../../../core/utils/enums/day_of_week_enum.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 
 Widget buildItem(
@@ -17,152 +19,163 @@ Widget buildItem(
   UserAppointmentCubit cubit,
   int index,
 ) {
+  // Make the card height responsive to screen size but constrained
+  final double cardHeight =
+      (MediaQuery.of(context).size.height * 0.28)
+          .clamp(220.0, 360.0)
+          .toDouble();
+
   return Padding(
     padding: const EdgeInsets.all(12.0),
-    child: Container(
-      width: double.infinity,
-      decoration: Decorations.kDecorationBoxShadow(context: context),
-      child: Column(
-        children: [
-          /// data
-          Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadiusDirectional.only(
-                topEnd: Radius.circular(14),
-                topStart: Radius.circular(14),
+    child: SizedBox(
+      height: cardHeight,
+      child: Container(
+        width: double.infinity,
+        decoration: Decorations.kDecorationBoxShadow(context: context),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            /// data
+            Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadiusDirectional.only(
+                  topEnd: Radius.circular(14),
+                  topStart: Radius.circular(14),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Handle all appointment states
+                    _buildStatusRow(appointments, context, cubit),
+                    const SizedBox(height: 3),
+                    if (appointments.status == 3 &&
+                        appointments.doctorServiceRate != 0)
+                      Center(
+                        child: Row(
+                          children: [
+                            Text(
+                              isArabic() ? 'تقييم الطبيب' : 'Doctor rating : ',
+                              style: FontStyleThame.textStyle(
+                                context: context,
+                                fontSize: 13,
+                              ),
+                            ),
+                            Row(
+                              children: List.generate(
+                                5,
+                                (index) =>
+                                    index < appointments.doctorServiceRate
+                                        ? const Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                          size: 18,
+                                        )
+                                        : const Icon(
+                                          Icons.star_border,
+                                          color: Colors.amber,
+                                          size: 18,
+                                        ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(14.0),
-              child: Column(
+
+            /// image + name
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 6.0,
+              ),
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Handle all appointment states
-                  _buildStatusRow(appointments, context, cubit),
-                  const SizedBox(height: 5),
-                  if (appointments.status == 3 &&
-                      appointments.doctorServiceRate != 0)
-                    Center(
-                      child: Row(
-                        children: [
-                          Text(
-                            isArabic() ? 'تقييم الطبيب' : 'Doctor rating : ',
-                            style: FontStyleThame.textStyle(
-                              context: context,
-                              fontSize: 14,
-                            ),
-                          ),
-                          Row(
-                            children: List.generate(
-                              5,
-                              (index) =>
-                                  index < appointments.doctorServiceRate
-                                      ? const Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
-                                      )
-                                      : const Icon(
-                                        Icons.star_border,
-                                        color: Colors.amber,
-                                      ),
-                            ),
-                          ),
-                        ],
-                      ),
+                  CircleAvatar(
+                    radius: 25,
+                    backgroundImage: NetworkImage(
+                      ConfigModel.serverFirstHalfOfImageUrl +
+                          (appointments.clinicLogo ?? ''),
                     ),
+                  ),
+                  SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          appointments.clinicName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: FontStyleThame.textStyle(
+                            context: context,
+                            fontSize: 15,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+
+                        Text(
+                          appointments.pet.name!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: FontStyleThame.textStyle(
+                            context: context,
+                            fontSize: 15,
+                          ),
+                        ),
+                        if (appointments.status == 3) ...[
+                          SizedBox(height: 3),
+                          _buildVitalsSection(appointments, context),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  InkWell(
+                    onTap: () {
+                      if (appointments.clinicLocation.isEmpty) {
+                        infoToast(
+                          context,
+                          isArabic()
+                              ? 'الموقع مفقود، يرجى مطالبة المشرف بإضافة موقعه'
+                              : 'the location is missing , please ask the admin to add his location',
+                        );
+                      } else {
+                        launchUrl((Uri.parse(appointments.clinicLocation)));
+                      }
+                    },
+                    child: FastCachedImage(
+                      url:
+                          'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/google-maps.png?alt=media&token=17b77d3f-92a8-4339-bc65-80cf49dff79e',
+                      height: 20,
+                      width: 20,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
 
-          /// image + name
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: NetworkImage(
-                    ConfigModel.serverFirstHalfOfImageUrl +
-                        (appointments.clinicLogo ?? ''),
-                  ),
-                ),
-                SizedBox(width: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: Text(
-                        appointments.clinicName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: FontStyleThame.textStyle(
-                          context: context,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 7),
-
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: Text(
-                        appointments.pet.name!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: FontStyleThame.textStyle(
-                          context: context,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    if (appointments.status == 3) ...[
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.5,
-                            child: _buildVitalsSection(appointments, context),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ],
-                ),
-                const Spacer(),
-                InkWell(
-                  onTap: () {
-                    if (appointments.clinicLocation.isEmpty) {
-                      infoToast(
-                        context,
-                        isArabic()
-                            ? 'الموقع مفقود، يرجى مطالبة المشرف بإضافة موقعه'
-                            : 'the location is missing , please ask the admin to add his location',
-                      );
-                    } else {
-                      launchUrl((Uri.parse(appointments.clinicLocation)));
-                    }
-                  },
-                  child: FastCachedImage(
-                    url:
-                        'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/google-maps.png?alt=media&token=17b77d3f-92a8-4339-bc65-80cf49dff79e',
-                    height: 20,
-                    width: 20,
-                    fit: BoxFit.fill,
-                  ),
-                ),
-              ],
+            /// bottom row - constrained and responsive buttons
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: _buildActionButtons(appointments, context, cubit),
+              ),
             ),
-          ),
-
-          /// bottom row
-          Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: Row(
-              children: _buildActionButtons(appointments, context, cubit),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );
@@ -269,6 +282,9 @@ Widget _buildStatusRow(
                 S.of(context).appointmentDone,
                 style: TextStyle(fontWeight: FontWeight.w700),
               ),
+              const SizedBox(width: 8),
+              Text(' ${formatDateString(appointments.date)}  ,  ', maxLines: 2),
+              Text(formatTimeToAmPm(appointments.time)),
               Spacer(),
               _buildEnhancedMenu(
                 context,
@@ -276,13 +292,6 @@ Widget _buildStatusRow(
                 appointments.status,
                 cubit,
               ),
-            ],
-          ),
-          SizedBox(height: 5),
-          Row(
-            children: [
-              Text(' ${formatDateString(appointments.date)}  ,  ', maxLines: 2),
-              Text(formatTimeToAmPm(appointments.time)),
             ],
           ),
         ],
@@ -359,9 +368,17 @@ List<Widget> _buildActionButtons(
 ) {
   List<Widget> buttons = [];
 
+  // Helper to create buttons with fixed height but flexible width
+  Widget buttonWrapper({required Widget child}) {
+    return Flexible(
+      fit: FlexFit.tight,
+      child: SizedBox(height: 44, child: child),
+    );
+  }
+
   // First button - Edit/Book Again based on status
   buttons.add(
-    Expanded(
+    buttonWrapper(
       child: ElevatedButton(
         onPressed: () {
           if (appointments.status == 0) {
@@ -410,6 +427,7 @@ List<Widget> _buildActionButtons(
                       width: MediaQuery.of(context).size.width / 3,
                       child: ElevatedButton(
                         onPressed: () async {
+                          // ignore: invalid_use_of_visible_for_testing_member
                           cubit.emit(EditAppointment(appointments));
                           Navigator.of(context).pop(false);
                           cubit.findClinic(
@@ -489,20 +507,24 @@ List<Widget> _buildActionButtons(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
+          minimumSize: const Size.fromHeight(44),
         ),
         child: Text(_getFirstButtonText(appointments.status, context)),
       ),
     ),
   );
 
-  buttons.add(const SizedBox(width: 10));
+  buttons.add(const SizedBox(width: 8));
 
   // Call button - Always present
   buttons.add(
-    Expanded(
+    buttonWrapper(
       child: ElevatedButton(
         onPressed: () {
-          launchUrl(Uri.parse('tel:${appointments.clinicPhone}'));
+          final phone = appointments.clinicPhone;
+          final formattedPhone = phone.startsWith('0') ? phone : '0$phone';
+          launchUrl(Uri.parse('tel:$formattedPhone'));
+          // launchUrl(Uri.parse('tel:0${appointments.clinicPhone}'));
         },
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.blue,
@@ -514,6 +536,7 @@ List<Widget> _buildActionButtons(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
+          minimumSize: const Size.fromHeight(44),
         ),
         child: Text(S.of(context).appointmentButtonCall),
       ),
@@ -522,9 +545,9 @@ List<Widget> _buildActionButtons(
 
   // Cancel button - Only for reserved appointments
   if (appointments.status == 0) {
-    buttons.add(const SizedBox(width: 10));
+    buttons.add(const SizedBox(width: 8));
     buttons.add(
-      Expanded(
+      buttonWrapper(
         child: ElevatedButton(
           onPressed: () {
             showDialog(
@@ -616,6 +639,7 @@ List<Widget> _buildActionButtons(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
+            minimumSize: const Size.fromHeight(44),
           ),
           child: Text(S.of(context).appointmentButtonCancel),
         ),
@@ -691,8 +715,8 @@ List<PopupMenuEntry<int>> _buildMenuItems(
   BuildContext context,
   UserAppointmentCubit cubit,
 ) {
-  print('appointment.appointment: $appointment');
-  print('appointment.appointmentState: $appointmentState');
+  // print('appointment.appointment: $appointment');
+  // print('appointment.appointmentState: $appointmentState');
 
   List<PopupMenuEntry<int>> items = [];
 
@@ -750,7 +774,9 @@ List<PopupMenuEntry<int>> _buildMenuItems(
 }
 
 Widget _buildVitalsSection(appointment, context) {
-  return Row(
+  return Wrap(
+    spacing: 8.0,
+    runSpacing: 4.0,
     children: [
       _buildVitalItem(
         'Temp',
@@ -759,7 +785,6 @@ Widget _buildVitalsSection(appointment, context) {
         Colors.red,
         context,
       ),
-      const SizedBox(width: 20),
       _buildVitalItem(
         'Weight',
         '${appointment.weight} kg',
@@ -779,16 +804,18 @@ Widget _buildVitalItem(
   context,
 ) {
   return Row(
+    mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(icon, size: 16, color: color),
-      const SizedBox(width: 6),
+      Icon(icon, size: 14, color: color),
+      const SizedBox(width: 4),
       Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 10,
               color:
                   MainCubit.get(context).isDark
                       ? Colors.grey.shade400
@@ -799,7 +826,7 @@ Widget _buildVitalItem(
           Text(
             value,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               color:
                   MainCubit.get(context).isDark ? Colors.white : Colors.black87,
               fontWeight: FontWeight.bold,

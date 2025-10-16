@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/accessibility/accessibility_helper.dart';
 import 'package:squeak/features/auth/contactus/presentation/pages/contact_us.dart';
+import 'package:squeak/features/auth/shared/widgets/compact_auth_header.dart';
 
 class EnhancedAuthHeader extends StatefulWidget {
   const EnhancedAuthHeader({
@@ -26,63 +27,32 @@ class EnhancedAuthHeader extends StatefulWidget {
 
 class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-
+  // Header visual logic is delegated to CompactAuthHeader; animations
+  // previously used here have been moved/removed to avoid duplication.
   @override
   void initState() {
     super.initState();
-
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.0, 0.6, curve: Curves.elasticOut),
-      ),
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.2, 0.8, curve: Curves.easeInOut),
-      ),
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, -0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.0, 0.7, curve: Curves.easeOutCubic),
-      ),
-    );
-
-    _animationController.forward();
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
+    // Let the body extend behind the status bar so the gradient reaches the top
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
       body: SingleChildScrollView(
+        padding: EdgeInsets.zero,
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-            // Enhanced Header Section
+            // Enhanced Header Section (more compact)
+            // Include the status bar height in header so gradient fills top area
             Container(
-              height: 300,
+              // Increase header visual height so it becomes more prominent
+              height: 220 + MediaQuery.of(context).padding.top,
+              // smaller top padding while still accounting for status bar
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top * 0.8),
               width: double.infinity,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -99,13 +69,15 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
                 children: [
                   // Background Pattern
                   Positioned.fill(
-                    child: CustomPaint(painter: PawPatternPainter()),
+                    child: RepaintBoundary(child: CustomPaint(painter: PawPatternPainter())),
                   ),
 
                   // Help Button
                   if (widget.showHelpButton)
                     Positioned(
-                      top: MediaQuery.of(context).padding.top + 10,
+                      // We already padded the container by the status bar height,
+                      // so position the help button from the visual top
+                      top: 10,
                       left: 20,
                       child: AccessibilityHelper.semanticWrapper(
                         label: 'Help and support',
@@ -141,107 +113,46 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
 
                   // Main Header Content
                   Positioned.fill(
-                    child: AnimatedBuilder(
-                      animation: _animationController,
-                      builder: (context, child) {
-                        return SlideTransition(
-                          position: _slideAnimation,
-                          child: FadeTransition(
-                            opacity: _fadeAnimation,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Logo Container
-                                ScaleTransition(
-                                  scale: _scaleAnimation,
-                                  child: Container(
-                                    width: 120,
-                                    height: 120,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.2),
-                                          blurRadius: 20,
-                                          offset: const Offset(0, 10),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(20),
-                                      child: Icon(
-                                        Icons.pets,
-                                        size: 60,
-                                        color: ColorManager.primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                                const SizedBox(height: 20),
-
-                                // Title
-                                Text(
-                                  widget.title,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold,
-                                    shadows: [
-                                      Shadow(
-                                        color: Colors.black26,
-                                        offset: Offset(0, 2),
-                                        blurRadius: 4,
-                                      ),
-                                    ],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-
-                                const SizedBox(height: 8),
-
-                                // Subtitle
-                                Text(
-                                  widget.subtitle,
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.9),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    shadows: const [
-                                      Shadow(
-                                        color: Colors.black26,
-                                        offset: Offset(0, 1),
-                                        blurRadius: 2,
-                                      ),
-                                    ],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+                    child: Center(
+                      child: CompactAuthHeader(
+                        title: widget.title,
+                        subtitle: widget.subtitle,
+                        logoSize: 64,
+                        iconSize: 36,
+                        showHelpButton: widget.showHelpButton,
+                        onHelpTap: () => navigateToScreen(context, ContactScreen()),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
 
-            // Content Section
-            Container(
-              transform: Matrix4.translationValues(0, -30, 0),
-              padding: const EdgeInsets.only(top: 30),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
+            Builder(builder: (context) {
+              final media = MediaQuery.of(context);
+              final headerHeight = 225.0 + media.padding.top;
+              const double transformOffset = 20.0;
+              final remaining = media.size.height - headerHeight;
+              final minCardHeight = math.max(300.0, remaining * 0.65);
+
+              return ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: minCardHeight,
                 ),
-              ),
-              child: widget.child,
-            ),
+                child: Container(
+                  transform: Matrix4.translationValues(0, -transformOffset, 0),
+                  padding: const EdgeInsets.only(top: 12, left: 16, right: 16, bottom: 24),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                  ),
+                  child: widget.child,
+                ),
+              );
+            }),
           ],
         ),
       ),

@@ -8,7 +8,7 @@ class LocalNotificationHandler {
 
   /// Handle notification responses (clicks and actions)
   static Future<void> handleNotificationResponse(NotificationResponse response) async {
-    print('Notification response received: ${response.payload}');
+    // print('Notification response received: ${response.payload}');
 
     if (response.payload == null) return;
 
@@ -64,10 +64,10 @@ class LocalNotificationHandler {
           payload: 'reminder_$id|$originalTitle|$originalBody',
         );
 
-        print("Notification $id snoozed until $snoozeTime");
+        // print("Notification $id snoozed until $snoozeTime");
       }
     } catch (e) {
-      print('Error handling snooze: $e');
+      // print('Error handling snooze: $e');
     }
   }
 
@@ -78,21 +78,21 @@ class LocalNotificationHandler {
     try {
       final id = int.parse(payload.split('_')[1]);
       await flutterLocalNotificationsPlugin.cancel(id);
-      print("Notification $id ignored and cancelled");
+      // print("Notification $id ignored and cancelled");
     } catch (e) {
-      print('Error handling ignore: $e');
+      // print('Error handling ignore: $e');
     }
   }
 
   /// Cancel specific notification
   static Future<void> cancelNotification(int id) async {
     await flutterLocalNotificationsPlugin.cancel(id);
-    print("Notification with ID: $id has been cancelled.");
+    // print("Notification with ID: $id has been cancelled.");
   }
 
   /// Cancel all notifications
   static Future<void> cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
-    print("All scheduled notifications have been cancelled.");
+    // print("All scheduled notifications have been cancelled.");
   }
 }

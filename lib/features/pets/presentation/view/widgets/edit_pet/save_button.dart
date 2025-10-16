@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
@@ -47,6 +49,7 @@ class SaveButton extends StatelessWidget {
   void _handleSave(BuildContext context) {
     if (cubit.formKey.currentState!.validate()) {
       cubit.isLoading = true;
+      // ignore: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
       cubit.emit(ChangeBreedState());
 
       // Handle both pet image and passport image uploads
@@ -64,6 +67,7 @@ class SaveButton extends StatelessWidget {
           context,
         ).getGlobalImage(cubit.petImage!, UploadPlace.petsImages).then((value) {
           cubit.imageNameController.text =
+              // ignore: use_build_context_synchronously
               MainCubit.get(context).modelImage!.data;
         }),
       );
@@ -76,6 +80,7 @@ class SaveButton extends StatelessWidget {
             .getGlobalImage(cubit.passportImage!, UploadPlace.petsImages)
             .then((value) {
               cubit.passportImageNameController.text =
+                  // ignore: use_build_context_synchronously
                   MainCubit.get(context).modelImage!.data;
             }),
       );
@@ -89,8 +94,10 @@ class SaveButton extends StatelessWidget {
           })
           .catchError((error) {
             cubit.isLoading = false;
+            // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
             cubit.emit(PetCreateErrorState(error.toString()));
             errorToast(
+              // ignore: use_build_context_synchronously
               context,
               isArabic() ? "فشل في رفع الصور" : "Failed to upload images",
             );

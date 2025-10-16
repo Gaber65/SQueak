@@ -1,7 +1,8 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:dio/dio.dart';
 
 import '../../../../core/service/service_locator/locatore_export_path.dart';
-import '../../domain/base_repo/qr_base_repo.dart';
 import '../models/vet_client_model.dart';
 
 abstract class QRRemoteDataSource {
@@ -15,10 +16,10 @@ class QRRemoteDataSourceImpl implements QRRemoteDataSource {
 
   @override
   Future<bool> checkClinicInSupplier(CheckClinicParams params) async {
-    print('checkClinicInSupplier');
-    print(params.clinicCode);
+    // print('checkClinicInSupplier');
+    // print(params.clinicCode);
     for (var element in params.suppliers.data) {
-      print(element.data.code);
+      // print(element.data.code);
     }
 
     try {

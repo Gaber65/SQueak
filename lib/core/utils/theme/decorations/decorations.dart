@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 
 import '../../../service/main_service/presentation/controller/main_cubit/main_cubit.dart';
@@ -189,6 +191,7 @@ class Decorations {
     );
   }
 
+  // ignore: non_constant_identifier_names
   static BoxDecoration KContinerBorder() {
     return BoxDecoration(
       border: Border.all(

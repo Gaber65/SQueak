@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/auth/login/presentation/widgets/enhanced_login_widget.dart';
 import 'package:squeak/features/auth/login/presentation/cubit/login_cubit.dart';
 
@@ -14,31 +15,36 @@ class ModernLoginHeader extends StatefulWidget {
 
 class _ModernLoginHeaderState extends State<ModernLoginHeader>
     with TickerProviderStateMixin {
-  late AnimationController _pawAnimationController;
-  late AnimationController _mascotAnimationController;
-  late Animation<double> _pawFloatAnimation;
-  late Animation<double> _mascotBounceAnimation;
+  late final AnimationController _pawAnimationController;
+  late final AnimationController _mascotAnimationController;
+  late final Animation<double> _pawFloatAnimation;
+  late final Animation<double> _mascotBounceAnimation;
 
   @override
   void initState() {
     super.initState();
+
     _pawAnimationController = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
     );
+
     _pawFloatAnimation = Tween<double>(begin: 0.0, end: 10.0).animate(
       CurvedAnimation(parent: _pawAnimationController, curve: Curves.easeInOut),
     );
+
     _mascotAnimationController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
+
     _mascotBounceAnimation = Tween<double>(begin: 0.0, end: 5.0).animate(
       CurvedAnimation(
         parent: _mascotAnimationController,
         curve: Curves.elasticOut,
       ),
     );
+
     debugPrint('Login animations temporarily disabled for memory optimization');
   }
 
@@ -51,188 +57,156 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
 
   @override
   Widget build(BuildContext context) {
-    //  Added: Use MediaQuery for responsive sizing
-    final size = MediaQuery.of(context).size; // <-- Added
-    final width = size.width; // <-- Added
-    final height = size.height; // <-- Added
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
 
+    // Make header more compact by reducing vertical padding
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(
-        width * 0.06, //  Changed: Scaled padding instead of fixed 24
-        height * 0.08, //  Changed: Scaled top padding instead of fixed 60
-        width * 0.06,
-        height * 0.05, //  Changed: Scaled bottom padding instead of fixed 40
+      padding: EdgeInsets.symmetric(
+        horizontal: width * 0.06,
+        vertical: height * 0.018,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
           colors: [
             ColorManager.secondColor,
             ColorManager.secondColor.withOpacity(0.8),
           ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
-        ),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
       ),
       child: Stack(
         children: [
-          // Floating paw prints - responsive positioning and size
-          AnimatedBuilder(
-            animation: _pawFloatAnimation,
-            builder: (context, child) {
-              return Positioned(
-                top: height * 0.03 + _pawFloatAnimation.value, //  Changed
-                right: width * 0.08, //  Changed
-                child: Transform.rotate(
-                  angle: 0.3,
-                  child: Icon(
-                    Icons.pets,
-                    size: width * 0.06, //  Changed: Scaled icon size
-                    color: Colors.white.withOpacity(0.3),
+          // Language toggle in the top-right
+          Positioned(
+            top: 12,
+            right: 16,
+            child: BlocBuilder<MainCubit, MainState>(
+              builder: (context, state) {
+                final mainCubit = MainCubit.get(context);
+                final lang =
+                    (mainCubit.language ??
+                            CacheHelper.getData('language') ??
+                            'en')
+                        .toString();
+                final isArabicLang = lang == 'ar';
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
                   ),
-                ),
-              );
-            },
-          ),
-          AnimatedBuilder(
-            animation: _pawFloatAnimation,
-            builder: (context, child) {
-              return Positioned(
-                top: height * 0.1 - _pawFloatAnimation.value, //  Changed
-                left: width * 0.1, //  Changed
-                child: Transform.rotate(
-                  angle: -0.2,
-                  child: Icon(
-                    Icons.pets,
-                    size: width * 0.05, //  Changed
-                    color: Colors.white.withOpacity(0.2),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(28),
                   ),
-                ),
-              );
-            },
-          ),
-          AnimatedBuilder(
-            animation: _pawFloatAnimation,
-            builder: (context, child) {
-              return Positioned(
-                top:
-                    height * 0.06 +
-                    (_pawFloatAnimation.value * 0.7), //  Changed
-                right: width * 0.2, //  Changed
-                child: Transform.rotate(
-                  angle: 0.5,
-                  child: Icon(
-                    Icons.pets,
-                    size: width * 0.04, //  Changed
-                    color: Colors.white.withOpacity(0.25),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.language, color: Colors.white, size: 18),
+                      const SizedBox(width: 8),
+                      Text(
+                        isArabicLang ? 'عربي' : 'English',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Switch(
+                        value: isArabicLang,
+                        activeColor: Colors.white,
+                        activeTrackColor: Colors.white24,
+                        inactiveThumbColor: Colors.white,
+                        inactiveTrackColor: Colors.white24,
+                        onChanged: (v) {
+                          final newLang = v ? 'ar' : 'en';
+                          mainCubit.changeAppLang(langMode: newLang);
+                        },
+                      ),
+                    ],
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-
-          // Main content
+          // Reduce paw sizes/positions for a tighter header
+          _buildFloatingPaw(
+            top: height * 0.01,
+            right: width * 0.06,
+            angle: 0.25,
+            size: width * 0.045,
+            opacity: 0.28,
+            reverse: false,
+          ),
+          _buildFloatingPaw(
+            top: height * 0.06,
+            left: width * 0.08,
+            angle: -0.18,
+            size: width * 0.04,
+            opacity: 0.18,
+            reverse: true,
+          ),
+          _buildFloatingPaw(
+            top: height * 0.04,
+            right: width * 0.16,
+            angle: 0.45,
+            size: width * 0.035,
+            opacity: 0.22,
+            factor: 0.7,
+          ),
           Column(
             children: [
-              AnimatedBuilder(
-                animation: _mascotBounceAnimation,
-                builder: (context, child) {
-                  return Transform.translate(
-                    offset: Offset(0, -_mascotBounceAnimation.value),
-                    child: Container(
-                      width: width * 0.22, //  Changed: Scaled mascot width
-                      height: width * 0.22, //  Changed: Scaled mascot height
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 25,
-                            offset: const Offset(0, 12),
-                          ),
-                        ],
-                      ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          const Icon(
-                            Icons.pets,
-                            size: 45,
-                            color: ColorManager.secondColor,
-                          ),
-                          Positioned(
-                            top: width * 0.05, //  Changed
-                            left: width * 0.06, //  Changed
-                            child: Icon(
-                              Icons.favorite,
-                              size: width * 0.025, //  Changed
-                              color: Colors.red.withOpacity(0.8),
-                            ),
-                          ),
-                          Positioned(
-                            top: width * 0.05, //  Changed
-                            right: width * 0.06, //  Changed
-                            child: Icon(
-                              Icons.favorite,
-                              size: width * 0.025, //  Changed
-                              color: Colors.red.withOpacity(0.8),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-              SizedBox(height: height * 0.03), //  Changed: Scaled spacing
-
-              const Text(
-                'Welcome Back!',
+              // Smaller mascot and text for compact header
+              _buildMascot(width, compact: true),
+              SizedBox(height: height * 0.01),
+              Text(
+                isArabic() ? 'مرحبا بك!' : 'Welcome Back!',
                 style: TextStyle(
-                  fontSize:
-                      28, // Kept as-is (title can stay fixed for readability)
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                   shadows: [
                     Shadow(
                       color: Colors.black26,
-                      blurRadius: 10,
-                      offset: Offset(0, 2),
+                      blurRadius: 8,
+                      offset: Offset(0, 1.5),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: height * 0.01), //  Changed
-
+              SizedBox(height: height * 0.008),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.pets, color: Colors.white, size: 16),
-                  SizedBox(width: width * 0.02), //  Changed
+                  const Icon(Icons.pets, color: Colors.white, size: 14),
+                  SizedBox(width: width * 0.02),
                   Text(
-                    'Your furry friends are waiting for you!',
+                    isArabic()
+                        ? 'الصغار الأليفة تنتظرك!'
+                        : 'Your furry friends are waiting for you!',
                     style: TextStyle(
-                      fontSize: width * 0.04, //  Changed
+                      fontSize: width * 0.032,
                       color: Colors.white.withOpacity(0.9),
                       fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(width: width * 0.02), //  Changed
-                  const Icon(Icons.pets, color: Colors.white, size: 16),
+                  SizedBox(width: width * 0.02),
+                  const Icon(Icons.pets, color: Colors.white, size: 14),
                 ],
               ),
-              SizedBox(height: height * 0.005), //  Changed
-
+              SizedBox(height: height * 0.006),
               Text(
-                'Sign in to continue your pet care journey',
+                isArabic()
+                    ? 'سجّل الدخول لمتابعة رحلتك في رعاية صغيرك الأليف'
+                    : 'Sign in to continue your pet care journey',
                 style: TextStyle(
-                  fontSize: width * 0.035, //  Changed
+                  fontSize: width * 0.033,
                   color: Colors.white.withOpacity(0.8),
                   fontWeight: FontWeight.w400,
                 ),
@@ -242,6 +216,94 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
           ),
         ],
       ),
+    );
+  }
+
+  /// Reusable floating paw builder
+  Widget _buildFloatingPaw({
+    required double top,
+    double? right,
+    double? left,
+    required double angle,
+    required double size,
+    required double opacity,
+    bool reverse = false,
+    double factor = 1.0,
+  }) {
+    return AnimatedBuilder(
+      animation: _pawFloatAnimation,
+      builder: (_, __) {
+        final offset = _pawFloatAnimation.value * factor;
+        return Positioned(
+          top: reverse ? (top - offset) : (top + offset),
+          right: right,
+          left: left,
+          child: Transform.rotate(
+            angle: angle,
+            child: Icon(
+              Icons.pets,
+              size: size,
+              color: Colors.white.withOpacity(opacity),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMascot(double width, {bool compact = false}) {
+    final sizeFactor = compact ? 0.12 : 0.18;
+    final iconSize = compact ? 40.0 : 50.0;
+    return AnimatedBuilder(
+      animation: _mascotBounceAnimation,
+      builder: (_, __) {
+        return Transform.translate(
+          offset: Offset(0, -_mascotBounceAnimation.value),
+          child: Container(
+            width: width * sizeFactor,
+            height: width * sizeFactor,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.12),
+                  blurRadius: compact ? 18 : 25,
+                  offset: Offset(0, compact ? 8 : 12),
+                ),
+              ],
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Icon(
+                  Icons.pets,
+                  size: iconSize,
+                  color: ColorManager.secondColor,
+                ),
+                Positioned(
+                  top: width * 0.02,
+                  left: width * 0.02,
+                  child: Icon(
+                    Icons.favorite,
+                    size: width * 0.02,
+                    color: Colors.red.withOpacity(0.8),
+                  ),
+                ),
+                Positioned(
+                  top: width * 0.02,
+                  right: width * 0.03,
+                  child: Icon(
+                    Icons.favorite,
+                    size: width * 0.02,
+                    color: Colors.red.withOpacity(0.8),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -301,49 +363,57 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       body: SafeArea(
-        child: Column(
-          children: [
-            FadeTransition(
-              opacity: _fadeAnimation,
-              child: const ModernLoginHeader(),
-            ),
-            Expanded(
-              child: SlideTransition(
-                position: _slideAnimation,
-                child: FadeTransition(
+        child: BlocBuilder<MainCubit, MainState>(
+          builder: (context, mainState) {
+            // Use the MainState so that the entire page rebuilds on change
+            // Ensure the animations still drive in; the widgets will rebuild when MainState changes
+            return Column(
+              children: [
+                FadeTransition(
                   opacity: _fadeAnimation,
-                  child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(width * 0.06), //  Changed
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(height: width * 0.05), //  Changed
-                          Container(
-                            padding: EdgeInsets.all(width * 0.06), //  Changed
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 10),
+                  // Rebuild header when language changes by reading from mainState inside ModernLoginHeader
+                  child: ModernLoginHeader(),
+                ),
+                Expanded(
+                  child: SlideTransition(
+                    position: _slideAnimation,
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(width * 0.06), //  Changed
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              SizedBox(height: width * 0.03), //  Changed
+                              // Wrap the form container so it rebuilds when language changes
+                              Container(
+                                padding: EdgeInsets.all(width * 0.06), //  Changed
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 10),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            child: EnhancedLoginView(cubit: widget.cubit),
+                                child: EnhancedLoginView(cubit: widget.cubit),
+                              ),
+                              SizedBox(height: width * 0.04),
+                              _buildFooter(),
+                            ],
                           ),
-                          SizedBox(height: width * 0.1), // Changed
-                          _buildFooter(),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
     );
@@ -363,7 +433,9 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
             const Icon(Icons.pets, color: Colors.grey, size: 16),
             SizedBox(width: width * 0.02), //  Changed
             Text(
-              'Trusted by Pet Parents Worldwide',
+              isArabic()
+                  ? ' موثوق به من قِبل مالكي الصغار الأليفة'
+                  : 'Trusted by Pet Parents Worldwide',
               style: TextStyle(
                 fontSize: width * 0.035, //  Changed
                 color: Colors.grey.shade600,
@@ -378,11 +450,15 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildPetFeatureItem(Icons.pets, 'Pet Care', Icons.favorite_border),
+            _buildPetFeatureItem(
+              Icons.pets,
+              isArabic() ? 'رعاية الصغار' : 'Pet Care',
+              Icons.favorite_border,
+            ),
             SizedBox(width: width * 0.08), //  Changed
-            _buildPetFeatureItem(Icons.favorite, 'Love', Icons.favorite),
+            _buildPetFeatureItem(Icons.favorite, isArabic() ? 'حب' : 'Love', Icons.favorite),
             SizedBox(width: width * 0.08), //  Changed
-            _buildPetFeatureItem(Icons.shield, 'Safe', Icons.security),
+            _buildPetFeatureItem(Icons.shield, isArabic() ? 'حماية' : 'Safe', Icons.security),
           ],
         ),
         SizedBox(height: width * 0.03), //  Changed

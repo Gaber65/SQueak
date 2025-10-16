@@ -1,5 +1,6 @@
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
@@ -8,9 +9,7 @@ import 'package:dio/dio.dart';
 import 'package:squeak/features/appointments/exam/data/models/availability_model.dart';
 import 'package:squeak/features/appointments/exam/data/models/client_clinic_model.dart';
 import '../../../data/models/doctor_model.dart';
-import '../../controller/clinic/appointment_cubit.dart';
-import '../component/CustomCalendarDatePicker.dart';
-import '../debug_appointment_api.dart';
+import '../component/custom_calendar_date_picker.dart';
 
 /// Booking again Screen melkerm
 class BooKAgainScreen extends StatefulWidget {
@@ -24,6 +23,7 @@ class BooKAgainScreen extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _BooKAgainScreenState createState() => _BooKAgainScreenState();
 }
 
@@ -52,7 +52,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
   Future<void> _initData() async {
     try {
       // Fetch pets
-      print("DEBUG: Fetching pets directly for clinic: ${widget.clinicCode}");
+      // print("DEBUG: Fetching pets directly for clinic: ${widget.clinicCode}");
       Response petResponse = await DioFinalHelper.getData(
         method: getClientClinicEndPoint(
           widget.clinicCode,
@@ -65,17 +65,17 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
             (petResponse.data['data'] as List)
                 .map((e) => PetClinicModel.fromJson(e))
                 .toList();
-        print("DEBUG: Loaded ${_localPetList.length} pets directly.");
+        // print("DEBUG: Loaded ${_localPetList.length} pets directly.");
       } else {
-        print(
-          "DEBUG: Failed to load pets directly: ${petResponse.data['message']}",
-        );
+        // print(
+        //   "DEBUG: Failed to load pets directly: ${petResponse.data['message']}",
+        // );
       }
 
       // Fetch availability
-      print(
-        "DEBUG: Fetching availability directly for clinic: ${widget.clinicCode}",
-      );
+      // print(
+      //   "DEBUG: Fetching availability directly for clinic: ${widget.clinicCode}",
+      // );
       Response availabilityResponse = await DioFinalHelper.getData(
         method: getAvailabilitiesEndPoint(widget.clinicCode),
         language: false,
@@ -88,14 +88,14 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
           _localAvailabilities
               .where((element) => element.isActive == true)
               .toList(); // Assuming removeDuplicatesByDayOfWeek was important, it would need to be reimplemented here or moved to a utility.
-      print(
-        "DEBUG: Loaded ${_localAvailabilities.length} availabilities directly.",
-      );
+      // print(
+      //   "DEBUG: Loaded ${_localAvailabilities.length} availabilities directly.",
+      // );
 
       // Fetch doctors
-      print(
-        "DEBUG: Fetching doctors directly for clinic: ${widget.clinicCode}",
-      );
+      // print(
+      //   "DEBUG: Fetching doctors directly for clinic: ${widget.clinicCode}",
+      // );
       Response doctorResponse = await DioFinalHelper.getData(
         method: getDoctorAppointmentsEndPoint(widget.clinicCode),
         language: false,
@@ -106,14 +106,14 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
             (doctorResponse.data['data'] as List)
                 .map((e) => DoctorModel.fromJson(e))
                 .toList();
-        print("DEBUG: Loaded ${_localDoctors.length} doctors directly.");
+        // print("DEBUG: Loaded ${_localDoctors.length} doctors directly.");
       } else {
-        print(
-          "DEBUG: Failed to load doctors directly or no data: ${doctorResponse.data['message']}",
-        );
+        // print(
+        //   "DEBUG: Failed to load doctors directly or no data: ${doctorResponse.data['message']}",
+        // );
       }
     } catch (e) {
-      print("DEBUG: Error during _initData: $e");
+      // print("DEBUG: Error during _initData: $e");
       // Optionally show an error toast here if data loading fails critically
       errorToast(
         context,
@@ -129,32 +129,32 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
   }
 
   PetClinicModel? findPet(List<PetClinicModel> data, String petIdToFind) {
-    print("DEBUG: Looking for petId: $petIdToFind in ${data.length} pets");
+    // print("DEBUG: Looking for petId: $petIdToFind in ${data.length} pets");
     for (var element in data) {
-      print(
-        "DEBUG: Checking pet - ID: ${element.petId}, Name: ${element.petName}, SqueakID: ${element.petSqueakId}",
-      );
+      // print(
+      //   "DEBUG: Checking pet - ID: ${element.petId}, Name: ${element.petName}, SqueakID: ${element.petSqueakId}",
+      // );
       if (element.petId == petIdToFind || element.petSqueakId == petIdToFind) {
-        print("DEBUG: Found exact match for pet: ${element.petName}");
+        // print("DEBUG: Found exact match for pet: ${element.petName}");
         return element;
       }
     }
     if (data.isNotEmpty) {
-      print(
-        "DEBUG: No exact match found, using first pet: ${data.first.petName}",
-      );
+      // print(
+      //   "DEBUG: No exact match found, using first pet: ${data.first.petName}",
+      // );
       return data.first;
     }
-    print("DEBUG: No pets found in list");
+    // print("DEBUG: No pets found in list");
     return null;
   }
 
   Future<void> _handleBooking() async {
-    print("DEBUG: handleBooking called");
+    // print("DEBUG: handleBooking called");
     if (dateController.text.isEmpty || time == null) {
-      print(
-        "DEBUG: Missing date or time - Date: ${dateController.text}, Time: $time",
-      );
+      // print(
+      //   "DEBUG: Missing date or time - Date: ${dateController.text}, Time: $time",
+      // );
       infoToast(
         context,
         dateController.text.isEmpty
@@ -163,9 +163,9 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       );
       return;
     }
-    print("DEBUG: Date: ${dateController.text}, Time: $time");
+    // print("DEBUG: Date: ${dateController.text}, Time: $time");
     if (_localPetList.isEmpty) {
-      print("DEBUG: _localPetList is empty");
+      // print("DEBUG: _localPetList is empty");
       errorToast(
         context,
         isArabic()
@@ -180,21 +180,21 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       });
     }
     try {
-      print("DEBUG: _localPetList has ${_localPetList.length} pets");
+      // print("DEBUG: _localPetList has ${_localPetList.length} pets");
       PetClinicModel? matchedPet = findPet(_localPetList, widget.petId);
       if (matchedPet == null) {
-        print("DEBUG: No matching pet found for ID: ${widget.petId}");
+        // print("DEBUG: No matching pet found for ID: ${widget.petId}");
         errorToast(
           context,
-          isArabic() ? 'لم يتم العثور على الحيوانات الأليفة' : 'No pets found',
+          isArabic() ? 'لم يتم العثور على الصغار الأليفة' : 'No pets found',
         );
         if (mounted) setState(() => isCreatingAppointment = false);
         return;
       }
       var formattedTime = convertLocalTimeToUTC(time!);
 
-      print("DEBUG: Formatted time: $formattedTime");
-      print("DEBUG: time: $time");
+      // print("DEBUG: Formatted time: $formattedTime");
+      // print("DEBUG: time: $time");
       Map<String, dynamic> requestData = {
         "date": dateController.text,
         "time": formattedTime,
@@ -207,12 +207,8 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       if (doctorId != null && doctorId!.isNotEmpty) {
         requestData["doctorUserId"] = doctorId;
       }
-      print("DEBUG: Direct API call with payload: $requestData");
-      Response response = await DioFinalHelper.postData(
-        method: '$version/vetcare/reservation/existedClient',
-        data: requestData,
-      );
-      print("DEBUG: API response: ${response.data}");
+      // print("DEBUG: Direct API call with payload: $requestData");
+      // print("DEBUG: API response: ${response.data}");
       if (mounted) {
         LayoutCubit.get(context).selectedIndex = 2;
         navigateAndFinish(context, const LayoutScreen());
@@ -222,7 +218,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
         isArabic() ? 'تم حجز الموعد بنجاح' : 'Appointment booked successfully',
       );
     } on DioException catch (e) {
-      print("DEBUG: Dio error: ${e.response!.data}");
+      // print("DEBUG: Dio error: ${e.response!.data}");
       String extractFirstErrorTO(dynamic error) {
         try {
           final entries = error.errors?.entries;
@@ -243,7 +239,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
         extractFirstErrorTO(ErrorMessageModel.fromJson(e.response!.data)),
       );
     } catch (e) {
-      print("DEBUG: General error: $e");
+      // print("DEBUG: General error: $e");
       errorToast(
         context,
         isArabic() ? 'حدث خطأ غير متوقع' : 'An unexpected error occurred',
@@ -259,7 +255,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("DEBUG: Book Again Screen building. Data loaded: $areDataLoaded");
+    // print("DEBUG: Book Again Screen building. Data loaded: $areDataLoaded");
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).appointmentButtonBooking),
@@ -411,11 +407,11 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                               }
                             },
                             onIntervalSelected: (p0) {
-                              print("DEBUG: Original time selection: $p0");
+                              // print("DEBUG: Original time selection: $p0");
                               p0 = convertTo24Hour(p0);
-                              print(
-                                "DEBUG: After conversion to 24-hour format: $p0",
-                              );
+                              // print(
+                              //   "DEBUG: After conversion to 24-hour format: $p0",
+                              // );
                               if (dateController.text.isEmpty) {
                                 // Ensure date is selected first
                                 infoToast(
@@ -469,11 +465,11 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                                       ) ||
                                       selectedDateTime.isAfter(nowForCompare)) {
                                     if (mounted) setState(() => time = p0);
-                                    print("DEBUG: Time set to: $time");
+                                    // print("DEBUG: Time set to: $time");
                                   } else {
-                                    print(
-                                      "DEBUG: Selected time is before current time",
-                                    );
+                                    // print(
+                                    //   "DEBUG: Selected time is before current time",
+                                    // );
                                     infoToast(
                                       context,
                                       isArabic()
@@ -482,7 +478,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                                     );
                                   }
                                 } catch (e) {
-                                  print("DEBUG: Error parsing time: $e");
+                                  // print("DEBUG: Error parsing time: $e");
                                   infoToast(
                                     context,
                                     isArabic()
@@ -491,7 +487,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                                   );
                                 }
                               } else {
-                                print("DEBUG: Selected date is in the past.");
+                                // print("DEBUG: Selected date is in the past.");
                                 infoToast(
                                   context,
                                   isArabic()

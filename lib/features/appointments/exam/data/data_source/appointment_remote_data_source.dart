@@ -1,6 +1,4 @@
 import 'package:dio/dio.dart';
-
-
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../models/appointment_model.dart';
 import '../models/availability_model.dart';
@@ -33,17 +31,13 @@ abstract class AppointmentRemoteDataSource {
 }
 
 class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
-
-
   @override
   Future<List<AvailabilityModel>> getAvailabilities(String clinicCode) async {
-
     try {
       final response = await DioFinalHelper.getData(
         method: getAvailabilitiesEndPoint(clinicCode),
         language: true,
       );
-
 
       final List data = response.data['data'];
       return data
@@ -52,8 +46,6 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
           .toList()
           .cast<AvailabilityModel>();
     } on DioException catch (e) {
-
-
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );
@@ -106,10 +98,10 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
           .map((e) => PetClinicModel.fromJson(e))
           .toList();
     } on DioException catch (e) {
-      print('***********error**********');
-      print('***********error**********');
+      // print('***********error**********');
+      // print('***********error**********');
 
-      print(e.response!.data);
+      // print(e.response!.data);
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );
@@ -224,18 +216,16 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
     bool applyFilter,
   ) async {
     try {
+      final endpoint = createAndGetAppointmentsEndPoint(phone, applyFilter);
       final response = await DioFinalHelper.getData(
-        method: createAndGetAppointmentsEndPoint(phone, applyFilter),
+        method: endpoint,
         language: true,
       );
-
       List<AppointmentModel> appointments =
           (response.data['data']['result'] as List)
               .map((e) => AppointmentModel.fromJson(e))
               .toList();
-
       appointments.sort((a, b) => b.date.compareTo(a.date));
-
       return appointments;
     } on DioException catch (e) {
       throw ServerException(

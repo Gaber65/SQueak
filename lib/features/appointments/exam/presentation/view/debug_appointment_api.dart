@@ -29,7 +29,7 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
   Future<void> _loadPets() async {
     setState(() {
       isLoading = true;
-      resultMessage = 'Loading pets...';
+      resultMessage = isArabic() ? 'جاري تحميل أصدقائك الأليفة...' : 'Loading pets...';
     });
     
     try {
@@ -91,7 +91,7 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
         requestData["doctorUserId"] = doctorId;
       }
       
-      print("DEBUG: Request payload: $requestData");
+      // print("DEBUG: Request payload: $requestData");
       
       Response response = await DioFinalHelper.postData(
         method: '$version/vetcare/reservation/existedClient',
@@ -105,7 +105,7 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
       setState(() {
         resultMessage = 'API Error: ${e.response?.data ?? e.message}';
       });
-      print("DEBUG: Error response: ${e.response?.data}");
+      // print("DEBUG: Error response: ${e.response?.data}");
     } catch (e) {
       setState(() {
         resultMessage = 'Error creating appointment: $e';

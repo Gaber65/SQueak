@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../core/utils/export_path/export_files.dart';
-import '../../../../generated/l10n.dart';
 import '../../../pets/domain/entities/pet_entity.dart';
 import '../cubit/ui/vaccination_ui_cubit.dart';
 import 'form_components.dart';
@@ -149,7 +147,7 @@ class VaccinationForm extends StatelessWidget {
       return;
     }
 
-    DateTime tomorrowDateItem = cubit.currentDateItem.add(
+    cubit.currentDateItem.add(
       const Duration(days: 1),
     );
     cubit

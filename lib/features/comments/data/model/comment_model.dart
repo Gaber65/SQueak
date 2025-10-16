@@ -1,5 +1,6 @@
 import '../../domain/entities/comment_entity.dart';
 
+// ignore: must_be_immutable
 class CommentModel extends CommentEntity {
   CommentModel({
     required super.id,

@@ -31,7 +31,7 @@ class AddPetAdditionalDetails extends StatelessWidget {
             horizontal: screenWidth * 0.05,
           ),
           decoration: BoxDecoration(
-            color: isSelected ? ColorManager.primaryColor : Colors.white10,
+            color: isSelected ? ColorManager.primaryColor : Colors.white,
             border: Border.all(
               // ignore: deprecated_member_use
               color: ColorManager.primaryColor.withOpacity(.7),
@@ -45,7 +45,7 @@ class AddPetAdditionalDetails extends StatelessWidget {
                 padding: EdgeInsets.all(screenWidth * 0.02),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(26),
-                  color: ColorManager.editScreenBaseFontColor,
+                  color:isSelected ? Colors.white : Colors.grey.withOpacity(.5),
                 ),
                 child: Icon(
                   icon,
@@ -57,7 +57,7 @@ class AddPetAdditionalDetails extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: isSelected ? Colors.white : Colors.black,
                   fontSize: screenWidth * 0.04,
                 ),
               ),

@@ -1,5 +1,6 @@
 import '../../domain/entities/client_clinic.dart';
 
+// ignore: must_be_immutable
 class PetClinicModel extends PetClinic {
   PetClinicModel({
     required super.petId,

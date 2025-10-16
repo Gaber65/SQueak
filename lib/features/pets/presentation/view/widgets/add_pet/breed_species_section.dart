@@ -3,6 +3,7 @@ import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:drop_down_search_field/drop_down_search_field.dart';
+import 'dart:convert';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../controller/pet_cubit.dart';
@@ -21,6 +22,50 @@ class BreedSpeciesSection extends StatefulWidget {
 class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
   bool _isLoadingBreeds = false;
   bool _showingOtherSpeciesLoader = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize loading flags from the cubit's current state so that if
+    // the AddPetScreen was pushed while the cubit was already loading
+    // breeds or species, the UI shows the appropriate loader immediately.
+    final state = widget.cubit.state;
+    if (state is GetAllBreedsLoadingState) {
+      _isLoadingBreeds = true;
+    }
+    if (state is GetAllSpeciesLoadingState) {
+      _showingOtherSpeciesLoader = true;
+    }
+
+    // If the selected species is dog or cat, try to load cached breeds
+    // immediately to avoid waiting for a network call.
+    final selectedSpeciesId = widget.cubit.dropdownValueSpeciesId;
+    if (selectedSpeciesId.isNotEmpty) {
+      final isDog = selectedSpeciesId == PetCubit.dogSpeciesId;
+      final isCat = selectedSpeciesId == PetCubit.catSpeciesId;
+      if (isDog || isCat) {
+        final cacheKey = 'breeds_$selectedSpeciesId';
+        final cached = CacheHelper.getData(cacheKey);
+        if (cached != null && (cached as String).isNotEmpty) {
+          try {
+            final List<dynamic> decoded = jsonDecode(cached);
+            final cachedBreeds = decoded
+                .map<BreedEntity>((m) => BreedEntity(
+                      enType: m['enType'] ?? '',
+                      id: m['id'] ?? '',
+                      specieId: m['specieId'] ?? '',
+                    ))
+                .toList();
+            // populate cubit's breedData so UI can use it immediately
+            widget.cubit.breedData = cachedBreeds;
+            _isLoadingBreeds = false;
+          } catch (_) {
+            // ignore parse errors and let normal flow load from network
+          }
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +220,11 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
   }
 
   Widget _buildSpeciesCard(BuildContext context, String name, IconData icon, String speciesType) {
-    final isSelected = widget.cubit.dropdownValueSpecies.toLowerCase() == name.toLowerCase();
+    // Treat 'coww' as 'cat' for selection purposes so that when the backend
+    // returns 'coww' the Cat card still appears selected.
+    final current = widget.cubit.dropdownValueSpecies.toLowerCase();
+    final normalizedCurrent = current == 'coww' ? 'cat' : current;
+    final isSelected = normalizedCurrent == name.toLowerCase();
 
     return GestureDetector(
       onTap: () async {
@@ -232,9 +281,10 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
   }
 
   Widget _buildOtherSpeciesCard(BuildContext context) {
-    final isCowwSelected = widget.cubit.dropdownValueSpecies.toLowerCase() == 'coww';
+    final current = widget.cubit.dropdownValueSpecies.toLowerCase();
+    // hasOtherSpecies is true only for truly other species (not dog/cat or the 'coww' alias)
     final hasOtherSpecies = widget.cubit.dropdownValueSpecies.isNotEmpty &&
-        !['dog', 'cat', 'coww'].contains(widget.cubit.dropdownValueSpecies.toLowerCase());
+        !['dog', 'cat', 'coww'].contains(current);
 
     return GestureDetector(
       onTap: _showingOtherSpeciesLoader
@@ -246,13 +296,11 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
         height: 80,
         width: 200,
         decoration: BoxDecoration(
-          color: (hasOtherSpecies || isCowwSelected)
-              ? (widget.isDark ? ColorManager.primaryColor.withValues(alpha: 0.3) : ColorManager.primaryLight)
-              : (widget.isDark ? Colors.black26 : Colors.grey.shade200),
+      color: hasOtherSpecies
+        ? (widget.isDark ? ColorManager.primaryColor.withValues(alpha: 0.3) : ColorManager.primaryLight)
+        : (widget.isDark ? Colors.black26 : Colors.grey.shade200),
           borderRadius: BorderRadius.circular(12),
-          border: (hasOtherSpecies || isCowwSelected)
-              ? Border.all(color: ColorManager.primaryColor, width: 2)
-              : null,
+      border: hasOtherSpecies ? Border.all(color: ColorManager.primaryColor, width: 2) : null,
         ),
         child: _showingOtherSpeciesLoader
             ? const Center(
@@ -271,20 +319,17 @@ class _BreedSpeciesSectionState extends State<BreedSpeciesSection> {
                   Icon(
                     hasOtherSpecies ? Icons.check_circle : Icons.pets,
                     size: 32,
-                    color: (hasOtherSpecies || isCowwSelected)
-                        ? ColorManager.primaryColor
-                        : (widget.isDark ? Colors.white70 : Colors.black54),
+                    color: hasOtherSpecies ? ColorManager.primaryColor : (widget.isDark ? Colors.white70 : Colors.black54),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    isCowwSelected ? 'Cat' : (hasOtherSpecies ? widget.cubit.dropdownValueSpecies : 'Other'),
+                    // Only show the actual other species name when it's truly an other species.
+                    hasOtherSpecies ? widget.cubit.dropdownValueSpecies : 'Other',
                     style: FontStyleThame.textStyle(
                       context: context,
                       fontSize: 12,
-                      fontWeight: (hasOtherSpecies || isCowwSelected) ? FontWeight.w600 : FontWeight.w500,
-                      fontColor: (hasOtherSpecies || isCowwSelected)
-                          ? ColorManager.primaryColor
-                          : (widget.isDark ? Colors.white70 : Colors.black87),
+                      fontWeight: hasOtherSpecies ? FontWeight.w600 : FontWeight.w500,
+                      fontColor: hasOtherSpecies ? ColorManager.primaryColor : (widget.isDark ? Colors.white70 : Colors.black87),
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 1,

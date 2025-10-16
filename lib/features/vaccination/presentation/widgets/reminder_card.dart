@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -26,7 +28,6 @@ class _ReminderCardState extends State<ReminderCard>
   late AnimationController _pulseController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _pulseAnimation;
-  bool _isPressed = false;
 
   @override
   void initState() {
@@ -110,15 +111,12 @@ class _ReminderCardState extends State<ReminderCard>
         confirmDismiss: (direction) => _handleDismiss(direction, context, cubit),
         child: GestureDetector(
           onTapDown: (_) {
-            setState(() => _isPressed = true);
             _animationController.forward();
           },
           onTapUp: (_) {
-            setState(() => _isPressed = false);
             _animationController.reverse();
           },
           onTapCancel: () {
-            setState(() => _isPressed = false);
             _animationController.reverse();
           },
           onTap: () => _showReminderDetails(context, widget.reminder, cubit),
@@ -245,8 +243,10 @@ class _ReminderCardState extends State<ReminderCard>
 
   Widget _buildBackgroundPattern(Color color) {
     return Positioned.fill(
-      child: CustomPaint(
-        painter: PatternPainter(color: color.withOpacity(0.1)),
+      child: RepaintBoundary(
+        child: CustomPaint(
+          painter: PatternPainter(color: color.withOpacity(0.1)),
+        ),
       ),
     );
   }
@@ -1048,7 +1048,7 @@ class _ReminderCardState extends State<ReminderCard>
 
       return DateTime(date.year, date.month, date.day, hour, minute);
     } catch (e) {
-      print("Error parsing date/time: $e");
+      // print("Error parsing date/time: $e");
       return null;
     }
   }

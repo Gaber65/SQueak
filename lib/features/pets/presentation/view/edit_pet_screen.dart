@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
-import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
 import 'package:squeak/features/pets/presentation/view/widgets/add_pet/passport_section.dart';
-import 'package:squeak/features/pets/presentation/view/widgets/add_pet/pet_form_section.dart';
-import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/birthdate_section.dart';
-import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/breed_species_section.dart';
-import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/gender_section.dart';
-import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/general_information_section.dart';
-import 'package:squeak/features/pets/presentation/view/widgets/edit_pet/profile_image_section.dart';
+
 
 // Import widget sections
 import '../controller/pet_cubit.dart';
+import 'widgets/add_pet/birthdate_picker.dart';
+import 'widgets/add_pet/breed_species_section.dart';
+import 'widgets/add_pet/gender_selection.dart';
+import 'widgets/add_pet/pet_name_field.dart';
+import 'widgets/add_pet/spayed_toggle.dart';
+import 'widgets/edit_pet/profile_image_section.dart';
 import 'widgets/edit_pet/save_button.dart' show SaveButton;
 
 class EditPet extends StatelessWidget {
@@ -40,20 +40,41 @@ class EditPet extends StatelessWidget {
               sl<PetCubit>()
                 ..initEdit(pets)
                 ..init(dropdownValueSpecies, species ?? '')
-                ..getAllSpecies(),
+                ..getAllSpecies()
+                ..getBreedsBySpecies(species ?? ''),
       child: BlocConsumer<PetCubit, PetState>(
         listener: (context, state) {
           if (state is PetCreateSuccessState) {
-            navigateAndFinish(context, const PetScreen());
+            navigateAndFinish(context, const LayoutScreen());
           }
           if (state is PetCreateErrorState) {
             errorToast(context, state.message);
           }
         },
+        buildWhen: (previous, current) {
+          // Rebuild for loading, success, error states
+          if (current is PetCreateLoadingState ||
+              current is PetCreateSuccessState ||
+              current is PetCreateErrorState) {
+            return true;
+          }
+          // Rebuild for data loading states
+          if (current is GetAllSpeciesSuccessState ||
+              current is GetAllBreedsSuccessState ||
+              current is PetFormState) {
+            return true;
+          }
+          // Rebuild for image picker states
+          if (current is PetImagePickedSuccessState ||
+              current is PetImagePickedErrorState) {
+            return true;
+          }
+          // Don't rebuild for individual form field changes
+          return false;
+        },
         builder: (context, state) {
           final cubit = PetCubit.get(context);
           final isDark = Theme.of(context).brightness == Brightness.dark;
-
           return Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
@@ -72,19 +93,53 @@ class EditPet extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ProfileImageSection(pets: pets, cubit: cubit),
-                    const SizedBox(height: 24),
-
-                    GeneralInformationSection(cubit: cubit, isDark: isDark),
+                    // Profile Image Section
+                    ProfileImageSection(cubit: cubit, pets: pets),
+                    SizedBox(height: responsiveHeight(20, context)),
+                    SpayedToggle(cubit: cubit),
+                    SizedBox(height: responsiveHeight(20, context)),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blue),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Icon(Icons.error, color: Colors.blue),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Basic Information',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w900,
+                                    color: isDark ? Colors.white : Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: responsiveHeight(20, context)),
+                            PetNameField(cubit: cubit, isDark: isDark),
+                            SizedBox(height: responsiveHeight(20, context)),
+                            BreedSpeciesSection(cubit: cubit, isDark: isDark),
+                            SizedBox(height: responsiveHeight(20, context)),
+                            GenderSelection(cubit: cubit),
+                            SizedBox(height: responsiveHeight(20, context)),
+                            BirthdatePicker(cubit: cubit, isDark: isDark),
+                            SizedBox(height: responsiveHeight(20, context)),
+                          ],
+                        ),
+                      ),
+                    ),
                     SizedBox(height: responsiveHeight(30, context)),
-
-                    BreedSpeciesSection(cubit: cubit, isDark: isDark),
-                    GenderSection(cubit: cubit),
-                    BirthdateSection(cubit: cubit, isDark: isDark),
-
                     PassportSection(cubit: cubit, isDark: isDark),
                     SizedBox(height: responsiveHeight(30, context)),
                     SaveButton(cubit: cubit),
+                    SizedBox(height: responsiveHeight(30, context)),
                   ],
                 ),
               ),
@@ -94,4 +149,15 @@ class EditPet extends StatelessWidget {
       ),
     );
   }
+}
+
+double responsiveHeight(double height, BuildContext context) {
+  final screenHeight = MediaQuery.of(context).size.height;
+  return (height / 800) * screenHeight; // 800 is the design reference height
+}
+
+/// Calculates a responsive width based on the screen size
+double responsiveWidth(double width, BuildContext context) {
+  final screenWidth = MediaQuery.of(context).size.width;
+  return (width / 360) * screenWidth; // 360 is the design reference width
 }

@@ -11,7 +11,8 @@ class GetUserAppointmentsUseCase implements BaseUseCase<List<AppointmentEntity>,
 
   @override
   Future<Either<Failure, List<AppointmentEntity>>> call(GetUserAppointmentsParams params) async {
-    return await repository.getUserAppointments(params.phone, params.applyFilter);
+    final result = await repository.getUserAppointments(params.phone, params.applyFilter);
+    return result;
   }
 }
 

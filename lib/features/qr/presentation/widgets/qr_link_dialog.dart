@@ -497,7 +497,7 @@ class _QrLinkDialogState extends State<QrLinkDialog>
 
   Future<void> _simulateScan(context) async {
     // Temporarily disabled due to mobile_scanner dependency conflict
-    // TODO: Re-enable when mobile_scanner is compatible with Firebase
+  
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text(

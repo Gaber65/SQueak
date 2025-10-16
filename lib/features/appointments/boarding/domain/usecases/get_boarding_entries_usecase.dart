@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 
 import '../entities/boarding_entry_entity.dart';
-import '../repositories/boarding_repository.dart';
 
 class GetBoardingEntriesUseCase implements BaseUseCase<List<BoardingEntryEntity>, GetBoardingEntriesParams> {
   final BoardingRepository repository;

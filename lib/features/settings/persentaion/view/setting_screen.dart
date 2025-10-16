@@ -27,6 +27,7 @@ class SettingScreen extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
+              centerTitle: true,
               title: Text(S.of(context).settings),
               automaticallyImplyLeading: false,
             ),
@@ -314,10 +315,23 @@ class SettingScreen extends StatelessWidget {
                         onCancelBtnTap: () {
                           Navigator.pop(context);
                         },
-                        onConfirmBtnTap: () {
-                          MainCubit.get(context).removeToken();
+                        onConfirmBtnTap: () async {
+                          debugPrint('[Logout] Confirm tapped - starting logout sequence');
+                          // First remove token from backend/service then clear local data and reset state
+                          debugPrint('[Logout] Calling MainCubit.removeToken()');
+                          await MainCubit.get(context).removeToken();
                           LayoutCubit.get(context).changeBottomNav(0);
-                          CacheHelper.clearData();
+
+                          // Clear local cache first to avoid race conditions with newly created LoginScreen
+                          debugPrint('[Logout] Clearing CacheHelper data');
+                          await CacheHelper.clearData();
+
+                          // Reset MainCubit state before navigating
+                          debugPrint('[Logout] Resetting MainCubit state');
+                          MainCubit.get(context).resetState();
+
+                          // Finally navigate to LoginScreen and clear navigation stack
+                          debugPrint('[Logout] Navigating to LoginScreen');
                           navigateAndFinish(context, LoginScreen());
                         },
                       );
@@ -332,30 +346,33 @@ class SettingScreen extends StatelessWidget {
       ),
     );
   }
+
   Widget buildImage(BuildContext context) {
     final profile = SettingCubit.get(context).profile;
     final imageActive = CacheHelper.getData('ImageActive');
-    final isPet = CacheHelper.getBool('isPet') ?? false;
+    final isPet = CacheHelper.getBool('isPet');
 
     ImageProvider backgroundImage;
 
     if (imageActive != null && imageActive != '') {
       backgroundImage = NetworkImage('$imageUrl$imageActive');
-    } else if (profile != null && profile.imageName !=  '') {
+    } else if (profile != null && profile.imageName != '') {
       backgroundImage = NetworkImage('$imageUrl${profile.imageName}');
     } else {
-      backgroundImage = AssetImage(
-        isPet ? AssetImageModel.defaultPetImage : AssetImageModel.defaultUserImage,
+      backgroundImage = NetworkImage(
+        isPet
+            ? AssetImageModel.defaultPetImage
+            : AssetImageModel.defaultUserImage,
       );
     }
 
     return CircleAvatar(
-      radius: 37,
-      backgroundColor:
-      Theme.of(context).scaffoldBackgroundColor,
+      radius: 33,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       backgroundImage: backgroundImage,
     );
   }
+
   Widget _buildSettingItem({
     required BuildContext context,
     required String icon,

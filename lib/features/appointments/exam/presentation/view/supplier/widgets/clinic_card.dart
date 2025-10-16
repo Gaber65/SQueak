@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
@@ -49,13 +51,13 @@ class ClinicCard extends StatelessWidget {
             const SizedBox(height: 12),
             PremiumInfoRow(
               icon: Icons.phone_outlined,
-              text: clinic.data.phone,
+              text: clinic.data.phone.startsWith('0') ? clinic.data.phone : '0${clinic.data.phone}',
               isDark: isDark,
             ),
             const SizedBox(height: 20),
             BlocConsumer<PetCubit, PetState>(
               listener: (context, state) {
-                // TODO: implement listener
+         
               },
               builder: (context, state) {
                 return ClinicActionsRow(
@@ -183,7 +185,12 @@ class ClinicActionsRow extends StatelessWidget {
           color: Colors.green,
           isDark: isDark,
           onPressed: () {
-            launchUrl(Uri.parse('tel:${clinic.data.phone}'));
+            final phone = clinic.data.phone;
+
+            // Check if number starts with 0
+            final formattedPhone = phone.startsWith('0') ? phone : '0$phone';
+            launchUrl(Uri.parse('tel:$formattedPhone'));
+            // launchUrl(Uri.parse('tel:0${clinic.data.phone}'));
           },
         ),
         const SizedBox(width: 10),
@@ -191,10 +198,52 @@ class ClinicActionsRow extends StatelessWidget {
           icon: Icons.person_remove,
           color: Colors.red,
           isDark: isDark,
-          onPressed:
-              () => AppointmentCubit.get(
-                context,
-              ).unfollowClinicById(clinic.data.id, clinic: clinic),
+          onPressed: () {
+            final parentContext = context; 
+            showDialog(
+              context: parentContext,
+              builder:
+                  (dialogContext) => UnfollowConfirmationDialog(
+                    onConfirm: () {
+                      AppointmentCubit.get(
+                        parentContext,
+                      ).unfollowClinicById(clinic.data.id, clinic: clinic);
+                    },
+                  ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class UnfollowConfirmationDialog extends StatelessWidget {
+  final VoidCallback onConfirm;
+
+  const UnfollowConfirmationDialog({super.key, required this.onConfirm});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(isArabic() ? 'إلغاء المتابعة للعيادة' : 'Unfollow Clinic'),
+      content: Text(
+        isArabic()
+            ? "هل تريد الغاء المتابعة لهذه العيادة؟"
+            : 'Are you sure you want to unfollow this clinic?',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(isArabic() ? 'إلغاء' : 'Cancel'),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          onPressed: () {
+            Navigator.pop(context);
+            onConfirm();
+          },
+          child: Text(isArabic() ? 'إلغاء المتابعة' : 'Unfollow'),
         ),
       ],
     );

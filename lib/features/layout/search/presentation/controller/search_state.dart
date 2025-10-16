@@ -14,6 +14,7 @@ class SearchError extends SearchState {}
 class FollowLoading extends SearchState {}
 
 class FollowSuccess extends SearchState {
+  // ignore: prefer_typing_uninitialized_variables
   final isHavePet;
 
   FollowSuccess(this.isHavePet);

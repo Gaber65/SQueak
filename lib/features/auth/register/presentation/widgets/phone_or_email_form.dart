@@ -12,6 +12,8 @@ class EmailOrPhoneField extends StatelessWidget {
   });
 
   String? _validateInput(String? value, context) {
+    // Trim leading/trailing whitespace before validation
+    value = value?.trim();
     if (value == null || value.isEmpty) {
       return S.of(context).enterUrEmailOPhone;
     }

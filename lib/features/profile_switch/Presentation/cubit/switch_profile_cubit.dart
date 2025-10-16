@@ -6,7 +6,7 @@ import 'package:squeak/features/profile_switch/domain/entities/profile_type_enti
 import 'package:squeak/features/profile_switch/domain/usecase/get_active_profile.dart';
 import 'package:squeak/features/profile_switch/domain/usecase/save_active_profile.dart';
 
-import '../../../../core/network/end-points.dart';
+import '../../../../core/network/end_points.dart';
 import '../../../../core/utils/enums/profile_type.dart';
 
 
@@ -30,11 +30,11 @@ class SwitchProfileCubit extends Cubit<SwitchProfileState> {
     final result = await getActiveProfile(const NoParameters());
     result.fold(
           (failure) {
-            print(failure.error.message);
+            // print(failure.error.message);
             emit(ProfileError(failure.error.message));
           },
           (profile) {
-            print(profile.toJson());
+            // print(profile.toJson());
             activeProfile = profile;
             if (activeProfile!.type == ProfileType.pet) {
               image = imageUrl +activeProfile!.pet!.imageName!;

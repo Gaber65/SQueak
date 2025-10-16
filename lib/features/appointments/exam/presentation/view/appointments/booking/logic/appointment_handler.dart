@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/appointments/exam/data/models/client_clinic_model.dart';
 import 'package:squeak/features/appointments/exam/presentation/controller/clinic/appointment_cubit.dart';
-
 import '../../../../../domain/entities/client_clinic.dart';
 import '../../../../../domain/use_case/create_appointment.dart';
 
@@ -22,7 +20,7 @@ class AppointmentHandler {
     required int petGender,
     required bool? isSpayed,
   }) {
-    print("DEBUG: createAppointment called$breedId");
+    // print("DEBUG: createAppointment called$breedId");
     // Validate inputs
     if (time == null) {
       infoToast(context, isArabic() ? 'الوقت مطلوب' : 'Please select time');

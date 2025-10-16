@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
@@ -20,14 +22,14 @@ class EnhancedLoginView extends StatefulWidget {
   State<EnhancedLoginView> createState() => _EnhancedLoginViewState();
 }
 
-class _EnhancedLoginViewState extends State<EnhancedLoginView> 
+class _EnhancedLoginViewState extends State<EnhancedLoginView>
     with AccessibilityMixin, TickerProviderStateMixin {
   ValidationResult? _emailValidation;
   // Password validation removed - no longer validating passwords on login page
   bool _isFormValid = false;
   bool _obscurePassword = true;
   // Performance monitoring removed for memory optimization
-  
+
   late AnimationController _shakeController;
   late AnimationController _pulseController;
 
@@ -36,10 +38,10 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
     super.initState();
     // TEMPORARILY DISABLED - Performance monitoring causing potential crashes
     // _performanceMonitor.startOperation('enhanced_login_init');
-    
+
     widget.cubit.emailController.addListener(_validateEmail);
     widget.cubit.passwordController.addListener(_validatePassword);
-    
+
     // Initialize animations
     _shakeController = AnimationController(
       duration: const Duration(milliseconds: 500),
@@ -53,7 +55,7 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
 
     // TEMPORARILY DISABLED - Performance monitoring causing potential crashes
     // _performanceMonitor.endOperation('enhanced_login_init');
-    
+
     // Trigger initial validation if fields have content
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.cubit.emailController.text.isNotEmpty) {
@@ -93,16 +95,18 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
 
   void _updateFormValidity() {
     final wasValid = _isFormValid;
-    
+
     // DEBUG: Check validation status
-    debugPrint('Email validation: ${_emailValidation?.isValid} - ${_emailValidation?.message}');
+    debugPrint(
+      'Email validation: ${_emailValidation?.isValid} - ${_emailValidation?.message}',
+    );
     debugPrint('Password validation: DISABLED (always valid)');
-    
+
     // Only validate email, password validation removed
     _isFormValid = (_emailValidation?.isValid ?? false);
-    
+
     debugPrint('Form valid: $_isFormValid');
-    
+
     // Trigger pulse animation when form becomes valid
     if (!wasValid && _isFormValid) {
       _pulseController.forward().then((_) => _pulseController.reverse());
@@ -114,25 +118,33 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
     // TEMPORARY: Basic validation for testing
     final email = widget.cubit.emailController.text.trim();
     final password = widget.cubit.passwordController.text.trim();
-    
+
     if (email.isEmpty) {
       _shakeController.forward().then((_) => _shakeController.reverse());
       HapticFeedback.mediumImpact();
-      announce('Please enter your email or phone number');
+      announce(
+        isArabic()
+            ? 'يرجى ادخال البريد الالكتروني او رقم الهاتف'
+            : 'Please enter your email or phone number',
+      );
       return;
     }
-    
+
     if (password.isEmpty) {
       _shakeController.forward().then((_) => _shakeController.reverse());
       HapticFeedback.mediumImpact();
-      announce('Please enter your password');
+      announce(
+        isArabic() ? 'يرجى ادخال كلمة المرور' : 'Please enter your password',
+      );
       return;
     }
-    
+
     // If enhanced validation is available and valid, great!
     // Otherwise, proceed with basic validation
     if (!_isFormValid) {
-      debugPrint('TEMPORARY: Proceeding with basic validation since enhanced validation failed');
+      debugPrint(
+        'TEMPORARY: Proceeding with basic validation since enhanced validation failed',
+      );
       debugPrint('Email: $email, Password length: ${password.length}');
     }
 
@@ -164,7 +176,7 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                 label: 'Login screen',
                 header: true,
                 child: Text(
-                  S.of(context).login,
+                  isArabic() ? 'تسجيل الدخول' : S.of(context).login,
                   style: FontStyleThame.textStyle(
                     context: context,
                     fontSize: 20,
@@ -172,8 +184,10 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                   ),
                 ),
               ),
-              
-              SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 20 : 13),
+
+              SizedBox(
+                height: getAnimationDuration().inMilliseconds > 200 ? 20 : 13,
+              ),
 
               // Enhanced Email/Phone Field with accessibility
               Column(
@@ -183,9 +197,10 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: _emailValidation?.isValid == false 
-                            ? Colors.red.shade300
-                            : _emailValidation?.isValid == true
+                        color:
+                            _emailValidation?.isValid == false
+                                ? Colors.red.shade300
+                                : _emailValidation?.isValid == true
                                 ? Colors.green.shade300
                                 : Colors.grey.shade300,
                         width: 1.5,
@@ -195,17 +210,22 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                       controller: widget.cubit.emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                        hintText: 'Enter your email or phone number',
+                        hintText:
+                            isArabic()
+                                ? 'ادخل البريد الالكتروني او رقم الهاتف'
+                                : 'Enter your email or phone number',
                         prefixIcon: const Icon(Icons.alternate_email, size: 18),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, 
+                          horizontal: 16,
                           vertical: 16,
                         ),
                       ),
-                      validator: (value) => _emailValidation?.isValid == false 
-                          ? _emailValidation?.message 
-                          : null,
+                      validator:
+                          (value) =>
+                              _emailValidation?.isValid == false
+                                  ? _emailValidation?.message
+                                  : null,
                     ),
                   ),
                   if (_emailValidation != null && !_emailValidation!.isValid)
@@ -227,13 +247,16 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                       padding: const EdgeInsets.only(top: 4),
                       child: Row(
                         children: [
-                          const Icon(Icons.check_circle, 
-                            color: Colors.green, 
+                          const Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
                             size: 16,
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Perfect! Your pet parent ID looks great!',
+                            isArabic()
+                                ? 'ممتاز! يبدو معرف والد صغيرك الأليف رائعًا!'
+                                : 'Perfect! Your pet parent ID looks great!',
                             style: const TextStyle(
                               color: Colors.green,
                               fontSize: 12,
@@ -245,12 +268,17 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                 ],
               ),
 
-              SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 20 : 13),
+              SizedBox(
+                height: getAnimationDuration().inMilliseconds > 200 ? 20 : 13,
+              ),
 
               // Enhanced Password Field with accessibility
               AccessibilityHelper.accessibleFormField(
-                label: 'Secure Paw-ssword',
-                hint: 'Enter your password to continue',
+                label: isArabic() ? 'كلمة المرور' : 'Password',
+                hint:
+                    isArabic()
+                        ? 'للمتابعة ادخل كلمة المرور الخاصة بك '
+                        : 'Enter your password to continue',
                 required: true,
                 errorText: null, // Password validation removed
                 child: Column(
@@ -260,7 +288,10 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: Colors.grey.shade300, // Always neutral since validation is disabled
+                          color:
+                              Colors
+                                  .grey
+                                  .shade300, // Always neutral since validation is disabled
                           width: 1.5,
                         ),
                       ),
@@ -268,25 +299,29 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                         controller: widget.cubit.passwordController,
                         obscureText: _obscurePassword,
                         decoration: InputDecoration(
-                          hintText: 'Enter your secure password',
+                          hintText: isArabic() ? 'ادخل كلمة المرور الخاصة بك' : 'Enter your secure password',
                           prefixIcon: const Icon(Icons.lock_outlined, size: 18),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscurePassword 
-                                  ? Icons.visibility_outlined 
+                              _obscurePassword
+                                  ? Icons.visibility_outlined
                                   : Icons.visibility_off_outlined,
                               size: 18,
                             ),
                             onPressed: _togglePasswordVisibility,
-                            tooltip: _obscurePassword ? 'Show password' : 'Hide password',
+                            tooltip:
+                                _obscurePassword
+                                    ? 'Show password'
+                                    : 'Hide password',
                           ),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, 
+                            horizontal: 16,
                             vertical: 16,
                           ),
                         ),
-                        validator: (value) => null, // Password validation removed
+                        validator:
+                            (value) => null, // Password validation removed
                       ),
                     ),
                     // Password validation UI removed - no longer showing validation feedback
@@ -294,7 +329,9 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                 ),
               ),
 
-              SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 20 : 13),
+              SizedBox(
+                height: getAnimationDuration().inMilliseconds > 200 ? 20 : 13,
+              ),
 
               // Forgot Password Link with accessibility
               AccessibilityHelper.semanticWrapper(
@@ -303,10 +340,14 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                 hint: 'Tap to reset your password',
                 onTap: () => navigateToScreen(context, ForgotPasswordScreen()),
                 child: InkWell(
-                  onTap: () => navigateToScreen(context, ForgotPasswordScreen()),
+                  onTap:
+                      () => navigateToScreen(context, ForgotPasswordScreen()),
                   borderRadius: BorderRadius.circular(8),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 4,
+                    ),
                     child: Text(
                       S.of(context).forgotPass,
                       style: FontStyleThame.textStyle(
@@ -320,7 +361,9 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                 ),
               ),
 
-              SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 24 : 16),
+              SizedBox(
+                height: getAnimationDuration().inMilliseconds > 200 ? 24 : 16,
+              ),
 
               // Enhanced Login Button with accessibility - TEMPORARILY ALWAYS ENABLED FOR TESTING
               SizedBox(
@@ -331,14 +374,16 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                   isLoading: widget.cubit.isLoggedIn,
                   loadingText: 'Finding your furry friends...',
                   semanticLabel: 'Login button',
-                  tooltip: _isFormValid 
-                      ? 'Tap to login' 
-                      : 'Tap to login (validation will be checked)',
+                  tooltip:
+                      _isFormValid
+                          ? 'Tap to login'
+                          : 'Tap to login (validation will be checked)',
                   animationDuration: getAnimationDuration(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _isFormValid 
-                        ? ColorManager.secondColor 
-                        : ColorManager.secondColor.withOpacity(0.8),
+                    backgroundColor:
+                        _isFormValid
+                            ? ColorManager.secondColor
+                            : ColorManager.secondColor.withOpacity(0.8),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
@@ -350,8 +395,8 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                     children: [
                       const Icon(Icons.pets, size: 18, color: Colors.white),
                       const SizedBox(width: 8),
-                      const Text(
-                        'Sign in to Pet Paradise',
+                       Text(
+                        isArabic() ? 'سجّل الدخول إلى مجتمع الصغار  ' : 'Sign in to Pet Paradise',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -363,7 +408,9 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                 ),
               ),
 
-              SizedBox(height: getAnimationDuration().inMilliseconds > 200 ? 20 : 13),
+              SizedBox(
+                height: getAnimationDuration().inMilliseconds > 200 ? 20 : 13,
+              ),
 
               // Register Link with accessibility
               AccessibilityHelper.semanticWrapper(
@@ -384,12 +431,21 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                       label: 'Register button',
                       button: true,
                       hint: 'Tap to create a new account',
-                      onTap: () => navigateToScreen(context, const RegisterScreen()),
+                      onTap:
+                          () =>
+                              navigateToScreen(context, const RegisterScreen()),
                       child: TextButton(
-                        onPressed: () => navigateToScreen(context, const RegisterScreen()),
+                        onPressed:
+                            () => navigateToScreen(
+                              context,
+                              const RegisterScreen(),
+                            ),
                         style: TextButton.styleFrom(
                           foregroundColor: ColorManager.secondColor,
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                         ),
                         child: Text(
                           S.of(context).register,

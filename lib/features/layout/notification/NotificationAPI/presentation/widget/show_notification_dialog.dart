@@ -15,8 +15,8 @@ void showNotificationDialog(
 
   // Retrieve username from cache
   String userName = CacheHelper.getData('name') ?? "Pet Lover";
-  print(model.message);
-  print('***********************');
+  // print(model.message);
+  // print('***********************');
   // Extract clinic name from the notification title (assuming "Clinic XYZ: Message")
   String extractedClinicName = model.title.split(":").first.trim();
   // Remove the word "Notification" if it appears
@@ -40,7 +40,7 @@ void showNotificationDialog(
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.25), // Light theme
                   image: DecorationImage(
-                    image: AssetImage('assets/paw_background_modified.png'),
+                    image: AssetImage('assets/paw_background_modified.webp'),
                     fit: BoxFit.cover,
                     colorFilter: ColorFilter.mode(
                       Colors.white.withOpacity(0.7),
