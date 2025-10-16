@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/appointment_entity.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 
@@ -12,18 +11,7 @@ class GetUserAppointmentsUseCase implements BaseUseCase<List<AppointmentEntity>,
 
   @override
   Future<Either<Failure, List<AppointmentEntity>>> call(GetUserAppointmentsParams params) async {
-    final useCaseStart = DateTime.now();
-    debugPrint('🔍 [UseCase:GetUserAppointments] START → ${useCaseStart.toIso8601String()}');
-    debugPrint('🔍 [UseCase] Params: phone=${params.phone}, applyFilter=${params.applyFilter}');
-    
-    final repoCallStart = DateTime.now();
-    debugPrint('🔍 [UseCase] Calling repository → ${repoCallStart.toIso8601String()}');
-    
     final result = await repository.getUserAppointments(params.phone, params.applyFilter);
-    
-    final useCaseEnd = DateTime.now();
-    debugPrint('✅ [UseCase] COMPLETED in ${useCaseEnd.difference(useCaseStart).inMilliseconds}ms');
-    
     return result;
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:dartz/dartz.dart';
-import 'package:flutter/foundation.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/appointment_entity.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/availability_entities.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/clinic_entity.dart';
@@ -22,7 +21,6 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
   Future<Either<Failure, List<Availability>>> getAvailabilities(
     String clinicCode,
   ) async {
-    // REMOVED: Slow network check - Let Dio handle network errors
     try {
       final remoteAvailabilities = await remoteDataSource.getAvailabilities(
         clinicCode,
@@ -120,7 +118,6 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
   Future<Either<Failure, Unit>> createAppointment(
     CreateAppointmentParams pram,
   ) async {
-    // REMOVED: Slow network check - Let Dio handle network errors
     try {
       await remoteDataSource.createAppointment(pram);
       return const Right(unit);
@@ -145,33 +142,15 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
     String phone,
     bool applyFilter,
   ) async {
-    final repoStart = DateTime.now();
-    debugPrint('🔍 [Repository:getUserAppointments] START → ${repoStart.toIso8601String()}');
-
-    // REMOVED: Slow network check (was taking 5 seconds!)
-    // The Dio client will handle network errors automatically
-    // If there's no connection, it will throw a DioException
-
     try {
-      final dataSourceCallStart = DateTime.now();
-      debugPrint('🔍 [Repository] Calling remoteDataSource → ${dataSourceCallStart.toIso8601String()}');
-      
       final remoteAppointments = await remoteDataSource.getUserAppointments(
         phone,
         applyFilter,
-      );
-      
-      final dataSourceCallEnd = DateTime.now();
-      debugPrint('✅ [Repository] DataSource returned in ${dataSourceCallEnd.difference(dataSourceCallStart).inMilliseconds}ms');
-      debugPrint('✅ [Repository] TOTAL TIME: ${dataSourceCallEnd.difference(repoStart).inMilliseconds}ms');
-      
+      );     
       return Right(remoteAppointments);
     } on ServerException catch (failure) {
-      debugPrint('❌ [Repository] Server Error: ${failure.errorMessageModel.message}');
       return Left(ServerFailure(failure.errorMessageModel));
     } catch (e) {
-      // Handle network connectivity errors here
-      debugPrint('❌ [Repository] Network Error: $e');
       return Left(
         ServerFailure(
           ErrorMessageModel(
@@ -187,7 +166,6 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
 
   @override
   Future<Either<Failure, Unit>> deleteAppointment(String appointmentId) async {
-    // REMOVED: Slow network check - Let Dio handle network errors
     try {
       await remoteDataSource.deleteAppointment(appointmentId);
       return const Right(unit);
@@ -214,7 +192,6 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
     required int doctorServiceRate,
     required String feedbackComment,
   }) async {
-    // REMOVED: Slow network check - Let Dio handle network errors
     try {
       await remoteDataSource.rateAppointment(
         appointmentId: appointmentId,
@@ -241,7 +218,6 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
 
   @override
   Future<Either<Failure, Invoice>> getInvoice(String id) async {
-    // REMOVED: Slow network check - Let Dio handle network errors
     try {
       final remoteInvoice = await remoteDataSource.getInvoice(id);
       return Right(remoteInvoice);

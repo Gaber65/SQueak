@@ -1,7 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
-
-
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../models/appointment_model.dart';
 import '../models/availability_model.dart';
@@ -34,17 +31,13 @@ abstract class AppointmentRemoteDataSource {
 }
 
 class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
-
-
   @override
   Future<List<AvailabilityModel>> getAvailabilities(String clinicCode) async {
-
     try {
       final response = await DioFinalHelper.getData(
         method: getAvailabilitiesEndPoint(clinicCode),
         language: true,
       );
-
 
       final List data = response.data['data'];
       return data
@@ -53,8 +46,6 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
           .toList()
           .cast<AvailabilityModel>();
     } on DioException catch (e) {
-
-
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );
@@ -224,51 +215,19 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
     String phone,
     bool applyFilter,
   ) async {
-    final startTime = DateTime.now();
     try {
-      if (kDebugMode) {
-        debugPrint('🔍 [DataSource:getUserAppointments] START → ${startTime.toIso8601String()}');
-      }
-
       final endpoint = createAndGetAppointmentsEndPoint(phone, applyFilter);
-      
-      if (kDebugMode) {
-        final endpointCreated = DateTime.now();
-        debugPrint('🔍 [DataSource] Endpoint created in ${endpointCreated.difference(startTime).inMilliseconds}ms');
-        debugPrint('🛰️ ➜ [${endpointCreated.toIso8601String()}] Requesting: $endpoint');
-      }
-
-      final requestStart = DateTime.now();
       final response = await DioFinalHelper.getData(
         method: endpoint,
         language: true,
       );
-      final requestEnd = DateTime.now();
-      
-      if (kDebugMode) {
-        debugPrint('🛰️ ← [${requestEnd.toIso8601String()}] Response received (network: ${requestEnd.difference(requestStart).inMilliseconds}ms)');
-      }
-
-      final parseStart = DateTime.now();
       List<AppointmentModel> appointments =
           (response.data['data']['result'] as List)
               .map((e) => AppointmentModel.fromJson(e))
               .toList();
-
       appointments.sort((a, b) => b.date.compareTo(a.date));
-      
-      final parseEnd = DateTime.now();
-      if (kDebugMode) {
-        debugPrint('✅ [DataSource] Parsed ${appointments.length} appointments in ${parseEnd.difference(parseStart).inMilliseconds}ms');
-        debugPrint('✅ [DataSource] TOTAL TIME: ${parseEnd.difference(startTime).inMilliseconds}ms');
-      }
-
       return appointments;
     } on DioException catch (e) {
-      if (kDebugMode) {
-        final errorTime = DateTime.now();
-        debugPrint('❌ [DataSource] Error after ${errorTime.difference(startTime).inMilliseconds}ms');
-      }
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

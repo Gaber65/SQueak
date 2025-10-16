@@ -139,7 +139,7 @@ class AllAppointment extends StatelessWidget {
         ),
         BlocProvider(
           lazy: true,
-          create: (context) => sl<PetCubit>()..getOwnerPets(),
+          create: (context) => sl<PetCubit>(),
         ),
       ],
       child: _AllAppointmentContent(services: _getServiceNames(context)),
@@ -233,13 +233,27 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
       listeners: [
         BlocListener<UserAppointmentCubit, UserAppointmentState>(
           listenWhen: (previous, current) =>
-              current is DeleteAppointmentSuccess || current is EditAppointment,
+              current is DeleteAppointmentSuccess ||
+              current is EditAppointment ||
+              current is GetAppointmentSuccess,
           listener: (context, state) {
+            // keep existing behaviors
             if (state is DeleteAppointmentSuccess) {
               UserAppointmentCubit.get(context).getAppointment(false);
             }
             if (state is EditAppointment) {
               UserAppointmentCubit.get(context).deleteAppointments(state.model.id);
+            }
+            if (state is GetAppointmentSuccess) {
+              try {
+                final petCubit = context.read<PetCubit>();
+                if (petCubit.pets.isEmpty) {
+                  petCubit.getOwnerPets();
+                }
+              } catch (_) {
+                final petCubit = sl<PetCubit>();
+                if (petCubit.pets.isEmpty) petCubit.getOwnerPets();
+              }
             }
           },
         ),
