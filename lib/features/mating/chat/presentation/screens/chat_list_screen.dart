@@ -1,19 +1,11 @@
-// chat_list_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dart';
-import '../../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
-import '../../../../../core/service/service_locator/service_locator.dart';
-import '../../../../../core/utils/theme/color_mangment/color_manager.dart';
 import '../../domain/entities/chat_entity.dart';
 import '../../domain/entities/chat_status.dart';
-import '../../domain/usecases/get_messages_usecase.dart';
-import '../../domain/usecases/send_message_usecase.dart';
-import '../controllers/chat_list_cubit.dart';
 import '../controllers/chat_list_state.dart';
-import '../controllers/chat_messages_cubit.dart';
 import '../widgets/chat_list_item.dart';
 import '../widgets/status_filter_item.dart';
 
@@ -83,25 +75,41 @@ class ProfessionalChatListScreen extends StatelessWidget {
                 ),
                 StatusFilterItem(
                   title: 'active',
-                  count: 8,
+                  count:
+                      cubit.chats
+                          .where((element) => element.status == cubit.status)
+                          .toList()
+                          .length,
                   isActive: cubit.status?.name == 'active',
                   onTap: () => cubit.loadChats(status: ChatStatus.active),
                 ),
                 StatusFilterItem(
                   title: 'onMating',
-                  count: 3,
+                  count:
+                      cubit.chats
+                          .where((element) => element.status == cubit.status)
+                          .toList()
+                          .length,
                   isActive: cubit.status?.name == 'onMating',
                   onTap: () => cubit.loadChats(status: ChatStatus.onMating),
                 ),
                 StatusFilterItem(
                   title: 'completed',
-                  count: 1,
+                  count:
+                      cubit.chats
+                          .where((element) => element.status == cubit.status)
+                          .toList()
+                          .length,
                   isActive: cubit.status?.name == 'completed',
                   onTap: () => cubit.loadChats(status: ChatStatus.completed),
                 ),
                 StatusFilterItem(
                   title: 'blocked',
-                  count: 0,
+                  count:
+                      cubit.chats
+                          .where((element) => element.status == cubit.status)
+                          .toList()
+                          .length,
                   isActive: cubit.status?.name == 'blocked',
                   onTap: () => cubit.loadChats(status: ChatStatus.blocked),
                 ),

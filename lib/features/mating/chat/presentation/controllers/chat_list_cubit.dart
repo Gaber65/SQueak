@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_status.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/get_chats_usecase.dart';
 import '../../domain/usecases/parameters.dart';
@@ -13,6 +14,7 @@ class ChatListCubit extends Cubit<ChatListState> {
   static get(BuildContext context) => BlocProvider.of<ChatListCubit>(context);
 
   ChatStatus? status;
+   List<ChatEntity> chats =[];
 
   Future<void> loadChats({ChatStatus? status}) async {
     emit(ChatListLoading());
@@ -22,7 +24,10 @@ class ChatListCubit extends Cubit<ChatListState> {
     print(status);
     result.fold(
       (failure) => emit(ChatListError(failure.toString())),
-      (chats) => emit(ChatListLoaded(chats)),
+      (chats) {
+        this.chats = chats;
+        emit(ChatListLoaded(chats));
+      },
     );
   }
 

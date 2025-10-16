@@ -45,31 +45,7 @@ class SettingScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(.0),
                       child: Row(
                         children: [
-                          // (state is ProfileImageUploadLoading)
-                          //     ? WidgetCircularAnimator(
-                          //       size: 65,
-                          //       innerIconsSize: 3,
-                          //       outerIconsSize: 3,
-                          //       innerAnimation: Curves.easeInOutBack,
-                          //       outerAnimation: Curves.easeInOutBack,
-                          //       innerColor: Colors.deepPurple,
-                          //       outerColor: Colors.orangeAccent,
-                          //       innerAnimationSeconds: 10,
-                          //       outerAnimationSeconds: 10,
-                          //       child: Container(
-                          //         height: 69,
-                          //         decoration: BoxDecoration(
-                          //           shape: BoxShape.circle,
-                          //           color: Colors.grey[200],
-                          //         ),
-                          //         child: Icon(
-                          //           Icons.person_outline,
-                          //           color: Colors.deepOrange[200],
-                          //           size: 30,
-                          //         ),
-                          //       ),
-                          //     )
-                          //     :
+
                           buildImage(context),
                           SizedBox(width: 15),
                           Text(
@@ -95,6 +71,32 @@ class SettingScreen extends StatelessWidget {
                   ),
 
                   SizedBox(height: 25),
+
+                  // Management pet  Section
+                  Text(
+                    isArabic() ? 'ادارة صديقك الاليف' : 'Manage Pets',
+                    style: FontStyleThame.textStyle(
+                      context: context,
+                      fontSize: 18,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+
+                  // MatingLayout pet  Section
+                  _buildSettingItem(
+                    context: context,
+                    icon:
+                        'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/rb_49299.png?alt=media&token=3f7daec5-e664-43bc-9e62-0ef2b7f018f3',
+                    title: 'Mating shows',
+
+                    subtitle: '',
+                    trailingWidget: IconButton(
+                      onPressed: () {
+                        navigateToScreen(context, MatingLayoutScreen());
+                      },
+                      icon: Icon(Icons.chevron_right),
+                    ),
+                  ),
 
                   // Personalization Section
                   Text(
