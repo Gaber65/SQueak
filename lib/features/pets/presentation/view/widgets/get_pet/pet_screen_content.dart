@@ -703,8 +703,8 @@ class _PetScreenContentState extends State<PetScreenContent> {
     final totalPets = widget.pets.length;
     final linkedPets =
         widget.pets.where((pet) => pet.qrCode?.isNotEmpty == true).length;
-    final petsWithPassport = widget.pets.where((pet) => 
-        pet.passportNumber?.isNotEmpty == true).length;
+    // final petsWithPassport = widget.pets.where((pet) => 
+    //     pet.passportNumber?.isNotEmpty == true).length;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -808,15 +808,15 @@ class _PetScreenContentState extends State<PetScreenContent> {
                   const Color(0xFF10B981),
                 ),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _buildCompactStatCard(
-                  petsWithPassport.toString(),
-                  isArabic() ? "جوازات" : "Passport",
-                  Icons.card_membership,
-                  const Color(0xFF8B5CF6),
-                ),
-              ),
+              // const SizedBox(width: 10),
+              // Expanded(
+              //   child: _buildCompactStatCard(
+              //     petsWithPassport.toString(),
+              //     isArabic() ? "جوازات" : "Passport",
+              //     Icons.card_membership,
+              //     const Color(0xFF8B5CF6),
+              //   ),
+              // ),
             ],
           ),
         ],
