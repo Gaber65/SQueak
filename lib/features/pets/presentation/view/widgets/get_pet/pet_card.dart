@@ -5,7 +5,6 @@ import 'package:squeak/features/appointments/exam/presentation/view/supplier/get
 
 import '../../../../../qr/presentation/controller/qr_cubit.dart';
 import '../../../../../qr/presentation/widgets/qr_action_buttons.dart';
-import '../../../../../qr/presentation/widgets/qr_status_indicator.dart';
 import '../../../../domain/entities/pet_entity.dart';
 import '../../../controller/pet_cubit.dart';
 import '../../edit_pet_screen.dart';
@@ -123,8 +122,8 @@ class _PetCardState extends State<PetCard> {
                   ),
                   const SizedBox(height: 16),
       
-                  QrStatusIndicator(pet: widget.pet),
-                  const SizedBox(height: 16),
+                  // QrStatusIndicator(pet: widget.pet),
+                  // const SizedBox(height: 16),
       
                   if (!widget.selectionMode)
                     QrActionButtons(
@@ -232,87 +231,10 @@ class _PetCardState extends State<PetCard> {
                   letterSpacing: 0.5,
                 ),
               ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  // Gender indicator
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: _getGenderColor().withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(
-                        color: _getGenderColor().withOpacity(0.3),
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          _getGenderIcon(),
-                          size: 12,
-                          color: _getGenderColor(),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          _getGenderText(),
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: _getGenderColor(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Spay/Neuter status
-                  if (widget.pet.isSpayed != null)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: widget.pet.isSpayed! 
-                            ? Colors.green.withOpacity(0.1)
-                            : Colors.orange.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
-                          color: widget.pet.isSpayed! 
-                              ? Colors.green.withOpacity(0.3)
-                              : Colors.orange.withOpacity(0.3),
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            widget.pet.isSpayed! 
-                                ? Icons.health_and_safety
-                                : Icons.warning_amber_outlined,
-                            size: 12,
-                            color: widget.pet.isSpayed! ? Colors.green : Colors.orange,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            widget.pet.isSpayed! 
-                                ? (isArabic() ? "معقم" : "Spayed")
-                                : (isArabic() ? "غير معقم" : "Not Spayed"),
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: widget.pet.isSpayed! ? Colors.green : Colors.orange,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
               const SizedBox(height: 8),
               if (widget.pet.birthdate?.isNotEmpty ?? false) ...[
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                   decoration: BoxDecoration(
                     color: ColorManager.primaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -329,42 +251,20 @@ class _PetCardState extends State<PetCard> {
                         size: 14,
                         color: ColorManager.primaryColor,
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 6),
+                      // Show only calculated age (e.g., "(2 years)") instead of raw birthdate
                       Text(
-                        widget.pet.birthdate!.substring(0, 10),
+                        _calculateAge(),
                         style: TextStyle(
                           color: ColorManager.primaryColor,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        _calculateAge(),
-                        style: TextStyle(
-                          color: ColorManager.primaryColor,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 4),
-              ],
-              if (widget.pet.breed != null) ...[
-                Text(
-                  isArabic()
-                      ? widget.pet.breed!.arBreed
-                      : widget.pet.breed!.enBreed,
-                  style: TextStyle(
-                    color: MainCubit.get(context).isDark 
-                        ? Colors.grey[400] 
-                        : Colors.grey[600],
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
               ],
             ],
           ),
@@ -414,38 +314,7 @@ class _PetCardState extends State<PetCard> {
     );
   }
 
-  Color _getGenderColor() {
-    switch (widget.pet.gender) {
-      case 1:
-        return Colors.blue; // Male
-      case 2:
-        return Colors.pink; // Female
-      default:
-        return Colors.grey;
-    }
-  }
 
-  IconData _getGenderIcon() {
-    switch (widget.pet.gender) {
-      case 1:
-        return Icons.male; // Male
-      case 2:
-        return Icons.female; // Female
-      default:
-        return Icons.help_outline;
-    }
-  }
-
-  String _getGenderText() {
-    switch (widget.pet.gender) {
-      case 1:
-        return isArabic() ? "ذكر" : "Male";
-      case 2:
-        return isArabic() ? "أنثى" : "Female";
-      default:
-        return isArabic() ? "غير محدد" : "Unknown";
-    }
-  }
 
   String _calculateAge() {
     if (widget.pet.birthdate?.isEmpty ?? true) return "";
