@@ -4,26 +4,36 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/utils/firebase_token_helper.dart';
+import 'package:squeak/core/utils/enums/env_enums.dart';
+import 'package:squeak/core/utils/debug_utils.dart';
 import 'package:squeak/features/layout/notification/NotificationFCM/notification_message.dart';
 import '../../../../../firebase_options.dart';
 
 @pragma('vm:entry-point')
 class InitFunctions {
+  static Environment currentEnvironment = Environment.pro;
+  
+  /// Set the environment for the application
+  /// Use Environment.test to enable chucker, Environment.pro to disable it
+  static void setEnvironment(Environment env) {
+    currentEnvironment = env;
+  }
+  
   static Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
-    ConfigModel.setEnvironment(Environment.pro);
+    // Don't override currentEnvironment here - use the one set in setEnvironment() or the default
+    ConfigModel.setEnvironment(currentEnvironment);
         Bloc.observer = MyBlocObserver();
     await _initServiceLocator();
     await _initCache(); // Initialize cache first
     await NotificationInitializer.initialize();
     await _initFirebase();
     await LocalDatabaseHelper.initDB();
-    await _initDio();
-    //await _configureChucker();
+    await _configureChucker(); // Configure chucker first
+    await _initDio(); // Then initialize Dio with chucker configuration
     await _setupMessaging();
   }
 
@@ -86,9 +96,7 @@ class InitFunctions {
       await _initializeFirebaseMessaging();
       
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('ERROR: Firebase initialization error: $e');
-      }
+      DebugUtils.debugPrintEnv('ERROR: Firebase initialization error: $e');
     }
   }
 
@@ -104,28 +112,20 @@ class InitFunctions {
         provisional: false,
       );
       
-      if (kDebugMode) {
-        debugPrint('Notification permission status: ${settings.authorizationStatus}');
-      }
+      DebugUtils.debugPrintEnv('Notification permission status: ${settings.authorizationStatus}');
       
       // Use FirebaseTokenHelper for robust token management
       try {
         final token = await FirebaseTokenHelper.getFirebaseToken();
         if (token != null) {
-          if (kDebugMode) {
-            debugPrint('SUCCESS: Firebase token obtained via helper: ${token.substring(0, 10)}...');
-          }
+          DebugUtils.debugPrintEnv('SUCCESS: Firebase token obtained via helper: ${token.substring(0, 10)}...');
         }
       } catch (tokenError) {
-        if (kDebugMode) {
-          debugPrint('WARNING: Firebase token helper error: $tokenError');
-        }
+        DebugUtils.debugPrintEnv('WARNING: Firebase token helper error: $tokenError');
       }
       
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('ERROR: Firebase messaging initialization error: $e');
-      }
+      DebugUtils.debugPrintEnv('ERROR: Firebase messaging initialization error: $e');
     }
   }
 
@@ -140,11 +140,32 @@ class InitFunctions {
   }
 
   static Future<void> _initDio() async {
+    // Set environment in DioFinalHelper before initialization
+    DioFinalHelper.setEnvironment(currentEnvironment);
     await DioFinalHelper.init();
   }
 
   static Future<void> _configureChucker() async {
-    ChuckerFlutter.showOnRelease = false;
-    ChuckerFlutter.showNotification = false;
+    // Configure chucker based on environment
+    // Enable chucker only in test environment for debugging network requests
+    // Disable in production and pre-production environments for security and performance
+    
+    DebugUtils.debugPrintEnv('INFO: Configuring Chucker for environment: ${currentEnvironment.name}');
+    
+    if (currentEnvironment == Environment.test) {
+      ChuckerFlutter.showOnRelease = true;
+      ChuckerFlutter.showNotification = true;
+      
+      DebugUtils.debugPrintEnv('SUCCESS: Chucker enabled for test environment');
+      DebugUtils.debugPrintEnv('  - showOnRelease: ${ChuckerFlutter.showOnRelease}');
+      DebugUtils.debugPrintEnv('  - showNotification: ${ChuckerFlutter.showNotification}');
+    } else {
+      ChuckerFlutter.showOnRelease = false;
+      ChuckerFlutter.showNotification = false;
+      
+      DebugUtils.debugPrintEnv('INFO: Chucker disabled for ${currentEnvironment.name} environment');
+      DebugUtils.debugPrintEnv('  - showOnRelease: ${ChuckerFlutter.showOnRelease}');
+      DebugUtils.debugPrintEnv('  - showNotification: ${ChuckerFlutter.showNotification}');
+    }
   }
 }
