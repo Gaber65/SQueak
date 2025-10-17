@@ -81,59 +81,59 @@ class _ModernLoginHeaderState extends State<ModernLoginHeader>
       ),
       child: Stack(
         children: [
-          // Language toggle in the top-right
-          Positioned(
-            top: 12,
-            right: 16,
-            child: BlocBuilder<MainCubit, MainState>(
-              builder: (context, state) {
-                final mainCubit = MainCubit.get(context);
-                final lang =
-                    (mainCubit.language ??
-                            CacheHelper.getData('language') ??
-                            'en')
-                        .toString();
-                final isArabicLang = lang == 'ar';
-                return Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(28),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.language, color: Colors.white, size: 18),
-                      const SizedBox(width: 8),
-                      Text(
-                        isArabicLang ? 'عربي' : 'English',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Switch(
-                        value: isArabicLang,
-                        activeColor: Colors.white,
-                        activeTrackColor: Colors.white24,
-                        inactiveThumbColor: Colors.white,
-                        inactiveTrackColor: Colors.white24,
-                        onChanged: (v) {
-                          final newLang = v ? 'ar' : 'en';
-                          mainCubit.changeAppLang(langMode: newLang);
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
+          // Language toggle in the top-right - HIDDEN
+          // Positioned(
+          //   top: 12,
+          //   right: 16,
+          //   child: BlocBuilder<MainCubit, MainState>(
+          //     builder: (context, state) {
+          //       final mainCubit = MainCubit.get(context);
+          //       final lang =
+          //           (mainCubit.language ??
+          //                   CacheHelper.getData('language') ??
+          //                   'en')
+          //               .toString();
+          //       final isArabicLang = lang == 'ar';
+          //       return Container(
+          //         padding: const EdgeInsets.symmetric(
+          //           horizontal: 12,
+          //           vertical: 6,
+          //         ),
+          //         decoration: BoxDecoration(
+          //           color: Colors.grey.withOpacity(0.3),
+          //           borderRadius: BorderRadius.circular(28),
+          //         ),
+          //         child: Row(
+          //           mainAxisSize: MainAxisSize.min,
+          //           children: [
+          //             const Icon(Icons.language, color: Colors.white, size: 18),
+          //             const SizedBox(width: 8),
+          //             Text(
+          //               isArabicLang ? 'عربي' : 'English',
+          //               style: const TextStyle(
+          //                 color: Colors.white,
+          //                 fontWeight: FontWeight.w700,
+          //                 fontSize: 14,
+          //               ),
+          //             ),
+          //             const SizedBox(width: 8),
+          //             Switch(
+          //               value: isArabicLang,
+          //               activeColor: Colors.white,
+          //               activeTrackColor: Colors.white24,
+          //               inactiveThumbColor: Colors.white,
+          //               inactiveTrackColor: Colors.white24,
+          //               onChanged: (v) {
+          //                 final newLang = v ? 'ar' : 'en';
+          //                 mainCubit.changeAppLang(langMode: newLang);
+          //               },
+          //             ),
+          //           ],
+          //         ),
+          //       );
+          //     },
+          //   ),
+          // ),
           // Reduce paw sizes/positions for a tighter header
           _buildFloatingPaw(
             top: height * 0.01,
