@@ -9,9 +9,7 @@ import 'package:squeak/features/pets/presentation/view/widgets/add_pet/passport_
 import '../controller/pet_cubit.dart';
 import 'widgets/add_pet/birthdate_picker.dart';
 import 'widgets/add_pet/breed_species_section.dart';
-import 'widgets/add_pet/gender_selection.dart';
 import 'widgets/add_pet/pet_name_field.dart';
-import 'widgets/add_pet/spayed_toggle.dart';
 import 'widgets/edit_pet/profile_image_section.dart';
 import 'widgets/edit_pet/save_button.dart' show SaveButton;
 
@@ -96,8 +94,6 @@ class EditPet extends StatelessWidget {
                     // Profile Image Section
                     ProfileImageSection(cubit: cubit, pets: pets),
                     SizedBox(height: responsiveHeight(20, context)),
-                    SpayedToggle(cubit: cubit),
-                    SizedBox(height: responsiveHeight(20, context)),
                     Container(
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.blue),
@@ -126,8 +122,6 @@ class EditPet extends StatelessWidget {
                             PetNameField(cubit: cubit, isDark: isDark),
                             SizedBox(height: responsiveHeight(20, context)),
                             BreedSpeciesSection(cubit: cubit, isDark: isDark),
-                            SizedBox(height: responsiveHeight(20, context)),
-                            GenderSelection(cubit: cubit),
                             SizedBox(height: responsiveHeight(20, context)),
                             BirthdatePicker(cubit: cubit, isDark: isDark),
                             SizedBox(height: responsiveHeight(20, context)),

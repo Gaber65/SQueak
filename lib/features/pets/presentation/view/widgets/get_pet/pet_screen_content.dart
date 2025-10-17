@@ -703,13 +703,14 @@ class _PetScreenContentState extends State<PetScreenContent> {
     final totalPets = widget.pets.length;
     final linkedPets =
         widget.pets.where((pet) => pet.qrCode?.isNotEmpty == true).length;
-    final spayedPets = widget.pets.where((pet) => pet.isSpayed == true).length;
+    final petsWithPassport = widget.pets.where((pet) => 
+        pet.passportNumber?.isNotEmpty == true).length;
 
     return Container(
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -725,8 +726,8 @@ class _PetScreenContentState extends State<PetScreenContent> {
         boxShadow: [
           BoxShadow(
             color: ColorManager.primaryColor.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -736,9 +737,9 @@ class _PetScreenContentState extends State<PetScreenContent> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(14),
                   gradient: LinearGradient(
                     colors: [
                       ColorManager.primaryColor,
@@ -746,19 +747,23 @@ class _PetScreenContentState extends State<PetScreenContent> {
                     ],
                   ),
                 ),
-                child: const Icon(Icons.pets, color: Colors.white, size: 24),
+                child: const Icon(
+                  Icons.pets,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       isArabic()
-                          ? "لوحة معلومات أصدقائك الأليفة"
+                          ? "لوحة الأصدقاء الأليفة"
                           : "Pet Dashboard",
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color:
                             MainCubit.get(context).isDark
@@ -766,13 +771,12 @@ class _PetScreenContentState extends State<PetScreenContent> {
                                 : Colors.black87,
                       ),
                     ),
-                    const SizedBox(height: 4),
                     Text(
                       isArabic()
-                          ? "نظرة عامة على أصدقائك الأليفة"
-                          : "Overview of your furry friends",
+                          ? "نظرة سريعة على أصدقائك"
+                          : "Quick overview",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         color:
                             MainCubit.get(context).isDark
                                 ? Colors.grey[400]
@@ -784,33 +788,33 @@ class _PetScreenContentState extends State<PetScreenContent> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
-                child: _buildStatCard(
+                child: _buildCompactStatCard(
                   totalPets.toString(),
-                  isArabic() ? "إجمالي الأصدقاء الأليفة" : "Total Pets",
+                  isArabic() ? "المجموع" : "Total",
                   Icons.pets_outlined,
-                  Colors.blue,
+                  const Color(0xFF4F46E5),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
-                child: _buildStatCard(
+                child: _buildCompactStatCard(
                   linkedPets.toString(),
-                  isArabic() ? "مربوطة برمز QR" : "QR Linked",
-                  Icons.qr_code,
-                  Colors.green,
+                  isArabic() ? "مربوطة" : "Linked",
+                  Icons.qr_code_2,
+                  const Color(0xFF10B981),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
-                child: _buildStatCard(
-                  spayedPets.toString(),
-                  isArabic() ? "معقمة" : "Spayed",
-                  Icons.health_and_safety,
-                  Colors.purple,
+                child: _buildCompactStatCard(
+                  petsWithPassport.toString(),
+                  isArabic() ? "جوازات" : "Passport",
+                  Icons.card_membership,
+                  const Color(0xFF8B5CF6),
                 ),
               ),
             ],
@@ -820,55 +824,68 @@ class _PetScreenContentState extends State<PetScreenContent> {
     );
   }
 
-  Widget _buildStatCard(
+  Widget _buildCompactStatCard(
     String value,
     String label,
     IconData icon,
     Color color,
   ) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color:
-            MainCubit.get(context).isDark
-                ? Colors.grey[800]!.withOpacity(0.5)
-                : Colors.white.withOpacity(0.7),
-        border: Border.all(color: color.withOpacity(0.2), width: 1),
+        borderRadius: BorderRadius.circular(14),
+        color: MainCubit.get(context).isDark
+            ? Colors.grey[800]!.withOpacity(0.6)
+            : Colors.white.withOpacity(0.8),
+        border: Border.all(
+          color: color.withOpacity(0.3),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+              color: color.withOpacity(0.15),
             ),
-            child: Icon(icon, color: color, size: 20),
+            child: Icon(
+              icon,
+              color: color,
+              size: 16,
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
             value,
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.w700,
-              color:
-                  MainCubit.get(context).isDark ? Colors.white : Colors.black87,
+              color: MainCubit.get(context).isDark 
+                  ? Colors.white 
+                  : Colors.black87,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text(
             label,
             style: TextStyle(
-              fontSize: 11,
-              color:
-                  MainCubit.get(context).isDark
-                      ? Colors.grey[400]
-                      : Colors.grey[600],
+              fontSize: 10,
+              color: MainCubit.get(context).isDark
+                  ? Colors.grey[400]
+                  : Colors.grey[600],
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
         ],

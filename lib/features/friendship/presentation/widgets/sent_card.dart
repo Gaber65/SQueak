@@ -108,6 +108,8 @@ class SentCard extends StatelessWidget {
           ),
 
           const SizedBox(height: 14),
+          // Spayed/Unspayed indicator - Hidden as requested
+          /*
           Container(
             margin: const EdgeInsets.only(top: 4),
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
@@ -152,6 +154,7 @@ class SentCard extends StatelessWidget {
               ],
             ),
           ),
+          */
 
           /// 🫂 Mutual Friends
           if ((pet.mutualFriends ?? 0) > 0) ...[
