@@ -91,6 +91,9 @@ class ServiceLocator {
     sl.registerLazySingleton<ChangeLanguageUseCase>(
       () => ChangeLanguageUseCase(sl()),
     );
+    sl.registerLazySingleton<MergePetsUsecase>(
+          () => MergePetsUsecase(sl()),
+    );
     sl.registerLazySingleton<ManageTokenUseCase>(
       () => ManageTokenUseCase(sl()),
     );

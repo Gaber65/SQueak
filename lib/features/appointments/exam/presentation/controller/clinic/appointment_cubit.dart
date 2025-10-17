@@ -170,19 +170,20 @@ class AppointmentCubit extends Cubit<AppointmentState> {
 
   void filterSuppliers(String query) {
     if (suppliers != null) {
-      filteredSuppliers =
-          suppliers!.data
-              .where(
-                (supplier) =>
-                    supplier.data.name.toLowerCase().contains(
-                      query.toLowerCase(),
-                    ) ||
-                    supplier.data.code.toLowerCase().contains(
-                      query.toLowerCase(),
-                    ),
-              )
-              .toList();
-      emit(SuppliersFilteredScreen());
+      if (query.isEmpty) {
+        // If query is empty, show all suppliers
+        filteredSuppliers = List.from(suppliers!.data); // Create a new list instance
+      } else {
+        // Filter by name OR code (case insensitive)
+        filteredSuppliers = suppliers!.data.where((supplier) {
+          final name = supplier.data.name.toLowerCase();
+          final code = supplier.data.code.toLowerCase();
+          final lowerQuery = query.toLowerCase();
+
+          return name.contains(lowerQuery) || code.contains(lowerQuery);
+        }).toList();
+      }
+      emit(SuppliersFilteredScreen()); // Only emit once
     }
   }
 
