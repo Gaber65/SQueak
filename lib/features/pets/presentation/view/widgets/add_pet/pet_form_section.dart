@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../controller/pet_cubit.dart';
-import 'spayed_toggle.dart';
+// import 'spayed_toggle.dart'; // Hidden as requested
 import 'pet_name_field.dart';
 import 'breed_species_section.dart';
-import 'gender_selection.dart';
+// import 'gender_selection.dart'; // Hidden as requested
 import 'birthdate_picker.dart';
 import 'passport_section.dart';
 import 'save_button.dart';
@@ -21,7 +21,7 @@ class PetFormSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SpayedToggle(cubit: cubit),
+          // SpayedToggle(cubit: cubit), // Hidden as requested
           SizedBox(height: responsiveHeight(20, context)),
           Container(
             decoration: BoxDecoration(
@@ -52,7 +52,7 @@ class PetFormSection extends StatelessWidget {
                   SizedBox(height: responsiveHeight(20, context)),
                   BreedSpeciesSection(cubit: cubit, isDark: isDark),
                   SizedBox(height: responsiveHeight(20, context)),
-                  GenderSelection(cubit: cubit),
+                  // GenderSelection(cubit: cubit), // Hidden as requested
                   SizedBox(height: responsiveHeight(20, context)),
                   BirthdatePicker(cubit: cubit, isDark: isDark),
                   SizedBox(height: responsiveHeight(20, context)),

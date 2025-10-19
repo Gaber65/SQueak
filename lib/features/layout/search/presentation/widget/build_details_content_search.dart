@@ -21,13 +21,14 @@ Widget buildDetailsContentSearch(
       children: [
         Row(
           children: [
-            Text(
-              entities.name,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontFamily: 'bold', fontSize: 15),
+            Expanded(
+              child: Text(
+                entities.name,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontFamily: 'bold', fontSize: 15),
+              ),
             ),
-            const Spacer(),
-            const Spacer(),
+            const SizedBox(width: 8),
             CircleAvatar(
               backgroundImage: NetworkImage('$imageUrl${entities.image}'),
               radius: 20,
@@ -37,16 +38,17 @@ Widget buildDetailsContentSearch(
         const SizedBox(height: 20),
         Row(
           children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.7,
+            Expanded(
               child: Row(
                 children: [
                   const Icon(Icons.location_city, size: 14),
                   const SizedBox(width: 5),
-                  Text(
-                    '${entities.location.length > 10 ? entities.location.substring(0, 10) : entities.location} , ${entities.city.length > 10 ? entities.city.substring(0, 10) : entities.city}  , ${entities.address.length > 10 ? entities.address.substring(0, 10) : entities.address} ',
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 12, fontFamily: 'bold'),
+                  Expanded(
+                    child: Text(
+                      '${entities.location.length > 10 ? entities.location.substring(0, 10) : entities.location} , ${entities.city.length > 10 ? entities.city.substring(0, 10) : entities.city}  , ${entities.address.length > 10 ? entities.address.substring(0, 10) : entities.address} ',
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 12, fontFamily: 'bold'),
+                    ),
                   ),
                 ],
               ),

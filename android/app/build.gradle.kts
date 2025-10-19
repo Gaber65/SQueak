@@ -1,17 +1,7 @@
-import java.util.Properties
-import java.io.FileInputStream
-
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id("kotlin-android") // or: id("org.jetbrains.kotlin.android")
     id("dev.flutter.flutter-gradle-plugin")
-}
-
-val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("key.properties")
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -31,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId = "com.softicare.squeak"
-        minSdk = flutter.minSdkVersion
+        minSdk = 21  // Explicitly set to API 21 (Android 5.0) for broader device support
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -41,26 +31,26 @@ android {
         }
     }
 
+    // Prefer loading from key.properties, but keeping your direct file config works too.
     signingConfigs {
-        // Debug config (بييجي مع أندرويد بشكل افتراضي)
-        getByName("debug") {
-            storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
+        create("release") {
+            storeFile = file("/Users/mac/StudioProjects/SqueakFlutter/android/new-upload-key.jks")
+            storePassword = "Squeak"   // ⚠️ move to key.properties/CI secrets later
+            keyAlias = "upload"        // ensure this is the alias with SHA1 18:1C:...:AF
+            keyPassword = "Squeak"     // ⚠️ move to key.properties/CI secrets later
         }
     }
 
     buildTypes {
         getByName("release") {
-            // علشان الاختبار بس: هنستخدم debug signing
-            signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // ✅ Use the release signing config (NOT debug!)
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }

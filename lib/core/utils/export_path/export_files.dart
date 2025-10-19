@@ -19,6 +19,7 @@ export 'package:squeak/core/service/global_widget/national_phone.dart';
 export 'package:squeak/core/service/global_widget/responsive_screen.dart';
 export 'package:squeak/core/service/global_widget/toast.dart';
 export 'package:squeak/core/service/global_widget/video_detail.dart';
+export 'package:squeak/core/utils/debug_utils.dart';
 
 // local_notifications
 export 'package:squeak/features/layout/notification/NotificationFCM/local_notification_handler.dart';
