@@ -22,10 +22,10 @@ String formatDateTime(DateTime dateTime) {
 
 String formatDateTimeBoardingCreate(String dateString) {
   try {
-    // Define the input date format
+    // Define the input data format
     final DateFormat inputFormat = DateFormat('dd/MM/yyyy h:mm a', 'en_US');
 
-    // Parse the input date string
+    // Parse the input data string
     final DateTime dateTime = inputFormat.parse(dateString);
 
     // Convert to ISO 8601 format (UTC)
@@ -36,7 +36,7 @@ String formatDateTimeBoardingCreate(String dateString) {
       'en_US',
     );
 
-    // Parse the input date string
+    // Parse the input data string
     final DateTime dateTime = inputFormat.parse(dateString);
 
     // Convert to ISO 8601 format (UTC)

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../feeds/domain/entities/pet_mating_model.dart';
+import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
+import '../../../../../generated/l10n.dart';
 
 class PetGenderChip extends StatelessWidget {
-  final PetMating pet;
+  final PetEntities pet;
   final bool isDarkMode;
 
   const PetGenderChip({
@@ -39,13 +40,13 @@ class PetGenderChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            pet.gender == 'Male' ? Icons.male : Icons.female,
+            pet.gender == 1 ? Icons.male : Icons.female,
             size: 16,
-            color: pet.gender == 'Male' ? Colors.blue : Colors.pink,
+            color: pet.gender == 1 ? Colors.blue : Colors.pink,
           ),
           const SizedBox(width: 6),
           Text(
-            pet.gender,
+            pet.gender == 1 ? S.of(context).male : S.of(context).female ,
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.bold,

@@ -1,352 +1,88 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import '../../domain/mating_request.dart';
+import 'package:squeak/core/utils/enums/profile_type.dart';
+import 'package:squeak/features/settings/persentaion/controller/setting_cubit.dart';
+import '../../../../pets/domain/entities/pet_entity.dart';
+import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
+import '../../../layoutMating/presentation/screens/widgets/profile_switcher_builder.dart';
+import 'widgets/mating_requests_body.dart';
 
 class MatingRequestsScreen extends StatelessWidget {
   const MatingRequestsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: DefaultTabController(
-        length: 2,
-        child: Column(
-          children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.favorite, color: Colors.pink.shade500),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Mating Requests for currentProfile',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Manage incoming and outgoing mating requests',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
-
-            // Tab Bar
-            TabBar(
-              labelColor: ColorManager.primaryColor,
-              unselectedLabelColor: Colors.grey,
-              indicatorColor:ColorManager.primaryColor,
-              tabs: [
-                Tab(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.favorite, size: 16),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Received (${MatingRequest.dummyMatingRequests.where((r) => r.status == RequestStatus.pending).length})',
-                      ),
-                    ],
-                  ),
-                ),
-                Tab(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.send, size: 16),
-                      const SizedBox(width: 4),
-                      Text('Sent (1)'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-
-            // Tab Views
-            Expanded(
-              child: TabBarView(
-                children: [_ReceivedRequestsTab(), _SentRequestsTab()],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ReceivedRequestsTab extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      physics: const BouncingScrollPhysics(),
-
-      itemCount: MatingRequest.dummyMatingRequests.length,
-      itemBuilder: (context, index) {
-        final request = MatingRequest.dummyMatingRequests[index];
-        return _RequestCard(
-          request: request,
-          isReceived: true,
-          onAccept: () {},
-          onReject: () {},
-        );
-      },
-    );
-  }
-}
-
-class _SentRequestsTab extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.all(16),
-      itemCount: MatingRequest.dummyMatingRequests.length,
-      itemBuilder: (context, index) {
-        final request = MatingRequest.dummyMatingRequests[index];
-        return _RequestCard(request: request, isReceived: false);
-      },
-    );
-
-  }
-}
-
-class _RequestCard extends StatelessWidget {
-  final MatingRequest request;
-  final bool isReceived;
-  final VoidCallback? onAccept;
-  final VoidCallback? onReject;
-
-  const _RequestCard({
-    required this.request,
-    required this.isReceived,
-    this.onAccept,
-    this.onReject,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final pet = isReceived ? request.fromPet : request.toPet;
-    final timeAgo = _getTimeAgo(request.timestamp);
-
-    return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-        decoration: Decorations.kDecorationBoxShadow(context: context),
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                // Pet Avatar
-                CircleAvatar(
-                  radius: 25,
-                  backgroundColor: Colors.grey.shade200,
-                  child: Text(
-                    pet.name[0].toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-
-                // Pet Info
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        pet.name,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        '${pet.breed} • ${pet.age}',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Status and Time
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: request.status.color.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            _getStatusIcon(request.status),
-                            size: 12,
-                            color: request.status.color,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            request.status.displayName,
-                            style: TextStyle(
-                              color: request.status.color,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      timeAgo,
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 12),
-
-            // Message
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                request.message,
-                style: const TextStyle(color: Colors.grey, fontSize: 14),
-              ),
-            ),
-
-            // Action Buttons
-            if (isReceived && request.status == RequestStatus.pending) ...[
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: onAccept,
-                      icon: const Icon(Icons.check, size: 16),
-                      label: const Text('Accept'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green.shade500,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: onReject,
-                      icon: const Icon(Icons.close, size: 16),
-                      label: const Text('Reject'),
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        foregroundColor: Colors.red,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-
-            if (isReceived && request.status == RequestStatus.accepted) ...[
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorManager.primaryColor,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () {
-                    // Navigate to chat
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Opening chat...')),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => sl<ManageRequestMatingCubit>()),
+        BlocProvider(create: (_) => sl<PetCubit>()..getOwnerPets()),
+        BlocProvider(create: (_) => sl<SettingCubit>()..getOwnerData()),
+        BlocProvider(create: (_) => sl<ChatListCubit>()),
+        BlocProvider(create: (_) => sl<SwitchProfileCubit>()..loadProfile()),
+      ],
+      child: BlocConsumer<ManageRequestMatingCubit, ManageRequestMatingState>(
+        listener: (context, state) {
+          if(state is UpdateMatingRequestLoaded && state.message.contains('0000')){
+            ManageRequestMatingCubit.get(context).getChatItem(ChatListCubit.get(context).allChats);
+          }
+        },
+        builder: (context, state) {
+          final cubit = ManageRequestMatingCubit.get(context);
+          final cubitList = ChatListCubit.get(context);
+          return DefaultTabController(
+            length: 2,
+            child: Scaffold(
+              appBar: _buildAppBar(context),
+              body: BlocSelector<
+                SwitchProfileCubit,
+                SwitchProfileState,
+                PetEntities?
+              >(
+                selector: (state) {
+                  if (state is ProfileLoaded &&
+                      state.profile.type == ProfileType.pet) {
+                    cubit.fetchMatingRequests(state.profile.pet!.petId!);
+                    cubit.fetchSentRequests(state.profile.pet!.petId!);
+                    cubitList.loadChats(state.profile.pet!.petId!).then(
+                      (value) {
+                      },
                     );
-                  },
-                  child: const Text('Open Chat'),
-                ),
+                    return state.profile.pet;
+                  }
+                  return null;
+                },
+                builder: (context, petActive) {
+                  return MatingRequestsBody(
+                    cubit,
+                    petActive?.petName ?? 'Current Profile',
+                  );
+                },
               ),
-            ],
-
-            if (!isReceived && request.status == RequestStatus.pending) ...[
-              const SizedBox(height: 12),
-              const Text(
-                'Waiting for response...',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ],
-          ],
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  IconData _getStatusIcon(RequestStatus status) {
-    switch (status) {
-      case RequestStatus.pending:
-        return Icons.schedule;
-      case RequestStatus.accepted:
-        return Icons.check_circle;
-      case RequestStatus.rejected:
-        return Icons.cancel;
-    }
-  }
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back, color: ColorManager.primaryColor),
+        onPressed: () => navigateAndFinish(context, LayoutScreen()),
+      ),
+      title: Text(
+        S.of(context).mangeMatingRequests,
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+      ),
+      centerTitle: true,
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      actions: [
+        buildProfileSwitcher(context),
 
-  String _getTimeAgo(DateTime timestamp) {
-    final now = DateTime.now();
-    final difference = now.difference(timestamp);
-
-    if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}m ago';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
-    } else {
-      return '${difference.inDays}d ago';
-    }
+      ],
+    );
   }
 }

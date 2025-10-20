@@ -45,36 +45,39 @@ class _PetCardState extends State<PetCard> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              MainCubit.get(context).isDark 
+              MainCubit.get(context).isDark
                   ? Colors.grey[800]!.withOpacity(0.9)
                   : Colors.white,
-              MainCubit.get(context).isDark 
+              MainCubit.get(context).isDark
                   ? Colors.grey[850]!.withOpacity(0.8)
                   : Colors.grey[50]!.withOpacity(0.5),
             ],
           ),
           boxShadow: [
             BoxShadow(
-              color: MainCubit.get(context).isDark 
-                  ? Colors.black.withOpacity(0.3)
-                  : ColorManager.primaryColor.withOpacity(0.08),
+              color:
+                  MainCubit.get(context).isDark
+                      ? Colors.black.withOpacity(0.3)
+                      : ColorManager.primaryColor.withOpacity(0.08),
               blurRadius: 20,
               offset: const Offset(0, 8),
               spreadRadius: 0,
             ),
             BoxShadow(
-              color: MainCubit.get(context).isDark 
-                  ? Colors.transparent
-                  : Colors.white.withOpacity(0.8),
+              color:
+                  MainCubit.get(context).isDark
+                      ? Colors.transparent
+                      : Colors.white.withOpacity(0.8),
               blurRadius: 10,
               offset: const Offset(0, -2),
               spreadRadius: 0,
             ),
           ],
           border: Border.all(
-            color: MainCubit.get(context).isDark 
-                ? Colors.grey[700]!.withOpacity(0.3)
-                : Colors.white.withOpacity(0.5),
+            color:
+                MainCubit.get(context).isDark
+                    ? Colors.grey[700]!.withOpacity(0.3)
+                    : Colors.white.withOpacity(0.5),
             width: 1,
           ),
         ),
@@ -82,9 +85,10 @@ class _PetCardState extends State<PetCard> {
           color: Colors.transparent,
           child: InkWell(
             borderRadius: BorderRadius.circular(20),
-            onTap: widget.selectionMode
-                ? () => widget.onSelected(!widget.isSelected)
-                : () => _navigateToEditPet(context),
+            onTap:
+                widget.selectionMode
+                    ? () => widget.onSelected(!widget.isSelected)
+                    : () => _navigateToEditPet(context),
             child: Container(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -96,23 +100,27 @@ class _PetCardState extends State<PetCard> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: widget.isSelected 
-                                  ? ColorManager.primaryColor 
-                                  : Colors.grey.withOpacity(0.3),
+                              color:
+                                  widget.isSelected
+                                      ? ColorManager.primaryColor
+                                      : Colors.grey.withOpacity(0.3),
                               width: 2,
                             ),
-                            color: widget.isSelected 
-                                ? ColorManager.primaryColor 
-                                : Colors.transparent,
+                            color:
+                                widget.isSelected
+                                    ? ColorManager.primaryColor
+                                    : Colors.transparent,
                           ),
                           child: Transform.scale(
                             scale: 1.2,
                             child: Checkbox(
                               value: widget.isSelected,
-                              onChanged: (val) => widget.onSelected(val ?? false),
+                              onChanged:
+                                  (val) => widget.onSelected(val ?? false),
                               activeColor: Colors.transparent,
                               checkColor: Colors.white,
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
                             ),
                           ),
                         ),
@@ -122,10 +130,10 @@ class _PetCardState extends State<PetCard> {
                     ],
                   ),
                   const SizedBox(height: 16),
-      
+
                   QrStatusIndicator(pet: widget.pet),
                   const SizedBox(height: 16),
-      
+
                   if (!widget.selectionMode)
                     QrActionButtons(
                       pet: widget.pet,
@@ -202,10 +210,11 @@ class _PetCardState extends State<PetCard> {
                     ),
                     child: Center(
                       child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
+                        value:
+                            loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(
                           ColorManager.primaryColor,
@@ -228,7 +237,10 @@ class _PetCardState extends State<PetCard> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: MainCubit.get(context).isDark ? Colors.white : Colors.black87,
+                  color:
+                      MainCubit.get(context).isDark
+                          ? Colors.white
+                          : Colors.black87,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -237,7 +249,10 @@ class _PetCardState extends State<PetCard> {
                 children: [
                   // Gender indicator
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: _getGenderColor().withOpacity(0.1),
                       borderRadius: BorderRadius.circular(6),
@@ -270,16 +285,21 @@ class _PetCardState extends State<PetCard> {
                   // Spay/Neuter status
                   if (widget.pet.isSpayed != null)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
-                        color: widget.pet.isSpayed! 
-                            ? Colors.green.withOpacity(0.1)
-                            : Colors.orange.withOpacity(0.1),
+                        color:
+                            widget.pet.isSpayed!
+                                ? Colors.green.withOpacity(0.1)
+                                : Colors.orange.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
-                          color: widget.pet.isSpayed! 
-                              ? Colors.green.withOpacity(0.3)
-                              : Colors.orange.withOpacity(0.3),
+                          color:
+                              widget.pet.isSpayed!
+                                  ? Colors.green.withOpacity(0.3)
+                                  : Colors.orange.withOpacity(0.3),
                           width: 1,
                         ),
                       ),
@@ -287,21 +307,27 @@ class _PetCardState extends State<PetCard> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            widget.pet.isSpayed! 
+                            widget.pet.isSpayed!
                                 ? Icons.health_and_safety
                                 : Icons.warning_amber_outlined,
                             size: 12,
-                            color: widget.pet.isSpayed! ? Colors.green : Colors.orange,
+                            color:
+                                widget.pet.isSpayed!
+                                    ? Colors.green
+                                    : Colors.orange,
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            widget.pet.isSpayed! 
+                            widget.pet.isSpayed!
                                 ? (isArabic() ? "معقم" : "Spayed")
                                 : (isArabic() ? "غير معقم" : "Not Spayed"),
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
-                              color: widget.pet.isSpayed! ? Colors.green : Colors.orange,
+                              color:
+                                  widget.pet.isSpayed!
+                                      ? Colors.green
+                                      : Colors.orange,
                             ),
                           ),
                         ],
@@ -312,7 +338,10 @@ class _PetCardState extends State<PetCard> {
               const SizedBox(height: 8),
               if (widget.pet.birthdate?.isNotEmpty ?? false) ...[
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: ColorManager.primaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -358,9 +387,10 @@ class _PetCardState extends State<PetCard> {
                       ? widget.pet.breed!.arBreed
                       : widget.pet.breed!.enBreed,
                   style: TextStyle(
-                    color: MainCubit.get(context).isDark 
-                        ? Colors.grey[400] 
-                        : Colors.grey[600],
+                    color:
+                        MainCubit.get(context).isDark
+                            ? Colors.grey[400]
+                            : Colors.grey[600],
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
@@ -370,8 +400,7 @@ class _PetCardState extends State<PetCard> {
           ),
         ),
         const SizedBox(width: 12),
-        if (!widget.selectionMode)
-          _buildCalendarButton(context),
+        if (!widget.selectionMode) _buildCalendarButton(context),
       ],
     );
   }
@@ -397,10 +426,11 @@ class _PetCardState extends State<PetCard> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () => navigateToScreen(
-            context,
-            MySupplierScreen(petSelectFromIcon: widget.pet),
-          ),
+          onTap:
+              () => navigateToScreen(
+                context,
+                MySupplierScreen(petSelectFromIcon: widget.pet),
+              ),
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Icon(
@@ -449,26 +479,26 @@ class _PetCardState extends State<PetCard> {
 
   String _calculateAge() {
     if (widget.pet.birthdate?.isEmpty ?? true) return "";
-    
+
     try {
       final birthDate = DateTime.parse(widget.pet.birthdate!);
       final now = DateTime.now();
       final difference = now.difference(birthDate);
-      
+
       final years = difference.inDays ~/ 365;
       final months = (difference.inDays % 365) ~/ 30;
-      
+
       if (years > 0) {
-        return isArabic() 
+        return isArabic()
             ? "($years ${years == 1 ? 'سنة' : 'سنوات'})"
             : "($years ${years == 1 ? 'year' : 'years'})";
       } else if (months > 0) {
-        return isArabic() 
+        return isArabic()
             ? "($months ${months == 1 ? 'شهر' : 'شهور'})"
             : "($months ${months == 1 ? 'month' : 'months'})";
       } else {
         final days = difference.inDays;
-        return isArabic() 
+        return isArabic()
             ? "($days ${days == 1 ? 'يوم' : 'أيام'})"
             : "($days ${days == 1 ? 'day' : 'days'})";
       }

@@ -42,7 +42,7 @@ class DateFieldWidget extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      controller.text.isEmpty ? 'Select date' : controller.text,
+                      controller.text.isEmpty ? 'Select data' : controller.text,
                       style: TextStyle(
                         color: controller.text.isEmpty 
                             ? Colors.grey.shade600 

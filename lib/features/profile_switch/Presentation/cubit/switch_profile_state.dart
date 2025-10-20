@@ -19,3 +19,8 @@ class ProfileError extends SwitchProfileState {
   final String message;
   ProfileError(this.message);
 }
+
+class ProfileSwitcherPage extends SwitchProfileState {
+  final ActiveProfile profile;
+  ProfileSwitcherPage(this.profile);
+}

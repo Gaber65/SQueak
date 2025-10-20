@@ -165,7 +165,7 @@ class _BookingContentBodyState extends State<BookingContentBody> {
                             context,
                             isArabic()
                                 ? 'الرجاء تحديد التاريخ أولاً'
-                                : 'Please select a date first',
+                                : 'Please select a data first',
                           );
                           return;
                         }
@@ -240,7 +240,7 @@ class _BookingContentBodyState extends State<BookingContentBody> {
                             context,
                             isArabic()
                                 ? 'لا يمكن تحديد تاريخ في الماضي'
-                                : 'Cannot select a past date',
+                                : 'Cannot select a past data',
                           );
                         }
                       },

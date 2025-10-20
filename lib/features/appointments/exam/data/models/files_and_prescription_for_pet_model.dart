@@ -108,13 +108,13 @@ class Prescription {
 
   factory Prescription.fromJson(Map<String, dynamic> json) => Prescription(
     comment: json["comment"],
-    date: json["date"] == null ? null : DateTime.parse(json["date"]),
+    date: json["data"] == null ? null : DateTime.parse(json["data"]),
     prescriptionDrugs: json["prescriptionDrugs"] == null ? [] : List<PrescriptionDrug>.from(json["prescriptionDrugs"]!.map((x) => PrescriptionDrug.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "comment": comment,
-    "date": date?.toIso8601String(),
+    "data": date?.toIso8601String(),
     "prescriptionDrugs": prescriptionDrugs == null ? [] : List<dynamic>.from(prescriptionDrugs!.map((x) => x.toJson())),
   };
 }
@@ -304,24 +304,24 @@ class Errors {
 //
 // class Prescription {
 //   String? comment;
-//   DateTime? date;
+//   DateTime? data;
 //   List<PrescriptionDrug>? prescriptionDrugs;
 //
 //   Prescription({
 //     this.comment,
-//     this.date,
+//     this.data,
 //     this.prescriptionDrugs,
 //   });
 //
 //   factory Prescription.fromJson(Map<String, dynamic> json) => Prescription(
 //     comment: json["comment"],
-//     date: json["date"] == null ? null : DateTime.parse(json["date"]),
+//     data: json["data"] == null ? null : DateTime.parse(json["data"]),
 //     prescriptionDrugs: json["prescriptionDrugs"] == null ? [] : List<PrescriptionDrug>.from(json["prescriptionDrugs"]!.map((x) => PrescriptionDrug.fromJson(x))),
 //   );
 //
 //   Map<String, dynamic> toJson() => {
 //     "comment": comment,
-//     "date": date?.toIso8601String(),
+//     "data": data?.toIso8601String(),
 //     "prescriptionDrugs": prescriptionDrugs == null ? [] : List<dynamic>.from(prescriptionDrugs!.map((x) => x.toJson())),
 //   };
 // }

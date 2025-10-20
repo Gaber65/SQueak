@@ -14,7 +14,6 @@ import 'package:intl/intl.dart';
 part 'comment_state.dart';
 
 class CommentCubit extends Cubit<CommentState> {
-
   CommentCubit(
     this.deleteCommentPostUseCase,
     this.updateCommentUseCase,
@@ -162,5 +161,11 @@ class CommentCubit extends Cubit<CommentState> {
       comments.removeWhere((element) => element.parentId != null);
       emit(GetCommentSuccess(r));
     });
+  }
+
+  @override
+  Future<void> close() async {
+    await CacheHelper.saveData('isReplayCommentOpen', false);
+    super.close();
   }
 }

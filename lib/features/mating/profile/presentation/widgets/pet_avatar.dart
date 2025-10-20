@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/network/end_points.dart';
+import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 import '../../../../../core/utils/theme/color_mangment/color_manager.dart';
-import '../../../feeds/domain/entities/pet_mating_model.dart';
 
 class PetAvatar extends StatelessWidget {
-  final PetMating pet;
+  final PetEntities pet;
   final bool isDarkMode;
 
   const PetAvatar({
@@ -15,6 +16,8 @@ class PetAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasImage = pet.imageName!.isNotEmpty && pet.imageName != imageUrl;
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -31,11 +34,22 @@ class PetAvatar extends StatelessWidget {
           color: isDarkMode ? Colors.grey.shade800 : Colors.white,
           borderRadius: BorderRadius.circular(25),
         ),
-        child: CircleAvatar(
+        child:hasImage ? CircleAvatar(
+          radius: 50,
+          backgroundColor: Colors.transparent,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(25),
+            child: Image.network(
+              imageUrl +pet.imageName!,
+
+              fit: BoxFit.cover,
+            ),
+          ),
+        ) : CircleAvatar(
           radius: 50,
           backgroundColor: Colors.transparent,
           child: Text(
-            pet.name[0].toUpperCase(),
+             pet.petName![0].toUpperCase(),
             style: TextStyle(
               fontSize: 36,
               fontWeight: FontWeight.bold,

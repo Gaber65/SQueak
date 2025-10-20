@@ -9,7 +9,7 @@ const String version = '/v1/api';
 /// Media URLs
 String imageUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
 String videoUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
-String imageUrlWithVetICare = ConfigModel.serverFirstHalfOfImageUrl; 
+String imageUrlWithVetICare = ConfigModel.serverFirstHalfOfImageUrl;
 // String videoUrlWithVetICare = ConfigModel.serverSecondHalfOfVideoUrl;
 
 /// Auth & User Management
@@ -91,13 +91,11 @@ const String contactUsEndPoint = '$version/tickets';
 const String createAvailabilitiesEndPoint = '$version/availabilities';
 String getAvailabilitiesEndPoint(String clinicCode) =>
     '$version/vetcare/avalibilities?ClinicCode=$clinicCode';
-String deleteAvailabilitiesEndPoint(String id) =>
-    '$version/availabilities/$id';
-String updateAvailabilitiesEndPoint(String id) =>
-    '$version/availabilities/$id';
+String deleteAvailabilitiesEndPoint(String id) => '$version/availabilities/$id';
+String updateAvailabilitiesEndPoint(String id) => '$version/availabilities/$id';
 
 /// Appointments
-String createAndGetAppointmentsEndPoint(String phone,bool isApplyFilter) =>
+String createAndGetAppointmentsEndPoint(String phone, bool isApplyFilter) =>
     '$version/vetcare/AllMyPetsRerservations/paginated?ClientPhone=$phone&IsApplyFilter=$isApplyFilter';
 const String getAppointmentsEndPoint = '$version/appointments/user';
 const String createAndGetReservationsEndPointGetFromNintyDays =
@@ -142,21 +140,20 @@ const String invoiveEndPoint = '$version/vetcare/print/reciept/';
 /// Files & Prescriptions
 const String getFilesAndPrescriptionForPet =
     '$version/vetcare/PrescriptionAndMedicalTests/6fc7968e-b080-423e-af4a-1e7c8ff60be5';
-String getFilesAndPrescriptionForPetEndPoint({
-  required String reservationid,
-}) =>
+String getFilesAndPrescriptionForPetEndPoint({required String reservationid}) =>
     '$version/vetcare/PrescriptionAndMedicalTests/$reservationid';
+
 ///todo boarding
-String boardingTypeEndPoint(String ClinicCode) => '$version/vetcare/BoardingType?ClinicCode=$ClinicCode';
-String createBoardingEndPoint  = '$version/vetcare/boarding';
-String editBoardingEndPoint  = '$version/vetcare/updateboarding';
+String boardingTypeEndPoint(String ClinicCode) =>
+    '$version/vetcare/BoardingType?ClinicCode=$ClinicCode';
+String createBoardingEndPoint = '$version/vetcare/boarding';
+String editBoardingEndPoint = '$version/vetcare/updateboarding';
 String getAllBoardingEndPoint(String phone) =>
     '$version/vetcare/boarding?ClientPhone=$phone';
-String rateBoardingEndPoint  = '$version/vetcare/reviewboarding';
+String rateBoardingEndPoint = '$version/vetcare/reviewboarding';
 
 ///Qr
-String qrScanEndPoint  = '$version/qr/Scan';
-
+String qrScanEndPoint = '$version/qr/Scan';
 
 /// PetFriend
 const String sendRequestEndPoint = '$version/petrequest/send';
@@ -170,6 +167,34 @@ const String cancelFriendshipEndPoint = '$version/petfriends/cancel';
 const String searchFriendsEndPoint = '$version/search/petfriends';
 const String getSentRequestsEndPoint = '$version/pet/sendrequest?MyPetId=';
 
+/// Mating pet
+const String updatePetStatusEndPoint = '$version/pets/';
+ String getPetProfile(String petId) => '$version/pets/$petId/profile';
+ String getPetHistoryProfile(String petId) => '$version/pets/id/history?id=$petId';
+
+ String getPetHistoryProfileSeperate(String historyId) => '$version/pets/history/$historyId/seperate';
+ String getPetHistoryProfileSetBaby(String historyId) => '$version/pets/history/$historyId/seperate';
+ String getPetHistoryProfilePregnant(String historyId) => '$version/pets/history/$historyId/SetBaby';
+
+const String cancelRequestEndPoint = '$version/matingrequest/cancel';
+const String getAvailablePetsEndPoint = '$version/pets/available';
+const String sendMatingRequestEndPoint = '$version/matingrequest';
+const String getPetProfileEndPoint = '$version/pets/profile';
+const String getPetsByStatusEndPoint = '$version/pets/profile';
+String getMatingRequestsEndPoint(petId) => '$version/matingrequest?PetId=$petId';
+String finishMatingRequestsEndPoint = '$version/matingrequest/finish';
+String getMatingSentEndPoint(petId) => '$version/mymatingrequest?PetId=$petId';
+
+
+
+/// Mating chat
+String getChatsEndPoint(petId) => '$version/conversations?ConversationType=1&PetId=$petId';
+String getMSGChatsEndPoint(conversationId) => '$version/messages?ConversationId=$conversationId';
+String sendMSGEndPoint = '$version/messages';
+String renameChatEndPoint = '$version/conversations/rename';
+String blockChatEndPoint = '$version/conversations/update/blocking';
+String rateMatingEndPoint = '$version/matingrequest/rate';
+
 
 /// App State
 String? clintId;
@@ -177,4 +202,3 @@ String? uId = '';
 String token = '';
 String refreshToken = '';
 String? language;
-

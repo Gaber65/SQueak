@@ -38,7 +38,6 @@ class NotificationScreen extends StatelessWidget {
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         itemBuilder: (context, index) {
-                          print(cubit.notifications[0].title);
                           return NotificationCard(
                             notification: cubit.notifications[index],
                           );

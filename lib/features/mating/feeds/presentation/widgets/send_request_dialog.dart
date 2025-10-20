@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:squeak/features/mating/feeds/domain/entities/pet_mating_model.dart';
+import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import 'package:squeak/features/mating/profile/presentation/widgets/pet_avatar.dart';
+import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
+
+import '../../domain/entities/mating_request_entity.dart';
+import '../../domain/usecases/mating_parameters.dart';
 
 class SendRequestDialog extends StatefulWidget {
-  final PetMating targetPet;
+  final PetEntities targetPet;
+  final String senderPetId;
   final bool isDarkMode;
+  final MatingFeedsCubit cubit;
 
   const SendRequestDialog({
     super.key,
     required this.targetPet,
+    required this.cubit,
+    required this.senderPetId,
     this.isDarkMode = false,
   });
 
@@ -18,7 +27,6 @@ class SendRequestDialog extends StatefulWidget {
 
 class _SendRequestDialogState extends State<SendRequestDialog>
     with TickerProviderStateMixin {
-  final _messageController = TextEditingController();
   bool _isLoading = false;
   late AnimationController _animationController;
   late AnimationController _heartController;
@@ -27,33 +35,15 @@ class _SendRequestDialogState extends State<SendRequestDialog>
   late Animation<double> _heartAnimation;
 
   // Enhanced Dark Mode Colors
-  Color get _backgroundColor => widget.isDarkMode
-      ? Colors.grey.shade900
-      : Colors.white;
+  Color get _borderColor =>
+      widget.isDarkMode ? Colors.grey.shade700 : Colors.grey.shade200;
 
-  Color get _surfaceColor => widget.isDarkMode
-      ? Colors.grey.shade800
-      : Colors.grey.shade50;
+  Color get _textPrimaryColor =>
+      widget.isDarkMode ? Colors.white : Colors.black87;
 
-  Color get _cardColor => widget.isDarkMode
-      ? Colors.grey.shade800
-      : Colors.white;
+  Color get _textSecondaryColor =>
+      widget.isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600;
 
-  Color get _borderColor => widget.isDarkMode
-      ? Colors.grey.shade700
-      : Colors.grey.shade200;
-
-  Color get _textPrimaryColor => widget.isDarkMode
-      ? Colors.white
-      : Colors.black87;
-
-  Color get _textSecondaryColor => widget.isDarkMode
-      ? Colors.grey.shade400
-      : Colors.grey.shade600;
-
-  Color get _hintColor => widget.isDarkMode
-      ? Colors.grey.shade500
-      : Colors.grey.shade500;
 
   @override
   void initState() {
@@ -72,29 +62,17 @@ class _SendRequestDialogState extends State<SendRequestDialog>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.elasticOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
 
-    _heartAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.2,
-    ).animate(CurvedAnimation(
-      parent: _heartController,
-      curve: Curves.easeInOut,
-    ));
+    _heartAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+      CurvedAnimation(parent: _heartController, curve: Curves.easeInOut),
+    );
 
     _animationController.forward();
     _heartController.repeat(reverse: true);
@@ -112,34 +90,34 @@ class _SendRequestDialogState extends State<SendRequestDialog>
             child: Dialog(
               backgroundColor: Colors.transparent,
               child: Container(
-                constraints: const BoxConstraints(maxWidth: 400),
+                constraints: const BoxConstraints(maxWidth: 600),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: widget.isDarkMode
-                        ? [
-                      Colors.grey.shade900,
-                      Colors.grey.shade800,
-                      Colors.grey.shade900,
-                    ]
-                        : [
-                      Colors.white,
-                      Colors.blue.shade50,
-                    ],
+                    colors:
+                        widget.isDarkMode
+                            ? [
+                              Colors.grey.shade900,
+                              Colors.grey.shade800,
+                              Colors.grey.shade900,
+                            ]
+                            : [Colors.white, Colors.blue.shade50],
                   ),
                   borderRadius: BorderRadius.circular(28),
                   border: Border.all(
-                    color: widget.isDarkMode
-                        ? Colors.grey.shade700.withOpacity(0.5)
-                        : Colors.blue.shade100,
+                    color:
+                        widget.isDarkMode
+                            ? Colors.grey.shade700.withOpacity(0.5)
+                            : Colors.blue.shade100,
                     width: 2,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: widget.isDarkMode
-                          ? Colors.black.withOpacity(0.6)
-                          : Colors.blue.withOpacity(0.1),
+                      color:
+                          widget.isDarkMode
+                              ? Colors.black.withOpacity(0.6)
+                              : Colors.blue.withOpacity(0.1),
                       blurRadius: 30,
                       offset: const Offset(0, 15),
                     ),
@@ -147,10 +125,7 @@ class _SendRequestDialogState extends State<SendRequestDialog>
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildEnhancedContent(),
-                    _buildEnhancedActions(),
-                  ],
+                  children: [_buildEnhancedContent(), _buildEnhancedActions()],
                 ),
               ),
             ),
@@ -160,16 +135,63 @@ class _SendRequestDialogState extends State<SendRequestDialog>
     );
   }
 
-
   Widget _buildEnhancedContent() {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _buildTargetPetCard(),
+          // Lovely Animated Heart Container
+          ScaleTransition(
+            scale: _heartAnimation,
+            child: Container(
+              width: 90,
+              height: 90,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [Colors.pinkAccent.shade100, Colors.pink.shade400],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.pink.withOpacity(0.4),
+                    blurRadius: 15,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.favorite_rounded,
+                color: Colors.white,
+                size: 48,
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Lovely Title
+          Text(
+            S.of(context).sendLovelyRequestTitle,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: _textPrimaryColor,
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          Text(
+            S
+                .of(context)
+                .sendLovelyRequestSubtitle(widget.targetPet.petName ?? ''),
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: _textSecondaryColor),
+          ),
           const SizedBox(height: 24),
-          _buildMessageSection(),
+
+          // Pet Info Card (already beautiful)
+          _buildTargetPetCard(),
         ],
       ),
     );
@@ -180,28 +202,23 @@ class _SendRequestDialogState extends State<SendRequestDialog>
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: widget.isDarkMode
-              ? [
-            Colors.grey.shade800,
-            Colors.grey.shade800,
-          ]
-              : [
-            Colors.white,
-            Colors.grey.shade50,
-          ],
+          colors:
+              widget.isDarkMode
+                  ? [Colors.grey.shade800, Colors.grey.shade800]
+                  : [Colors.white, Colors.grey.shade50],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: widget.isDarkMode
-              ? Colors.grey.shade700
-              : Colors.grey.shade200,
+          color:
+              widget.isDarkMode ? Colors.grey.shade700 : Colors.grey.shade200,
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: widget.isDarkMode
-                ? Colors.black.withOpacity(0.3)
-                : Colors.black.withOpacity(0.05),
+            color:
+                widget.isDarkMode
+                    ? Colors.black.withOpacity(0.3)
+                    : Colors.black.withOpacity(0.05),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -209,36 +226,7 @@ class _SendRequestDialogState extends State<SendRequestDialog>
       ),
       child: Row(
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.blue.shade300,
-                  Colors.purple.shade300,
-                ],
-              ),
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.blue.withOpacity(0.3),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                widget.targetPet.name[0].toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
+          PetAvatar(pet: widget.targetPet, isDarkMode: widget.isDarkMode),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -254,7 +242,7 @@ class _SendRequestDialogState extends State<SendRequestDialog>
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        widget.targetPet.name,
+                        widget.targetPet.petName!,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -266,15 +254,22 @@ class _SendRequestDialogState extends State<SendRequestDialog>
                 ),
                 const SizedBox(height: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: widget.isDarkMode
-                        ? Colors.grey.shade700
-                        : Colors.grey.shade100,
+                    color:
+                        widget.isDarkMode
+                            ? Colors.grey.shade700
+                            : Colors.grey.shade100,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    '${widget.targetPet.breed} • ${widget.targetPet.age}',
+                    (widget.targetPet.birthdate != null &&
+                            widget.targetPet.birthdate != '')
+                        ? "${formatAge(DateTime.parse(widget.targetPet.birthdate!.substring(0, 10)))}${widget.targetPet.breed?.enBreed != null ? " • ${widget.targetPet.breed!.enBreed}" : ""}"
+                        : widget.targetPet.breed?.enBreed ?? "",
                     style: TextStyle(
                       color: _textSecondaryColor,
                       fontSize: 13,
@@ -285,114 +280,8 @@ class _SendRequestDialogState extends State<SendRequestDialog>
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              Icons.arrow_forward_rounded,
-              color: Colors.blue.shade400,
-              size: 20,
-            ),
-          ),
         ],
       ),
-    );
-  }
-
-  Widget _buildMessageSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(
-              Icons.message_rounded,
-              size: 20,
-              color: Colors.purple.shade400,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'Message (Optional)',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: _textPrimaryColor,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Container(
-          decoration: BoxDecoration(
-            color: widget.isDarkMode
-                ? Colors.grey.shade800
-                : Colors.grey.shade50,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: _messageController.text.isNotEmpty
-                  ? Colors.purple.shade300
-                  : _borderColor,
-              width: _messageController.text.isNotEmpty ? 2 : 1,
-            ),
-          ),
-          child: TextField(
-            controller: _messageController,
-            style: TextStyle(color: _textPrimaryColor),
-            decoration: InputDecoration(
-              hintText: 'Write a message to introduce your pet...',
-              hintStyle: TextStyle(color: _hintColor),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.all(16),
-              counterStyle: TextStyle(color: _textSecondaryColor),
-            ),
-            maxLines: 4,
-            maxLength: 200,
-            onChanged: (value) => setState(() {}),
-          ),
-        ),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: widget.isDarkMode
-                ? Colors.blue.shade900.withOpacity(0.2)
-                : Colors.blue.shade50,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: widget.isDarkMode
-                  ? Colors.blue.shade700.withOpacity(0.3)
-                  : Colors.blue.shade200,
-            ),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.info_outline_rounded,
-                size: 16,
-                color: widget.isDarkMode
-                    ? Colors.blue.shade300
-                    : Colors.blue.shade600,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'A friendly message increases your chances of a positive response!',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: widget.isDarkMode
-                        ? Colors.blue.shade300
-                        : Colors.blue.shade700,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 
@@ -401,22 +290,21 @@ class _SendRequestDialogState extends State<SendRequestDialog>
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: widget.isDarkMode
-              ? [
-            Colors.grey.shade900.withOpacity(0.3),
-            Colors.grey.shade800.withOpacity(0.7),
-          ]
-              : [
-            Colors.grey.shade50,
-            Colors.blue.shade50,
-          ],
+          colors:
+              widget.isDarkMode
+                  ? [
+                    Colors.grey.shade900.withOpacity(0.3),
+                    Colors.grey.shade800.withOpacity(0.7),
+                  ]
+                  : [Colors.grey.shade50, Colors.blue.shade50],
         ),
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(28)),
         border: Border(
           top: BorderSide(
-            color: widget.isDarkMode
-                ? Colors.grey.shade700.withOpacity(0.5)
-                : Colors.blue.shade100,
+            color:
+                widget.isDarkMode
+                    ? Colors.grey.shade700.withOpacity(0.5)
+                    : Colors.blue.shade100,
           ),
         ),
       ),
@@ -425,10 +313,7 @@ class _SendRequestDialogState extends State<SendRequestDialog>
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                border: Border.all(
-                  color: _borderColor,
-                  width: 2,
-                ),
+                border: Border.all(color: _borderColor, width: 2),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Material(
@@ -448,7 +333,7 @@ class _SendRequestDialogState extends State<SendRequestDialog>
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Cancel',
+                          S.of(context).cancel,
                           style: TextStyle(
                             color: _textSecondaryColor,
                             fontWeight: FontWeight.w600,
@@ -467,23 +352,22 @@ class _SendRequestDialogState extends State<SendRequestDialog>
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: _isLoading
-                      ? [Colors.grey.shade400, Colors.grey.shade500]
-                      : [
-                    Colors.blue.shade400,
-                    Colors.blue.shade400,
-                  ],
+                  colors:
+                      _isLoading
+                          ? [Colors.grey.shade400, Colors.grey.shade500]
+                          : [Colors.blue.shade400, Colors.blue.shade400],
                 ),
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: _isLoading
-                    ? null
-                    : [
-                  BoxShadow(
-                    color: Colors.blue.withOpacity(0.4),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+                boxShadow:
+                    _isLoading
+                        ? null
+                        : [
+                          BoxShadow(
+                            color: Colors.blue.withOpacity(0.4),
+                            blurRadius: 12,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
               ),
               child: Material(
                 color: Colors.transparent,
@@ -501,7 +385,9 @@ class _SendRequestDialogState extends State<SendRequestDialog>
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
                             ),
                           )
                         else ...[
@@ -511,8 +397,8 @@ class _SendRequestDialogState extends State<SendRequestDialog>
                             color: Colors.white,
                           ),
                           const SizedBox(width: 8),
-                          const Text(
-                            'Send Request',
+                          Text(
+                            S.of(context).sendRequest,
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -543,35 +429,28 @@ class _SendRequestDialogState extends State<SendRequestDialog>
     await Future.delayed(const Duration(milliseconds: 1500));
 
     if (mounted) {
-      Navigator.of(context).pop();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(
-                Icons.favorite_rounded,
-                color: Colors.white,
-                size: 20,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'Mating request sent to ${widget.targetPet.name}! 💕',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          backgroundColor: Colors.blue.shade400,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          margin: const EdgeInsets.all(16),
+      final result = await widget.cubit.sendMatingRequest(
+        SendMatingRequestParameters(
+          message: '',
+          senderPetId: widget.senderPetId,
+          targetPetId: widget.targetPet.petId!,
         ),
+      );
+
+      result.fold(
+        (errorMessage) {
+          Navigator.pop(context,false);
+          errorToast(context, errorMessage);
+        },
+        (status) {
+          if (status == MatingRequestStatus.success) {
+            Navigator.pop(context ,true);
+            successToast(
+              context,
+              'Mating request sent to ${widget.targetPet.petName}! 💕',
+            );
+          }
+        },
       );
     }
   }
@@ -580,33 +459,6 @@ class _SendRequestDialogState extends State<SendRequestDialog>
   void dispose() {
     _animationController.dispose();
     _heartController.dispose();
-    _messageController.dispose();
     super.dispose();
   }
-}
-
-// Usage functions
-void showBeautifulSendRequestDialog(
-    BuildContext context,
-    PetMating targetPet, {
-      bool isDarkMode = false,
-    }) {
-  showDialog(
-    context: context,
-    barrierDismissible: true,
-    barrierColor: isDarkMode ? Colors.black87 : Colors.black54,
-    builder: (context) => SendRequestDialog(
-      targetPet: targetPet,
-      isDarkMode: isDarkMode,
-    ),
-  );
-}
-
-// Auto-detect theme version
-void showThemeAwareSendRequestDialog(
-    BuildContext context,
-    PetMating targetPet,
-    ) {
-  final isDark = Theme.of(context).brightness == Brightness.dark;
-  showBeautifulSendRequestDialog(context, targetPet, isDarkMode: isDark);
 }

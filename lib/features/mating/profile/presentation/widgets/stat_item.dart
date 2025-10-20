@@ -18,9 +18,10 @@ class StatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -34,31 +35,36 @@ class StatItem extends StatelessWidget {
               color: color.withOpacity(0.3),
             ),
           ),
-          child: Icon(
-            icon,
-            color: color,
-            size: 24,
+          child: Column(
+            children: [
+
+              Icon(
+                icon,
+                color: color,
+                size: 24,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                value,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: isDarkMode ? Colors.white : Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: isDarkMode ? Colors.white : Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: TextStyle(
-            color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

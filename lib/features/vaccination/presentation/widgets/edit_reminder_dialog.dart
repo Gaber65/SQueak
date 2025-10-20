@@ -267,7 +267,7 @@ class _SelectDateVacForEditState extends State<SelectDateVacForEdit> {
     return InkWell(
       onTap: () async {
         await widget.cubit.selectDateOnEdit(context, widget.initDate);
-        _updateDate(); // Ensure UI updates after date selection
+        _updateDate(); // Ensure UI updates after data selection
       },
       child: IgnorePointer(
         child: MyTextForm(
@@ -278,11 +278,11 @@ class _SelectDateVacForEditState extends State<SelectDateVacForEdit> {
           hintText:
               isArabic()
                   ? 'من فضلك ادخل تاريخ الميلاد'
-                  : 'Please enter date of birth',
+                  : 'Please enter data of birth',
           validatorText:
               isArabic()
                   ? 'من فضلك ادخل تاريخ الميلاد'
-                  : 'Please enter date of birth',
+                  : 'Please enter data of birth',
           obscureText: false,
         ),
       ),

@@ -1,10 +1,3 @@
-import 'package:squeak/features/mating/chat/domain/entities/chat_status.dart';
-
-class GetChatsParameters {
-  final ChatStatus? status;
-
-  const GetChatsParameters({this.status});
-}
 
 class GetMessagesParameters {
   final String chatId;
@@ -13,29 +6,91 @@ class GetMessagesParameters {
 }
 
 class SendMessageParameters {
-  final String chatId;
-  final String text;
-  final bool isMe;
+  final String description;
+  final String? image;
+  final String? video;
+  final String? audio;
+  final bool isRead;
+  final String conversationId;
 
   const SendMessageParameters({
-    required this.chatId,
-    required this.text,
-    required this.isMe,
+    required this.description,
+    this.image,
+    this.video,
+    this.audio,
+    this.isRead = true,
+    required this.conversationId,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'description': description,
+      'image': image,
+      'video': video,
+      'audio': audio,
+      'isRead': isRead,
+      'convesationId': conversationId,
+    };
+  }
 }
 
-class UpdateChatStatusParameters {
-  final String chatId;
-  final ChatStatus status;
+class BlockChatParameters {
+  final String conversationId;
+  final int statues;
+  final int conversationType;
 
-  const UpdateChatStatusParameters({
-    required this.chatId,
-    required this.status,
+  const BlockChatParameters({
+    required this.conversationId,
+    required this.statues,
+    required this.conversationType,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'conversationId': conversationId,
+      'statues': statues,
+      'conversationType': conversationType,
+    };
+  }
 }
 
-class MarkMessagesReadParameters {
-  final String chatId;
+class RenameChatParameters {
+  final String conversationId;
+  final String petId;
+  final String newName;
+  final int conversationType;
 
-  const MarkMessagesReadParameters({required this.chatId});
+  const RenameChatParameters({
+    required this.conversationId,
+    required this.petId,
+    required this.newName,
+    required this.conversationType,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'conversationId': conversationId,
+      'petId': petId,
+      'newName': newName,
+      'conversationType': conversationType,
+    };
+  }
+}
+
+class RateMatingParameters {
+  final String matingId;
+  final int rate;
+  final String rateComment;
+
+  const RateMatingParameters({
+    required this.matingId,
+    required this.rate,
+    required this.rateComment,
+  });
+
+  Map<String, dynamic> toJson() => {
+    'matingId': matingId,
+    'rate': rate,
+    'rateComment': rateComment,
+  };
 }

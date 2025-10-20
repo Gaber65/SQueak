@@ -3259,6 +3259,1626 @@ class S {
       args: [],
     );
   }
+
+  /// `First Switch Profile`
+  String get switchTitle {
+    return Intl.message(
+      'First Switch Profile',
+      name: 'switchTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Complete Pet Profile`
+  String get CompletePetProfile {
+    return Intl.message(
+      'Complete Pet Profile',
+      name: 'CompletePetProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile Incomplete`
+  String get profile_incomplete {
+    return Intl.message(
+      'Profile Incomplete',
+      name: 'profile_incomplete',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your pet profile needs additional information to unlock all features`
+  String get profile_incomplete_desc {
+    return Intl.message(
+      'Your pet profile needs additional information to unlock all features',
+      name: 'profile_incomplete_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Missing Information:`
+  String get missing_information {
+    return Intl.message(
+      'Missing Information:',
+      name: 'missing_information',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Maybe Later`
+  String get maybe_later {
+    return Intl.message(
+      'Maybe Later',
+      name: 'maybe_later',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Complete Now`
+  String get complete_now {
+    return Intl.message(
+      'Complete Now',
+      name: 'complete_now',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All required fields are complete!`
+  String get all_required_complete {
+    return Intl.message(
+      'All required fields are complete!',
+      name: 'all_required_complete',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Required`
+  String get required {
+    return Intl.message(
+      'Required',
+      name: 'required',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Features you'll unlock:`
+  String get features_unlock {
+    return Intl.message(
+      'Features you\'ll unlock:',
+      name: 'features_unlock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pet Friendship`
+  String get pet_friendship {
+    return Intl.message(
+      'Pet Friendship',
+      name: 'pet_friendship',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mating Features`
+  String get mating_features {
+    return Intl.message(
+      'Mating Features',
+      name: 'mating_features',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Health Tracking`
+  String get health_tracking {
+    return Intl.message(
+      'Health Tracking',
+      name: 'health_tracking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Community Access`
+  String get community_access {
+    return Intl.message(
+      'Community Access',
+      name: 'community_access',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Profile`
+  String get edit_profile {
+    return Intl.message(
+      'Edit Profile',
+      name: 'edit_profile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Navigate to profile editing screen...`
+  String get navigate_edit_profile {
+    return Intl.message(
+      'Navigate to profile editing screen...',
+      name: 'navigate_edit_profile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `OK`
+  String get ok {
+    return Intl.message(
+      'OK',
+      name: 'ok',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pet Name`
+  String get missing_field_pet_name {
+    return Intl.message(
+      'Pet Name',
+      name: 'missing_field_pet_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gender`
+  String get missing_field_gender {
+    return Intl.message(
+      'Gender',
+      name: 'missing_field_gender',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Species`
+  String get missing_field_species {
+    return Intl.message(
+      'Species',
+      name: 'missing_field_species',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Breed`
+  String get missing_field_breed {
+    return Intl.message(
+      'Breed',
+      name: 'missing_field_breed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile Photo`
+  String get missing_field_photo {
+    return Intl.message(
+      'Profile Photo',
+      name: 'missing_field_photo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Birth Date`
+  String get missing_field_birth_date {
+    return Intl.message(
+      'Birth Date',
+      name: 'missing_field_birth_date',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Available For Mating`
+  String get availableForMating {
+    return Intl.message(
+      'Available For Mating',
+      name: 'availableForMating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not Available For Mating`
+  String get notAvailableForMating {
+    return Intl.message(
+      'Not Available For Mating',
+      name: 'notAvailableForMating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Pet Status`
+  String get update_pet_status {
+    return Intl.message(
+      'Update Pet Status',
+      name: 'update_pet_status',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change {petName}'s relationship status`
+  String change_pet_status_for(Object petName) {
+    return Intl.message(
+      'Change $petName\'s relationship status',
+      name: 'change_pet_status_for',
+      desc: '',
+      args: [petName],
+    );
+  }
+
+  /// `Update Status`
+  String get update_status {
+    return Intl.message(
+      'Update Status',
+      name: 'update_status',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Single`
+  String get single {
+    return Intl.message(
+      'Single',
+      name: 'single',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not looking for mating`
+  String get single_desc {
+    return Intl.message(
+      'Not looking for mating',
+      name: 'single_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Available for Mating`
+  String get available_for_mating {
+    return Intl.message(
+      'Available for Mating',
+      name: 'available_for_mating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ready to find a partner`
+  String get available_for_mating_desc {
+    return Intl.message(
+      'Ready to find a partner',
+      name: 'available_for_mating_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `On Mating`
+  String get on_mating {
+    return Intl.message(
+      'On Mating',
+      name: 'on_mating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Currently in a mating relationship`
+  String get on_mating_desc {
+    return Intl.message(
+      'Currently in a mating relationship',
+      name: 'on_mating_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Previously Mated`
+  String get previously_mated {
+    return Intl.message(
+      'Previously Mated',
+      name: 'previously_mated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Has completed mating`
+  String get previously_mated_desc {
+    return Intl.message(
+      'Has completed mating',
+      name: 'previously_mated_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pregnant`
+  String get pregnant {
+    return Intl.message(
+      'Pregnant',
+      name: 'pregnant',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expecting babies`
+  String get pregnant_desc {
+    return Intl.message(
+      'Expecting babies',
+      name: 'pregnant_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Has Set Its Baby`
+  String get has_set_its_baby {
+    return Intl.message(
+      'Has Set Its Baby',
+      name: 'has_set_its_baby',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Now a parent`
+  String get has_set_its_baby_desc {
+    return Intl.message(
+      'Now a parent',
+      name: 'has_set_its_baby_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Divorced`
+  String get divorced {
+    return Intl.message(
+      'Divorced',
+      name: 'divorced',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Single again after mating`
+  String get divorced_desc {
+    return Intl.message(
+      'Single again after mating',
+      name: 'divorced_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected`
+  String get selected {
+    return Intl.message(
+      'Selected',
+      name: 'selected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Available Pets for Mating`
+  String get avaPetTOMating {
+    return Intl.message(
+      'Available Pets for Mating',
+      name: 'avaPetTOMating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Welcome to Squeak!`
+  String get welcomeToSqueak {
+    return Intl.message(
+      'Welcome to Squeak!',
+      name: 'welcomeToSqueak',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Find the perfect match for your beloved pets. Connect, chat, and create beautiful families together.`
+  String get welcomeSubtitle {
+    return Intl.message(
+      'Find the perfect match for your beloved pets. Connect, chat, and create beautiful families together.',
+      name: 'welcomeSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create Pet Profile`
+  String get createPetProfile {
+    return Intl.message(
+      'Create Pet Profile',
+      name: 'createPetProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add your pet's details and photos`
+  String get createPetProfileSub {
+    return Intl.message(
+      'Add your pet\'s details and photos',
+      name: 'createPetProfileSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Find Matches`
+  String get findMatches {
+    return Intl.message(
+      'Find Matches',
+      name: 'findMatches',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Discover compatible pets nearby`
+  String get findMatchesSub {
+    return Intl.message(
+      'Discover compatible pets nearby',
+      name: 'findMatchesSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start Chatting`
+  String get startChatting {
+    return Intl.message(
+      'Start Chatting',
+      name: 'startChatting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connect with other pet owners`
+  String get startChattingSub {
+    return Intl.message(
+      'Connect with other pet owners',
+      name: 'startChattingSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pets looking for love in your area`
+  String get petsLookingInArea {
+    return Intl.message(
+      'Pets looking for love in your area',
+      name: 'petsLookingInArea',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Viewing {petName}'s profile`
+  String viewProfileSnack(Object petName) {
+    return Intl.message(
+      'Viewing $petName\'s profile',
+      name: 'viewProfileSnack',
+      desc: '',
+      args: [petName],
+    );
+  }
+
+  /// `Little Friend`
+  String get littleFriend {
+    return Intl.message(
+      'Little Friend',
+      name: 'littleFriend',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View Profile`
+  String get viewProfile {
+    return Intl.message(
+      'View Profile',
+      name: 'viewProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send a Lovely Mating Request 💞`
+  String get sendLovelyRequestTitle {
+    return Intl.message(
+      'Send a Lovely Mating Request 💞',
+      name: 'sendLovelyRequestTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Let’s help your little friend connect with {petName} and start a beautiful friendship!`
+  String sendLovelyRequestSubtitle(Object petName) {
+    return Intl.message(
+      'Let’s help your little friend connect with $petName and start a beautiful friendship!',
+      name: 'sendLovelyRequestSubtitle',
+      desc: '',
+      args: [petName],
+    );
+  }
+
+  /// `Send Request`
+  String get sendRequest {
+    return Intl.message(
+      'Send Request',
+      name: 'sendRequest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel Request`
+  String get cancelRequest {
+    return Intl.message(
+      'Cancel Request',
+      name: 'cancelRequest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mating request sent to {petName}! 💕`
+  String requestSent(Object petName) {
+    return Intl.message(
+      'Mating request sent to $petName! 💕',
+      name: 'requestSent',
+      desc: '',
+      args: [petName],
+    );
+  }
+
+  /// `Manage Mating Requests`
+  String get mangeMatingRequests {
+    return Intl.message(
+      'Manage Mating Requests',
+      name: 'mangeMatingRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mating Requests for {profile}`
+  String matingRequestsFor(Object profile) {
+    return Intl.message(
+      'Mating Requests for $profile',
+      name: 'matingRequestsFor',
+      desc: '',
+      args: [profile],
+    );
+  }
+
+  /// `Manage incoming and outgoing mating requests`
+  String get manageIncomingOutgoing {
+    return Intl.message(
+      'Manage incoming and outgoing mating requests',
+      name: 'manageIncomingOutgoing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Received`
+  String get received {
+    return Intl.message(
+      'Received',
+      name: 'received',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sent`
+  String get sent {
+    return Intl.message(
+      'Sent',
+      name: 'sent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reject`
+  String get reject {
+    return Intl.message(
+      'Reject',
+      name: 'reject',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open Chat`
+  String get openChat {
+    return Intl.message(
+      'Open Chat',
+      name: 'openChat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting for response...`
+  String get waitingForResponse {
+    return Intl.message(
+      'Waiting for response...',
+      name: 'waitingForResponse',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Opening chat...`
+  String get openingChat {
+    return Intl.message(
+      'Opening chat...',
+      name: 'openingChat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count}m ago`
+  String minutesAgo(Object count) {
+    return Intl.message(
+      '${count}m ago',
+      name: 'minutesAgo',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count}h ago`
+  String hoursAgo(Object count) {
+    return Intl.message(
+      '${count}h ago',
+      name: 'hoursAgo',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count}d ago`
+  String daysAgo(Object count) {
+    return Intl.message(
+      '${count}d ago',
+      name: 'daysAgo',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `No requests found`
+  String get noRequests {
+    return Intl.message(
+      'No requests found',
+      name: 'noRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No received requests`
+  String get noReceivedRequests {
+    return Intl.message(
+      'No received requests',
+      name: 'noReceivedRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No sent requests`
+  String get noSentRequests {
+    return Intl.message(
+      'No sent requests',
+      name: 'noSentRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `الطلبات النشطة`
+  String get activeRequests {
+    return Intl.message(
+      'الطلبات النشطة',
+      name: 'activeRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `النشاط الحديث`
+  String get recentActivity {
+    return Intl.message(
+      'النشاط الحديث',
+      name: 'recentActivity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mating Activity`
+  String get matingActivity {
+    return Intl.message(
+      'Mating Activity',
+      name: 'matingActivity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View All`
+  String get viewAll {
+    return Intl.message(
+      'View All',
+      name: 'viewAll',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Respond`
+  String get respond {
+    return Intl.message(
+      'Respond',
+      name: 'respond',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Match Found!`
+  String get matchFound {
+    return Intl.message(
+      'Match Found!',
+      name: 'matchFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start Conversation`
+  String get startConversation {
+    return Intl.message(
+      'Start Conversation',
+      name: 'startConversation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `When you receive mating requests, they will appear here`
+  String get noReceivedRequestsSub {
+    return Intl.message(
+      'When you receive mating requests, they will appear here',
+      name: 'noReceivedRequestsSub',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All Chats`
+  String get AllChats {
+    return Intl.message(
+      'All Chats',
+      name: 'AllChats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Block`
+  String get block {
+    return Intl.message(
+      'Block',
+      name: 'block',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mating Chats`
+  String get matingChats {
+    return Intl.message(
+      'Mating Chats',
+      name: 'matingChats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rename Chat`
+  String get renameChat {
+    return Intl.message(
+      'Rename Chat',
+      name: 'renameChat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chat Name`
+  String get chatName {
+    return Intl.message(
+      'Chat Name',
+      name: 'chatName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter chat name`
+  String get enterChatName {
+    return Intl.message(
+      'Enter chat name',
+      name: 'enterChatName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Max {count} characters`
+  String maxCharacters(Object count) {
+    return Intl.message(
+      'Max $count characters',
+      name: 'maxCharacters',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Chat renamed successfully`
+  String get chatRenamedSuccessfully {
+    return Intl.message(
+      'Chat renamed successfully',
+      name: 'chatRenamedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Block Chat`
+  String get blockChat {
+    return Intl.message(
+      'Block Chat',
+      name: 'blockChat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to block this chat? You will not be able to send or receive messages.`
+  String get blockChatConfirmation {
+    return Intl.message(
+      'Are you sure you want to block this chat? You will not be able to send or receive messages.',
+      name: 'blockChatConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unblock Chat`
+  String get unblockChat {
+    return Intl.message(
+      'Unblock Chat',
+      name: 'unblockChat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to unblock this chat?`
+  String get unblockChatConfirmation {
+    return Intl.message(
+      'Are you sure you want to unblock this chat?',
+      name: 'unblockChatConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unblock`
+  String get unblock {
+    return Intl.message(
+      'Unblock',
+      name: 'unblock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chat blocked successfully`
+  String get chatBlocked {
+    return Intl.message(
+      'Chat blocked successfully',
+      name: 'chatBlocked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chat unblocked successfully`
+  String get chatUnblocked {
+    return Intl.message(
+      'Chat unblocked successfully',
+      name: 'chatUnblocked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark as Mating Started`
+  String get markAsMatingStarted {
+    return Intl.message(
+      'Mark as Mating Started',
+      name: 'markAsMatingStarted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark this chat as mating started? This will enable mating tracking features.`
+  String get startMatingConfirmation {
+    return Intl.message(
+      'Mark this chat as mating started? This will enable mating tracking features.',
+      name: 'startMatingConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start Mating`
+  String get startMating {
+    return Intl.message(
+      'Start Mating',
+      name: 'startMating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mating started successfully`
+  String get matingStarted {
+    return Intl.message(
+      'Mating started successfully',
+      name: 'matingStarted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `End Chat`
+  String get endChat {
+    return Intl.message(
+      'End Chat',
+      name: 'endChat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to end this chat? This action cannot be undone.`
+  String get endChatConfirmation {
+    return Intl.message(
+      'Are you sure you want to end this chat? This action cannot be undone.',
+      name: 'endChatConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chat ended successfully`
+  String get chatEnded {
+    return Intl.message(
+      'Chat ended successfully',
+      name: 'chatEnded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finish Mating`
+  String get finishMating {
+    return Intl.message(
+      'Finish Mating',
+      name: 'finishMating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to finish mating? This will archive the chat.`
+  String get finishMatingConfirmation {
+    return Intl.message(
+      'Are you sure you want to finish mating? This will archive the chat.',
+      name: 'finishMatingConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `I confirm that mating has been completed`
+  String get confirmMatingCompletion {
+    return Intl.message(
+      'I confirm that mating has been completed',
+      name: 'confirmMatingCompletion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Partner has confirmed`
+  String get partnerConfirmed {
+    return Intl.message(
+      'Partner has confirmed',
+      name: 'partnerConfirmed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Note: Both partners need to confirm mating completion`
+  String get finishMatingNote {
+    return Intl.message(
+      'Note: Both partners need to confirm mating completion',
+      name: 'finishMatingNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mating completed! Chat has been archived.`
+  String get matingCompletedChatArchived {
+    return Intl.message(
+      'Mating completed! Chat has been archived.',
+      name: 'matingCompletedChatArchived',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You will receive pregnancy notifications if applicable`
+  String get pregnancyNotificationInfo {
+    return Intl.message(
+      'You will receive pregnancy notifications if applicable',
+      name: 'pregnancyNotificationInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm`
+  String get confirm {
+    return Intl.message(
+      'Confirm',
+      name: 'confirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This chat has been archived and is read-only`
+  String get chatArchivedReadOnly {
+    return Intl.message(
+      'This chat has been archived and is read-only',
+      name: 'chatArchivedReadOnly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This chat is blocked. No messages can be sent or received.`
+  String get chatBlockedNoMessages {
+    return Intl.message(
+      'This chat is blocked. No messages can be sent or received.',
+      name: 'chatBlockedNoMessages',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No messages yet`
+  String get noMessagesYet {
+    return Intl.message(
+      'No messages yet',
+      name: 'noMessagesYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type a message...`
+  String get typeMessage {
+    return Intl.message(
+      'Type a message...',
+      name: 'typeMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose Attachment`
+  String get chooseAttachment {
+    return Intl.message(
+      'Choose Attachment',
+      name: 'chooseAttachment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Photo`
+  String get photo {
+    return Intl.message(
+      'Photo',
+      name: 'photo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Video`
+  String get video {
+    return Intl.message(
+      'Video',
+      name: 'video',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Audio`
+  String get audio {
+    return Intl.message(
+      'Audio',
+      name: 'audio',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Photo picker not implemented yet`
+  String get photoPickerNotImplemented {
+    return Intl.message(
+      'Photo picker not implemented yet',
+      name: 'photoPickerNotImplemented',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Video picker not implemented yet`
+  String get videoPickerNotImplemented {
+    return Intl.message(
+      'Video picker not implemented yet',
+      name: 'videoPickerNotImplemented',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Audio recorder not implemented yet`
+  String get audioRecorderNotImplemented {
+    return Intl.message(
+      'Audio recorder not implemented yet',
+      name: 'audioRecorderNotImplemented',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Retry`
+  String get retry {
+    return Intl.message(
+      'Retry',
+      name: 'retry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All`
+  String get all {
+    return Intl.message(
+      'All',
+      name: 'all',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Active`
+  String get active {
+    return Intl.message(
+      'Active',
+      name: 'active',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mating`
+  String get onMating {
+    return Intl.message(
+      'Mating',
+      name: 'onMating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Completed`
+  String get completed {
+    return Intl.message(
+      'Completed',
+      name: 'completed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not Completed`
+  String get not_completed {
+    return Intl.message(
+      'Not Completed',
+      name: 'not_completed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Blocked`
+  String get blocked {
+    return Intl.message(
+      'Blocked',
+      name: 'blocked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No chats found`
+  String get noChatsFound {
+    return Intl.message(
+      'No chats found',
+      name: 'noChatsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No active chats`
+  String get noActiveChats {
+    return Intl.message(
+      'No active chats',
+      name: 'noActiveChats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No mating chats`
+  String get noMatingChats {
+    return Intl.message(
+      'No mating chats',
+      name: 'noMatingChats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No completed chats`
+  String get noCompletedChats {
+    return Intl.message(
+      'No completed chats',
+      name: 'noCompletedChats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No blocked chats`
+  String get noBlockedChats {
+    return Intl.message(
+      'No blocked chats',
+      name: 'noBlockedChats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No chats in this category`
+  String get noChatsInThisCategory {
+    return Intl.message(
+      'No chats in this category',
+      name: 'noChatsInThisCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show All Chats`
+  String get showAllChats {
+    return Intl.message(
+      'Show All Chats',
+      name: 'showAllChats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start a new conversation to see it here!`
+  String get startNewConversation {
+    return Intl.message(
+      'Start a new conversation to see it here!',
+      name: 'startNewConversation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mating`
+  String get mating {
+    return Intl.message(
+      'Mating',
+      name: 'mating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All Chats`
+  String get allChats {
+    return Intl.message(
+      'All Chats',
+      name: 'allChats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fetching your pet chats...`
+  String get fetchingPetChats {
+    return Intl.message(
+      'Fetching your pet chats...',
+      name: 'fetchingPetChats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Oops! Something went wrong`
+  String get somethingWentWrong {
+    return Intl.message(
+      'Oops! Something went wrong',
+      name: 'somethingWentWrong',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error:`
+  String get errorColon {
+    return Intl.message(
+      'Error:',
+      name: 'errorColon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try Again`
+  String get tryAgain {
+    return Intl.message(
+      'Try Again',
+      name: 'tryAgain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No chats yet!`
+  String get noChatsYet {
+    return Intl.message(
+      'No chats yet!',
+      name: 'noChatsYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start matching with other pets to begin chatting`
+  String get startMatchingToChat {
+    return Intl.message(
+      'Start matching with other pets to begin chatting',
+      name: 'startMatchingToChat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter new name`
+  String get enterNewName {
+    return Intl.message(
+      'Enter new name',
+      name: 'enterNewName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rate Your Experience`
+  String get rateYourExperience {
+    return Intl.message(
+      'Rate Your Experience',
+      name: 'rateYourExperience',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How was the mating session?`
+  String get howWasMatingSession {
+    return Intl.message(
+      'How was the mating session?',
+      name: 'howWasMatingSession',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap to Rate`
+  String get tapToRate {
+    return Intl.message(
+      'Tap to Rate',
+      name: 'tapToRate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share Your Thoughts`
+  String get shareYourThoughts {
+    return Intl.message(
+      'Share Your Thoughts',
+      name: 'shareYourThoughts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tell us about the mating experience...`
+  String get tellUsAboutExperience {
+    return Intl.message(
+      'Tell us about the mating experience...',
+      name: 'tellUsAboutExperience',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit Rating`
+  String get submitRating {
+    return Intl.message(
+      'Submit Rating',
+      name: 'submitRating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a rating`
+  String get pleaseSelectRating {
+    return Intl.message(
+      'Please select a rating',
+      name: 'pleaseSelectRating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Poor Experience`
+  String get poorExperience {
+    return Intl.message(
+      'Poor Experience',
+      name: 'poorExperience',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Below Average`
+  String get belowAverage {
+    return Intl.message(
+      'Below Average',
+      name: 'belowAverage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Good Experience`
+  String get goodExperience {
+    return Intl.message(
+      'Good Experience',
+      name: 'goodExperience',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Great Experience`
+  String get greatExperience {
+    return Intl.message(
+      'Great Experience',
+      name: 'greatExperience',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Excellent!`
+  String get excellentExperience {
+    return Intl.message(
+      'Excellent!',
+      name: 'excellentExperience',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mating Session`
+  String get matingSession {
+    return Intl.message(
+      'Mating Session',
+      name: 'matingSession',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

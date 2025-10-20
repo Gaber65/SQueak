@@ -16,7 +16,7 @@ class InitFunctions {
   static Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
     ConfigModel.setEnvironment(Environment.test);
-        Bloc.observer = MyBlocObserver();
+    Bloc.observer = MyBlocObserver();
     await _initServiceLocator();
     await _initCache(); // Initialize cache first
     await NotificationInitializer.initialize();

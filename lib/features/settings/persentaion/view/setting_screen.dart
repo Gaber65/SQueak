@@ -4,12 +4,12 @@ import 'package:quickalert/quickalert.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:iconly/iconly.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:squeak/features/mating/layoutMating/presentation/screens/profle_complete.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
 
 import '../../../auth/contactus/presentation/pages/contact_us.dart';
 import '../../../auth/login/presentation/pages/login_screen.dart';
-import '../../../mating/layoutMating/presentation/screens/mating_layout.dart';
 import '../../../settings/persentaion/view/privacy_policy_screen.dart';
 import '../../../settings/persentaion/view/update_profile_screen.dart';
 import '../controller/setting_cubit.dart';
@@ -93,7 +93,7 @@ class SettingScreen extends StatelessWidget {
                     subtitle: '',
                     trailingWidget: IconButton(
                       onPressed: () {
-                        navigateToScreen(context, MatingLayoutScreen());
+                        navigateToScreen(context, ProfileComplete());
                       },
                       icon: Icon(Icons.chevron_right),
                     ),
@@ -316,10 +316,12 @@ class SettingScreen extends StatelessWidget {
                           Navigator.pop(context);
                         },
                         onConfirmBtnTap: () async {
+
                           debugPrint('[Logout] Confirm tapped - starting logout sequence');
                           // First remove token from backend/service then clear local data and reset state
                           debugPrint('[Logout] Calling MainCubit.removeToken()');
                           await MainCubit.get(context).removeToken();
+                          if (!context.mounted) return;
                           LayoutCubit.get(context).changeBottomNav(0);
 
                           // Clear local cache first to avoid race conditions with newly created LoginScreen
@@ -328,6 +330,7 @@ class SettingScreen extends StatelessWidget {
 
                           // Reset MainCubit state before navigating
                           debugPrint('[Logout] Resetting MainCubit state');
+                          if (!context.mounted) return;
                           MainCubit.get(context).resetState();
 
                           // Finally navigate to LoginScreen and clear navigation stack

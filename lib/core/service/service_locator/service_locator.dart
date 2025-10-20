@@ -1,6 +1,8 @@
-import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
+import 'package:squeak/features/mating/chat/domain/usecases/rate_mating_use_case.dart';
+import 'package:squeak/features/mating/profile/domain/usecases/get_pet_profile_history_usecase.dart';
+
 import '../../../features/layout/search/presentation/controller/search_cubit.dart';
-import '../../../features/pets/domain/use_case/merge_pets_usecase.dart';
+import '../../../features/mating/matingRequest/domain/usecases/update_mating_request.dart';
 import '../../../features/settings/persentaion/controller/setting_cubit.dart';
 import '../../../features/vetcare/presenation/controllers/follow_request/follow_request_cubit.dart';
 import 'locatore_export_path.dart';
@@ -91,9 +93,7 @@ class ServiceLocator {
     sl.registerLazySingleton<ChangeLanguageUseCase>(
       () => ChangeLanguageUseCase(sl()),
     );
-    sl.registerLazySingleton<MergePetsUsecase>(
-          () => MergePetsUsecase(sl()),
-    );
+    sl.registerLazySingleton<MergePetsUsecase>(() => MergePetsUsecase(sl()));
     sl.registerLazySingleton<ManageTokenUseCase>(
       () => ManageTokenUseCase(sl()),
     );
@@ -242,10 +242,8 @@ class ServiceLocator {
 
     // Repository
     sl.registerLazySingleton<AppointmentRepository>(
-      () => AppointmentRepositoryImpl(
-        remoteDataSource: sl(),
-        networkInfo: sl(),
-      ),
+      () =>
+          AppointmentRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
     );
 
     // Data sources
@@ -317,8 +315,7 @@ class ServiceLocator {
 
     // Repository
     sl.registerLazySingleton<BoardingRepository>(
-      () =>
-          BoardingRepositoryImpl(remoteDataSource: sl(), ),
+      () => BoardingRepositoryImpl(remoteDataSource: sl()),
     );
 
     // Data sources
@@ -419,26 +416,95 @@ class ServiceLocator {
     );
     // Data sources
     sl.registerLazySingleton<BaseChatRemoteDataSource>(
-          () => ChatRemoteDataSource(),
+      () => ChatRemoteDataSource(),
     );
 
     // Repository
-    sl.registerLazySingleton<BaseChatRepository>(
-          () => ChatRepository(sl()),
-    );
+    sl.registerLazySingleton<BaseChatRepository>(() => ChatRepository(sl()));
 
     // Use cases
     sl.registerLazySingleton(() => GetChatsUseCase(sl()));
     sl.registerLazySingleton(() => GetMessagesUseCase(sl()));
     sl.registerLazySingleton(() => SendMessageUseCase(sl()));
-    sl.registerLazySingleton(() => UpdateChatStatusUseCase(sl()));
-    sl.registerLazySingleton(() => MarkMessagesReadUseCase(sl()));
+    sl.registerLazySingleton(() => FinishMatingUseCase(sl()));
+    sl.registerLazySingleton(() => BlockChatUseCase(sl()));
+    sl.registerLazySingleton(() => RenameChatUseCase(sl()));
+    sl.registerLazySingleton(() => RateMatingUseCase(sl()));
 
     // Cubits
     sl.registerFactory(() => ChatListCubit(getChatsUseCase: sl()));
-    sl.registerFactory(() => ChatMessagesCubit(
-      getMessagesUseCase: sl(),
-      sendMessageUseCase: sl(),
-    ));
+    sl.registerFactory(
+      () => ChatMessagesCubit(
+        getMessagesUseCase: sl(),
+        sendMessageUseCase: sl(),
+        startMatingUseCase: sl(),
+        blockChatUseCase: sl(),
+        renameChatUseCase: sl(),
+        rateMatingUseCase :sl(),
+      ),
+    );
+
+    /// profile mating
+    sl.registerLazySingleton(() => UpdatePetMatingStatuesUseCase(sl()));
+    sl.registerLazySingleton<BaseMatingPetProfileRepo>(
+      () => MatingPetProfileRepoImpl(sl()),
+    );
+    sl.registerLazySingleton<MatingProfileDataSource>(
+      () => MatingProfileDataSourceImpl(),
+    );
+    sl.registerFactory(() => ProfileMatingCubit(sl(),sl(),sl()));
+
+    /// 🧱 Data Source
+    sl.registerLazySingleton<PetMatingRemoteDataSource>(
+      () => PetMatingRemoteDataSourceImpl(),
+    );
+
+    /// 🧠 Repository
+    sl.registerLazySingleton<BasePetMatingRepository>(
+      () => PetMatingRepositoryImpl(remoteDataSource: sl()),
+    );
+
+    /// ⚙️ Use Cases
+    sl.registerLazySingleton(() => GetAvailablePetsUseCase(sl()));
+    sl.registerLazySingleton(() => GetPetProfileMatingUseCase(sl()));
+    sl.registerLazySingleton(() => GetPetHistoryMatingUseCase(sl()));
+    sl.registerLazySingleton(() => SendMatingRequestUseCase(sl()));
+    sl.registerLazySingleton(() => UpdateSentRequestStatusUseCase(sl()));
+
+    /// 🎯 Cubit
+    sl.registerFactory(
+      () => MatingFeedsCubit(
+        getAvailablePetsUseCase: sl(),
+        sendMatingRequestUseCase: sl(),
+        updatePetStatusUseCase: sl(),
+      ),
+    );
+    // ==========================
+    // 🧩 CUBITS
+    // ==========================
+    sl.registerFactory(() => ManageRequestMatingCubit(sl(), sl(), sl()));
+
+    // ==========================
+    // ⚙️ USECASES
+    // ==========================
+    sl.registerLazySingleton(() => GetMatingRequestsUseCase(sl()));
+    sl.registerLazySingleton(() => GetSentRequestsMatingUseCase(sl()));
+    sl.registerLazySingleton(
+      () => UpdateMatingRequestUseCase(repository: sl()),
+    );
+
+    // ==========================
+    // 🏗️ REPOSITORIES
+    // ==========================
+    sl.registerLazySingleton<MatingRequestRepository>(
+      () => MatingRequestRepositoryImpl(remoteDataSource: sl()),
+    );
+
+    // ==========================
+    // 🌐 DATA SOURCES
+    // ==========================
+    sl.registerLazySingleton<MatingRequestRemoteDataSource>(
+      () => MatingRequestRemoteDataSourceImpl(),
+    );
   }
 }

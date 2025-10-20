@@ -1,29 +1,60 @@
-import '../models/pet_mating_model.dart';
+import 'package:dio/dio.dart';
+import 'package:squeak/features/mating/feeds/domain/usecases/mating_parameters.dart';
+import 'package:squeak/features/pets/data/models/pet_model.dart';
+import '../../../../../core/service/service_locator/locatore_export_path.dart';
+
 
 abstract class PetMatingRemoteDataSource {
-  Future<List<PetMatingModel>> getAvailablePets();
-  Future<void> sendMatingRequest(String petId, String message);
-  Future<void> updatePetStatus(String petId, int status);
-
+  Future<List<PetData>> getAvailablePets(String specieId);
+  Future<String> sendMatingRequest(SendMatingRequestParameters parameters);
+  Future<void> updateSentRequestStatus(SendMatingRequestParameters parameters);
 }
 
 class PetMatingRemoteDataSourceImpl implements PetMatingRemoteDataSource {
-  @override
-  Future<List<PetMatingModel>> getAvailablePets() async {
-    // Implement actual API call
-    await Future.delayed(const Duration(seconds: 1));
-    return PetMatingModel.availablePets;
-  }
 
   @override
-  Future<void> sendMatingRequest(String petId, String message) async {
-    // Implement actual API call
-    await Future.delayed(const Duration(seconds: 2));
+  Future<List<PetData>> getAvailablePets(String specieId) async {
+    try {
+      final result = await DioFinalHelper.getData(
+        method: getAvailablePetsEndPoint,
+      );
+      return List<PetData>.from(result.data['data']['result'].map((x) => PetData.fromJson(x)));
+    } on DioException catch (failure) {
+      throw ServerException(errorMessageModel: ErrorMessageModel.fromJson(failure.response?.data));
+    }
   }
 
+
   @override
-  Future<void> updatePetStatus(String petId, int status) async {
-    // Implement actual API call
-    await Future.delayed(const Duration(seconds: 1));
+  Future<String> sendMatingRequest(SendMatingRequestParameters p) async {
+    try {
+      final result = await DioFinalHelper.postData(
+        method: sendMatingRequestEndPoint,
+        data: {
+          "petFrienId": p.targetPetId,
+          "myPetId": p.senderPetId,
+        },
+      );
+      return result.data['message'];
+    } on DioException catch (failure) {
+      throw ServerException(errorMessageModel: ErrorMessageModel.fromJson(failure.response?.data));
+    }
+  }
+
+
+
+  @override
+  Future<void> updateSentRequestStatus(SendMatingRequestParameters p) async {
+    try {
+      await DioFinalHelper.postData(
+        method: cancelRequestEndPoint,
+        data: {
+          "friendPetId": p.targetPetId,
+          "myPetId": p.senderPetId,
+        },
+      );
+    } on DioException catch (failure) {
+      throw ServerException(errorMessageModel: ErrorMessageModel.fromJson(failure.response?.data));
+    }
   }
 }

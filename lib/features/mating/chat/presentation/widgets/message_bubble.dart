@@ -1,148 +1,166 @@
-// message_bubble.dart
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../../core/utils/theme/color_mangment/color_manager.dart';
 import '../../domain/entities/message_entity.dart';
-import '../../domain/entities/message_status.dart';
 
-class MessageBubble extends StatelessWidget {
+class ChatMessageBubble extends StatelessWidget {
   final MessageEntity message;
+  final bool isMe;
 
-  const MessageBubble({super.key, required this.message});
+  const ChatMessageBubble({
+    super.key,
+    required this.message,
+    required this.isMe,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
       child: Row(
-        mainAxisAlignment: message.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (!message.isMe) _buildPetAvatar(),
-          const SizedBox(width: 8),
+          if (!isMe) ..._buildSenderInfo(context),
           Flexible(
-            child: Column(
-              crossAxisAlignment: message.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-              children: [
-
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    gradient: message.isMe
-                        ? LinearGradient(
-                      colors: [ColorManager.primaryColor,ColorManager.primaryColor.withOpacity(0.4)],
-                    )
-                        : null,
-                    color: message.isMe ? null : Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    message.text,
-                    style: TextStyle(
-                      color: message.isMe ? Colors.white : Colors.black87,
-                      fontSize: 15,
-                    ),
-                  ),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isMe
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(16),
+                  topRight: const Radius.circular(16),
+                  bottomLeft: Radius.circular(isMe ? 16 : 4),
+                  bottomRight: Radius.circular(isMe ? 4 : 16),
                 ),
-                const SizedBox(height: 4),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: message.isMe ? 0 : 12,
-                    right: message.isMe ? 12 : 0,
-                  ),
-                  child: Row(
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Media content
+                  if (message.image != null) _buildImageContent(),
+                  if (message.video != null) _buildVideoContent(),
+                  if (message.audio != null) _buildAudioContent(),
+
+                  // Text message
+                  if (message.description.isNotEmpty)
+                    Text(
+                      message.description,
+                      style: TextStyle(
+                        color: isMe
+                            ? Colors.white
+                            : Theme.of(context).colorScheme.onSurface,
+                        fontSize: 14,
+                      ),
+                    ),
+
+                  // Timestamp and read status
+                  const SizedBox(height: 4),
+                  Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        _formatMessageTime(message.time),
+                        _formatTime(message.createdAt),
                         style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey[500],
+                          color: isMe
+                              ? Colors.white70
+                              : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                          fontSize: 10,
                         ),
                       ),
-                      if (message.isMe) ...[
-                        const SizedBox(width: 6),
+                      if (isMe) ...[
+                        const SizedBox(width: 4),
                         Icon(
-                          message.status == MessageStatus.read ? Icons.done_all : Icons.done,
-                          size: 14,
-                          color: message.status == MessageStatus.read
-                              ? Colors.blue[200]
-                              : Colors.grey[400],
+                          message.isRead ? Icons.done_all : Icons.done,
+                          size: 12,
+                          color: message.isRead ? Colors.lightBlue : Colors.white70,
                         ),
                       ],
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-          if (message.isMe) const SizedBox(width: 8),
-          if (message.isMe) _buildUserAvatar(),
         ],
       ),
     );
   }
 
-  Widget _buildPetAvatar() {
+  List<Widget> _buildSenderInfo(BuildContext context) {
+    return [
+      // You can add sender avatar here if needed
+      const SizedBox(width: 8),
+    ];
+  }
+
+  Widget _buildImageContent() {
     return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: ColorManager.primaryColor.withOpacity(0.3), width: 2),
-      ),
-      child: ClipOval(
-        child: Image.asset(
-          'assets/pet_avatar.png',
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: FastCachedImage(
+          url: message.image!,
+          width: 200,
+          height: 150,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: ColorManager.primaryColor.withOpacity(0.1),
-              ),
-              child: Icon(Icons.pets, size: 18, color: ColorManager.primaryColor),
-            );
-          },
+
+          errorBuilder: (context, url, error) => Container(
+            width: 200,
+            height: 150,
+            color: Colors.grey[300],
+            child: const Icon(Icons.broken_image, color: Colors.grey),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildUserAvatar() {
+  Widget _buildVideoContent() {
     return Container(
-      width: 36,
-      height: 36,
+      margin: const EdgeInsets.only(bottom: 8),
+      width: 200,
+      height: 150,
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.blue.withOpacity(0.3), width: 2),
+        color: Colors.black54,
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: ClipOval(
-        child: Image.asset(
-          'assets/user_avatar.png',
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.blue[100],
-              ),
-              child: Icon(Icons.person, size: 18, color: Colors.blue),
-            );
-          },
-        ),
+      child: Stack(
+        children: [
+          // Video thumbnail would go here
+          Center(
+            child: Icon(
+              Icons.play_circle_filled,
+              color: Colors.white.withOpacity(0.8),
+              size: 40,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  String _formatMessageTime(DateTime time) {
-    return '${time.hour}:${time.minute.toString().padLeft(2, '0')}';
+  Widget _buildAudioContent() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.play_arrow, color: Colors.blue),
+          const SizedBox(width: 8),
+          Text('Audio message'),
+        ],
+      ),
+    );
+  }
+
+  String _formatTime(DateTime time) {
+    return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
 }

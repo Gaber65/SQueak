@@ -78,7 +78,7 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
     try {
       // Create the request payload
       Map<String, dynamic> requestData = {
-        "date": appointmentDate,
+        "data": appointmentDate,
         "time": appointmentTime,
         "petId": selectedPet!['id'],
         "clinicCode": widget.clinicCode,

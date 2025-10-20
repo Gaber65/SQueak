@@ -79,7 +79,7 @@ class NotificationScheduler {
 
     // print("Scheduling reminder for: ${startDate.year}/${startDate.month}/${startDate.day} ${startTime.hour}:${startTime.minute}");
 
-    // Ensure the scheduled date is in the future
+    // Ensure the scheduled data is in the future
     if (scheduledDate.isBefore(tz.TZDateTime.now(tz.local))) {
       scheduledDate = _adjustScheduledDate(scheduledDate, frequency);
     }
@@ -179,7 +179,7 @@ class NotificationScheduler {
     }
   }
 
-  /// Adjust scheduled date if it's in the past
+  /// Adjust scheduled data if it's in the past
   static tz.TZDateTime _adjustScheduledDate(tz.TZDateTime scheduledDate, String frequency) {
     switch (frequency) {
       case "Daily":

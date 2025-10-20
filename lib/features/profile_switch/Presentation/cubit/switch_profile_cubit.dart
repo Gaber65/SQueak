@@ -30,11 +30,9 @@ class SwitchProfileCubit extends Cubit<SwitchProfileState> {
     final result = await getActiveProfile(const NoParameters());
     result.fold(
           (failure) {
-            // print(failure.error.message);
             emit(ProfileError(failure.error.message));
           },
           (profile) {
-            // print(profile.toJson());
             activeProfile = profile;
             if (activeProfile!.type == ProfileType.pet) {
               image = imageUrl +activeProfile!.pet!.imageName!;
@@ -56,6 +54,8 @@ class SwitchProfileCubit extends Cubit<SwitchProfileState> {
           (_) {
             loadProfile();
             emit(ProfileLoaded(profile));
+            emit(ProfileSwitcherPage(profile));
+
           },
     );
   }

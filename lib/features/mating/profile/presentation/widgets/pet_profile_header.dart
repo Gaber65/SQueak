@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import 'package:squeak/features/mating/profile/presentation/widgets/pet_description_card.dart';
 import 'package:squeak/features/mating/profile/presentation/widgets/pet_profile_info.dart';
 import 'package:squeak/features/mating/profile/presentation/widgets/pet_stats_section.dart';
-import '../../../feeds/domain/entities/pet_mating_model.dart';
+import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 class PetProfileHeader extends StatelessWidget {
-  final PetMating pet;
+  final PetEntities pet;
   final bool isDarkMode;
-  final VoidCallback onEditPressed;
+  final ProfileMatingCubit cubit;
 
   const PetProfileHeader({
     super.key,
     required this.pet,
+    required this.cubit,
+
     required this.isDarkMode,
-    required this.onEditPressed,
   });
 
   @override
@@ -29,15 +29,11 @@ class PetProfileHeader extends StatelessWidget {
           children: [
             PetProfileInfo(
               pet: pet,
+              cubit: cubit,
               isDarkMode: isDarkMode,
-              onEditPressed: onEditPressed,
             ),
             const SizedBox(height: 24),
             PetStatsSection(pet: pet, isDarkMode: isDarkMode),
-            if (pet.description != null) ...[
-              const SizedBox(height: 20),
-              PetDescriptionCard(pet: pet, isDarkMode: isDarkMode),
-            ],
           ],
         ),
       ),

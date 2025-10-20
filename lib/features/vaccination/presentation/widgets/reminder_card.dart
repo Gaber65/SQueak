@@ -835,7 +835,7 @@ class _ReminderCardState extends State<ReminderCard>
                     : 'Are you sure you want to delete this service?',
                 imageUrl: 'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?t=st=1729767092~exp=1729770692~hmac=fe206337cc285fa3e223ab4e0326cd478bbb1497ff9a0b37543f9a46f4f23325&w=826',
                 onConfirm: () {
-                  cubit.deleteReminder(reminder: reminder, petId: widget.petId);
+                  cubit.deleteReminder(reminder: reminder, matingRequestId: widget.petId);
                   Navigator.of(contextAll).pop();
                 },
               );
@@ -963,7 +963,7 @@ class _ReminderCardState extends State<ReminderCard>
                       : 'Are you sure you want to delete this service?',
                   imageUrl: 'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?t=st=1729767092~exp=1729770692~hmac=fe206337cc285fa3e223ab4e0326cd478bbb1497ff9a0b37543f9a46f4f23325&w=826',
                   onConfirm: () {
-                    cubit.deleteReminder(reminder: reminder, petId: widget.petId);
+                    cubit.deleteReminder(reminder: reminder, matingRequestId: widget.petId);
                     Navigator.pop(contextAll);
                   },
                 );
@@ -1048,7 +1048,7 @@ class _ReminderCardState extends State<ReminderCard>
 
       return DateTime(date.year, date.month, date.day, hour, minute);
     } catch (e) {
-      // print("Error parsing date/time: $e");
+      // print("Error parsing data/time: $e");
       return null;
     }
   }

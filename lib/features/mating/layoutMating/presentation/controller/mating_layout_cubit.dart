@@ -1,7 +1,5 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:squeak/core/service/main_service/presentation/screens/app_view.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_list_screen.dart';
 import 'package:squeak/features/mating/feeds/presentation/screens/feed_mating.dart';
@@ -26,8 +24,7 @@ class MatingLayoutCubit extends Cubit<MatingLayoutState> {
       isDarkMode: MainCubit.get(navigatorKey.currentState!.context).isDark,
     ),
     const MatingRequestsScreen(),
-    ProfessionalChatListScreen(),
-    const Scaffold(),
+    ChatListScreen(),
   ];
 
   void changeIndex(int index) {

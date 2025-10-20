@@ -3,6 +3,7 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../core/service/global_widget/global_image.dart';
 import '../../../../../core/utils/export_path/export_files.dart';
 import '../../../domain/entities/comment_entity.dart';
 import '../../controller/comment_cubit.dart';

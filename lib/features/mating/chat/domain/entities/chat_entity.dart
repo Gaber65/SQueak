@@ -1,28 +1,29 @@
-import 'chat_status.dart';
-
 class ChatEntity {
   final String id;
-  final String petAName;
-  final String petBName;
-  final String petBreed;
-  final String petImage;
-  final String lastMessage;
-  final DateTime lastMessageTime;
-  final int unreadCount;
-  final bool isOnline;
-  final ChatStatus status;
+  final bool isGroup;
+  final bool isPetChat;
+  final String name;
+  final String? image;
+  final String? groupImage;
+  final String petId;
+  final String matingId;
+  final bool completeMarriageStatues;
+  final String createdAt;
+  final String lastMessageSendDateTime;
+  final bool isBlock;
 
-  ChatEntity({
+  const ChatEntity({
     required this.id,
-    required this.petAName,
-    required this.petBName,
-    required this.petBreed,
-    required this.petImage,
-    required this.lastMessage,
-    required this.lastMessageTime,
-    this.unreadCount = 0,
-    this.isOnline = false,
-    required this.status,
+    required this.isGroup,
+    required this.isPetChat,
+    required this.name,
+    required this.image,
+    required this.groupImage,
+    required this.petId,
+    required this.matingId,
+    required this.completeMarriageStatues,
+    required this.createdAt,
+    required this.lastMessageSendDateTime,
+    required this.isBlock,
   });
 }
-

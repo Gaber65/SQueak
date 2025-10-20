@@ -36,7 +36,7 @@ class LocalDatabaseHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         reminderType TEXT,
         reminderFreq TEXT,
-        date TEXT,
+        data TEXT,
         time TEXT,
         timeAR TEXT,
         notes TEXT,

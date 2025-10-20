@@ -753,7 +753,7 @@ VERSION=$1
 echo "🚀 Preparing release v$VERSION..."
 
 # Update version in pubspec.yaml
-sed -i '' "s/^version: .*/version: $VERSION+$(($(date +%s) / 60))/" pubspec.yaml
+sed -i '' "s/^version: .*/version: $VERSION+$(($(data +%s) / 60))/" pubspec.yaml
 
 # Commit version bump
 git add pubspec.yaml
