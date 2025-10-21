@@ -71,8 +71,8 @@ class PostCubit extends Cubit<PostState> {
   void _sortUserPostsByDate() {
     final dateFormat = DateFormat('EEE MMM dd yyyy HH:mm:ss zzz', 'en_US');
     _userPosts.sort((a, b) {
-      final dateA = dateFormat.parse(a.createdAt);
-      final dateB = dateFormat.parse(b.createdAt);
+      final dateA = dateFormat.parse(a.createdAt!);
+      final dateB = dateFormat.parse(b.createdAt!);
       return dateB.compareTo(dateA);
     });
   }

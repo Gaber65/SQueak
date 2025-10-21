@@ -125,7 +125,8 @@ class PetCubit extends Cubit<PetState> {
     // For dog and cat species, attempt to load from cache first to improve
     // perceived performance and avoid repeated network calls.
     try {
-      final isCacheable = speciesId == dogSpeciesId || speciesId == catSpeciesId;
+      final isCacheable =
+          speciesId == dogSpeciesId || speciesId == catSpeciesId;
       final cacheKey = 'breeds_$speciesId';
 
       if (isCacheable) {
@@ -133,13 +134,16 @@ class PetCubit extends Cubit<PetState> {
         if (cached != null && (cached as String).isNotEmpty) {
           try {
             final List<dynamic> decoded = jsonDecode(cached);
-            breedData = decoded
-                .map<BreedEntity>((m) => BreedEntity(
-                      enType: m['enType'] ?? '',
-                      id: m['id'] ?? '',
-                      specieId: m['specieId'] ?? '',
-                    ))
-                .toList();
+            breedData =
+                decoded
+                    .map<BreedEntity>(
+                      (m) => BreedEntity(
+                        enType: m['enType'] ?? '',
+                        id: m['id'] ?? '',
+                        specieId: m['specieId'] ?? '',
+                      ),
+                    )
+                    .toList();
             emit(const GetAllBreedsSuccessState());
             return;
           } catch (_) {
@@ -159,7 +163,9 @@ class PetCubit extends Cubit<PetState> {
           // Save cache for dog and cat
           if (speciesId == dogSpeciesId || speciesId == catSpeciesId) {
             try {
-              final jsonList = jsonEncode(breedsList.map((b) => b.toJson()).toList());
+              final jsonList = jsonEncode(
+                breedsList.map((b) => b.toJson()).toList(),
+              );
               await CacheHelper.saveData(cacheKey, jsonList);
             } catch (_) {
               // ignore cache save errors
@@ -191,17 +197,19 @@ class PetCubit extends Cubit<PetState> {
   void init(String speciesName, String speciesId) {
     dropdownValueSpecies = speciesName;
     dropdownValueSpeciesId = speciesId;
-    emit(PetFormState(
-      gender: gender,
-      birthdate: birthdateController.text,
-      imageName: imageNameController.text,
-      breedId: breedIdController.text,
-      breedName: dropdownValueBreed,
-      speciesName: speciesName,
-      speciesId: speciesId,
-      spayed: spayed,
-      passportImageName: passportImageNameController.text,
-    ));
+    emit(
+      PetFormState(
+        gender: gender,
+        birthdate: birthdateController.text,
+        imageName: imageNameController.text,
+        breedId: breedIdController.text,
+        breedName: dropdownValueBreed,
+        speciesName: speciesName,
+        speciesId: speciesId,
+        spayed: spayed,
+        passportImageName: passportImageNameController.text,
+      ),
+    );
   }
 
   // Initialize form for editing an existing pet
@@ -232,17 +240,19 @@ class PetCubit extends Cubit<PetState> {
     specieId = pet.specieId.toString();
     spayed = pet.isSpayed ?? false;
     dropdownValueBreed = pet.breedId ?? '';
-    emit(PetFormState(
-      gender: gender,
-      birthdate: birthdateController.text,
-      imageName: imageNameController.text,
-      breedId: breedIdController.text,
-      breedName: dropdownValueBreed,
-      speciesName: dropdownValueSpecies,
-      speciesId: dropdownValueSpeciesId,
-      spayed: spayed,
-      passportImageName: passportImageNameController.text,
-    ));
+    emit(
+      PetFormState(
+        gender: gender,
+        birthdate: birthdateController.text,
+        imageName: imageNameController.text,
+        breedId: breedIdController.text,
+        breedName: dropdownValueBreed,
+        speciesName: dropdownValueSpecies,
+        speciesId: dropdownValueSpeciesId,
+        spayed: spayed,
+        passportImageName: passportImageNameController.text,
+      ),
+    );
   }
 
   // Create a new pet
@@ -314,6 +324,8 @@ class PetCubit extends Cubit<PetState> {
     );
   }
 
+  PetEntities? petEdit;
+
   // Update an existing pet
   Future<void> updatePet() async {
     isLoading = true;
@@ -343,7 +355,7 @@ class PetCubit extends Cubit<PetState> {
               ? ''
               : microchipNumberController.text,
     );
-
+    petEdit = pet;
     final result = await updatePetUseCase(PetParams(pet: pet));
 
     isLoading = false;
@@ -388,39 +400,45 @@ class PetCubit extends Cubit<PetState> {
   // Form field update methods - Optimized to use single state
   void changeGender(int newGender) {
     gender = newGender;
-    final currentState = state is PetFormState ? state as PetFormState : _createFormState();
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
     emit(currentState.copyWith(gender: newGender));
   }
 
   void changeBirthdate(String date) {
     birthdateController.text = date;
-    final currentState = state is PetFormState ? state as PetFormState : _createFormState();
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
     emit(currentState.copyWith(birthdate: date));
   }
 
   void changeImageName(String name) {
     imageNameController.text = name;
-    final currentState = state is PetFormState ? state as PetFormState : _createFormState();
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
     emit(currentState.copyWith(imageName: name));
   }
 
   void changeBreed(String name, String id) {
     breedIdController.text = id;
     dropdownValueBreed = name;
-    final currentState = state is PetFormState ? state as PetFormState : _createFormState();
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
     emit(currentState.copyWith(breedId: id, breedName: name));
   }
 
   void changeSpecies(String name, String id) {
     dropdownValueSpecies = name;
     dropdownValueSpeciesId = id;
-    final currentState = state is PetFormState ? state as PetFormState : _createFormState();
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
     emit(currentState.copyWith(speciesName: name, speciesId: id));
   }
 
   void changeSpayed() {
     spayed = !spayed;
-    final currentState = state is PetFormState ? state as PetFormState : _createFormState();
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
     emit(currentState.copyWith(spayed: spayed));
   }
 
@@ -463,14 +481,16 @@ class PetCubit extends Cubit<PetState> {
   void removePassportImage() {
     passportImage = null;
     passportImageNameController.clear();
-    final currentState = state is PetFormState ? state as PetFormState : _createFormState();
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
     emit(currentState.copyWith(passportImageName: ''));
   }
 
   // Change passport image name
   void changePassportImageName(String name) {
     passportImageNameController.text = name;
-    final currentState = state is PetFormState ? state as PetFormState : _createFormState();
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
     emit(currentState.copyWith(passportImageName: name));
   }
 

@@ -361,7 +361,7 @@ Widget build(BuildContext context) {
     try {
       // Convert Arabic to English numbers
       String englishInput = _convertArabicToEnglishNumbers(input);
-      return DateTime.parse(englishInput); // Parse the date
+      return DateTime.parse(englishInput); // Parse the data
     } catch (e) {
       return null; // Return null if parsing fails
     }

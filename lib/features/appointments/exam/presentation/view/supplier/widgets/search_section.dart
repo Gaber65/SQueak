@@ -10,8 +10,11 @@ Widget buildSearchTextField(AppointmentCubit cubit, BuildContext context) {
     padding: const EdgeInsets.all(8.0),
     child: TextField(
       controller: cubit.searchController,
-      onChanged: cubit.filterSuppliers,
-      decoration: InputDecoration(
+      onChanged: (query) {
+        // Ensure we're using the correct cubit instance
+        final currentCubit = AppointmentCubit.get(context);
+        currentCubit.filterSuppliers(query);
+      },      decoration: InputDecoration(
         prefixIcon: const Icon(Icons.search),
         hintText:
             isArabic() ? 'ابحث بالاسم او الكود' : 'Search by name or code',

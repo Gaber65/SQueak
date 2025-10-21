@@ -1,9 +1,14 @@
+import 'package:squeak/features/settings/domain/entities/owner_entite.dart';
+
+import '../../../layout/post/domain/entities/post_entity.dart';
+
 class PetEntities {
   final String? petId;
   final String? petName;
   final String? breedId;
   final bool? isSpayed;
   final int? gender;
+  final Owner? owner;
   final String? specieId;
   final String? imageName;
   final String? birthdate;
@@ -14,7 +19,11 @@ class PetEntities {
   final String? qrCodeId;
   final BreedPetEntity? breed;
   final int? mutualFriends;
-
+  final String? ownerId;
+  final int maritalStatus;
+  final bool availableForMating;
+  final List<PostEntity> post;
+  final List<dynamic> petMarriage;
   bool isSelected;
 
   PetEntities({
@@ -27,12 +36,19 @@ class PetEntities {
     this.imageName,
     this.birthdate,
     this.passportNumber,
+    this.passportImage,
     this.microShipNumber,
-    this.mutualFriends,
     this.qrCode,
     this.qrCodeId,
-    this.passportImage,
     this.breed,
+    this.mutualFriends,
+    this.ownerId,
+    this.owner,
+
+    this.maritalStatus = 0,
+    this.availableForMating = false,
+    this.post = const [],
+    this.petMarriage = const [],
     this.isSelected = false,
   });
 
@@ -44,12 +60,22 @@ class PetEntities {
       'isSpayed': isSpayed,
       'gender': gender,
       'specieId': specieId,
-      'mutualFriends': mutualFriends,
       'imageName': imageName,
       'birthdate': birthdate,
-      'passportnumber': passportNumber,
+      'passportNumber': passportNumber,
       'passportImage': passportImage,
       'microShipNumber': microShipNumber,
+      'qrCode': qrCode,
+      'qrCodeId': qrCodeId,
+      'mutualFriends': mutualFriends,
+      'owner': owner?.toMap(),
+      'maritalStatus': maritalStatus,
+      'availableForMating': availableForMating,
+      'post': post.map((e) => e.toJson()).toList(),
+      'petMarriage': petMarriage,
+      'breed': breed?.toJson(),
+      'ownerId': ownerId,
+      'isSelected': isSelected,
     };
   }
 }
@@ -86,4 +112,18 @@ class BreedPetEntity {
   BreedPetEntity({required this.enBreed, required this.arBreed});
 
   Map<String, dynamic> toJson() => {'enBreed': enBreed, 'arBreed': arBreed};
+}
+
+extension PetValidator on PetEntities {
+  bool get isValid {
+    return petName != null &&
+        petName!.trim().isNotEmpty &&
+        gender != null &&
+        specieId != null &&
+        specieId!.trim().isNotEmpty &&
+        breedId != null &&
+        breedId!.trim().isNotEmpty &&
+        imageName != null &&
+        imageName!.trim().isNotEmpty;
+  }
 }

@@ -11,7 +11,7 @@ class BirthdatePicker extends StatelessWidget {
   final PetCubit cubit;
   final bool isDark;
 
-  /// Calculates age from birthdate to current date
+  /// Calculates age from birthdate to current data
   String _calculateAge(String birthdate) {
     if (birthdate.isEmpty) {
       return isArabic() ? 'سيتم حسابه' : 'Age will be calculated';
@@ -53,16 +53,16 @@ class BirthdatePicker extends StatelessWidget {
     }
   }
 
-  /// Sets date by subtracting the specified months/years from current date
+  /// Sets data by subtracting the specified months/years from current data
   void _setQuickDate(BuildContext context, int months) {
     final DateTime now = DateTime.now();
-    // Subtract the specified months from current date
+    // Subtract the specified months from current data
     final DateTime selectedDate = DateTime(
       now.year,
       now.month - months,
       now.day,
     );
-    // Format date as YYYY-MM-DD and update the birthdate
+    // Format data as YYYY-MM-DD and update the birthdate
     cubit.changeBirthdate(selectedDate.toString().substring(0, 10));
   }
 
@@ -206,7 +206,7 @@ class BirthdatePicker extends StatelessWidget {
     );
   }
 
-  /// Builds a quick date selection button
+  /// Builds a quick data selection button
   Widget _buildQuickDateButton(BuildContext context, String label, int months) {
     return Expanded(
       child: InkWell(
@@ -236,10 +236,10 @@ class BirthdatePicker extends StatelessWidget {
     );
   }
 
-  /// Opens date picker dialog and updates the birthdate
+  /// Opens data picker dialog and updates the birthdate
   Future<void> _selectDate(BuildContext context) async {
     // Use the currently selected birthdate if available, otherwise default
-    // to today. This ensures the calendar opens at the selected date.
+    // to today. This ensures the calendar opens at the selected data.
     DateTime initial = DateTime.now();
     try {
       if (cubit.birthdateController.text.isNotEmpty) {

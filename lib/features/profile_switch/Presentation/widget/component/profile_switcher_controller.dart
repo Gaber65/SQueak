@@ -19,10 +19,8 @@ class ProfileSwitcherController {
       duration: const Duration(milliseconds: 200),
     );
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
-    _scale = Tween<double>(
-      begin: 0.9,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _scale = Tween<double>(begin: 0.9, end: 1.0)
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
   }
 
   bool get isOpen => _isOpen;
@@ -32,11 +30,12 @@ class ProfileSwitcherController {
   }
 
   void _showOverlay() {
+    if (!mounted) return;
     final overlay = Overlay.of(context);
+
     _overlayEntry = OverlayEntry(
       builder: (_) => Stack(
         children: [
-          // Only the background area handles taps to close the overlay.
           Positioned.fill(
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
@@ -44,9 +43,6 @@ class ProfileSwitcherController {
               child: Container(color: Colors.transparent),
             ),
           ),
-          // The overlay content sits above and will receive gestures itself
-          // (so taps/scrolls inside won't be intercepted by the background
-          // tap handler).
           buildProfileSwitcherOverlay(
             context: context,
             layerLink: layerLink,
@@ -63,21 +59,33 @@ class ProfileSwitcherController {
     _controller.forward();
   }
 
+  void showTemporaryOverlay({Duration duration = const Duration(seconds: 2)}) {
+    if (!mounted) return;
+    _showOverlay();
+    Future.delayed(duration, () {
+      if (_isOpen) _removeOverlay();
+    });
+  }
+
   void _removeOverlay() {
     if (_overlayEntry != null && _isOpen) {
       _isOpen = false;
       _controller.reverse().then((_) {
-        _overlayEntry?.remove();
-        _overlayEntry?.dispose();
-        _overlayEntry = null;
+        if (_overlayEntry != null) {
+          _overlayEntry?.remove();
+          _overlayEntry = null;
+        }
       });
     }
   }
 
   void dispose() {
-    _removeOverlay();
     _controller.dispose();
+    _overlayEntry?.remove();
+    _overlayEntry = null;
   }
 
   void closeDropdown() => _removeOverlay();
+
+  bool get mounted => context.mounted; // Use extension for safety in Flutter >=3.7
 }

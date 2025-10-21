@@ -115,7 +115,7 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
       formattedTime = convertLocalTimeToUTC(formattedTime);
       if (params.isExisted) {
         final Map<String, dynamic> requestData = {
-          "date": params.appointmentDate,
+          "data": params.appointmentDate,
           "time": formattedTime,
           "petId": params.petId,
           "clinicCode": params.clinicCode,
@@ -148,7 +148,7 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
         await DioFinalHelper.postData(
           method: '$version/vetcare/reservation/newPet',
           data: {
-            "date": params.appointmentDate,
+            "data": params.appointmentDate,
             "time": formattedTime,
             "clinicCode": params.clinicCode,
             "clientId": params.clientId,
@@ -168,7 +168,7 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
         await DioFinalHelper.postData(
           method: '$version/vetcare/reservation/newPet/newClient',
           data: {
-            "date": params.appointmentDate,
+            "data": params.appointmentDate,
             "time": formattedTime,
             "clinicCode": params.clinicCode,
             "doctorUserId": params.doctorId,

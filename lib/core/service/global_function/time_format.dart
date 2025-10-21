@@ -83,12 +83,12 @@ String formatFacebookTimePost(String createdAt) {
           : DateFormat('MMM d \'at\' h:mm a').format(localTime);
     }
   } catch (e) {
-    return 'Invalid date';
+    return 'Invalid data';
   }
 }
 
 String formatBILL(String createdAt) {
-  debugPrint("Input date string: $createdAt");
+  debugPrint("Input data string: $createdAt");
 
   final backendFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss", 'en_US');
   final utcTime = backendFormat.parse(createdAt, true);
@@ -116,7 +116,7 @@ String formatTimeToAmPmReminder(String time) {
 }
 
 String formatBoarding(String createdAt) {
-  // print("Input date string: $createdAt");
+  // print("Input data string: $createdAt");
 
   try {
     // لو السيرفر بيرسل التوقيت كـ UTC بدون 'Z' في آخره
@@ -129,7 +129,7 @@ String formatBoarding(String createdAt) {
     // ننسق الناتج
     return DateFormat('MMM dd yyyy, hh:mm a', 'en_US').format(localTime);
   } catch (e) {
-    // print('Error parsing date: $e');
+    // print('Error parsing data: $e');
     return createdAt;
   }
 }
@@ -178,7 +178,7 @@ String formatAge(dynamic birthDate, {bool isUser = false}) {
         : DateTime.tryParse(birthDate.toString());
 
     if (date == null) {
-      return isArabic() ? "تاريخ غير صالح" : "Invalid date";
+      return isArabic() ? "تاريخ غير صالح" : "Invalid data";
     }
 
     final today = DateTime.now();
@@ -237,6 +237,6 @@ String formatAge(dynamic birthDate, {bool isUser = false}) {
 
     return arabic ? parts.join(" و ") : parts.join(", ");
   } catch (e) {
-    return isArabic() ? "تاريخ غير صالح" : "Invalid date";
+    return isArabic() ? "تاريخ غير صالح" : "Invalid data";
   }
 }

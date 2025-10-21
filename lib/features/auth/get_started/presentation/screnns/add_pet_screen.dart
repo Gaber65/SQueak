@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -192,9 +190,11 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                     imagefile = file;
                   });
                   if (file != null) {
+                    if (!context.mounted) return;
                     MainCubit.get(
                       context,
                     ).getGlobalImage(file, UploadPlace.petsImages).then((value) {
+                      if (!context.mounted) return;
                       context.read<PetCubit>().imageNameController.text =
                           MainCubit.get(context).modelImage!.data;
                     });

@@ -1,0 +1,96 @@
+
+class GetMessagesParameters {
+  final String chatId;
+
+  const GetMessagesParameters({required this.chatId});
+}
+
+class SendMessageParameters {
+  final String description;
+  final String? image;
+  final String? video;
+  final String? audio;
+  final bool isRead;
+  final String conversationId;
+
+  const SendMessageParameters({
+    required this.description,
+    this.image,
+    this.video,
+    this.audio,
+    this.isRead = true,
+    required this.conversationId,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'description': description,
+      'image': image,
+      'video': video,
+      'audio': audio,
+      'isRead': isRead,
+      'convesationId': conversationId,
+    };
+  }
+}
+
+class BlockChatParameters {
+  final String conversationId;
+  final int statues;
+  final int conversationType;
+
+  const BlockChatParameters({
+    required this.conversationId,
+    required this.statues,
+    required this.conversationType,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'conversationId': conversationId,
+      'statues': statues,
+      'conversationType': conversationType,
+    };
+  }
+}
+
+class RenameChatParameters {
+  final String conversationId;
+  final String petId;
+  final String newName;
+  final int conversationType;
+
+  const RenameChatParameters({
+    required this.conversationId,
+    required this.petId,
+    required this.newName,
+    required this.conversationType,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'conversationId': conversationId,
+      'petId': petId,
+      'newName': newName,
+      'conversationType': conversationType,
+    };
+  }
+}
+
+class RateMatingParameters {
+  final String matingId;
+  final int rate;
+  final String rateComment;
+
+  const RateMatingParameters({
+    required this.matingId,
+    required this.rate,
+    required this.rateComment,
+  });
+
+  Map<String, dynamic> toJson() => {
+    'matingId': matingId,
+    'rate': rate,
+    'rateComment': rateComment,
+  };
+}

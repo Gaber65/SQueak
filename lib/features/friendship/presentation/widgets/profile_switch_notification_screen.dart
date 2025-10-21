@@ -1,12 +1,9 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
 import 'package:squeak/features/profile_switch/Presentation/widget/screens/profile_switcher_page.dart';
-import 'package:squeak/features/settings/persentaion/controller/setting_cubit.dart';
 
 bool hasPlayedProfileAnimation = false;
 
@@ -57,88 +54,72 @@ class _ProfileSwitchNotificationScreenState
             children: [
               Padding(
                 padding: const EdgeInsets.only(right: 12),
-                child: MultiBlocProvider(
-                  providers: [
-                    BlocProvider(
-                      create: (_) => sl<PetCubit>()..getOwnerPets(),
-                      lazy: false,
-                    ),
-                    BlocProvider(
-                      create: (_) => sl<SettingCubit>()..getOwnerData(),
-                      lazy: true,
-                    ),
-                    BlocProvider(
-                      create: (_) => sl<SwitchProfileCubit>()..loadProfile(),
-                      lazy: true,
-                    ),
-                  ],
-                  child: BlocConsumer<SwitchProfileCubit, SwitchProfileState>(
-                    listener: (context, state) {},
-                    builder: (context, state) {
-                      var cubit = SwitchProfileCubit.get(context);
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Stack(
-                            alignment: Alignment.center,
-                            clipBehavior: Clip.none,
-                            children: [
-                              // Profile button container
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color:
-                                        isDark
-                                            ? Colors.grey.shade800
-                                            : Colors.grey.shade200,
-                                    width: 2,
+                child: BlocConsumer<SwitchProfileCubit, SwitchProfileState>(
+                  listener: (context, state) {},
+                  builder: (context, state) {
+                    var cubit = SwitchProfileCubit.get(context);
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Stack(
+                          alignment: Alignment.center,
+                          clipBehavior: Clip.none,
+                          children: [
+                            // Profile button container
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color:
+                                      isDark
+                                          ? Colors.grey.shade800
+                                          : Colors.grey.shade200,
+                                  width: 2,
+                                ),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: ColorManager.primaryColor
+                                        .withOpacity(0.3),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 4),
                                   ),
+                                ],
+                              ),
+                              child: _StaticProfileButton(
+                                isDark: isDark,
+                                image: cubit.image,
+                                name: cubit.name,
+                              ),
+                            ),
+
+                            // Swap icon positioned at bottom center
+                            Positioned(
+                              bottom: -8, // move slightly below the circle
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
                                       color: ColorManager.primaryColor
                                           .withOpacity(0.3),
-                                      blurRadius: 12,
-                                      offset: const Offset(0, 4),
+                                      blurRadius: 6,
                                     ),
                                   ],
                                 ),
-                                child: _StaticProfileButton(
-                                  isDark: isDark,
-                                  image: cubit.image,
-                                  name: cubit.name,
+                                padding: const EdgeInsets.all(4),
+                                child: Icon(
+                                  Icons.swap_horiz,
+                                  color: ColorManager.primaryColor,
+                                  size: 22,
                                 ),
                               ),
-
-                              // Swap icon positioned at bottom center
-                              Positioned(
-                                bottom: -8, // move slightly below the circle
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: ColorManager.primaryColor
-                                            .withOpacity(0.3),
-                                        blurRadius: 6,
-                                      ),
-                                    ],
-                                  ),
-                                  padding: const EdgeInsets.all(4),
-                                  child: Icon(
-                                    Icons.swap_horiz,
-                                    color: ColorManager.primaryColor,
-                                    size: 22,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 16),

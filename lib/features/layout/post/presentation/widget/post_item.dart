@@ -33,7 +33,7 @@ class BuildPostItem extends StatelessWidget {
                     radius: 30,
                     backgroundColor: isDark ? Colors.black38 : Colors.white,
                     backgroundImage: FastCachedImageProvider(
-                      imageUrl + postItem.clinic.image,
+                      imageUrl + postItem.clinic!.image,
                     ),
                   ),
                   const SizedBox(width: 15),
@@ -42,14 +42,14 @@ class BuildPostItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          postItem.clinic.name,
+                          postItem.clinic!.name,
                           style: FontStyleThame.textStyle(context: context),
                         ),
                         const SizedBox(height: 5),
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.7,
                           child: Text(
-                            postItem.title,
+                            postItem.title!,
                             maxLines: 4,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -66,7 +66,7 @@ class BuildPostItem extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                postItem.content,
+                postItem.content!,
                 style: TextStyle(color: textColor),
               ),
               const SizedBox(height: 12),
@@ -79,8 +79,8 @@ class BuildPostItem extends StatelessWidget {
                       context,
                       ImageDetailSimple(
                         path: imageUrl + postItem.image!,
-                        title: postItem.title,
-                        description: postItem.content,
+                        title: postItem.title!,
+                        description: postItem.content!,
                       ),
                     );
                   },
@@ -131,7 +131,7 @@ class BuildPostItem extends StatelessWidget {
                   CacheHelper.saveData('isReplayCommentOpen', false);
                   navigateToScreen(
                     context,
-                    CommentScreen(postId: postItem.postId),
+                    CommentScreen(postId: postItem.postId!),
                   );
                 },
                 radius: 10,
@@ -156,7 +156,7 @@ class BuildPostItem extends StatelessWidget {
       
               // Post time
               Text(
-                formatFacebookTimePost(postItem.createdAt),
+                formatFacebookTimePost(postItem.createdAt!),
                 style: FontStyleThame.textStyle(
                   context: context,
                   fontWeight: FontWeight.w400,

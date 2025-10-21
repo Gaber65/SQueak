@@ -33,7 +33,7 @@ class AppointmentModel extends AppointmentEntity {
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
     return AppointmentModel(
       id: json['id'],
-      date: json['date'],
+      date: json['data'],
       time: json['time'],
       isBillSqueakVisible: json['isBillSqueakVisible'],
       doctorUserId: json['doctorUserId'],
@@ -71,7 +71,7 @@ class AppointmentModel extends AppointmentEntity {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'date': date,
+      'data': date,
       'time': time,
       'doctorUserId': doctorUserId,
       'visitId': visitId,

@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/friendship/domain/entities/friend_request_stats.dart';
 import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
-import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
 
 class RequestCard extends StatelessWidget {
   final PetFriendRequestEntity pet;
