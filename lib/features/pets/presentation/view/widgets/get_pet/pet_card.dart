@@ -5,6 +5,7 @@ import 'package:squeak/features/appointments/exam/presentation/view/supplier/get
 
 import '../../../../../qr/presentation/controller/qr_cubit.dart';
 import '../../../../../qr/presentation/widgets/qr_action_buttons.dart';
+import '../../../../../qr/presentation/widgets/qr_status_indicator.dart';
 import '../../../../domain/entities/pet_entity.dart';
 import '../../../controller/pet_cubit.dart';
 import '../../edit_pet_screen.dart';
@@ -357,14 +358,22 @@ class _PetCardState extends State<PetCard> {
                         size: 14,
                         color: ColorManager.primaryColor,
                       ),
-                      const SizedBox(width: 6),
-                      // Show only calculated age (e.g., "(2 years)") instead of raw birthdate
+                      const SizedBox(width: 4),
                       Text(
-                        _calculateAge(),
+                        widget.pet.birthdate!.substring(0, 10),
                         style: TextStyle(
                           color: ColorManager.primaryColor,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        _calculateAge(),
+                        style: TextStyle(
+                          color: ColorManager.primaryColor,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -435,7 +444,38 @@ class _PetCardState extends State<PetCard> {
     );
   }
 
+  Color _getGenderColor() {
+    switch (widget.pet.gender) {
+      case 1:
+        return Colors.blue; // Male
+      case 2:
+        return Colors.pink; // Female
+      default:
+        return Colors.grey;
+    }
+  }
 
+  IconData _getGenderIcon() {
+    switch (widget.pet.gender) {
+      case 1:
+        return Icons.male; // Male
+      case 2:
+        return Icons.female; // Female
+      default:
+        return Icons.help_outline;
+    }
+  }
+
+  String _getGenderText() {
+    switch (widget.pet.gender) {
+      case 1:
+        return isArabic() ? "ذكر" : "Male";
+      case 2:
+        return isArabic() ? "أنثى" : "Female";
+      default:
+        return isArabic() ? "غير محدد" : "Unknown";
+    }
+  }
 
   String _calculateAge() {
     if (widget.pet.birthdate?.isEmpty ?? true) return "";

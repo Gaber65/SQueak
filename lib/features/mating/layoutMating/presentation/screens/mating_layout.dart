@@ -13,7 +13,6 @@ class MatingLayoutScreen extends StatelessWidget {
       create: (context) => MatingLayoutCubit(),
       child: BlocConsumer<MatingLayoutCubit, MatingLayoutState>(
         listener: (context, state) {
-          // TODO: implement listener
         },
         builder: (context, state) {
           var cubit = MatingLayoutCubit.get(context);
