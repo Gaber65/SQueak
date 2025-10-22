@@ -32,14 +32,13 @@ class PetFeedScreen extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
+              centerTitle: true,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back_ios),
                 onPressed: () => navigateAndFinish(context, LayoutScreen()),
               ),
               title: Text(S.of(context).avaPetTOMating),
-              actions: [
-                buildProfileSwitcher(context),
-              ],
+              actions: [buildProfileSwitcher(context)],
             ),
             body: BlocSelector<
               SwitchProfileCubit,

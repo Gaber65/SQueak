@@ -55,6 +55,7 @@ class PetProfileScreen extends StatelessWidget {
             builder: (context, activePet) {
               return Scaffold(
                 appBar: AppBar(
+                  centerTitle: true,
                   elevation: 0,
                   title: Text(
                     S.of(context).profile,
@@ -62,7 +63,10 @@ class PetProfileScreen extends StatelessWidget {
                   ),
                   backgroundColor: Colors.transparent,
                   actions: [
-                    buildProfileSwitcher(context),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: buildProfileSwitcher(context),
+                    ),
                   ],
                   leading: IconButton(
                     icon: Container(

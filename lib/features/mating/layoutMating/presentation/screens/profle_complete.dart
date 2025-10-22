@@ -41,7 +41,9 @@ class ProfileComplete extends StatelessWidget {
           if (state is ProfileLoaded) {
             if (cubit.activeProfile!.type == ProfileType.user) {
               return Scaffold(
-                appBar: AppBar(title: Text(S.of(context).switchTitle)),
+                appBar: AppBar(
+                  centerTitle: true,
+                  title: Text(S.of(context).switchTitle)),
                 body: ProfileSwitchMatingNotificationScreen(),
               );
             } else if (cubit.activeProfile!.pet!.isValid) {

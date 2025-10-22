@@ -69,7 +69,7 @@ class MatingRequestsScreen extends StatelessWidget {
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: ColorManager.primaryColor),
+        icon: Icon(Icons.arrow_back_ios, color: ColorManager.primaryColor),
         onPressed: () => navigateAndFinish(context, LayoutScreen()),
       ),
       title: Text(

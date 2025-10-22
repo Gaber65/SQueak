@@ -111,6 +111,7 @@ class _ChatListView extends StatelessWidget {
   ) {
     return SliverAppBar(
       floating: true,
+      centerTitle: true,
       pinned: true,
       elevation: 0,
       title: Text(
