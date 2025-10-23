@@ -32,7 +32,6 @@ class PetFeedScreen extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
-              centerTitle: true,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back_ios),
                 onPressed: () => navigateAndFinish(context, LayoutScreen()),

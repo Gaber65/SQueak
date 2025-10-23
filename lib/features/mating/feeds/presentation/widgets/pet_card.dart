@@ -22,195 +22,217 @@ class PetCardMating extends StatelessWidget {
         pet.imageName!.isNotEmpty &&
         pet.imageName != imageUrl;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-      decoration: Decorations.kDecorationBoxShadow(context: context),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            // 🐶 Avatar
-            hasImage
-                ? ClipOval(
-              child: Container(
-                width: 70,
-                height: 70,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 1.5),
-                ),
-                child: ClipOval(
-                  child: Image.network(
-                    imageUrl + pet.imageName!,
-                    width: 70,
-                    height: 70,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.pets, color: Colors.white),
-                      );
-                    },
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Container(
-                        color: Colors.grey[200],
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes !=
-                                null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                                : null,
-                            strokeWidth: 2,
-                            valueColor:
-                            const AlwaysStoppedAnimation<Color>(
-                              Colors.white,
+    return LayoutBuilder(builder: (context, constraints) {
+      // Base sizes that scale with available width
+      final maxWidth = constraints.maxWidth;
+      final avatarSize = (maxWidth * 0.12).clamp(48.0, 96.0);
+      final spacing = (maxWidth * 0.02).clamp(8.0, 20.0);
+  // buttonWidth removed — buttons are now using Expanded to layout responsively
+      final titleFont = (maxWidth * 0.045).clamp(14.0, 20.0);
+      final subtitleFont = (maxWidth * 0.032).clamp(12.0, 16.0);
+
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: spacing, vertical: spacing),
+        margin: EdgeInsets.symmetric(vertical: spacing, horizontal: spacing),
+        decoration: Decorations.kDecorationBoxShadow(context: context),
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        child: Padding(
+          padding: EdgeInsets.all(spacing * 2),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Top row: avatar + info
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // 🐶 Avatar
+                  hasImage
+                      ? ClipOval(
+                          child: Container(
+                            width: avatarSize,
+                            height: avatarSize,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 1.5),
+                            ),
+                            child: ClipOval(
+                              child: Image.network(
+                                imageUrl + pet.imageName!,
+                                width: avatarSize,
+                                height: avatarSize,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: Colors.grey[300],
+                                    child: const Icon(Icons.pets, color: Colors.white),
+                                  );
+                                },
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Container(
+                                    color: Colors.grey[200],
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress.expectedTotalBytes != null
+                                            ? loadingProgress.cumulativeBytesLoaded /
+                                                loadingProgress.expectedTotalBytes!
+                                            : null,
+                                        strokeWidth: 2,
+                                        valueColor: const AlwaysStoppedAnimation<Color>(
+                                          Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox(
+                          width: avatarSize,
+                          height: avatarSize,
+                          child: CircleAvatar(
+                            backgroundColor: ColorManager.primaryColor,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                pet.petName ?? S.of(context).littleFriend,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: (avatarSize * 0.18).clamp(10.0, 14.0),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            )
-                : SizedBox(
-              width: 70,
-              height: 70,
-              child: CircleAvatar(
-                backgroundColor: ColorManager.primaryColor,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    pet.petName ?? S.of(context).littleFriend,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
 
-            // 🩵 Pet Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                  SizedBox(width: spacing * 2),
+
+                  // 🩵 Pet Info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          pet.petName ?? S.of(context).littleFriend,
+                          style: TextStyle(
+                            fontSize: titleFont,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          (pet.birthdate != null && pet.birthdate!.isNotEmpty)
+                              ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
+                              : pet.breed?.enBreed ?? "",
+                          style: TextStyle(color: Colors.grey, fontSize: subtitleFont),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: spacing * 0.8,
+                            vertical: spacing * 0.35,
+                          ),
+                          decoration: BoxDecoration(
+                            color: pet.isSpayed!
+                                ? Colors.green.withOpacity(0.1)
+                                : Colors.red.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            pet.isSpayed! ? S.of(context).spayed : S.of(context).notSpayed,
+                            style: TextStyle(
+                              color: pet.isSpayed! ? Colors.green : Colors.red,
+                              fontSize: (subtitleFont * 0.85).clamp(9.0, 12.0),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: spacing * 1.25),
+
+              // Bottom row: two buttons side-by-side
+              Row(
                 children: [
-                  Text(
-                    pet.petName ?? S.of(context).littleFriend,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Expanded(
+                    child: !pet.isSelected
+                        ? ElevatedButton.icon(
+                            onPressed: onSendRequest,
+                            icon: const Icon(Icons.favorite, size: 16),
+                            label: Text(
+                              S.of(context).sendRequest,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              backgroundColor: ColorManager.primaryColor,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: spacing,
+                                vertical: spacing * 0.9,
+                              ),
+                            ),
+                          )
+                        : OutlinedButton.icon(
+                            onPressed: onCancelRequest,
+                            icon: const Icon(Icons.close, size: 16),
+                            label: Text(S.of(context).cancelRequest,
+                                overflow: TextOverflow.ellipsis),
+                            style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              foregroundColor: Colors.red,
+                              side: BorderSide(color: Colors.red),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: spacing,
+                                vertical: spacing * 0.9,
+                              ),
+                            ),
+                          ),
                   ),
-                  Text(
-                    (pet.birthdate != null && pet.birthdate!.isNotEmpty)
-                        ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
-                        : pet.breed?.enBreed ?? "",
-                    style: const TextStyle(color: Colors.grey, fontSize: 14),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: pet.isSpayed!
-                          ? Colors.green.withOpacity(0.1)
-                          : Colors.red.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      pet.isSpayed!
-                          ? S.of(context).spayed
-                          : S.of(context).notSpayed,
-                      style: TextStyle(
-                        color: pet.isSpayed! ? Colors.green : Colors.red,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
+
+                  SizedBox(width: spacing),
+
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: onViewProfile,
+                      icon: const Icon(Icons.person, size: 16),
+                      label: Text(S.of(context).viewProfile,
+                          overflow: TextOverflow.ellipsis),
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        foregroundColor: ColorManager.primaryColor,
+                        side: BorderSide(color: ColorManager.primaryColor),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: spacing,
+                          vertical: spacing * 0.9,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
-            ),
-
-            // 💌 Buttons
-            Column(
-              children: [
-                !pet.isSelected ?
-                SizedBox(
-                  width: 150,
-                  child: ElevatedButton.icon(
-                    onPressed: onSendRequest,
-                    icon: const Icon(Icons.favorite, size: 16),
-                    label: Text(
-                      S.of(context).sendRequest,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      backgroundColor: ColorManager.primaryColor,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                    ),
-                  ),
-                ) :
-                SizedBox(
-                  width: 150,
-                  child: OutlinedButton.icon(
-                    onPressed: onCancelRequest,
-                    icon: const Icon(Icons.close, size: 16),
-                    label: Text(S.of(context).cancelRequest),
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      foregroundColor: Colors.red,
-                      side: BorderSide(color: Colors.red),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: 150,
-                  child: OutlinedButton.icon(
-                    onPressed: onViewProfile,
-                    icon: const Icon(Icons.person, size: 16),
-                    label: Text(S.of(context).viewProfile),
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      foregroundColor: ColorManager.primaryColor,
-                      side: BorderSide(color: ColorManager.primaryColor),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
