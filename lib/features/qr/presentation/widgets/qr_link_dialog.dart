@@ -5,8 +5,8 @@ import '../../../../core/service/global_widget/toast.dart';
 import '../../../../core/utils/theme/color_mangment/color_manager.dart';
 import '../controller/qr_cubit.dart';
 import '../../../pets/domain/entities/pet_entity.dart';
-// import '../view/new_scanner.dart';  // Temporarily disabled due to mobile_scanner dependency conflict
-import 'package:flutter/services.dart'; // مهم للـ Clipboard
+import '../view/new_scanner.dart';
+import 'package:flutter/services.dart'; 
 
 class QrLinkDialog extends StatefulWidget {
   final PetEntities pet;
@@ -496,29 +496,24 @@ class _QrLinkDialogState extends State<QrLinkDialog>
   }
 
   Future<void> _simulateScan(context) async {
-    // Temporarily disabled due to mobile_scanner dependency conflict
-  
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'QR Scanner temporarily unavailable. Please enter QR code manually.',
-        ),
-        duration: Duration(seconds: 3),
-      ),
-    );
+    setState(() {
+      isScanning = true;
+    });
 
-    /* Original implementation:
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) =>  ScannerScreen()),
+      MaterialPageRoute(builder: (context) => const ScannerScreen()),
     );
+
+    setState(() {
+      isScanning = false;
+    });
 
     if (result != null && result is String) {
       setState(() {
         qrController.text = result;
       });
     }
-    */
   }
 
   void _linkQr(QrCubit cubit) {
