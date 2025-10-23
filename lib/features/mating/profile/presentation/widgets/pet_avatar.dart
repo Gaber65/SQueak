@@ -16,7 +16,18 @@ class PetAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = pet.imageName!.isNotEmpty && pet.imageName != imageUrl;
+    final rawImageName = pet.imageName;
+    final hasImage = rawImageName != null && rawImageName.isNotEmpty && rawImageName != 'xxx';
+
+    String? fullImageUrl;
+    if (hasImage) {
+      // If the imageName is already a full URL, use it. Otherwise prefix base imageUrl.
+      if (rawImageName.startsWith('http')) {
+        fullImageUrl = rawImageName;
+      } else {
+        fullImageUrl = imageUrl + rawImageName;
+      }
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -34,29 +45,62 @@ class PetAvatar extends StatelessWidget {
           color: isDarkMode ? Colors.grey.shade800 : Colors.white,
           borderRadius: BorderRadius.circular(25),
         ),
-        child:hasImage ? CircleAvatar(
-          radius: 50,
-          backgroundColor: Colors.transparent,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(25),
-            child: Image.network(
-              imageUrl +pet.imageName!,
-
-              fit: BoxFit.cover,
-            ),
-          ),
-        ) : CircleAvatar(
-          radius: 50,
-          backgroundColor: Colors.transparent,
-          child: Text(
-             pet.petName![0].toUpperCase(),
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              color: isDarkMode ? Colors.white : Colors.black87,
-            ),
-          ),
-        ),
+        child: hasImage && fullImageUrl != null
+            ? CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.transparent,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(25),
+                  child: Image.network(
+                    fullImageUrl,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                : null,
+                            color: ColorManager.primaryColor,
+                          ),
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
+                        child: const Center(
+                          child: Icon(
+                            Icons.pets,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              )
+            : CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.transparent,
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.pets,
+                      size: 40,
+                      color: isDarkMode ? Colors.white : Colors.black54,
+                    ),
+                  ),
+                ),
+              ),
       ),
     );
   }
