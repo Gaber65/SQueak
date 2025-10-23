@@ -41,12 +41,12 @@ class PetStatsSection extends StatelessWidget {
           StatItem(
             icon: Icons.calendar_today_rounded,
             label: 'Age',
-            value:
-                (pet.birthdate != null)
-                    ? formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))
-                    : 'Unknown',
+            value: (pet.birthdate != null)
+                ? formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))
+                : 'Unknown',
             color: Colors.blue,
             isDarkMode: isDarkMode,
+            flex: 6,
           ),
           StatItem(
             icon: Icons.location_on_rounded,
@@ -54,6 +54,7 @@ class PetStatsSection extends StatelessWidget {
             value: pet.owner?.address ?? 'Unknown',
             color: Colors.green,
             isDarkMode: isDarkMode,
+            flex: 5,
           ),
           // StatItem(
           //   icon: Icons.star_rounded,
@@ -68,6 +69,7 @@ class PetStatsSection extends StatelessWidget {
             value: pet.petMarriage.length.toString() ,
             color: Colors.pink,
             isDarkMode: isDarkMode,
+            flex: 5,
           ),
         ],
       ),

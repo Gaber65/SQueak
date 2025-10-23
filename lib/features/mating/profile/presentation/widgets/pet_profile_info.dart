@@ -26,84 +26,113 @@ class PetProfileInfo extends StatelessWidget {
     final Color textSecondaryColor =
         isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600;
 
-    return Row(
-      children: [
-        PetAvatar(pet: pet, isDarkMode: isDarkMode),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      pet.petName!,
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: textPrimaryColor,
-                        letterSpacing: -0.5,
+    return LayoutBuilder(builder: (context, constraints) {
+      final double maxWidth = constraints.maxWidth;
+      final double avatarSize = (maxWidth < 350)
+          ? 60
+          : (maxWidth < 600)
+              ? 80
+              : 100;
+      final double nameFontSize = (maxWidth < 350)
+          ? 18
+          : (maxWidth < 600)
+              ? 24
+              : 28;
+
+      final double breedFontSize = (maxWidth < 350) ? 12 : 16;
+      final double editIconSize = (maxWidth < 350) ? 16 : 20;
+      final double editPadding = (maxWidth < 350) ? 6 : 10;
+
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: avatarSize,
+            height: avatarSize,
+            child: PetAvatar(pet: pet, isDarkMode: isDarkMode),
+          ),
+          SizedBox(width: maxWidth < 360 ? 12 : 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        pet.petName!,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: nameFontSize,
+                          fontWeight: FontWeight.bold,
+                          color: textPrimaryColor,
+                          letterSpacing: -0.5,
+                        ),
                       ),
                     ),
-                  ),
-                  if (pet.ownerId == CacheHelper.getData('clintId'))
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: ColorManager.primaryColor,
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return StatusManagerDialog(
-                                  petId: pet.petId!,
-                                  listDate: statusesAlertToUpdateProfile(S.of(context)),
-                                  historyId: '',
-                                  cubit: cubit,
-                                );
-                              },
-                            );
-                          },
+                    if (pet.ownerId == CacheHelper.getData('clintId'))
+                      Container(
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          child: const Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Icon(
-                              Icons.edit_rounded,
-                              color: Colors.white,
-                              size: 20,
+                          color: ColorManager.primaryColor,
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return StatusManagerDialog(
+                                    petId: pet.petId!,
+                                    listDate: statusesAlertToUpdateProfile(S.of(context)),
+                                    historyId: '',
+                                    cubit: cubit,
+                                  );
+                                },
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: Padding(
+                              padding: EdgeInsets.all(editPadding),
+                              child: Icon(
+                                Icons.edit_rounded,
+                                color: Colors.white,
+                                size: editIconSize,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                pet.breed?.enBreed ?? '',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: textSecondaryColor,
-                  fontWeight: FontWeight.w500,
+                  ],
                 ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  PetStatusChip(pet: pet),
-                  const SizedBox(width: 12),
-                  PetGenderChip(pet: pet, isDarkMode: isDarkMode),
-                ],
-              ),
-            ],
+                SizedBox(height: maxWidth < 360 ? 6 : 8),
+                Text(
+                  pet.breed?.enBreed ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: breedFontSize,
+                    color: textSecondaryColor,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: maxWidth < 360 ? 8 : 12),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  children: [
+                    PetStatusChip(pet: pet),
+                    PetGenderChip(pet: pet, isDarkMode: isDarkMode),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 }

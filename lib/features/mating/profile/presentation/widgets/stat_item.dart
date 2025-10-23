@@ -6,6 +6,7 @@ class StatItem extends StatelessWidget {
   final String value;
   final Color color;
   final bool isDarkMode;
+  final int flex;
 
   const StatItem({
     super.key,
@@ -14,11 +15,13 @@ class StatItem extends StatelessWidget {
     required this.value,
     required this.color,
     required this.isDarkMode,
+    this.flex = 1,
   });
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
+      flex: flex,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
@@ -46,6 +49,9 @@ class StatItem extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 value,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
