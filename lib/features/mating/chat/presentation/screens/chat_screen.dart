@@ -8,12 +8,14 @@ import 'package:squeak/features/mating/chat/domain/entities/message_entity.dart'
 import 'package:squeak/features/mating/chat/presentation/widgets/chat_app_bar.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/message_bubble.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
+import '../../../../pets/domain/entities/pet_entity.dart';
 import '../controllers/chat_messages_state.dart';
 
 class MatingChatDetailScreen extends StatefulWidget {
+  final PetEntities? pet;
   final ChatEntity chat;
 
-  const MatingChatDetailScreen({super.key, required this.chat});
+  const MatingChatDetailScreen({super.key, required this.chat, this.pet});
 
   @override
   State<MatingChatDetailScreen> createState() => _MatingChatDetailScreenState();
@@ -132,11 +134,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       ),
     );
   }
-
-
-
-
-
 
   Widget _buildStatusBanner(
       ThemeData theme,
@@ -290,8 +287,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       },
     );
   }
-
-
 
   Widget _buildEmptyState(ThemeData theme, bool isDark, S s) {
     return Center(

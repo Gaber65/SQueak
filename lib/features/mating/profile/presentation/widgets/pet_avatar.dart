@@ -21,7 +21,6 @@ class PetAvatar extends StatelessWidget {
 
     String? fullImageUrl;
     if (hasImage) {
-      // If the imageName is already a full URL, use it. Otherwise prefix base imageUrl.
       if (rawImageName.startsWith('http')) {
         fullImageUrl = rawImageName;
       } else {

@@ -68,7 +68,35 @@ class _ChatAppBarState extends State<ChatAppBar> {
                 width: 2,
               ),
             ),
-            child: const Icon(Icons.pets, color: ColorManager.primaryColor),
+            child: (widget.chat.image != null && widget.chat.image!.isNotEmpty)
+                ? ClipOval(
+                    child: Image.network(
+                      imageUrl + widget.chat.image!,
+                      width: 45,
+                      height: 45,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.pets, color: ColorManager.primaryColor);
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                : const Icon(Icons.pets, color: ColorManager.primaryColor),
           ),
           const SizedBox(width: 12),
           Expanded(
