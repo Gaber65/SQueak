@@ -386,7 +386,7 @@
   "viewProfile": "View Profile",
   "sendLovelyRequestTitle": "Send a Lovely Mating Request 💞",
   "sendLovelyRequestSubtitle": "Let’s help your little friend connect with {petName} and start a beautiful friendship!",
-  "sendRequest": "Send Request",
+  "sendRequest": "Send",
   "cancelRequest": "Cancel Request",
   "requestSent": "Mating request sent to {petName}! 💕",
   "mangeMatingRequests": "Manage Mating Requests",

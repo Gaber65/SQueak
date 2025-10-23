@@ -3264,14 +3264,9 @@ class S {
     );
   }
 
-  /// `Send Request`
+  /// `Send`
   String get sendRequest {
-    return Intl.message(
-      'Send Request',
-      name: 'sendRequest',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Send', name: 'sendRequest', desc: '', args: []);
   }
 
   /// `Cancel Request`

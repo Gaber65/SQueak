@@ -171,7 +171,7 @@ class PetCardMating extends StatelessWidget {
                     child: !pet.isSelected
                         ? ElevatedButton.icon(
                             onPressed: onSendRequest,
-                            icon: const Icon(Icons.favorite, size: 16),
+                            icon: const Icon(Icons.send_outlined, size: 16),
                             label: Text(
                               S.of(context).sendRequest,
                               overflow: TextOverflow.ellipsis,

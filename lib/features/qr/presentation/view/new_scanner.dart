@@ -13,7 +13,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
   bool _isScanned = false;
-\
+
 
   @override
   void dispose() {
@@ -27,6 +27,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
       if (!_isScanned && scanData.code != null) {
         _isScanned = true;
         controller.pauseCamera();
+        // ignore: use_build_context_synchronously
         Navigator.pop(context, scanData.code);
       }
     });

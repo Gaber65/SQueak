@@ -768,7 +768,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Send a Lovely Mating Request 💞",
     ),
     "sendMeNow": MessageLookupByLibrary.simpleMessage("Send me now"),
-    "sendRequest": MessageLookupByLibrary.simpleMessage("Send Request"),
+    "sendRequest": MessageLookupByLibrary.simpleMessage("Send"),
     "sent": MessageLookupByLibrary.simpleMessage("Sent"),
     "sentVerification": MessageLookupByLibrary.simpleMessage(
       "We have sent a verification code to",
