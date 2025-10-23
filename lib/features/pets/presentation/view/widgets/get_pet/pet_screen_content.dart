@@ -93,39 +93,63 @@ class _PetScreenContentState extends State<PetScreenContent> {
                     : Container(),
           ),
           actions: [
-            Container(
-              margin: const EdgeInsets.only(right: 16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [ColorManager.primaryColor, ColorManager.secondColor],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: ColorManager.primaryColor.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: SizedBox(
+                width: 56,
+                height: 56,
+                child: Material(
+                  color: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                ],
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  onTap: () {
-                    setState(() {
-                      _selectionMode = !_selectionMode;
-                      _selectedPets.clear();
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Icon(
-                      _selectionMode ? Icons.close : Icons.merge_type,
-                      size: 24,
-                      color: Colors.white,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(14),
+                    onTap: () {
+                      setState(() {
+                        _selectionMode = !_selectionMode;
+                        _selectedPets.clear();
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(14),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [ColorManager.primaryColor, ColorManager.secondColor],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: ColorManager.primaryColor.withOpacity(0.22),
+                            blurRadius: 6,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            _selectionMode ? Icons.close : Icons.merge_type,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(height: 4),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              S.of(context).mergePets,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

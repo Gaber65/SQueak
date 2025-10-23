@@ -528,6 +528,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "mating_features": MessageLookupByLibrary.simpleMessage("Mating Features"),
     "maxCharacters": m4,
     "maybe_later": MessageLookupByLibrary.simpleMessage("Maybe Later"),
+    "mergePets": MessageLookupByLibrary.simpleMessage("Merge"),
     "message_hint": MessageLookupByLibrary.simpleMessage("Enter your message"),
     "message_validation": MessageLookupByLibrary.simpleMessage(
       "Please enter a message",

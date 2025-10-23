@@ -500,6 +500,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "mating_features": MessageLookupByLibrary.simpleMessage("ميزات التزاوج"),
     "maxCharacters": m4,
     "maybe_later": MessageLookupByLibrary.simpleMessage("ربما لاحقًا"),
+    "mergePets": MessageLookupByLibrary.simpleMessage("دمج"),
     "message_hint": MessageLookupByLibrary.simpleMessage("أدخل رسالتك"),
     "message_validation": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال رسالة",
