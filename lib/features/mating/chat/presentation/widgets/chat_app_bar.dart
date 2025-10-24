@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import '../../../../../core/utils/enums/profile_type.dart';
+import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
+import '../controllers/chat_messages_state.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/rating_pet_mating.dart';
 import '../../../profile/presentation/screens/view_pet_profile_screen.dart';
 import '../../domain/entities/chat_entity.dart';
@@ -20,16 +24,40 @@ class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _ChatAppBarState extends State<ChatAppBar> {
   String? newName;
+  late bool _isBlocked;
+  late StreamSubscription _subscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _isBlocked = widget.chat.isBlock;
+    // listen to cubit stream for block/unblock updates
+    _subscription = widget.cubit.stream.listen((state) {
+      // When block/unblock succeeds, toggle local flag so UI updates
+      if (state is BlockChatSuccess) {
+        if (!mounted) return;
+        setState(() {
+          _isBlocked = !_isBlocked;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 
   String _getStatusText(context) {
-    if (widget.chat.isBlock) return S.of(context).block;
+    if (_isBlocked) return S.of(context).block;
     if (widget.chat.completeMarriageStatues) return S.of(context).completed;
     return S.of(context).active;
   }
 
   Color _getStatusColor() {
-    if (widget.chat.isBlock) return Colors.red;
-    if (widget.chat.isBlock) return const Color(0xFF6C63FF);
+    if (_isBlocked) return Colors.red;
+    if (widget.chat.completeMarriageStatues) return const Color(0xFF6C63FF);
     return Colors.green;
   }
 
@@ -48,7 +76,21 @@ class _ChatAppBarState extends State<ChatAppBar> {
           ),
           child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
         ),
-        onPressed: () => Navigator.pop(context),
+        onPressed: () {
+          Navigator.pop(context);
+          // Reload chat list after navigation completes
+          Future.delayed(const Duration(milliseconds: 100), () {
+            try {
+              final profileState = SwitchProfileCubit.get(navigatorKey.currentContext!).state;
+              if (profileState is ProfileLoaded && profileState.profile.type == ProfileType.pet) {
+                final petId = profileState.profile.pet?.petId;
+                if (petId != null) {
+                  ChatListCubit.get(navigatorKey.currentContext!).loadChats(petId);
+                }
+              }
+            } catch (_) {}
+          });
+        },
       ),
       title: Row(
         children: [
@@ -207,7 +249,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                     ),
                   ),
 
-                if (!widget.chat.isBlock)
+                if (!_isBlocked)
                   PopupMenuItem(
                     value: 'block',
                     child: Container(
@@ -239,7 +281,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                     ),
                   ),
 
-                if (widget.chat.isBlock)
+                if (_isBlocked)
                   PopupMenuItem(
                     value: 'unBlock',
                     child: Container(
@@ -379,7 +421,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
   }
 
   void _showFinishMatingDialog(BuildContext context) {
-    final s = S.of(context); // Your localization
+    final s = S.of(context); 
 
     MatingCompleteStatues? selectedStatus;
 
@@ -388,7 +430,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
         'status': MatingCompleteStatues.complete,
         'title': s.completed,
         'description':
-            'Description for completed', // make sure you have descriptions
+            'Description for completed', 
       },
       {
         'status': MatingCompleteStatues.notComplete,
@@ -396,7 +438,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
         'description': 'Description for not completed',
       },
     ];
-    bool sharePost = true; // initial value for checkbox
+    bool sharePost = true; 
 
     showDialog(
       context: context,
@@ -434,8 +476,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         ],
                       ),
                       const SizedBox(height: 8),
-
-                      // Status Options
                       Expanded(
                         child: ListView.builder(
                           itemCount: statuses.length,
@@ -531,7 +571,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       Row(
                         children: [
                           Text(
-                            'Share post', // replace with actual pet name
+                            'Share post', 
                             style: const TextStyle(color: Colors.grey),
                           ),
                           const Spacer(),
@@ -549,56 +589,63 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       const SizedBox(height: 16),
                       Row(
                         children: [
-                          OutlinedButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.grey[700],
-                              side: BorderSide(color: Colors.grey[300]!),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0),
+                          Expanded(
+                            flex: 2,
+                            child: OutlinedButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.grey[700],
+                                side: BorderSide(color: Colors.grey[300]!),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                  horizontal: 20,
+                                ),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 14,
-                                horizontal: 20,
+                              child: const Text(
+                                'Cancel',
+                                style: TextStyle(fontWeight: FontWeight.w500),
                               ),
-                            ),
-                            child: const Text(
-                              'Cancel',
-                              style: TextStyle(fontWeight: FontWeight.w500),
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (selectedStatus != null) {
-                                widget.cubit
-                                    .finishMating(
-                                      FinishMatingParameters(
-                                        matingId: widget.chat.matingId,
-                                        matingCompleteStatues: selectedStatus!,
-                                        sharePost: sharePost,
-                                      ),
-                                    )
-                                    .then((value) {
-                                      if (!context.mounted) return;
-                                      Navigator.of(context).pop();
-                                    });
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorManager.primaryColor,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            flex: 2,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (selectedStatus != null) {
+                                  widget.cubit
+                                      .finishMating(
+                                        FinishMatingParameters(
+                                          matingId: widget.chat.matingId,
+                                          matingCompleteStatues: selectedStatus!,
+                                          sharePost: sharePost,
+                                        ),
+                                      )
+                                      .then((value) {
+                                        if (!context.mounted) return;
+                                        Navigator.of(context).pop();
+                                      });
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: ColorManager.primaryColor,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                  horizontal: 20,
+                                ),
+                                elevation: 2,
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 14,
-                                horizontal: 20,
+                              child: const Text(
+                                'Finish',
+                                style: TextStyle(fontWeight: FontWeight.w500),
                               ),
-                              elevation: 2,
-                            ),
-                            child: const Text(
-                              'Finish',
-                              style: TextStyle(fontWeight: FontWeight.w500),
                             ),
                           ),
                         ],
@@ -615,43 +662,105 @@ class _ChatAppBarState extends State<ChatAppBar> {
   }
 
   void _showBlockDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Block User'),
-            content: Text(
-              'Are you sure you want to block ${widget.chat.name}?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  widget.cubit
-                      .blockChat(
-                        BlockChatParameters(
-                          conversationType: 1,
-                          statues: 0,
-                          conversationId: widget.chat.id,
-                        ),
-                      )
-                      .then((value) {
-                        if (!context.mounted) return;
-                        Navigator.pop(context);
-                      });
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: const Text(
-                  'Block',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
+   showDialog(
+  context: context,
+  builder: (context) => AlertDialog(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+    contentPadding: const EdgeInsets.all(24),
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Cute icon
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.orange.shade50,
+            shape: BoxShape.circle,
           ),
-    );
+          child: Icon(
+            Icons.pets,
+            size: 40,
+            color: Colors.orange.shade400,
+          ),
+        ),
+        const SizedBox(height: 16),
+        // Title
+        Text(
+          'Block ${widget.chat.name}?',
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
+        // Description
+        Text(
+          'You won\'t receive messages anymore',
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey.shade600,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ),
+    actions: [
+      // Cancel button
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: const Text(
+          'Cancel',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey,
+          ),
+        ),
+      ),
+      // Block button
+      ElevatedButton(
+        onPressed: () {
+          widget.cubit
+              .blockChat(
+                BlockChatParameters(
+                  conversationType: 1,
+                  statues: 0,
+                  conversationId: widget.chat.id,
+                ),
+              )
+              .then((value) {
+            if (!context.mounted) return;
+            Navigator.pop(context);
+          });
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.orange.shade400,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: const Text(
+          'Block',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    ],
+  ),
+);
   }
 
   void _showUnBlockDialog(BuildContext context) {

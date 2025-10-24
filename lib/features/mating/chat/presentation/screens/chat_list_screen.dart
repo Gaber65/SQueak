@@ -80,9 +80,14 @@ class _ChatListView extends StatelessWidget {
                             return _buildEmptyState(context, theme, isDark, s);
                           } else {
                             return RefreshIndicator(
-                              onRefresh:
-                                  () => cubit.loadChats(activePet!.petId!),
+                              onRefresh: () async {
+                                if (activePet?.petId != null) {
+                                  await cubit.loadChats(activePet!.petId!);
+                                }
+                              },
                               child: _buildChatsList(
+                                context,
+                                activePet?.petId ?? '',
                                 state.chats,
                                 theme,
                                 isDark,
@@ -90,6 +95,7 @@ class _ChatListView extends StatelessWidget {
                             );
                           }
                         }
+
                         return _buildEmptyState(context, theme, isDark, s);
                       },
                     ),
@@ -302,17 +308,16 @@ class _ChatListView extends StatelessWidget {
     );
   }
 
-  Widget _buildChatsList(List<ChatEntity> chats, ThemeData theme, bool isDark) {
+  Widget _buildChatsList(BuildContext context, String petId, List<ChatEntity> chats, ThemeData theme, bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
-        children:
-            chats.map((chat) => _buildChatItem(chat, theme, isDark)).toList(),
+        children: chats.map((chat) => _buildChatItem(context, petId, chat, theme, isDark)).toList(),
       ),
     );
   }
 
-  Widget _buildChatItem(ChatEntity chat, ThemeData theme, bool isDark) {
+  Widget _buildChatItem(BuildContext context, String petId, ChatEntity chat, ThemeData theme, bool isDark) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: ClipRRect(
@@ -347,11 +352,30 @@ class _ChatListView extends StatelessWidget {
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () {
-                  navigateToScreen(
-                    navigatorKey.currentContext!,
-                    MatingChatDetailScreen(chat: chat),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(milliseconds: 500),
+                      pageBuilder: (context, animation, secondaryAnimation) => MatingChatDetailScreen(chat: chat),
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        var begin = const Offset(1.0, 0.0);
+                        var end = Offset.zero;
+                        var curve = Curves.ease;
+
+                        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                        var offsetAnimation = animation.drive(tween);
+                        return SlideTransition(
+                          position: offsetAnimation,
+                          child: child,
+                        );
+                      },
+                    ),
                   );
+                  // reload chats after returning
+                  try {
+                    ChatListCubit.get(context).loadChats(petId);
+                  } catch (_) {}
                 },
                 borderRadius: BorderRadius.circular(20),
                 child: Padding(
