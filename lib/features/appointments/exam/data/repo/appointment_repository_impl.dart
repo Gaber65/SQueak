@@ -21,19 +21,6 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
   Future<Either<Failure, List<Availability>>> getAvailabilities(
     String clinicCode,
   ) async {
-    if (!await networkInfo.isConnected) {
-      return Left(
-        ServerFailure(
-          ErrorMessageModel(
-            message: 'No internet connection',
-            statusCode: 0,
-            errors: {},
-            success: false,
-          ),
-        ),
-      );
-    }
-
     try {
       final remoteAvailabilities = await remoteDataSource.getAvailabilities(
         clinicCode,
@@ -57,34 +44,17 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
 
   @override
   Future<Either<Failure, MySupplier>> getSuppliers() async {
-    if (!await networkInfo.isConnected) {
-      return Left(
-        ServerFailure(
-          ErrorMessageModel(
-            message: 'No internet connection',
-            statusCode: 0,
-            errors: {},
-            success: false,
-          ),
-        ),
-      );
-    }
-
+    // REMOVED: Slow network check - Let Dio handle network errors
     try {
       final remoteSuppliers = await remoteDataSource.getSuppliers();
       return Right(remoteSuppliers);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<Doctor>>> getDoctors(String clinicCode) async {
-    if (!await networkInfo.isConnected) {
+    } catch (e) {
       return Left(
         ServerFailure(
           ErrorMessageModel(
-            message: 'No internet connection',
+            message: 'Network error: $e',
             statusCode: 0,
             errors: {},
             success: false,
@@ -92,7 +62,11 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
         ),
       );
     }
+  }
 
+  @override
+  Future<Either<Failure, List<Doctor>>> getDoctors(String clinicCode) async {
+    // REMOVED: Slow network check - Let Dio handle network errors
     try {
       final remoteDoctors = await remoteDataSource.getDoctors(clinicCode);
       return Right(remoteDoctors);
@@ -117,19 +91,7 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
     String clinicCode,
     String phone,
   ) async {
-    if (!await networkInfo.isConnected) {
-      return Left(
-        ServerFailure(
-          ErrorMessageModel(
-            message: 'No internet connection',
-            statusCode: 0,
-            errors: {},
-            success: false,
-          ),
-        ),
-      );
-    }
-
+    // REMOVED: Slow network check - Let Dio handle network errors
     try {
       final remoteClientClinic = await remoteDataSource.getClientInClinic(
         clinicCode,
@@ -138,18 +100,11 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
       return Right(remoteClientClinic);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));
-    }
-  }
-
-  @override
-  Future<Either<Failure, Unit>> createAppointment(
-    CreateAppointmentParams pram,
-  ) async {
-    if (!await networkInfo.isConnected) {
+    } catch (e) {
       return Left(
         ServerFailure(
           ErrorMessageModel(
-            message: 'No internet connection',
+            message: 'Network error: $e',
             statusCode: 0,
             errors: {},
             success: false,
@@ -157,12 +112,28 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
         ),
       );
     }
+  }
 
+  @override
+  Future<Either<Failure, Unit>> createAppointment(
+    CreateAppointmentParams pram,
+  ) async {
     try {
       await remoteDataSource.createAppointment(pram);
       return const Right(unit);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));
+    } catch (e) {
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: 'Network error: $e',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 
@@ -171,50 +142,46 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
     String phone,
     bool applyFilter,
   ) async {
-    if (!await networkInfo.isConnected) {
+    try {
+      final remoteAppointments = await remoteDataSource.getUserAppointments(
+        phone,
+        applyFilter,
+      );     
+      return Right(remoteAppointments);
+    } on ServerException catch (failure) {
+      return Left(ServerFailure(failure.errorMessageModel));
+    } catch (e) {
       return Left(
         ServerFailure(
           ErrorMessageModel(
-            message: 'No internet connection',
+            message: 'No internet connection or network error',
             statusCode: 0,
             errors: {},
             success: false,
           ),
         ),
       );
-    }
-
-    try {
-      final remoteAppointments = await remoteDataSource.getUserAppointments(
-        phone,
-        applyFilter,
-      );
-      return Right(remoteAppointments);
-    } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 
   @override
   Future<Either<Failure, Unit>> deleteAppointment(String appointmentId) async {
-    if (!await networkInfo.isConnected) {
+    try {
+      await remoteDataSource.deleteAppointment(appointmentId);
+      return const Right(unit);
+    } on ServerException catch (failure) {
+      return Left(ServerFailure(failure.errorMessageModel));
+    } catch (e) {
       return Left(
         ServerFailure(
           ErrorMessageModel(
-            message: 'No internet connection',
+            message: 'Network error: $e',
             statusCode: 0,
             errors: {},
             success: false,
           ),
         ),
       );
-    }
-
-    try {
-      await remoteDataSource.deleteAppointment(appointmentId);
-      return const Right(unit);
-    } on ServerException catch (failure) {
-      return Left(ServerFailure(failure.errorMessageModel));
     }
   }
 
@@ -225,19 +192,6 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
     required int doctorServiceRate,
     required String feedbackComment,
   }) async {
-    if (!await networkInfo.isConnected) {
-      return Left(
-        ServerFailure(
-          ErrorMessageModel(
-            message: 'No internet connection',
-            statusCode: 0,
-            errors: {},
-            success: false,
-          ),
-        ),
-      );
-    }
-
     try {
       await remoteDataSource.rateAppointment(
         appointmentId: appointmentId,
@@ -248,16 +202,11 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
       return const Right(unit);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));
-    }
-  }
-
-  @override
-  Future<Either<Failure, Invoice>> getInvoice(String id) async {
-    if (!await networkInfo.isConnected) {
+    } catch (e) {
       return Left(
         ServerFailure(
           ErrorMessageModel(
-            message: 'No internet connection',
+            message: 'Network error: $e',
             statusCode: 0,
             errors: {},
             success: false,
@@ -265,12 +214,26 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
         ),
       );
     }
+  }
 
+  @override
+  Future<Either<Failure, Invoice>> getInvoice(String id) async {
     try {
       final remoteInvoice = await remoteDataSource.getInvoice(id);
       return Right(remoteInvoice);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));
+    } catch (e) {
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: 'Network error: $e',
+            statusCode: 0,
+            errors: {},
+            success: false,
+          ),
+        ),
+      );
     }
   }
 }

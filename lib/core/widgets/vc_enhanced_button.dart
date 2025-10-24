@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -31,7 +33,7 @@ class VCEnhancedButton extends StatefulWidget {
   final bool autofocus;
   final FocusNode? focusNode;
   final Clip clipBehavior;
-  final MaterialStatesController? statesController;
+  final WidgetStatesController? statesController;
   final String? semanticLabel;
   final String? tooltip;
   final bool isLoading;

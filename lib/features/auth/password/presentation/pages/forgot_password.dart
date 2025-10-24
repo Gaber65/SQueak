@@ -22,25 +22,37 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     with SingleTickerProviderStateMixin {
-  final List<String> petEmojis = [
-    '🐶',
-    '🐱',
-    '🐰',
-    '🐭',
-    '🐦',
-    '🦁',
-  ];
-  final List<String> motivationalMessages = [
-    '"Woof! We\'re here to help!" 🐕',
-    '"Meow! You\'ll be back in no time!" 🐈',
-    '"Hop! Just a few steps away!" 🐰',
-    '"Squeak! Everyone forgets sometimes!" 🐭',
-    '"Chirp! Reset passwords are easy!" 🐦',
-    '"Roar! Stay pawsitive!" 🦁',
+  final List<String> petEmojis = ['🐶', '🐱', '🐰', '🐭', '🐦', '🦁'];
+  
+  // Motivational messages with both English and Arabic
+  final List<Map<String, String>> motivationalMessages = const [
+    {
+      'en': '"Woof! We\'re here to help!" 🐕',
+      'ar': '"هاو! نحن هنا لمساعدتك!" 🐕',
+    },
+    {
+      'en': '"Meow! You\'ll be back in no time!" 🐈',
+      'ar': '"مواء! ستعود في لمح البصر!" 🐈',
+    },
+    {
+      'en': '"Hop! Just a few steps away!" 🐰',
+      'ar': '"قفزة! خطوات قليلة فقط!" 🐰',
+    },
+    {
+      'en': '"Squeak! Everyone forgets sometimes!" 🐭',
+      'ar': '"صرير! الجميع ينسى أحياناً!" 🐭',
+    },
+    {
+      'en': '"Chirp! Reset passwords are easy!" 🐦',
+      'ar': '"زقزقة! إعادة تعيين كلمة المرور سهلة!" 🐦',
+    },
+    {
+      'en': '"Roar! Stay pawsitive!" 🦁',
+      'ar': '"زئير! ابقَ متفائلاً!" 🦁',
+    },
   ];
 
-  int currentMessageIndex = 0;
-  int currentPetIndex = 0;
+  int currentIndex = 0;
   late AnimationController _petController;
 
   @override
@@ -55,9 +67,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       await Future.delayed(const Duration(seconds: 5));
       if (!mounted) return false;
       setState(() {
-        currentMessageIndex =
-            (currentMessageIndex + 1) % motivationalMessages.length;
-        currentPetIndex = (currentPetIndex + 1) % petEmojis.length;
+        // Update both emoji and message together using the same index
+        currentIndex = (currentIndex + 1) % petEmojis.length;
       });
       return true;
     });
@@ -69,6 +80,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     super.dispose();
   }
 
+  String _getMessage() {
+    return isArabic() 
+        ? motivationalMessages[currentIndex]['ar']! 
+        : motivationalMessages[currentIndex]['en']!;
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -77,17 +94,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     final scaleFactor = isTablet ? 1.2 : 1.0;
 
     return BlocProvider(
-      create: (_) => PasswordCubit(
-        forgetPasswordUseCase: ForgetPasswordUseCase(
-          PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
-        ),
-        resetPasswordUseCase: ResetPasswordUseCase(
-          PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
-        ),
-        verifyUserUseCase: VerifyUserUseCase(
-          PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
-        ),
-      ),
+      create:
+          (_) => PasswordCubit(
+            forgetPasswordUseCase: ForgetPasswordUseCase(
+              PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
+            ),
+            resetPasswordUseCase: ResetPasswordUseCase(
+              PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
+            ),
+            verifyUserUseCase: VerifyUserUseCase(
+              PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
+            ),
+          ),
       child: BlocConsumer<PasswordCubit, PasswordState>(
         listener: (context, state) {
           if (state is ForgetPasswordErrorState) {
@@ -204,7 +222,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                       ),
                       SizedBox(height: 12 * scaleFactor),
                       Text(
-                        "Don't Worry!",
+                        isArabic() ? 'لا تقلق!' : "Don't Worry!",
                         style: TextStyle(
                           fontSize: 20 * scaleFactor,
                           fontWeight: FontWeight.bold,
@@ -215,7 +233,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 18),
                         child: Text(
-                          "Even the smartest pets forget where they\nburied their bones sometimes 🦴",
+                          isArabic()
+                              ? 'حتى أذكى الحيوانات الأليفة تنسى أين دفنت\nعظامها أحياناً 🦴'
+                              : "Even the smartest pets forget where they\nburied their bones sometimes 🦴",
                           style: TextStyle(
                             fontSize: 12 * scaleFactor,
                             color: Colors.white70,
@@ -224,9 +244,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                         ),
                       ),
                       SizedBox(height: 12 * scaleFactor),
-                      Expanded(
-                        child: _buildResetCard(cubit, scaleFactor),
-                      ),
+                      Expanded(child: _buildResetCard(cubit, scaleFactor)),
                     ],
                   ),
                 ),
@@ -263,7 +281,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Reset Your Password',
+              isArabic() ? 'إعادة تعيين كلمة المرور' : 'Reset Your Password',
               style: TextStyle(
                 fontSize: 22 * scaleFactor,
                 fontWeight: FontWeight.bold,
@@ -272,7 +290,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             ),
             SizedBox(height: 10 * scaleFactor),
             Text(
-              'Enter your email address and we\'ll send you a OTP to reset your password.',
+              isArabic()
+                  ? 'أدخل عنوان بريدك الإلكتروني وسنرسل لك رمز التحقق\nلإعادة تعيين كلمة المرور.'
+                  : 'Enter your email address and we\'ll send you a OTP to reset your password.',
               style: TextStyle(
                 fontSize: 14 * scaleFactor,
                 color: Colors.grey[700],
@@ -280,27 +300,30 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 24 * scaleFactor),
-            
-            // Reusable Motivational Widget
+
+            // Reusable Motivational Widget with synchronized emoji and message
             MotivationalPetWidget(
-              petEmoji: petEmojis[(currentPetIndex + 2) % petEmojis.length],
-              message: motivationalMessages[currentMessageIndex],
-              messageKey: ValueKey(currentMessageIndex),
+              petEmoji: petEmojis[currentIndex],
+              message: _getMessage(),
+              messageKey: ValueKey(currentIndex),
               scaleFactor: scaleFactor,
             ),
-            
+
             SizedBox(height: 24 * scaleFactor),
             Form(
               key: cubit.formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Email Address',
-                    style: TextStyle(
-                      fontSize: 14 * scaleFactor,
-                      color: Colors.grey[800],
-                      fontWeight: FontWeight.w600,
+                  Align(
+                    alignment: isArabic() ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Text(
+                      isArabic() ? 'عنوان البريد الإلكتروني' : 'Email Address',
+                      style: TextStyle(
+                        fontSize: 14 * scaleFactor,
+                        color: Colors.grey[800],
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   SizedBox(height: 8 * scaleFactor),
@@ -315,7 +338,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                         Icons.email_outlined,
                         color: Colors.grey,
                       ),
-                      hintText: 'Enter your email address',
+                      hintText: isArabic()
+                          ? 'أدخل عنوان بريدك الإلكتروني'
+                          : 'Enter your email address',
                       hintStyle: const TextStyle(color: Colors.grey),
                       contentPadding: EdgeInsets.symmetric(
                         vertical: 16 * scaleFactor,
@@ -346,12 +371,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
+                        return isArabic() ? 'أدخل عنوان بريدك الإلكتروني' : 'Please enter your email';
                       }
                       if (!RegExp(
                         r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                       ).hasMatch(value)) {
-                        return 'Please enter a valid email';
+                        return isArabic() ? 'أدخل بريداً إلكترونياً صالحاً' : 'Please enter a valid email';
                       }
                       return null;
                     },
@@ -374,7 +399,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Send OTP',
+                            isArabic() ? 'إرسال رمز التحقق' : 'Send OTP',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -398,7 +423,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             TextButton(
               onPressed: () => navigateToScreen(context, const LoginScreen()),
               child: Text(
-                'Remember your password? Sign In',
+                isArabic() ? 'تذكرت كلمة المرور؟ سجل الدخول' : 'Remember your password? Sign In',
                 style: TextStyle(
                   color: const Color(0xFF7B5CE6),
                   fontSize: 14 * scaleFactor,
@@ -439,10 +464,7 @@ class MotivationalPetWidget extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          petEmoji,
-          style: TextStyle(fontSize: 48 * scaleFactor),
-        ),
+        Text(petEmoji, style: TextStyle(fontSize: 48 * scaleFactor)),
         SizedBox(height: 12 * scaleFactor),
         Container(
           padding: EdgeInsets.symmetric(

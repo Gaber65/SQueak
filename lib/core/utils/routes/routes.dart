@@ -8,7 +8,7 @@ import '../../../features/auth/password/presentation/pages/forgot_password.dart'
 import '../../../features/auth/register/presentation/pages/register_screen.dart';
 import '../../../features/pets/presentation/view/pet_screen.dart';
 import '../../../features/vetcare/presenation/view/follow_request_screen.dart';
-import '../../../features/vetcare/presenation/view/vetCareRegister.dart';
+import '../../../features/vetcare/presenation/view/vet_care_register.dart';
 
 Map<String, WidgetBuilder> routes = {
   '/vetRegister': (context) {

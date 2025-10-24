@@ -2,7 +2,7 @@ name: squeak
 description: "Pet App"
 publish_to: 'none'
 
-version: 1.0.26+26
+version: 1.0.66+66
 
 environment:
   sdk: ">=3.7.0 <4.0.0"
@@ -42,7 +42,7 @@ dependencies:
   geolocator: ^13.0.2
   get_it: ^8.0.3
   google_fonts: ^6.2.1
-  http: ^1.2.2
+  http: ^1.1.0
   iconly: ^1.0.1
   image_picker: ^1.1.2
   internet_connection_checker: ^3.0.1
@@ -52,6 +52,7 @@ dependencies:
   permission_handler: ^11.3.1
   phone_text_field: ^0.0.7
   printing: ^5.13.3
+  qr_code_scanner: ^1.0.1
   qr_flutter: ^4.1.0
   quickalert: ^1.1.0
   share_plus: ^10.1.1
@@ -75,7 +76,5 @@ flutter:
     - assets/
     - assets/notification.mp3
     - assets/content/pet_tips.json
-    - assets/video/
-
 flutter_intl:
   enabled: true

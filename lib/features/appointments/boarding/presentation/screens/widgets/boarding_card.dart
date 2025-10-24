@@ -4,13 +4,9 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:squeak/core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
-
 import '../../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../domain/entities/boarding_entry_entity.dart';
 import '../../../domain/entities/boarding_status.dart';
-import '../../../domain/usecases/share_image_usecase.dart';
-import '../../cubit/boarding_cubit.dart';
 import '../boarding_rating.dart';
 import '../share_image_pet_screen.dart';
 
@@ -59,7 +55,19 @@ class BoardingCard extends StatelessWidget {
         ],
       ),
       child: Column(
-        children: [_buildHeader(), _buildContent(), _buildFooter()],
+        // Use min main axis size so children can size themselves and avoid
+        // forcing the Column to expand beyond available space.
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildHeader(),
+
+          // Make content flexible so it can take available space but not
+          // force the whole card to grow beyond its parent constraints.
+          Flexible(child: _buildContent()),
+
+          _buildFooter(),
+        ],
       ),
     );
   }
@@ -254,7 +262,6 @@ class BoardingCard extends StatelessWidget {
             isArabic() ? 'المدة' : 'Duration',
             '${entry.period} ${entry.period == 1 ? (isArabic() ? 'يوم' : 'day') : (isArabic() ? 'أيام' : 'days')}',
           ),
-
           // Doctor rating if available
           if (entry.status == 3 && entry.doctorServiceRate != 0)
             _buildDoctorRating(),

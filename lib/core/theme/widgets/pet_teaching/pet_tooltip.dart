@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import '../../app_theme.dart';
 
@@ -35,10 +37,10 @@ class PetTooltip extends StatefulWidget {
     return PetTooltip(
       key: key,
       message: message,
-      child: child,
       title: title,
       icon: const Icon(Icons.vaccines, color: AppTheme.petVaccinationColor),
       onDismiss: onDismiss,
+      child: child,
     );
   }
 
@@ -53,10 +55,10 @@ class PetTooltip extends StatefulWidget {
     return PetTooltip(
       key: key,
       message: message,
-      child: child,
       title: title,
       icon: const Icon(Icons.favorite, color: AppTheme.petHealthyColor),
       onDismiss: onDismiss,
+      child: child,
     );
   }
 
@@ -71,10 +73,10 @@ class PetTooltip extends StatefulWidget {
     return PetTooltip(
       key: key,
       message: message,
-      child: child,
       title: title,
       icon: const Icon(Icons.notification_important, color: AppTheme.petWarningColor),
       onDismiss: onDismiss,
+      child: child,
     );
   }
 

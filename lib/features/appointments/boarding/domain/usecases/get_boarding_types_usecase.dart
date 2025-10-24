@@ -2,7 +2,6 @@ import 'package:dartz/dartz.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 
 import '../entities/boarding_type_entity.dart';
-import '../repositories/boarding_repository.dart';
 
 class GetBoardingTypesUseCase implements BaseUseCase<List<BoardingTypeEntity>, String> {
   final BoardingRepository repository;

@@ -917,7 +917,7 @@ void main() {
       await tester.tap(find.text('VetCare Clinic').last);
       await tester.pumpAndSettle();
       
-      // Select date
+      // Select data
       await tester.tap(find.byKey(const Key('date_picker')));
       await tester.pumpAndSettle();
       await tester.tap(find.text('15')); // Select 15th of current month

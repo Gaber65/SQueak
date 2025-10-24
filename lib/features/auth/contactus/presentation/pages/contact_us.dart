@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/global_widget/vc_loading_widget.dart';
 import 'dart:math' as math;
@@ -102,140 +101,143 @@ class _ContactScreenState extends State<ContactScreen>
         builder: (context, state) {
           var cubit = ContactUsCubit.get(context);
           var registerCubit = RegisterCubit.get(context);
-          return Scaffold(
-            backgroundColor: Colors.white,
-            extendBodyBehindAppBar: true,
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: IconButton(
-                icon: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    shape: BoxShape.circle,
+          return Directionality(
+            textDirection: isArabic() ? TextDirection.rtl : TextDirection.ltr,
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              extendBodyBehindAppBar: true,
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                leading: IconButton(
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.arrow_back, color: Colors.white),
                   ),
-                  child: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
                 ),
-                onPressed: () => Navigator.pop(context),
               ),
-            ),
-            body: Stack(
-              children: [
-                // Gradient Background
-                Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0xFF7F8DFA),
-                        Color(0xFF9192F5),
-                        Color(0xFF27272B),
-                      ],
-                      stops: [0.0, 0.4, 1.0],
+              body: Stack(
+                children: [
+                  // Gradient Background
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0xFF7F8DFA),
+                          Color(0xFF9192F5),
+                          Color(0xFF27272B),
+                        ],
+                        stops: [0.0, 0.4, 1.0],
+                      ),
                     ),
                   ),
-                ),
-                // Floating pet emojis
-                ...List.generate(5, (index) {
-                  final random = math.Random(index);
-                  final baseTop = random.nextDouble() * screenHeight * 0.3;
-                  final baseLeft = random.nextDouble() * screenWidth;
-                  return AnimatedBuilder(
-                    animation: _petController,
-                    builder: (context, child) {
-                      final offset =
-                          math.sin(_petController.value * 2 * math.pi) * 10;
-                      return Positioned(
-                        top: baseTop + offset,
-                        left: baseLeft,
-                        child: Opacity(
-                          opacity: 0.08,
-                          child: Text(
-                            petEmojis[index % petEmojis.length],
-                            style: TextStyle(
-                              fontSize: isTablet ? 34 : 26,
-                              color: Colors.white,
+                  // Floating pet emojis
+                  ...List.generate(5, (index) {
+                    final random = math.Random(index);
+                    final baseTop = random.nextDouble() * screenHeight * 0.3;
+                    final baseLeft = random.nextDouble() * screenWidth;
+                    return AnimatedBuilder(
+                      animation: _petController,
+                      builder: (context, child) {
+                        final offset =
+                            math.sin(_petController.value * 2 * math.pi) * 10;
+                        return Positioned(
+                          top: baseTop + offset,
+                          left: baseLeft,
+                          child: Opacity(
+                            opacity: 0.08,
+                            child: Text(
+                              petEmojis[index % petEmojis.length],
+                              style: TextStyle(
+                                fontSize: isTablet ? 34 : 26,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }),
+                  SafeArea(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 6 * scaleFactor),
+                        // Header Icon
+                        Container(
+                          width: 64 * scaleFactor,
+                          height: 64 * scaleFactor,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFCDC2F4), Color(0xFF5B3FB5)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 15,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.3),
+                              width: 2,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '💬',
+                              style: TextStyle(fontSize: 28 * scaleFactor),
                             ),
                           ),
                         ),
-                      );
-                    },
-                  );
-                }),
-                SafeArea(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(height: 6 * scaleFactor),
-                      // Header Icon
-                      Container(
-                        width: 64 * scaleFactor,
-                        height: 64 * scaleFactor,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFFCDC2F4), Color(0xFF5B3FB5)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              blurRadius: 15,
-                              offset: const Offset(0, 5),
-                            ),
-                          ],
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 2,
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '💬',
-                            style: TextStyle(fontSize: 28 * scaleFactor),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 6 * scaleFactor),
-                      Text(
-                        S.of(context).help,
-                        style: TextStyle(
-                          fontSize: 18 * scaleFactor,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(height: 4 * scaleFactor),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          isArabic()
-                              ? "نحن هنا للمساعدة! أخبرنا كيف يمكننا مساعدتك 🐾"
-                              : "We're here to help! Tell us how\nwe can assist you 🐾",
+                        SizedBox(height: 6 * scaleFactor),
+                        Text(
+                          S.of(context).help,
                           style: TextStyle(
-                            fontSize: 11 * scaleFactor,
-                            color: Colors.white70,
+                            fontSize: 18 * scaleFactor,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                      ),
-                      SizedBox(height: 10 * scaleFactor),
-                      Expanded(
-                        child: _buildContactCard(
-                          context,
-                          cubit,
-                          registerCubit,
-                          scaleFactor,
+                        SizedBox(height: 4 * scaleFactor),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            isArabic()
+                                ? "نحن هنا للمساعدة! أخبرنا كيف يمكننا مساعدتك 🐾"
+                                : "We're here to help! Tell us how\nwe can assist you 🐾",
+                            style: TextStyle(
+                              fontSize: 11 * scaleFactor,
+                              color: Colors.white70,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 10 * scaleFactor),
+                        Expanded(
+                          child: _buildContactCard(
+                            context,
+                            cubit,
+                            registerCubit,
+                            scaleFactor,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
@@ -500,7 +502,7 @@ class _ContactScreenState extends State<ContactScreen>
 
   Widget _buildLabel(String text, double scaleFactor) {
     return Align(
-      alignment: Alignment.centerLeft,
+      alignment: isArabic() ? Alignment.centerRight : Alignment.centerLeft,
       child: Text(
         text,
         style: TextStyle(
@@ -521,6 +523,7 @@ class _ContactScreenState extends State<ContactScreen>
     int maxLines = 1,
   }) {
     return TextFormField(
+      textAlign: isArabic() ? TextAlign.right : TextAlign.left,
       controller: controller,
       style: const TextStyle(color: Colors.black87),
       maxLines: maxLines,

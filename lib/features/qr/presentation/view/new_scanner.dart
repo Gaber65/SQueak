@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:mobile_scanner/mobile_scanner.dart';  // Temporarily disabled due to dependency conflict
-
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../../../../core/service/global_function/format_utils.dart';
 
 class ScannerScreen extends StatefulWidget {
@@ -11,54 +10,66 @@ class ScannerScreen extends StatefulWidget {
 }
 
 class _ScannerScreenState extends State<ScannerScreen> {
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  QRViewController? controller;
+  bool _isScanned = false;
+
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      if (!_isScanned && scanData.code != null) {
+        _isScanned = true;
+        controller.pauseCamera();
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context, scanData.code);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(isArabic() ? 'ماسح QR' : 'QR Scanner')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.qr_code_scanner,
-              size: 100,
-              color: Colors.grey,
-            ),
-            SizedBox(height: 20),
-            Text(
-              isArabic() 
-                ? 'ماسح QR غير متاح مؤقتاً\nيرجى إدخال الرمز يدوياً'
-                : 'QR Scanner temporarily unavailable\nPlease enter code manually',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(isArabic() ? 'إغلاق' : 'Close'),
-            ),
-          ],
-        ),
+      appBar: AppBar(
+        title: Text(isArabic() ? 'ماسح QR' : 'QR Scanner'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      // Temporarily disabled due to mobile_scanner dependency conflict
-      // body: MobileScanner(
-      //   controller: MobileScannerController(
-      //     facing: CameraFacing.back,
-      //     torchEnabled: false,
-      //   ),
-      //   onDetect: (capture) {
-      //     if (_isScanned) return;
-      //
-      //     final List<Barcode> barcodes = capture.barcodes;
-      //     if (barcodes.isNotEmpty) {
-      //       final String code = barcodes.first.rawValue ?? '';
-      //       if (code.isNotEmpty) {
-      //         _isScanned = true;
-      //         Navigator.pop(context, code);
-      //       }
-      //     }
-      //   },
-      // ),
+      body: Column(
+        children: [
+          Expanded(
+            flex: 5,
+            child: QRView(
+              key: qrKey,
+              onQRViewCreated: _onQRViewCreated,
+              overlay: QrScannerOverlayShape(
+                borderColor: Theme.of(context).primaryColor,
+                borderRadius: 10,
+                borderLength: 30,
+                borderWidth: 10,
+                cutOutSize: MediaQuery.of(context).size.width * 0.7,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Center(
+              child: Text(
+                isArabic() 
+                  ? 'ضع رمز QR في المنتصف للمسح'
+                  : 'Place QR code in the center to scan',
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -525,7 +527,7 @@ Widget buildItemAppointment(
                             : 'the location is missing , please ask the admin to add his location',
                       );
                     } else {
-                      print(appointments.clinicLocation);
+                      // print(appointments.clinicLocation);
                       launchUrl((Uri.parse(appointments.clinicLocation)));
                     }
                   },

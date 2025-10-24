@@ -38,10 +38,8 @@ class NotificationMessage {
     data["category"] = category;
     data["collapseKey"] = collapseKey;
     data["contentAvailable"] = contentAvailable;
-    if(data != null) {
-      data["data"] = data;
-    }
-    data["from"] = from;
+    data["data"] = data;
+      data["from"] = from;
     data["messageId"] = messageId;
     data["messageType"] = messageType;
     data["mutableContent"] = mutableContent;

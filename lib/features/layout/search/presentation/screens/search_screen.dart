@@ -16,30 +16,37 @@ class SearchScreen extends StatelessWidget {
       child: BlocConsumer<SearchCubit, SearchState>(
         listener: (context, state) {
           if (state is FollowError) {
-            errorToast(
-              context,
+            if (context.mounted) {
+              errorToast(
+                context,
                 extractFirstError(state.error),
-
-            );
+              );
+            }
           }
 
           if (state is FollowSuccess) {
             CacheHelper.removeData('posts');
             if (state.isHavePet) {
-              navigateAndFinish(
-                context,
-                PetMergeScreen(
-                  code: SearchCubit.get(context).searchController.text,
-                  isNavigation: true,
-                ),
-              );
+              if (context.mounted) {
+                final searchCubit = context.read<SearchCubit>();
+                navigateAndFinish(
+                  context,
+                  PetMergeScreen(
+                    code: searchCubit.searchController.text,
+                    isNavigation: true,
+                  ),
+                );
+              }
             } else {
-              navigateAndFinish(context, LayoutScreen());
+              if (context.mounted) {
+                navigateAndFinish(context, LayoutScreen());
+              }
             }
           }
         },
         builder: (context, state) {
-          var cubit = SearchCubit.get(context);
+          if (!context.mounted) return const Scaffold();
+          var cubit = context.read<SearchCubit>();
           return Scaffold(
             appBar: AppBar(title: Text(S.of(context).search)),
             body: Padding(

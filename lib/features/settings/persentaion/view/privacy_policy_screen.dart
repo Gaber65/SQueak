@@ -1,8 +1,10 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:io'; // Import Platform class
+
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -319,7 +321,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                               );
                             }
                           } catch (e) {
-                            print('Error launching email client: $e');
+                            // print('Error launching email client: $e');
                           }
                         },
                 ),

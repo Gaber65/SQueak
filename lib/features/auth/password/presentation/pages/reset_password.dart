@@ -24,7 +24,7 @@ class ResetPasswordScreen extends StatefulWidget {
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen>
     with SingleTickerProviderStateMixin {
- final List<String> petEmojis = [
+  final List<String> petEmojis = [
     '🐶',
     '🐱',
     '🐰',
@@ -32,17 +32,36 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
     '🐦',
     '🦁',
   ];
-  final List<String> motivationalMessages = [
-    '"Woof! We\'re here to help!" 🐕',
-    '"Meow! You\'ll be back in no time!" 🐈',
-    '"Hop! Just a few steps away!" 🐰',
-    '"Squeak! Everyone forgets sometimes!" 🐭',
-    '"Chirp! Reset passwords are easy!" 🐦',
-    '"Roar! Stay pawsitive!" 🦁',
+
+  // Motivational messages with both English and Arabic
+  final List<Map<String, String>> motivationalMessages = const [
+    {
+      'en': '"Woof! We\'re here to help!" 🐕',
+      'ar': '"هاو! نحن هنا لمساعدتك!" 🐕',
+    },
+    {
+      'en': '"Meow! You\'ll be back in no time!" 🐈',
+      'ar': '"مواء! ستعود في لمح البصر!" 🐈',
+    },
+    {
+      'en': '"Hop! Just a few steps away!" 🐰',
+      'ar': '"قفزة! خطوات قليلة فقط!" 🐰',
+    },
+    {
+      'en': '"Squeak! Everyone forgets sometimes!" 🐭',
+      'ar': '"صرير! الجميع ينسى أحياناً!" 🐭',
+    },
+    {
+      'en': '"Chirp! Reset passwords are easy!" 🐦',
+      'ar': '"زقزقة! إعادة تعيين كلمة المرور سهلة!" 🐦',
+    },
+    {
+      'en': '"Roar! Stay pawsitive!" 🦁',
+      'ar': '"زئير! ابقَ متفائلاً!" 🦁',
+    },
   ];
 
-  int currentMessageIndex = 0;
-  int currentPetIndex = 0;
+  int currentIndex = 0;
   late AnimationController _petController;
 
   @override
@@ -57,9 +76,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       await Future.delayed(const Duration(seconds: 5));
       if (!mounted) return false;
       setState(() {
-        currentMessageIndex =
-            (currentMessageIndex + 1) % motivationalMessages.length;
-        currentPetIndex = (currentPetIndex + 1) % petEmojis.length;
+        // Update both emoji and message together using the same index
+        currentIndex = (currentIndex + 1) % petEmojis.length;
       });
       return true;
     });
@@ -69,6 +87,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
   void dispose() {
     _petController.dispose();
     super.dispose();
+  }
+
+  String _getMessage() {
+    return isArabic() 
+        ? motivationalMessages[currentIndex]['ar']! 
+        : motivationalMessages[currentIndex]['en']!;
   }
 
   @override
@@ -220,7 +244,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                       ),
                       SizedBox(height: 8 * scaleFactor),
                       Text(
-                        "Create New Password",
+                        isArabic() ? 'إنشاء كلمة مرور جديدة' : "Create New Password",
                         style: TextStyle(
                           fontSize: 20 * scaleFactor,
                           fontWeight: FontWeight.bold,
@@ -231,7 +255,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          "Almost there! Just set up your new\npassword and you're good to go 🎉",
+                          isArabic() 
+                              ? "أوشكت على الانتهاء! فقط قم بإعداد كلمة المرور\nالجديدة وأنت جاهز للانطلاق 🎉"
+                              : "Almost there! Just set up your new\npassword and you're good to go 🎉",
                           style: TextStyle(
                             fontSize: 12 * scaleFactor,
                             color: Colors.white70,
@@ -287,7 +313,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'Reset Your Password',
+                      isArabic() ? 'إعادة تعيين كلمة المرور' : 'Reset Your Password',
                       style: TextStyle(
                         fontSize: 22 * scaleFactor,
                         fontWeight: FontWeight.bold,
@@ -296,7 +322,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                     ),
                     SizedBox(height: 8 * scaleFactor),
                     Text(
-                      'Please enter the digit code sent to your email ${widget.emailController.text}',
+                      isArabic()
+                          ? 'الرجاء إدخال الرمز المرسل إلى بريدك الإلكتروني ${widget.emailController.text}'
+                          : 'Please enter the digit code sent to your email ${widget.emailController.text}',
                       style: TextStyle(
                         fontSize: 13 * scaleFactor,
                         color: Colors.grey[700],
@@ -305,23 +333,23 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                     ),
                     SizedBox(height: 18 * scaleFactor),
 
-                    // Center the motivational widget
+                    // Center the motivational widget with synchronized emoji and message
                     Center(
                       child: MotivationalPetWidget(
-                        petEmoji: petEmojis[(currentPetIndex + 2) % petEmojis.length],
-                        message: motivationalMessages[currentMessageIndex],
-                        messageKey: ValueKey(currentMessageIndex),
+                        petEmoji: petEmojis[currentIndex],
+                        message: _getMessage(),
+                        messageKey: ValueKey(currentIndex),
                         scaleFactor: scaleFactor,
                       ),
                     ),
 
                     SizedBox(height: 18 * scaleFactor),
 
-                    // Code Field (label left-aligned within the centered content)
+                    // Code Field
                     Align(
-                      alignment: Alignment.centerLeft,
+                      alignment: isArabic() ? Alignment.centerRight : Alignment.centerLeft,
                       child: Text(
-                        isArabic() ? 'الرمز' : 'Verification Code',
+                        isArabic() ? 'رمز التحقق' : 'Verification Code',
                         style: TextStyle(
                           fontSize: 14 * scaleFactor,
                           color: Colors.grey[800],
@@ -334,6 +362,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                       controller: cubit.codeController,
                       style: const TextStyle(color: Colors.black87),
                       keyboardType: TextInputType.number,
+                      textDirection: isArabic() ? TextDirection.ltr : TextDirection.ltr,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.grey[200],
@@ -341,7 +370,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                           Icons.numbers,
                           color: Colors.grey,
                         ),
-                        hintText: isArabic() ? 'أدخل الرمز المرسل' : 'Enter verification code',
+                        hintText: isArabic() ? 'أدخل رمز التحقق' : 'Enter verification code',
                         hintStyle: const TextStyle(color: Colors.grey),
                         contentPadding: EdgeInsets.symmetric(
                           vertical: 16 * scaleFactor,
@@ -372,7 +401,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return isArabic() ? 'من فضلك ادخل الرمز' : 'Please enter the code';
+                          return isArabic() ? 'من فضلك أدخل الرمز' : 'Please enter the code';
                         }
                         return null;
                       },
@@ -382,7 +411,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
 
                     // Password Field
                     Align(
-                      alignment: Alignment.centerLeft,
+                      alignment: isArabic() ? Alignment.centerRight : Alignment.centerLeft,
                       child: Text(
                         isArabic() ? 'كلمة المرور الجديدة' : 'New Password',
                         style: TextStyle(
@@ -435,7 +464,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return isArabic() ? 'من فضلك ادخل كلمة المرور' : 'Please enter password';
+                          return isArabic() ? 'من فضلك أدخل كلمة المرور' : 'Please enter password';
                         }
                         if (value.length < 6) {
                           return isArabic() ? 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' : 'Password must be at least 6 characters';
@@ -463,7 +492,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              isArabic() ? 'حفظ' : 'Save Password',
+                              isArabic() ? 'حفظ كلمة المرور' : 'Save Password',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,

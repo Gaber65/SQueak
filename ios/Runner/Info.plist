@@ -57,6 +57,8 @@
 	<string>Squeak needs access to your location to provide location-based pet services, find nearby veterinarians, and enhance your pet care experience with location-aware features.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need your location to determine your country code.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Squeak needs access to your camera to scan QR codes for pet care services and features.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photos to allow you to upload and share them.</string>
 	<key>NSLocalNetworkUsageDescription</key>

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:squeak/core/network/dio.dart';
-import 'package:squeak/core/network/end-points.dart';
+import 'package:squeak/core/network/end_points.dart';
 
 import '../../../../core/error/exception.dart';
 import '../../../../core/network/error_message_model.dart';

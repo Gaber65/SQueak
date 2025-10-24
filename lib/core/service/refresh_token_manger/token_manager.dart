@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:squeak/core/network/config_model.dart';
-import 'package:squeak/core/network/end-points.dart';
+import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 
 class DataToken {

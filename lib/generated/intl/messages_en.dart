@@ -20,15 +20,38 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(count) => "View ${count} replies";
+  static String m0(petName) => "Change ${petName}\'s relationship status";
+
+  static String m1(count) => "${count}d ago";
+
+  static String m2(count) => "${count}h ago";
+
+  static String m3(profile) => "Mating Requests for ${profile}";
+
+  static String m4(count) => "Max ${count} characters";
+
+  static String m5(count) => "${count}m ago";
+
+  static String m6(petName) => "Mating request sent to ${petName}! 💕";
+
+  static String m7(petName) =>
+      "Let’s help your little friend connect with ${petName} and start a beautiful friendship!";
+
+  static String m8(petName) => "Viewing ${petName}\'s profile";
+
+  static String m9(count) => "View ${count} replies";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "AddServiceSupplier": MessageLookupByLibrary.simpleMessage(
       "Add Service Supplier",
     ),
+    "AllChats": MessageLookupByLibrary.simpleMessage("All Chats"),
     "CleanlinessOfClinic": MessageLookupByLibrary.simpleMessage(
       "Cleanliness of the Clinic",
+    ),
+    "CompletePetProfile": MessageLookupByLibrary.simpleMessage(
+      "Complete Pet Profile",
     ),
     "DateOfRecord": MessageLookupByLibrary.simpleMessage("Data"),
     "DoctorService": MessageLookupByLibrary.simpleMessage("Doctor\'s Service"),
@@ -52,6 +75,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "VerifyPhone": MessageLookupByLibrary.simpleMessage(" Verify Phone"),
     "about": MessageLookupByLibrary.simpleMessage("About"),
     "accept": MessageLookupByLibrary.simpleMessage("Accept"),
+    "active": MessageLookupByLibrary.simpleMessage("Active"),
+    "activeRequests": MessageLookupByLibrary.simpleMessage("الطلبات النشطة"),
     "addAppointment": MessageLookupByLibrary.simpleMessage("Add Appointment"),
     "addAvailabilities": MessageLookupByLibrary.simpleMessage(
       "Add available times",
@@ -76,8 +101,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "address_validation": MessageLookupByLibrary.simpleMessage(
       "Please enter your address",
     ),
+    "all": MessageLookupByLibrary.simpleMessage("All"),
+    "allChats": MessageLookupByLibrary.simpleMessage("All Chats"),
     "allYourAppointments": MessageLookupByLibrary.simpleMessage(
       "All Appointments",
+    ),
+    "all_required_complete": MessageLookupByLibrary.simpleMessage(
+      "All required fields are complete!",
     ),
     "alreadyHaveAccount": MessageLookupByLibrary.simpleMessage(
       "Already have account?",
@@ -115,6 +145,23 @@ class MessageLookup extends MessageLookupByLibrary {
       "Start Examination",
     ),
     "arabic": MessageLookupByLibrary.simpleMessage("Arabic"),
+    "audio": MessageLookupByLibrary.simpleMessage("Audio"),
+    "audioRecorderNotImplemented": MessageLookupByLibrary.simpleMessage(
+      "Audio recorder not implemented yet",
+    ),
+    "avaPetTOMating": MessageLookupByLibrary.simpleMessage(
+      "Available Pets for Mating",
+    ),
+    "availableForMating": MessageLookupByLibrary.simpleMessage(
+      "Available For Mating",
+    ),
+    "available_for_mating": MessageLookupByLibrary.simpleMessage(
+      "Available for Mating",
+    ),
+    "available_for_mating_desc": MessageLookupByLibrary.simpleMessage(
+      "Ready to find a partner",
+    ),
+    "belowAverage": MessageLookupByLibrary.simpleMessage("Below Average"),
     "bill": MessageLookupByLibrary.simpleMessage("Bill"),
     "birthdate": MessageLookupByLibrary.simpleMessage("Date of birth"),
     "birthdateValidation": MessageLookupByLibrary.simpleMessage(
@@ -126,6 +173,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "birthdate_validation": MessageLookupByLibrary.simpleMessage(
       "Please enter your birthdate",
     ),
+    "block": MessageLookupByLibrary.simpleMessage("Block"),
+    "blockChat": MessageLookupByLibrary.simpleMessage("Block Chat"),
+    "blockChatConfirmation": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to block this chat? You will not be able to send or receive messages.",
+    ),
+    "blocked": MessageLookupByLibrary.simpleMessage("Blocked"),
     "boardingBy": MessageLookupByLibrary.simpleMessage("Boarding By"),
     "boardingCage": MessageLookupByLibrary.simpleMessage("Cage"),
     "boardingPrice": MessageLookupByLibrary.simpleMessage("Initial cost"),
@@ -141,9 +194,33 @@ class MessageLookup extends MessageLookupByLibrary {
     "cageSelect": MessageLookupByLibrary.simpleMessage("Select Cage"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "cancelFollow": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "cancelRequest": MessageLookupByLibrary.simpleMessage("Cancel Request"),
     "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
     "changePhoto": MessageLookupByLibrary.simpleMessage("Change Photo"),
+    "change_pet_status_for": m0,
+    "chatArchivedReadOnly": MessageLookupByLibrary.simpleMessage(
+      "This chat has been archived and is read-only",
+    ),
+    "chatBlocked": MessageLookupByLibrary.simpleMessage(
+      "Chat blocked successfully",
+    ),
+    "chatBlockedNoMessages": MessageLookupByLibrary.simpleMessage(
+      "This chat is blocked. No messages can be sent or received.",
+    ),
+    "chatEnded": MessageLookupByLibrary.simpleMessage(
+      "Chat ended successfully",
+    ),
+    "chatName": MessageLookupByLibrary.simpleMessage("Chat Name"),
+    "chatRenamedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Chat renamed successfully",
+    ),
+    "chatUnblocked": MessageLookupByLibrary.simpleMessage(
+      "Chat unblocked successfully",
+    ),
     "checkYourEmail": MessageLookupByLibrary.simpleMessage("Check Your Email"),
+    "chooseAttachment": MessageLookupByLibrary.simpleMessage(
+      "Choose Attachment",
+    ),
     "chooseViewMode": MessageLookupByLibrary.simpleMessage("Choose view mode"),
     "chosePet": MessageLookupByLibrary.simpleMessage("Choose Pet"),
     "city": MessageLookupByLibrary.simpleMessage("city"),
@@ -155,17 +232,26 @@ class MessageLookup extends MessageLookupByLibrary {
     "closeIn": MessageLookupByLibrary.simpleMessage("Close In"),
     "commentReply": MessageLookupByLibrary.simpleMessage("Comment Reply"),
     "comments": MessageLookupByLibrary.simpleMessage("Comments"),
+    "community_access": MessageLookupByLibrary.simpleMessage(
+      "Community Access",
+    ),
     "comparePassword": MessageLookupByLibrary.simpleMessage(
       "Enter confirm your password",
     ),
     "compeleteSqueakRegister": MessageLookupByLibrary.simpleMessage(
       "Complete the register from vetIcare invitation",
     ),
+    "complete_now": MessageLookupByLibrary.simpleMessage("Complete Now"),
+    "completed": MessageLookupByLibrary.simpleMessage("Completed"),
     "compliance": MessageLookupByLibrary.simpleMessage(
       "Compliance with Data Protection Regulations",
     ),
     "complianceDesc": MessageLookupByLibrary.simpleMessage(
       "We comply with relevant data protection laws and regulations.",
+    ),
+    "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
+    "confirmMatingCompletion": MessageLookupByLibrary.simpleMessage(
+      "I confirm that mating has been completed",
     ),
     "confirmNewPassword": MessageLookupByLibrary.simpleMessage(
       "Confirm New Password",
@@ -194,6 +280,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Could not open link",
     ),
     "crNumber": MessageLookupByLibrary.simpleMessage("CR"),
+    "createPetProfile": MessageLookupByLibrary.simpleMessage(
+      "Create Pet Profile",
+    ),
+    "createPetProfileSub": MessageLookupByLibrary.simpleMessage(
+      "Add your pet\'s details and photos",
+    ),
     "createPost": MessageLookupByLibrary.simpleMessage("Create Post "),
     "darkMode": MessageLookupByLibrary.simpleMessage("Dark Mode"),
     "dataEncryption": MessageLookupByLibrary.simpleMessage("Data Encryption"),
@@ -213,12 +305,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Your privacy and the security of your clinic\'s data are of utmost importance to us. We implement industry-standard security measures to protect your data against unauthorized access, alteration, and disclosure. Our systems are regularly updated to address potential vulnerabilities and ensure the highest level of protection.",
     ),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
+    "daysAgo": m1,
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
     "deleteComment": MessageLookupByLibrary.simpleMessage("Delete Comment"),
     "deleteConfirmation": MessageLookupByLibrary.simpleMessage(
       "Delete Confirmation",
     ),
     "deletePhoto": MessageLookupByLibrary.simpleMessage("Delete Photo"),
+    "divorced": MessageLookupByLibrary.simpleMessage("Divorced"),
+    "divorced_desc": MessageLookupByLibrary.simpleMessage(
+      "Single again after mating",
+    ),
     "doctorName": MessageLookupByLibrary.simpleMessage("Doctor Name"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editComment": MessageLookupByLibrary.simpleMessage("Edit Comment . . . ."),
@@ -227,6 +324,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "editReplyCommentPost": MessageLookupByLibrary.simpleMessage(
       "Edit Reply Comment",
     ),
+    "edit_profile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
     "email": MessageLookupByLibrary.simpleMessage("Email Address"),
     "emailCopied": MessageLookupByLibrary.simpleMessage(
       "Email copied to clipboard",
@@ -240,6 +338,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "email_validation": MessageLookupByLibrary.simpleMessage(
       "Please enter a valid email address",
     ),
+    "endChat": MessageLookupByLibrary.simpleMessage("End Chat"),
+    "endChatConfirmation": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to end this chat? This action cannot be undone.",
+    ),
     "english": MessageLookupByLibrary.simpleMessage("English"),
     "enterAValidEm": MessageLookupByLibrary.simpleMessage(
       "Enter a valid email",
@@ -250,11 +352,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterCharPassword": MessageLookupByLibrary.simpleMessage(
       "Password more than 6 charts",
     ),
+    "enterChatName": MessageLookupByLibrary.simpleMessage("Enter chat name"),
     "enterCode": MessageLookupByLibrary.simpleMessage("Enter code your sent"),
     "enterConfirmNewPass": MessageLookupByLibrary.simpleMessage(
       "Enter your confirm new password",
     ),
     "enterName": MessageLookupByLibrary.simpleMessage("Enter your Full Name"),
+    "enterNewName": MessageLookupByLibrary.simpleMessage("Enter new name"),
     "enterNewPassword": MessageLookupByLibrary.simpleMessage(
       "Enter your new password",
     ),
@@ -285,6 +389,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "What are you thinking .... ?",
     ),
     "entryDate": MessageLookupByLibrary.simpleMessage("Entry Date"),
+    "errorColon": MessageLookupByLibrary.simpleMessage("Error:"),
+    "excellentExperience": MessageLookupByLibrary.simpleMessage("Excellent!"),
     "exitDate": MessageLookupByLibrary.simpleMessage("Exit Date"),
     "expiredRequest": MessageLookupByLibrary.simpleMessage(
       "The follow request you\\\'re looking for is no longer available. \'\n                      \'It may have been cancelled, expired, or already accepted.",
@@ -292,7 +398,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "failedToLoadVersion": MessageLookupByLibrary.simpleMessage(
       "Failed to load version",
     ),
+    "features_unlock": MessageLookupByLibrary.simpleMessage(
+      "Features you\'ll unlock:",
+    ),
     "female": MessageLookupByLibrary.simpleMessage("Female"),
+    "fetchingPetChats": MessageLookupByLibrary.simpleMessage(
+      "Fetching your pet chats...",
+    ),
     "files": MessageLookupByLibrary.simpleMessage("Files"),
     "filesAndPrescription": MessageLookupByLibrary.simpleMessage(
       "Files And Prescription",
@@ -301,10 +413,22 @@ class MessageLookup extends MessageLookupByLibrary {
       "Filter by status",
     ),
     "filter_hint_pets": MessageLookupByLibrary.simpleMessage("Filter by pet"),
+    "findMatches": MessageLookupByLibrary.simpleMessage("Find Matches"),
+    "findMatchesSub": MessageLookupByLibrary.simpleMessage(
+      "Discover compatible pets nearby",
+    ),
     "findPetFriends": MessageLookupByLibrary.simpleMessage("Find Pet Friends"),
     "findPotentialMates": MessageLookupByLibrary.simpleMessage(
       "Search for pets...",
     ),
+    "finishMating": MessageLookupByLibrary.simpleMessage("Finish Mating"),
+    "finishMatingConfirmation": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to finish mating? This will archive the chat.",
+    ),
+    "finishMatingNote": MessageLookupByLibrary.simpleMessage(
+      "Note: Both partners need to confirm mating completion",
+    ),
+    "follow": MessageLookupByLibrary.simpleMessage("Follow"),
     "followCode": MessageLookupByLibrary.simpleMessage("Follow Code"),
     "followConfirmation": MessageLookupByLibrary.simpleMessage(
       "Follow Confirmation",
@@ -323,12 +447,25 @@ class MessageLookup extends MessageLookupByLibrary {
     "goToClinicsFromPetsScreen": MessageLookupByLibrary.simpleMessage(
       "Go to clinics",
     ),
+    "goodExperience": MessageLookupByLibrary.simpleMessage("Good Experience"),
+    "greatExperience": MessageLookupByLibrary.simpleMessage("Great Experience"),
+    "has_set_its_baby": MessageLookupByLibrary.simpleMessage(
+      "Has Set Its Baby",
+    ),
+    "has_set_its_baby_desc": MessageLookupByLibrary.simpleMessage(
+      "Now a parent",
+    ),
     "haveNotAccount": MessageLookupByLibrary.simpleMessage(
       "Don\'t have an account?",
     ),
+    "health_tracking": MessageLookupByLibrary.simpleMessage("Health Tracking"),
     "help": MessageLookupByLibrary.simpleMessage("Support"),
     "helpShare": MessageLookupByLibrary.simpleMessage(
       "Help us to share the app",
+    ),
+    "hoursAgo": m2,
+    "howWasMatingSession": MessageLookupByLibrary.simpleMessage(
+      "How was the mating session?",
     ),
     "howWeUse": MessageLookupByLibrary.simpleMessage(
       "How We Use Your Information",
@@ -359,6 +496,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "lastUpdated": MessageLookupByLibrary.simpleMessage("Last updated"),
     "linkAnotherPet": MessageLookupByLibrary.simpleMessage("Link another pet"),
+    "littleFriend": MessageLookupByLibrary.simpleMessage("Little Friend"),
     "location": MessageLookupByLibrary.simpleMessage("location"),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
     "logout": MessageLookupByLibrary.simpleMessage("LogOut"),
@@ -366,9 +504,48 @@ class MessageLookup extends MessageLookupByLibrary {
       "Do you want to log out?",
     ),
     "male": MessageLookupByLibrary.simpleMessage("Male"),
+    "manageIncomingOutgoing": MessageLookupByLibrary.simpleMessage(
+      "Manage incoming and outgoing mating requests",
+    ),
+    "mangeMatingRequests": MessageLookupByLibrary.simpleMessage(
+      "Manage Mating Requests",
+    ),
+    "markAsMatingStarted": MessageLookupByLibrary.simpleMessage(
+      "Mark as Mating Started",
+    ),
+    "matchFound": MessageLookupByLibrary.simpleMessage("Match Found!"),
+    "mating": MessageLookupByLibrary.simpleMessage("Mating"),
+    "matingActivity": MessageLookupByLibrary.simpleMessage("Mating Activity"),
+    "matingChats": MessageLookupByLibrary.simpleMessage("Mating Chats"),
+    "matingCompletedChatArchived": MessageLookupByLibrary.simpleMessage(
+      "Mating completed! Chat has been archived.",
+    ),
+    "matingRequestsFor": m3,
+    "matingSession": MessageLookupByLibrary.simpleMessage("Mating Session"),
+    "matingStarted": MessageLookupByLibrary.simpleMessage(
+      "Mating started successfully",
+    ),
+    "mating_features": MessageLookupByLibrary.simpleMessage("Mating Features"),
+    "maxCharacters": m4,
+    "maybe_later": MessageLookupByLibrary.simpleMessage("Maybe Later"),
+    "mergePets": MessageLookupByLibrary.simpleMessage("Merge"),
     "message_hint": MessageLookupByLibrary.simpleMessage("Enter your message"),
     "message_validation": MessageLookupByLibrary.simpleMessage(
       "Please enter a message",
+    ),
+    "minutesAgo": m5,
+    "missing_field_birth_date": MessageLookupByLibrary.simpleMessage(
+      "Birth Date",
+    ),
+    "missing_field_breed": MessageLookupByLibrary.simpleMessage("Breed"),
+    "missing_field_gender": MessageLookupByLibrary.simpleMessage("Gender"),
+    "missing_field_pet_name": MessageLookupByLibrary.simpleMessage("Pet Name"),
+    "missing_field_photo": MessageLookupByLibrary.simpleMessage(
+      "Profile Photo",
+    ),
+    "missing_field_species": MessageLookupByLibrary.simpleMessage("Species"),
+    "missing_information": MessageLookupByLibrary.simpleMessage(
+      "Missing Information:",
     ),
     "myFavorites": MessageLookupByLibrary.simpleMessage("My favourites"),
     "myPets": MessageLookupByLibrary.simpleMessage("My pets"),
@@ -377,17 +554,44 @@ class MessageLookup extends MessageLookupByLibrary {
     "name_validation": MessageLookupByLibrary.simpleMessage(
       "Please enter your name",
     ),
+    "navigate_edit_profile": MessageLookupByLibrary.simpleMessage(
+      "Navigate to profile editing screen...",
+    ),
     "newPassword": MessageLookupByLibrary.simpleMessage("New Password"),
     "no": MessageLookupByLibrary.simpleMessage("No"),
+    "noActiveChats": MessageLookupByLibrary.simpleMessage("No active chats"),
     "noAppointment": MessageLookupByLibrary.simpleMessage("No Appointments"),
+    "noBlockedChats": MessageLookupByLibrary.simpleMessage("No blocked chats"),
+    "noChatsFound": MessageLookupByLibrary.simpleMessage("No chats found"),
+    "noChatsInThisCategory": MessageLookupByLibrary.simpleMessage(
+      "No chats in this category",
+    ),
+    "noChatsYet": MessageLookupByLibrary.simpleMessage("No chats yet!"),
+    "noCompletedChats": MessageLookupByLibrary.simpleMessage(
+      "No completed chats",
+    ),
+    "noMatingChats": MessageLookupByLibrary.simpleMessage("No mating chats"),
+    "noMessagesYet": MessageLookupByLibrary.simpleMessage("No messages yet"),
     "noPetsFound": MessageLookupByLibrary.simpleMessage("No Pets Found"),
     "noPetsInVetICare": MessageLookupByLibrary.simpleMessage(
       "No pets are available in this clinic, or they have already been added to SQueak",
+    ),
+    "noReceivedRequests": MessageLookupByLibrary.simpleMessage(
+      "No received requests",
+    ),
+    "noReceivedRequestsSub": MessageLookupByLibrary.simpleMessage(
+      "When you receive mating requests, they will appear here",
+    ),
+    "noRequests": MessageLookupByLibrary.simpleMessage("No requests found"),
+    "noSentRequests": MessageLookupByLibrary.simpleMessage("No sent requests"),
+    "notAvailableForMating": MessageLookupByLibrary.simpleMessage(
+      "Not Available For Mating",
     ),
     "notEqualPassword": MessageLookupByLibrary.simpleMessage(
       "confirm password not equal password",
     ),
     "notSpayed": MessageLookupByLibrary.simpleMessage("Unspayed"),
+    "not_completed": MessageLookupByLibrary.simpleMessage("Not Completed"),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
     "notificationsAlert": MessageLookupByLibrary.simpleMessage(
       "Notifications Alert",
@@ -398,7 +602,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "offlineMessagesTitle": MessageLookupByLibrary.simpleMessage(
       "No Internet Connection",
     ),
+    "ok": MessageLookupByLibrary.simpleMessage("OK"),
+    "onMating": MessageLookupByLibrary.simpleMessage("Mating"),
+    "on_mating": MessageLookupByLibrary.simpleMessage("On Mating"),
+    "on_mating_desc": MessageLookupByLibrary.simpleMessage(
+      "Currently in a mating relationship",
+    ),
     "openAt": MessageLookupByLibrary.simpleMessage("Open At"),
+    "openChat": MessageLookupByLibrary.simpleMessage("Open Chat"),
+    "openingChat": MessageLookupByLibrary.simpleMessage("Opening chat..."),
     "other": MessageLookupByLibrary.simpleMessage("Other"),
     "other_valid": MessageLookupByLibrary.simpleMessage(
       "Please enter valid title",
@@ -408,6 +620,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "ownerDetails": MessageLookupByLibrary.simpleMessage("Owner Details"),
     "paid": MessageLookupByLibrary.simpleMessage("Paid"),
+    "partnerConfirmed": MessageLookupByLibrary.simpleMessage(
+      "Partner has confirmed",
+    ),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "password_hint": MessageLookupByLibrary.simpleMessage(
       "Enter your password",
@@ -433,6 +648,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "pet_birthdate_validation": MessageLookupByLibrary.simpleMessage(
       "Please enter your pet\'s birthdate",
     ),
+    "pet_friendship": MessageLookupByLibrary.simpleMessage("Pet Friendship"),
+    "petsLookingInArea": MessageLookupByLibrary.simpleMessage(
+      "Pets looking for love in your area",
+    ),
     "petsVetICare": MessageLookupByLibrary.simpleMessage(
       "Pets in vetIcare clinic",
     ),
@@ -449,33 +668,69 @@ class MessageLookup extends MessageLookupByLibrary {
     "phone_validation": MessageLookupByLibrary.simpleMessage(
       "Please enter your phone number",
     ),
+    "photo": MessageLookupByLibrary.simpleMessage("Photo"),
+    "photoPickerNotImplemented": MessageLookupByLibrary.simpleMessage(
+      "Photo picker not implemented yet",
+    ),
     "pleaseSelectBoarding": MessageLookupByLibrary.simpleMessage(
       "Please select boarding Type name",
     ),
     "pleaseSelectCage": MessageLookupByLibrary.simpleMessage(
       "Please select Cage",
     ),
+    "pleaseSelectRating": MessageLookupByLibrary.simpleMessage(
+      "Please select a rating",
+    ),
+    "poorExperience": MessageLookupByLibrary.simpleMessage("Poor Experience"),
+    "pregnancyNotificationInfo": MessageLookupByLibrary.simpleMessage(
+      "You will receive pregnancy notifications if applicable",
+    ),
+    "pregnant": MessageLookupByLibrary.simpleMessage("Pregnant"),
+    "pregnant_desc": MessageLookupByLibrary.simpleMessage("Expecting babies"),
     "prescription": MessageLookupByLibrary.simpleMessage("Prescription"),
+    "previously_mated": MessageLookupByLibrary.simpleMessage(
+      "Previously Mated",
+    ),
+    "previously_mated_desc": MessageLookupByLibrary.simpleMessage(
+      "Has completed mating",
+    ),
     "price": MessageLookupByLibrary.simpleMessage("price"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
     "profile": MessageLookupByLibrary.simpleMessage("Your Profile"),
+    "profile_incomplete": MessageLookupByLibrary.simpleMessage(
+      "Profile Incomplete",
+    ),
+    "profile_incomplete_desc": MessageLookupByLibrary.simpleMessage(
+      "Your pet profile needs additional information to unlock all features",
+    ),
     "publish": MessageLookupByLibrary.simpleMessage("Publish"),
     "qty": MessageLookupByLibrary.simpleMessage("Qty"),
     "rate": MessageLookupByLibrary.simpleMessage("Rate"),
+    "rateYourExperience": MessageLookupByLibrary.simpleMessage(
+      "Rate Your Experience",
+    ),
     "receiveCode": MessageLookupByLibrary.simpleMessage(
       "Enter the received code",
     ),
     "receiveEmail": MessageLookupByLibrary.simpleMessage(
       "Enter your email to\n Receive the instruction to reset your password",
     ),
+    "received": MessageLookupByLibrary.simpleMessage("Received"),
+    "recentActivity": MessageLookupByLibrary.simpleMessage("النشاط الحديث"),
     "register": MessageLookupByLibrary.simpleMessage("Register"),
+    "reject": MessageLookupByLibrary.simpleMessage("Reject"),
     "reminderOtherHintText": MessageLookupByLibrary.simpleMessage(
       "Please enter your reminder type",
     ),
     "removeClinic": MessageLookupByLibrary.simpleMessage("Remove Clinic"),
     "removePost": MessageLookupByLibrary.simpleMessage("Remove post"),
+    "renameChat": MessageLookupByLibrary.simpleMessage("Rename Chat"),
     "replies": MessageLookupByLibrary.simpleMessage("replies"),
     "reply": MessageLookupByLibrary.simpleMessage("Reply"),
+    "requestSent": m6,
+    "required": MessageLookupByLibrary.simpleMessage("Required"),
+    "respond": MessageLookupByLibrary.simpleMessage("Respond"),
+    "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "returnPolicy": MessageLookupByLibrary.simpleMessage(
       "Return & Exchange Policy: Items can be returned within 3 days of purchase with receipt. Medical products are non-refundable.",
     ),
@@ -507,8 +762,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please select a pet to start service",
     ),
     "selectPetType": MessageLookupByLibrary.simpleMessage("Select Pet Type"),
+    "selected": MessageLookupByLibrary.simpleMessage("Selected"),
     "send": MessageLookupByLibrary.simpleMessage("Send"),
+    "sendLovelyRequestSubtitle": m7,
+    "sendLovelyRequestTitle": MessageLookupByLibrary.simpleMessage(
+      "Send a Lovely Mating Request 💞",
+    ),
     "sendMeNow": MessageLookupByLibrary.simpleMessage("Send me now"),
+    "sendRequest": MessageLookupByLibrary.simpleMessage("Send"),
+    "sent": MessageLookupByLibrary.simpleMessage("Sent"),
     "sentVerification": MessageLookupByLibrary.simpleMessage(
       "We have sent a verification code to",
     ),
@@ -520,18 +782,29 @@ class MessageLookup extends MessageLookupByLibrary {
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "sex": MessageLookupByLibrary.simpleMessage("Sex"),
     "shareApp": MessageLookupByLibrary.simpleMessage("Share App"),
+    "shareYourThoughts": MessageLookupByLibrary.simpleMessage(
+      "Share Your Thoughts",
+    ),
     "sharingInfo": MessageLookupByLibrary.simpleMessage(
       "Sharing Your Information",
     ),
     "sharingInfoDesc": MessageLookupByLibrary.simpleMessage(
       "We do not sell or trade your personal information. However, we may share certain information with trusted third-party service providers to support and improve our services. These providers are required to adhere to strict data protection standards and are only permitted to use the information for the purposes outlined in our privacy policy.",
     ),
+    "showAllChats": MessageLookupByLibrary.simpleMessage("Show All Chats"),
     "signOut": MessageLookupByLibrary.simpleMessage("Sign Out"),
     "signUp": MessageLookupByLibrary.simpleMessage("Sign Up"),
     "signUpAsADoctor": MessageLookupByLibrary.simpleMessage(
       "Sign up as a Doctor",
     ),
+    "single": MessageLookupByLibrary.simpleMessage("Single"),
+    "single_desc": MessageLookupByLibrary.simpleMessage(
+      "Not looking for mating",
+    ),
     "skip": MessageLookupByLibrary.simpleMessage("Skip"),
+    "somethingWentWrong": MessageLookupByLibrary.simpleMessage(
+      "Oops! Something went wrong",
+    ),
     "spayed": MessageLookupByLibrary.simpleMessage("Spayed"),
     "speciality": MessageLookupByLibrary.simpleMessage("Speciality"),
     "species": MessageLookupByLibrary.simpleMessage("Species"),
@@ -539,11 +812,34 @@ class MessageLookup extends MessageLookupByLibrary {
     "startAppointment": MessageLookupByLibrary.simpleMessage(
       "Start Appointment",
     ),
+    "startChatting": MessageLookupByLibrary.simpleMessage("Start Chatting"),
+    "startChattingSub": MessageLookupByLibrary.simpleMessage(
+      "Connect with other pet owners",
+    ),
+    "startConversation": MessageLookupByLibrary.simpleMessage(
+      "Start Conversation",
+    ),
+    "startMatchingToChat": MessageLookupByLibrary.simpleMessage(
+      "Start matching with other pets to begin chatting",
+    ),
+    "startMating": MessageLookupByLibrary.simpleMessage("Start Mating"),
+    "startMatingConfirmation": MessageLookupByLibrary.simpleMessage(
+      "Mark this chat as mating started? This will enable mating tracking features.",
+    ),
+    "startNewConversation": MessageLookupByLibrary.simpleMessage(
+      "Start a new conversation to see it here!",
+    ),
     "submit": MessageLookupByLibrary.simpleMessage("Submit"),
+    "submitRating": MessageLookupByLibrary.simpleMessage("Submit Rating"),
     "swapPet": MessageLookupByLibrary.simpleMessage(
       "Swipe left or right to select a pet",
     ),
+    "switchTitle": MessageLookupByLibrary.simpleMessage("First Switch Profile"),
+    "tapToRate": MessageLookupByLibrary.simpleMessage("Tap to Rate"),
     "taxId": MessageLookupByLibrary.simpleMessage("Tax ID"),
+    "tellUsAboutExperience": MessageLookupByLibrary.simpleMessage(
+      "Tell us about the mating experience...",
+    ),
     "terms": MessageLookupByLibrary.simpleMessage(
       "By signing up you agree to our Terms of use and Privacy Policy",
     ),
@@ -556,6 +852,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalAmount": MessageLookupByLibrary.simpleMessage("Total Invoice"),
     "trademarkInfo": MessageLookupByLibrary.simpleMessage(
       "Trademark Information",
+    ),
+    "tryAgain": MessageLookupByLibrary.simpleMessage("Try Again"),
+    "typeMessage": MessageLookupByLibrary.simpleMessage("Type a message..."),
+    "unblock": MessageLookupByLibrary.simpleMessage("Unblock"),
+    "unblockChat": MessageLookupByLibrary.simpleMessage("Unblock Chat"),
+    "unblockChatConfirmation": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to unblock this chat?",
     ),
     "unfollow": MessageLookupByLibrary.simpleMessage("Unfollow"),
     "unfollowConfirmation": MessageLookupByLibrary.simpleMessage(
@@ -593,6 +896,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "updateVersionModuleTitle": MessageLookupByLibrary.simpleMessage(
       "Update App ?",
     ),
+    "update_pet_status": MessageLookupByLibrary.simpleMessage(
+      "Update Pet Status",
+    ),
+    "update_status": MessageLookupByLibrary.simpleMessage("Update Status"),
     "userControl": MessageLookupByLibrary.simpleMessage(
       "User Control Over Data",
     ),
@@ -604,8 +911,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "verification": MessageLookupByLibrary.simpleMessage("Verification"),
     "version": MessageLookupByLibrary.simpleMessage("Version"),
     "versionNumber": MessageLookupByLibrary.simpleMessage("Version"),
+    "video": MessageLookupByLibrary.simpleMessage("Video"),
+    "videoPickerNotImplemented": MessageLookupByLibrary.simpleMessage(
+      "Video picker not implemented yet",
+    ),
     "view1Reply": MessageLookupByLibrary.simpleMessage("View 1 reply"),
-    "viewReplies": m0,
+    "viewAll": MessageLookupByLibrary.simpleMessage("View All"),
+    "viewProfile": MessageLookupByLibrary.simpleMessage("View Profile"),
+    "viewProfileSnack": m8,
+    "viewReplies": m9,
+    "waitingForResponse": MessageLookupByLibrary.simpleMessage(
+      "Waiting for response...",
+    ),
+    "welcomeSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Find the perfect match for your beloved pets. Connect, chat, and create beautiful families together.",
+    ),
+    "welcomeToSqueak": MessageLookupByLibrary.simpleMessage(
+      "Welcome to Squeak!",
+    ),
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
     "yourAppointments": MessageLookupByLibrary.simpleMessage("Appointments"),
     "yourClinic": MessageLookupByLibrary.simpleMessage("Clinics"),

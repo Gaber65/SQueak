@@ -33,18 +33,15 @@ class GetUserAppointment extends StatelessWidget {
         BlocProvider(
           lazy: false,
           create:
-              (context) =>
-                  sl<UserAppointmentCubit>()
-                    ..fetchSuppliers()
-                    ..getAppointment(false),
+              (context) => sl<UserAppointmentCubit>()..getAppointment(false),
         ),
         BlocProvider(
           lazy: true,
-          create: (context) => sl<BoardingCubit>()..getBoardingEntries(true),
+          create: (context) => sl<BoardingCubit>(),
         ),
         BlocProvider(
           lazy: true,
-          create: (context) => sl<PetCubit>()..getOwnerPets(),
+          create: (context) => sl<PetCubit>(),
         ),
       ],
       child: _AllAppointmentContent(services: _getServiceNames(context)),
@@ -52,16 +49,62 @@ class GetUserAppointment extends StatelessWidget {
   }
 }
 
-class _AllAppointmentContent extends StatelessWidget {
+class _AllAppointmentContent extends StatefulWidget {
   final List<String> services;
 
   const _AllAppointmentContent({required this.services});
 
   @override
+  State<_AllAppointmentContent> createState() => _AllAppointmentContentState();
+}
+
+class _AllAppointmentContentState extends State<_AllAppointmentContent>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  int _previousIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: widget.services.length, vsync: this);
+    // Add listener after first frame so inherited blocs are available from context
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _tabController.addListener(_handleTabChange);
+    });
+  }
+
+  void _handleTabChange() {
+    // When the index is changing (user tapped another tab or swiped), clear filters
+    if (_tabController.indexIsChanging) {
+      final prev = _previousIndex;
+      if (prev == 0) {
+        try {
+          UserAppointmentCubit.get(context).clearFilters();
+        } catch (_) {}
+      } else if (prev == 1) {
+        try {
+          BoardingCubit.get(context).clearFilters();
+        } catch (_) {}
+      }
+    } else {
+      // update previous index when the animation landed on the new index
+      if (_tabController.index != _previousIndex) {
+        _previousIndex = _tabController.index;
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_handleTabChange);
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        // Listen for UserAppointmentCubit state changes
         BlocListener<UserAppointmentCubit, UserAppointmentState>(
           listener: (context, state) {
             if (state is DeleteAppointmentSuccess) {
@@ -72,30 +115,43 @@ class _AllAppointmentContent extends StatelessWidget {
                 context,
               ).deleteAppointments(state.model.id);
             }
+            if (state is GetAppointmentSuccess) {
+              try {
+                final petCubit = context.read<PetCubit>();
+                if (petCubit.pets.isEmpty) petCubit.getOwnerPets();
+              } catch (_) {
+                final petCubit = sl<PetCubit>();
+                if (petCubit.pets.isEmpty) petCubit.getOwnerPets();
+              }
+
+              try {
+                final boardingCubit = context.read<BoardingCubit>();
+                if (boardingCubit.boardingEntries.isEmpty) {
+                  boardingCubit.getBoardingEntries(true);
+                }
+              } catch (_) {
+                final boardingCubit = sl<BoardingCubit>();
+                if (boardingCubit.boardingEntries.isEmpty) {
+                  boardingCubit.getBoardingEntries(true);
+                }
+              }
+            }
           },
         ),
-        // Listen for BoardingCubit state changes if needed
         BlocListener<BoardingCubit, BoardingState>(
           listener: (context, state) {
-            // Add boarding-specific listeners here if needed
-            // For example: show snackbars, navigate, etc.
           },
         ),
-        // Listen for PetCubit state changes if needed
         BlocListener<PetCubit, PetState>(
           listener: (context, state) {
-            // Add pet-specific listeners here if needed
           },
         ),
       ],
       child: Builder(
         builder: (context) {
-          return DefaultTabController(
-            length: 2,
-            child: Scaffold(
-              appBar: _buildAppBar(context),
-              body: _buildTabBarView(context),
-            ),
+          return Scaffold(
+            appBar: _buildAppBar(context),
+            body: _buildTabBarView(context),
           );
         },
       ),
@@ -125,6 +181,7 @@ class _AllAppointmentContent extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           child: TabBar(
+            controller: _tabController,
             isScrollable: false,
             indicatorColor: ColorManager.primaryColor,
             indicatorSize: TabBarIndicatorSize.tab,
@@ -141,7 +198,7 @@ class _AllAppointmentContent extends StatelessWidget {
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
-            tabs: services.map((service) => Tab(text: service)).toList(),
+            tabs: widget.services.map((service) => Tab(text: service)).toList(),
           ),
         ),
       ),
@@ -150,6 +207,7 @@ class _AllAppointmentContent extends StatelessWidget {
 
   TabBarView _buildTabBarView(BuildContext context) {
     return TabBarView(
+      controller: _tabController,
       children: [_buildExaminationTab(context), _buildBoardingTab(context)],
     );
   }
@@ -187,14 +245,22 @@ class _AllAppointmentContent extends StatelessWidget {
     UserAppointmentState state,
   ) {
     return Row(
-      children: [
+        children: [
         Expanded(
           child: BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
+            buildWhen: (previous, current) =>
+                current is AppointmentFiltered ||
+                current is GetAppointmentSuccess ||
+                current is AppointmentFilterCleared,
             builder: (context, state) => buildStateFilter(context),
           ),
         ),
         Expanded(
-          child: BlocBuilder<PetCubit, PetState>(
+          child: BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
+            buildWhen: (previous, current) =>
+                current is AppointmentFiltered ||
+                current is AppointmentFilterCleared ||
+                current is GetAppointmentSuccess,
             builder: (context, state) {
               final pets = PetCubit.get(context).pets;
               return buildPetFilter(context, pets);
@@ -202,13 +268,16 @@ class _AllAppointmentContent extends StatelessWidget {
           ),
         ),
         BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
+          buildWhen: (previous, current) =>
+              current is AppointmentFiltered ||
+              current is GetAppointmentSuccess ||
+              current is AppointmentFilterCleared,
           builder: (context, state) {
             return Visibility(
               visible: state is AppointmentFiltered,
               child: IconButton(
                 icon: const Icon(Icons.clear),
-                onPressed:
-                    () => UserAppointmentCubit.get(context).clearFilters(),
+                onPressed: () => UserAppointmentCubit.get(context).clearFilters(),
               ),
             );
           },
@@ -222,21 +291,22 @@ class _AllAppointmentContent extends StatelessWidget {
     UserAppointmentCubit cubit,
     UserAppointmentState state,
   ) {
-    if (state is GetAppointmentLoading && state is! GetAppointmentSuccess) {
+    if (state is GetAppointmentLoading && cubit.appointments.isEmpty) {
       return LoadingWidget(
         enMessage: 'Loading All appointments...',
         arMessage: 'جاري تحميل جميع المواعيد...',
       );
-    } else if (cubit.appointments.isEmpty && state is! GetSupplierSuccess) {
-      return emptyAppointment(context);
-    } else if (state is AppointmentFiltered && state is GetAppointmentSuccess) {
-      return _buildAppointmentList(state.appointments, context, cubit);
-    } else {
-      return RefreshIndicator(
-        onRefresh: () async => await cubit.getAppointment(false),
-        child: _buildAppointmentList(cubit.appointments, context, cubit),
-      );
     }
+    if (cubit.appointments.isEmpty && state is! GetSupplierSuccess) {
+      return emptyAppointment(context);
+    }
+    if (state is AppointmentFiltered) {
+      return _buildAppointmentList(state.appointments, context, cubit);
+    }
+    return RefreshIndicator(
+      onRefresh: () async => await cubit.getAppointment(false),
+      child: _buildAppointmentList(cubit.appointments, context, cubit),
+    );
   }
 
   Widget _buildAppointmentList(
@@ -271,7 +341,11 @@ class _AllAppointmentContent extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: BlocBuilder<PetCubit, PetState>(
+          child: BlocBuilder<BoardingCubit, BoardingState>(
+            buildWhen: (previous, current) =>
+                current is BoardingFiltered ||
+                current is BoardingFilteredClear ||
+                current is GetBoardingEntriesSuccess,
             builder: (context, state) {
               final pets = PetCubit.get(context).pets;
               return buildPetFilterBoarding(context, pets);
@@ -279,11 +353,19 @@ class _AllAppointmentContent extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: BlocBuilder<LayoutCubit, LayoutState>(
+          child: BlocBuilder<BoardingCubit, BoardingState>(
+            buildWhen: (previous, current) =>
+                current is BoardingFiltered ||
+                current is GetBoardingEntriesSuccess ||
+                current is BoardingFilteredClear,
             builder: (context, state) => buildStateFilterBoarding(context),
           ),
         ),
         BlocBuilder<BoardingCubit, BoardingState>(
+          buildWhen: (previous, current) =>
+              current is BoardingFiltered ||
+              current is GetBoardingEntriesSuccess ||
+              current is BoardingFilteredClear,
           builder: (context, state) {
             return Visibility(
               visible: state is BoardingFiltered,

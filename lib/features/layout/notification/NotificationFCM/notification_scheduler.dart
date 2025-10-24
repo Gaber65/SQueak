@@ -56,7 +56,7 @@ class NotificationScheduler {
       payload: payload,
     );
 
-    print("Instant notification scheduled: $title");
+    // print("Instant notification scheduled: $title");
   }
 
   /// Schedule reminder notification with frequency
@@ -77,9 +77,9 @@ class NotificationScheduler {
       startTime.minute,
     );
 
-    print("Scheduling reminder for: ${startDate.year}/${startDate.month}/${startDate.day} ${startTime.hour}:${startTime.minute}");
+    // print("Scheduling reminder for: ${startDate.year}/${startDate.month}/${startDate.day} ${startTime.hour}:${startTime.minute}");
 
-    // Ensure the scheduled date is in the future
+    // Ensure the scheduled data is in the future
     if (scheduledDate.isBefore(tz.TZDateTime.now(tz.local))) {
       scheduledDate = _adjustScheduledDate(scheduledDate, frequency);
     }
@@ -132,7 +132,7 @@ class NotificationScheduler {
       payload: 'reminder_$id|$title|$body',
     );
 
-    print("Reminder scheduled for: $scheduledDate, Frequency: $frequency");
+    // print("Reminder scheduled for: $scheduledDate, Frequency: $frequency");
   }
 
   /// Edit a scheduled notification
@@ -157,7 +157,7 @@ class NotificationScheduler {
       frequency: newFrequency,
     );
 
-    print("Notification with ID $notificationId has been updated.");
+    // print("Notification with ID $notificationId has been updated.");
   }
 
   /// Download image for notification
@@ -179,7 +179,7 @@ class NotificationScheduler {
     }
   }
 
-  /// Adjust scheduled date if it's in the past
+  /// Adjust scheduled data if it's in the past
   static tz.TZDateTime _adjustScheduledDate(tz.TZDateTime scheduledDate, String frequency) {
     switch (frequency) {
       case "Daily":

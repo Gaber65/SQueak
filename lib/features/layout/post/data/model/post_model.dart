@@ -21,9 +21,9 @@ class PostDataModel extends PostEntity {
     return PostDataModel(
       title: json['title'],
       content: json['content'],
-      createdAt: json['createdAt'],
+      createdAt: json['createdAt'] ?? '',
       video: json['video'],
-      clinic: ClinicModel.fromJson(json['clinic']),
+      clinic: json['clinic'] == null ? null : ClinicModel.fromJson(json['clinic']),
       specieId: json['specieId'],
       specie:
           json['speciePost'] != null

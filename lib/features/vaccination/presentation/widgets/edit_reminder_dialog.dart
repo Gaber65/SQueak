@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+// ignore_for_file: library_private_types_in_public_api, unrelated_type_equality_checks
 
+import 'package:flutter/material.dart';
 import '../../../../core/utils/export_path/export_files.dart';
 import '../../domain/entities/reminder_entity.dart';
 import '../cubit/ui/vaccination_ui_cubit.dart';
@@ -180,6 +180,7 @@ class _EditReminderDialogState extends State<EditReminderDialog> {
               reminderFreq: widget.cubit.currentFreqInEdit,
               date:
                   widget.cubit.newValueForDateInEdit == null ||
+                          
                           widget.cubit.newValueForDateInEdit == ""
                       ? dateController.text
                       : widget.cubit.newValueForDateInEdit.toString().substring(
@@ -211,6 +212,7 @@ class _EditReminderDialogState extends State<EditReminderDialog> {
             await widget.cubit.updateReminder(reminder: updatedReminder);
             widget.cubit.loadPetReminders(widget.petId);
             if (mounted) {
+              // ignore: use_build_context_synchronously
               Navigator.of(context).pop();
             }
           },
@@ -265,7 +267,7 @@ class _SelectDateVacForEditState extends State<SelectDateVacForEdit> {
     return InkWell(
       onTap: () async {
         await widget.cubit.selectDateOnEdit(context, widget.initDate);
-        _updateDate(); // Ensure UI updates after date selection
+        _updateDate(); // Ensure UI updates after data selection
       },
       child: IgnorePointer(
         child: MyTextForm(
@@ -276,11 +278,11 @@ class _SelectDateVacForEditState extends State<SelectDateVacForEdit> {
           hintText:
               isArabic()
                   ? 'من فضلك ادخل تاريخ الميلاد'
-                  : 'Please enter date of birth',
+                  : 'Please enter data of birth',
           validatorText:
               isArabic()
                   ? 'من فضلك ادخل تاريخ الميلاد'
-                  : 'Please enter date of birth',
+                  : 'Please enter data of birth',
           obscureText: false,
         ),
       ),

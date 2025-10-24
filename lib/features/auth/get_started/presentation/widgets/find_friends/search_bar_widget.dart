@@ -48,7 +48,7 @@ class SearchBarWidget extends StatelessWidget {
           border: InputBorder.none,
           hintText:
               isArabic()
-                  ? 'ابحث عن الحيوانات والاصناف...'
+                  ? 'ابحث عن الصغار والاصناف...'
                   : 'Search pets, breeds...',
           hintStyle: TextStyle(
             color: isDark ? Colors.grey[400] : Colors.grey[600],

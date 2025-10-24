@@ -9,7 +9,7 @@ import 'package:dio/dio.dart';
 import 'package:squeak/features/appointments/exam/data/models/availability_model.dart';
 import 'package:squeak/features/appointments/exam/data/models/client_clinic_model.dart';
 import '../../../data/models/doctor_model.dart';
-import '../component/CustomCalendarDatePicker.dart';
+import '../component/custom_calendar_date_picker.dart';
 
 /// Booking again Screen melkerm
 class BooKAgainScreen extends StatefulWidget {
@@ -153,12 +153,12 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
     // print("DEBUG: handleBooking called");
     if (dateController.text.isEmpty || time == null) {
       // print(
-      //   "DEBUG: Missing date or time - Date: ${dateController.text}, Time: $time",
+      //   "DEBUG: Missing data or time - Date: ${dateController.text}, Time: $time",
       // );
       infoToast(
         context,
         dateController.text.isEmpty
-            ? (isArabic() ? 'الرجاء تحديد التاريخ ' : 'Please select date')
+            ? (isArabic() ? 'الرجاء تحديد التاريخ ' : 'Please select data')
             : (isArabic() ? "الرجاء تحديد الوقت" : 'Please select time'),
       );
       return;
@@ -186,7 +186,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
         // print("DEBUG: No matching pet found for ID: ${widget.petId}");
         errorToast(
           context,
-          isArabic() ? 'لم يتم العثور على الحيوانات الأليفة' : 'No pets found',
+          isArabic() ? 'لم يتم العثور على الصغار الأليفة' : 'No pets found',
         );
         if (mounted) setState(() => isCreatingAppointment = false);
         return;
@@ -196,7 +196,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       // print("DEBUG: Formatted time: $formattedTime");
       // print("DEBUG: time: $time");
       Map<String, dynamic> requestData = {
-        "date": dateController.text,
+        "data": dateController.text,
         "time": formattedTime,
         "petId": matchedPet.petId,
         "clinicCode": widget.clinicCode,
@@ -418,7 +418,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                                   context,
                                   isArabic()
                                       ? 'الرجاء تحديد التاريخ أولاً'
-                                      : 'Please select a date first',
+                                      : 'Please select a data first',
                                 );
                                 return;
                               }
@@ -492,7 +492,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                                   context,
                                   isArabic()
                                       ? 'لا يمكن تحديد تاريخ في الماضي'
-                                      : 'Cannot select a past date',
+                                      : 'Cannot select a past data',
                                 );
                               }
                             },

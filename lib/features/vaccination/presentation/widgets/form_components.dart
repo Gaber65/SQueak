@@ -150,10 +150,11 @@ Widget buildSelectDateVac(BuildContext context, VaccinationUiCubit cubit) {
       child: MyTextForm(
         controller: TextEditingController(
           text:
+              // ignore: unrelated_type_equality_checks
               cubit.currentDateItem == ''
                   ? isArabic()
                       ? 'من فضلك ادخل تاريخ الميلاد'
-                      : 'Please enter date of birth'
+                      : 'Please enter data of birth'
                   : cubit.currentDateItem.toString().substring(0, 10),
         ),
         enabled: false,
@@ -162,11 +163,11 @@ Widget buildSelectDateVac(BuildContext context, VaccinationUiCubit cubit) {
         hintText:
             isArabic()
                 ? 'من فضلك ادخل تاريخ الميلاد'
-                : 'Please enter date of birth',
+                : 'Please enter data of birth',
         validatorText:
             isArabic()
                 ? 'من فضلك ادخل تاريخ الميلاد'
-                : 'Please enter date of birth',
+                : 'Please enter data of birth',
         obscureText: false,
       ),
     ),

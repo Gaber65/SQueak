@@ -42,7 +42,7 @@ class DateFieldWidget extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      controller.text.isEmpty ? 'Select date' : controller.text,
+                      controller.text.isEmpty ? 'Select data' : controller.text,
                       style: TextStyle(
                         color: controller.text.isEmpty 
                             ? Colors.grey.shade600 
@@ -78,6 +78,7 @@ class DateFieldWidget extends StatelessWidget {
       // If boarding type is hourly, also pick time
       if (boardingType != null && boardingType!.unit == 0) {
         final TimeOfDay? pickedTime = await showTimePicker(
+          // ignore: use_build_context_synchronously
           context: context,
           initialTime: TimeOfDay.fromDateTime(selectedDateTime ?? DateTime.now()),
         );

@@ -1,14 +1,14 @@
 class PostEntity {
-  final String title;
-  final String content;
-  final int numberOfComments;
+  final String? title;
+  final String? content;
+  final int? numberOfComments;
   final String? image;
-  final String postId;
+  final String? postId;
   final String? video;
-  final String createdAt;
+  final String? createdAt;
   final String? specieId;
   final String? clinicId;
-  final ClinicEntity clinic;
+  final ClinicEntity? clinic;
   final SpecieEntityPost? specie;
 
   const PostEntity({
@@ -52,7 +52,7 @@ class PostEntity {
       'createdAt': createdAt,
       'specieId': specieId,
       'clinicId': clinicId,
-      'clinic': clinic.toJson(),
+      'clinic': clinic!.toJson(),
       'specie': specie?.toJson(),
     };
   }

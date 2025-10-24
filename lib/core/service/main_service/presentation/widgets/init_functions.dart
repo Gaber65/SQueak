@@ -1,5 +1,6 @@
 import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+// ignore: depend_on_referenced_packages
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +13,15 @@ import '../../../../../firebase_options.dart';
 
 @pragma('vm:entry-point')
 class InitFunctions {
+  // Exposed current environment so other utilities can read it
+  static Environment? currentEnvironment;
   static Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
+    // Set the application environment here and expose it
     ConfigModel.setEnvironment(Environment.test);
+    currentEnvironment = Environment.test;
+    // propagate to other helpers that need to know environment
+    DioFinalHelper.setEnvironment(Environment.test);
     Bloc.observer = MyBlocObserver();
     await _initServiceLocator();
     await _initCache(); // Initialize cache first
@@ -34,7 +41,7 @@ class InitFunctions {
 
   static void _listenToForegroundMessages() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print('app foreground');
+      // print('app foreground');
       _handleMessage(message);
     });
   }
@@ -42,7 +49,7 @@ class InitFunctions {
   @pragma('vm:entry-point')
   static void _listenToMessageOpenedApp() {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      print('app opened');
+      // print('app opened');
       _handleMessage(message);
     });
   }
@@ -56,14 +63,14 @@ class InitFunctions {
   static Future<void> _firebaseMessagingBackgroundHandler(
     RemoteMessage message,
   ) async {
-    print('app Terminated');
+    // print('app Terminated');
 
     _handleMessage(message);
   }
 
   @pragma('vm:entry-point')
   static void _handleMessage(RemoteMessage message) async {
-    print('Message received: ${message.toMap()}\n \n \n');
+    // print('Message received: ${message.toMap()}\n \n \n');
     final model = NotificationMessage.fromJson(message.toMap());
 
     NotificationScheduler.scheduleInstantNotification(

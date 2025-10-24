@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:app_links/app_links.dart';
 import '../../../../../features/vetcare/presenation/view/follow_confirmation_screen.dart';
 import '../../../../../features/vetcare/presenation/view/qr_register_screen.dart';
-import '../../../../../features/vetcare/presenation/view/vetCareRegister.dart';
+import '../../../../../features/vetcare/presenation/view/vet_care_register.dart';
 import '../../../../utils/export_path/export_files.dart';
 
 enum LinkType {
@@ -52,7 +52,7 @@ void initDeepLinkHandler(
   if (!kIsWeb) {
     sub = appLinks.uriLinkStream.listen(
       handleUri,
-      onError: (e) => print('Error: $e'),
+      // onError: (e) => print('Error: $e'),
     );
   }
 
@@ -64,9 +64,9 @@ void initDeepLinkHandler(
 void handleDeepLink(Uri uri, GlobalKey<NavigatorState> navigatorKey) async {
   final url = uri.toString();
   final params = extractQueryParams(url);
-  print(params);
-  print(url);
-  print("/******************************/");
+  // print(params);
+  // print(url);
+  // print("/******************************/");
   // Handle QR clinic registration
   if (params.values.every((v) => v != null && v.isNotEmpty)) {
     final route =

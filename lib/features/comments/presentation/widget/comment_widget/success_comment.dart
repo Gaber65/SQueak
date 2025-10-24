@@ -5,7 +5,7 @@ import 'package:squeak/core/utils/theme/color_mangment/color_manager.dart';
 
 import 'package:squeak/features/comments/domain/entities/comment_entity.dart';
 
-import '../../../../../core/network/end-points.dart';
+import '../../../../../core/network/end_points.dart';
 import '../../../../../core/utils/theme/asset_image/asset_image.dart';
 
 import '../../controller/comment_cubit.dart';

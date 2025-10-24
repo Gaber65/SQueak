@@ -13,7 +13,7 @@ String? initialNotificationPayload;
 class NotificationInitializer {
   /// Initialize the complete notification system
   static Future<void> initialize() async {
-    print("Initializing Notification System...");
+    // print("Initializing Notification System...");
 
     // Initialize timezone data
     tz.initializeTimeZones();
@@ -53,17 +53,17 @@ class NotificationInitializer {
       initialNotificationPayload = details?.notificationResponse?.payload;
     }
 
-    print("Notification System initialized successfully!");
+    // print("Notification System initialized successfully!");
   }
 
   /// Request notification permissions (Android 13+)
   static Future<void> _requestPermissions() async {
     try {
       if (await Permission.notification.isDenied) {
-        print("Requesting notification permission...");
+        // print("Requesting notification permission...");
         await Permission.notification.request();
       } else {
-        print("Notification permission already granted.");
+        // print("Notification permission already granted.");
       }
     } catch (e, stackTrace) {
       // You can log or handle the error here

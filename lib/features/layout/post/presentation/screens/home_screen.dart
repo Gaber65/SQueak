@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen>
   void _closeProfileList() {
     // Close the local controller
     controller.closeDropdown();
-    
+
     // Also try to close the service locator instance if it exists
     try {
       final globalController = sl<ProfileSwitcherController>();
@@ -118,7 +119,11 @@ class _PetTipBanner extends StatefulWidget {
 }
 
 class _PetTipBannerState extends State<_PetTipBanner> {
-  static bool _isDismissed = false;
+  bool _isDismissed = false;
+  late final Future<List<PetTip>> _tipsFuture;
+  late final Random _random;
+  static final Set<int> _recentlyShownTips = <int>{};
+  static const int _maxRecentTips = 5; // Remember last 5 tips to avoid repetition
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +132,7 @@ class _PetTipBannerState extends State<_PetTipBanner> {
     }
 
     return FutureBuilder<List<PetTip>>(
-      future: const PetTipsRepository().loadTips(),
+      future: _tipsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const SizedBox(height: 0);
@@ -136,7 +141,8 @@ class _PetTipBannerState extends State<_PetTipBanner> {
         if (tips.isEmpty) {
           return const SizedBox(height: 0);
         }
-        final tip = tips.first;
+        
+        final tip = _getSmartRandomTip(tips);
         return DidYouKnowCard(
           title: tip.title,
           content: tip.content,
@@ -151,6 +157,66 @@ class _PetTipBannerState extends State<_PetTipBanner> {
       },
     );
   }
+
+  /// Enhanced random tip selection that avoids recently shown tips
+  /// and considers time-based weighting for variety
+  PetTip _getSmartRandomTip(List<PetTip> tips) {
+    if (tips.isEmpty) {
+      throw StateError('Tips list cannot be empty');
+    }
+
+    // If we have fewer tips than our recent memory, just pick randomly
+    if (tips.length <= _maxRecentTips) {
+      final randomIndex = _random.nextInt(tips.length);
+      return tips[randomIndex];
+    }
+
+    // Create a list of available tips (not recently shown)
+    final availableTips = <int>[];
+    for (int i = 0; i < tips.length; i++) {
+      if (!_recentlyShownTips.contains(i)) {
+        availableTips.add(i);
+      }
+    }
+
+    // If no tips are available (all were recently shown), clear the recent list
+    if (availableTips.isEmpty) {
+      _recentlyShownTips.clear();
+      availableTips.addAll(List.generate(tips.length, (index) => index));
+    }
+
+    // Enhanced randomization with time-based seed for better variety
+    final timeBasedSeed = DateTime.now().millisecondsSinceEpoch;
+    final enhancedRandom = Random(timeBasedSeed);
+    
+    // Add extra randomness by shuffling the available tips
+    availableTips.shuffle(enhancedRandom);
+    
+    final selectedIndex = availableTips[enhancedRandom.nextInt(availableTips.length)];
+    
+    // Remember this tip to avoid showing it again soon
+    _recentlyShownTips.add(selectedIndex);
+    
+    // Keep only the most recent tips in memory
+    if (_recentlyShownTips.length > _maxRecentTips) {
+      final sortedRecent = _recentlyShownTips.toList()..sort();
+      _recentlyShownTips.clear();
+      _recentlyShownTips.addAll(sortedRecent.skip(sortedRecent.length - _maxRecentTips));
+    }
+
+    return tips[selectedIndex];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize random with time-based seed for better entropy
+    final seed = DateTime.now().millisecondsSinceEpoch + 
+                 DateTime.now().microsecond + 
+                 hashCode;
+    _random = Random(seed);
+    _tipsFuture = const PetTipsRepository().loadTips();
+  }
 }
 
 class _ActivePetSummary extends StatelessWidget {
@@ -162,7 +228,8 @@ class _ActivePetSummary extends StatelessWidget {
     return VcCard(
       onTap: () {
         try {
-          ProfileSwitcherController? controller = sl<ProfileSwitcherController>();
+          ProfileSwitcherController? controller =
+              sl<ProfileSwitcherController>();
           controller.closeDropdown();
         } catch (e) {
           // Controller might not be registered

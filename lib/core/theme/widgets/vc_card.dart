@@ -19,7 +19,7 @@ class VcCard extends StatelessWidget {
   });
 
   final Widget child;
-  final EdgeInsets? margin;
+  final  EdgeInsets? margin;
   final EdgeInsets? padding;
   final double? elevation;
   final Color? color;

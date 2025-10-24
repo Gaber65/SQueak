@@ -34,10 +34,6 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +49,8 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
             // Enhanced Header Section (more compact)
             // Include the status bar height in header so gradient fills top area
             Container(
-              // More compact visual height
-              height: 160 + MediaQuery.of(context).padding.top,
+              // Increase header visual height so it becomes more prominent
+              height: 220 + MediaQuery.of(context).padding.top,
               // smaller top padding while still accounting for status bar
               padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top * 0.8),
               width: double.infinity,
@@ -73,7 +69,7 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
                 children: [
                   // Background Pattern
                   Positioned.fill(
-                    child: CustomPaint(painter: PawPatternPainter()),
+                    child: RepaintBoundary(child: CustomPaint(painter: PawPatternPainter())),
                   ),
 
                   // Help Button
@@ -132,19 +128,31 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
               ),
             ),
 
-            // Content Section
-            Container(
-              transform: Matrix4.translationValues(0, -30, 0),
-              padding: const EdgeInsets.only(top: 30),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
+            Builder(builder: (context) {
+              final media = MediaQuery.of(context);
+              final headerHeight = 225.0 + media.padding.top;
+              const double transformOffset = 20.0;
+              final remaining = media.size.height - headerHeight;
+              final minCardHeight = math.max(300.0, remaining * 0.65);
+
+              return ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: minCardHeight,
                 ),
-              ),
-              child: widget.child,
-            ),
+                child: Container(
+                  transform: Matrix4.translationValues(0, -transformOffset, 0),
+                  padding: const EdgeInsets.only(top: 12, left: 16, right: 16, bottom: 24),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                  ),
+                  child: widget.child,
+                ),
+              );
+            }),
           ],
         ),
       ),

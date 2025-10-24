@@ -10,7 +10,7 @@ import 'package:squeak/features/appointments/exam/presentation/view/appointments
 import 'package:squeak/features/appointments/exam/presentation/view/files_and_prescription_for_pet/files_for_pet_screen.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/files_and_prescription_for_pet/prescription_for_pet_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../../../../core/utils/enums/dayOfWeek_enum.dart';
+import '../../../../../../core/utils/enums/day_of_week_enum.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 
 Widget buildItem(
@@ -19,116 +19,128 @@ Widget buildItem(
   UserAppointmentCubit cubit,
   int index,
 ) {
+  // Make the card height responsive to screen size but constrained
+  final double cardHeight =
+      (MediaQuery.of(context).size.height * 0.28)
+          .clamp(220.0, 360.0)
+          .toDouble();
+
   return Padding(
     padding: const EdgeInsets.all(12.0),
-    child: Container(
-      width: double.infinity,
-      decoration: Decorations.kDecorationBoxShadow(context: context),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          /// data
-          Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadiusDirectional.only(
-                topEnd: Radius.circular(14),
-                topStart: Radius.circular(14),
+    child: SizedBox(
+      height: cardHeight,
+      child: Container(
+        width: double.infinity,
+        decoration: Decorations.kDecorationBoxShadow(context: context),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            /// data
+            Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadiusDirectional.only(
+                  topEnd: Radius.circular(14),
+                  topStart: Radius.circular(14),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Handle all appointment states
+                    _buildStatusRow(appointments, context, cubit),
+                    const SizedBox(height: 3),
+                    if (appointments.status == 3 &&
+                        appointments.doctorServiceRate != 0)
+                      Center(
+                        child: Row(
+                          children: [
+                            Text(
+                              isArabic() ? 'تقييم الطبيب' : 'Doctor rating : ',
+                              style: FontStyleThame.textStyle(
+                                context: context,
+                                fontSize: 13,
+                              ),
+                            ),
+                            Row(
+                              children: List.generate(
+                                5,
+                                (index) =>
+                                    index < appointments.doctorServiceRate
+                                        ? const Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                          size: 18,
+                                        )
+                                        : const Icon(
+                                          Icons.star_border,
+                                          color: Colors.amber,
+                                          size: 18,
+                                        ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+
+            /// image + name
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 6.0,
+              ),
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Handle all appointment states
-                  _buildStatusRow(appointments, context, cubit),
-                  const SizedBox(height: 3),
-                  if (appointments.status == 3 &&
-                      appointments.doctorServiceRate != 0)
-                    Center(
-                      child: Row(
-                        children: [
-                          Text(
-                            isArabic() ? 'تقييم الطبيب' : 'Doctor rating : ',
-                            style: FontStyleThame.textStyle(
-                              context: context,
-                              fontSize: 13,
-                            ),
-                          ),
-                          Row(
-                            children: List.generate(
-                              5,
-                              (index) =>
-                                  index < appointments.doctorServiceRate
-                                      ? const Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
-                                        size: 18,
-                                      )
-                                      : const Icon(
-                                        Icons.star_border,
-                                        color: Colors.amber,
-                                        size: 18,
-                                      ),
-                            ),
-                          ),
-                        ],
-                      ),
+                  CircleAvatar(
+                    radius: 25,
+                    backgroundImage: NetworkImage(
+                      ConfigModel.serverFirstHalfOfImageUrl +
+                          (appointments.clinicLogo ?? ''),
                     ),
-                ],
-              ),
-            ),
-          ),
-
-          /// image + name
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundImage: NetworkImage(
-                    ConfigModel.serverFirstHalfOfImageUrl +
-                        (appointments.clinicLogo ?? ''),
                   ),
-                ),
-                SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        appointments.clinicName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: FontStyleThame.textStyle(
-                          context: context,
-                          fontSize: 15,
+                  SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          appointments.clinicName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: FontStyleThame.textStyle(
+                            context: context,
+                            fontSize: 15,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 4),
+                        SizedBox(height: 4),
 
-                      Text(
-                        appointments.pet.name!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: FontStyleThame.textStyle(
-                          context: context,
-                          fontSize: 15,
+                        Text(
+                          appointments.pet.name!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: FontStyleThame.textStyle(
+                            context: context,
+                            fontSize: 15,
+                          ),
                         ),
-                      ),
-                      if (appointments.status == 3) ...[
-                        SizedBox(height: 3),
-                        _buildVitalsSection(appointments, context),
+                        if (appointments.status == 3) ...[
+                          SizedBox(height: 3),
+                          _buildVitalsSection(appointments, context),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                InkWell(
+                  const SizedBox(width: 8),
+                  InkWell(
                     onTap: () {
                       if (appointments.clinicLocation.isEmpty) {
                         infoToast(
@@ -153,14 +165,17 @@ Widget buildItem(
               ),
             ),
 
-          /// bottom row
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10.0, 6.0, 10.0, 10.0),
-            child: Row(
-              children: _buildActionButtons(appointments, context, cubit),
+            /// bottom row - constrained and responsive buttons
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: _buildActionButtons(appointments, context, cubit),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );
@@ -267,6 +282,9 @@ Widget _buildStatusRow(
                 S.of(context).appointmentDone,
                 style: TextStyle(fontWeight: FontWeight.w700),
               ),
+              const SizedBox(width: 8),
+              Text(' ${formatDateString(appointments.date)}  ,  ', maxLines: 2),
+              Text(formatTimeToAmPm(appointments.time)),
               Spacer(),
               _buildEnhancedMenu(
                 context,
@@ -274,13 +292,6 @@ Widget _buildStatusRow(
                 appointments.status,
                 cubit,
               ),
-            ],
-          ),
-          SizedBox(height: 5),
-          Row(
-            children: [
-              Text(' ${formatDateString(appointments.date)}  ,  ', maxLines: 2),
-              Text(formatTimeToAmPm(appointments.time)),
             ],
           ),
         ],
@@ -357,9 +368,17 @@ List<Widget> _buildActionButtons(
 ) {
   List<Widget> buttons = [];
 
+  // Helper to create buttons with fixed height but flexible width
+  Widget buttonWrapper({required Widget child}) {
+    return Flexible(
+      fit: FlexFit.tight,
+      child: SizedBox(height: 44, child: child),
+    );
+  }
+
   // First button - Edit/Book Again based on status
   buttons.add(
-    Expanded(
+    buttonWrapper(
       child: ElevatedButton(
         onPressed: () {
           if (appointments.status == 0) {
@@ -488,17 +507,18 @@ List<Widget> _buildActionButtons(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
+          minimumSize: const Size.fromHeight(44),
         ),
         child: Text(_getFirstButtonText(appointments.status, context)),
       ),
     ),
   );
 
-  buttons.add(const SizedBox(width: 10));
+  buttons.add(const SizedBox(width: 8));
 
   // Call button - Always present
   buttons.add(
-    Expanded(
+    buttonWrapper(
       child: ElevatedButton(
         onPressed: () {
           final phone = appointments.clinicPhone;
@@ -516,6 +536,7 @@ List<Widget> _buildActionButtons(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
+          minimumSize: const Size.fromHeight(44),
         ),
         child: Text(S.of(context).appointmentButtonCall),
       ),
@@ -524,9 +545,9 @@ List<Widget> _buildActionButtons(
 
   // Cancel button - Only for reserved appointments
   if (appointments.status == 0) {
-    buttons.add(const SizedBox(width: 10));
+    buttons.add(const SizedBox(width: 8));
     buttons.add(
-      Expanded(
+      buttonWrapper(
         child: ElevatedButton(
           onPressed: () {
             showDialog(
@@ -618,6 +639,7 @@ List<Widget> _buildActionButtons(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
+            minimumSize: const Size.fromHeight(44),
           ),
           child: Text(S.of(context).appointmentButtonCancel),
         ),

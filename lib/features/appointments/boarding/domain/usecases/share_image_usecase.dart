@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
-import '../repositories/boarding_repository.dart';
 
 class ShareImageEntriesUseCase implements BaseUseCase<void, ShareImageBoardingEntriesParams> {
   final BoardingRepository repository;

@@ -61,8 +61,8 @@ class MySupplierScreen extends StatelessWidget {
     }
 
     return SuppliersSection(
-      cubit: cubit,
-      state: state,
+      allSuppliers: cubit.suppliers!.data,
+      onRefresh: () => cubit.getSuppliersList(),
       petSelectFromIcon: petSelectFromIcon,
     );
   }

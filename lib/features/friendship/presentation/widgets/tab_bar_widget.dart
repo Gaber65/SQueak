@@ -1,10 +1,8 @@
-// ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
 
 class TabBarPetFriend extends StatelessWidget {
   final int selectedTab;

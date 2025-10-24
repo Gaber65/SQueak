@@ -15,23 +15,28 @@ Padding buildSearchBox(PostCubit cubit) {
       child: BlocConsumer<SearchCubit, SearchState>(
         listener: (context, state) {
           if (state is FollowError) {
-            errorToast(
-              context,
-              extractFirstError(state.error),
-            );
+            if (context.mounted) {
+              errorToast(
+                context,
+                extractFirstError(state.error),
+              );
+            }
           }
 
           if (state is FollowSuccess) {
             CacheHelper.removeData('posts');
 
             if (state.isHavePet) {
-              navigateAndFinish(
-                context,
-                PetMergeScreen(
-                  code: SearchCubit.get(context).searchController.text,
-                  isNavigation: true,
-                ),
-              );
+              if (context.mounted) {
+                final searchCubit = context.read<SearchCubit>();
+                navigateAndFinish(
+                  context,
+                  PetMergeScreen(
+                    code: searchCubit.searchController.text,
+                    isNavigation: true,
+                  ),
+                );
+              }
             } else {
               sl<SearchCubit>().getSupplier();
               cubit.init();
@@ -39,7 +44,8 @@ Padding buildSearchBox(PostCubit cubit) {
           }
         },
         builder: (context, state) {
-          var cubit = SearchCubit.get(context);
+          if (!context.mounted) return const SizedBox.shrink();
+          var cubit = context.read<SearchCubit>();
           return buildColumnSearchBody(
             cubit,
             state,

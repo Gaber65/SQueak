@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+// ignore: depend_on_referenced_packages
 import 'package:equatable/equatable.dart';
 import '../error/failure.dart';
 

@@ -1,9 +1,11 @@
+// ignore_for_file: invalid_use_of_protected_member
+
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-import '../../../../../../core/utils/enums/dayOfWeek_enum.dart';
+import '../../../../../../core/utils/enums/day_of_week_enum.dart';
 import '../../../../../pets/domain/entities/pet_entity.dart';
 import '../../controller/user/user_appointment_cubit.dart';
 
@@ -31,6 +33,7 @@ Widget buildPetFilter(BuildContext context, List<PetEntities> pets) {
           onSelected: (value) {
             UserAppointmentCubit.get(context).selectedPetId = value.petId;
             UserAppointmentCubit.get(context).petName = value.petName;
+            // ignore: invalid_use_of_visible_for_testing_member
             UserAppointmentCubit.get(context).emit(GetInvoicesSuccess());
             UserAppointmentCubit.get(context).filterAppointments();
           },
@@ -81,6 +84,7 @@ Widget buildStateFilter(BuildContext context) {
           onSelected: (value) {
             UserAppointmentCubit.get(context).selectedState = value.state.index;
             UserAppointmentCubit.get(context).selectedStateValue = value.key;
+            // ignore: invalid_use_of_visible_for_testing_member
             UserAppointmentCubit.get(context).emit(GetInvoicesSuccess());
 
             UserAppointmentCubit.get(context).filterAppointments();

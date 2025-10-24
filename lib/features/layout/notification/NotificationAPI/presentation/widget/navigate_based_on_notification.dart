@@ -17,11 +17,6 @@ void navigateBasedOnNotification(
   final NotificationType notificationType =
       getNotificationType(notification.eventType.name);
 
-  if (notificationType == null) {
-    print('Unknown notification type: ${notification.eventType}');
-    return;
-  }
-
   switch (notificationType) {
     case NotificationType.VaccinationReminder:
     case NotificationType.NewPetAdded:
@@ -58,7 +53,7 @@ void navigateBasedOnNotification(
       break;
 
     default:
-      print('Unhandled notification type (should not reach here): $notificationType');
+      // print('Unhandled notification type (should not reach here): $notificationType');
       break;
   }
 }

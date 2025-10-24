@@ -40,7 +40,7 @@ class YoutubeCardWidget extends StatelessWidget {
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height * 0.1,
                     width: MediaQuery.of(context).size.width * 0.2,
-                    child: Image.asset('assets/youtube_logo.png'),
+                    child: Image.asset('assets/youtube_logo.webp'),
                   ),
                 ),
               ],

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import '../../app_theme.dart';
@@ -146,28 +148,16 @@ class PetAvatar extends StatelessWidget {
       height: avatarSize.diameter,
       color: _getBreedColor(),
       child: Center(
-        child: Text(
-          _getInitials(),
-          style: TextStyle(
-            fontSize: avatarSize.fontSize,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+        child: Icon(
+          Icons.pets,
+          color: Colors.white,
+          size: avatarSize.fontSize + 4,
         ),
       ),
     );
   }
 
-  String _getInitials() {
-    if (petName != null && petName!.isNotEmpty) {
-      final words = petName!.trim().split(' ');
-      if (words.length >= 2) {
-        return '${words[0][0]}${words[1][0]}'.toUpperCase();
-      }
-      return petName![0].toUpperCase();
-    }
-    return 'P';
-  }
+
 
   Color _getBreedColor() {
     if (petBreed != null) {

@@ -110,7 +110,6 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
 
   void _startAnimations() {
     _fadeController.forward();
-    _countryFieldController.forward();
     _initializeFocusNodes();
   }
 
@@ -310,7 +309,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
           ),
           const SizedBox(height: 16),
           Text(
-            'Join the Pack!',
+            isArabic() ? ' انضم الى مجتمع الصغار الأليفة ' : 'Join the Pack!',
             style: FontStyleThame.textStyle(
               context: context,
               fontSize: 28,
@@ -320,7 +319,9 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
           ),
           const SizedBox(height: 8),
           Text(
-            'Create your account to connect with the pet care community',
+            isArabic()
+                ? 'أنشئ حسابك للتواصل مع رعاية الصغار الأليفة'
+                : 'Create your account to connect with pet care',
             style: FontStyleThame.textStyle(
               context: context,
               fontSize: 16,
@@ -368,7 +369,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
           // For the email field, proactively trim leading/trailing spaces while typing so
           // the UI matches the login page behavior and avoids lingering spaces.
           try {
-            if (controller == widget.cubit.emailController && value != null) {
+            if (controller == widget.cubit.emailController) {
               final trimmed = value.trim();
               if (value != trimmed) {
                 // Preserve cursor position as best-effort (place at end of trimmed text)
@@ -393,43 +394,101 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: _getBorderColor(_passwordValidation),
-          width: 1.5,
+        border: Border(
+          top: BorderSide(
+            color: _getBorderColor(_passwordValidation),
+            width: 1.5,
+          ),
+          left: BorderSide(
+            color: _getBorderColor(_passwordValidation),
+            width: 1.5,
+          ),
+          right: BorderSide(
+            color: _getBorderColor(_passwordValidation),
+            width: 1.5,
+          ),
+          bottom:
+              (_passwordValidation?.isValid == true)
+                  ? BorderSide.none
+                  : BorderSide(
+                    color: _getBorderColor(_passwordValidation),
+                    width: 1.5,
+                  ),
         ),
       ),
-      child: TextFormField(
-        controller: widget.cubit.passwordController,
-        obscureText: _obscurePassword,
-        decoration: InputDecoration(
-          hintText: 'Enter your password',
-          prefixIcon: const Icon(Icons.lock_outlined, size: 18),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          fillColor: Theme.of(context).inputDecorationTheme.fillColor,
-          filled: true,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 14,
-          ),
-          suffixIcon: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (_passwordValidation?.isValid == true)
-                Icon(Icons.check_circle, color: ColorManager.green, size: 20),
-              IconButton(
-                icon: Icon(
-                  _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                  color: Theme.of(context).colorScheme.outline,
-                ),
-                onPressed: _togglePasswordVisibility,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextFormField(
+            controller: widget.cubit.passwordController,
+            obscureText: _obscurePassword,
+            decoration: InputDecoration(
+              hintText: isArabic() ? 'ادخل كلمة المرور' : 'Enter your password',
+              prefixIcon: const Icon(Icons.lock_outlined, size: 18),
+              // No inner border so the outer container controls the visual border
+              border: InputBorder.none,
+              // Hide the inner filled background once the field is valid so it
+              // doesn't create a rounded inner shape that expands the sides.
+              filled: (_passwordValidation?.isValid == true) ? false : true,
+              fillColor:
+                  (_passwordValidation?.isValid == true)
+                      ? Colors.transparent
+                      : Theme.of(context).inputDecorationTheme.fillColor,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
               ),
-            ],
+              suffixIcon: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_passwordValidation?.isValid == true)
+                    Icon(
+                      Icons.check_circle,
+                      color: ColorManager.green,
+                      size: 20,
+                    ),
+                  IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                    onPressed: _togglePasswordVisibility,
+                  ),
+                ],
+              ),
+            ),
+            onChanged: (value) {
+              _validatePassword();
+              // Rebuild to show/hide helper text
+              setState(() {});
+            },
           ),
-        ),
-        onChanged: (_) => _validatePassword(),
+          const SizedBox(height: 12),
+          // Show helper text as a separate widget under the field.
+          // Hide it when the field is valid (_passwordValidation?.isValid == true).
+          AnimatedSwitcher(
+            duration: getAnimationDuration(),
+            child:
+                (_passwordValidation?.isValid == true)
+                    ? const SizedBox.shrink()
+                    : Padding(
+                      key: ValueKey('pwd_helper'),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                      child: Text(
+                        isArabic()
+                            ? 'يجب أن تكون كلمة المرور 6 أحرف على الأقل'
+                            : 'Password must be at least 6 characters',
+                        style: FontStyleThame.textStyle(
+                          context: context,
+                          fontSize: 12,
+                          fontColor: ColorManager.red,
+                        ),
+                      ),
+                    ),
+          ),
+        ],
       ),
     );
   }
@@ -536,7 +595,7 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  'Already part of the pack?',
+                  isArabic() ? 'هل أنت بالفعل جزء من المجتمع؟' : 'Already part of the pack?',
                   style: FontStyleThame.textStyle(
                     context: context,
                     fontSize: 14,
@@ -660,7 +719,10 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
 
                       _buildInputField(
                         controller: widget.cubit.followCodeController,
-                        hintText: S.of(context).followCode,
+                        hintText:
+                            isArabic()
+                                ? 'رمز المتابعة (اختياري)'
+                                : 'Follow Code (Optional)',
                         prefixIcon: Icons.local_hospital_outlined,
                         validation: _clinicCodeValidation,
                         onChanged: _validateClinicCode,

@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use, invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -361,7 +361,7 @@ Widget build(BuildContext context) {
     try {
       // Convert Arabic to English numbers
       String englishInput = _convertArabicToEnglishNumbers(input);
-      return DateTime.parse(englishInput); // Parse the date
+      return DateTime.parse(englishInput); // Parse the data
     } catch (e) {
       return null; // Return null if parsing fails
     }

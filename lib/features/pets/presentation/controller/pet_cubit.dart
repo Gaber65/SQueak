@@ -47,6 +47,10 @@ class PetCubit extends Cubit<PetState> {
 
   static PetCubit get(context) => BlocProvider.of(context);
 
+  // Species constants (used in multiple places across the UI)
+  static const String dogSpeciesId = 'bca48207-f05d-4e9f-a631-06f34eb5af39';
+  static const String catSpeciesId = 'f1131363-3b9f-40ee-9a89-0573ee274a10';
+
   // Lists to store data
   List<PetEntities> pets = [];
   List<BreedEntity> allBreeds = [];
@@ -85,7 +89,7 @@ class PetCubit extends Cubit<PetState> {
 
   // Get owner's pets
   Future<void> getOwnerPets() async {
-    emit(GetOwnerPetsLoadingState());
+    emit(const GetOwnerPetsLoadingState());
 
     final result = await getOwnerPetsUseCase(NoParameters());
 
@@ -94,14 +98,14 @@ class PetCubit extends Cubit<PetState> {
       (petsList) {
         pets = petsList;
         CacheHelper.saveData('havePets', pets.length);
-        emit(GetOwnerPetsSuccessState());
+        emit(const GetOwnerPetsSuccessState());
       },
     );
   }
 
   // Get all breeds
   Future<void> getAllBreeds() async {
-    emit(GetAllBreedsLoadingState());
+    emit(const GetAllBreedsLoadingState());
 
     final result = await getAllBreedsUseCase(NoParameters());
 
@@ -109,29 +113,74 @@ class PetCubit extends Cubit<PetState> {
       (error) => emit(GetAllBreedsErrorState(extractFirstError(error))),
       (breedsList) {
         allBreeds = breedsList;
-        emit(GetAllBreedsSuccessState());
+        emit(const GetAllBreedsSuccessState());
       },
     );
   }
 
   // Get breeds by species ID
   Future<void> getBreedsBySpecies(String speciesId) async {
-    emit(GetAllBreedsLoadingState());
+    emit(const GetAllBreedsLoadingState());
 
-    final result = await getBreedsBySpeciesUseCase(speciesId);
+    // For dog and cat species, attempt to load from cache first to improve
+    // perceived performance and avoid repeated network calls.
+    try {
+      final isCacheable =
+          speciesId == dogSpeciesId || speciesId == catSpeciesId;
+      final cacheKey = 'breeds_$speciesId';
 
-    result.fold(
-      (error) => emit(GetAllBreedsErrorState(extractFirstError(error))),
-      (breedsList) {
-        breedData = breedsList;
-        emit(GetAllBreedsSuccessState());
-      },
-    );
+      if (isCacheable) {
+        final cached = CacheHelper.getData(cacheKey);
+        if (cached != null && (cached as String).isNotEmpty) {
+          try {
+            final List<dynamic> decoded = jsonDecode(cached);
+            breedData =
+                decoded
+                    .map<BreedEntity>(
+                      (m) => BreedEntity(
+                        enType: m['enType'] ?? '',
+                        id: m['id'] ?? '',
+                        specieId: m['specieId'] ?? '',
+                      ),
+                    )
+                    .toList();
+            emit(const GetAllBreedsSuccessState());
+            return;
+          } catch (_) {
+            // Fall through to network fetch on parse error
+          }
+        }
+      }
+
+      final result = await getBreedsBySpeciesUseCase(speciesId);
+
+      result.fold(
+        (error) => emit(GetAllBreedsErrorState(extractFirstError(error))),
+        (breedsList) async {
+          breedData = breedsList;
+          emit(const GetAllBreedsSuccessState());
+
+          // Save cache for dog and cat
+          if (speciesId == dogSpeciesId || speciesId == catSpeciesId) {
+            try {
+              final jsonList = jsonEncode(
+                breedsList.map((b) => b.toJson()).toList(),
+              );
+              await CacheHelper.saveData(cacheKey, jsonList);
+            } catch (_) {
+              // ignore cache save errors
+            }
+          }
+        },
+      );
+    } catch (e) {
+      emit(GetAllBreedsErrorState(e.toString()));
+    }
   }
 
   // Get all species
   Future<void> getAllSpecies() async {
-    emit(GetAllSpeciesLoadingState());
+    emit(const GetAllSpeciesLoadingState());
 
     final result = await getAllSpeciesUseCase(NoParameters());
 
@@ -139,7 +188,7 @@ class PetCubit extends Cubit<PetState> {
       (error) => emit(GetAllSpeciesErrorState(extractFirstError(error))),
       (speciesList) {
         species = speciesList;
-        emit(GetAllSpeciesSuccessState());
+        emit(const GetAllSpeciesSuccessState());
       },
     );
   }
@@ -148,7 +197,19 @@ class PetCubit extends Cubit<PetState> {
   void init(String speciesName, String speciesId) {
     dropdownValueSpecies = speciesName;
     dropdownValueSpeciesId = speciesId;
-    emit(PetFormUpdatedState());
+    emit(
+      PetFormState(
+        gender: gender,
+        birthdate: birthdateController.text,
+        imageName: imageNameController.text,
+        breedId: breedIdController.text,
+        breedName: dropdownValueBreed,
+        speciesName: speciesName,
+        speciesId: speciesId,
+        spayed: spayed,
+        passportImageName: passportImageNameController.text,
+      ),
+    );
   }
 
   // Initialize form for editing an existing pet
@@ -179,13 +240,25 @@ class PetCubit extends Cubit<PetState> {
     specieId = pet.specieId.toString();
     spayed = pet.isSpayed ?? false;
     dropdownValueBreed = pet.breedId ?? '';
-    emit(PetFormUpdatedState());
+    emit(
+      PetFormState(
+        gender: gender,
+        birthdate: birthdateController.text,
+        imageName: imageNameController.text,
+        breedId: breedIdController.text,
+        breedName: dropdownValueBreed,
+        speciesName: dropdownValueSpecies,
+        speciesId: dropdownValueSpeciesId,
+        spayed: spayed,
+        passportImageName: passportImageNameController.text,
+      ),
+    );
   }
 
   // Create a new pet
   Future<void> createPet() async {
     isLoading = true;
-    emit(PetCreateLoadingState());
+    emit(const PetCreateLoadingState());
 
     final pet = PetEntities(
       petId: '',
@@ -222,7 +295,7 @@ class PetCubit extends Cubit<PetState> {
       },
       (createdPet) {
         pets.add(createdPet);
-        emit(PetCreateSuccessState());
+        emit(const PetCreateSuccessState());
       },
     );
   }
@@ -230,7 +303,7 @@ class PetCubit extends Cubit<PetState> {
   // Create a new pet
   Future<void> createPetGetStarting({required PetEntities pet}) async {
     isLoading = true;
-    emit(PetCreateLoadingState());
+    emit(const PetCreateLoadingState());
 
     // print(pet.toJson());
     final result = await createPetUseCase(PetParams(pet: pet));
@@ -246,15 +319,17 @@ class PetCubit extends Cubit<PetState> {
         // Update the petId and specieId with the newly created pet's values
         petId = createdPet.petId ?? '';
         specieId = createdPet.specieId ?? '';
-        emit(PetCreateSuccessState());
+        emit(const PetCreateSuccessState());
       },
     );
   }
 
+  PetEntities? petEdit;
+
   // Update an existing pet
   Future<void> updatePet() async {
     isLoading = true;
-    emit(PetCreateLoadingState());
+    emit(const PetCreateLoadingState());
     final pet = PetEntities(
       petId: petId,
       petName: petNameController.text,
@@ -280,7 +355,7 @@ class PetCubit extends Cubit<PetState> {
               ? ''
               : microchipNumberController.text,
     );
-
+    petEdit = pet;
     final result = await updatePetUseCase(PetParams(pet: pet));
 
     isLoading = false;
@@ -291,14 +366,14 @@ class PetCubit extends Cubit<PetState> {
         if (index != -1) {
           pets[index] = updatedPet;
         }
-        emit(PetCreateSuccessState());
+        emit(const PetCreateSuccessState());
       },
     );
   }
 
   // Delete a pet
   Future<void> deletePet(String id) async {
-    emit(DeletePetLoadingState());
+    emit(const DeletePetLoadingState());
 
     final result = await deletePetUseCase(id);
 
@@ -317,42 +392,69 @@ class PetCubit extends Cubit<PetState> {
           jsonEncode(pets.map((e) => e.toJson()).toList()),
         );
 
-        emit(DeletePetSuccessState());
+        emit(const DeletePetSuccessState());
       },
     );
   }
 
-  // Form field update methods
+  // Form field update methods - Optimized to use single state
   void changeGender(int newGender) {
     gender = newGender;
-    emit(PetFormUpdatedState());
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
+    emit(currentState.copyWith(gender: newGender));
   }
 
   void changeBirthdate(String date) {
     birthdateController.text = date;
-    emit(PetFormUpdatedState());
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
+    emit(currentState.copyWith(birthdate: date));
   }
 
   void changeImageName(String name) {
     imageNameController.text = name;
-    emit(PetFormUpdatedState());
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
+    emit(currentState.copyWith(imageName: name));
   }
 
   void changeBreed(String name, String id) {
     breedIdController.text = id;
     dropdownValueBreed = name;
-    emit(PetFormUpdatedState());
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
+    emit(currentState.copyWith(breedId: id, breedName: name));
   }
 
   void changeSpecies(String name, String id) {
     dropdownValueSpecies = name;
     dropdownValueSpeciesId = id;
-    emit(PetFormUpdatedState());
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
+    emit(currentState.copyWith(speciesName: name, speciesId: id));
   }
 
   void changeSpayed() {
     spayed = !spayed;
-    emit(PetFormUpdatedState());
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
+    emit(currentState.copyWith(spayed: spayed));
+  }
+
+  // Helper method to create form state from current values
+  PetFormState _createFormState() {
+    return PetFormState(
+      gender: gender,
+      birthdate: birthdateController.text,
+      imageName: imageNameController.text,
+      breedId: breedIdController.text,
+      breedName: dropdownValueBreed,
+      speciesName: dropdownValueSpecies,
+      speciesId: dropdownValueSpeciesId,
+      spayed: spayed,
+      passportImageName: passportImageNameController.text,
+    );
   }
 
   // Pick image from gallery
@@ -379,13 +481,17 @@ class PetCubit extends Cubit<PetState> {
   void removePassportImage() {
     passportImage = null;
     passportImageNameController.clear();
-    emit(PetFormUpdatedState());
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
+    emit(currentState.copyWith(passportImageName: ''));
   }
 
   // Change passport image name
   void changePassportImageName(String name) {
     passportImageNameController.text = name;
-    emit(PetFormUpdatedState());
+    final currentState =
+        state is PetFormState ? state as PetFormState : _createFormState();
+    emit(currentState.copyWith(passportImageName: name));
   }
 
   @override
@@ -396,12 +502,16 @@ class PetCubit extends Cubit<PetState> {
     birthdateController.dispose();
     petNameController.dispose();
     imageNameController.dispose();
+    // Dispose additional controllers that were missing
+    passportNumberController.dispose();
+    microchipNumberController.dispose();
+    passportImageNameController.dispose();
     return super.close();
   }
 
   // merge pets
   Future<void> mergePets(List<String> ids) async {
-    emit(MergePetsLoadingState());
+    emit(const MergePetsLoadingState());
     final result = await mergePetsUseCase(ids);
     result.fold(
       (error) {
@@ -410,7 +520,7 @@ class PetCubit extends Cubit<PetState> {
       (mergedPet) {
         pets.removeWhere((pet) => ids.contains(pet.petId));
         pets.add(mergedPet);
-        emit(MergePetsSuccessState());
+        emit(const MergePetsSuccessState());
       },
     );
   }

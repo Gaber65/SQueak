@@ -4,6 +4,12 @@ import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 
 class DioFinalHelper {
   static late Dio dio;
+  static Environment? _currentEnvironment;
+
+  static void setEnvironment(Environment environment) {
+    _currentEnvironment = environment;
+    DebugUtils.debugPrintEnv('DioFinalHelper: Environment set to ${environment.name}');
+  }
 
   static Map<String, String> _buildHeaders({String? token}) {
     return {
@@ -21,7 +27,14 @@ class DioFinalHelper {
         headers: _buildHeaders(),
       ),
     );
-    dio.interceptors.add(ChuckerDioInterceptor());
+    
+    // Only add ChuckerDioInterceptor if environment is test
+    if (_currentEnvironment == Environment.test) {
+      dio.interceptors.add(ChuckerDioInterceptor());
+      DebugUtils.debugPrintEnv('DioFinalHelper: ChuckerDioInterceptor added for test environment');
+    } else {
+      DebugUtils.debugPrintEnv('DioFinalHelper: ChuckerDioInterceptor skipped for ${_currentEnvironment?.name ?? 'unknown'} environment');
+    }
   }
 
   static Future<void> _ensureValidToken() async {

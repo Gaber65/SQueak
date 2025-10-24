@@ -52,9 +52,10 @@ class _PetScreenContentState extends State<PetScreenContent> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: MainCubit.get(context).isDark 
-            ? const Color(0xFF121212) 
-            : const Color(0xFFF8FAFC),
+        backgroundColor:
+            MainCubit.get(context).isDark
+                ? const Color(0xFF121212)
+                : const Color(0xFFF8FAFC),
         appBar: AppBar(
           elevation: 0,
           centerTitle: true,
@@ -64,66 +65,91 @@ class _PetScreenContentState extends State<PetScreenContent> {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: MainCubit.get(context).isDark ? Colors.white : Colors.black87,
+              color:
+                  MainCubit.get(context).isDark ? Colors.white : Colors.black87,
             ),
           ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(2.0),
-            child: widget.state is DeletePetLoadingState
-                ? Container(
-                    height: 2,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          ColorManager.primaryColor,
-                          ColorManager.secondColor,
-                        ],
+            child:
+                widget.state is DeletePetLoadingState
+                    ? Container(
+                      height: 2,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            ColorManager.primaryColor,
+                            ColorManager.secondColor,
+                          ],
+                        ),
                       ),
-                    ),
-                    child: const LinearProgressIndicator(
-                      backgroundColor: Colors.transparent,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.transparent),
-                    ),
-                  )
-                : Container(),
+                      child: const LinearProgressIndicator(
+                        backgroundColor: Colors.transparent,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.transparent,
+                        ),
+                      ),
+                    )
+                    : Container(),
           ),
           actions: [
-            Container(
-              margin: const EdgeInsets.only(right: 16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    ColorManager.primaryColor,
-                    ColorManager.secondColor,
-                  ],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: ColorManager.primaryColor.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: SizedBox(
+                width: 56,
+                height: 56,
+                child: Material(
+                  color: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                ],
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  onTap: () {
-                    setState(() {
-                      _selectionMode = !_selectionMode;
-                      _selectedPets.clear();
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Icon(
-                      _selectionMode ? Icons.close : Icons.merge_type,
-                      size: 24,
-                      color: Colors.white,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(14),
+                    onTap: () {
+                      setState(() {
+                        _selectionMode = !_selectionMode;
+                        _selectedPets.clear();
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(14),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [ColorManager.primaryColor, ColorManager.secondColor],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: ColorManager.primaryColor.withOpacity(0.22),
+                            blurRadius: 6,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            _selectionMode ? Icons.close : Icons.merge_type,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(height: 4),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              S.of(context).mergePets,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -134,6 +160,8 @@ class _PetScreenContentState extends State<PetScreenContent> {
 
         body: _buildBody(),
         floatingActionButton: _buildFab(),
+        // Place FAB at the start side so it is left in LTR and right in RTL
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       ),
     );
   }
@@ -150,11 +178,14 @@ class _PetScreenContentState extends State<PetScreenContent> {
           builder: (context, value, child) {
             final pulseScale = 1.0 + (math.sin(value * 2 * math.pi) * 0.03);
             final glowIntensity = 0.3 + (math.sin(value * 2 * math.pi) * 0.2);
-            
+
             return Transform.scale(
               scale: pulseScale,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(28),
                   gradient: LinearGradient(
@@ -169,7 +200,9 @@ class _PetScreenContentState extends State<PetScreenContent> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: ColorManager.primaryColor.withOpacity(glowIntensity),
+                      color: ColorManager.primaryColor.withOpacity(
+                        glowIntensity,
+                      ),
                       blurRadius: 16,
                       spreadRadius: 2,
                       offset: const Offset(0, 8),
@@ -192,9 +225,9 @@ class _PetScreenContentState extends State<PetScreenContent> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
-                        Icons.merge_type, 
-                        color: Colors.white, 
-                        size: 18
+                        Icons.merge_type,
+                        color: Colors.white,
+                        size: 18,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -218,103 +251,91 @@ class _PetScreenContentState extends State<PetScreenContent> {
 
     return _shouldShowFab()
         ? FloatingActionButton.extended(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            onPressed: () => showPetTypeSelection(context, widget.cubit),
-            label: TweenAnimationBuilder<double>(
-              duration: const Duration(milliseconds: 1500),
-              tween: Tween(begin: 0.0, end: 1.0),
-              builder: (context, value, child) {
-                final pulseScale = 1.0 + (math.sin(value * 2 * math.pi) * 0.05);
-                final glowIntensity = 0.4 + (math.sin(value * 2 * math.pi) * 0.3);
-                final rotationAngle = math.sin(value * 2 * math.pi) * 0.1;
-                
-                return Transform.scale(
-                  scale: pulseScale,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          ColorManager.primaryColor,
-                          ColorManager.secondColor,
-                          ColorManager.primaryColor.withOpacity(0.9),
-                        ],
-                        stops: const [0.0, 0.6, 1.0],
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: ColorManager.primaryColor.withOpacity(glowIntensity),
-                          blurRadius: 20,
-                          spreadRadius: 3,
-                          offset: const Offset(0, 10),
-                        ),
-                        BoxShadow(
-                          color: ColorManager.secondColor.withOpacity(0.4),
-                          blurRadius: 25,
-                          spreadRadius: -3,
-                          offset: const Offset(0, 6),
-                        ),
-                        BoxShadow(
-                          color: Colors.white.withOpacity(0.1),
-                          blurRadius: 8,
-                          spreadRadius: -1,
-                          offset: const Offset(0, -2),
-                        ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          onPressed: () => showPetTypeSelection(context, widget.cubit),
+          label: TweenAnimationBuilder<double>(
+            duration: const Duration(milliseconds: 1500),
+            tween: Tween(begin: 0.0, end: 1.0),
+            builder: (context, value, child) {
+              final pulseScale = 1.0 + (math.sin(value * 2 * math.pi) * 0.05);
+              final glowIntensity = 0.4 + (math.sin(value * 2 * math.pi) * 0.3);
+              final rotationAngle = math.sin(value * 2 * math.pi) * 0.1;
+
+              return Transform.scale(
+                scale: pulseScale,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 22,
+                    vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        ColorManager.primaryColor,
+                        ColorManager.secondColor,
+                        ColorManager.primaryColor.withOpacity(0.9),
                       ],
+                      stops: const [0.0, 0.6, 1.0],
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Transform.rotate(
-                          angle: rotationAngle,
-                          child: Container(
-                            padding: const EdgeInsets.all(3),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.25),
-                              borderRadius: BorderRadius.circular(14),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              FontAwesomeIcons.paw, 
-                              color: Colors.white, 
-                              size: 18
-                            ),
-                          ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: ColorManager.primaryColor.withOpacity(
+                          glowIntensity,
                         ),
-                        const SizedBox(width: 12),
-                        Text(
-                          S.of(context).addPet,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                            letterSpacing: 0.8,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black26,
-                                offset: Offset(0, 1),
-                                blurRadius: 2,
+                        blurRadius: 20,
+                        spreadRadius: 3,
+                        offset: const Offset(0, 10),
+                      ),
+                      BoxShadow(
+                        color: ColorManager.secondColor.withOpacity(0.4),
+                        blurRadius: 25,
+                        spreadRadius: -3,
+                        offset: const Offset(0, 6),
+                      ),
+                      BoxShadow(
+                        color: Colors.white.withOpacity(0.1),
+                        blurRadius: 8,
+                        spreadRadius: -1,
+                        offset: const Offset(0, -2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Transform.rotate(
+                        angle: rotationAngle,
+                        child: Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.25),
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
                               ),
                             ],
                           ),
+                          child: const Icon(
+                            FontAwesomeIcons.paw,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                );
-              },
-            ),
-          )
+                ),
+              );
+            },
+          ),
+        )
         : null;
   }
 
@@ -525,10 +546,10 @@ class _PetScreenContentState extends State<PetScreenContent> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              MainCubit.get(context).isDark 
+              MainCubit.get(context).isDark
                   ? Colors.grey[900]!.withOpacity(0.8)
                   : Colors.white.withOpacity(0.8),
-              MainCubit.get(context).isDark 
+              MainCubit.get(context).isDark
                   ? Colors.grey[800]!.withOpacity(0.6)
                   : Colors.grey[50]!.withOpacity(0.6),
             ],
@@ -541,7 +562,10 @@ class _PetScreenContentState extends State<PetScreenContent> {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: MainCubit.get(context).isDark ? Colors.grey[800] : Colors.white,
+                  color:
+                      MainCubit.get(context).isDark
+                          ? Colors.grey[800]
+                          : Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
@@ -562,7 +586,10 @@ class _PetScreenContentState extends State<PetScreenContent> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: MainCubit.get(context).isDark ? Colors.white : Colors.black87,
+                        color:
+                            MainCubit.get(context).isDark
+                                ? Colors.white
+                                : Colors.black87,
                       ),
                     ),
                   ],
@@ -584,7 +611,10 @@ class _PetScreenContentState extends State<PetScreenContent> {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: MainCubit.get(context).isDark ? Colors.grey[800] : Colors.white,
+                  color:
+                      MainCubit.get(context).isDark
+                          ? Colors.grey[800]
+                          : Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
@@ -617,7 +647,10 @@ class _PetScreenContentState extends State<PetScreenContent> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: MainCubit.get(context).isDark ? Colors.white : Colors.black87,
+                        color:
+                            MainCubit.get(context).isDark
+                                ? Colors.white
+                                : Colors.black87,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -625,10 +658,7 @@ class _PetScreenContentState extends State<PetScreenContent> {
                       isArabic()
                           ? "يرجى المحاولة مرة أخرى"
                           : "Please try again",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                     ),
                     const SizedBox(height: 24),
                     Container(
@@ -654,7 +684,10 @@ class _PetScreenContentState extends State<PetScreenContent> {
                           borderRadius: BorderRadius.circular(12),
                           onTap: () => widget.cubit.getOwnerPets(),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
                             child: Text(
                               isArabic() ? "إعادة المحاولة" : "Try Again",
                               style: const TextStyle(
@@ -692,14 +725,16 @@ class _PetScreenContentState extends State<PetScreenContent> {
 
   Widget _buildPetsDashboard() {
     final totalPets = widget.pets.length;
-    final linkedPets = widget.pets.where((pet) => pet.qrCode?.isNotEmpty == true).length;
-    final spayedPets = widget.pets.where((pet) => pet.isSpayed == true).length;
+    final linkedPets =
+        widget.pets.where((pet) => pet.qrCode?.isNotEmpty == true).length;
+    // final petsWithPassport = widget.pets.where((pet) => 
+    //     pet.passportNumber?.isNotEmpty == true).length;
 
     return Container(
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -715,8 +750,8 @@ class _PetScreenContentState extends State<PetScreenContent> {
         boxShadow: [
           BoxShadow(
             color: ColorManager.primaryColor.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -726,9 +761,9 @@ class _PetScreenContentState extends State<PetScreenContent> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(14),
                   gradient: LinearGradient(
                     colors: [
                       ColorManager.primaryColor,
@@ -739,30 +774,37 @@ class _PetScreenContentState extends State<PetScreenContent> {
                 child: const Icon(
                   Icons.pets,
                   color: Colors.white,
-                  size: 24,
+                  size: 20,
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isArabic() ? "لوحة معلومات الحيوانات الأليفة" : "Pet Dashboard",
+                      isArabic()
+                          ? "لوحة الأصدقاء الأليفة"
+                          : "Pet Dashboard",
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: MainCubit.get(context).isDark ? Colors.white : Colors.black87,
+                        color:
+                            MainCubit.get(context).isDark
+                                ? Colors.white
+                                : Colors.black87,
                       ),
                     ),
-                    const SizedBox(height: 4),
                     Text(
-                      isArabic() ? "نظرة عامة على أصدقائك الأليفة" : "Overview of your furry friends",
+                      isArabic()
+                          ? "نظرة سريعة على أصدقائك"
+                          : "Quick overview",
                       style: TextStyle(
-                        fontSize: 14,
-                        color: MainCubit.get(context).isDark 
-                            ? Colors.grey[400] 
-                            : Colors.grey[600],
+                        fontSize: 12,
+                        color:
+                            MainCubit.get(context).isDark
+                                ? Colors.grey[400]
+                                : Colors.grey[600],
                       ),
                     ),
                   ],
@@ -770,35 +812,35 @@ class _PetScreenContentState extends State<PetScreenContent> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
-                child: _buildStatCard(
+                child: _buildCompactStatCard(
                   totalPets.toString(),
-                  isArabic() ? "إجمالي الحيوانات" : "Total Pets",
+                  isArabic() ? "المجموع" : "Total",
                   Icons.pets_outlined,
-                  Colors.blue,
+                  const Color(0xFF4F46E5),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
-                child: _buildStatCard(
+                child: _buildCompactStatCard(
                   linkedPets.toString(),
-                  isArabic() ? "مربوطة برمز QR" : "QR Linked",
-                  Icons.qr_code,
-                  Colors.green,
+                  isArabic() ? "مربوطة" : "Linked",
+                  Icons.qr_code_2,
+                  const Color(0xFF10B981),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildStatCard(
-                  spayedPets.toString(),
-                  isArabic() ? "معقمة" : "Spayed",
-                  Icons.health_and_safety,
-                  Colors.purple,
-                ),
-              ),
+              // const SizedBox(width: 10),
+              // Expanded(
+              //   child: _buildCompactStatCard(
+              //     petsWithPassport.toString(),
+              //     isArabic() ? "جوازات" : "Passport",
+              //     Icons.card_membership,
+              //     const Color(0xFF8B5CF6),
+              //   ),
+              // ),
             ],
           ),
         ],
@@ -806,54 +848,68 @@ class _PetScreenContentState extends State<PetScreenContent> {
     );
   }
 
-  Widget _buildStatCard(String value, String label, IconData icon, Color color) {
+  Widget _buildCompactStatCard(
+    String value,
+    String label,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: MainCubit.get(context).isDark 
-            ? Colors.grey[800]!.withOpacity(0.5)
-            : Colors.white.withOpacity(0.7),
+        borderRadius: BorderRadius.circular(14),
+        color: MainCubit.get(context).isDark
+            ? Colors.grey[800]!.withOpacity(0.6)
+            : Colors.white.withOpacity(0.8),
         border: Border.all(
-          color: color.withOpacity(0.2),
+          color: color.withOpacity(0.3),
           width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+              color: color.withOpacity(0.15),
             ),
             child: Icon(
               icon,
               color: color,
-              size: 20,
+              size: 16,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
             value,
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: MainCubit.get(context).isDark ? Colors.white : Colors.black87,
+              color: MainCubit.get(context).isDark 
+                  ? Colors.white 
+                  : Colors.black87,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text(
             label,
             style: TextStyle(
-              fontSize: 11,
-              color: MainCubit.get(context).isDark 
-                  ? Colors.grey[400] 
+              fontSize: 10,
+              color: MainCubit.get(context).isDark
+                  ? Colors.grey[400]
                   : Colors.grey[600],
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
         ],
@@ -872,10 +928,10 @@ class _PetScreenContentState extends State<PetScreenContent> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            MainCubit.get(context).isDark 
-                ? const Color(0xFF121212) 
+            MainCubit.get(context).isDark
+                ? const Color(0xFF121212)
                 : const Color(0xFFF8FAFC),
-            MainCubit.get(context).isDark 
+            MainCubit.get(context).isDark
                 ? Colors.grey[900]!.withOpacity(0.8)
                 : Colors.grey[50]!.withOpacity(0.8),
           ],
@@ -898,33 +954,34 @@ class _PetScreenContentState extends State<PetScreenContent> {
               final clampedValue = value.clamp(0.0, 1.0);
               return Transform.translate(
                 offset: Offset(0, 20 * (1 - clampedValue)),
-                child: Opacity(
-                  opacity: clampedValue,
-                  child: child,
-                ),
+                child: Opacity(opacity: clampedValue, child: child),
               );
             },
             child: Hero(
               tag: 'pet_card_${pet.petId}',
               child: Material(
                 color: Colors.transparent,
-                child: PetCard(
-                  pet: pet,
-                  cubit: widget.cubit,
-                  qrCubit: qrCubit,
-                  selectionMode: _selectionMode,
-                  isSelected: _selectedPets.contains(
-                    widget.pets.elementAt(index).petId,
+                child: RepaintBoundary(
+                  child: PetCard(
+                    pet: pet,
+                    cubit: widget.cubit,
+                    qrCubit: qrCubit,
+                    selectionMode: _selectionMode,
+                    isSelected: _selectedPets.contains(
+                      widget.pets.elementAt(index).petId,
+                    ),
+                    onSelected: (selected) {
+                      setState(() {
+                        if (selected) {
+                          _selectedPets.add(widget.pets.elementAt(index).petId!);
+                        } else {
+                          _selectedPets.remove(
+                            widget.pets.elementAt(index).petId,
+                          );
+                        }
+                      });
+                    },
                   ),
-                  onSelected: (selected) {
-                    setState(() {
-                      if (selected) {
-                        _selectedPets.add(widget.pets.elementAt(index).petId!);
-                      } else {
-                        _selectedPets.remove(widget.pets.elementAt(index).petId);
-                      }
-                    });
-                  },
                 ),
               ),
             ),
@@ -967,19 +1024,17 @@ class _PetScreenContentState extends State<PetScreenContent> {
                     ],
                   ),
                 ),
-                child: const Icon(
-                  Icons.pets,
-                  color: Colors.white,
-                  size: 24,
-                ),
+                child: const Icon(Icons.pets, color: Colors.white, size: 24),
               ),
               // Animated paws around the center
               ...List.generate(4, (index) {
-                final angle = (index * 90) * (3.14159 / 180); // Convert to radians
+                final angle =
+                    (index * 90) * (3.14159 / 180); // Convert to radians
                 final animationOffset = (value + (index * 0.25)) % 1.0;
-                final opacity = (math.sin(animationOffset * 2 * math.pi) + 1) / 2;
+                final opacity =
+                    (math.sin(animationOffset * 2 * math.pi) + 1) / 2;
                 final scale = 0.5 + (opacity * 0.5);
-                
+
                 return Positioned(
                   left: 40 + (25 * math.cos(angle)) - 10,
                   top: 40 + (25 * math.sin(angle)) - 10,
@@ -1016,7 +1071,6 @@ class _PetScreenContentState extends State<PetScreenContent> {
       },
     );
   }
-
 }
 
 void showPetTypeSelection(BuildContext context, PetCubit cubit) {
@@ -1031,13 +1085,17 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
 
           return Container(
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(28),
+              ),
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  MainCubit.get(context).isDark ? Colors.grey[900]! : Colors.white,
-                  MainCubit.get(context).isDark 
+                  MainCubit.get(context).isDark
+                      ? Colors.grey[900]!
+                      : Colors.white,
+                  MainCubit.get(context).isDark
                       ? Colors.grey[800]!.withOpacity(0.95)
                       : Colors.grey[50]!.withOpacity(0.8),
                 ],
@@ -1069,20 +1127,24 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w700,
-                      color: MainCubit.get(context).isDark ? Colors.white : Colors.black87,
+                      color:
+                          MainCubit.get(context).isDark
+                              ? Colors.white
+                              : Colors.black87,
                       letterSpacing: 0.5,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     isArabic()
-                        ? "اختر نوع حيوانك الأليف لبدء الرحلة"
+                        ? "اختر نوع صغيرك الأليف لبدء الرحلة"
                         : "Choose your pet type to get started",
                     style: TextStyle(
                       fontSize: 14,
-                      color: MainCubit.get(context).isDark 
-                          ? Colors.grey[400] 
-                          : Colors.grey[600],
+                      color:
+                          MainCubit.get(context).isDark
+                              ? Colors.grey[400]
+                              : Colors.grey[600],
                       fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.center,
@@ -1110,12 +1172,13 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                           child: PetTypeOption(
                             icon: FontAwesomeIcons.cat,
                             label: isArabic() ? 'قطة' : 'Cat',
-                            onTap: () => navigateToAddPet(
-                              isArabic() ? 'قطة' : 'Cat',
-                              'assets/avatar7.jpg',
-                              'f1131363-3b9f-40ee-9a89-0573ee274a10',
-                              context,
-                            ),
+                            onTap:
+                                () => navigateToAddPet(
+                                  isArabic() ? 'قطة' : 'Cat',
+                                  'assets/avatar_new.webp',
+                                  'f1131363-3b9f-40ee-9a89-0573ee274a10',
+                                  context,
+                                ),
                           ),
                         ),
                       ),
@@ -1140,12 +1203,13 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                           child: PetTypeOption(
                             icon: FontAwesomeIcons.dog,
                             label: isArabic() ? 'كلب' : 'Dog',
-                            onTap: () => navigateToAddPet(
-                              isArabic() ? 'كلب' : 'Dog',
-                              'assets/avatar7.jpg',
-                              'bca48207-f05d-4e9f-a631-06f34eb5af39',
-                              context,
-                            ),
+                            onTap:
+                                () => navigateToAddPet(
+                                  isArabic() ? 'كلب' : 'Dog',
+                                  'assets/avatar_new.webp',
+                                  'bca48207-f05d-4e9f-a631-06f34eb5af39',
+                                  context,
+                                ),
                           ),
                         ),
                       ),
@@ -1181,7 +1245,7 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                               onSelected: (species) {
                                 navigateToAddPet(
                                   species.type,
-                                  'assets/avatar7.jpg',
+                                  'assets/avatar_new.webp',
                                   species.id,
                                   context,
                                 );
@@ -1203,7 +1267,9 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                                     duration: const Duration(milliseconds: 800),
                                     tween: Tween(begin: 0.0, end: 1.0),
                                     builder: (context, value, child) {
-                                      final scale = 0.8 + (math.sin(value * 2 * math.pi) * 0.2);
+                                      final scale =
+                                          0.8 +
+                                          (math.sin(value * 2 * math.pi) * 0.2);
                                       return Transform.scale(
                                         scale: scale,
                                         child: Container(
@@ -1211,8 +1277,11 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                                           height: 40,
                                           padding: const EdgeInsets.all(8),
                                           decoration: BoxDecoration(
-                                            color: ColorManager.primaryColor.withOpacity(0.1),
-                                            borderRadius: BorderRadius.circular(20),
+                                            color: ColorManager.primaryColor
+                                                .withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
                                           ),
                                           child: Icon(
                                             FontAwesomeIcons.paw,
@@ -1241,17 +1310,23 @@ void showPetTypeSelection(BuildContext context, PetCubit cubit) {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: MainCubit.get(context).isDark ? Colors.white : Colors.black87,
+                                  color:
+                                      MainCubit.get(context).isDark
+                                          ? Colors.white
+                                          : Colors.black87,
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                isArabic() ? 'اختر من المزيد من الأنواع' : 'Choose from more species',
+                                isArabic()
+                                    ? 'اختر من المزيد من الأنواع'
+                                    : 'Choose from more species',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: MainCubit.get(context).isDark 
-                                      ? Colors.grey[400] 
-                                      : Colors.grey[600],
+                                  color:
+                                      MainCubit.get(context).isDark
+                                          ? Colors.grey[400]
+                                          : Colors.grey[600],
                                 ),
                               ),
                             ],

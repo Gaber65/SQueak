@@ -5,7 +5,7 @@ export 'package:squeak/core/error/failure.dart';
 export 'package:squeak/core/network/config_model.dart';
 export 'package:squeak/core/network/dio.dart';
 export 'package:squeak/core/network/network_info.dart';
-export 'package:squeak/core/network/end-points.dart';
+export 'package:squeak/core/network/end_points.dart';
 export 'package:squeak/core/network/error_message_model.dart';
 export 'package:squeak/core/service/cache/local_database/local_database.dart';
 export 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
@@ -14,11 +14,11 @@ export 'package:squeak/core/service/global_function/time_format.dart';
 export 'package:squeak/core/service/global_widget/custom_confirmation_dialog.dart';
 export 'package:squeak/core/service/global_widget/custom_elevated_button.dart';
 export 'package:squeak/core/service/global_widget/custom_text_form_field.dart';
-export 'package:squeak/core/service/global_widget/global_Image.dart';
 export 'package:squeak/core/service/global_widget/national_phone.dart';
 export 'package:squeak/core/service/global_widget/responsive_screen.dart';
 export 'package:squeak/core/service/global_widget/toast.dart';
 export 'package:squeak/core/service/global_widget/video_detail.dart';
+export 'package:squeak/core/utils/debug_utils.dart';
 
 // local_notifications
 export 'package:squeak/features/layout/notification/NotificationFCM/local_notification_handler.dart';
@@ -51,7 +51,7 @@ export 'package:squeak/core/service/main_service/presentation/widgets/init_funct
 export 'package:squeak/core/service/main_service/presentation/widgets/route_generator.dart';
 
 // observer
-export 'package:squeak/core/service/observer/observe.dart';
+export 'package:squeak/core/service/observer/observer.dart';
 
 // refresh_token_manger
 export  'package:squeak/core/service/refresh_token_manger/token_manager.dart';

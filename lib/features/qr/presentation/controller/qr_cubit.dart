@@ -1,7 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import '../../domain/usecases/link_pet_to_qr_usecase.dart';
-import '../../domain/usecases/unlink_pet_from_qr_usecase.dart';
 
 import '../../../pets/domain/entities/pet_entity.dart';
 

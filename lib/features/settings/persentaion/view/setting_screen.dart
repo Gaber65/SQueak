@@ -1,11 +1,10 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:iconly/iconly.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:squeak/features/mating/layoutMating/presentation/screens/profle_complete.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
 
@@ -47,31 +46,7 @@ class SettingScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(.0),
                       child: Row(
                         children: [
-                          // (state is ProfileImageUploadLoading)
-                          //     ? WidgetCircularAnimator(
-                          //       size: 65,
-                          //       innerIconsSize: 3,
-                          //       outerIconsSize: 3,
-                          //       innerAnimation: Curves.easeInOutBack,
-                          //       outerAnimation: Curves.easeInOutBack,
-                          //       innerColor: Colors.deepPurple,
-                          //       outerColor: Colors.orangeAccent,
-                          //       innerAnimationSeconds: 10,
-                          //       outerAnimationSeconds: 10,
-                          //       child: Container(
-                          //         height: 69,
-                          //         decoration: BoxDecoration(
-                          //           shape: BoxShape.circle,
-                          //           color: Colors.grey[200],
-                          //         ),
-                          //         child: Icon(
-                          //           Icons.person_outline,
-                          //           color: Colors.deepOrange[200],
-                          //           size: 30,
-                          //         ),
-                          //       ),
-                          //     )
-                          //     :
+
                           buildImage(context),
                           SizedBox(width: 15),
                           Text(
@@ -97,6 +72,32 @@ class SettingScreen extends StatelessWidget {
                   ),
 
                   SizedBox(height: 25),
+
+                  // Management pet  Section
+                  Text(
+                    isArabic() ? 'ادارة صديقك الاليف' : 'Manage Pets',
+                    style: FontStyleThame.textStyle(
+                      context: context,
+                      fontSize: 18,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+
+                  // MatingLayout pet  Section
+                  _buildSettingItem(
+                    context: context,
+                    icon:
+                        'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/rb_49299.png?alt=media&token=3f7daec5-e664-43bc-9e62-0ef2b7f018f3',
+                    title: 'Mating shows',
+
+                    subtitle: '',
+                    trailingWidget: IconButton(
+                      onPressed: () {
+                        navigateToScreen(context, ProfileComplete());
+                      },
+                      icon: Icon(Icons.chevron_right),
+                    ),
+                  ),
 
                   // Personalization Section
                   Text(
@@ -315,10 +316,12 @@ class SettingScreen extends StatelessWidget {
                           Navigator.pop(context);
                         },
                         onConfirmBtnTap: () async {
+
                           debugPrint('[Logout] Confirm tapped - starting logout sequence');
                           // First remove token from backend/service then clear local data and reset state
                           debugPrint('[Logout] Calling MainCubit.removeToken()');
                           await MainCubit.get(context).removeToken();
+                          if (!context.mounted) return;
                           LayoutCubit.get(context).changeBottomNav(0);
 
                           // Clear local cache first to avoid race conditions with newly created LoginScreen
@@ -327,6 +330,7 @@ class SettingScreen extends StatelessWidget {
 
                           // Reset MainCubit state before navigating
                           debugPrint('[Logout] Resetting MainCubit state');
+                          if (!context.mounted) return;
                           MainCubit.get(context).resetState();
 
                           // Finally navigate to LoginScreen and clear navigation stack

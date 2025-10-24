@@ -17,7 +17,7 @@ class NotificationCard extends StatelessWidget {
     final IconData icon = getNotificationIcon(notification);
     final Color iconBgColor = getNotificationColor(notification);
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    print(notification.title);
+    // print(notification.title);
     return GestureDetector(
       onTap: () {
         showNotificationDialog(context, notification);

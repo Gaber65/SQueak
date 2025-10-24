@@ -112,7 +112,7 @@ class _MyTextFormState extends State<MyTextForm> {
         onPressed: () => setState(() => _obscureText = !_obscureText),
       )
           : null,
-      contentPadding: EdgeInsets.all(widget.maxLines != 1 ? 10 : 0),
+      contentPadding:  EdgeInsets.all(widget.maxLines != 1 ? 10 : 0),
       filled: true,
       fillColor: isDark ? Colors.black26 : Colors.grey.shade200,
       hintStyle: FontStyleThame.textStyle(

@@ -4,9 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/auth/login/data/datasources/login_remote_data_source.dart';
-import 'package:squeak/features/auth/login/data/repositories/login_repository.dart';
-import 'package:squeak/features/auth/login/domin/usecses/login_use_case.dart';
+// Removed unused login implementation imports; auto-login has been disabled.
 import 'package:squeak/features/auth/login/presentation/cubit/login_cubit.dart';
 import 'package:squeak/features/auth/register/domin/entities/country_entity.dart';
 import 'package:squeak/features/auth/register/domin/entities/register_entity.dart';
@@ -216,64 +214,56 @@ class RegisterCubit extends Cubit<RegisterState> {
       followCode: followCodeController.text.trim(),
       shareData: isAccept,
     );
-    await registerUseCase
-        .execute(entity)
-        .then((value) async {
-          isRegister = false;
-          debugPrint('[Register] Registration successful - saving followCode');
-          await CacheHelper.saveData("followCode", followCodeController.text.trim());
+      try {
+        final authResult = await registerUseCase.execute(entity);
+        isRegister = false;
+        debugPrint('[Register] Registration successful - saving followCode');
+        await CacheHelper.saveData("followCode", followCodeController.text.trim());
 
-          // Automatically log in the user after successful registration
-          try {
-            debugPrint('[Register] Starting auto-login after registration');
-            final loginUseCase = LoginUseCase(
-              LoginRepositoryImpl(
-                remoteDataSource: LoginRemoteDataSource(),
-              ),
-            );
+        // Persist auth data returned from register so subsequent requests (e.g., add pet)
+        // will use the new token automatically via DioFinalHelper.
+        try {
+          await CacheHelper.clearData();
+          await Future.wait([
+            CacheHelper.saveData('token', authResult.data?.token ?? ''),
+            CacheHelper.saveData('role', authResult.data?.role ?? 0),
+            CacheHelper.saveData('clintId', authResult.data?.id ?? ''),
+            CacheHelper.saveData('phone', authResult.data?.phone ?? ''),
+            CacheHelper.saveData('name', authResult.data?.fullName ?? ''),
+            CacheHelper.saveData('clientName', authResult.data?.fullName ?? ''),
+            CacheHelper.saveData('username', authResult.data?.fullName ?? ''),
+            CacheHelper.saveData('email', authResult.data?.email ?? ''),
+          ]);
 
-            final loginResult = await loginUseCase(
-              emailOrPhoneNumber: trimmedEmail,
-              password: passwordController.text,
-            );
-
-            debugPrint('[Register] Auto-login succeeded - persisting login data');
-            // Save token and user data (await to avoid race conditions)
-            await Future.wait([
-              CacheHelper.saveData('token', loginResult.token),
-              CacheHelper.saveData('role', loginResult.role),
-              CacheHelper.saveData('clintId', loginResult.id),
-              CacheHelper.saveData('phone', loginResult.phone),
-              CacheHelper.saveData('name', loginResult.fullName),
-              CacheHelper.saveData('clientName', loginResult.fullName),
-              CacheHelper.saveData('username', loginResult.fullName),
-              CacheHelper.saveData('email', loginResult.email),
-            ]);
-
+      if (authResult.data?.token != null && authResult.data!.token.isNotEmpty) {
             await TokenManager.saveToken(
-              loginResult.token,
-              loginResult.expiresIn,
-              loginResult.refreshToken,
+              authResult.data!.token,
+              authResult.data!.expiresIn,
+              authResult.data!.refreshToken,
             );
-
-            debugPrint('[Register] Auto-login persistence complete');
-            emit(RegistrationSuccessState());
-          } catch (loginError) {
-            debugPrint('[Register] Auto-login failed: $loginError');
-            // If automatic login fails, still emit success but show error
-            emit(RegistrationSuccessState());
-            // The user will be redirected to login screen where they can manually log in
+            debugPrint('[Register] Saved token and token metadata from register.');
+          } else {
+            debugPrint('[Register] Auth response missing token or metadata; skipping TokenManager.saveToken.');
           }
-        })
-        .catchError((error) {
-          isRegister = false;
-          ServerException failure = error;
-          emit(
-            RegistrationErrorState(
-              extractFirstErrorAuth(failure.errorMessageModel),
-            ),
-          );
-        });
+        } catch (e) {
+          debugPrint('[Register] Failed to persist auth data: $e');
+        }
+
+        // The register flow now returns the same shape as login (AuthModel).
+        debugPrint('[Register] Received auth-like response after register: token=${authResult.data?.token ?? 'null'} id=${authResult.data?.id}');
+
+        emit(RegistrationSuccessState());
+      } on ServerException catch (failure) {
+        isRegister = false;
+        emit(
+          RegistrationErrorState(
+            extractFirstErrorAuth(failure.errorMessageModel),
+          ),
+        );
+      } catch (e) {
+        isRegister = false;
+        emit(RegistrationErrorState(e.toString()));
+      }
   }
 
   // QR-based registration
@@ -303,32 +293,54 @@ class RegisterCubit extends Cubit<RegisterState> {
       shareData: isAccept,
     );
 
-    print(entity.toMap());
+    // print(entity.toMap());
 
-    final qrEmail = emailController.text.trim();
-    await registerQrUseCase
-        .execute(entity, clinicCode)
-        .then((value) async {
-          emit(RegistrationSuccessState());
-          emit(RegistrationSuccessState());
-          debugPrint('[Register][QR] Registration success - invoking LoginCubit.login');
-          await LoginCubit.get(context).login(
-            context,
-            email: qrEmail,
-            password: passwordController.text,
-          );
-          debugPrint('[Register][QR] LoginCubit.login returned');
-        })
-        .catchError((error) {
-          isRegister = false;
-          LoginCubit.get(context).isLoggedIn = false;
-          ServerException failure = error;
-          emit(
-            RegistrationErrorState(
-              extractFirstErrorAuth(failure.errorMessageModel),
-            ),
-          );
-        });
+      try {
+        final authResult = await registerQrUseCase.execute(entity, clinicCode);
+        // Persist auth data returned from register via QR so subsequent requests will use it.
+        try {
+          await CacheHelper.clearData();
+          await Future.wait([
+            CacheHelper.saveData('token', authResult.data?.token ?? ''),
+            CacheHelper.saveData('role', authResult.data?.role ?? 0),
+            CacheHelper.saveData('clintId', authResult.data?.id ?? ''),
+            CacheHelper.saveData('phone', authResult.data?.phone ?? ''),
+            CacheHelper.saveData('name', authResult.data?.fullName ?? ''),
+            CacheHelper.saveData('clientName', authResult.data?.fullName ?? ''),
+            CacheHelper.saveData('username', authResult.data?.fullName ?? ''),
+            CacheHelper.saveData('email', authResult.data?.email ?? ''),
+          ]);
+
+      if (authResult.data?.token != null && authResult.data!.token.isNotEmpty) {
+            await TokenManager.saveToken(
+              authResult.data!.token,
+              authResult.data!.expiresIn,
+              authResult.data!.refreshToken,
+            );
+            debugPrint('[Register][QR] Saved token and token metadata from registerQr.');
+          } else {
+            debugPrint('[Register][QR] Auth response missing token or metadata; skipping TokenManager.saveToken.');
+          }
+        } catch (e) {
+          debugPrint('[Register][QR] Failed to persist auth data: $e');
+        }
+
+        emit(RegistrationSuccessState());
+        emit(RegistrationSuccessState());
+        debugPrint('[Register][QR] Registration success. Received auth-like response: token=${authResult.data?.token ?? 'null'} id=${authResult.data?.id}');
+      } on ServerException catch (failure) {
+        isRegister = false;
+        LoginCubit.get(context).isLoggedIn = false;
+        emit(
+          RegistrationErrorState(
+            extractFirstErrorAuth(failure.errorMessageModel),
+          ),
+        );
+      } catch (e) {
+        isRegister = false;
+        LoginCubit.get(context).isLoggedIn = false;
+        emit(RegistrationErrorState(e.toString()));
+      }
   }
 
   @override

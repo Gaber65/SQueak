@@ -23,17 +23,19 @@ class LayoutCubit extends Cubit<LayoutState> {
   LayoutCubit({
     required this.getVersionUseCase,
     required this.getCurrentAppVersionUseCase,
-  }) : super(LayoutInitial());
+  }) : super(LayoutInitial()) {
+    screens = [
+      HomeScreen(),
+      FriendsScreen(),
+      PetScreen(),
+      CareHubScreen(),
+      SettingScreen(),
+    ];
+  }
 
   static LayoutCubit get(context) => BlocProvider.of(context);
 
-  List<Widget> screens = [
-    HomeScreen(),
-    FriendsScreen(),
-    PetScreen(),
-    CareHubScreen(),
-    SettingScreen(),
-  ];
+  late final List<Widget> screens;
 
   int selectedIndex = 0;
   String currentVersion = '';
@@ -41,8 +43,10 @@ class LayoutCubit extends Cubit<LayoutState> {
   bool getVersionFromBackLoading = true;
 
   void changeBottomNav(int index) {
-    selectedIndex = index;
-    emit(ChangeBottomNavState());
+    if (selectedIndex != index) {
+      selectedIndex = index;
+      emit(ChangeBottomNavState());
+    }
   }
 
   Future<void> getVersion() async {
