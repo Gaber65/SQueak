@@ -43,6 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/
 /android/app/release
-/android/build/ios
-/ios/build
+android/build/ios
+ios/build
 
