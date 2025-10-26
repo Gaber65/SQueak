@@ -31,40 +31,92 @@ class AppointmentModel extends AppointmentEntity {
   });
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
+    // Local helpers to safely parse values from potentially inconsistent API responses
+    int toInt(dynamic v) {
+      if (v == null) return 0;
+      if (v is int) return v;
+      if (v is double) return v.toInt();
+      final s = v.toString();
+      return int.tryParse(s) ?? 0;
+    }
+
+    num toNum(dynamic v) {
+      if (v == null) return 0;
+      if (v is num) return v;
+      final s = v.toString();
+      return num.tryParse(s) ?? 0;
+    }
+
+    final String id = json['id']?.toString() ?? '';
+    final String date = json['data']?.toString() ?? '';
+    final String time = json['time']?.toString() ?? '';
+    final bool isBillSqueakVisible = json['isBillSqueakVisible'] ?? false;
+    final String? doctorUserId = json['doctorUserId']?.toString();
+    final String? visitId = () {
+      final v = json['visitId'];
+      if (v == null) return null;
+      final s = v.toString();
+      return s.contains('00000000') ? null : s;
+    }();
+
+    final int cleanlinessRate = toInt(json['cleanlinessRate']);
+    final int doctorServiceRate = toInt(json['doctorServiceRate']);
+
+    final bool isRating = json['isRating'] ?? (cleanlinessRate > 0 || doctorServiceRate > 0);
+
+    final String? feedbackComment = json['feedbackComment']?.toString();
+    final dynamic status = json['status'] ?? json['statues'] ?? 0;
+    final String clientId = json['clientId']?.toString() ?? '';
+    final String petId = json['petId']?.toString() ?? '';
+    final String clinicPhone = json['clinicPhone']?.toString() ?? '';
+    final String clinicLocation = json['clinicLocation']?.toString() ?? '';
+    final String? clinicLogo = json['clinicLogo']?.toString();
+    final String clinicCode = json['clinicCode']?.toString() ?? '';
+    final String clinicId = json['clinicId']?.toString() ?? '';
+    final String clinicName = json['clinicName']?.toString() ?? '';
+    final int source = toInt(json['source']);
+
+    final client = json['client'] != null
+        ? ClientModel.fromJson(Map<String, dynamic>.from(json['client']))
+        : const ClientModel();
+
+    final pet = json['pet'] != null
+        ? PetModel.fromJson(Map<String, dynamic>.from(json['pet']))
+        : const PetModel();
+
+    final DoctorUserModel? doctorUser = json['doctorUser'] != null
+        ? DoctorUserModel.fromJson(Map<String, dynamic>.from(json['doctorUser']))
+        : null;
+
+    final num temperature = toNum(json['temprature'] ?? json['temperature']);
+    final num weight = toNum(json['wieght'] ?? json['weight']);
+
     return AppointmentModel(
-      id: json['id'],
-      date: json['data'],
-      time: json['time'],
-      isBillSqueakVisible: json['isBillSqueakVisible'],
-      doctorUserId: json['doctorUserId'],
-      visitId: json['visitId'].toString().contains('00000000')
-          ? null
-          : json['visitId'],
-      isRating: json['isRating'] ?? ((json['cleanlinessRate'] > 0 || json['doctorServiceRate'] > 0)
-              ? true
-              : (json['cleanlinessRate'] == 0 && json['doctorServiceRate'] == 0)
-                  ? false
-                  : false),
-      cleanlinessRate: json['cleanlinessRate'],
-      doctorServiceRate: json['doctorServiceRate'],
-      feedbackComment: json['feedbackComment'],
-      status: json['statues'],
-      clientId: json['clientId'],
-      petId: json['petId'],
-      clinicPhone: json['clinicPhone'],
-      clinicLocation: json['clinicLocation'],
-      clinicLogo: json['clinicLogo'],
-      clinicCode: json['clinicCode'],
-      clinicId: json['clinicId'],
-      clinicName: json['clinicName'],
-      source: json['source'] ?? 0,
-      client: ClientModel.fromJson(json['client']),
-      pet: PetModel.fromJson(json['pet']),
-      doctorUser: json['doctorUser'] != null
-          ? DoctorUserModel.fromJson(json['doctorUser'])
-          : null,
-      temperature: json['temprature'] ?? 0,
-      weight: json['wieght'] ?? 0,
+      id: id,
+      date: date,
+      time: time,
+      isBillSqueakVisible: isBillSqueakVisible,
+      doctorUserId: doctorUserId,
+      visitId: visitId,
+      isRating: isRating,
+      cleanlinessRate: cleanlinessRate,
+      doctorServiceRate: doctorServiceRate,
+      feedbackComment: feedbackComment,
+      status: status,
+      clientId: clientId,
+      petId: petId,
+      clinicPhone: clinicPhone,
+      clinicLocation: clinicLocation,
+      clinicLogo: clinicLogo,
+      clinicCode: clinicCode,
+      clinicId: clinicId,
+      clinicName: clinicName,
+      source: source,
+      client: client,
+      pet: pet,
+      doctorUser: doctorUser,
+      temperature: temperature,
+      weight: weight,
     );
   }
 
@@ -79,7 +131,7 @@ class AppointmentModel extends AppointmentEntity {
       'cleanlinessRate': cleanlinessRate,
       'doctorServiceRate': doctorServiceRate,
       'feedbackComment': feedbackComment,
-      'statues': status,
+      'status': status,
       'clientId': clientId,
       'petId': petId,
       'clinicPhone': clinicPhone,
@@ -92,8 +144,8 @@ class AppointmentModel extends AppointmentEntity {
       'client': (client as ClientModel).toJson(),
       'pet': (pet as PetModel).toJson(),
       'doctorUser': doctorUser != null ? (doctorUser as DoctorUserModel).toJson() : null,
-      'wieght': weight,
-      'temprature': temperature,
+      'weight': weight,
+      'temperature': temperature,
     };
   }
 }

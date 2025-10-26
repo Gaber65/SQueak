@@ -34,18 +34,59 @@ String formatTimeToAmPm(String time) {
 
 
 String formatDateString(String dateString) {
-  final date = DateTime.parse(dateString);
-  return DateFormat('yyyy MMMM d', 'en_US').format(date);
+  try {
+    DateTime? date = DateTime.tryParse(dateString);
+    if (date == null) {
+      // Try common backend format without timezone
+      try {
+        date = DateFormat("yyyy-MM-dd'T'HH:mm:ss", 'en_US').parse(dateString);
+      } catch (_) {
+        try {
+          date = DateFormat('yyyy-MM-dd', 'en_US').parse(dateString);
+        } catch (_) {
+          return dateString;
+        }
+      }
+    }
+
+    return DateFormat('yyyy MMMM d', 'en_US').format(date);
+  } catch (e) {
+    return dateString;
+  }
 }
 
 String formatDateStringAndTime(String dateString) {
-  final date = DateTime.parse(dateString);
-  return DateFormat('EEE , MMM dd yyyy , hh:mm a', 'en_US').format(date);
+  try {
+    DateTime? date = DateTime.tryParse(dateString);
+    if (date == null) {
+      try {
+        date = DateFormat("yyyy-MM-dd'T'HH:mm:ss", 'en_US').parse(dateString);
+      } catch (_) {
+        return dateString;
+      }
+    }
+
+    return DateFormat('EEE , MMM dd yyyy , hh:mm a', 'en_US').format(date);
+  } catch (e) {
+    return dateString;
+  }
 }
 
 String formatDate(String dateString) {
-  final date = DateTime.parse(dateString);
-  return DateFormat('EEE , MMM dd yyyy , hh:mm a', 'en_US').format(date);
+  try {
+    DateTime? date = DateTime.tryParse(dateString);
+    if (date == null) {
+      try {
+        date = DateFormat("yyyy-MM-dd'T'HH:mm:ss", 'en_US').parse(dateString);
+      } catch (_) {
+        return dateString;
+      }
+    }
+
+    return DateFormat('EEE , MMM dd yyyy , hh:mm a', 'en_US').format(date);
+  } catch (e) {
+    return dateString;
+  }
 }
 
 String formatFacebookTimePost(String createdAt) {
