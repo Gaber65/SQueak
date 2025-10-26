@@ -192,6 +192,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "تمت أرشفة هذه الدردشة وهي للقراءة فقط",
     ),
     "chatBlocked": MessageLookupByLibrary.simpleMessage("تم حظر الدردشة بنجاح"),
+    "chatBlockedByOther": MessageLookupByLibrary.simpleMessage(
+      "قام بحظرك. لا يمكنك إرسال رسائل حتى يقوم بإلغاء الحظر.",
+    ),
     "chatBlockedNoMessages": MessageLookupByLibrary.simpleMessage(
       "هذه الدردشة محظورة. لا يمكن إرسال أو استقبال الرسائل.",
     ),

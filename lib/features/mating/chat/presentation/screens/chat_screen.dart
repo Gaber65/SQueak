@@ -31,12 +31,16 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   bool _isMatingStarted = false;
   bool isCompleted = false;
   bool _isBlocked = false;
+  bool _isBlockedByMe = false;
+  bool _isBlockedByOther = false;
 
   @override
   void initState() {
     super.initState();
 
     _isBlocked = widget.chat.isBlock;
+    _isBlockedByMe = widget.chat.isBlockedByMe;
+    _isBlockedByOther = widget.chat.isBlockedByOther;
     isCompleted = widget.chat.completeMarriageStatues;
     _isMatingStarted = _getChatStatus() == ChatStatus.onMating;
     _isReadOnly = isCompleted || _isBlocked;
@@ -94,6 +98,14 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           if (state is BlockChatSuccess) {
             setState(() {
               _isBlocked = !_isBlocked;
+              // Toggle the appropriate flag based on who initiated the block
+              if (_isBlocked) {
+                _isBlockedByMe = true;
+                _isBlockedByOther = false;
+              } else {
+                _isBlockedByMe = false;
+                _isBlockedByOther = false;
+              }
               _isReadOnly = _isBlocked;
             });
           }
@@ -114,12 +126,20 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                     s.chatArchivedReadOnly,
                     const Color(0xFF6C63FF),
                   ),
-                if (_isBlocked)
+                if (_isBlockedByMe)
                   _buildStatusBanner(
                     theme,
                     isDark,
                     Icons.block_rounded,
                     s.chatBlockedNoMessages,
+                    Colors.red,
+                  ),
+                if (_isBlockedByOther)
+                  _buildStatusBanner(
+                    theme,
+                    isDark,
+                    Icons.block_rounded,
+                    '${widget.chat.name} ${s.chatBlockedByOther}',
                     Colors.red,
                   ),
                 Expanded(

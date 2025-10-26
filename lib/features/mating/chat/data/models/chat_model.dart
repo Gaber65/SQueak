@@ -14,6 +14,8 @@ class ChatModel extends ChatEntity {
     required super.createdAt,
     required super.lastMessageSendDateTime,
     required super.isBlock,
+    super.isBlockedByMe,
+    super.isBlockedByOther,
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
@@ -30,6 +32,8 @@ class ChatModel extends ChatEntity {
       createdAt:json['createdAt'],
       lastMessageSendDateTime:json['lastMessageSendDateTime'],
       isBlock: json['isBlock'],
+      isBlockedByMe: json['isBlockedByMe'] ?? false,
+      isBlockedByOther: json['isBlockedByOther'] ?? false,
     );
   }
 
@@ -47,6 +51,8 @@ class ChatModel extends ChatEntity {
       'createdAt': createdAt,
       'lastMessageSendDateTime': lastMessageSendDateTime,
       'isBlock': isBlock,
+      'isBlockedByMe': isBlockedByMe,
+      'isBlockedByOther': isBlockedByOther,
     };
   }
 

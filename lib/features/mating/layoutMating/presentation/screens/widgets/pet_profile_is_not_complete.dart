@@ -334,21 +334,21 @@ class PetProfileIncompleteScreen extends StatelessWidget {
     String fieldName,
     IconData icon,
   ) {
-    final double _scale = MediaQuery.of(context).size.width / 375;
+    final double scale = MediaQuery.of(context).size.width / 375;
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 6 * _scale),
+      padding: EdgeInsets.symmetric(vertical: 6 * scale),
       child: Row(
         children: [
-          Icon(icon, size: 18 * _scale, color: ColorManager.primaryColor),
-          SizedBox(width: 8 * _scale),
+          Icon(icon, size: 18 * scale, color: ColorManager.primaryColor),
+          SizedBox(width: 8 * scale),
           Expanded(
             child: Text(
               fieldName,
-              style: TextStyle(color: ColorManager.primaryColor, fontSize: 14 * _scale),
+              style: TextStyle(color: ColorManager.primaryColor, fontSize: 14 * scale),
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 8 * _scale, vertical: 2 * _scale),
+            padding: EdgeInsets.symmetric(horizontal: 8 * scale, vertical: 2 * scale),
             decoration: BoxDecoration(
               color: ColorManager.primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(4),
@@ -357,7 +357,7 @@ class PetProfileIncompleteScreen extends StatelessWidget {
               S.of(context).required,
               style: TextStyle(
                 color: ColorManager.primaryColor,
-                fontSize: 12 * _scale,
+                fontSize: 12 * scale,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -372,16 +372,16 @@ class PetProfileIncompleteScreen extends StatelessWidget {
     String feature,
     IconData icon,
   ) {
-    final double _scale = MediaQuery.of(context).size.width / 375;
+    final double scale = MediaQuery.of(context).size.width / 375;
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 6 * _scale),
+      padding: EdgeInsets.symmetric(vertical: 6 * scale),
       child: Row(
         children: [
-          Icon(icon, size: 16 * _scale, color: Colors.blue),
-          SizedBox(width: 8 * _scale),
+          Icon(icon, size: 16 * scale, color: Colors.blue),
+          SizedBox(width: 8 * scale),
           Text(
             feature,
-            style: TextStyle(color: Colors.grey[700], fontSize: 14 * _scale),
+            style: TextStyle(color: Colors.grey[700], fontSize: 14 * scale),
           ),
         ],
       ),

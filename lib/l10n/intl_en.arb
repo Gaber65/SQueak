@@ -449,6 +449,7 @@
   "confirm": "Confirm",
   "chatArchivedReadOnly": "This chat has been archived and is read-only",
   "chatBlockedNoMessages": "This chat is blocked. No messages can be sent or received.",
+  "chatBlockedByOther": "has blocked you. You cannot send messages until they unblock you.",
   "noMessagesYet": "No messages yet",
   "typeMessage": "Type a message...",
   "chooseAttachment": "Choose Attachment",

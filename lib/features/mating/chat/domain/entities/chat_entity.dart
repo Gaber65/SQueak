@@ -11,6 +11,8 @@ class ChatEntity {
   final String createdAt;
   final String lastMessageSendDateTime;
   final bool isBlock;
+  final bool isBlockedByMe; 
+  final bool isBlockedByOther; 
 
   const ChatEntity({
     required this.id,
@@ -25,5 +27,7 @@ class ChatEntity {
     required this.createdAt,
     required this.lastMessageSendDateTime,
     required this.isBlock,
+    this.isBlockedByMe = false,
+    this.isBlockedByOther = false,
   });
 }

@@ -204,6 +204,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "chatBlocked": MessageLookupByLibrary.simpleMessage(
       "Chat blocked successfully",
     ),
+    "chatBlockedByOther": MessageLookupByLibrary.simpleMessage(
+      "has blocked you. You cannot send messages until they unblock you.",
+    ),
     "chatBlockedNoMessages": MessageLookupByLibrary.simpleMessage(
       "This chat is blocked. No messages can be sent or received.",
     ),

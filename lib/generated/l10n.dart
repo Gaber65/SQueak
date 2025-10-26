@@ -3769,6 +3769,16 @@ class S {
     );
   }
 
+  /// `has blocked you. You cannot send messages until they unblock you.`
+  String get chatBlockedByOther {
+    return Intl.message(
+      'has blocked you. You cannot send messages until they unblock you.',
+      name: 'chatBlockedByOther',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `No messages yet`
   String get noMessagesYet {
     return Intl.message(

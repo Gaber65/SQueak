@@ -436,6 +436,7 @@
   "confirm": "تأكيد",
   "chatArchivedReadOnly": "تمت أرشفة هذه الدردشة وهي للقراءة فقط",
   "chatBlockedNoMessages": "هذه الدردشة محظورة. لا يمكن إرسال أو استقبال الرسائل.",
+  "chatBlockedByOther": "قام بحظرك. لا يمكنك إرسال رسائل حتى يقوم بإلغاء الحظر.",
   "noMessagesYet": "لا توجد رسائل بعد",
 
   "typeMessage": "اكتب رسالة...",
