@@ -18,6 +18,26 @@ class ProfileImageSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  // Prefer the cubit's currently selected species id (updated when user
+  // taps species cards). Fall back to the pet model's specieId if cubit's
+  // value is empty. This prevents mismatch where the UI selection and the
+  // pet model disagree.
+  final speciesId = (cubit.dropdownValueSpeciesId.isNotEmpty)
+    ? cubit.dropdownValueSpeciesId
+    : (pets.specieId ?? '');
+    final isCat = speciesId == PetCubit.catSpeciesId;
+    final isDog = speciesId == PetCubit.dogSpeciesId;
+    final FaIcon speciesIcon = FaIcon(
+      isCat
+          ? FontAwesomeIcons.cat
+          : (isDog ? FontAwesomeIcons.dog : FontAwesomeIcons.paw),
+      size: 40,
+      color: ColorManager.primaryColor,
+    );
+    final String speciesLabel = isCat
+        ? (isArabic() ? 'قطة' : 'Cat')
+        : (isDog ? (isArabic() ? 'كلب' : 'Dog') : (isArabic() ? 'حيوان' : 'Pet'));
+
     return Center(
       child: Stack(
         alignment: Alignment.bottomRight,
@@ -44,20 +64,10 @@ class ProfileImageSection extends StatelessWidget {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                FaIcon(
-                                  pets.specieId ==
-                                          'f1131363-3b9f-40ee-9a89-0573ee274a10'
-                                      ? FontAwesomeIcons.cat
-                                      : FontAwesomeIcons.dog,
-                                  size: 40,
-                                  color: ColorManager.primaryColor,
-                                ),
+                                speciesIcon,
                                 const SizedBox(height: 6),
                                 Text(
-                                  pets.specieId ==
-                                          'f1131363-3b9f-40ee-9a89-0573ee274a10'
-                                      ? (isArabic() ? 'قطة' : 'Cat')
-                                      : (isArabic() ? 'كلب' : 'Dog'),
+                                  speciesLabel,
                                   style: TextStyle(
                                     color: MainCubit.get(context).isDark
                                         ? Colors.white
@@ -69,7 +79,6 @@ class ProfileImageSection extends StatelessWidget {
                             ),
                           ),
                         )
-                      // There is an image name -> load from network
                       : Image.network(
                           imageUrl + (pets.imageName ?? ''),
                           fit: BoxFit.cover,
@@ -79,10 +88,9 @@ class ProfileImageSection extends StatelessWidget {
                                 : Colors.grey[200],
                             child: Center(
                               child: FaIcon(
-                                pets.specieId ==
-                                        'f1131363-3b9f-40ee-9a89-0573ee274a10'
+                                isCat
                                     ? FontAwesomeIcons.cat
-                                    : FontAwesomeIcons.dog,
+                                    : (isDog ? FontAwesomeIcons.dog : FontAwesomeIcons.paw),
                                 size: 40,
                                 color: ColorManager.primaryColor,
                               ),

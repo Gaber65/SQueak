@@ -37,7 +37,6 @@ String formatDateString(String dateString) {
   try {
     DateTime? date = DateTime.tryParse(dateString);
     if (date == null) {
-      // Try common backend format without timezone
       try {
         date = DateFormat("yyyy-MM-dd'T'HH:mm:ss", 'en_US').parse(dateString);
       } catch (_) {

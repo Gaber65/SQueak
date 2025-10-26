@@ -28,15 +28,11 @@ class EditPet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final species = pets.specieId;
-    final dropdownValueSpecies =
-        pets.specieId == 'f1131363-3b9f-40ee-9a89-0573ee274a10'
-            ? isArabic()
-                ? 'قطة'
-                : 'Cat'
-            : isArabic()
-            ? 'كلب'
-            : 'Dog';
+  final species = pets.specieId ?? '';
+  final dropdownValueSpecies =
+    (species == PetCubit.catSpeciesId)
+      ? 'Cat'
+      : (species == PetCubit.dogSpeciesId ? 'Dog' : 'Pet');
 
     return MultiBlocProvider(
       providers: [
@@ -44,12 +40,12 @@ class EditPet extends StatelessWidget {
 
         BlocProvider(
           create:
-              (context) =>
+                  (context) =>
                   sl<PetCubit>()
                     ..initEdit(pets)
-                    ..init(dropdownValueSpecies, species ?? '')
+                    ..init(dropdownValueSpecies, species)
                     ..getAllSpecies()
-                    ..getBreedsBySpecies(species ?? ''),
+                    ..getBreedsBySpecies(species),
         ),
       ],
       child: BlocConsumer<SwitchProfileCubit, SwitchProfileState>(
