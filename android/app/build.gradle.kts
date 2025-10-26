@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("kotlin-android") // or: id("org.jetbrains.kotlin.android")
+    id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -21,23 +21,14 @@ android {
 
     defaultConfig {
         applicationId = "com.softicare.squeak"
-        minSdk = 21  // Explicitly set to API 21 (Android 5.0) for broader device support
+        minSdk = 21
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         multiDexEnabled = true
+
         ndk {
             abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86_64"))
-        }
-    }
-
-    // Prefer loading from key.properties, but keeping your direct file config works too.
-    signingConfigs {
-        create("release") {
-            storeFile = file("/Users/mac/StudioProjects/SqueakFlutter/android/new-upload-key.jks")
-            storePassword = "Squeak"   // ⚠️ move to key.properties/CI secrets later
-            keyAlias = "upload"        // ensure this is the alias with SHA1 18:1C:...:AF
-            keyPassword = "Squeak"     // ⚠️ move to key.properties/CI secrets later
         }
     }
 
@@ -45,12 +36,12 @@ android {
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
+            // Use debug keystore for testing (automatically available)
+            signingConfig = signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // ✅ Use the release signing config (NOT debug!)
-            signingConfig = signingConfigs.getByName("release")
         }
     }
 }

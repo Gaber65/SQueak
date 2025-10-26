@@ -12,21 +12,25 @@ class PetProfileIncompleteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final Size size = MediaQuery.of(context).size;
+    final double scale = size.width / 375;
 
     return Scaffold(
       backgroundColor: isDark ? Colors.grey[900] : Colors.grey[50],
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 40),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: EdgeInsets.all(24.0 * scale),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+              SizedBox(height: 40 * scale),
 
               // Main Card
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(24 * scale),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   gradient: LinearGradient(
@@ -49,11 +53,11 @@ class PetProfileIncompleteScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Column(
+                    child: Column(
                   children: [
                     // Warning Icon
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16 * scale),
                       decoration: BoxDecoration(
                         color: ColorManager.primaryColor.withOpacity(0.1),
                         shape: BoxShape.circle,
@@ -64,41 +68,41 @@ class PetProfileIncompleteScreen extends StatelessWidget {
                       ),
                       child: Icon(
                         Icons.warning_rounded,
-                        size: 40,
+                        size: 40 * scale,
                         color: ColorManager.primaryColor,
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20 * scale),
 
                     // Title
                     Text(
                       S.of(context).profile_incomplete,
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 24 * scale,
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black,
                       ),
                     ),
 
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8 * scale),
 
                     // Description
                     Text(
                       S.of(context).profile_incomplete_desc,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 16 * scale,
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
                       ),
                     ),
 
-                    const SizedBox(height: 30),
+                    SizedBox(height: 30 * scale),
 
                     // Missing Fields Section
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16 * scale),
                       decoration: BoxDecoration(
                         color: ColorManager.primaryColor.withOpacity(0.05),
                         borderRadius: BorderRadius.circular(12),
@@ -114,17 +118,17 @@ class PetProfileIncompleteScreen extends StatelessWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: ColorManager.primaryColor,
-                              fontSize: 16,
+                              fontSize: 16 * scale,
                             ),
                           ),
 
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12 * scale),
                           ..._buildMissingFieldsList(context, pet),
                         ],
                       ),
                     ),
 
-                    const SizedBox(height: 30),
+                    SizedBox(height: 30 * scale),
 
                     // Action Buttons
                     Row(
@@ -133,7 +137,7 @@ class PetProfileIncompleteScreen extends StatelessWidget {
                           child: OutlinedButton(
                             onPressed: () => navigateToScreen(context, LayoutScreen()),
                             style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              padding: EdgeInsets.symmetric(vertical: 16 * scale),
                               side: BorderSide(
                                 color: Colors.grey.withOpacity(0.5),
                               ),
@@ -153,7 +157,7 @@ class PetProfileIncompleteScreen extends StatelessWidget {
                           ),
                         ),
 
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12 * scale),
 
                         Expanded(
                           child: ElevatedButton(
@@ -165,7 +169,7 @@ class PetProfileIncompleteScreen extends StatelessWidget {
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: ColorManager.primaryColor,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              padding: EdgeInsets.symmetric(vertical: 16 * scale),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -185,12 +189,12 @@ class PetProfileIncompleteScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: 20 * scale),
 
               // Features Section
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16 * scale),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Colors.blue.withOpacity(0.05),
@@ -201,12 +205,12 @@ class PetProfileIncompleteScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.lock_open,
                           color: Colors.blue,
-                          size: 20,
+                          size: 20 * scale,
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8 * scale),
                         Text(
                           S.of(context).features_unlock,
                           style: const TextStyle(
@@ -216,7 +220,7 @@ class PetProfileIncompleteScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12 * scale),
                     _buildFeatureItem(
                       context,
                       S.of(context).pet_friendship,
@@ -244,7 +248,8 @@ class PetProfileIncompleteScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 
   List<Widget> _buildMissingFieldsList(BuildContext context, PetEntities pet) {
@@ -308,12 +313,13 @@ class PetProfileIncompleteScreen extends StatelessWidget {
     if (missingFields.isEmpty) {
       missingFields.add(
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
+          padding: EdgeInsets.symmetric(vertical: 4 * (MediaQuery.of(context).size.width / 375)),
           child: Text(
             S.of(context).all_required_complete,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.green,
               fontWeight: FontWeight.w500,
+              fontSize: 14 * (MediaQuery.of(context).size.width / 375),
             ),
           ),
         ),
@@ -328,29 +334,30 @@ class PetProfileIncompleteScreen extends StatelessWidget {
     String fieldName,
     IconData icon,
   ) {
+    final double _scale = MediaQuery.of(context).size.width / 375;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: EdgeInsets.symmetric(vertical: 6 * _scale),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: ColorManager.primaryColor),
-          const SizedBox(width: 8),
+          Icon(icon, size: 18 * _scale, color: ColorManager.primaryColor),
+          SizedBox(width: 8 * _scale),
           Expanded(
             child: Text(
               fieldName,
-              style: const TextStyle(color: ColorManager.primaryColor),
+              style: TextStyle(color: ColorManager.primaryColor, fontSize: 14 * _scale),
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            padding: EdgeInsets.symmetric(horizontal: 8 * _scale, vertical: 2 * _scale),
             decoration: BoxDecoration(
               color: ColorManager.primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
               S.of(context).required,
-              style: const TextStyle(
+              style: TextStyle(
                 color: ColorManager.primaryColor,
-                fontSize: 12,
+                fontSize: 12 * _scale,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -365,15 +372,16 @@ class PetProfileIncompleteScreen extends StatelessWidget {
     String feature,
     IconData icon,
   ) {
+    final double _scale = MediaQuery.of(context).size.width / 375;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: EdgeInsets.symmetric(vertical: 6 * _scale),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: Colors.blue),
-          const SizedBox(width: 8),
+          Icon(icon, size: 16 * _scale, color: Colors.blue),
+          SizedBox(width: 8 * _scale),
           Text(
             feature,
-            style: TextStyle(color: Colors.grey[700], fontSize: 14),
+            style: TextStyle(color: Colors.grey[700], fontSize: 14 * _scale),
           ),
         ],
       ),
