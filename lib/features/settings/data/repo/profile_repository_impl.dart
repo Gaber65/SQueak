@@ -21,24 +21,22 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<Either<Failure, Owner>> getOwnerData() async {
-    if (await networkInfo.isConnected) {
-      try {
-        final remoteOwner = await remoteDataSource.getOwnerData();
-        await localDataSource.cacheCountryId(remoteOwner.countryId);
-        return Right(remoteOwner);
-      } on Exception catch (e) {
-        return Left(
-          ServerFailure(
-            ErrorMessageModel(
-              message: e.toString(),
-              statusCode: 0,
-              errors: {},
-              success: false,
-            ),
+    try {
+      final remoteOwner = await remoteDataSource.getOwnerData();
+      await localDataSource.cacheCountryId(remoteOwner.countryId);
+      return Right(remoteOwner);
+    } on Exception catch (e) {
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: e.toString(),
+            statusCode: 0,
+            errors: {},
+            success: false,
           ),
-        );
-      }
-    } else {
+        ),
+      );
+    } catch (_) {
       return Left(
         ServerFailure(
           ErrorMessageModel(
@@ -60,29 +58,27 @@ class ProfileRepositoryImpl implements ProfileRepository {
     required String birthDate,
     required int gender,
   }) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final updatedOwner = await remoteDataSource.updateProfile(
-          fullName: fullName,
-          address: address,
-          imageName: imageName,
-          birthDate: birthDate,
-          gender: gender,
-        );
-        return Right(updatedOwner);
-      } on Exception catch (e) {
-        return Left(
-          ServerFailure(
-            ErrorMessageModel(
-              message: e.toString(),
-              statusCode: 0,
-              errors: {},
-              success: false,
-            ),
+    try {
+      final updatedOwner = await remoteDataSource.updateProfile(
+        fullName: fullName,
+        address: address,
+        imageName: imageName,
+        birthDate: birthDate,
+        gender: gender,
+      );
+      return Right(updatedOwner);
+    } on Exception catch (e) {
+      return Left(
+        ServerFailure(
+          ErrorMessageModel(
+            message: e.toString(),
+            statusCode: 0,
+            errors: {},
+            success: false,
           ),
-        );
-      }
-    } else {
+        ),
+      );
+    } catch (_) {
       return Left(
         ServerFailure(
           ErrorMessageModel(

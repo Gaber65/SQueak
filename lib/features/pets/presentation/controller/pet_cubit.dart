@@ -237,7 +237,11 @@ class PetCubit extends Cubit<PetState> {
 
     gender = pet.gender ?? 0;
     petId = pet.petId.toString();
-    specieId = pet.specieId.toString();
+  specieId = pet.specieId.toString();
+  dropdownValueSpeciesId = pet.specieId ?? '';
+  dropdownValueSpecies = (dropdownValueSpeciesId == dogSpeciesId)
+    ? 'Dog'
+    : (dropdownValueSpeciesId == catSpeciesId ? 'Cat' : 'Pet');
     spayed = pet.isSpayed ?? false;
     dropdownValueBreed = pet.breedId ?? '';
     emit(
@@ -255,7 +259,6 @@ class PetCubit extends Cubit<PetState> {
     );
   }
 
-  // Create a new pet
   Future<void> createPet() async {
     isLoading = true;
     emit(const PetCreateLoadingState());
@@ -430,6 +433,8 @@ class PetCubit extends Cubit<PetState> {
   void changeSpecies(String name, String id) {
     dropdownValueSpecies = name;
     dropdownValueSpeciesId = id;
+    // Keep specieId in sync so updates use the latest selected species.
+    specieId = id;
     final currentState =
         state is PetFormState ? state as PetFormState : _createFormState();
     emit(currentState.copyWith(speciesName: name, speciesId: id));
