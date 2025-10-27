@@ -44,7 +44,6 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
 
   @override
   Future<Either<Failure, MySupplier>> getSuppliers() async {
-    // REMOVED: Slow network check - Let Dio handle network errors
     try {
       final remoteSuppliers = await remoteDataSource.getSuppliers();
       return Right(remoteSuppliers);
@@ -66,7 +65,6 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
 
   @override
   Future<Either<Failure, List<Doctor>>> getDoctors(String clinicCode) async {
-    // REMOVED: Slow network check - Let Dio handle network errors
     try {
       final remoteDoctors = await remoteDataSource.getDoctors(clinicCode);
       return Right(remoteDoctors);
@@ -91,7 +89,6 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
     String clinicCode,
     String phone,
   ) async {
-    // REMOVED: Slow network check - Let Dio handle network errors
     try {
       final remoteClientClinic = await remoteDataSource.getClientInClinic(
         clinicCode,

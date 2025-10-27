@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/base_usecase/base_usecase.dart';
+import 'package:squeak/core/error/failure.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import 'package:squeak/features/layout/search/domain/entities/clinic_search_entity.dart';
 import 'package:squeak/features/layout/search/domain/entities/vet_client_search_entity.dart';
-import '../../../../../core/error/failure.dart';
 import '../../domain/usecase/follow_clinic_use_case.dart';
 import '../../domain/usecase/get_client_form_vet_use_case.dart';
 import '../../domain/usecase/get_search_list_use_case.dart';
