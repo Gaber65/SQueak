@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
-import 'package:squeak/core/service/global_widget/coming_soon_alert.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
+import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dart';
+import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 
 import '../../../../core/network/end_points.dart';
 
@@ -20,7 +21,7 @@ class FriendCard extends StatelessWidget {
 
     final cardColor = isDark ? Color(0xFF1E1E1E) : Colors.white;
     final shadowColor =
-    isDark ? Colors.black26 : Colors.black.withOpacity(0.05);
+        isDark ? Colors.black26 : Colors.black.withOpacity(0.05);
     final nameColor = isDark ? Colors.white : Colors.black87;
     final subTextColor = isDark ? Colors.grey[400]! : Colors.grey[600]!;
 
@@ -63,7 +64,7 @@ class FriendCard extends StatelessWidget {
                   children: [
                     Text(
                       pet.petName ?? '',
-                      style:  TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: nameColor,
@@ -74,7 +75,6 @@ class FriendCard extends StatelessWidget {
                           ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
                           : pet.breed?.enBreed ?? "",
                       style: TextStyle(fontSize: 14, color: subTextColor),
-
                     ),
                   ],
                 ),
@@ -96,7 +96,54 @@ class FriendCard extends StatelessWidget {
               ),
               child: ElevatedButton.icon(
                 onPressed: () {
-                  AnimatedComingSoonAlert.show(context);
+                  // Create ChatEntity from friend data
+                  final chat = ChatEntity(
+                    id: '', // Will be created when first message is sent
+                    isGroup: false,
+                    isPetChat: true,
+                    name: pet.petName ?? '',
+                    image: pet.imageName,
+                    groupImage: null,
+                    petId: pet.petId ?? '',
+                    matingId: '',
+                    completeMarriageStatues: false,
+                    createdAt: DateTime.now().toIso8601String(),
+                    lastMessageSendDateTime: DateTime.now().toIso8601String(),
+                    isBlock: false,
+                    isBlockedByMe: false,
+                    isBlockedByOther: false,
+                  );
+
+                  // Navigate to chat screen
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(milliseconds: 500),
+                      pageBuilder:
+                          (context, animation, secondaryAnimation) =>
+                              MatingChatDetailScreen(chat: chat),
+                      transitionsBuilder: (
+                        context,
+                        animation,
+                        secondaryAnimation,
+                        child,
+                      ) {
+                        var begin = const Offset(1.0, 0.0);
+                        var end = Offset.zero;
+                        var curve = Curves.ease;
+
+                        var tween = Tween(
+                          begin: begin,
+                          end: end,
+                        ).chain(CurveTween(curve: curve));
+                        var offsetAnimation = animation.drive(tween);
+                        return SlideTransition(
+                          position: offsetAnimation,
+                          child: child,
+                        );
+                      },
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
@@ -107,9 +154,9 @@ class FriendCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                icon:  Icon(IconlyBold.chat, size: 18),
-                label:  Text(
-                   isArabic() ? 'الرسالة':  'Message',
+                icon: Icon(IconlyBold.chat, size: 18),
+                label: Text(
+                  isArabic() ? 'الرسالة' : 'Message',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
               ),

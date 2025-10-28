@@ -6,6 +6,8 @@ import 'package:squeak/features/friendship/presentation/controllers/pet_friend_s
 import 'package:squeak/features/friendship/presentation/widgets/friends_tab.dart';
 import 'package:squeak/features/friendship/presentation/widgets/profile_switch_notification_screen.dart';
 import 'package:squeak/features/friendship/presentation/widgets/tab_bar_widget.dart';
+import 'package:squeak/features/friendship/presentation/widgets/request_filter_widget.dart';
+import 'package:squeak/features/friendship/presentation/widgets/empty_chats_widget.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
 
 import '../../../auth/get_started/presentation/widgets/find_friends/search_bar_widget.dart';
@@ -142,6 +144,13 @@ class _FriendsScreenState extends State<FriendsScreen> {
                       receivedCount: cubit.pendingRequests.length,
                       sentCount: cubit.sentRequests.length,
                     ),
+                    // Show filter buttons when Requests tab is selected
+                    if (cubit.selectedTab == 2)
+                      RequestFilterWidget(
+                        selectedFilter: cubit.requestFilter,
+                        sentCount: cubit.sentRequests.length,
+                        receivedCount: cubit.pendingRequests.length,
+                      ),
                     Expanded(child: buildTabContent(context, cubit)),
                   ],
                 );
@@ -162,9 +171,14 @@ class _FriendsScreenState extends State<FriendsScreen> {
       case 1:
         return SuggestedTab(suggested: state.suggestedFriends);
       case 2:
-        return ReceivedTab(requests: state.pendingRequests);
+        // Show either received or sent based on filter
+        if (state.requestFilter == 'received') {
+          return ReceivedTab(requests: state.pendingRequests);
+        } else {
+          return SentTab(requests: state.sentRequests);
+        }
       case 3:
-        return SentTab(requests: state.sentRequests);
+        return const EmptyChatsWidget();
       default:
         return FriendsTab(friends: state.friends);
     }

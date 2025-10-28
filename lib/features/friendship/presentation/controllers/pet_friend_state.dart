@@ -106,3 +106,9 @@ class ChangeTab extends PetFriendsState {
 
   ChangeTab({required this.tabIndex});
 }
+
+class ChangeRequestFilter extends PetFriendsState {
+  final String filter; // 'sent' or 'received'
+
+  ChangeRequestFilter({required this.filter});
+}

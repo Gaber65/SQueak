@@ -39,10 +39,16 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
   List<PetEntities> sentRequests = [];
 
   int selectedTab = 0;
+  String requestFilter = 'received'; // 'sent' or 'received'
 
   void changeTab(int tabIndex) {
     selectedTab = tabIndex;
     emit(ChangeTab(tabIndex: tabIndex));
+  }
+
+  void changeRequestFilter(String filter) {
+    requestFilter = filter;
+    emit(ChangeRequestFilter(filter: filter));
   }
 
   Future<void> getFriends({required String petId}) async {
