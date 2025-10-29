@@ -16,7 +16,59 @@ class ProfileSwitchNotificationScreen extends StatefulWidget {
 }
 
 class _ProfileSwitchNotificationScreenState
-    extends State<ProfileSwitchNotificationScreen> {
+    extends State<ProfileSwitchNotificationScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _pulseAnimation;
+  bool _isAnimationStopped = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _handleProfileButtonTap() {
+    // Stop the animation permanently
+    if (!_isAnimationStopped) {
+      setState(() {
+        _isAnimationStopped = true;
+      });
+      _animationController.stop();
+    }
+    
+    // Close the dialog after a short delay to allow profile switcher to show
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -61,61 +113,137 @@ class _ProfileSwitchNotificationScreenState
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Stack(
-                          alignment: Alignment.center,
-                          clipBehavior: Clip.none,
-                          children: [
-                            // Profile button container
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color:
-                                      isDark
-                                          ? Colors.grey.shade800
-                                          : Colors.grey.shade200,
-                                  width: 2,
+                        AnimatedBuilder(
+                          animation: _animationController,
+                          builder: (context, child) {
+                            return Stack(
+                              alignment: Alignment.center,
+                              clipBehavior: Clip.none,
+                              children: [
+                                // Pulsing glow effect
+                                Transform.scale(
+                                  scale: _pulseAnimation.value,
+                                  child: Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: RadialGradient(
+                                        colors: [
+                                          ColorManager.primaryColor
+                                              .withOpacity(0.3),
+                                          ColorManager.primaryColor
+                                              .withOpacity(0.0),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: ColorManager.primaryColor
-                                        .withOpacity(0.3),
-                                    blurRadius: 12,
-                                    offset: const Offset(0, 4),
+
+                                // Profile button container with scale animation
+                                Transform.scale(
+                                  scale: _scaleAnimation.value,
+                                  child: GestureDetector(
+                                    onTap: _handleProfileButtonTap,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: ColorManager.primaryColor,
+                                          width: 3,
+                                        ),
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: ColorManager.primaryColor
+                                                .withOpacity(0.5),
+                                            blurRadius: 15,
+                                            spreadRadius: 2,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: AbsorbPointer(
+                                        absorbing: false,
+                                        child: _StaticProfileButton(
+                                          isDark: isDark,
+                                          image: cubit.image,
+                                          name: cubit.name,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                // Swap icon positioned at bottom center with bounce
+                                Positioned(
+                                  bottom: -8,
+                                  child: Transform.translate(
+                                    offset: Offset(
+                                        0,
+                                        -5 *
+                                            (_scaleAnimation.value -
+                                                1)), // Bounce effect
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                          colors: [
+                                            ColorManager.primaryColor,
+                                            Colors.pink
+                                          ],
+                                        ),
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: ColorManager.primaryColor
+                                                .withOpacity(0.5),
+                                            blurRadius: 8,
+                                            spreadRadius: 1,
+                                          ),
+                                        ],
+                                      ),
+                                      padding: const EdgeInsets.all(6),
+                                      child: const Icon(
+                                        Icons.swap_horiz,
+                                        color: Colors.white,
+                                        size: 22,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        // "Tap to Switch" indicator
+                        AnimatedBuilder(
+                          animation: _animationController,
+                          builder: (context, child) {
+                            return Opacity(
+                              opacity: 0.5 + (_scaleAnimation.value - 1) * 5,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.touch_app,
+                                    size: 16,
+                                    color: ColorManager.primaryColor,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    isArabic()
+                                        ? "اضغط للتبديل"
+                                        : "Tap to Switch",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: ColorManager.primaryColor,
+                                    ),
                                   ),
                                 ],
                               ),
-                              child: _StaticProfileButton(
-                                isDark: isDark,
-                                image: cubit.image,
-                                name: cubit.name,
-                              ),
-                            ),
-
-                            // Swap icon positioned at bottom center
-                            Positioned(
-                              bottom: -8, // move slightly below the circle
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: ColorManager.primaryColor
-                                          .withOpacity(0.3),
-                                      blurRadius: 6,
-                                    ),
-                                  ],
-                                ),
-                                padding: const EdgeInsets.all(4),
-                                child: Icon(
-                                  Icons.swap_horiz,
-                                  color: ColorManager.primaryColor,
-                                  size: 22,
-                                ),
-                              ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
                       ],
                     );

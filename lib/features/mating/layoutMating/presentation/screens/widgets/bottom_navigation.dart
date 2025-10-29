@@ -31,9 +31,9 @@ class BottomNavigation extends StatelessWidget {
       onTap: onTap,
       icons: [
         IconlyLight.home,
+        IconlyLight.profile,
         IconlyLight.user,
-        IconlyLight.heart,
-        IconlyLight.message,
+        IconlyLight.chat,
       ],
       activeIndex: currentIndex,
     );
