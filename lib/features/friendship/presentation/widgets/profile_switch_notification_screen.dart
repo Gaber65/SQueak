@@ -32,17 +32,11 @@ class _ProfileSwitchNotificationScreenState
     )..repeat(reverse: true);
 
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
 
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
   }
 
@@ -53,15 +47,13 @@ class _ProfileSwitchNotificationScreenState
   }
 
   void _handleProfileButtonTap() {
-    // Stop the animation permanently
     if (!_isAnimationStopped) {
       setState(() {
         _isAnimationStopped = true;
       });
       _animationController.stop();
     }
-    
-    // Close the dialog after a short delay to allow profile switcher to show
+
     Future.delayed(const Duration(milliseconds: 100), () {
       if (mounted) {
         Navigator.of(context).pop();
@@ -120,7 +112,6 @@ class _ProfileSwitchNotificationScreenState
                               alignment: Alignment.center,
                               clipBehavior: Clip.none,
                               children: [
-                                // Pulsing glow effect
                                 Transform.scale(
                                   scale: _pulseAnimation.value,
                                   child: Container(
@@ -130,17 +121,17 @@ class _ProfileSwitchNotificationScreenState
                                       shape: BoxShape.circle,
                                       gradient: RadialGradient(
                                         colors: [
-                                          ColorManager.primaryColor
-                                              .withOpacity(0.3),
-                                          ColorManager.primaryColor
-                                              .withOpacity(0.0),
+                                          ColorManager.primaryColor.withOpacity(
+                                            0.3,
+                                          ),
+                                          ColorManager.primaryColor.withOpacity(
+                                            0.0,
+                                          ),
                                         ],
                                       ),
                                     ),
                                   ),
                                 ),
-
-                                // Profile button container with scale animation
                                 Transform.scale(
                                   scale: _scaleAnimation.value,
                                   child: GestureDetector(
@@ -173,22 +164,19 @@ class _ProfileSwitchNotificationScreenState
                                     ),
                                   ),
                                 ),
-
-                                // Swap icon positioned at bottom center with bounce
                                 Positioned(
                                   bottom: -8,
                                   child: Transform.translate(
                                     offset: Offset(
-                                        0,
-                                        -5 *
-                                            (_scaleAnimation.value -
-                                                1)), // Bounce effect
+                                      0,
+                                      -5 * (_scaleAnimation.value - 1),
+                                    ), 
                                     child: Container(
                                       decoration: BoxDecoration(
                                         gradient: const LinearGradient(
                                           colors: [
                                             ColorManager.primaryColor,
-                                            Colors.pink
+                                            Colors.pink,
                                           ],
                                         ),
                                         shape: BoxShape.circle,
@@ -351,7 +339,6 @@ class _ProfileSwitchNotificationScreenState
   }
 }
 
-/// Static Profile Button (no animation)
 class _StaticProfileButton extends StatelessWidget {
   final bool isDark;
   final String? image;

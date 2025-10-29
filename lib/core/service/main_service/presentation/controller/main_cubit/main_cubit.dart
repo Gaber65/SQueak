@@ -63,10 +63,6 @@ class MainCubit extends Cubit<MainState> {
     }
   }
 
-  // Token methods
-
-
-  // Change language method
   void setLangInAPI(int langMode) async {
     emit(AppChangeModeState());
     final languageEntity = LanguageEntity(language: langMode);
@@ -87,7 +83,6 @@ class MainCubit extends Cubit<MainState> {
       emit(SaveTokenError());
     }
   }
-// في MainCubit
 void resetState() {
   isNotificationEnabled = false;
   emit(MainInitial());
@@ -129,7 +124,6 @@ void resetState() {
     }
   }
   ImageEntity? modelImage;
-  // File Upload methods
   Future<void> getGlobalImage(File file, UploadPlace uploadPlace) async {
     emit(ImageHelperLoading());
     final result = await manageUploadUseCase(

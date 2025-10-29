@@ -5,7 +5,7 @@ import 'core/service/service_locator/locatore_export_path.dart';
 
 Future<void> main() async {
 
-  Bloc.observer = MyBlocObserver(); // <--- هنا
+  Bloc.observer = MyBlocObserver();
 
   await InitFunctions.initialize();
 
