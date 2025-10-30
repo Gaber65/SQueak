@@ -4293,6 +4293,36 @@ class S {
       args: [],
     );
   }
+
+  /// `You won't receive messages anymore from this user.`
+  String get youWontReceiveMessagesAnymore {
+    return Intl.message(
+      'You won\'t receive messages anymore from this user.',
+      name: 'youWontReceiveMessagesAnymore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Do you want to block`
+  String get wantBlockUser {
+    return Intl.message(
+      'Do you want to block',
+      name: 'wantBlockUser',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finish`
+  String get finish {
+    return Intl.message('Finish', name: 'finish', desc: '', args: []);
+  }
+
+  /// `Share Post`
+  String get sharePost {
+    return Intl.message('Share Post', name: 'sharePost', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -514,8 +514,11 @@
   "unblockUser":"Unblock User",
   "ratingMating": "Rating Mating",
   "nameCannotBeEmpty": "Name cannot be empty",
-  "areYouSureYouWantToUnblock": "Are you sure you want to unblock this user?"
-  
+  "areYouSureYouWantToUnblock": "Are you sure you want to unblock this user?",
+  "youWontReceiveMessagesAnymore": "You won't receive messages anymore from this user.",
+  "wantBlockUser": "Do you want to block",
+  "finish": "Finish",
+  "sharePost": "Share Post"
 
 
 }

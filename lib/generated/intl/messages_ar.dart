@@ -168,7 +168,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "birthdate_validation": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال تاريخ ميلادك",
     ),
-    "block": MessageLookupByLibrary.simpleMessage("محظور"),
+    "block": MessageLookupByLibrary.simpleMessage("حظر"),
     "blockChat": MessageLookupByLibrary.simpleMessage("حظر الدردشة"),
     "blockChatConfirmation": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد من أنك تريد حظر هذه الدردشة؟ لن تتمكن من إرسال أو استقبال الرسائل.",
@@ -415,6 +415,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "findPotentialMates": MessageLookupByLibrary.simpleMessage(
       "ابحث عن صديقك الصغير...",
     ),
+    "finish": MessageLookupByLibrary.simpleMessage("إنهاء"),
     "finishMating": MessageLookupByLibrary.simpleMessage("إنهاء التزاوج"),
     "finishMatingConfirmation": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد من أنك تريد إنهاء التزاوج؟ هذا سيقوم بأرشفة الدردشة.",
@@ -787,6 +788,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "settings": MessageLookupByLibrary.simpleMessage("الإعدادات"),
     "sex": MessageLookupByLibrary.simpleMessage("الجنس"),
     "shareApp": MessageLookupByLibrary.simpleMessage("مشاركة التطبيق"),
+    "sharePost": MessageLookupByLibrary.simpleMessage("مشاركة المنشور"),
     "shareYourThoughts": MessageLookupByLibrary.simpleMessage("شارك أفكارك"),
     "sharingInfo": MessageLookupByLibrary.simpleMessage("مشاركة معلوماتك"),
     "sharingInfoDesc": MessageLookupByLibrary.simpleMessage(
@@ -909,6 +911,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "waitingForResponse": MessageLookupByLibrary.simpleMessage(
       "في انتظار الرد...",
     ),
+    "wantBlockUser": MessageLookupByLibrary.simpleMessage("هل تريد حظر"),
     "welcomeSubtitle": MessageLookupByLibrary.simpleMessage(
       "ابحث عن الشريك المثالي لصديقك الصغير. تواصل، تحدث، وكون عائلة سعيدة معًا.",
     ),
@@ -916,6 +919,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "مرحبًا بك في سكويك!",
     ),
     "yes": MessageLookupByLibrary.simpleMessage("نعم"),
+    "youWontReceiveMessagesAnymore": MessageLookupByLibrary.simpleMessage(
+      "لن تتلقى رسائل منه بعد الآن",
+    ),
     "yourAppointments": MessageLookupByLibrary.simpleMessage("مواعيدك"),
     "yourClinic": MessageLookupByLibrary.simpleMessage("عيادات"),
     "yourConsent": MessageLookupByLibrary.simpleMessage("موافقتك"),

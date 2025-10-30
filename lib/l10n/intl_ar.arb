@@ -404,7 +404,7 @@
   "matingActivity": "نشاط التزاوج",
   "noReceivedRequestsSub": "عندما تتلقى طلبات التزاوج، ستظهر هنا",
   "AllChats": "جميع المحادثات",
-  "block": "محظور",
+  "block": "حظر",
 
   "matingChats": "دردشات التزاوج",
   "renameChat": "إعادة تسمية الدردشة",
@@ -503,8 +503,12 @@
   "unblockUser": "إلغاء حظر المستخدم",
   "ratingMating": "تقييم التزاوج",
   "nameCannotBeEmpty": "لا يمكن أن يكون الاسم فارغًا",
-  "areYouSureYouWantToUnblock": "هل أنت متأكد أنك تريد إلغاء حظر"
- 
+  "areYouSureYouWantToUnblock": "هل أنت متأكد أنك تريد إلغاء حظر",
+  "youWontReceiveMessagesAnymore": "لن تتلقى رسائل منه بعد الآن",
+  "wantBlockUser": "هل تريد حظر",
+  "finish": "إنهاء",
+  "sharePost": "مشاركة المنشور"
+
 
 
   

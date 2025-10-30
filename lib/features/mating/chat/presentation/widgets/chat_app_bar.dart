@@ -575,7 +575,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       Row(
                         children: [
                           Text(
-                            'Share post',
+                            S.of(context).sharePost,
                             style: const TextStyle(color: Colors.grey),
                           ),
                           const Spacer(),
@@ -608,8 +608,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                                   horizontal: 20,
                                 ),
                               ),
-                              child: const Text(
-                                'Cancel',
+                              child: Text(
+                                S.of(context).cancel,
                                 style: TextStyle(fontWeight: FontWeight.w500),
                               ),
                             ),
@@ -647,8 +647,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                                 ),
                                 elevation: 2,
                               ),
-                              child: const Text(
-                                'Finish',
+                              child: Text(
+                                S.of(context).finish,
                                 style: TextStyle(fontWeight: FontWeight.w500),
                               ),
                             ),
@@ -694,7 +694,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                 const SizedBox(height: 16),
                 // Title
                 Text(
-                  'Block ${widget.chat.name}?',
+                  '${S.of(context).wantBlockUser} ${widget.chat.name}',
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -704,7 +704,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                 const SizedBox(height: 8),
                 // Description
                 Text(
-                  'You won\'t receive messages anymore',
+                  S.of(context).youWontReceiveMessagesAnymore,
                   style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                   textAlign: TextAlign.center,
                 ),
@@ -723,8 +723,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  'Cancel',
+                child: Text(
+                  S.of(context).cancel,
                   style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
               ),
@@ -755,8 +755,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  'Block',
+                child: Text(
+                  S.of(context).blockUser,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

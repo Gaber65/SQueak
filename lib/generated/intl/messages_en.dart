@@ -433,6 +433,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "findPotentialMates": MessageLookupByLibrary.simpleMessage(
       "Search for pets...",
     ),
+    "finish": MessageLookupByLibrary.simpleMessage("Finish"),
     "finishMating": MessageLookupByLibrary.simpleMessage("Finish Mating"),
     "finishMatingConfirmation": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to finish mating? This will archive the chat.",
@@ -809,6 +810,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "sex": MessageLookupByLibrary.simpleMessage("Sex"),
     "shareApp": MessageLookupByLibrary.simpleMessage("Share App"),
+    "sharePost": MessageLookupByLibrary.simpleMessage("Share Post"),
     "shareYourThoughts": MessageLookupByLibrary.simpleMessage(
       "Share Your Thoughts",
     ),
@@ -952,6 +954,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "waitingForResponse": MessageLookupByLibrary.simpleMessage(
       "Waiting for response...",
     ),
+    "wantBlockUser": MessageLookupByLibrary.simpleMessage(
+      "Do you want to block",
+    ),
     "welcomeSubtitle": MessageLookupByLibrary.simpleMessage(
       "Find the perfect match for your beloved pets. Connect, chat, and create beautiful families together.",
     ),
@@ -959,6 +964,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Welcome to Squeak!",
     ),
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
+    "youWontReceiveMessagesAnymore": MessageLookupByLibrary.simpleMessage(
+      "You won\'t receive messages anymore from this user.",
+    ),
     "yourAppointments": MessageLookupByLibrary.simpleMessage("Appointments"),
     "yourClinic": MessageLookupByLibrary.simpleMessage("Clinics"),
     "yourConsent": MessageLookupByLibrary.simpleMessage("Your Consent"),
