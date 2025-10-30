@@ -403,6 +403,7 @@ class ServiceLocator {
     sl.registerLazySingleton(() => GetBlockedFriendsUseCase(sl()));
     sl.registerLazySingleton(() => GetSentRequestsUseCase(sl()));
     sl.registerLazySingleton(() => SearchFriendsUseCase(sl()));
+    sl.registerLazySingleton(() => SendFriendMessageUseCase(sl()));
 
     /// 🔹 Data sources
     sl.registerLazySingleton<PetFriendRemoteDataSource>(

@@ -4,6 +4,7 @@ import 'package:squeak/features/friendship/domain/entities/friend_request_stats.
 import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
 import 'package:squeak/features/friendship/domain/usecases/update_pet_request.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
+import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../../core/service/service_locator/locatore_export_path.dart';
 
@@ -37,6 +38,7 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
   List<PetEntities> suggestedFriends = [];
   List<PetFriendRequestEntity> pendingRequests = [];
   List<PetEntities> sentRequests = [];
+  List<ChatEntity> chats = [];
 
   int selectedTab = 0;
   String requestFilter = 'received'; // 'sent' or 'received'
@@ -44,6 +46,8 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
   void changeTab(int tabIndex) {
     selectedTab = tabIndex;
     emit(ChangeTab(tabIndex: tabIndex));
+    if (tabIndex == 3) {
+    }
   }
 
   void changeRequestFilter(String filter) {
@@ -172,5 +176,23 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     result.fold((_) => emit(FriendUnblockFailed()), (_) {
       emit(FriendUnblocked(pet: pet));
     });
+  }
+
+  /// Load chats for the active pet
+  Future<void> loadChats({required String petId}) async {
+    emit(ChatsLoading());
+    
+    final getChatsUseCase = sl<GetChatsUseCase>();
+    final result = await getChatsUseCase.call(petId);
+
+    result.fold(
+      (failure) {
+       emit(ChatsLoadFailed(message: failure.error.message));
+      },
+      (chatsList) {
+        chats = chatsList;
+        emit(ChatsLoaded(chats: chatsList));
+      },
+    );
   }
 }

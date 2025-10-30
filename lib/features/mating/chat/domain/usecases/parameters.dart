@@ -11,7 +11,9 @@ class SendMessageParameters {
   final String? video;
   final String? audio;
   final bool isRead;
-  final String conversationId;
+  final String? conversationId;
+  final String? fromPetId;
+  final String? toPetId;
 
   const SendMessageParameters({
     required this.description,
@@ -19,7 +21,9 @@ class SendMessageParameters {
     this.video,
     this.audio,
     this.isRead = true,
-    required this.conversationId,
+    this.conversationId,
+    this.fromPetId,
+    this.toPetId,
   });
 
   Map<String, dynamic> toJson() {
@@ -30,6 +34,8 @@ class SendMessageParameters {
       'audio': audio,
       'isRead': isRead,
       'convesationId': conversationId,
+      if (fromPetId != null) 'fromPetId': fromPetId,
+      if (toPetId != null) 'toPetId': toPetId,
     };
   }
 }

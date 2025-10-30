@@ -1,5 +1,6 @@
 import 'package:squeak/features/friendship/domain/entities/friend_request_stats.dart';
 import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
+import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 abstract class PetFriendsState {}
@@ -111,4 +112,17 @@ class ChangeRequestFilter extends PetFriendsState {
   final String filter; // 'sent' or 'received'
 
   ChangeRequestFilter({required this.filter});
+}
+
+// Chat states
+class ChatsLoading extends PetFriendsState {}
+
+class ChatsLoaded extends PetFriendsState {
+  final List<ChatEntity> chats;
+  ChatsLoaded({required this.chats});
+}
+
+class ChatsLoadFailed extends PetFriendsState {
+  final String message;
+  ChatsLoadFailed({required this.message});
 }

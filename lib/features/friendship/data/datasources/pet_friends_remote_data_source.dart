@@ -5,6 +5,7 @@ import 'package:squeak/features/friendship/domain/usecases/cancel_friendship.dar
 import 'package:squeak/features/friendship/domain/usecases/send_pet_request.dart';
 import 'package:squeak/features/friendship/domain/usecases/unblock_friend.dart';
 import 'package:squeak/features/friendship/domain/usecases/update_pet_request.dart';
+import 'package:squeak/features/friendship/domain/entities/send_friend_message_parameters.dart';
 import 'package:squeak/features/pets/data/models/pet_model.dart';
 
 abstract class PetFriendRemoteDataSource {
@@ -23,15 +24,18 @@ abstract class PetFriendRemoteDataSource {
     int? pageSize,
   });
   Future<List<PetData>> getSentRequests(String myPetId);
+  Future<Map<String, dynamic>> sendFriendMessage(
+    SendFriendPetMessageParameters params,
+  );
 }
 
 class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
   /// 🔹 Generic handler
   /// 🔹 Generic handler
   Future<T> _handleRequest<T>(
-      Future<Response> Function() request,
-      T Function(dynamic json) fromJson,
-      ) async {
+    Future<Response> Function() request,
+    T Function(dynamic json) fromJson,
+  ) async {
     try {
       final result = await request();
       // print(result.data);
@@ -40,9 +44,8 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
       final data = result.data['data'];
 
       // تحقق لو data Map وفيها key 'result'
-      final dynamic jsonToParse = (data is Map && data.containsKey('result'))
-          ? data['result']
-          : data;
+      final dynamic jsonToParse =
+          (data is Map && data.containsKey('result')) ? data['result'] : data;
 
       return fromJson(jsonToParse);
     } on DioException catch (e) {
@@ -51,7 +54,6 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
       );
     }
   }
-
 
   @override
   Future<bool> sendRequest(SendPetRequestParams params) async {
@@ -74,7 +76,7 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
           'petFriendShipRequestId': params.requestId,
         },
       ),
-          (json) => true,
+      (json) => true,
     );
   }
 
@@ -153,18 +155,40 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
       if (pageSize != null) "pageSize": pageSize.toString(),
     };
 
-    final uri = Uri.parse(searchFriendsEndPoint).replace(queryParameters: queryParams);
+    final uri = Uri.parse(
+      searchFriendsEndPoint,
+    ).replace(queryParameters: queryParams);
 
     return _handleRequest(
-          () => DioFinalHelper.getData(method: uri.toString()),
-          (json) => (json as List).map((e) => PetData.fromJson(e)).toList(),
+      () => DioFinalHelper.getData(method: uri.toString()),
+      (json) => (json as List).map((e) => PetData.fromJson(e)).toList(),
     );
   }
+
   @override
   Future<List<PetData>> getSentRequests(String myPetId) async {
     return _handleRequest(
       () => DioFinalHelper.getData(method: "$getSentRequestsEndPoint$myPetId"),
       (json) => (json as List).map((e) => PetData.fromJson(e)).toList(),
     );
+  }
+
+  @override
+  Future<Map<String, dynamic>> sendFriendMessage(
+    SendFriendPetMessageParameters params,
+  ) async {
+    try {
+      final data = params.toJson();
+
+      final response = await DioFinalHelper.postData(
+        method: sendMassageEndPoint,
+        data: data,
+      );
+      return response.data['data'] as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw ServerException(
+        errorMessageModel: ErrorMessageModel.fromJson(e.response?.data),
+      );
+    }
   }
 }

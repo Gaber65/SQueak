@@ -75,7 +75,7 @@ class EmptyChatsWidget extends StatelessWidget {
               // Description
               Text(
                 isArabic()
-                    ? 'ابدأ محادثة مع أصدقائك من الحيوانات الأليفة!\nستظهر جميع محادثاتك هنا.'
+                    ? 'ابدأ محادثة مع أصدقائك من الصغار الأليفة!\nستظهر جميع محادثاتك هنا.'
                     : 'Start chatting with your pet friends!\nAll your conversations will appear here.',
                 style: TextStyle(
                   fontSize: 16,
@@ -84,53 +84,7 @@ class EmptyChatsWidget extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
               const SizedBox(height: 32),
-              
-              // Coming soon badge
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      primaryColor.withOpacity(0.2),
-                      primaryColor.withOpacity(0.1),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: primaryColor.withOpacity(0.5),
-                    width: 2,
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.rocket_launch_rounded,
-                      color: primaryColor,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      isArabic() ? 'قريباً...' : 'Coming Soon...',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: primaryColor,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              
-              const SizedBox(height: 24),
-              
-              // Feature preview
               _buildFeatureItem(
                 icon: IconlyBold.send,
                 title: isArabic() ? 'رسائل فورية' : 'Instant Messaging',

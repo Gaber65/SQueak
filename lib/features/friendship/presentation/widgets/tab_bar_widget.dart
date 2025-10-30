@@ -10,6 +10,7 @@ class TabBarPetFriend extends StatelessWidget {
   final int suggestedCount;
   final int receivedCount;
   final int sentCount;
+  final int chatsCount;
 
   const TabBarPetFriend({
     super.key,
@@ -18,6 +19,7 @@ class TabBarPetFriend extends StatelessWidget {
     required this.suggestedCount,
     required this.receivedCount,
     required this.sentCount,
+    this.chatsCount = 0,
   });
 
   @override
@@ -72,9 +74,23 @@ class TabBarPetFriend extends StatelessWidget {
               _TabItem(
                 icon: IconlyBold.chat,
                 label: isArabic() ? 'المحادثات' : 'Chats',
-                count: 0,
+                count: chatsCount,
                 isSelected: selectedTab == 3,
-                onTap: () => context.read<PetFriendsCubit>().changeTab(3),
+                onTap: () {
+                  final cubit = context.read<PetFriendsCubit>();
+                  cubit.changeTab(3);
+                  
+                  // Load chats when Chats tab is clicked
+                  final switchProfileCubit = context.read<SwitchProfileCubit>();
+                  final activePet = switchProfileCubit.activeProfile?.pet;
+                  
+                  if (activePet != null && activePet.petId != null) {
+                  
+                    cubit.loadChats(petId: activePet.petId!);
+                  } else {
+                
+                  }
+                },
                 iconSize: iconSize,
                 fontSize: fontSize,
                 countSize: countSize,

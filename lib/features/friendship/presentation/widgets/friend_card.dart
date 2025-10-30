@@ -1,12 +1,14 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
+import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 
 import '../../../../core/network/end_points.dart';
 
@@ -96,16 +98,35 @@ class FriendCard extends StatelessWidget {
               ),
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // Create ChatEntity from friend data
+                  // Get current active pet (from pet)
+                  final switchProfileCubit = context.read<SwitchProfileCubit>();
+                  final activePet = switchProfileCubit.activeProfile?.pet;
+
+                  if (activePet == null || activePet.petId == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          isArabic()
+                              ? 'لا يوجد صغير أليف نشط'
+                              : 'No active pet found',
+                        ),
+                      ),
+                    );
+                    return;
+                  }
+
+                  // Create ChatEntity from friend data with fromPetId and toPetId
                   final chat = ChatEntity(
-                    id: '', // Will be created when first message is sent
+                    id: '', // Empty - will be created when first message is sent
                     isGroup: false,
                     isPetChat: true,
                     name: pet.petName ?? '',
                     image: pet.imageName,
                     groupImage: null,
-                    petId: pet.petId ?? '',
-                    matingId: '',
+                    petId: pet.petId ?? '', // toPetId
+                    matingId:
+                        activePet
+                            .petId!, // Store fromPetId in matingId field temporarily
                     completeMarriageStatues: false,
                     createdAt: DateTime.now().toIso8601String(),
                     lastMessageSendDateTime: DateTime.now().toIso8601String(),
@@ -113,7 +134,6 @@ class FriendCard extends StatelessWidget {
                     isBlockedByMe: false,
                     isBlockedByOther: false,
                   );
-
                   // Navigate to chat screen
                   Navigator.push(
                     context,

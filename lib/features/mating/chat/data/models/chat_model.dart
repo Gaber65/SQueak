@@ -20,18 +20,18 @@ class ChatModel extends ChatEntity {
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
-      id: json['id'],
-      isGroup: json['isGroup'],
-      isPetChat: json['isPetChat'],
-      name: json['name'],
+      id: json['id'] ?? '',
+      isGroup: json['isGroup'] ?? false,
+      isPetChat: json['isPetChat'] ?? false,
+      name: json['name'] ?? 'Unknown',
       image: json['image'],
       groupImage: json['groupImage'],
-      petId: json['petId'],
-      matingId: json['matingId'],
-      completeMarriageStatues: json['completeMarriageStatues'],
-      createdAt:json['createdAt'],
-      lastMessageSendDateTime:json['lastMessageSendDateTime'],
-      isBlock: json['isBlock'],
+      petId: json['petId'] ?? '',
+      matingId: json['matingId'] ?? '',
+      completeMarriageStatues: json['completeMarriageStatues'] ?? false,
+      createdAt: json['createdAt'] ?? '',
+      lastMessageSendDateTime: json['lastMessageSendDateTime'] ?? '',
+      isBlock: json['isBlock'] ?? false,
       isBlockedByMe: json['isBlockedByMe'] ?? false,
       isBlockedByOther: json['isBlockedByOther'] ?? false,
     );

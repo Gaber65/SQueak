@@ -122,6 +122,7 @@ export 'package:squeak/features/friendship/domain/usecases/get_sent_requests.dar
 export 'package:squeak/features/friendship/domain/usecases/search_friends.dart';
 export 'package:squeak/features/friendship/domain/usecases/send_pet_request.dart';
 export 'package:squeak/features/friendship/domain/usecases/unblock_friend.dart';
+export 'package:squeak/features/friendship/domain/usecases/send_friend_message.dart';
 export 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 export 'package:squeak/features/profile_switch/domain/repositories/profile_type_base_repo.dart';
 export 'package:squeak/features/profile_switch/domain/usecase/get_active_profile.dart';

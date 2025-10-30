@@ -7,7 +7,7 @@ import 'package:squeak/features/friendship/presentation/widgets/friends_tab.dart
 import 'package:squeak/features/friendship/presentation/widgets/profile_switch_notification_screen.dart';
 import 'package:squeak/features/friendship/presentation/widgets/tab_bar_widget.dart';
 import 'package:squeak/features/friendship/presentation/widgets/request_filter_widget.dart';
-import 'package:squeak/features/friendship/presentation/widgets/empty_chats_widget.dart';
+import 'package:squeak/features/friendship/presentation/widgets/chats_tab.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
 
 import '../../../auth/get_started/presentation/widgets/find_friends/search_bar_widget.dart';
@@ -143,6 +143,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                       suggestedCount: cubit.suggestedFriends.length,
                       receivedCount: cubit.pendingRequests.length,
                       sentCount: cubit.sentRequests.length,
+                      chatsCount: cubit.chats.length,
                     ),
                     // Show filter buttons when Requests tab is selected
                     if (cubit.selectedTab == 2)
@@ -164,23 +165,23 @@ class _FriendsScreenState extends State<FriendsScreen> {
     );
   }
 
-  Widget buildTabContent(BuildContext context, PetFriendsCubit state) {
-    switch (state.selectedTab) {
+  Widget buildTabContent(BuildContext context, PetFriendsCubit cubit) {
+    switch (cubit.selectedTab) {
       case 0:
-        return FriendsTab(friends: state.friends);
+        return FriendsTab(friends: cubit.friends);
       case 1:
-        return SuggestedTab(suggested: state.suggestedFriends);
+        return SuggestedTab(suggested: cubit.suggestedFriends);
       case 2:
         // Show either received or sent based on filter
-        if (state.requestFilter == 'received') {
-          return ReceivedTab(requests: state.pendingRequests);
+        if (cubit.requestFilter == 'received') {
+          return ReceivedTab(requests: cubit.pendingRequests);
         } else {
-          return SentTab(requests: state.sentRequests);
+          return SentTab(requests: cubit.sentRequests);
         }
       case 3:
-        return const EmptyChatsWidget();
+        return const ChatsTab();
       default:
-        return FriendsTab(friends: state.friends);
+        return FriendsTab(friends: cubit.friends);
     }
   }
 }
