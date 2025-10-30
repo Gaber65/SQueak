@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/mating/layoutMating/presentation/screens/mating_layout.dart';
-import 'package:squeak/features/mating/layoutMating/presentation/screens/widgets/mating_pet_feature_switch.dart';
 import 'package:squeak/features/mating/layoutMating/presentation/screens/widgets/pet_profile_is_not_complete.dart';
 import 'package:squeak/features/mating/layoutMating/presentation/screens/widgets/reusable_profile_switcher_widget.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../../../core/utils/enums/profile_type.dart';
+import '../../../../friendship/presentation/widgets/profile_switch_notification_screen.dart';
 import '../../../../settings/persentaion/controller/setting_cubit.dart';
 
 class ProfileComplete extends StatelessWidget {
@@ -44,7 +44,7 @@ class ProfileComplete extends StatelessWidget {
                 appBar: AppBar(
                   centerTitle: true,
                   title: Text(S.of(context).switchTitle)),
-                body: ProfileSwitchMatingNotificationScreen(),
+                body: ProfileSwitchNotificationScreen(),
               );
             } else if (cubit.activeProfile!.pet!.isValid) {
               return MatingLayoutScreen();
@@ -64,7 +64,7 @@ class ProfileComplete extends StatelessWidget {
           } else {
             return Scaffold(
               appBar: AppBar(title: Text(S.of(context).switchTitle)),
-              body: ProfileSwitchMatingNotificationScreen(),
+              body: ProfileSwitchNotificationScreen(),
             );
           }
         },

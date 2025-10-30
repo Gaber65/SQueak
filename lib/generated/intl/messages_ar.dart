@@ -497,6 +497,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "matingRequestsFor": m3,
     "matingSession": MessageLookupByLibrary.simpleMessage("جلسة التزاوج"),
+    "matingShows": MessageLookupByLibrary.simpleMessage("عرض التزاوج"),
     "matingStarted": MessageLookupByLibrary.simpleMessage(
       "تم بدء التزاوج بنجاح",
     ),

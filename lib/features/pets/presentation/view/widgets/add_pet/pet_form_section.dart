@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../controller/pet_cubit.dart';
 // import 'spayed_toggle.dart'; // Hidden as requested
+import 'gender_selection.dart';
 import 'pet_name_field.dart';
 import 'breed_species_section.dart';
 // import 'gender_selection.dart'; // Hidden as requested
@@ -52,7 +53,7 @@ class PetFormSection extends StatelessWidget {
                   SizedBox(height: responsiveHeight(20, context)),
                   BreedSpeciesSection(cubit: cubit, isDark: isDark),
                   SizedBox(height: responsiveHeight(20, context)),
-                  // GenderSelection(cubit: cubit), // Hidden as requested
+                  GenderSelection(cubit: cubit), 
                   SizedBox(height: responsiveHeight(20, context)),
                   BirthdatePicker(cubit: cubit, isDark: isDark),
                   SizedBox(height: responsiveHeight(20, context)),

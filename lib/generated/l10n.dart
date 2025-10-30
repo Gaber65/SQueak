@@ -4168,6 +4168,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Mating Shows`
+  String get matingShows {
+    return Intl.message(
+      'Mating Shows',
+      name: 'matingShows',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

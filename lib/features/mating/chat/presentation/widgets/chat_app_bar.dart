@@ -811,131 +811,152 @@ class _ChatAppBarState extends State<ChatAppBar> {
     showDialog(
       context: context,
       builder:
-          (context) => Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            elevation: 8,
-            backgroundColor: Colors.white,
-            child: Container(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title
-                  Text(
-                    S.of(context).renameChat,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[800],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  const SizedBox(height: 24),
-
-                  // Text Field
-                  TextField(
-                    controller: controller,
-                    autofocus: true,
-                    textAlign: TextAlign.start,
-                    decoration: InputDecoration(
-                      hintText: S.of(context).enterNewName,
-                      filled: true,
-                      fillColor: Colors.grey[50],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide(color: Colors.grey[300]!),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide(
-                          color: Colors.blue[400]!,
-                          width: 2.0,
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 14.0,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  // Buttons Row
-                  Row(
+          (context) => StatefulBuilder(
+            builder: (context, setDialogState) {
+              bool isEmpty = controller.text.trim().isEmpty;
+              
+              return Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                elevation: 8,
+                backgroundColor: Colors.white,
+                child: Container(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Cancel Button
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.grey[700],
-                            side: BorderSide(color: Colors.grey[300]!),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
+                      // Title
+                      Text(
+                        S.of(context).renameChat,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      const SizedBox(height: 24),
+
+                      // Text Field
+                      TextField(
+                        controller: controller,
+                        autofocus: true,
+                        textAlign: TextAlign.start,
+                        onChanged: (value) {
+                          setDialogState(() {
+                            isEmpty = value.trim().isEmpty;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          hintText: S.of(context).enterNewName,
+                          filled: true,
+                          fillColor: Colors.grey[50],
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                            borderSide: BorderSide.none,
                           ),
-                          child: const Text(
-                            'Cancel',
-                            style: TextStyle(fontWeight: FontWeight.w500),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                            borderSide: BorderSide(
+                              color: Colors.blue[400]!,
+                              width: 2.0,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 14.0,
                           ),
                         ),
                       ),
-
-                      const SizedBox(width: 12),
-
-                      // Rename Button
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            String newName = controller.text.trim();
-                            if (newName.isNotEmpty) {
-                              widget.cubit
-                                  .renameChat(
-                                    RenameChatParameters(
-                                      conversationId: widget.chat.id,
-                                      petId: widget.chat.petId,
-                                      newName: newName,
-                                      conversationType: 1,
-                                    ),
-                                  )
-                                  .then((value) {
-                                    if (!context.mounted) return;
-                                    Navigator.pop(context, [value, newName]);
-                                  });
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue[600],
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            elevation: 2,
-                          ),
+                      if (isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0, left: 4.0),
                           child: Text(
-                            S.of(context).save,
-                            style: TextStyle(fontWeight: FontWeight.w500),
+                            'Name cannot be empty',
+                            style: TextStyle(
+                              color: Colors.red[600],
+                              fontSize: 12,
+                            ),
                           ),
                         ),
+
+                      const SizedBox(height: 32),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.grey[700],
+                                side: BorderSide(color: Colors.grey[300]!),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                              ),
+                              child:Text(
+                                S.of(context).cancel,
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(width: 12),
+
+                          // Rename Button
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: isEmpty
+                                  ? null
+                                  : () {
+                                      String newName = controller.text.trim();
+                                      if (newName.isNotEmpty) {
+                                        widget.cubit
+                                            .renameChat(
+                                              RenameChatParameters(
+                                                conversationId: widget.chat.id,
+                                                petId: widget.chat.petId,
+                                                newName: newName,
+                                                conversationType: 1,
+                                              ),
+                                            )
+                                            .then((value) {
+                                              if (!context.mounted) return;
+                                              Navigator.pop(context, [value, newName]);
+                                            });
+                                      }
+                                    },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: isEmpty ? Colors.grey[300] : Colors.blue[600],
+                                foregroundColor: isEmpty ? Colors.grey[500] : Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                elevation: isEmpty ? 0 : 2,
+                              ),
+                              child: Text(
+                                S.of(context).save,
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
     ).then((value) {
       if (value != null && value[0] == true) {
