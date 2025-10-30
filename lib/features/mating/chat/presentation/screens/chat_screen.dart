@@ -48,6 +48,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
   }
 
   @override
@@ -83,6 +87,12 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             );
           } else if (state is MessageSendError) {
             errorToast(context, state.message);
+          }
+          if (state is ChatMessagesLoaded) {
+            // Scroll to bottom when messages are loaded
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _scrollToBottom();
+            });
           }
           if (state is MatingFinishSuccess) {
             setState(() {
