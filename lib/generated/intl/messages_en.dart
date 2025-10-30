@@ -467,6 +467,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "helpShare": MessageLookupByLibrary.simpleMessage(
       "Help us to share the app",
     ),
+    "history": MessageLookupByLibrary.simpleMessage("History"),
     "hoursAgo": m2,
     "howWasMatingSession": MessageLookupByLibrary.simpleMessage(
       "How was the mating session?",
@@ -689,6 +690,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please select a rating",
     ),
     "poorExperience": MessageLookupByLibrary.simpleMessage("Poor Experience"),
+    "posts": MessageLookupByLibrary.simpleMessage("Posts"),
     "pregnancyNotificationInfo": MessageLookupByLibrary.simpleMessage(
       "You will receive pregnancy notifications if applicable",
     ),
@@ -716,6 +718,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "rateYourExperience": MessageLookupByLibrary.simpleMessage(
       "Rate Your Experience",
     ),
+    "ratings": MessageLookupByLibrary.simpleMessage("Ratings"),
     "receiveCode": MessageLookupByLibrary.simpleMessage(
       "Enter the received code",
     ),

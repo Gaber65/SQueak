@@ -445,6 +445,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "helpShare": MessageLookupByLibrary.simpleMessage(
       "ساعدنا في مشاركة التطبيق",
     ),
+    "history": MessageLookupByLibrary.simpleMessage("السجل"),
     "hoursAgo": m2,
     "howWasMatingSession": MessageLookupByLibrary.simpleMessage(
       "كيف كانت جلسة التزاوج؟",
@@ -670,6 +671,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "يرجى اختيار تقييم",
     ),
     "poorExperience": MessageLookupByLibrary.simpleMessage("تجربة سيئة"),
+    "posts": MessageLookupByLibrary.simpleMessage("المنشورات"),
     "pregnancyNotificationInfo": MessageLookupByLibrary.simpleMessage(
       "ستتلقى إشعارات الحمل إذا كانت تنطبق",
     ),
@@ -695,6 +697,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "qty": MessageLookupByLibrary.simpleMessage("الكمية"),
     "rate": MessageLookupByLibrary.simpleMessage("التقييم"),
     "rateYourExperience": MessageLookupByLibrary.simpleMessage("قيّم تجربتك"),
+    "ratings": MessageLookupByLibrary.simpleMessage("التقييمات"),
     "receiveCode": MessageLookupByLibrary.simpleMessage("ادخال الرمز المتلقي "),
     "receiveEmail": MessageLookupByLibrary.simpleMessage(
       "أدخل بريدك الإلكتروني\nلتلقي التعليمات لإعادة تعيين كلمة المرور الخاصة بك",

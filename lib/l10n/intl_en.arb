@@ -501,6 +501,9 @@
   "managePets":"Manage Pets",
   "age": "Age",
   "unknown": "Unknown",
-  "matches": "Matches"
+  "matches": "Matches",
+  "posts": "Posts",
+  "history": "History",
+  "ratings": "Ratings"
 
 }

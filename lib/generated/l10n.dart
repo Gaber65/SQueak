@@ -4198,6 +4198,21 @@ class S {
   String get matches {
     return Intl.message('Matches', name: 'matches', desc: '', args: []);
   }
+
+  /// `Posts`
+  String get posts {
+    return Intl.message('Posts', name: 'posts', desc: '', args: []);
+  }
+
+  /// `History`
+  String get history {
+    return Intl.message('History', name: 'history', desc: '', args: []);
+  }
+
+  /// `Ratings`
+  String get ratings {
+    return Intl.message('Ratings', name: 'ratings', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
