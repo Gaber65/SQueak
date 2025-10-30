@@ -81,11 +81,15 @@ class _ChatAppBarState extends State<ChatAppBar> {
           // Reload chat list after navigation completes
           Future.delayed(const Duration(milliseconds: 100), () {
             try {
-              final profileState = SwitchProfileCubit.get(navigatorKey.currentContext!).state;
-              if (profileState is ProfileLoaded && profileState.profile.type == ProfileType.pet) {
+              final profileState =
+                  SwitchProfileCubit.get(navigatorKey.currentContext!).state;
+              if (profileState is ProfileLoaded &&
+                  profileState.profile.type == ProfileType.pet) {
                 final petId = profileState.profile.pet?.petId;
                 if (petId != null) {
-                  ChatListCubit.get(navigatorKey.currentContext!).loadChats(petId);
+                  ChatListCubit.get(
+                    navigatorKey.currentContext!,
+                  ).loadChats(petId);
                 }
               }
             } catch (_) {}
@@ -110,35 +114,41 @@ class _ChatAppBarState extends State<ChatAppBar> {
                 width: 2,
               ),
             ),
-            child: (widget.chat.image != null && widget.chat.image!.isNotEmpty)
-                ? ClipOval(
-                    child: Image.network(
-                      imageUrl + widget.chat.image!,
-                      width: 45,
-                      height: 45,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.pets, color: ColorManager.primaryColor);
-                      },
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Center(
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
+            child:
+                (widget.chat.image != null && widget.chat.image!.isNotEmpty)
+                    ? ClipOval(
+                      child: Image.network(
+                        imageUrl + widget.chat.image!,
+                        width: 45,
+                        height: 45,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.pets,
+                            color: ColorManager.primaryColor,
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                value:
+                                    loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                : const Icon(Icons.pets, color: ColorManager.primaryColor),
+                          );
+                        },
+                      ),
+                    )
+                    : const Icon(Icons.pets, color: ColorManager.primaryColor),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -205,8 +215,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Text(
-                          'View Profile',
+                        Text(
+                          S.of(context).viewProfile,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 14,
@@ -216,7 +226,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
                     ),
                   ),
                 ),
-
                 if (!widget.chat.completeMarriageStatues)
                   PopupMenuItem(
                     value: 'finish_mating',
@@ -237,8 +246,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          const Text(
-                            'Finish Mating Process',
+                          Text(
+                            S.of(context).finishMatingProcess,
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 14,
@@ -248,7 +257,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       ),
                     ),
                   ),
-
                 if (!_isBlocked)
                   PopupMenuItem(
                     value: 'block',
@@ -269,8 +277,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          const Text(
-                            'Block User',
+                          Text(
+                            S.of(context).blockUser,
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 14,
@@ -280,7 +288,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       ),
                     ),
                   ),
-
                 if (_isBlocked)
                   PopupMenuItem(
                     value: 'unBlock',
@@ -301,8 +308,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          const Text(
-                            'unBlock User',
+                          Text(
+                            S.of(context).unblockUser,
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 14,
@@ -312,7 +319,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       ),
                     ),
                   ),
-
                 if (widget.chat.completeMarriageStatues)
                   PopupMenuItem(
                     value: 'rating',
@@ -333,8 +339,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          const Text(
-                            'Rating Mating',
+                          Text(
+                            S.of(context).ratingMating,
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 14,
@@ -344,7 +350,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       ),
                     ),
                   ),
-
                 PopupMenuItem(
                   value: 'end_chat',
                   child: Container(
@@ -364,8 +369,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Text(
-                          'End Chat',
+                        Text(
+                          S.of(context).endChat,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 14,
@@ -421,7 +426,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
   }
 
   void _showFinishMatingDialog(BuildContext context) {
-    final s = S.of(context); 
+    final s = S.of(context);
 
     MatingCompleteStatues? selectedStatus;
 
@@ -429,8 +434,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
       {
         'status': MatingCompleteStatues.complete,
         'title': s.completed,
-        'description':
-            'Description for completed', 
+        'description': 'Description for completed',
       },
       {
         'status': MatingCompleteStatues.notComplete,
@@ -438,7 +442,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
         'description': 'Description for not completed',
       },
     ];
-    bool sharePost = true; 
+    bool sharePost = true;
 
     showDialog(
       context: context,
@@ -571,7 +575,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       Row(
                         children: [
                           Text(
-                            'Share post', 
+                            'Share post',
                             style: const TextStyle(color: Colors.grey),
                           ),
                           const Spacer(),
@@ -620,7 +624,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                                       .finishMating(
                                         FinishMatingParameters(
                                           matingId: widget.chat.matingId,
-                                          matingCompleteStatues: selectedStatus!,
+                                          matingCompleteStatues:
+                                              selectedStatus!,
                                           sharePost: sharePost,
                                         ),
                                       )
@@ -662,105 +667,106 @@ class _ChatAppBarState extends State<ChatAppBar> {
   }
 
   void _showBlockDialog(BuildContext context) {
-   showDialog(
-  context: context,
-  builder: (context) => AlertDialog(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20),
-    ),
-    contentPadding: const EdgeInsets.all(24),
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Cute icon
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.orange.shade50,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.pets,
-            size: 40,
-            color: Colors.orange.shade400,
-          ),
-        ),
-        const SizedBox(height: 16),
-        // Title
-        Text(
-          'Block ${widget.chat.name}?',
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        // Description
-        Text(
-          'You won\'t receive messages anymore',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey.shade600,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    ),
-    actions: [
-      // Cancel button
-      TextButton(
-        onPressed: () => Navigator.pop(context),
-        style: TextButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: const Text(
-          'Cancel',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey,
-          ),
-        ),
-      ),
-      // Block button
-      ElevatedButton(
-        onPressed: () {
-          widget.cubit
-              .blockChat(
-                BlockChatParameters(
-                  conversationType: 1,
-                  statues: 0,
-                  conversationId: widget.chat.id,
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            contentPadding: const EdgeInsets.all(24),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Cute icon
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.pets,
+                    size: 40,
+                    color: Colors.orange.shade400,
+                  ),
                 ),
-              )
-              .then((value) {
-            if (!context.mounted) return;
-            Navigator.pop(context);
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.orange.shade400,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 16),
+                // Title
+                Text(
+                  'Block ${widget.chat.name}?',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                // Description
+                Text(
+                  'You won\'t receive messages anymore',
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            actions: [
+              // Cancel button
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ),
+              // Block button
+              ElevatedButton(
+                onPressed: () {
+                  widget.cubit
+                      .blockChat(
+                        BlockChatParameters(
+                          conversationType: 1,
+                          statues: 0,
+                          conversationId: widget.chat.id,
+                        ),
+                      )
+                      .then((value) {
+                        if (!context.mounted) return;
+                        Navigator.pop(context);
+                      });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange.shade400,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'Block',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-        child: const Text(
-          'Block',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    ],
-  ),
-);
+    );
   }
 
   void _showUnBlockDialog(BuildContext context) {
@@ -768,14 +774,14 @@ class _ChatAppBarState extends State<ChatAppBar> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Unblock User'),
+            title: Text(S.of(context).unblockUser),
             content: Text(
-              'Are you sure you want to unblock ${widget.chat.name}?',
+              '${S.of(context).areYouSureYouWantToUnblock} ${widget.chat.name}',
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: Text(S.of(context).cancel),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -793,8 +799,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       });
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                child: const Text(
-                  'Unblock',
+                child: Text(
+                  S.of(context).unblockUser,
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -814,7 +820,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
           (context) => StatefulBuilder(
             builder: (context, setDialogState) {
               bool isEmpty = controller.text.trim().isEmpty;
-              
+
               return Dialog(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0),
@@ -881,7 +887,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0, left: 4.0),
                           child: Text(
-                            'Name cannot be empty',
+                            S.of(context).nameCannotBeEmpty,
                             style: TextStyle(
                               color: Colors.red[600],
                               fontSize: 12,
@@ -901,9 +907,11 @@ class _ChatAppBarState extends State<ChatAppBar> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12.0),
                                 ),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                               ),
-                              child:Text(
+                              child: Text(
                                 S.of(context).cancel,
                                 style: TextStyle(fontWeight: FontWeight.w500),
                               ),
@@ -915,33 +923,44 @@ class _ChatAppBarState extends State<ChatAppBar> {
                           // Rename Button
                           Expanded(
                             child: ElevatedButton(
-                              onPressed: isEmpty
-                                  ? null
-                                  : () {
-                                      String newName = controller.text.trim();
-                                      if (newName.isNotEmpty) {
-                                        widget.cubit
-                                            .renameChat(
-                                              RenameChatParameters(
-                                                conversationId: widget.chat.id,
-                                                petId: widget.chat.petId,
-                                                newName: newName,
-                                                conversationType: 1,
-                                              ),
-                                            )
-                                            .then((value) {
-                                              if (!context.mounted) return;
-                                              Navigator.pop(context, [value, newName]);
-                                            });
-                                      }
-                                    },
+                              onPressed:
+                                  isEmpty
+                                      ? null
+                                      : () {
+                                        String newName = controller.text.trim();
+                                        if (newName.isNotEmpty) {
+                                          widget.cubit
+                                              .renameChat(
+                                                RenameChatParameters(
+                                                  conversationId:
+                                                      widget.chat.id,
+                                                  petId: widget.chat.petId,
+                                                  newName: newName,
+                                                  conversationType: 1,
+                                                ),
+                                              )
+                                              .then((value) {
+                                                if (!context.mounted) return;
+                                                Navigator.pop(context, [
+                                                  value,
+                                                  newName,
+                                                ]);
+                                              });
+                                        }
+                                      },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: isEmpty ? Colors.grey[300] : Colors.blue[600],
-                                foregroundColor: isEmpty ? Colors.grey[500] : Colors.white,
+                                backgroundColor:
+                                    isEmpty
+                                        ? Colors.grey[300]
+                                        : Colors.blue[600],
+                                foregroundColor:
+                                    isEmpty ? Colors.grey[500] : Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12.0),
                                 ),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                                 elevation: isEmpty ? 0 : 2,
                               ),
                               child: Text(
@@ -972,14 +991,12 @@ class _ChatAppBarState extends State<ChatAppBar> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('End Chat'),
-            content: const Text(
-              'Are you sure you want to end this chat? This action cannot be undone.',
-            ),
+            title: Text(S.of(context).endChat),
+            content: Text(S.of(context).endChatConfirmation),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: Text(S.of(context).cancel),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -990,8 +1007,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                child: const Text(
-                  'End Chat',
+                child: Text(
+                  S.of(context).endChat,
                   style: TextStyle(color: Colors.white),
                 ),
               ),

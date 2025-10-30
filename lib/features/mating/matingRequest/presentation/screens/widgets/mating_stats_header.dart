@@ -60,7 +60,7 @@ class MatingStatsHeader extends StatelessWidget {
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.bold)),
-                Text('Total',
+                Text(S.of(context).total,
                     style: TextStyle(
                         color: Colors.white.withOpacity(0.8), fontSize: 12)),
               ],

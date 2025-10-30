@@ -377,7 +377,7 @@
   "sendRequest": "أرسل طلب",
   "cancelRequest": "إلغاء الطلب",
 
-  "viewProfile": "عرض الملف",
+  "viewProfile": "عرض الملف الشخصي",
   "sendLovelyRequestTitle": "أرسل طلب تزاوج لطيف 💞",
   "sendLovelyRequestSubtitle": "خلينا نساعد صديقك الصغير يتواصل مع {petName} وتبدأوا صداقة جميلة!",
   "requestSent": "تم إرسال طلب التزاوج إلى {petName}! 💕",
@@ -493,7 +493,26 @@
   "matches":"متشابهات",
   "posts": "المنشورات",
   "history":"السجل",
-  "ratings": "التقييمات"
+  "ratings": "التقييمات",
+  "pending":  "مُعلقة",
+  "accepted": "مُوافق عليها",
+  "rejected": "مرفوضة",
+  "emptyMatingRequests":"عندما ترسل طلبات التزاوج، ستظهر هنا",
+  "finishMatingProcess": "إنهاء عملية التزاوج",
+  "blockUser": "حظر المستخدم",
+  "unblockUser": "إلغاء حظر المستخدم",
+  "ratingMating": "تقييم التزاوج",
+  "nameCannotBeEmpty": "لا يمكن أن يكون الاسم فارغًا",
+  "areYouSureYouWantToUnblock": "هل أنت متأكد أنك تريد إلغاء حظر"
+ 
+
+
+  
+
+
+  
+  
+  
   
 
 

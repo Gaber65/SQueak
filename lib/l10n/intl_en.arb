@@ -437,7 +437,7 @@
   "startMating": "Start Mating",
   "matingStarted": "Mating started successfully",
   "endChat": "End Chat",
-  "endChatConfirmation": "Are you sure you want to end this chat? This action cannot be undone.",
+  "endChatConfirmation": "Are you sure you want to end this chat? This action cannot be reversed.",
   "chatEnded": "Chat ended successfully",
   "finishMating": "Finish Mating",
   "finishMatingConfirmation": "Are you sure you want to finish mating? This will archive the chat.",
@@ -504,6 +504,18 @@
   "matches": "Matches",
   "posts": "Posts",
   "history": "History",
-  "ratings": "Ratings"
+  "ratings": "Ratings",
+  "pending": "Pending",
+  "accepted": "Accepted",
+  "rejected": "Rejected",
+  "emptyMatingRequests":"Your sent mating requests will appear here",
+  "finishMatingProcess": "Finish Mating Process",
+  "blockUser":"Block User",
+  "unblockUser":"Unblock User",
+  "ratingMating": "Rating Mating",
+  "nameCannotBeEmpty": "Name cannot be empty",
+  "areYouSureYouWantToUnblock": "Are you sure you want to unblock this user?"
+  
+
 
 }

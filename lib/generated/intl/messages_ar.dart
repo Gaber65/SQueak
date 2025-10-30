@@ -76,6 +76,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "TimeOfRecord": MessageLookupByLibrary.simpleMessage("الوقت"),
     "about": MessageLookupByLibrary.simpleMessage("عن التطبيق"),
     "accept": MessageLookupByLibrary.simpleMessage("قبول"),
+    "accepted": MessageLookupByLibrary.simpleMessage("مُوافق عليها"),
     "active": MessageLookupByLibrary.simpleMessage("نشط"),
     "addAppointment": MessageLookupByLibrary.simpleMessage("إضافة موعد"),
     "addAvailabilities": MessageLookupByLibrary.simpleMessage(
@@ -140,6 +141,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "بدء الفحص",
     ),
     "arabic": MessageLookupByLibrary.simpleMessage("اللغة العربية"),
+    "areYouSureYouWantToUnblock": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد أنك تريد إلغاء حظر",
+    ),
     "audio": MessageLookupByLibrary.simpleMessage("صوت"),
     "audioRecorderNotImplemented": MessageLookupByLibrary.simpleMessage(
       "تسجيل الصوت غير متوفر بعد",
@@ -169,6 +173,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "blockChatConfirmation": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد من أنك تريد حظر هذه الدردشة؟ لن تتمكن من إرسال أو استقبال الرسائل.",
     ),
+    "blockUser": MessageLookupByLibrary.simpleMessage("حظر المستخدم"),
     "blocked": MessageLookupByLibrary.simpleMessage("محظور"),
     "boardingBy": MessageLookupByLibrary.simpleMessage("الإقامة بواسطة"),
     "boardingCage": MessageLookupByLibrary.simpleMessage("القفص"),
@@ -324,6 +329,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "email_validation": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال بريد إلكتروني صالح",
     ),
+    "emptyMatingRequests": MessageLookupByLibrary.simpleMessage(
+      "عندما ترسل طلبات التزاوج، ستظهر هنا",
+    ),
     "endChat": MessageLookupByLibrary.simpleMessage("إنهاء الدردشة"),
     "endChatConfirmation": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد من أنك تريد إنهاء هذه الدردشة؟ لا يمكن التراجع عن هذا الإجراء.",
@@ -413,6 +421,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "finishMatingNote": MessageLookupByLibrary.simpleMessage(
       "ملاحظة: يحتاج كلا الشريكين لتأكيد اكتمال التزاوج",
+    ),
+    "finishMatingProcess": MessageLookupByLibrary.simpleMessage(
+      "إنهاء عملية التزاوج",
     ),
     "follow": MessageLookupByLibrary.simpleMessage("متابعة"),
     "followCode": MessageLookupByLibrary.simpleMessage("كود العياده"),
@@ -534,6 +545,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "myFavorites": MessageLookupByLibrary.simpleMessage("مفضلتي"),
     "myPets": MessageLookupByLibrary.simpleMessage("أصدقائي الصغار"),
     "name": MessageLookupByLibrary.simpleMessage("الاسم"),
+    "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage(
+      "لا يمكن أن يكون الاسم فارغًا",
+    ),
     "name_hint": MessageLookupByLibrary.simpleMessage("أدخل اسمك الكامل"),
     "name_validation": MessageLookupByLibrary.simpleMessage("يرجى إدخال اسمك"),
     "navigate_edit_profile": MessageLookupByLibrary.simpleMessage(
@@ -621,6 +635,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "payment": MessageLookupByLibrary.simpleMessage("الدفع"),
     "paymentType": MessageLookupByLibrary.simpleMessage("النوع"),
+    "pending": MessageLookupByLibrary.simpleMessage("مُعلقة"),
     "personalInfo": MessageLookupByLibrary.simpleMessage(
       "المعلومات الشخصية (الاسم، عنوان البريد الإلكتروني، رقم الهاتف، إلخ)",
     ),
@@ -697,6 +712,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "qty": MessageLookupByLibrary.simpleMessage("الكمية"),
     "rate": MessageLookupByLibrary.simpleMessage("التقييم"),
     "rateYourExperience": MessageLookupByLibrary.simpleMessage("قيّم تجربتك"),
+    "ratingMating": MessageLookupByLibrary.simpleMessage("تقييم التزاوج"),
     "ratings": MessageLookupByLibrary.simpleMessage("التقييمات"),
     "receiveCode": MessageLookupByLibrary.simpleMessage("ادخال الرمز المتلقي "),
     "receiveEmail": MessageLookupByLibrary.simpleMessage(
@@ -705,6 +721,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "received": MessageLookupByLibrary.simpleMessage("الواردة"),
     "register": MessageLookupByLibrary.simpleMessage("تسجيل"),
     "reject": MessageLookupByLibrary.simpleMessage("رفض"),
+    "rejected": MessageLookupByLibrary.simpleMessage("مرفوضة"),
     "reminderOtherHintText": MessageLookupByLibrary.simpleMessage(
       "الرجاء ادخال عنوان الخدمه",
     ),
@@ -834,6 +851,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unblockChatConfirmation": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد من أنك تريد إلغاء حظر هذه الدردشة؟",
     ),
+    "unblockUser": MessageLookupByLibrary.simpleMessage("إلغاء حظر المستخدم"),
     "unfollow": MessageLookupByLibrary.simpleMessage("الغاء المتابعة"),
     "unfollowConfirmation": MessageLookupByLibrary.simpleMessage(
       "تأكيد الغاء  المتابعة",
@@ -885,7 +903,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "view1Reply": MessageLookupByLibrary.simpleMessage("عرض رد واحد"),
     "viewAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
-    "viewProfile": MessageLookupByLibrary.simpleMessage("عرض الملف"),
+    "viewProfile": MessageLookupByLibrary.simpleMessage("عرض الملف الشخصي"),
     "viewProfileSnack": m8,
     "viewReplies": m9,
     "waitingForResponse": MessageLookupByLibrary.simpleMessage(

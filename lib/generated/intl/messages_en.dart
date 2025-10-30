@@ -75,6 +75,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "VerifyPhone": MessageLookupByLibrary.simpleMessage(" Verify Phone"),
     "about": MessageLookupByLibrary.simpleMessage("About"),
     "accept": MessageLookupByLibrary.simpleMessage("Accept"),
+    "accepted": MessageLookupByLibrary.simpleMessage("Accepted"),
     "active": MessageLookupByLibrary.simpleMessage("Active"),
     "activeRequests": MessageLookupByLibrary.simpleMessage("الطلبات النشطة"),
     "addAppointment": MessageLookupByLibrary.simpleMessage("Add Appointment"),
@@ -146,6 +147,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Start Examination",
     ),
     "arabic": MessageLookupByLibrary.simpleMessage("Arabic"),
+    "areYouSureYouWantToUnblock": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to unblock this user?",
+    ),
     "audio": MessageLookupByLibrary.simpleMessage("Audio"),
     "audioRecorderNotImplemented": MessageLookupByLibrary.simpleMessage(
       "Audio recorder not implemented yet",
@@ -179,6 +183,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "blockChatConfirmation": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to block this chat? You will not be able to send or receive messages.",
     ),
+    "blockUser": MessageLookupByLibrary.simpleMessage("Block User"),
     "blocked": MessageLookupByLibrary.simpleMessage("Blocked"),
     "boardingBy": MessageLookupByLibrary.simpleMessage("Boarding By"),
     "boardingCage": MessageLookupByLibrary.simpleMessage("Cage"),
@@ -342,9 +347,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "email_validation": MessageLookupByLibrary.simpleMessage(
       "Please enter a valid email address",
     ),
+    "emptyMatingRequests": MessageLookupByLibrary.simpleMessage(
+      "Your sent mating requests will appear here",
+    ),
     "endChat": MessageLookupByLibrary.simpleMessage("End Chat"),
     "endChatConfirmation": MessageLookupByLibrary.simpleMessage(
-      "Are you sure you want to end this chat? This action cannot be undone.",
+      "Are you sure you want to end this chat? This action cannot be reversed.",
     ),
     "english": MessageLookupByLibrary.simpleMessage("English"),
     "enterAValidEm": MessageLookupByLibrary.simpleMessage(
@@ -431,6 +439,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "finishMatingNote": MessageLookupByLibrary.simpleMessage(
       "Note: Both partners need to confirm mating completion",
+    ),
+    "finishMatingProcess": MessageLookupByLibrary.simpleMessage(
+      "Finish Mating Process",
     ),
     "follow": MessageLookupByLibrary.simpleMessage("Follow"),
     "followCode": MessageLookupByLibrary.simpleMessage("Follow Code"),
@@ -558,6 +569,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "myFavorites": MessageLookupByLibrary.simpleMessage("My favourites"),
     "myPets": MessageLookupByLibrary.simpleMessage("My pets"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
+    "nameCannotBeEmpty": MessageLookupByLibrary.simpleMessage(
+      "Name cannot be empty",
+    ),
     "name_hint": MessageLookupByLibrary.simpleMessage("Enter your full name"),
     "name_validation": MessageLookupByLibrary.simpleMessage(
       "Please enter your name",
@@ -640,6 +654,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "payment": MessageLookupByLibrary.simpleMessage("Payment"),
     "paymentType": MessageLookupByLibrary.simpleMessage("Type"),
+    "pending": MessageLookupByLibrary.simpleMessage("Pending"),
     "personalInfo": MessageLookupByLibrary.simpleMessage(
       "Personal identification information (Name, email address, phone number, etc.)",
     ),
@@ -718,6 +733,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "rateYourExperience": MessageLookupByLibrary.simpleMessage(
       "Rate Your Experience",
     ),
+    "ratingMating": MessageLookupByLibrary.simpleMessage("Rating Mating"),
     "ratings": MessageLookupByLibrary.simpleMessage("Ratings"),
     "receiveCode": MessageLookupByLibrary.simpleMessage(
       "Enter the received code",
@@ -729,6 +745,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "recentActivity": MessageLookupByLibrary.simpleMessage("النشاط الحديث"),
     "register": MessageLookupByLibrary.simpleMessage("Register"),
     "reject": MessageLookupByLibrary.simpleMessage("Reject"),
+    "rejected": MessageLookupByLibrary.simpleMessage("Rejected"),
     "reminderOtherHintText": MessageLookupByLibrary.simpleMessage(
       "Please enter your reminder type",
     ),
@@ -870,6 +887,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unblockChatConfirmation": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to unblock this chat?",
     ),
+    "unblockUser": MessageLookupByLibrary.simpleMessage("Unblock User"),
     "unfollow": MessageLookupByLibrary.simpleMessage("Unfollow"),
     "unfollowConfirmation": MessageLookupByLibrary.simpleMessage(
       "Unfollow Confirmation",

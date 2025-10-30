@@ -3654,10 +3654,10 @@ class S {
     return Intl.message('End Chat', name: 'endChat', desc: '', args: []);
   }
 
-  /// `Are you sure you want to end this chat? This action cannot be undone.`
+  /// `Are you sure you want to end this chat? This action cannot be reversed.`
   String get endChatConfirmation {
     return Intl.message(
-      'Are you sure you want to end this chat? This action cannot be undone.',
+      'Are you sure you want to end this chat? This action cannot be reversed.',
       name: 'endChatConfirmation',
       desc: '',
       args: [],
@@ -4212,6 +4212,86 @@ class S {
   /// `Ratings`
   String get ratings {
     return Intl.message('Ratings', name: 'ratings', desc: '', args: []);
+  }
+
+  /// `Pending`
+  String get pending {
+    return Intl.message('Pending', name: 'pending', desc: '', args: []);
+  }
+
+  /// `Accepted`
+  String get accepted {
+    return Intl.message('Accepted', name: 'accepted', desc: '', args: []);
+  }
+
+  /// `Rejected`
+  String get rejected {
+    return Intl.message('Rejected', name: 'rejected', desc: '', args: []);
+  }
+
+  /// `Your sent mating requests will appear here`
+  String get emptyMatingRequests {
+    return Intl.message(
+      'Your sent mating requests will appear here',
+      name: 'emptyMatingRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finish Mating Process`
+  String get finishMatingProcess {
+    return Intl.message(
+      'Finish Mating Process',
+      name: 'finishMatingProcess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Block User`
+  String get blockUser {
+    return Intl.message('Block User', name: 'blockUser', desc: '', args: []);
+  }
+
+  /// `Unblock User`
+  String get unblockUser {
+    return Intl.message(
+      'Unblock User',
+      name: 'unblockUser',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rating Mating`
+  String get ratingMating {
+    return Intl.message(
+      'Rating Mating',
+      name: 'ratingMating',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name cannot be empty`
+  String get nameCannotBeEmpty {
+    return Intl.message(
+      'Name cannot be empty',
+      name: 'nameCannotBeEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to unblock this user?`
+  String get areYouSureYouWantToUnblock {
+    return Intl.message(
+      'Are you sure you want to unblock this user?',
+      name: 'areYouSureYouWantToUnblock',
+      desc: '',
+      args: [],
+    );
   }
 }
 

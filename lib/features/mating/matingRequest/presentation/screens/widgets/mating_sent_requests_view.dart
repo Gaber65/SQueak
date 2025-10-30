@@ -17,7 +17,7 @@ class MatingSentRequestsView extends StatelessWidget {
       return EmptyState(
         icon: Icons.send_rounded,
         title: S.of(context).noSentRequests,
-        subtitle: 'Your sent mating requests will appear here',
+        subtitle: S.of(context).emptyMatingRequests,
       );
     }
 
