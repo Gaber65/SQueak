@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
 import 'package:squeak/features/mating/profile/presentation/widgets/stat_item.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
+import 'package:squeak/generated/l10n.dart';
 
 class PetStatsSection extends StatelessWidget {
   final PetEntities pet;
@@ -40,7 +41,7 @@ class PetStatsSection extends StatelessWidget {
         children: [
           StatItem(
             icon: Icons.calendar_today_rounded,
-            label: 'Age',
+            label: S.of(context).age,
             value: (() {
               final raw = pet.birthdate;
               if (raw == null || raw.trim().isEmpty) return 'Unknown';
@@ -49,7 +50,7 @@ class PetStatsSection extends StatelessWidget {
                 final dt = DateTime.parse(part);
                 return formatAge(dt);
               } catch (_) {
-                return 'Unknown';
+                return S.of(context).unknown;
               }
             })(),
             color: Colors.blue,
@@ -58,8 +59,8 @@ class PetStatsSection extends StatelessWidget {
           ),
           StatItem(
             icon: Icons.location_on_rounded,
-            label: 'Location',
-            value: pet.owner?.address ?? 'Unknown',
+            label: S.of(context).location,
+            value: pet.owner?.address ?? S.of(context).unknown,
             color: Colors.green,
             isDarkMode: isDarkMode,
             flex: 5,
@@ -73,8 +74,8 @@ class PetStatsSection extends StatelessWidget {
           // ),
           StatItem(
             icon: Icons.favorite_rounded,
-            label: 'Matches',
-            value: pet.petMarriage.length.toString() ,
+            label: S.of(context).matches,
+            value: pet.petMarriage.length.toString(),
             color: Colors.pink,
             isDarkMode: isDarkMode,
             flex: 5,

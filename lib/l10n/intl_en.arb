@@ -497,6 +497,10 @@
   "greatExperience": "Great Experience",
   "excellentExperience": "Excellent!",
   "matingSession": "Mating Session",
-  "matingShows": "Mating Shows"
+  "matingShows": "Mating Shows",
+  "managePets":"Manage Pets",
+  "age": "Age",
+  "unknown": "Unknown",
+  "matches": "Matches"
 
 }

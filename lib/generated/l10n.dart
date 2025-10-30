@@ -4178,6 +4178,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Manage Pets`
+  String get managePets {
+    return Intl.message('Manage Pets', name: 'managePets', desc: '', args: []);
+  }
+
+  /// `Age`
+  String get age {
+    return Intl.message('Age', name: 'age', desc: '', args: []);
+  }
+
+  /// `Unknown`
+  String get unknown {
+    return Intl.message('Unknown', name: 'unknown', desc: '', args: []);
+  }
+
+  /// `Matches`
+  String get matches {
+    return Intl.message('Matches', name: 'matches', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

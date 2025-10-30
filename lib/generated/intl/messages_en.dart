@@ -101,6 +101,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "address_validation": MessageLookupByLibrary.simpleMessage(
       "Please enter your address",
     ),
+    "age": MessageLookupByLibrary.simpleMessage("Age"),
     "all": MessageLookupByLibrary.simpleMessage("All"),
     "allChats": MessageLookupByLibrary.simpleMessage("All Chats"),
     "allYourAppointments": MessageLookupByLibrary.simpleMessage(
@@ -510,6 +511,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "manageIncomingOutgoing": MessageLookupByLibrary.simpleMessage(
       "Manage incoming and outgoing mating requests",
     ),
+    "managePets": MessageLookupByLibrary.simpleMessage("Manage Pets"),
     "mangeMatingRequests": MessageLookupByLibrary.simpleMessage(
       "Manage Mating Requests",
     ),
@@ -517,6 +519,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Mark as Mating Started",
     ),
     "matchFound": MessageLookupByLibrary.simpleMessage("Match Found!"),
+    "matches": MessageLookupByLibrary.simpleMessage("Matches"),
     "mating": MessageLookupByLibrary.simpleMessage("Mating"),
     "matingActivity": MessageLookupByLibrary.simpleMessage("Mating Activity"),
     "matingChats": MessageLookupByLibrary.simpleMessage("Mating Chats"),
@@ -869,6 +872,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Unfollow Confirmation",
     ),
     "uniqueCode": MessageLookupByLibrary.simpleMessage("Unique Code"),
+    "unknown": MessageLookupByLibrary.simpleMessage("Unknown"),
     "updateAppointment": MessageLookupByLibrary.simpleMessage(
       "Update Appointment",
     ),

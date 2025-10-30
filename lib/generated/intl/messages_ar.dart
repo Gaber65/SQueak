@@ -97,6 +97,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "address_validation": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال عنوانك",
     ),
+    "age": MessageLookupByLibrary.simpleMessage("العمر"),
     "all": MessageLookupByLibrary.simpleMessage("الكل"),
     "allChats": MessageLookupByLibrary.simpleMessage("جميع المحادثات"),
     "allYourAppointments": MessageLookupByLibrary.simpleMessage("جميع مواعيدك"),
@@ -482,6 +483,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "manageIncomingOutgoing": MessageLookupByLibrary.simpleMessage(
       "إدارة طلبات التزاوج الواردة والصادرة",
     ),
+    "managePets": MessageLookupByLibrary.simpleMessage("إدارة الصغار الأليفة"),
     "mangeMatingRequests": MessageLookupByLibrary.simpleMessage(
       "إدارة طلبات التزاوج",
     ),
@@ -489,6 +491,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تعيين كبدء التزاوج",
     ),
     "matchFound": MessageLookupByLibrary.simpleMessage("تم العثور على تطابق!"),
+    "matches": MessageLookupByLibrary.simpleMessage("متشابهات"),
     "mating": MessageLookupByLibrary.simpleMessage("تزاوج"),
     "matingActivity": MessageLookupByLibrary.simpleMessage("نشاط التزاوج"),
     "matingChats": MessageLookupByLibrary.simpleMessage("دردشات التزاوج"),
@@ -833,6 +836,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تأكيد الغاء  المتابعة",
     ),
     "uniqueCode": MessageLookupByLibrary.simpleMessage("الرمز الفريد"),
+    "unknown": MessageLookupByLibrary.simpleMessage("غير معروف"),
     "updateAppointment": MessageLookupByLibrary.simpleMessage("تحديث الموعد"),
     "updateNotification": MessageLookupByLibrary.simpleMessage("إشعار التحديث"),
     "updateNotificationDesc": MessageLookupByLibrary.simpleMessage(

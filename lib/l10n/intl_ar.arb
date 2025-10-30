@@ -486,7 +486,13 @@
   "greatExperience": "تجربة رائعة",
   "excellentExperience": "ممتاز!",
   "matingSession": "جلسة التزاوج",
-  "matingShows": "عرض التزاوج"
+  "matingShows": "عرض التزاوج",
+  "managePets":"إدارة الصغار الأليفة",
+  "age": "العمر",
+  "unknown": "غير معروف",
+  "matches":"متشابهات"
+  
+
 
 
 }

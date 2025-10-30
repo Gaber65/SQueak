@@ -70,12 +70,9 @@ class SettingScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   SizedBox(height: 25),
-
-                  // Management pet  Section
                   Text(
-                    isArabic() ? 'ادارة صديقك الاليف' : 'Manage Pets',
+                    S.of(context).managePets,
                     style: FontStyleThame.textStyle(
                       context: context,
                       fontSize: 18,
@@ -89,7 +86,6 @@ class SettingScreen extends StatelessWidget {
                     icon:
                         'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/rb_49299.png?alt=media&token=3f7daec5-e664-43bc-9e62-0ef2b7f018f3',
                     title: S.of(context).matingShows,
-
                     subtitle: '',
                     trailingWidget: IconButton(
                       onPressed: () {
