@@ -44,7 +44,6 @@ class _SendRequestDialogState extends State<SendRequestDialog>
   Color get _textSecondaryColor =>
       widget.isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600;
 
-
   @override
   void initState() {
     super.initState();
@@ -241,41 +240,112 @@ class _SendRequestDialogState extends State<SendRequestDialog>
                     ),
                     const SizedBox(width: 6),
                     Expanded(
-                      child: Text(
-                        widget.targetPet.petName!,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: _textPrimaryColor,
-                        ),
+                      child: Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              widget.targetPet.petName!,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: _textPrimaryColor,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color:
-                        widget.isDarkMode
-                            ? Colors.grey.shade700
-                            : Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    (widget.targetPet.birthdate != null &&
-                            widget.targetPet.birthdate != '')
-                        ? "${formatAge(DateTime.parse(widget.targetPet.birthdate!.substring(0, 10)))}${widget.targetPet.breed?.enBreed != null ? " • ${widget.targetPet.breed!.enBreed}" : ""}"
-                        : widget.targetPet.breed?.enBreed ?? "",
-                    style: TextStyle(
-                      color: _textSecondaryColor,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
+                Row(
+                  children: [
+                    // Age / Breed pill
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color:
+                            widget.isDarkMode
+                                ? Colors.grey.shade800
+                                : Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        (widget.targetPet.birthdate != null &&
+                                widget.targetPet.birthdate != '')
+                            ? "${formatAge(DateTime.parse(widget.targetPet.birthdate!.substring(0, 10)))}${widget.targetPet.breed?.enBreed != null ? " • ${widget.targetPet.breed!.enBreed}" : ""}"
+                            : widget.targetPet.breed?.enBreed ?? "",
+                        style: TextStyle(
+                          color: _textSecondaryColor,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    // Gender pill
+                    if (widget.targetPet.gender != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color:
+                              widget.isDarkMode
+                                  ? Colors.grey.shade800
+                                  : Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color:
+                                widget.targetPet.gender == 1
+                                    ? Colors.blue.shade100
+                                    : Colors.pink.shade100,
+                            width: 1,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(
+                                widget.isDarkMode ? 0.15 : 0.03,
+                              ),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              widget.targetPet.gender == 1
+                                  ? Icons.male
+                                  : Icons.female,
+                              size: 14,
+                              color:
+                                  widget.targetPet.gender == 1
+                                      ? Colors.blue
+                                      : Colors.pink,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              widget.targetPet.gender == 1
+                                  ? S.of(context).male
+                                  : S.of(context).female,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: _textSecondaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),
@@ -439,12 +509,12 @@ class _SendRequestDialogState extends State<SendRequestDialog>
 
       result.fold(
         (errorMessage) {
-          Navigator.pop(context,false);
+          Navigator.pop(context, false);
           errorToast(context, errorMessage);
         },
         (status) {
           if (status == MatingRequestStatus.success) {
-            Navigator.pop(context ,true);
+            Navigator.pop(context, true);
             successToast(
               context,
               'Mating request sent to ${widget.targetPet.petName}! 💕',
