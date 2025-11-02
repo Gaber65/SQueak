@@ -394,6 +394,8 @@
   "minutesAgo": "منذ {count} دقيقة",
   "hoursAgo": "منذ {count} ساعة",
   "daysAgo": "منذ {count} يوم",
+  "justNow": "الآن",
+  "yesterday": "أمس",
   "noRequests": "لا توجد طلبات",
   "noReceivedRequests": "لا توجد طلبات واردة",
   "noSentRequests": "لا توجد طلبات صادرة",

@@ -506,6 +506,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "inviteFriends": MessageLookupByLibrary.simpleMessage("Invite friends"),
     "invoiceNo": MessageLookupByLibrary.simpleMessage("Invoice No"),
     "itemName": MessageLookupByLibrary.simpleMessage("Item Name"),
+    "justNow": MessageLookupByLibrary.simpleMessage("just now"),
     "labelPost": MessageLookupByLibrary.simpleMessage(
       "What\\\'s on your mind ?",
     ),
@@ -964,6 +965,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Welcome to Squeak!",
     ),
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
+    "yesterday": MessageLookupByLibrary.simpleMessage("yesterday"),
     "youWontReceiveMessagesAnymore": MessageLookupByLibrary.simpleMessage(
       "You won\'t receive messages anymore from this user.",
     ),

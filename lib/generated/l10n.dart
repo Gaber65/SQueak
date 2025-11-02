@@ -3394,6 +3394,16 @@ class S {
     );
   }
 
+  /// `just now`
+  String get justNow {
+    return Intl.message('just now', name: 'justNow', desc: '', args: []);
+  }
+
+  /// `yesterday`
+  String get yesterday {
+    return Intl.message('yesterday', name: 'yesterday', desc: '', args: []);
+  }
+
   /// `No requests found`
   String get noRequests {
     return Intl.message(

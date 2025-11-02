@@ -1,5 +1,6 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:squeak/core/utils/date_time_formatter.dart';
 import '../../domain/entities/message_entity.dart';
 
 class ChatMessageBubble extends StatefulWidget {
@@ -148,8 +149,8 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            _formatTime(widget.message.createdAt),
+                              Text(
+                                DateTimeFormatter.formattedChatTime(widget.message.createdAt, context: context),
                             style: TextStyle(
                               color: widget.isMe
                                   ? Colors.white.withOpacity(0.8)
@@ -379,7 +380,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                 ),
               ),
               Text(
-                _formatTime(widget.message.createdAt),
+                  DateTimeFormatter.formattedChatTime(widget.message.createdAt, context: context),
                 style: TextStyle(
                   color: widget.isMe
                       ? Colors.white.withOpacity(0.7)
@@ -394,12 +395,5 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
     );
   }
 
-  String _formatTime(DateTime time) {
-    // Format time in 12-hour format with am/pm (lowercase)
-    final hour = time.hour;
-    final minute = time.minute.toString().padLeft(2, '0');
-    final period = hour >= 12 ? 'pm' : 'am';
-    final hour12 = hour % 12 == 0 ? 12 : hour % 12;
-    return '$hour12:$minute $period';
-  }
+  // Formatting moved to DateTimeFormatter
 }

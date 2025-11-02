@@ -480,6 +480,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "inviteFriends": MessageLookupByLibrary.simpleMessage("دعوة الأصدقاء"),
     "invoiceNo": MessageLookupByLibrary.simpleMessage("رمز الفاتورة"),
     "itemName": MessageLookupByLibrary.simpleMessage("اسم الصنف"),
+    "justNow": MessageLookupByLibrary.simpleMessage("الآن"),
     "labelPost": MessageLookupByLibrary.simpleMessage("بماذا تفكر؟"),
     "langMode": MessageLookupByLibrary.simpleMessage("وضع اللغة"),
     "language": MessageLookupByLibrary.simpleMessage("اللغه"),
@@ -919,6 +920,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "مرحبًا بك في سكويك!",
     ),
     "yes": MessageLookupByLibrary.simpleMessage("نعم"),
+    "yesterday": MessageLookupByLibrary.simpleMessage("أمس"),
     "youWontReceiveMessagesAnymore": MessageLookupByLibrary.simpleMessage(
       "لن تتلقى رسائل منه بعد الآن",
     ),

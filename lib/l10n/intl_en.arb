@@ -401,6 +401,8 @@
   "minutesAgo": "{count}m ago",
   "hoursAgo": "{count}h ago",
   "daysAgo": "{count}d ago",
+  "justNow": "just now",
+  "yesterday": "yesterday",
   "noRequests": "No requests found",
   "noReceivedRequests": "No received requests",
   "noSentRequests": "No sent requests",

@@ -20,10 +20,22 @@ class MessageModel extends MessageEntity {
       parsedCreatedAt = DateTime.now();
     } else {
       try {
-        parsedCreatedAt = DateTime.parse(raw.toString()).toLocal();
+        var tempDate = DateTime.parse(raw.toString());
+        
+        if (tempDate.isUtc) {
+          parsedCreatedAt = tempDate.toLocal();
+        } else {
+          parsedCreatedAt = DateTime.parse('${raw}Z').toLocal();
+        }
+        
         if (parsedCreatedAt.year <= 1) parsedCreatedAt = DateTime.now();
       } catch (_) {
-        parsedCreatedAt = DateTime.now();
+        try {
+          parsedCreatedAt = DateTime.parse(raw.toString()).toLocal();
+          if (parsedCreatedAt.year <= 1) parsedCreatedAt = DateTime.now();
+        } catch (_) {
+          parsedCreatedAt = DateTime.now();
+        }
       }
     }
 
@@ -49,7 +61,8 @@ class MessageModel extends MessageEntity {
       'isRead': isRead,
       'fromUserId': fromUserId,
       'toUserId': toUserId,
-      'createdAt': createdAt.toIso8601String(),
+      // Convert local time to UTC for server
+      'createdAt': createdAt.toUtc().toIso8601String(),
       'toMe': toMe,
     };
   }
