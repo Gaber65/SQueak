@@ -14,16 +14,29 @@ class MessageModel extends MessageEntity {
   });
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
+    DateTime parsedCreatedAt;
+    final raw = json['createdAt'];
+    if (raw == null) {
+      parsedCreatedAt = DateTime.now();
+    } else {
+      try {
+        parsedCreatedAt = DateTime.parse(raw.toString()).toLocal();
+        if (parsedCreatedAt.year <= 1) parsedCreatedAt = DateTime.now();
+      } catch (_) {
+        parsedCreatedAt = DateTime.now();
+      }
+    }
+
     return MessageModel(
-      description: json['description'],
+      description: json['description'] ?? '',
       image: json['image'],
       video: json['video'],
       audio: json['audio'],
-      isRead: json['isRead'],
-      fromUserId: json['fromUserId'],
-      toUserId: json['toUserId'],
-      createdAt: DateTime.parse(json['createdAt']),
-      toMe: json['toMe'],
+      isRead: json['isRead'] ?? false,
+      fromUserId: json['fromUserId'] ?? '',
+      toUserId: json['toUserId'] ?? '',
+      createdAt: parsedCreatedAt,
+      toMe: json['toMe'] ?? false,
     );
   }
 
