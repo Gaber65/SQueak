@@ -41,7 +41,7 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
   List<ChatEntity> chats = [];
 
   int selectedTab = 0;
-  String requestFilter = 'received'; // 'sent' or 'received'
+  String requestFilter = 'received'; 
 
   void changeTab(int tabIndex) {
     selectedTab = tabIndex;

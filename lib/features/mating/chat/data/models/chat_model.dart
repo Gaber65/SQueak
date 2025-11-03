@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+
 import '../../domain/entities/chat_entity.dart';
 
 class ChatModel extends ChatEntity {
@@ -19,7 +23,19 @@ class ChatModel extends ChatEntity {
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
-    return ChatModel(
+    // Print raw incoming JSON for full visibility
+    try {
+      if (kDebugMode) {
+        print('📥 ChatModel.fromJson raw JSON: ${jsonEncode(json)}');
+      }
+    } catch (_) {
+      // Fallback to simple print if encoding fails
+      if (kDebugMode) {
+        print('📥 ChatModel.fromJson raw JSON (fallback): $json');
+      }
+    }
+
+    final model = ChatModel(
       id: json['id'] ?? '',
       isGroup: json['isGroup'] ?? false,
       isPetChat: json['isPetChat'] ?? false,
@@ -35,10 +51,23 @@ class ChatModel extends ChatEntity {
       isBlockedByMe: json['isBlockedByMe'] ?? false,
       isBlockedByOther: json['isBlockedByOther'] ?? false,
     );
+
+    if (kDebugMode) {
+      print(
+        '=====================================================================',
+      );
+    }
+    if (kDebugMode) {
+      print(
+        '📥 ChatModel.fromJson parsed: isBlockByMe=${model.isBlockedByMe}, name=${model.name}, isBlockedByOther=${model.isBlockedByOther} 🐾',
+      );
+    }
+
+    return model;
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    final map = {
       'id': id,
       'isGroup': isGroup,
       'isPetChat': isPetChat,
@@ -54,9 +83,25 @@ class ChatModel extends ChatEntity {
       'isBlockedByMe': isBlockedByMe,
       'isBlockedByOther': isBlockedByOther,
     };
+    try {
+      if (kDebugMode) {
+        print('==============={Blocked By Other}====================');
+        print(map['isBlockedByOther']);
+        print('📤 ChatModel.toJson JSON: ${jsonEncode(map)}');
+      }
+    } catch (_) {
+      if (kDebugMode) {
+        print('📤 ChatModel.toJson map (fallback): $map');
+      }
+    }
+
+    return map;
   }
 
   static List<ChatModel> fromJsonList(List<dynamic> list) {
+    if (kDebugMode) {
+      print('🧾 ChatModel.fromJsonList: parsing ${list.length} item(s)');
+    }
     return list.map((item) => ChatModel.fromJson(item)).toList();
   }
 }

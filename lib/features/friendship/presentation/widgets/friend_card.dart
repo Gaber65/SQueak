@@ -14,8 +14,9 @@ import '../../../../core/network/end_points.dart';
 
 class FriendCard extends StatelessWidget {
   final PetEntities pet;
+  final ChatEntity ? chat;
 
-  const FriendCard({super.key, required this.pet});
+  const FriendCard({super.key, required this.pet, this.chat});
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +99,6 @@ class FriendCard extends StatelessWidget {
               ),
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // Get current active pet (from pet)
                   final switchProfileCubit = context.read<SwitchProfileCubit>();
                   final activePet = switchProfileCubit.activeProfile?.pet;
 
@@ -114,19 +114,15 @@ class FriendCard extends StatelessWidget {
                     );
                     return;
                   }
-
-                  // Create ChatEntity from friend data with fromPetId and toPetId
                   final chat = ChatEntity(
-                    id: '', // Empty - will be created when first message is sent
+                    id: pet.conversationId ?? '',
                     isGroup: false,
                     isPetChat: true,
                     name: pet.petName ?? '',
                     image: pet.imageName,
                     groupImage: null,
-                    petId: pet.petId ?? '', // toPetId
-                    matingId:
-                        activePet
-                            .petId!, // Store fromPetId in matingId field temporarily
+                    petId: pet.petId ?? '',
+                    matingId: activePet.petId!,
                     completeMarriageStatues: false,
                     createdAt: DateTime.now().toIso8601String(),
                     lastMessageSendDateTime: DateTime.now().toIso8601String(),
@@ -134,7 +130,6 @@ class FriendCard extends StatelessWidget {
                     isBlockedByMe: false,
                     isBlockedByOther: false,
                   );
-                  // Navigate to chat screen
                   Navigator.push(
                     context,
                     PageRouteBuilder(

@@ -13,7 +13,7 @@ import '../controllers/chat_messages_state.dart';
 
 class MatingChatDetailScreen extends StatefulWidget {
   final PetEntities? pet;
-  final ChatEntity chat;
+  final ChatEntity  chat;
 
   const MatingChatDetailScreen({super.key, required this.chat, this.pet});
 

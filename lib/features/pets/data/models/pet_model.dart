@@ -29,6 +29,7 @@ class PetData extends PetEntities {
     super.petMarriage,
     super.qrCodeId,
     super.ownerId,
+    super.conversationId,
   });
 
   factory PetData.fromJson(Map<String, dynamic> json) {
@@ -63,6 +64,7 @@ class PetData extends PetEntities {
       microShipNumber: json['microShipNumber'],
       qrCode: json['qrCode'],
       qrCodeId: json['qrCodeId'],
+      conversationId: json['conversationId'],
     );
   }
 
@@ -85,6 +87,7 @@ class PetData extends PetEntities {
       'qrCodeId': qrCodeId,
       'mutualFriends': mutualFriends,
       'isSelected': isSelected,
+      'conversationId': conversationId,
     };
   }
   factory PetData.empty() {
@@ -107,6 +110,7 @@ class PetData extends PetEntities {
       maritalStatus: 0,
       ownerId: '',
       availableForMating: false,
+      conversationId: '',
     );
   }
 }

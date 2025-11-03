@@ -31,9 +31,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
   void initState() {
     super.initState();
     _isBlocked = widget.chat.isBlock;
-    // listen to cubit stream for block/unblock updates
     _subscription = widget.cubit.stream.listen((state) {
-      // When block/unblock succeeds, toggle local flag so UI updates
       if (state is BlockChatSuccess) {
         if (!mounted) return;
         setState(() {

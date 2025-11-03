@@ -25,6 +25,7 @@ class PetEntities {
   final List<PostEntity> post;
   final List<dynamic> petMarriage;
   bool isSelected;
+  final String? conversationId;
 
   PetEntities({
     this.petId,
@@ -44,6 +45,7 @@ class PetEntities {
     this.mutualFriends,
     this.ownerId,
     this.owner,
+    this.conversationId,
 
     this.maritalStatus = 0,
     this.availableForMating = false,
@@ -76,6 +78,7 @@ class PetEntities {
       'breed': breed?.toJson(),
       'ownerId': ownerId,
       'isSelected': isSelected,
+      
     };
   }
 }
