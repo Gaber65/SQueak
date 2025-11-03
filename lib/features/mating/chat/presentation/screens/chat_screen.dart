@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_status.dart';
 import 'package:squeak/features/mating/chat/domain/entities/message_entity.dart';
@@ -23,7 +24,8 @@ class MatingChatDetailScreen extends StatefulWidget {
 class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     with SingleTickerProviderStateMixin {
   final TextEditingController _messageController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+  final ItemScrollController _itemScrollController = ItemScrollController();
+  final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
   late AnimationController _animationController;
 
   bool _isReadOnly = false;
@@ -49,15 +51,11 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       vsync: this,
     );
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
-    });
   }
 
   @override
   void dispose() {
     _messageController.dispose();
-    _scrollController.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -79,9 +77,16 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       create: (_) => sl<ChatMessagesCubit>()..loadMessages(widget.chat.id),
       child: BlocConsumer<ChatMessagesCubit, ChatMessagesState>(
         listener: (context, state) {
+          final cubit = ChatMessagesCubit.get(context);
+
           if (state is MessageSent) {
             _messageController.clear();
-            _scrollToBottom();
+            final lastIndex = cubit.messagesList.length - 1;
+            if (lastIndex >= 0) {
+              try {
+                _itemScrollController.jumpTo(index: lastIndex);
+              } catch (_) {}
+            }
             _animationController.forward().then(
               (_) => _animationController.reverse(),
             );
@@ -89,10 +94,24 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             errorToast(context, state.message);
           }
           if (state is ChatMessagesLoaded) {
-            // Scroll to bottom when messages are loaded
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _scrollToBottom();
-            });
+            final messages = cubit.messagesList.toList();
+            if (messages.isNotEmpty) {
+              final now = DateTime.now();
+              int targetIndex = messages.length - 1; // default to last
+              for (var i = 0; i < messages.length; i++) {
+                if (_isSameDay(messages[i].createdAt, now)) {
+                  targetIndex = i;
+                  break;
+                }
+              }
+
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                try {
+                  _itemScrollController.jumpTo(index: targetIndex);
+                } catch (_) {
+                }
+              });
+            }
           }
           if (state is MatingFinishSuccess) {
             setState(() {
@@ -109,7 +128,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           if (state is BlockChatSuccess) {
             setState(() {
               _isBlocked = !_isBlocked;
-              // Toggle the appropriate flag based on who initiated the block
               if (_isBlocked) {
                 _isBlockedByMe = true;
                 _isBlockedByOther = false;
@@ -347,12 +365,13 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             ),
           ),
         ),
-        // Messages list
-        ListView.builder(
-          controller: _scrollController,
+        // Messages list using indexed scrolling so we can jump to a specific
+        // message index when opening the chat.
+        ScrollablePositionedList.builder(
+          itemScrollController: _itemScrollController,
+          itemPositionsListener: _itemPositionsListener,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           itemCount: messages.length,
-          reverse: false,
           itemBuilder: (_, index) {
             final message = messages[index];
             final showDateDivider = index == 0 ||
@@ -360,7 +379,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                   messages[index - 1].createdAt,
                   message.createdAt,
                 );
-            
+
             return Column(
               children: [
                 if (showDateDivider)
@@ -701,20 +720,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     );
   }
 
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      Future.delayed(const Duration(milliseconds: 100), () {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      });
-    }
-  }
 }
 
-// Custom painter for chat background pattern
 class _ChatBackgroundPainter extends CustomPainter {
   final Color color;
 

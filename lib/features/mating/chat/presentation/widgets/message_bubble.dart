@@ -150,7 +150,10 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                               Text(
-                                DateTimeFormatter.formattedChatTime(widget.message.createdAt, context: context),
+                                DateTimeFormatter.formattedTime(
+                                  widget.message.createdAt,
+                                  Localizations.localeOf(context).toString(),
+                                ),
                             style: TextStyle(
                               color: widget.isMe
                                   ? Colors.white.withOpacity(0.8)
@@ -380,7 +383,10 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                 ),
               ),
               Text(
-                  DateTimeFormatter.formattedChatTime(widget.message.createdAt, context: context),
+                  DateTimeFormatter.formattedTime(
+                    widget.message.createdAt,
+                    Localizations.localeOf(context).toString(),
+                  ),
                 style: TextStyle(
                   color: widget.isMe
                       ? Colors.white.withOpacity(0.7)
