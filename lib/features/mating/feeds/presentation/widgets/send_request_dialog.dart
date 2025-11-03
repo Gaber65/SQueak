@@ -288,65 +288,65 @@ class _SendRequestDialogState extends State<SendRequestDialog>
                       ),
                     ),
                     const SizedBox(width: 8),
-                    // Gender pill
-                    if (widget.targetPet.gender != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color:
-                              widget.isDarkMode
-                                  ? Colors.grey.shade800
-                                  : Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color:
-                                widget.targetPet.gender == 1
-                                    ? Colors.blue.shade100
-                                    : Colors.pink.shade100,
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(
-                                widget.isDarkMode ? 0.15 : 0.03,
-                              ),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              widget.targetPet.gender == 1
-                                  ? Icons.male
-                                  : Icons.female,
-                              size: 14,
-                              color:
-                                  widget.targetPet.gender == 1
-                                      ? Colors.blue
-                                      : Colors.pink,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              widget.targetPet.gender == 1
-                                  ? S.of(context).male
-                                  : S.of(context).female,
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: _textSecondaryColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                   ],
                 ),
+                const SizedBox(height: 8),
+                if (widget.targetPet.gender != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color:
+                          widget.isDarkMode
+                              ? Colors.grey.shade800
+                              : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color:
+                            widget.targetPet.gender == 1
+                                ? Colors.blue.shade100
+                                : Colors.pink.shade100,
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(
+                            widget.isDarkMode ? 0.15 : 0.03,
+                          ),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          widget.targetPet.gender == 1
+                              ? Icons.male
+                              : Icons.female,
+                          size: 14,
+                          color:
+                              widget.targetPet.gender == 1
+                                  ? Colors.blue
+                                  : Colors.pink,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          widget.targetPet.gender == 1
+                              ? S.of(context).male
+                              : S.of(context).female,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: _textSecondaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
               ],
             ),
           ),

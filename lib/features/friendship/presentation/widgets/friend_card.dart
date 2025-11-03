@@ -14,7 +14,7 @@ import '../../../../core/network/end_points.dart';
 
 class FriendCard extends StatelessWidget {
   final PetEntities pet;
-  final ChatEntity ? chat;
+  final ChatEntity? chat;
 
   const FriendCard({super.key, required this.pet, this.chat});
 
