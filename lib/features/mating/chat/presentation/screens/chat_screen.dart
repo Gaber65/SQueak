@@ -96,14 +96,12 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           if (state is ChatMessagesLoaded) {
             final messages = cubit.messagesList.toList();
             if (messages.isNotEmpty) {
-              // Scroll to the last message (most recent)
               final lastIndex = messages.length - 1;
               
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 try {
                   _itemScrollController.jumpTo(index: lastIndex);
                 } catch (_) {
-                  // Handle error silently
                 }
               });
             }

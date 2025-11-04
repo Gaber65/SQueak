@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dart';
+import 'package:squeak/features/mating/chat/presentation/screens/block_list_screen.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../../../core/utils/enums/profile_type.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
@@ -106,6 +107,18 @@ class _ChatListView extends StatelessWidget {
           );
         },
       ),
+      // Centered small gray icon button (like WhatsApp archive) to open Block List
+      floatingActionButton: FloatingActionButton.small(
+        onPressed: () => navigateToScreen(context, const BlockedPetsScreen()),
+        backgroundColor: Colors.grey[200],
+        elevation: 6,
+        child: Icon(
+          Icons.block,
+          color: Colors.black54,
+          size: 20,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 
