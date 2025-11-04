@@ -42,7 +42,6 @@ class RequestCardCompact extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            // Avatar
             ClipOval(
               child: InkWell(
                 onTap: () {

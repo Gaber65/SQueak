@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:squeak/features/mating/matingRequest/domain/entities/mating_request_entity.dart';
 import 'package:squeak/features/pets/data/models/pet_model.dart';
 
@@ -12,7 +13,7 @@ class MatingRequestModel extends MatingRequestEntity {
   });
 
   factory MatingRequestModel.fromJson(Map<String, dynamic> json) {
-    return MatingRequestModel(
+    final model = MatingRequestModel(
       id: json['id'],
       fromPet:
           json['userPet'] == null
@@ -29,6 +30,17 @@ class MatingRequestModel extends MatingRequestEntity {
       ),
       timestamp: json['createdAt'],
     );
+    try {
+      if (kDebugMode) {
+        print('MatingRequestModel.fromJson -> ${model.toJson()}');
+      }
+    } catch (_) {
+      if (kDebugMode) {
+        print('MatingRequestModel.fromJson -> raw json: $json');
+      }
+    }
+
+    return model;
   }
 
   Map<String, dynamic> toJson() {

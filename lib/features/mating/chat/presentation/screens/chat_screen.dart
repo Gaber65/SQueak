@@ -96,19 +96,14 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           if (state is ChatMessagesLoaded) {
             final messages = cubit.messagesList.toList();
             if (messages.isNotEmpty) {
-              final now = DateTime.now();
-              int targetIndex = messages.length - 1; 
-              for (var i = 0; i < messages.length; i++) {
-                if (_isSameDay(messages[i].createdAt, now)) {
-                  targetIndex = i;
-                  break;
-                }
-              }
-
+              // Scroll to the last message (most recent)
+              final lastIndex = messages.length - 1;
+              
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 try {
-                  _itemScrollController.jumpTo(index: targetIndex);
+                  _itemScrollController.jumpTo(index: lastIndex);
                 } catch (_) {
+                  // Handle error silently
                 }
               });
             }
