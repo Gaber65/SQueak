@@ -97,7 +97,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             final messages = cubit.messagesList.toList();
             if (messages.isNotEmpty) {
               final now = DateTime.now();
-              int targetIndex = messages.length - 1; // default to last
+              int targetIndex = messages.length - 1; 
               for (var i = 0; i < messages.length; i++) {
                 if (_isSameDay(messages[i].createdAt, now)) {
                   targetIndex = i;
@@ -539,134 +539,134 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     S localizations,
   ) {
     final isDark = theme.brightness == Brightness.dark;
-    
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Expanded(
-              child: Container(
-                constraints: const BoxConstraints(
-                  maxHeight: 120,
-                ),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.grey[850]
-                      : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: isDark
-                        ? Colors.grey[700]!
-                        : Colors.grey[300]!,
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _messageController,
-                        decoration: InputDecoration(
-                          hintText: localizations.typeMessage,
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 0,
-                            vertical: 12,
-                          ),
-                          hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.4),
-                          ),
-                        ),
-                        maxLines: null,
-                        textCapitalization: TextCapitalization.sentences,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.attach_file_rounded,
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
-                        size: 22,
-                      ),
-                      onPressed: () {
-                        // Handle attachment
-                      },
-                    ),
-                  ],
-                ),
-              ),
+    final bottomSystemPadding = MediaQuery.of(context).viewPadding.bottom;
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomSystemPadding),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
             ),
-            const SizedBox(width: 8),
-            BlocBuilder<ChatMessagesCubit, ChatMessagesState>(
-              builder: (_, state) {
-                final isSending = state is MessageSending;
-                return Container(
-                  width: 48,
-                  height: 48,
+          ],
+        ),
+        child: SafeArea(
+          top: false,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Container(
+                  constraints: const BoxConstraints(
+                    maxHeight: 120,
+                  ),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        theme.colorScheme.primary,
-                        theme.colorScheme.primary.withOpacity(0.8),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                    color: isDark ? Colors.grey[850] : Colors.grey[100],
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                      width: 1,
                     ),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: theme.colorScheme.primary.withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
+                  ),
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _messageController,
+                          decoration: InputDecoration(
+                            hintText: localizations.typeMessage,
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 0,
+                              vertical: 12,
+                            ),
+                            hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurface.withOpacity(0.4),
+                            ),
+                          ),
+                          maxLines: null,
+                          textCapitalization: TextCapitalization.sentences,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.attach_file_rounded,
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          size: 22,
+                        ),
+                        onPressed: () {
+                          // Handle attachment
+                        },
                       ),
                     ],
                   ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: isSending ? null : () => _sendMessage(cubit),
-                      borderRadius: BorderRadius.circular(24),
-                      child: Center(
-                        child: isSending
-                            ? SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                ),
+              ),
+              const SizedBox(width: 8),
+              BlocBuilder<ChatMessagesCubit, ChatMessagesState>(
+                builder: (_, state) {
+                  final isSending = state is MessageSending;
+                  return Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          theme.colorScheme.primary,
+                          theme.colorScheme.primary.withOpacity(0.8),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.colorScheme.primary.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: isSending ? null : () => _sendMessage(cubit),
+                        borderRadius: BorderRadius.circular(24),
+                        child: Center(
+                          child: isSending
+                              ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.send_rounded,
                                   color: Colors.white,
+                                  size: 22,
                                 ),
-                              )
-                            : Icon(
-                                Icons.send_rounded,
-                                color: Colors.white,
-                                size: 22,
-                              ),
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
