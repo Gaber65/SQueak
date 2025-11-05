@@ -25,17 +25,31 @@ class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _ChatAppBarState extends State<ChatAppBar> {
   String? newName;
   late bool _isBlocked;
+  late bool _isBlockedByMe;
+  late bool _isBlockedByOther;
   late StreamSubscription _subscription;
 
   @override
   void initState() {
     super.initState();
     _isBlocked = widget.chat.isBlock;
+    _isBlockedByMe = widget.chat.isBlockedByMe;
+    _isBlockedByOther = widget.chat.isBlockedByOther;
     _subscription = widget.cubit.stream.listen((state) {
       if (state is BlockChatSuccess) {
         if (!mounted) return;
         setState(() {
+          // Toggle the block state
           _isBlocked = !_isBlocked;
+          if (_isBlocked) {
+            // When blocking: set isBlockedByMe to true
+            _isBlockedByMe = true;
+            _isBlockedByOther = false;
+          } else {
+            // When unblocking: clear isBlockedByMe
+            _isBlockedByMe = false;
+            _isBlockedByOther = false;
+          }
         });
       }
     });
@@ -48,13 +62,14 @@ class _ChatAppBarState extends State<ChatAppBar> {
   }
 
   String _getStatusText(context) {
-    if (_isBlocked) return S.of(context).block;
+    if (_isBlockedByMe) return S.of(context).block;
+    if (_isBlockedByOther) return S.of(context).block;
     if (widget.chat.completeMarriageStatues) return S.of(context).completed;
     return S.of(context).active;
   }
 
   Color _getStatusColor() {
-    if (_isBlocked) return Colors.red;
+    if (_isBlockedByMe || _isBlockedByOther) return Colors.red;
     if (widget.chat.completeMarriageStatues) return const Color(0xFF6C63FF);
     return Colors.green;
   }
@@ -255,7 +270,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       ),
                     ),
                   ),
-                if (!_isBlocked)
+                // Show "Block" option only when neither party has blocked
+                if (!_isBlockedByMe && !_isBlockedByOther)
                   PopupMenuItem(
                     value: 'block',
                     child: Container(
@@ -286,7 +302,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       ),
                     ),
                   ),
-                if (_isBlocked)
+                // Show "Unblock" option only when I blocked them
+                if (_isBlockedByMe)
                   PopupMenuItem(
                     value: 'unBlock',
                     child: Container(

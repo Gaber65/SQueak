@@ -13,6 +13,7 @@ class ChatEntity {
   final bool isBlock;
   final bool isBlockedByMe; 
   final bool isBlockedByOther; 
+  final bool isReadOnly;
 
   const ChatEntity({
     required this.id,
@@ -27,7 +28,8 @@ class ChatEntity {
     required this.createdAt,
     required this.lastMessageSendDateTime,
     required this.isBlock,
-    this.isBlockedByMe = false,
-    this.isBlockedByOther = false,
+    required  this.isBlockedByMe,
+    required this.isBlockedByOther,
+    required this.isReadOnly
   });
 }

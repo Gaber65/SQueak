@@ -18,8 +18,10 @@ class ChatModel extends ChatEntity {
     required super.createdAt,
     required super.lastMessageSendDateTime,
     required super.isBlock,
-    super.isBlockedByMe,
-    super.isBlockedByOther,
+    required super.isBlockedByMe,
+    required super.isBlockedByOther,
+    required super.isReadOnly,
+
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
@@ -50,6 +52,7 @@ class ChatModel extends ChatEntity {
       isBlock: json['isBlock'] ?? false,
       isBlockedByMe: json['isBlockedByMe'] ?? false,
       isBlockedByOther: json['isBlockedByOther'] ?? false,
+      isReadOnly: json['isReadOnly'] ?? false,
     );
 
     if (kDebugMode) {
@@ -82,6 +85,7 @@ class ChatModel extends ChatEntity {
       'isBlock': isBlock,
       'isBlockedByMe': isBlockedByMe,
       'isBlockedByOther': isBlockedByOther,
+      'isReadOnly': isReadOnly,
     };
     try {
       if (kDebugMode) {

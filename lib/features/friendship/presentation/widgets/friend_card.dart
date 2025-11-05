@@ -114,7 +114,7 @@ class FriendCard extends StatelessWidget {
                     );
                     return;
                   }
-                  final chat = ChatEntity(
+                  final chatEntity = ChatEntity(
                     id: pet.conversationId ?? '',
                     isGroup: false,
                     isPetChat: true,
@@ -126,9 +126,10 @@ class FriendCard extends StatelessWidget {
                     completeMarriageStatues: false,
                     createdAt: DateTime.now().toIso8601String(),
                     lastMessageSendDateTime: DateTime.now().toIso8601String(),
-                    isBlock: false,
-                    isBlockedByMe: false,
-                    isBlockedByOther: false,
+                    isBlock: chat?.isBlock ?? false,
+                    isBlockedByMe: chat?.isBlockedByMe ?? false,
+                    isBlockedByOther: chat?.isBlockedByOther ?? false,
+                    isReadOnly: chat?.isReadOnly ?? false,
                   );
                   Navigator.push(
                     context,
@@ -136,7 +137,7 @@ class FriendCard extends StatelessWidget {
                       transitionDuration: const Duration(milliseconds: 500),
                       pageBuilder:
                           (context, animation, secondaryAnimation) =>
-                              MatingChatDetailScreen(chat: chat),
+                              MatingChatDetailScreen(chat: chatEntity),
                       transitionsBuilder: (
                         context,
                         animation,

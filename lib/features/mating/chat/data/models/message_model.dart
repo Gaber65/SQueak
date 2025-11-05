@@ -61,7 +61,6 @@ class MessageModel extends MessageEntity {
       'isRead': isRead,
       'fromUserId': fromUserId,
       'toUserId': toUserId,
-      // Convert local time to UTC for server
       'createdAt': createdAt.toUtc().toIso8601String(),
       'toMe': toMe,
     };
