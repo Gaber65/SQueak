@@ -612,6 +612,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "لا يوجد اتصال بالانترنت",
     ),
     "ok": MessageLookupByLibrary.simpleMessage("حسنًا"),
+    "okay": MessageLookupByLibrary.simpleMessage("حسناً"),
     "onMating": MessageLookupByLibrary.simpleMessage("تزاوج"),
     "on_mating": MessageLookupByLibrary.simpleMessage("في حالة تزاوج"),
     "on_mating_desc": MessageLookupByLibrary.simpleMessage(
@@ -704,6 +705,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "price": MessageLookupByLibrary.simpleMessage("السعر"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("سياسة الخصوصية"),
     "profile": MessageLookupByLibrary.simpleMessage("ملفك الشخصي"),
+    "profileBlocked": MessageLookupByLibrary.simpleMessage(
+      "الملف الشخصي محظور",
+    ),
     "profile_incomplete": MessageLookupByLibrary.simpleMessage(
       "الملف الشخصي غير مكتمل",
     ),
@@ -837,6 +841,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "terms": MessageLookupByLibrary.simpleMessage(
       "بالتسجيل أنت توافق على شروط الاستخدام وسياسة الخصوصية",
     ),
+    "thisUserBlockedYouCannotViewProfile": MessageLookupByLibrary.simpleMessage(
+      "قام هذا المستخدم بحظرك. لا يمكنك عرض ملفه الشخصي.",
+    ),
     "time": MessageLookupByLibrary.simpleMessage("الوقت"),
     "title_hint": MessageLookupByLibrary.simpleMessage("أدخل العنوان"),
     "title_validation": MessageLookupByLibrary.simpleMessage(
@@ -921,6 +928,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "yes": MessageLookupByLibrary.simpleMessage("نعم"),
     "yesterday": MessageLookupByLibrary.simpleMessage("أمس"),
+    "youBlockedThisUserCannotViewProfile": MessageLookupByLibrary.simpleMessage(
+      "لقد قمت بحظر هذا المستخدم. لا يمكنك عرض ملفه الشخصي أثناء حظره.",
+    ),
     "youWontReceiveMessagesAnymore": MessageLookupByLibrary.simpleMessage(
       "لن تتلقى رسائل منه بعد الآن",
     ),

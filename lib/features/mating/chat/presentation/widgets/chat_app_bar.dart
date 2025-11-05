@@ -39,14 +39,11 @@ class _ChatAppBarState extends State<ChatAppBar> {
       if (state is BlockChatSuccess) {
         if (!mounted) return;
         setState(() {
-          // Toggle the block state
           _isBlocked = !_isBlocked;
           if (_isBlocked) {
-            // When blocking: set isBlockedByMe to true
             _isBlockedByMe = true;
             _isBlockedByOther = false;
           } else {
-            // When unblocking: clear isBlockedByMe
             _isBlockedByMe = false;
             _isBlockedByOther = false;
           }
@@ -404,13 +401,18 @@ class _ChatAppBarState extends State<ChatAppBar> {
   void _handleAction(BuildContext context, String value) {
     switch (value) {
       case 'view_profile':
-        navigateToScreen(
-          context,
-          ViewPetProfileScreen(
-            petId: widget.chat.petId,
-            isDarkMode: MainCubit.get(context).isDark,
-          ),
-        );
+
+        if (_isBlockedByMe || _isBlockedByOther) {
+          _showBlockedProfileDialog(context);
+        } else {
+          navigateToScreen(
+            context,
+            ViewPetProfileScreen(
+              petId: widget.chat.petId,
+              isDarkMode: MainCubit.get(context).isDark,
+            ),
+          );
+        }
         break;
       case 'finish_mating':
         _showFinishMatingDialog(context);
@@ -821,6 +823,105 @@ class _ChatAppBarState extends State<ChatAppBar> {
               ),
             ],
           ),
+    );
+  }
+
+  void _showBlockedProfileDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        elevation: 8,
+        child: Container(
+          padding: const EdgeInsets.all(28),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.red.shade50,
+                Colors.orange.shade50,
+              ],
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.red.shade200,
+                      blurRadius: 20,
+                      spreadRadius: 5,
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.block_rounded,
+                  size: 50,
+                  color: Colors.red.shade400,
+                ),
+              ),
+              const SizedBox(height: 24),
+              
+              // Title
+              Text(
+                S.of(context).profileBlocked,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade800,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              
+              // Description
+              Text(
+                _isBlockedByMe
+                    ? S.of(context).youBlockedThisUserCannotViewProfile
+                    : S.of(context).thisUserBlockedYouCannotViewProfile,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey.shade600,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 28),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red.shade400,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    S.of(context).okay,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

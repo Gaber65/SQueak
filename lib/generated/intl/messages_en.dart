@@ -211,7 +211,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Chat blocked successfully",
     ),
     "chatBlockedByOther": MessageLookupByLibrary.simpleMessage(
-      "has blocked you. You cannot send messages until they unblock you.",
+      "has blocked you. You cannot send messages until he unblock you.",
     ),
     "chatBlockedNoMessages": MessageLookupByLibrary.simpleMessage(
       "This chat is blocked. No messages can be sent or received.",
@@ -627,6 +627,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "No Internet Connection",
     ),
     "ok": MessageLookupByLibrary.simpleMessage("OK"),
+    "okay": MessageLookupByLibrary.simpleMessage("Okay"),
     "onMating": MessageLookupByLibrary.simpleMessage("Mating"),
     "on_mating": MessageLookupByLibrary.simpleMessage("On Mating"),
     "on_mating_desc": MessageLookupByLibrary.simpleMessage(
@@ -723,6 +724,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "price": MessageLookupByLibrary.simpleMessage("price"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
     "profile": MessageLookupByLibrary.simpleMessage("Your Profile"),
+    "profileBlocked": MessageLookupByLibrary.simpleMessage("Profile Blocked"),
     "profile_incomplete": MessageLookupByLibrary.simpleMessage(
       "Profile Incomplete",
     ),
@@ -873,6 +875,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "terms": MessageLookupByLibrary.simpleMessage(
       "By signing up you agree to our Terms of use and Privacy Policy",
     ),
+    "thisUserBlockedYouCannotViewProfile": MessageLookupByLibrary.simpleMessage(
+      "This user has blocked you. You cannot view this profile.",
+    ),
     "time": MessageLookupByLibrary.simpleMessage("Time"),
     "title_hint": MessageLookupByLibrary.simpleMessage("Enter the title"),
     "title_validation": MessageLookupByLibrary.simpleMessage(
@@ -966,6 +971,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
     "yesterday": MessageLookupByLibrary.simpleMessage("yesterday"),
+    "youBlockedThisUserCannotViewProfile": MessageLookupByLibrary.simpleMessage(
+      "You have blocked this user. You cannot view this profile while you are blocked.",
+    ),
     "youWontReceiveMessagesAnymore": MessageLookupByLibrary.simpleMessage(
       "You won\'t receive messages anymore from this user.",
     ),

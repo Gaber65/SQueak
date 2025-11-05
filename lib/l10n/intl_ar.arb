@@ -439,6 +439,10 @@
   "chatArchivedReadOnly": "تمت أرشفة هذه الدردشة وهي للقراءة فقط",
   "chatBlockedNoMessages": "هذه الدردشة محظورة. لا يمكن إرسال أو استقبال الرسائل.",
   "chatBlockedByOther": "قام بحظرك. لا يمكنك إرسال رسائل حتى يقوم بإلغاء الحظر.",
+  "profileBlocked": "الملف الشخصي محظور",
+  "youBlockedThisUserCannotViewProfile": "لقد قمت بحظر هذا المستخدم. لا يمكنك عرض ملفه الشخصي أثناء حظره.",
+  "thisUserBlockedYouCannotViewProfile": "قام هذا المستخدم بحظرك. لا يمكنك عرض ملفه الشخصي.",
+  "okay": "حسناً",
   "noMessagesYet": "لا توجد رسائل بعد",
 
   "typeMessage": "اكتب رسالة...",

@@ -122,9 +122,11 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             setState(() {
               _isBlocked = !_isBlocked;
               if (_isBlocked) {
+                // When blocking: set isBlockedByMe to true
                 _isBlockedByMe = true;
                 _isBlockedByOther = false;
               } else {
+                // When unblocking: clear isBlockedByMe
                 _isBlockedByMe = false;
                 _isBlockedByOther = false;
               }

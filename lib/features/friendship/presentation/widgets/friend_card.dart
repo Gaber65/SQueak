@@ -172,7 +172,7 @@ class FriendCard extends StatelessWidget {
                 ),
                 icon: Icon(IconlyBold.chat, size: 18),
                 label: Text(
-                  isArabic() ? 'الرسالة' : 'Message',
+                  isArabic() ? 'محادثة' : 'Message',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
               ),

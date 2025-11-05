@@ -3779,14 +3779,49 @@ class S {
     );
   }
 
-  /// `has blocked you. You cannot send messages until they unblock you.`
+  /// `has blocked you. You cannot send messages until he unblock you.`
   String get chatBlockedByOther {
     return Intl.message(
-      'has blocked you. You cannot send messages until they unblock you.',
+      'has blocked you. You cannot send messages until he unblock you.',
       name: 'chatBlockedByOther',
       desc: '',
       args: [],
     );
+  }
+
+  /// `Profile Blocked`
+  String get profileBlocked {
+    return Intl.message(
+      'Profile Blocked',
+      name: 'profileBlocked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have blocked this user. You cannot view this profile while you are blocked.`
+  String get youBlockedThisUserCannotViewProfile {
+    return Intl.message(
+      'You have blocked this user. You cannot view this profile while you are blocked.',
+      name: 'youBlockedThisUserCannotViewProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This user has blocked you. You cannot view this profile.`
+  String get thisUserBlockedYouCannotViewProfile {
+    return Intl.message(
+      'This user has blocked you. You cannot view this profile.',
+      name: 'thisUserBlockedYouCannotViewProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Okay`
+  String get okay {
+    return Intl.message('Okay', name: 'okay', desc: '', args: []);
   }
 
   /// `No messages yet`
