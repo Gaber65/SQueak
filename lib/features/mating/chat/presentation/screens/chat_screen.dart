@@ -13,7 +13,7 @@ import '../controllers/chat_messages_state.dart';
 
 class MatingChatDetailScreen extends StatefulWidget {
   final PetEntities? pet;
-  final ChatEntity  chat;
+  final ChatEntity chat;
 
   const MatingChatDetailScreen({super.key, required this.chat, this.pet});
 
@@ -25,7 +25,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     with SingleTickerProviderStateMixin {
   final TextEditingController _messageController = TextEditingController();
   final ItemScrollController _itemScrollController = ItemScrollController();
-  final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
   late AnimationController _animationController;
 
   bool _isReadOnly = false;
@@ -34,6 +35,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   bool _isBlocked = false;
   bool _isBlockedByMe = false;
   bool _isBlockedByOther = false;
+  bool readOnlyAfterMating = false;
 
   @override
   void initState() {
@@ -43,14 +45,15 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     _isBlockedByMe = widget.chat.isBlockedByMe;
     _isBlockedByOther = widget.chat.isBlockedByOther;
     isCompleted = widget.chat.completeMarriageStatues;
+    readOnlyAfterMating = widget.chat.isReadOnly;
+
     _isMatingStarted = _getChatStatus() == ChatStatus.onMating;
-    _isReadOnly = isCompleted || _isBlocked;
+    _isReadOnly = (isCompleted && !readOnlyAfterMating) || _isBlocked;
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-
   }
 
   @override
@@ -97,12 +100,11 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             final messages = cubit.messagesList.toList();
             if (messages.isNotEmpty) {
               final lastIndex = messages.length - 1;
-              
+
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 try {
                   _itemScrollController.jumpTo(index: lastIndex);
-                } catch (_) {
-                }
+                } catch (_) {}
               });
             }
           }
@@ -122,11 +124,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             setState(() {
               _isBlocked = !_isBlocked;
               if (_isBlocked) {
-                // When blocking: set isBlockedByMe to true
                 _isBlockedByMe = true;
                 _isBlockedByOther = false;
               } else {
-                // When unblocking: clear isBlockedByMe
                 _isBlockedByMe = false;
                 _isBlockedByOther = false;
               }
@@ -346,22 +346,17 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     bool isDark,
   ) {
     if (messages.isEmpty) return _buildEmptyState(theme, isDark, S.of(context));
-    
+
     return Stack(
       children: [
-        // Background pattern
         Positioned.fill(
           child: Opacity(
             opacity: isDark ? 0.03 : 0.05,
             child: CustomPaint(
-              painter: _ChatBackgroundPainter(
-                color: theme.colorScheme.primary,
-              ),
+              painter: _ChatBackgroundPainter(color: theme.colorScheme.primary),
             ),
           ),
         ),
-        // Messages list using indexed scrolling so we can jump to a specific
-        // message index when opening the chat.
         ScrollablePositionedList.builder(
           itemScrollController: _itemScrollController,
           itemPositionsListener: _itemPositionsListener,
@@ -369,11 +364,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           itemCount: messages.length,
           itemBuilder: (_, index) {
             final message = messages[index];
-            final showDateDivider = index == 0 ||
-                !_isSameDay(
-                  messages[index - 1].createdAt,
-                  message.createdAt,
-                );
+            final showDateDivider =
+                index == 0 ||
+                !_isSameDay(messages[index - 1].createdAt, message.createdAt);
 
             return Column(
               children: [
@@ -397,7 +390,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   Widget _buildDateDivider(DateTime date, ThemeData theme, bool isDark) {
     final now = DateTime.now();
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
-    
+
     String dateText;
     if (_isSameDay(date, now)) {
       dateText = 'Today';
@@ -422,9 +415,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.grey[850]
-                    : Colors.grey[200],
+                color: isDark ? Colors.grey[850] : Colors.grey[200],
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
@@ -557,9 +548,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             children: [
               Expanded(
                 child: Container(
-                  constraints: const BoxConstraints(
-                    maxHeight: 120,
-                  ),
+                  constraints: const BoxConstraints(maxHeight: 120),
                   decoration: BoxDecoration(
                     color: isDark ? Colors.grey[850] : Colors.grey[100],
                     borderRadius: BorderRadius.circular(24),
@@ -585,7 +574,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                               vertical: 12,
                             ),
                             hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.4),
+                              color: theme.colorScheme.onSurface.withOpacity(
+                                0.4,
+                              ),
                             ),
                           ),
                           maxLines: null,
@@ -640,20 +631,21 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                         onTap: isSending ? null : () => _sendMessage(cubit),
                         borderRadius: BorderRadius.circular(24),
                         child: Center(
-                          child: isSending
-                              ? SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
+                          child:
+                              isSending
+                                  ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                  : Icon(
+                                    Icons.send_rounded,
                                     color: Colors.white,
+                                    size: 22,
                                   ),
-                                )
-                              : Icon(
-                                  Icons.send_rounded,
-                                  color: Colors.white,
-                                  size: 22,
-                                ),
                         ),
                       ),
                     ),
@@ -714,7 +706,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       toPetId: toPetId,
     );
   }
-
 }
 
 class _ChatBackgroundPainter extends CustomPainter {
@@ -724,10 +715,11 @@ class _ChatBackgroundPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
+    final paint =
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5;
 
     const spacing = 30.0;
     const iconSize = 20.0;
@@ -740,29 +732,20 @@ class _ChatBackgroundPainter extends CustomPainter {
     }
   }
 
-  void _drawPawPrint(Canvas canvas, Paint paint, double x, double y, double size) {
-    // Main pad (center)
-    canvas.drawCircle(
-      Offset(x, y + size * 0.3),
-      size * 0.2,
-      paint,
-    );
-
-    // Top toe
-    canvas.drawCircle(
-      Offset(x, y),
-      size * 0.12,
-      paint,
-    );
-
-    // Left toe
+  void _drawPawPrint(
+    Canvas canvas,
+    Paint paint,
+    double x,
+    double y,
+    double size,
+  ) {
+    canvas.drawCircle(Offset(x, y + size * 0.3), size * 0.2, paint);
+    canvas.drawCircle(Offset(x, y), size * 0.12, paint);
     canvas.drawCircle(
       Offset(x - size * 0.22, y + size * 0.12),
       size * 0.12,
       paint,
     );
-
-    // Right toe
     canvas.drawCircle(
       Offset(x + size * 0.22, y + size * 0.12),
       size * 0.12,

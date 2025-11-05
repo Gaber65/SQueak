@@ -88,7 +88,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
         ),
         onPressed: () {
           Navigator.pop(context);
-          // Reload chat list after navigation completes
           Future.delayed(const Duration(milliseconds: 100), () {
             try {
               final profileState =
@@ -267,7 +266,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       ),
                     ),
                   ),
-                // Show "Block" option only when neither party has blocked
                 if (!_isBlockedByMe && !_isBlockedByOther)
                   PopupMenuItem(
                     value: 'block',
@@ -299,7 +297,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
                       ),
                     ),
                   ),
-                // Show "Unblock" option only when I blocked them
                 if (_isBlockedByMe)
                   PopupMenuItem(
                     value: 'unBlock',
@@ -719,7 +716,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
-                // Description
                 Text(
                   S.of(context).youWontReceiveMessagesAnymore,
                   style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
@@ -728,7 +724,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
               ],
             ),
             actions: [
-              // Cancel button
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 style: TextButton.styleFrom(
@@ -870,8 +865,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
                 ),
               ),
               const SizedBox(height: 24),
-              
-              // Title
               Text(
                 S.of(context).profileBlocked,
                 style: TextStyle(
@@ -882,8 +875,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
-              
-              // Description
               Text(
                 _isBlockedByMe
                     ? S.of(context).youBlockedThisUserCannotViewProfile
