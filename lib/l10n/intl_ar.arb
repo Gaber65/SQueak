@@ -513,7 +513,15 @@
   "youWontReceiveMessagesAnymore": "لن تتلقى رسائل منه بعد الآن",
   "wantBlockUser": "هل تريد حظر",
   "finish": "إنهاء",
-  "sharePost": "مشاركة المنشور"
+  "sharePost": "مشاركة المنشور",
+  "YouCannotContactAgain": "لن تتمكن من التواصل حتى تقوم بإلغاء الحظر",
+  "addedToBlockedList": "سيتم إضافته إلى قائمة المحظورين",
+  "removedFromFreiendList": "سيتم إزالته من قائمة الأصدقاء",
+  "chatWillBeEnded": "سيتم إغلاق المحادثة بينكما",
+  "areYouSureYouWantToBlock": "هل أنت متأكد أنك تريد حظر هذا المستخدم؟",
+  "NoMessagesYet": "لا توجد رسائل بعد",
+  "StartConversation": "ابدأ محادثة جديدة"
+
 
 
 

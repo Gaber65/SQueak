@@ -524,7 +524,15 @@
   "youWontReceiveMessagesAnymore": "You won't receive messages anymore from this user.",
   "wantBlockUser": "Do you want to block",
   "finish": "Finish",
-  "sharePost": "Share Post"
+  "sharePost": "Share Post",
+  "YouCannotContactAgain": "You cannot contact again until you unblock the user.",
+  "addedToBlockedList": "Will be added to block list.",
+  "removedFromFreiendList": "Will be removed from friends list.",
+  "chatWillBeEnded": "Chat between you will be closed.",
+  "areYouSureYouWantToBlock": "Are you sure you want to block this user?",
+  "NoMessagesYet": "No messages yet",
+  "StartConversation": "Start a new conversation"
+
 
 
 }

@@ -4368,6 +4368,76 @@ class S {
   String get sharePost {
     return Intl.message('Share Post', name: 'sharePost', desc: '', args: []);
   }
+
+  /// `You cannot contact again until you unblock the user.`
+  String get YouCannotContactAgain {
+    return Intl.message(
+      'You cannot contact again until you unblock the user.',
+      name: 'YouCannotContactAgain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Will be added to block list.`
+  String get addedToBlockedList {
+    return Intl.message(
+      'Will be added to block list.',
+      name: 'addedToBlockedList',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Will be removed from friends list.`
+  String get removedFromFreiendList {
+    return Intl.message(
+      'Will be removed from friends list.',
+      name: 'removedFromFreiendList',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chat between you will be closed.`
+  String get chatWillBeEnded {
+    return Intl.message(
+      'Chat between you will be closed.',
+      name: 'chatWillBeEnded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to block this user?`
+  String get areYouSureYouWantToBlock {
+    return Intl.message(
+      'Are you sure you want to block this user?',
+      name: 'areYouSureYouWantToBlock',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No messages yet`
+  String get NoMessagesYet {
+    return Intl.message(
+      'No messages yet',
+      name: 'NoMessagesYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start a new conversation`
+  String get StartConversation {
+    return Intl.message(
+      'Start a new conversation',
+      name: 'StartConversation',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -60,6 +60,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Search For Your Doctor",
     ),
     "NameOfRecord": MessageLookupByLibrary.simpleMessage("Name Of Record"),
+    "NoMessagesYet": MessageLookupByLibrary.simpleMessage("No messages yet"),
     "Orloginasadoctor": MessageLookupByLibrary.simpleMessage(
       "Or login as a doctor",
     ),
@@ -71,8 +72,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "ServiceName": MessageLookupByLibrary.simpleMessage("Service Name"),
     "ServicePhone": MessageLookupByLibrary.simpleMessage("Service Phone"),
     "ShareImagesPet": MessageLookupByLibrary.simpleMessage("Share Images Pet"),
+    "StartConversation": MessageLookupByLibrary.simpleMessage(
+      "Start a new conversation",
+    ),
     "TimeOfRecord": MessageLookupByLibrary.simpleMessage("Time"),
     "VerifyPhone": MessageLookupByLibrary.simpleMessage(" Verify Phone"),
+    "YouCannotContactAgain": MessageLookupByLibrary.simpleMessage(
+      "You cannot contact again until you unblock the user.",
+    ),
     "about": MessageLookupByLibrary.simpleMessage("About"),
     "accept": MessageLookupByLibrary.simpleMessage("Accept"),
     "accepted": MessageLookupByLibrary.simpleMessage("Accepted"),
@@ -95,6 +102,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "addToSqueak": MessageLookupByLibrary.simpleMessage("Add to squeak"),
     "addYourFirstPet": MessageLookupByLibrary.simpleMessage(
       "Add Your First Pet",
+    ),
+    "addedToBlockedList": MessageLookupByLibrary.simpleMessage(
+      "Will be added to block list.",
     ),
     "address": MessageLookupByLibrary.simpleMessage("Address"),
     "addressCity": MessageLookupByLibrary.simpleMessage("Location"),
@@ -147,6 +157,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Start Examination",
     ),
     "arabic": MessageLookupByLibrary.simpleMessage("Arabic"),
+    "areYouSureYouWantToBlock": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to block this user?",
+    ),
     "areYouSureYouWantToUnblock": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to unblock this user?",
     ),
@@ -225,6 +238,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "chatUnblocked": MessageLookupByLibrary.simpleMessage(
       "Chat unblocked successfully",
+    ),
+    "chatWillBeEnded": MessageLookupByLibrary.simpleMessage(
+      "Chat between you will be closed.",
     ),
     "checkYourEmail": MessageLookupByLibrary.simpleMessage("Check Your Email"),
     "chooseAttachment": MessageLookupByLibrary.simpleMessage(
@@ -755,6 +771,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "removeClinic": MessageLookupByLibrary.simpleMessage("Remove Clinic"),
     "removePost": MessageLookupByLibrary.simpleMessage("Remove post"),
+    "removedFromFreiendList": MessageLookupByLibrary.simpleMessage(
+      "Will be removed from friends list.",
+    ),
     "renameChat": MessageLookupByLibrary.simpleMessage("Rename Chat"),
     "replies": MessageLookupByLibrary.simpleMessage("replies"),
     "reply": MessageLookupByLibrary.simpleMessage("Reply"),

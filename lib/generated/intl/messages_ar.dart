@@ -60,6 +60,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "ابحث عن طبيبك",
     ),
     "NameOfRecord": MessageLookupByLibrary.simpleMessage("اسم السجل"),
+    "NoMessagesYet": MessageLookupByLibrary.simpleMessage("لا توجد رسائل بعد"),
     "Orloginasadoctor": MessageLookupByLibrary.simpleMessage(
       "أو قم بتسجيل الدخول كطبيب",
     ),
@@ -73,7 +74,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "ShareImagesPet": MessageLookupByLibrary.simpleMessage(
       "شارك صور الصديق الصغير",
     ),
+    "StartConversation": MessageLookupByLibrary.simpleMessage(
+      "ابدأ محادثة جديدة",
+    ),
     "TimeOfRecord": MessageLookupByLibrary.simpleMessage("الوقت"),
+    "YouCannotContactAgain": MessageLookupByLibrary.simpleMessage(
+      "لن تتمكن من التواصل حتى تقوم بإلغاء الحظر",
+    ),
     "about": MessageLookupByLibrary.simpleMessage("عن التطبيق"),
     "accept": MessageLookupByLibrary.simpleMessage("قبول"),
     "accepted": MessageLookupByLibrary.simpleMessage("مُوافق عليها"),
@@ -91,6 +98,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "addToSqueak": MessageLookupByLibrary.simpleMessage("اضافة الى Squeak"),
     "addYourFirstPet": MessageLookupByLibrary.simpleMessage(
       "أضف أول صديق صغير لك",
+    ),
+    "addedToBlockedList": MessageLookupByLibrary.simpleMessage(
+      "سيتم إضافته إلى قائمة المحظورين",
     ),
     "address": MessageLookupByLibrary.simpleMessage("عنوان"),
     "addressCity": MessageLookupByLibrary.simpleMessage("الموقع"),
@@ -141,6 +151,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "بدء الفحص",
     ),
     "arabic": MessageLookupByLibrary.simpleMessage("اللغة العربية"),
+    "areYouSureYouWantToBlock": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد أنك تريد حظر هذا المستخدم؟",
+    ),
     "areYouSureYouWantToUnblock": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد أنك تريد إلغاء حظر",
     ),
@@ -211,6 +224,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "chatUnblocked": MessageLookupByLibrary.simpleMessage(
       "تم إلغاء حظر الدردشة بنجاح",
+    ),
+    "chatWillBeEnded": MessageLookupByLibrary.simpleMessage(
+      "سيتم إغلاق المحادثة بينكما",
     ),
     "checkYourEmail": MessageLookupByLibrary.simpleMessage(
       "تحقق من بريدك الإلكتروني",
@@ -733,6 +749,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "removeClinic": MessageLookupByLibrary.simpleMessage("إزالة العيادة"),
     "removePost": MessageLookupByLibrary.simpleMessage("إزالة المنشور"),
+    "removedFromFreiendList": MessageLookupByLibrary.simpleMessage(
+      "سيتم إزالته من قائمة الأصدقاء",
+    ),
     "renameChat": MessageLookupByLibrary.simpleMessage("إعادة تسمية الدردشة"),
     "replies": MessageLookupByLibrary.simpleMessage("الردود"),
     "reply": MessageLookupByLibrary.simpleMessage("رد"),

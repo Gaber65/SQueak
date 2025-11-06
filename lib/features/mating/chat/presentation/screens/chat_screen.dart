@@ -498,14 +498,14 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'No messages yet',
+                  S.of(context).noMessagesYet,
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Start a conversation',
+                  S.of(context).startConversation,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.6),
                   ),
