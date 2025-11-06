@@ -520,7 +520,17 @@
   "chatWillBeEnded": "سيتم إغلاق المحادثة بينكما",
   "areYouSureYouWantToBlock": "هل أنت متأكد أنك تريد حظر هذا المستخدم؟",
   "NoMessagesYet": "لا توجد رسائل بعد",
-  "StartConversation": "ابدأ محادثة جديدة"
+  "StartConversation": "ابدأ محادثة جديدة",
+  "blockedPets": "الصغار الأليفة المحظورة",
+  "noPetsBlocked": "لا توجد صغار أليفة محظورة",
+  "selectPetProfile":"اختر ملف صديقك الصغير لعرض الصغار الأليفة المحظورة.",
+  "interactWithyourPet":"لن يتمكن المستخدمون المحظورون من التفاعل مع صديقك الصغير.",
+  "youBlockedAnyPets":"لم يتم حظر أي صغار أليفة .",
+"blockedAt":"تم حظره في",
+"month":"شهور",
+"years":"سنوات",
+"day":"يوم"
+
 
 
 

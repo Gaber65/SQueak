@@ -98,10 +98,23 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
 
   @override
   Future<List<PetFriendModel>> getBlockedFriends(String petId) async {
-    return _handleRequest(
-      () => DioFinalHelper.getData(method: "$getBlockedFriendsEndPoint$petId"),
-      (json) => (json as List).map((e) => PetFriendModel.fromJson(e)).toList(),
-    );
+    try {
+      final result = await DioFinalHelper.getData(
+        method: "$getBlockedFriendsEndPoint$petId",
+      );
+      final data = result.data['data'];
+      if (data is Map && data.containsKey('petFriendShipDTOs')) {
+        final List<dynamic> friendsList = data['petFriendShipDTOs'] as List;
+        return friendsList.map((e) {
+          return PetFriendModel.fromJson(e);
+        }).toList();
+      }
+      return [];
+    } on DioException catch (e) {
+      throw ServerException(
+        errorMessageModel: ErrorMessageModel.fromJson(e.response?.data),
+      );
+    }
   }
 
   @override
@@ -191,4 +204,6 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
       );
     }
   }
+
+
 }

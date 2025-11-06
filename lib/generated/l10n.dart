@@ -4438,6 +4438,76 @@ class S {
       args: [],
     );
   }
+
+  /// `Blocked Pets`
+  String get blockedPets {
+    return Intl.message(
+      'Blocked Pets',
+      name: 'blockedPets',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No pets blocked`
+  String get noPetsBlocked {
+    return Intl.message(
+      'No pets blocked',
+      name: 'noPetsBlocked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a pet profile to view blocked pets.`
+  String get selectPetProfile {
+    return Intl.message(
+      'Please select a pet profile to view blocked pets.',
+      name: 'selectPetProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `These pets can't interact with yours.`
+  String get interactWithyourPet {
+    return Intl.message(
+      'These pets can\'t interact with yours.',
+      name: 'interactWithyourPet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You haven't blocked any pets yet.`
+  String get youBlockedAnyPets {
+    return Intl.message(
+      'You haven\'t blocked any pets yet.',
+      name: 'youBlockedAnyPets',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `BlockedAt`
+  String get blockedAt {
+    return Intl.message('BlockedAt', name: 'blockedAt', desc: '', args: []);
+  }
+
+  /// `Month`
+  String get month {
+    return Intl.message('Month', name: 'month', desc: '', args: []);
+  }
+
+  /// `Years`
+  String get years {
+    return Intl.message('Years', name: 'years', desc: '', args: []);
+  }
+
+  /// `Days`
+  String get days {
+    return Intl.message('Days', name: 'days', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

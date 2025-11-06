@@ -126,3 +126,16 @@ class ChatsLoadFailed extends PetFriendsState {
   final String message;
   ChatsLoadFailed({required this.message});
 }
+
+// Blocked friends states
+class BlockedFriendsLoading extends PetFriendsState {}
+
+class BlockedFriendsLoaded extends PetFriendsState {
+  final List<PetFriendRequestEntity> blockedFriends;
+  BlockedFriendsLoaded({required this.blockedFriends});
+}
+
+class BlockedFriendsLoadFailed extends PetFriendsState {
+  final String message;
+  BlockedFriendsLoadFailed({required this.message});
+}

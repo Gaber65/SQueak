@@ -198,6 +198,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "blockUser": MessageLookupByLibrary.simpleMessage("Block User"),
     "blocked": MessageLookupByLibrary.simpleMessage("Blocked"),
+    "blockedAt": MessageLookupByLibrary.simpleMessage("BlockedAt"),
+    "blockedPets": MessageLookupByLibrary.simpleMessage("Blocked Pets"),
     "boardingBy": MessageLookupByLibrary.simpleMessage("Boarding By"),
     "boardingCage": MessageLookupByLibrary.simpleMessage("Cage"),
     "boardingPrice": MessageLookupByLibrary.simpleMessage("Initial cost"),
@@ -330,6 +332,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Your privacy and the security of your clinic\'s data are of utmost importance to us. We implement industry-standard security measures to protect your data against unauthorized access, alteration, and disclosure. Our systems are regularly updated to address potential vulnerabilities and ensure the highest level of protection.",
     ),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
+    "days": MessageLookupByLibrary.simpleMessage("Days"),
     "daysAgo": m1,
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
     "deleteComment": MessageLookupByLibrary.simpleMessage("Delete Comment"),
@@ -519,6 +522,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "infoWeCollectDesc": MessageLookupByLibrary.simpleMessage(
       "We may collect the following types of information:",
     ),
+    "interactWithyourPet": MessageLookupByLibrary.simpleMessage(
+      "These pets can\'t interact with yours.",
+    ),
     "inviteFriends": MessageLookupByLibrary.simpleMessage("Invite friends"),
     "invoiceNo": MessageLookupByLibrary.simpleMessage("Invoice No"),
     "itemName": MessageLookupByLibrary.simpleMessage("Item Name"),
@@ -584,6 +590,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "missing_information": MessageLookupByLibrary.simpleMessage(
       "Missing Information:",
     ),
+    "month": MessageLookupByLibrary.simpleMessage("Month"),
     "myFavorites": MessageLookupByLibrary.simpleMessage("My favourites"),
     "myPets": MessageLookupByLibrary.simpleMessage("My pets"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
@@ -612,6 +619,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noMatingChats": MessageLookupByLibrary.simpleMessage("No mating chats"),
     "noMessagesYet": MessageLookupByLibrary.simpleMessage("No messages yet"),
+    "noPetsBlocked": MessageLookupByLibrary.simpleMessage("No pets blocked"),
     "noPetsFound": MessageLookupByLibrary.simpleMessage("No Pets Found"),
     "noPetsInVetICare": MessageLookupByLibrary.simpleMessage(
       "No pets are available in this clinic, or they have already been added to SQueak",
@@ -811,6 +819,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectPet": MessageLookupByLibrary.simpleMessage(
       "Please select a pet to start service",
     ),
+    "selectPetProfile": MessageLookupByLibrary.simpleMessage(
+      "Please select a pet profile to view blocked pets.",
+    ),
     "selectPetType": MessageLookupByLibrary.simpleMessage("Select Pet Type"),
     "selected": MessageLookupByLibrary.simpleMessage("Selected"),
     "send": MessageLookupByLibrary.simpleMessage("Send"),
@@ -988,8 +999,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "welcomeToSqueak": MessageLookupByLibrary.simpleMessage(
       "Welcome to Squeak!",
     ),
+    "years": MessageLookupByLibrary.simpleMessage("Years"),
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
     "yesterday": MessageLookupByLibrary.simpleMessage("yesterday"),
+    "youBlockedAnyPets": MessageLookupByLibrary.simpleMessage(
+      "You haven\'t blocked any pets yet.",
+    ),
     "youBlockedThisUserCannotViewProfile": MessageLookupByLibrary.simpleMessage(
       "You have blocked this user. You cannot view this profile while you are blocked.",
     ),

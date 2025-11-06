@@ -188,6 +188,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "blockUser": MessageLookupByLibrary.simpleMessage("حظر المستخدم"),
     "blocked": MessageLookupByLibrary.simpleMessage("محظور"),
+    "blockedAt": MessageLookupByLibrary.simpleMessage("تم حظره في"),
+    "blockedPets": MessageLookupByLibrary.simpleMessage(
+      "الصغار الأليفة المحظورة",
+    ),
     "boardingBy": MessageLookupByLibrary.simpleMessage("الإقامة بواسطة"),
     "boardingCage": MessageLookupByLibrary.simpleMessage("القفص"),
     "boardingPrice": MessageLookupByLibrary.simpleMessage("التكلفة الأولية"),
@@ -493,6 +497,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "infoWeCollectDesc": MessageLookupByLibrary.simpleMessage(
       "قد نجمع الأنواع التالية من المعلومات:",
     ),
+    "interactWithyourPet": MessageLookupByLibrary.simpleMessage(
+      "لن يتمكن المستخدمون المحظورون من التفاعل مع صديقك الصغير.",
+    ),
     "inviteFriends": MessageLookupByLibrary.simpleMessage("دعوة الأصدقاء"),
     "invoiceNo": MessageLookupByLibrary.simpleMessage("رمز الفاتورة"),
     "itemName": MessageLookupByLibrary.simpleMessage("اسم الصنف"),
@@ -560,6 +567,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "missing_information": MessageLookupByLibrary.simpleMessage(
       "المعلومات الناقصة:",
     ),
+    "month": MessageLookupByLibrary.simpleMessage("شهور"),
     "myFavorites": MessageLookupByLibrary.simpleMessage("مفضلتي"),
     "myPets": MessageLookupByLibrary.simpleMessage("أصدقائي الصغار"),
     "name": MessageLookupByLibrary.simpleMessage("الاسم"),
@@ -596,6 +604,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "لا توجد دردشات تزاوج",
     ),
     "noMessagesYet": MessageLookupByLibrary.simpleMessage("لا توجد رسائل بعد"),
+    "noPetsBlocked": MessageLookupByLibrary.simpleMessage(
+      "لا توجد صغار أليفة محظورة",
+    ),
     "noPetsFound": MessageLookupByLibrary.simpleMessage(
       "لا توجد أصدقاء صغار الآن",
     ),
@@ -789,6 +800,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectPet": MessageLookupByLibrary.simpleMessage(
       "يرجى اختيار صديق صغير لبدء الخدمة",
     ),
+    "selectPetProfile": MessageLookupByLibrary.simpleMessage(
+      "اختر ملف صديقك الصغير لعرض الصغار الأليفة المحظورة.",
+    ),
     "selectPetType": MessageLookupByLibrary.simpleMessage(
       "اختر نوع الصديق الصغير",
     ),
@@ -945,8 +959,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "welcomeToSqueak": MessageLookupByLibrary.simpleMessage(
       "مرحبًا بك في سكويك!",
     ),
+    "years": MessageLookupByLibrary.simpleMessage("سنوات"),
     "yes": MessageLookupByLibrary.simpleMessage("نعم"),
     "yesterday": MessageLookupByLibrary.simpleMessage("أمس"),
+    "youBlockedAnyPets": MessageLookupByLibrary.simpleMessage(
+      "لم يتم حظر أي صغار أليفة .",
+    ),
     "youBlockedThisUserCannotViewProfile": MessageLookupByLibrary.simpleMessage(
       "لقد قمت بحظر هذا المستخدم. لا يمكنك عرض ملفه الشخصي أثناء حظره.",
     ),

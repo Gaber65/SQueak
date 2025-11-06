@@ -39,15 +39,15 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
   List<PetFriendRequestEntity> pendingRequests = [];
   List<PetEntities> sentRequests = [];
   List<ChatEntity> chats = [];
+  List<PetFriendRequestEntity> blockedFriends = [];
 
   int selectedTab = 0;
-  String requestFilter = 'received'; 
+  String requestFilter = 'received';
 
   void changeTab(int tabIndex) {
     selectedTab = tabIndex;
     emit(ChangeTab(tabIndex: tabIndex));
-    if (tabIndex == 3) {
-    }
+    if (tabIndex == 3) {}
   }
 
   void changeRequestFilter(String filter) {
@@ -60,14 +60,10 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     final result = await getMyFriendsUseCase.call(petId);
 
     result.fold(
-      (failure) => emit(
-        FriendsLoadFailed(message: "Failed to load friends"),
-      ), 
+      (failure) => emit(FriendsLoadFailed(message: "Failed to load friends")),
       (friends) {
-        emit(FriendsLoadSuccess(friends: friends)); 
-
+        emit(FriendsLoadSuccess(friends: friends));
         this.friends = friends;
-
         emit(
           FriendsLoaded(
             friends: friends,
@@ -80,7 +76,6 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     );
   }
 
-  
   Future<void> loadSuggestedFriends({
     required String specieId,
     String? name,
@@ -181,17 +176,31 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
   /// Load chats for the active pet
   Future<void> loadChats({required String petId}) async {
     emit(ChatsLoading());
-    
+
     final getChatsUseCase = sl<GetChatsUseCase>();
     final result = await getChatsUseCase.call(petId);
 
     result.fold(
       (failure) {
-       emit(ChatsLoadFailed(message: failure.error.message));
+        emit(ChatsLoadFailed(message: failure.error.message));
       },
       (chatsList) {
         chats = chatsList;
         emit(ChatsLoaded(chats: chatsList));
+      },
+    );
+  }
+
+  Future<void> loadBlockedFriends({required String petId}) async {
+    emit(BlockedFriendsLoading());
+    final result = await getBlockedFriendsUseCase.call(petId);
+    result.fold(
+      (failure) {
+        emit(BlockedFriendsLoadFailed(message: failure.error.message));
+      },
+      (blockedList) {
+        blockedFriends = blockedList;
+        emit(BlockedFriendsLoaded(blockedFriends: blockedList));
       },
     );
   }
