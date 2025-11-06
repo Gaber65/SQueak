@@ -32,7 +32,7 @@ class SendFriendPetMessageParameters {
       'isRead': isRead,
       'toUserId': toUserId,
       'clinicId': clinicId,
-      'convesationId': conversationId,
+      'conversationId': conversationId,
       'fromPetId': fromPetId,
       'toPetId': toPetId,
     };

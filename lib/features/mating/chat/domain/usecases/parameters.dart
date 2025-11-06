@@ -33,7 +33,7 @@ class SendMessageParameters {
       'video': video,
       'audio': audio,
       'isRead': isRead,
-      'convesationId': conversationId,
+      'ConversationId': conversationId,
       if (fromPetId != null) 'fromPetId': fromPetId,
       if (toPetId != null) 'toPetId': toPetId,
     };
