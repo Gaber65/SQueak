@@ -81,6 +81,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "YouCannotContactAgain": MessageLookupByLibrary.simpleMessage(
       "لن تتمكن من التواصل حتى تقوم بإلغاء الحظر",
     ),
+    "ableToInteract": MessageLookupByLibrary.simpleMessage(
+      "سيتمكن المستخدمون المحظورون من التفاعل مع صديقك الصغير مرة أخرى.",
+    ),
     "about": MessageLookupByLibrary.simpleMessage("عن التطبيق"),
     "accept": MessageLookupByLibrary.simpleMessage("قبول"),
     "accepted": MessageLookupByLibrary.simpleMessage("مُوافق عليها"),
@@ -155,6 +158,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "هل أنت متأكد أنك تريد حظر هذا المستخدم؟",
     ),
     "areYouSureYouWantToUnblock": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد أنك تريد إلغاء حظر",
+    ),
+    "areYouSureYouWantToUnblockThisPet": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد أنك تريد إلغاء حظر",
     ),
     "audio": MessageLookupByLibrary.simpleMessage("صوت"),
@@ -655,6 +661,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "other_valid_more_than_30_char": MessageLookupByLibrary.simpleMessage(
       "يجب الا يقل عن حرف او يزيد عن ٣٠ حرف",
     ),
+    "ownedBy": MessageLookupByLibrary.simpleMessage("المملوك من قبل"),
     "ownerDetails": MessageLookupByLibrary.simpleMessage("بيانات المالك"),
     "paid": MessageLookupByLibrary.simpleMessage("المدفوع"),
     "partnerConfirmed": MessageLookupByLibrary.simpleMessage("الشريك قد أكد"),

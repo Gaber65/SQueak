@@ -4459,6 +4459,31 @@ class S {
     );
   }
 
+  /// `Are you sure you want to unblock`
+  String get areYouSureYouWantToUnblockThisPet {
+    return Intl.message(
+      'Are you sure you want to unblock',
+      name: 'areYouSureYouWantToUnblockThisPet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `owned by`
+  String get ownedBy {
+    return Intl.message('owned by', name: 'ownedBy', desc: '', args: []);
+  }
+
+  /// `They will be able to interact with your pets again.`
+  String get ableToInteract {
+    return Intl.message(
+      'They will be able to interact with your pets again.',
+      name: 'ableToInteract',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Please select a pet profile to view blocked pets.`
   String get selectPetProfile {
     return Intl.message(

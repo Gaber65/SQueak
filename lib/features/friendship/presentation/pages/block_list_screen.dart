@@ -2,11 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:squeak/core/utils/enums/profile_type.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
+import 'package:squeak/features/friendship/presentation/widgets/profile_switch_notification_screen.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
+import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
 
 import '../../../pets/domain/entities/pet_entity.dart';
 
@@ -25,16 +28,13 @@ class _BlockedPetsScreenState extends State<BlockedPetsScreen> {
   @override
   void initState() {
     super.initState();
-    _initializePetId();
+    // Defer initialization until after the first build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializePetId();
+    });
   }
 
   void _initializePetId() {
-    if (widget.petId != null) {
-      _currentPetId = widget.petId;
-      _loadBlockedFriends();
-      return;
-    }
-
     try {
       final switchCubit = context.read<SwitchProfileCubit>();
       final activePet = switchCubit.activeProfile?.pet;
@@ -42,14 +42,10 @@ class _BlockedPetsScreenState extends State<BlockedPetsScreen> {
       if (activePet != null && activePet.petId != null) {
         _currentPetId = activePet.petId;
         _loadBlockedFriends();
-      } else {
-        if (kDebugMode) {
-          print('⚠️ No active pet found');
-        }
       }
     } catch (e) {
       if (kDebugMode) {
-        print('⚠️ SwitchProfileCubit not available in context: $e');
+        print('⚠️ Error initializing pet ID: $e');
       }
     }
   }
@@ -60,57 +56,121 @@ class _BlockedPetsScreenState extends State<BlockedPetsScreen> {
     }
   }
 
-  void _showUnblockDialog(PetFriendRequestEntity friendRequest) {
+void _showUnblockDialog(PetFriendRequestEntity friendRequest) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
+        final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+        
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(24),
           ),
-          title: Row(
+          backgroundColor: isDarkMode ? const Color(0xFF1E1E2E) : Colors.white,
+          title: Column(
             children: [
-              const Icon(Icons.block, color: Color(0xFF6B4EFF)),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'Unblock ${friendRequest.friendPetName}?',
-                  style: const TextStyle(fontSize: 20),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isDarkMode 
+                      ? const Color(0xFF6B4EFF).withOpacity(0.2)
+                      : const Color(0xFF6B4EFF).withOpacity(0.1),
+                  shape: BoxShape.circle,
                 ),
+                child: Icon(
+                  Icons.pets,
+                  color: const Color(0xFF6B4EFF),
+                  size: 32,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                '${S.of(context).unblock} ${friendRequest.friendPetName}?',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: isDarkMode ? Colors.white : Colors.black87,
+                ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
-          content: Text(
-            'Are you sure you want to unblock ${friendRequest.friendPetName} owned by ${friendRequest.friendName}? They will be able to interact with your pets again.',
-            style: const TextStyle(fontSize: 15),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text(S.of(context).cancel),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                if (_currentPetId != null) {
-                  await PetFriendsCubit.get(context).unblockFriend(
-                    PetEntities(
-                      petId: friendRequest.friendPetId,
-                      petName: friendRequest.friendPetName,
-                    ),
-                    _currentPetId!,
-                  );
-                  _loadBlockedFriends();
-                }
-                Navigator.of(dialogContext).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6B4EFF),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+          content: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              '${S.of(context).areYouSureYouWantToUnblockThisPet} ${friendRequest.friendPetName} ${S.of(context).ownedBy} ${friendRequest.friendName}? ${S.of(context).ableToInteract}',
+              style: TextStyle(
+                fontSize: 15,
+                color: isDarkMode ? Colors.white70 : Colors.black87,
+                height: 1.5,
               ),
-              child: Text(S.of(context).unblock),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
+          actions: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                          color: isDarkMode 
+                              ? Colors.white24 
+                              : Colors.grey.shade300,
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      S.of(context).cancel,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: isDarkMode ? Colors.white70 : Colors.black54,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_currentPetId != null) {
+                        await PetFriendsCubit.get(context).unblockFriend(
+                          PetEntities(
+                            petId: friendRequest.friendPetId,
+                            petName: friendRequest.friendPetName,
+                          ),
+                          _currentPetId!,
+                        );
+                        _loadBlockedFriends();
+                      }
+                      Navigator.of(dialogContext).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6B4EFF),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      S.of(context).unblock,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         );
@@ -186,42 +246,18 @@ class _BlockedPetsScreenState extends State<BlockedPetsScreen> {
         ),
         centerTitle: true,
       ),
-      body:
-          _currentPetId == null
-              ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.pets_outlined,
-                      size: 80,
-                      color: Color(0xFF9FA5C0),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      S.of(context).noPetsBlocked,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Color(0xFF2D3142),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 40),
-                      child: Text(
-                        S.of(context).selectPetProfile,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Color(0xFF9FA5C0),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-              : BlocBuilder<PetFriendsCubit, PetFriendsState>(
+      body: BlocBuilder<SwitchProfileCubit, SwitchProfileState>(
+        builder: (context, switchState) {
+          final switchCubit = SwitchProfileCubit.get(context);
+          final activeProfile = switchCubit.activeProfile;
+
+          // Show profile switch notification if no profile or not a pet profile
+          if (activeProfile == null || activeProfile.type != ProfileType.pet) {
+            return const ProfileSwitchNotificationScreen();
+          }
+
+          // If we have a pet profile, show the blocked pets list
+          return BlocBuilder<PetFriendsCubit, PetFriendsState>(
                 builder: (context, state) {
                   if (state is BlockedFriendsLoading) {
                     return const Center(
@@ -563,7 +599,9 @@ class _BlockedPetsScreenState extends State<BlockedPetsScreen> {
                     ],
                   );
                 },
-              ),
+              );
+        },
+      ),
     );
   }
 

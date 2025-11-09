@@ -80,6 +80,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "YouCannotContactAgain": MessageLookupByLibrary.simpleMessage(
       "You cannot contact again until you unblock the user.",
     ),
+    "ableToInteract": MessageLookupByLibrary.simpleMessage(
+      "They will be able to interact with your pets again.",
+    ),
     "about": MessageLookupByLibrary.simpleMessage("About"),
     "accept": MessageLookupByLibrary.simpleMessage("Accept"),
     "accepted": MessageLookupByLibrary.simpleMessage("Accepted"),
@@ -162,6 +165,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "areYouSureYouWantToUnblock": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to unblock this user?",
+    ),
+    "areYouSureYouWantToUnblockThisPet": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to unblock",
     ),
     "audio": MessageLookupByLibrary.simpleMessage("Audio"),
     "audioRecorderNotImplemented": MessageLookupByLibrary.simpleMessage(
@@ -667,6 +673,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "other_valid_more_than_30_char": MessageLookupByLibrary.simpleMessage(
       "the range is from 1 - 30 char",
     ),
+    "ownedBy": MessageLookupByLibrary.simpleMessage("owned by"),
     "ownerDetails": MessageLookupByLibrary.simpleMessage("Owner Details"),
     "paid": MessageLookupByLibrary.simpleMessage("Paid"),
     "partnerConfirmed": MessageLookupByLibrary.simpleMessage(

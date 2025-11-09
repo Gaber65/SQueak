@@ -4,7 +4,10 @@ import 'package:quickalert/quickalert.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:iconly/iconly.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
+import 'package:squeak/features/friendship/presentation/pages/block_list_screen.dart';
 import 'package:squeak/features/mating/layoutMating/presentation/screens/profle_complete.dart';
+import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
 
@@ -46,7 +49,6 @@ class SettingScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(.0),
                       child: Row(
                         children: [
-
                           buildImage(context),
                           SizedBox(width: 15),
                           Text(
@@ -94,7 +96,35 @@ class SettingScreen extends StatelessWidget {
                       icon: Icon(Icons.chevron_right),
                     ),
                   ),
-
+                  SizedBox(height: 12),
+                  _buildSettingItem(
+                    context: context,
+                    icon:
+                        'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/rb_48102.png?alt=media&token=1f3f3f6e-F4b1-4f6d-8f6e-5c3e3e6e7e8e',
+                    title: S.of(context).blockedPets,
+                    subtitle: '',
+                    onTap: () {
+                      navigateToScreen(
+                        context,
+                        MultiBlocProvider(
+                          providers: [
+                            BlocProvider(
+                              create: (context) => sl<PetFriendsCubit>(),
+                            ),
+                            BlocProvider(
+                              create: (context) => sl<SwitchProfileCubit>()..loadProfile(),
+                            ),
+                          ],
+                          child: const BlockedPetsScreen(),
+                        ),
+                      );
+                    },
+                    trailingWidget: IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.block),
+                    ),
+                  ),
+                  SizedBox(height: 12),
                   // Personalization Section
                   Text(
                     S.of(context).personalization,
@@ -104,7 +134,6 @@ class SettingScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 12),
-
                   // Language Settings
                   _buildSettingItem(
                     context: context,
@@ -147,7 +176,6 @@ class SettingScreen extends StatelessWidget {
                       },
                     ),
                   ),
-
                   // Dark Mode
                   SizedBox(height: 12),
                   _buildSettingItem(
@@ -210,7 +238,6 @@ class SettingScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 12),
-
                   // Share App
                   _buildSettingItem(
                     context: context,
@@ -312,10 +339,13 @@ class SettingScreen extends StatelessWidget {
                           Navigator.pop(context);
                         },
                         onConfirmBtnTap: () async {
-
-                          debugPrint('[Logout] Confirm tapped - starting logout sequence');
+                          debugPrint(
+                            '[Logout] Confirm tapped - starting logout sequence',
+                          );
                           // First remove token from backend/service then clear local data and reset state
-                          debugPrint('[Logout] Calling MainCubit.removeToken()');
+                          debugPrint(
+                            '[Logout] Calling MainCubit.removeToken()',
+                          );
                           await MainCubit.get(context).removeToken();
                           if (!context.mounted) return;
                           LayoutCubit.get(context).changeBottomNav(0);

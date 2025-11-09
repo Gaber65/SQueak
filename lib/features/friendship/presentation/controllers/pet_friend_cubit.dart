@@ -173,7 +173,6 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     });
   }
 
-  /// Load chats for the active pet
   Future<void> loadChats({required String petId}) async {
     emit(ChatsLoading());
 

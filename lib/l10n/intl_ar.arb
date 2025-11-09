@@ -522,14 +522,17 @@
   "NoMessagesYet": "لا توجد رسائل بعد",
   "StartConversation": "ابدأ محادثة جديدة",
   "blockedPets": "الصغار الأليفة المحظورة",
+  "areYouSureYouWantToUnblockThisPet": "هل أنت متأكد أنك تريد إلغاء حظر",
+  "ownedBy": "المملوك من قبل",
+  "ableToInteract": "سيتمكن المستخدمون المحظورون من التفاعل مع صديقك الصغير مرة أخرى.",
   "noPetsBlocked": "لا توجد صغار أليفة محظورة",
   "selectPetProfile":"اختر ملف صديقك الصغير لعرض الصغار الأليفة المحظورة.",
   "interactWithyourPet":"لن يتمكن المستخدمون المحظورون من التفاعل مع صديقك الصغير.",
   "youBlockedAnyPets":"لم يتم حظر أي صغار أليفة .",
-"blockedAt":"تم حظره في",
-"month":"شهور",
-"years":"سنوات",
-"day":"يوم"
+  "blockedAt":"تم حظره في",
+  "month":"شهور",
+  "years":"سنوات",
+  "day":"يوم"
 
 
 
