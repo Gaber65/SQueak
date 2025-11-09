@@ -2,27 +2,49 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/core/utils/enums/profile_type.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
-import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
 import 'package:squeak/features/friendship/presentation/widgets/profile_switch_notification_screen.dart';
-import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
 
 import '../../../pets/domain/entities/pet_entity.dart';
 
-class BlockedPetsScreen extends StatefulWidget {
+class BlockedPetsScreen extends StatelessWidget {
   final String? petId;
 
   const BlockedPetsScreen({super.key, this.petId});
 
   @override
-  State<BlockedPetsScreen> createState() => _BlockedPetsScreenState();
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => sl<PetCubit>()..getOwnerPets(),
+        ),
+        BlocProvider(
+          create: (context) => sl<PetFriendsCubit>(),
+        ),
+        BlocProvider(
+          create: (context) => sl<SwitchProfileCubit>()..loadProfile(),
+        ),
+      ],
+      child: _BlockedPetsScreenContent(petId: petId),
+    );
+  }
 }
 
-class _BlockedPetsScreenState extends State<BlockedPetsScreen> {
+class _BlockedPetsScreenContent extends StatefulWidget {
+  final String? petId;
+
+  const _BlockedPetsScreenContent({this.petId});
+
+  @override
+  State<_BlockedPetsScreenContent> createState() => _BlockedPetsScreenContentState();
+}
+
+class _BlockedPetsScreenContentState extends State<_BlockedPetsScreenContent> {
   String? _currentPetId;
 
   @override

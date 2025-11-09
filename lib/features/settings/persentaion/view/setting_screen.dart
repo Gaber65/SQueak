@@ -4,13 +4,9 @@ import 'package:quickalert/quickalert.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:iconly/iconly.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
 import 'package:squeak/features/friendship/presentation/pages/block_list_screen.dart';
 import 'package:squeak/features/mating/layoutMating/presentation/screens/profle_complete.dart';
-import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
-
 import '../../../../core/utils/export_path/export_files.dart';
-
 import '../../../auth/contactus/presentation/pages/contact_us.dart';
 import '../../../auth/login/presentation/pages/login_screen.dart';
 import '../../../settings/persentaion/view/privacy_policy_screen.dart';
@@ -104,23 +100,12 @@ class SettingScreen extends StatelessWidget {
                     title: S.of(context).blockedPets,
                     subtitle: '',
                     onTap: () {
-                      navigateToScreen(
-                        context,
-                        MultiBlocProvider(
-                          providers: [
-                            BlocProvider(
-                              create: (context) => sl<PetFriendsCubit>(),
-                            ),
-                            BlocProvider(
-                              create: (context) => sl<SwitchProfileCubit>()..loadProfile(),
-                            ),
-                          ],
-                          child: const BlockedPetsScreen(),
-                        ),
-                      );
+                      navigateToScreen(context, const BlockedPetsScreen());
                     },
                     trailingWidget: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        navigateToScreen(context, const BlockedPetsScreen());
+                      },
                       icon: Icon(Icons.block),
                     ),
                   ),
