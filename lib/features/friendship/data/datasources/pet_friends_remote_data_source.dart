@@ -142,10 +142,10 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
     return _handleRequest(
       () {
         // Debug: show POST endpoint and body for blockFriend
-        // print('POST $blockFriendEndPoint -> body: ${{"myPetId": params.myPetId, "petFriendId": params.friendId}}');
+        print('POST $blockFriendEndPoint -> body: ${{"myPetId": params.myPetId, "petFriendId": params.friendId}}');
         return DioFinalHelper.postData(
           method: blockFriendEndPoint,
-          data: {"myPetId": params.myPetId, "petFriendId": params.friendId},
+          data: {"myPetId": params.myPetId, "petFrienId": params.friendId},
         );
       },
       (json) => true,
@@ -249,7 +249,7 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
      return _handleRequest(
       () {
         // Debug: show POST endpoint and body for deleteFriendShip
-         print('POST $deleteFriendShipEndPoint -> body: ${{"myPetId": params.myPetId, "myFrienPetId": params.myFrienPetId}}');
+        //  print('POST $deleteFriendShipEndPoint -> body: ${{"myPetId": params.myPetId, "myFrienPetId": params.myFrienPetId}}');
         return DioFinalHelper.postData(
           method: deleteFriendShipEndPoint,
           data: {"myPetId": params.myPetId, "myFrienPetId": params.myFrienPetId},

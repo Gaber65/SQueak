@@ -20,7 +20,7 @@ class UnblockFriendParams {
   Map<String, dynamic> toJson() {
     return {
       "myPetId": myPetId,
-      "friendId": friendId,
+      "myFrienPetId": friendId,
     };
   }
 

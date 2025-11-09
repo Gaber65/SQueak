@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
-import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
 import 'package:squeak/features/friendship/presentation/widgets/cancel_daialog.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
@@ -108,15 +107,6 @@ class FriendCard extends StatelessWidget {
                       final activePet = switchProfileCubit.activeProfile?.pet;
 
                       if (activePet == null || activePet.petId == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              isArabic()
-                                  ? 'لا يوجد صغير أليف نشط'
-                                  : 'No active pet found',
-                            ),
-                          ),
-                        );
                         return;
                       }
                       final chatEntity = ChatEntity(
@@ -203,9 +193,9 @@ class FriendCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      _showBlockDialog(context);
-                    },
+                      onPressed: () {
+                        _showBlockDialog(context, pet);
+                      },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,
                       shadowColor: Colors.transparent,
@@ -229,7 +219,6 @@ class FriendCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          // Full-width "Cancel Friend" button
           SizedBox(
             width: double.infinity,
             child: Container(
@@ -256,9 +245,6 @@ class FriendCard extends StatelessWidget {
 
                   _showCancelFriendDialog(context, pet, () async {
                     if (activePet == null || activePet.petId == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(isArabic() ? 'لا يوجد صغير أليف نشط' : 'No active pet found')),
-                      );
                       return false;
                     }
 
@@ -302,31 +288,42 @@ class FriendCard extends StatelessWidget {
   }
 }
 
-void _showBlockDialog(BuildContext context) {
+void _showBlockDialog(BuildContext context, PetEntities pet) {
   showDialog(
     context: context,
-    builder: (BuildContext context) {
+    builder: (BuildContext dialogContext) {
       return BlockUserDialog(
-        onConfirmBlock: () {
-          _handleBlockUser(context);
+        onConfirmBlock: () async {
+          Navigator.of(dialogContext).pop();
+          final switchProfileCubit = context.read<SwitchProfileCubit>();
+          final activePet = switchProfileCubit.activeProfile?.pet;
+          if (activePet == null || activePet.petId == null) {
+            return;
+          }
+          final petFriendsCubit = PetFriendsCubit.get(context);
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => const Center(child: CircularProgressIndicator()),
+          );
+
+          try {
+            await petFriendsCubit.blockFriend(pet, activePet.petId!);
+            await petFriendsCubit.getFriends(petId: activePet.petId!);
+          } finally {
+            try {
+              final NavigatorState nav = Navigator.of(context, rootNavigator: true);
+              if (nav.canPop()) {
+                nav.pop();
+              } else if (Navigator.canPop(context)) {
+                Navigator.of(context).pop();
+              }
+            } catch (_) {
+            }
+          }
         },
       );
     },
-  );
-}
-
-void _handleBlockUser(BuildContext context) {
-  Navigator.of(context).pop();
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        isArabic()
-            ? 'تم حظر المستخدم بنجاح'
-            : 'User has been blocked successfully',
-      ),
-      backgroundColor: Colors.green,
-      duration: const Duration(seconds: 3),
-    ),
   );
 }
 

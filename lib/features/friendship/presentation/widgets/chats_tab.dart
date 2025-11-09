@@ -271,25 +271,50 @@ class _ChatListItem extends StatelessWidget {
         ),
       ),
       child: ClipOval(
-        child: Image.network(
-          imageUrl + chat.image!,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    ColorManager.primaryColor.withOpacity(0.2),
-                    ColorManager.primaryColor.withOpacity(0.1),
-                  ],
+        child: Builder(
+          builder: (context) {
+            final imagePath = chat.image;
+            if (imagePath == null || imagePath.isEmpty) {
+              return Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [
+                      ColorManager.primaryColor.withOpacity(0.2),
+                      ColorManager.primaryColor.withOpacity(0.1),
+                    ],
+                  ),
                 ),
-              ),
-              child: Icon(
-                Icons.pets,
-                color: ColorManager.primaryColor,
-                size: 28,
-              ),
+                child: Icon(
+                  Icons.pets,
+                  color: ColorManager.primaryColor,
+                  size: 28,
+                ),
+              );
+            }
+
+            // Otherwise try to load the network image and fallback on error
+            return Image.network(
+              imageUrl + imagePath,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        ColorManager.primaryColor.withOpacity(0.2),
+                        ColorManager.primaryColor.withOpacity(0.1),
+                      ],
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.pets,
+                    color: ColorManager.primaryColor,
+                    size: 28,
+                  ),
+                );
+              },
             );
           },
         ),

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/friendship/domain/entities/friend_request_stats.dart';
 import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
 import 'package:squeak/features/friendship/domain/usecases/update_pet_request.dart';
+import 'package:squeak/features/friendship/domain/usecases/block_friend.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
@@ -17,10 +18,11 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     this.searchFriendsUseCase,
     this.sendPetRequestUseCase,
     this.cancelFriendshipUseCase,
+    this.blockFriendUseCase,
     this.unblockFriendUseCase,
     this.updatePetRequestUseCase,
     this.getBlockedFriendsUseCase,
-    this.deleteFriendshipUseCase
+    this.deleteFriendshipUseCase,
   ) : super(FriendsInitial());
 
   static PetFriendsCubit get(BuildContext context) =>
@@ -32,6 +34,7 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
   final SearchFriendsUseCase searchFriendsUseCase;
   final SendPetRequestUseCase sendPetRequestUseCase;
   final CancelFriendshipUseCase cancelFriendshipUseCase;
+  final BlockFriendUseCase blockFriendUseCase;
   final UnblockFriendUseCase unblockFriendUseCase;
   final UpdatePetRequestUseCase updatePetRequestUseCase;
   final GetBlockedFriendsUseCase getBlockedFriendsUseCase;
@@ -193,6 +196,23 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     result.fold((_) => emit(FriendUnblockFailed()), (_) {
       emit(FriendUnblocked(pet: pet));
     });
+  }
+
+  /// Block friend
+  Future<void> blockFriend(PetEntities pet, String activeID) async {
+    emit(BlockFriendshipLoading());
+    final result = await blockFriendUseCase.call(
+      UnblockFriendParams(friendId: pet.petId!, myPetId: activeID),
+    );
+
+    result.fold(
+      (failure) => emit(BlockFriendshipFailed(message: failure.error.message)),
+      (_) {
+        // remove from local friends list if present
+        friends.removeWhere((p) => p.petId == pet.petId);
+        emit(BlockFriendshipSuccess());
+      },
+    );
   }
 
   Future<void> loadChats({required String petId}) async {

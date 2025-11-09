@@ -1,4 +1,5 @@
 import 'package:squeak/features/friendship/domain/usecases/delete_friendship.dart';
+import 'package:squeak/features/friendship/domain/usecases/block_friend.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/rate_mating_use_case.dart';
 import 'package:squeak/features/mating/profile/domain/usecases/get_pet_profile_history_usecase.dart';
 
@@ -398,7 +399,8 @@ class ServiceLocator {
     sl.registerLazySingleton(() => SendPetRequestUseCase(sl()));
     sl.registerLazySingleton(() => UpdatePetRequestUseCase(sl()));
     sl.registerLazySingleton(() => CancelFriendshipUseCase(sl()));
-    sl.registerLazySingleton(() => UnblockFriendUseCase(sl()));
+  sl.registerLazySingleton(() => UnblockFriendUseCase(sl()));
+  sl.registerLazySingleton(() => BlockFriendUseCase(sl()));
     sl.registerLazySingleton(() => DeleteFriendShipUseCase(sl()));
 
     sl.registerLazySingleton(() => GetMyRequestsUseCase(sl()));
@@ -416,7 +418,7 @@ class ServiceLocator {
     /// 🔹 Cubit
     sl.registerFactory(
       () =>
-          PetFriendsCubit(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+          PetFriendsCubit(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
     );
     // Data sources
     sl.registerLazySingleton<BaseChatRemoteDataSource>(
