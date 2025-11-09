@@ -1929,6 +1929,16 @@ class S {
     return Intl.message('Cancel', name: 'cancel', desc: '', args: []);
   }
 
+  /// `Cancel Friend`
+  String get cancelFriend {
+    return Intl.message(
+      'Cancel Friend',
+      name: 'cancelFriend',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Delete Confirmation`
   String get deleteConfirmation {
     return Intl.message(
@@ -4532,6 +4542,16 @@ class S {
   /// `Days`
   String get days {
     return Intl.message('Days', name: 'days', desc: '', args: []);
+  }
+
+  /// `Are you sure you want to cancel this friend ?`
+  String get wantToCancelThisFriend {
+    return Intl.message(
+      'Are you sure you want to cancel this friend ?',
+      name: 'wantToCancelThisFriend',
+      desc: '',
+      args: [],
+    );
   }
 }
 

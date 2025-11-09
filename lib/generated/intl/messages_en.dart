@@ -221,6 +221,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cageSelect": MessageLookupByLibrary.simpleMessage("Select Cage"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "cancelFollow": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "cancelFriend": MessageLookupByLibrary.simpleMessage("Cancel Friend"),
     "cancelRequest": MessageLookupByLibrary.simpleMessage("Cancel Request"),
     "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
     "changePhoto": MessageLookupByLibrary.simpleMessage("Change Photo"),
@@ -999,6 +1000,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "wantBlockUser": MessageLookupByLibrary.simpleMessage(
       "Do you want to block",
+    ),
+    "wantToCancelThisFriend": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to cancel this friend ?",
     ),
     "welcomeSubtitle": MessageLookupByLibrary.simpleMessage(
       "Find the perfect match for your beloved pets. Connect, chat, and create beautiful families together.",

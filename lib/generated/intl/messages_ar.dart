@@ -213,6 +213,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cageSelect": MessageLookupByLibrary.simpleMessage("اختر قفصًا"),
     "cancel": MessageLookupByLibrary.simpleMessage("الغاء"),
     "cancelFollow": MessageLookupByLibrary.simpleMessage("إلغاء المتابعة"),
+    "cancelFriend": MessageLookupByLibrary.simpleMessage("إلغاء الصداقة"),
     "cancelRequest": MessageLookupByLibrary.simpleMessage("إلغاء الطلب"),
     "changePassword": MessageLookupByLibrary.simpleMessage("تغيير كلمة المرور"),
     "changePhoto": MessageLookupByLibrary.simpleMessage("تغيير الصورة"),
@@ -960,6 +961,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "في انتظار الرد...",
     ),
     "wantBlockUser": MessageLookupByLibrary.simpleMessage("هل تريد حظر"),
+    "wantToCancelThisFriend": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد أنك تريد إلغاء الصداقة؟",
+    ),
     "welcomeSubtitle": MessageLookupByLibrary.simpleMessage(
       "ابحث عن الشريك المثالي لصديقك الصغير. تواصل، تحدث، وكون عائلة سعيدة معًا.",
     ),

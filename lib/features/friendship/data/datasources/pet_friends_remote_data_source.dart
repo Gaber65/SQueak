@@ -60,7 +60,7 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
     return _handleRequest(
       () {
         // Debug: show the request endpoint and body for sendRequest
-        print('POST $sendRequestEndPoint -> body: ${{"petId": params.petId, "friendPetId": params.friendPetId}}');
+        // print('POST $sendRequestEndPoint -> body: ${{"petId": params.petId, "friendPetId": params.friendPetId}}');
         return DioFinalHelper.postData(
           method: sendRequestEndPoint,
           data: {"petId": params.petId, "friendPetId": params.friendPetId},
@@ -75,7 +75,7 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
     return _handleRequest(
       () {
         // Debug: show the request endpoint and body for updateRequest
-        print('PUT $updateRequestEndPoint -> body: ${{"statues": params.status, '"petFriendShipRequestId"': params.requestId}}');
+        // print('PUT $updateRequestEndPoint -> body: ${{"statues": params.status, '"petFriendShipRequestId"': params.requestId}}');
         return DioFinalHelper.putData(
           method: updateRequestEndPoint,
           data: {
@@ -92,7 +92,7 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
   Future<List<PetFriendModel>> getMyRequests(String petId) async {
     final endpoint = "$getMyRequestsEndPoint$petId";
     // Debug: show GET endpoint for getMyRequests
-    print('GET $endpoint');
+    // print('GET $endpoint');
     return _handleRequest(
       () => DioFinalHelper.getData(method: endpoint),
       (json) => (json as List).map((e) => PetFriendModel.fromJson(e)).toList(),
@@ -103,7 +103,7 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
   Future<List<PetData>> getMyFriends(String petId) async {
     final endpoint = "$getMyFriendsEndPoint$petId";
     // Debug: show GET endpoint for getMyFriends
-    print('GET $endpoint');
+    // print('GET $endpoint');
     return _handleRequest(
       () => DioFinalHelper.getData(method: endpoint),
       (json) => (json as List).map((e) => PetData.fromJson(e)).toList(),
@@ -115,7 +115,7 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
     try {
       final endpoint = "$getBlockedFriendsEndPoint$petId";
       // Debug: show GET endpoint for getBlockedFriends
-      print('GET $endpoint');
+      // print('GET $endpoint');
       final result = await DioFinalHelper.getData(
         method: endpoint,
       );
@@ -139,7 +139,7 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
     return _handleRequest(
       () {
         // Debug: show POST endpoint and body for blockFriend
-        print('POST $blockFriendEndPoint -> body: ${{"myPetId": params.myPetId, "petFriendId": params.friendId}}');
+        // print('POST $blockFriendEndPoint -> body: ${{"myPetId": params.myPetId, "petFriendId": params.friendId}}');
         return DioFinalHelper.postData(
           method: blockFriendEndPoint,
           data: {"myPetId": params.myPetId, "petFriendId": params.friendId},
@@ -154,7 +154,7 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
     return _handleRequest(
       () {
         // Debug: show POST endpoint and body for unblockFriend
-        print('POST $unblockFriendEndPoint -> body: ${{"myPetId": params.myPetId, "myFrienPetId": params.friendId}}');
+        // print('POST $unblockFriendEndPoint -> body: ${{"myPetId": params.myPetId, "myFrienPetId": params.friendId}}');
         return DioFinalHelper.postData(
           method: unblockFriendEndPoint,
           data: {"myPetId": params.myPetId, "myFrienPetId": params.friendId},
@@ -202,7 +202,7 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
     ).replace(queryParameters: queryParams);
 
     // Debug: show GET endpoint for searchFriends (with query params)
-    print('GET ${uri.toString()}');
+    // print('GET ${uri.toString()}');
     return _handleRequest(
       () => DioFinalHelper.getData(method: uri.toString()),
       (json) => (json as List).map((e) => PetData.fromJson(e)).toList(),
@@ -213,7 +213,7 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
   Future<List<PetData>> getSentRequests(String myPetId) async {
     final endpoint = "$getSentRequestsEndPoint$myPetId";
     // Debug: show GET endpoint for getSentRequests
-    print('GET $endpoint');
+    // print('GET $endpoint');
     return _handleRequest(
       () => DioFinalHelper.getData(method: endpoint),
       (json) => (json as List).map((e) => PetData.fromJson(e)).toList(),
@@ -228,7 +228,7 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
       final data = params.toJson();
 
       // Debug: show POST endpoint and body for sendFriendMessage
-      print('POST $sendMassageEndPoint -> body: $data');
+      // print('POST $sendMassageEndPoint -> body: $data');
       final response = await DioFinalHelper.postData(
         method: sendMassageEndPoint,
         data: data,

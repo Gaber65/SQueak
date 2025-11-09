@@ -5,10 +5,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
+import 'package:squeak/features/friendship/presentation/widgets/cancel_daialog.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
+import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
+import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
 import 'package:squeak/generated/l10n.dart';
 
 import '../../../../core/network/end_points.dart';
@@ -225,6 +228,65 @@ class FriendCard extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 12),
+          // Full-width "Cancel Friend" button
+          SizedBox(
+            width: double.infinity,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: Theme.of(context).brightness == Brightness.dark
+                      ? [Color(0xFF3B3F46), Color(0xFF1F2430)]
+                      : [Color(0xFFB91C1C), Color(0xFFEF4444)],
+                ),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.12),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+                child: ElevatedButton(
+                onPressed: () {
+                  final switchProfileCubit = context.read<SwitchProfileCubit>();
+                  final activePet = switchProfileCubit.activeProfile?.pet;
+                  final petFriendsCubit = PetFriendsCubit.get(context);
+
+                  _showCancelFriendDialog(context, pet, () async {
+                    if (activePet == null || activePet.petId == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(isArabic() ? 'لا يوجد صغير أليف نشط' : 'No active pet found')),
+                      );
+                      return false;
+                    }
+
+                    await petFriendsCubit.cancelRequest(pet, activePet.petId!);
+                    final state = await petFriendsCubit.stream.firstWhere((s) =>
+                        s is FriendRequestCancelled || s is FriendRequestCancelFailed);
+                    return state is FriendRequestCancelled;
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: Colors.white,
+                  shadowColor: Colors.transparent,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  S.of(context).cancelFriend,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -258,6 +320,18 @@ void _handleBlockUser(BuildContext context) {
     ),
   );
 }
+
+
+
+void _showCancelFriendDialog(BuildContext context, PetEntities pet, Future<bool> Function()? onConfirm) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return CancelFriendDialog(pet: pet, onConfirmCancel: onConfirm);
+    },
+  );
+}
+
 
 class BlockUserDialog extends StatelessWidget {
   final VoidCallback onConfirmBlock;

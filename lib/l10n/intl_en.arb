@@ -232,6 +232,7 @@
   "changePhoto": "Change Photo",
   "delete": "Delete",
   "cancel": "Cancel",
+  "cancelFriend": "Cancel Friend",
   "deleteConfirmation": "Delete Confirmation",
   "petDeletedSuccessfully": "Pet Deleted Successfully",
   "selectPetType": "Select Pet Type",
@@ -543,7 +544,8 @@
   "blockedAt": "BlockedAt",
   "month": "Month",
   "years": "Years",
-  "days": "Days"
+  "days": "Days",
+  "wantToCancelThisFriend": "Are you sure you want to cancel this friend ?"
  
 
 
