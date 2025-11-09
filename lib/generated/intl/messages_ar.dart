@@ -821,6 +821,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "أرسل طلب تزاوج لطيف 💞",
     ),
     "sendMeNow": MessageLookupByLibrary.simpleMessage("أرسل لي الآن"),
+    "sendMessage": MessageLookupByLibrary.simpleMessage("محادثة"),
     "sendRequest": MessageLookupByLibrary.simpleMessage("أرسل طلب"),
     "sent": MessageLookupByLibrary.simpleMessage("الصادرة"),
     "sentVerification": MessageLookupByLibrary.simpleMessage(

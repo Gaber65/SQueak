@@ -194,40 +194,52 @@ class _CancelFriendDialogState extends State<CancelFriendDialog> {
 
   Future<void> _onConfirmPressed() async {
     setState(() => isLoading = true);
-
-    // Call the provided async callback (provided by the caller) so the dialog
-    // doesn't need to access Blocs/Providers in its own BuildContext.
     final onConfirm = widget.onConfirmCancel;
     if (onConfirm == null) {
       if (mounted) setState(() => isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.of(context).appointmentsCanceled)),
-      );
       return;
     }
 
     try {
       final success = await onConfirm();
-      if (success) {
-        if (mounted) Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(S.of(context).appointmentCanceled),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(S.of(context).appointmentsCanceled)),
-        );
+      if (mounted) {
+        setState(() => isLoading = false);
+        if (success) {
+          Navigator.of(context).pop();
+        } else {
+          _showErrorSnackBar('Failed to delete friend');
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
-    } finally {
-      if (mounted) setState(() => isLoading = false);
+      if (mounted) {
+        setState(() => isLoading = false);
+        _showErrorSnackBar('Failed to delete friend');
+      }
     }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.red[700],
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   Widget _buildInfoItem({

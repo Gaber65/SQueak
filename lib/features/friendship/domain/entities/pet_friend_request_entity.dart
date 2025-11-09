@@ -5,9 +5,7 @@ class PetFriendRequestEntity extends Equatable {
   final String id;
   final String myPetId;
   final String friendPetId;
-
   final PetFriendStatus status;
-
   final DateTime? sendAt;
   final DateTime? acceptedAt;
   final DateTime? rejectedAt;
@@ -17,16 +15,13 @@ class PetFriendRequestEntity extends Equatable {
   final DateTime? unFriendAt;
   final String? unFriendBy;
   final DateTime? unBlockedAt;
-
   final String myPetName;
   final String myPetImage;
   final String myPetAge;
-
   final String friendPetName;
   final String friendPetImage;
   final String friendPetAge;
-
-  final String friendName;
+  final String? friendName;
 
   const PetFriendRequestEntity({
     required this.id,
@@ -48,7 +43,7 @@ class PetFriendRequestEntity extends Equatable {
     required this.friendPetName,
     required this.friendPetImage,
     required this.friendPetAge,
-    required this.friendName,
+    this.friendName = '',
   });
 
   @override
@@ -74,6 +69,4 @@ class PetFriendRequestEntity extends Equatable {
     friendPetAge,
     friendName,
   ];
-
-
 }

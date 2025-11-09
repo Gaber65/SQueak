@@ -7,6 +7,7 @@ import 'package:squeak/features/friendship/presentation/controllers/pet_friend_s
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../../core/service/service_locator/locatore_export_path.dart';
+import '../../domain/usecases/delete_friendship.dart';
 
 class PetFriendsCubit extends Cubit<PetFriendsState> {
   PetFriendsCubit(
@@ -19,6 +20,7 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     this.unblockFriendUseCase,
     this.updatePetRequestUseCase,
     this.getBlockedFriendsUseCase,
+    this.deleteFriendshipUseCase
   ) : super(FriendsInitial());
 
   static PetFriendsCubit get(BuildContext context) =>
@@ -33,6 +35,7 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
   final UnblockFriendUseCase unblockFriendUseCase;
   final UpdatePetRequestUseCase updatePetRequestUseCase;
   final GetBlockedFriendsUseCase getBlockedFriendsUseCase;
+  final DeleteFriendShipUseCase deleteFriendshipUseCase;
 
   List<PetEntities> friends = [];
   List<PetEntities> suggestedFriends = [];
@@ -139,6 +142,25 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     });
   }
 
+///delete friendship
+  Future<void> deleteFriendship(PetEntities pet, String activeID) async {
+    emit(DeleteFriendShipLoading());
+    try {
+      final result = await deleteFriendshipUseCase.call(
+        DeleteFriendShipParams(myPetId: activeID, myFrienPetId: pet.petId!),
+      );
+
+      result.fold(
+        (failure) => emit(DeleteFriendShipFailed(message: failure.error.message)),
+        (_) {
+          friends.remove(pet);
+          emit(DeleteFriendShipSuccess());
+        },
+      );
+    } catch (e) {
+      emit(DeleteFriendShipFailed(message: 'Failed to delete friendship: $e'));
+    }
+  } 
   /// Accept or decline friend request
   Future<void> updateFriendRequest(
     PetFriendRequestEntity pet,

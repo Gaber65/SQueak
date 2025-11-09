@@ -139,3 +139,24 @@ class BlockedFriendsLoadFailed extends PetFriendsState {
   final String message;
   BlockedFriendsLoadFailed({required this.message});
 }
+// Cancel friendship 
+class DeleteFriendShipLoading extends PetFriendsState {}
+class DeleteFriendShipFailed extends PetFriendsState {
+  final String message;
+  DeleteFriendShipFailed({required this.message});
+}
+class DeleteFriendShipSuccess extends PetFriendsState {}
+// Block friendship
+class BlockFriendshipLoading extends PetFriendsState {}
+class BlockFriendshipFailed extends PetFriendsState {
+  final String message;
+  BlockFriendshipFailed({required this.message});
+}
+class BlockFriendshipSuccess extends PetFriendsState {}
+// UnBlock friendship
+class UnBlockFriendshipLoading extends PetFriendsState {}
+class UnBlockFriendshipFailed extends PetFriendsState {
+  final String message;
+  UnBlockFriendshipFailed({required this.message});
+}
+class UnBlockFriendshipSuccess extends PetFriendsState {}

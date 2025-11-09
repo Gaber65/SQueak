@@ -8,6 +8,8 @@ import 'package:squeak/features/friendship/domain/usecases/update_pet_request.da
 import 'package:squeak/features/friendship/domain/entities/send_friend_message_parameters.dart';
 import 'package:squeak/features/pets/data/models/pet_model.dart';
 
+import '../../domain/usecases/delete_friendship.dart';
+
 abstract class PetFriendRemoteDataSource {
   Future<bool> sendRequest(SendPetRequestParams params);
   Future<bool> updateRequest(UpdatePetRequestParams params);
@@ -16,6 +18,7 @@ abstract class PetFriendRemoteDataSource {
   Future<List<PetFriendModel>> getBlockedFriends(String petId);
   Future<bool> blockFriend(UnblockFriendParams params);
   Future<bool> unblockFriend(UnblockFriendParams params);
+  Future<bool> deleteFriendship(DeleteFriendShipParams params);
   Future<bool> cancelFriendship(CancelFriendshipParams params);
   Future<List<PetData>> searchFriends({
     required String speciesId,
@@ -169,7 +172,7 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
     return _handleRequest(
       () {
         // Debug: show POST endpoint and body for cancelFriendship
-        print('POST $cancelFriendshipEndPoint -> body: ${{"myPetId": params.myPetId, "peFriendId": params.friendId}}');
+        // print('POST $cancelFriendshipEndPoint -> body: ${{"myPetId": params.myPetId, "peFriendId": params.friendId}}');
         return DioFinalHelper.postData(
           method: cancelFriendshipEndPoint,
           data: {"myPetId": params.myPetId, "peFriendId": params.friendId},
@@ -240,6 +243,22 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
       );
     }
   }
+  
+  @override
+  Future<bool> deleteFriendship(DeleteFriendShipParams params) {
+     return _handleRequest(
+      () {
+        // Debug: show POST endpoint and body for deleteFriendShip
+         print('POST $deleteFriendShipEndPoint -> body: ${{"myPetId": params.myPetId, "myFrienPetId": params.myFrienPetId}}');
+        return DioFinalHelper.postData(
+          method: deleteFriendShipEndPoint,
+          data: {"myPetId": params.myPetId, "myFrienPetId": params.myFrienPetId},
+        );
+      },
+      (json) => true,
+    );
+  }
+
 
 
 }

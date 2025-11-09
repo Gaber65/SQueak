@@ -164,6 +164,7 @@ const String getBlockedFriendsEndPoint = '$version/petfriends/block?MyPetId=';
 const String blockFriendEndPoint = '$version/petfriends/block';
 const String unblockFriendEndPoint = '$version/petfriends/unblock';
 const String cancelFriendshipEndPoint = '$version/petfriends/cancel';
+const String deleteFriendShipEndPoint = '$version/petfriends/delete';
 const String searchFriendsEndPoint = '$version/search/petfriends';
 const String getSentRequestsEndPoint = '$version/pet/sendrequest?MyPetId=';
 

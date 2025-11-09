@@ -545,7 +545,8 @@
   "month": "Month",
   "years": "Years",
   "days": "Days",
-  "wantToCancelThisFriend": "Are you sure you want to cancel this friend ?"
+  "wantToCancelThisFriend": "Are you sure you want to cancel this friend ?",
+  "sendMessage": "Message"
  
 
 

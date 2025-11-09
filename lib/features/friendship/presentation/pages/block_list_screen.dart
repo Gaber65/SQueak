@@ -514,7 +514,7 @@ void _showUnblockDialog(PetFriendRequestEntity friendRequest) {
                                                   const SizedBox(width: 4),
                                                   Expanded(
                                                     child: Text(
-                                                      friendRequest.friendName,
+                                                      friendRequest.friendName??'',
                                                       style: const TextStyle(
                                                         fontSize: 13,
                                                         color: Color(

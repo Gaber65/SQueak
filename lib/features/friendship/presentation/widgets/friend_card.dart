@@ -178,7 +178,7 @@ class FriendCard extends StatelessWidget {
                     ),
                     icon: Icon(IconlyBold.chat, size: 18),
                     label: Text(
-                      isArabic() ? 'محادثة' : 'Message',
+                      S.of(context).sendMessage,
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -262,10 +262,19 @@ class FriendCard extends StatelessWidget {
                       return false;
                     }
 
-                    await petFriendsCubit.cancelRequest(pet, activePet.petId!);
-                    final state = await petFriendsCubit.stream.firstWhere((s) =>
-                        s is FriendRequestCancelled || s is FriendRequestCancelFailed);
-                    return state is FriendRequestCancelled;
+                    try {
+                      final resultFuture = petFriendsCubit.stream.firstWhere(
+                        (s) => s is DeleteFriendShipSuccess || s is DeleteFriendShipFailed,
+                      ).timeout(
+                        const Duration(seconds: 10),
+                        onTimeout: () => DeleteFriendShipFailed(message: 'Request timeout'),
+                      );
+                      await petFriendsCubit.deleteFriendship(pet, activePet.petId!);
+                      final state = await resultFuture;
+                      return state is DeleteFriendShipSuccess;
+                    } catch (e) {
+                      return false;
+                    }
                   });
                 },
                 style: ElevatedButton.styleFrom(
