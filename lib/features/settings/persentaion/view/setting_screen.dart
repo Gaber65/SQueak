@@ -103,9 +103,7 @@ class SettingScreen extends StatelessWidget {
                       navigateToScreen(context, const BlockedPetsScreen());
                     },
                     trailingWidget: IconButton(
-                      onPressed: () {
-                        navigateToScreen(context, const BlockedPetsScreen());
-                      },
+                      onPressed: () {},
                       icon: Icon(Icons.block),
                     ),
                   ),

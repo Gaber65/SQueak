@@ -268,7 +268,25 @@ void _showUnblockDialog(PetFriendRequestEntity friendRequest) {
         ),
         centerTitle: true,
       ),
-      body: BlocBuilder<SwitchProfileCubit, SwitchProfileState>(
+      body: BlocConsumer<SwitchProfileCubit, SwitchProfileState>(
+        listener: (context, switchState) {
+          try {
+            final activePet = SwitchProfileCubit.get(context).activeProfile?.pet;
+            if (activePet != null && activePet.petId != null && activePet.petId != _currentPetId) {
+              if (mounted) {
+                setState(() {
+                  _currentPetId = activePet.petId;
+                });
+              } else {
+                _currentPetId = activePet.petId;
+              }
+              // load blocked friends once we have the current pet id
+              PetFriendsCubit.get(context).loadBlockedFriends(petId: _currentPetId!);
+            }
+          } catch (e) {
+            if (kDebugMode) print('Error in SwitchProfile listener: $e');
+          }
+        },
         builder: (context, switchState) {
           final switchCubit = SwitchProfileCubit.get(context);
           final activeProfile = switchCubit.activeProfile;

@@ -372,7 +372,6 @@ class _ChatListView extends StatelessWidget {
                       },
                     ),
                   );
-                  // reload chats after returning
                   try {
                     ChatListCubit.get(context).loadChats(petId);
                   } catch (_) {}
