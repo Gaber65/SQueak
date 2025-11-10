@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import '../../../../../core/utils/enums/profile_type.dart';
-import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
 import '../controllers/chat_messages_state.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/rating_pet_mating.dart';
 import '../../../profile/presentation/screens/view_pet_profile_screen.dart';
