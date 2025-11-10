@@ -199,7 +199,7 @@ Future<void> clearMessages(ClearChatParameters parameters) async {
 
     final clearConversationUseCase = sl<ClearConversationUseCase>();
     // Debug: log clear chat parameters
-    print('CUBIT.clearMessages -> params: ${parameters.toJson()}');
+    // print('CUBIT.clearMessages -> params: ${parameters.toJson()}');
     final result = await clearConversationUseCase(parameters);
 
     result.fold(

@@ -375,7 +375,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                     ),
                   ),
                 PopupMenuItem(
-                  value: 'end_chat',
+                  value: 'clear_chat',
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Row(
@@ -394,8 +394,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          // Changing label from "End Chat" to "Clear Chat"
-                          'Clear Chat',
+                          S.of(context).clearChat,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 14,
@@ -436,7 +435,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
       case 'unBlock':
         _showUnBlockDialog(context);
         break;
-      case 'end_chat':
+      case 'clear_chat':
         _showClearChatDialog(context);
         break;
       case 'rating':
@@ -1113,37 +1112,73 @@ class _ChatAppBarState extends State<ChatAppBar> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Clear chat messages'),
-        content: Text('Are you sure you want to clear messages in this conversation?'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.pets, color: Colors.orange[700], size: 28),
+            SizedBox(width: 12),
+            Expanded(child: Text(S.of(context).clearChatMessages)),
+          ],
+        ),
+        content: Text(S.of(context).clearChatConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.grey[600],
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
             child: Text(S.of(context).cancel),
           ),
           ElevatedButton(
             onPressed: () {
-              // close the confirmation dialog
               Navigator.pop(context);
-
-              // send clear request - onlyFromMe true by default here
               widget.cubit.clearMessages(
                 ClearChatParameters(
                   conversationId: widget.chat.id,
                   onlyFromMe: true,
                 ),
               );
-
-              // show immediate feedback
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Clearing chat...')),
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        Icon(Icons.cleaning_services, color: Colors.white, size: 20),
+                        SizedBox(width: 8),
+                        Text('Clearing chat...'),
+                      ],
+                    ),
+                    backgroundColor: Colors.orange[700],
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 );
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-            child: Text(
-              'Clear',
-              style: TextStyle(color: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange[700],
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 2,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.delete_sweep, size: 20),
+                SizedBox(width: 8),
+                Text(
+                  S.of(context).clearChat,
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                ),
+              ],
             ),
           ),
         ],

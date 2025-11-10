@@ -246,6 +246,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "chooseViewMode": MessageLookupByLibrary.simpleMessage("اختر وضع العرض"),
     "chosePet": MessageLookupByLibrary.simpleMessage("اختر صديق صغير"),
     "city": MessageLookupByLibrary.simpleMessage("المدينة"),
+    "clearChat": MessageLookupByLibrary.simpleMessage("مسح الدردشة"),
+    "clearChatConfirmation": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد من أنك تريد مسح جميع رسائل هذه الدردشة؟ لا يمكن التراجع عن هذا الإجراء.",
+    ),
+    "clearChatMessages": MessageLookupByLibrary.simpleMessage(
+      "مسح رسائل الدردشة",
+    ),
     "clinic": MessageLookupByLibrary.simpleMessage("العيادة"),
     "clinicDoctor": MessageLookupByLibrary.simpleMessage("أطباء العيادة"),
     "clinicFollowedBefore": MessageLookupByLibrary.simpleMessage(
@@ -359,7 +366,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "emptyMatingRequests": MessageLookupByLibrary.simpleMessage(
       "عندما ترسل طلبات التزاوج، ستظهر هنا",
     ),
-    "endChat": MessageLookupByLibrary.simpleMessage("إنهاء الدردشة"),
     "endChatConfirmation": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد من أنك تريد إنهاء هذه الدردشة؟ لا يمكن التراجع عن هذا الإجراء.",
     ),

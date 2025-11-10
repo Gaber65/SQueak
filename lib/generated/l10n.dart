@@ -3669,9 +3669,29 @@ class S {
     );
   }
 
-  /// `End Chat`
-  String get endChat {
-    return Intl.message('End Chat', name: 'endChat', desc: '', args: []);
+  /// `Clear Chat`
+  String get clearChat {
+    return Intl.message('Clear Chat', name: 'clearChat', desc: '', args: []);
+  }
+
+  /// `Clear Chat Messages`
+  String get clearChatMessages {
+    return Intl.message(
+      'Clear Chat Messages',
+      name: 'clearChatMessages',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to clear all messages in this chat? This action cannot be undone.`
+  String get clearChatConfirmation {
+    return Intl.message(
+      'Are you sure you want to clear all messages in this chat? This action cannot be undone.',
+      name: 'clearChatConfirmation',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Are you sure you want to end this chat? This action cannot be reversed.`

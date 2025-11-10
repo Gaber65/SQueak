@@ -130,17 +130,17 @@ class ChatRemoteDataSource implements BaseChatRemoteDataSource {
   Future<bool> clearChat(ClearChatParameters param)async {
     try {
       final url = clearChatEndPoint(param.conversationId, deleteForMeOnly: param.onlyFromMe);
-      // Debug prints: URL, request params
-      print('CLEAR_CHAT -> URL: $url');
-      print('CLEAR_CHAT -> request: ${param.toJson()}');
+      // // Debug prints: URL, request params
+      // print('CLEAR_CHAT -> URL: $url');
+      // print('CLEAR_CHAT -> request: ${param.toJson()}');
 
       final response = await DioFinalHelper.deleteData(
         method: url,
       );
 
-      // Debug prints: response status and body
-      print('CLEAR_CHAT -> response status: ${response.statusCode}');
-      print('CLEAR_CHAT -> response data: ${response.data}');
+      // // Debug prints: response status and body
+      // print('CLEAR_CHAT -> response status: ${response.statusCode}');
+      // print('CLEAR_CHAT -> response data: ${response.data}');
 
       return response.data['success'];
     } on DioException catch (e) {

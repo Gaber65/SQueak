@@ -258,6 +258,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "chooseViewMode": MessageLookupByLibrary.simpleMessage("Choose view mode"),
     "chosePet": MessageLookupByLibrary.simpleMessage("Choose Pet"),
     "city": MessageLookupByLibrary.simpleMessage("city"),
+    "clearChat": MessageLookupByLibrary.simpleMessage("Clear Chat"),
+    "clearChatConfirmation": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to clear all messages in this chat? This action cannot be undone.",
+    ),
+    "clearChatMessages": MessageLookupByLibrary.simpleMessage(
+      "Clear Chat Messages",
+    ),
     "clinic": MessageLookupByLibrary.simpleMessage("Clinic"),
     "clinicDoctor": MessageLookupByLibrary.simpleMessage("Clinic Doctors"),
     "clinicFollowedBefore": MessageLookupByLibrary.simpleMessage(
@@ -376,7 +383,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "emptyMatingRequests": MessageLookupByLibrary.simpleMessage(
       "Your sent mating requests will appear here",
     ),
-    "endChat": MessageLookupByLibrary.simpleMessage("End Chat"),
     "endChatConfirmation": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to end this chat? This action cannot be reversed.",
     ),
