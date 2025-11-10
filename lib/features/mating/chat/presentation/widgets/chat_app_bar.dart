@@ -103,21 +103,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
         ),
         onPressed: () {
           Navigator.pop(context);
-          Future.delayed(const Duration(milliseconds: 100), () {
-            try {
-              final profileState =
-                  SwitchProfileCubit.get(navigatorKey.currentContext!).state;
-              if (profileState is ProfileLoaded &&
-                  profileState.profile.type == ProfileType.pet) {
-                final petId = profileState.profile.pet?.petId;
-                if (petId != null) {
-                  ChatListCubit.get(
-                    navigatorKey.currentContext!,
-                  ).loadChats(petId);
-                }
-              }
-            } catch (_) {}
-          });
         },
       ),
       title: Row(

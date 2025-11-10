@@ -176,7 +176,7 @@ class AppTheme {
     ),
     
     // Card theme
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: _surfaceColor,
       elevation: elevation1,
       shape: RoundedRectangleBorder(
@@ -477,7 +477,7 @@ class AppTheme {
     ),
     
     // Card theme for dark
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: _darkSurfaceColor,
       elevation: elevation1,
       shape: RoundedRectangleBorder(
