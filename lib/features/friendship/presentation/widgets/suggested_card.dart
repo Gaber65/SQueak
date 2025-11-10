@@ -8,6 +8,7 @@ import 'package:squeak/core/service/global_function/time_format.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
+import 'package:squeak/generated/l10n.dart';
 
 import '../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
 import '../controllers/pet_friend_cubit.dart';
@@ -21,266 +22,157 @@ class SuggestedCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     // Responsive sizing
     final isTablet = screenWidth > 600;
-    final cardPadding = isTablet ? 24.0 : 18.0;
-    final avatarRadius = isTablet ? 36.0 : 32.0;
-    final nameSize = isTablet ? 19.0 : 17.0;
-    final subTextSize = isTablet ? 14.5 : 13.5;
+    final cardPadding = isTablet ? 24.0 : 20.0;
+    final avatarRadius = isTablet ? 40.0 : 36.0;
+    final nameSize = isTablet ? 20.0 : 18.0;
+    final subTextSize = isTablet ? 14.0 : 13.0;
 
-    // Universal gender-neutral colors
-    final cardColor = isDark 
-        ? Color(0xFF1C1C1E) 
-        : Colors.white;
-    final cardGradientOverlay = isDark
-        ? LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF2C2C2E).withOpacity(0.5),
-              Color(0xFF1C1C1E).withOpacity(0.3),
-            ],
-          )
-        : LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              Color(0xFFFAFBFC),
-            ],
-          );
-    
-    final shadowColor = isDark 
-        ? Colors.black.withOpacity(0.4) 
-        : Colors.black.withOpacity(0.06);
-    final nameColor = isDark 
-        ? Color(0xFFF5F5F7) 
-        : Color(0xFF1C1C1E);
-    final subTextColor = isDark 
-        ? Color(0xFFAEAEB2) 
-        : Color(0xFF636366);
-    
-    // Professional teal/blue accent - appeals to all
-    final accentColor = isDark
-        ? Color(0xFF5AC8FA) // iOS blue
-        : Color(0xFF007AFF); // Classic blue
-    
-    final mutualBgColor = isDark
-        ? Color(0xFF2C2C2E)
-        : Color(0xFFF2F2F7);
+    // Modern color scheme
+    final cardColor = isDark ? Color(0xFF1C1C1E) : Colors.white;
+    final shadowColor =
+        isDark ? Colors.black.withOpacity(0.6) : Colors.black.withOpacity(0.08);
+    final nameColor = isDark ? Color(0xFFF5F5F7) : Color(0xFF1C1C1E);
+    final subTextColor = isDark ? Color(0xFFAEAEB2) : Color(0xFF8E8E93);
+    final accentColor = isDark ? Color(0xFF0A84FF) : Color(0xFF007AFF);
+    final mutualBgColor = isDark ? Color(0xFF2C2C2E) : Color(0xFFF2F2F7);
+    final dividerColor =
+        isDark
+            ? Colors.white.withOpacity(0.08)
+            : Colors.black.withOpacity(0.06);
 
     return Container(
       margin: EdgeInsets.only(
-        bottom: isTablet ? 16 : 14,
-        left: isTablet ? 8 : 4,
-        right: isTablet ? 8 : 4,
+        bottom: isTablet ? 20 : 16,
+        left: isTablet ? 12 : 8,
+        right: isTablet ? 12 : 8,
       ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(isTablet ? 24 : 20),
+        color: cardColor,
+        borderRadius: BorderRadius.circular(isTablet ? 28 : 24),
+        border: Border.all(
+          color:
+              isDark
+                  ? Colors.white.withOpacity(0.1)
+                  : Colors.black.withOpacity(0.06),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: shadowColor,
-            blurRadius: 20,
+            blurRadius: 24,
             offset: Offset(0, 8),
-            spreadRadius: 0,
+            spreadRadius: -4,
           ),
           BoxShadow(
             color: shadowColor.withOpacity(0.5),
-            blurRadius: 4,
+            blurRadius: 8,
             offset: Offset(0, 2),
-            spreadRadius: 0,
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(isTablet ? 24 : 20),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: cardGradientOverlay,
-            border: Border.all(
-              color: isDark 
-                  ? Colors.white.withOpacity(0.08) 
-                  : Colors.black.withOpacity(0.04),
-              width: 1,
-            ),
-          ),
-          child: Stack(
-            children: [
-              // Subtle decorative elements
-              Positioned(
-                top: -30,
-                right: -30,
-                child: Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        accentColor.withOpacity(0.08),
-                        accentColor.withOpacity(0.0),
-                      ],
-                    ),
+        borderRadius: BorderRadius.circular(isTablet ? 28 : 24),
+        child: Stack(
+          children: [
+            // Gradient overlay for depth
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors:
+                        isDark
+                            ? [
+                              Color(0xFF2C2C2E).withOpacity(0.3),
+                              Colors.transparent,
+                            ]
+                            : [Colors.white, Color(0xFFFAFBFC)],
                   ),
                 ),
               ),
-              Positioned(
-                bottom: -20,
-                left: -20,
-                child: Icon(
-                  Icons.pets_rounded,
-                  size: 80,
-                  color: accentColor.withOpacity(0.04),
+            ),
+
+            // Decorative background elements
+            Positioned(
+              top: -40,
+              right: -40,
+              child: Container(
+                width: 140,
+                height: 140,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      accentColor.withOpacity(0.1),
+                      accentColor.withOpacity(0.0),
+                    ],
+                  ),
                 ),
               ),
-              
-              Padding(
-                padding: EdgeInsets.all(cardPadding),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        // Pet Avatar with modern gradient border
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: [
-                                accentColor.withOpacity(0.8),
-                                accentColor.withOpacity(0.4),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: accentColor.withOpacity(0.3),
-                                blurRadius: 12,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          padding: EdgeInsets.all(3.5),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: cardColor,
-                            ),
-                            padding: EdgeInsets.all(2.5),
-                            child: CircleAvatar(
-                              radius: avatarRadius,
-                              backgroundColor: isDark 
-                                  ? Color(0xFF3A3A3C) 
-                                  : Color(0xFFE5E5EA),
-                              backgroundImage: pet.imageName?.isNotEmpty == true
-                                  ? NetworkImage(imageUrl + pet.imageName!)
-                                  : null,
-                              child: pet.imageName?.isNotEmpty != true
-                                  ? Text(
-                                      pet.petName!.substring(0, 1).toUpperCase(),
-                                      style: TextStyle(
-                                        fontSize: avatarRadius * 0.65,
-                                        fontWeight: FontWeight.w700,
-                                        color: accentColor,
-                                        letterSpacing: 1,
-                                      ),
-                                    )
-                                  : null,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: isTablet ? 18 : 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      pet.petName!,
-                                      style: TextStyle(
-                                        fontSize: nameSize,
-                                        fontWeight: FontWeight.w700,
-                                        color: nameColor,
-                                        letterSpacing: 0.2,
-                                        height: 1.2,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  SizedBox(width: 6),
-                                  Container(
-                                    padding: EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      color: accentColor.withOpacity(0.15),
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: Icon(
-                                      Icons.pets,
-                                      size: isTablet ? 15 : 13,
-                                      color: accentColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 6),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.cake_outlined,
-                                    size: isTablet ? 15 : 13,
-                                    color: subTextColor,
-                                  ),
-                                  SizedBox(width: 6),
-                                  Flexible(
-                                    child: Text(
-                                      (pet.birthdate != null && pet.birthdate != '')
-                                          ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
-                                          : pet.breed?.enBreed ?? "Mixed breed",
-                                      style: TextStyle(
-                                        fontSize: subTextSize,
-                                        color: subTextColor,
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 0.1,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (pet.mutualFriends! > 0) ...[
-                      SizedBox(height: isTablet ? 16 : 14),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: isTablet ? 16 : 14,
-                          vertical: isTablet ? 12 : 10,
-                        ),
-                        decoration: BoxDecoration(
-                          color: mutualBgColor,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.white.withOpacity(0.06)
-                                : Colors.black.withOpacity(0.04),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
+            ),
+
+            Positioned(
+              bottom: -30,
+              left: -30,
+              child: Icon(
+                Icons.pets_rounded,
+                size: 100,
+                color: accentColor.withOpacity(0.05),
+              ),
+            ),
+
+            // Main content
+            Padding(
+              padding: EdgeInsets.all(cardPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Avatar and basic info section
+                  Row(
+                    children: [
+                      // Enhanced pet avatar
+                      _buildPetAvatar(
+                        pet: pet,
+                        isDark: isDark,
+                        avatarRadius: avatarRadius,
+                        accentColor: accentColor,
+                        cardColor: cardColor,
+                      ),
+
+                      SizedBox(width: isTablet ? 18 : 16),
+
+                      // Pet info
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Stack(
+                            // Name with badge
+                            Row(
                               children: [
+                                Flexible(
+                                  child: Text(
+                                    pet.petName!,
+                                    style: TextStyle(
+                                      fontSize: nameSize,
+                                      fontWeight: FontWeight.w800,
+                                      color: nameColor,
+                                      letterSpacing: 0.3,
+                                      height: 1.2,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                SizedBox(width: 8),
                                 Container(
-                                  padding: EdgeInsets.all(6),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
@@ -288,60 +180,281 @@ class SuggestedCard extends StatelessWidget {
                                         accentColor.withOpacity(0.1),
                                       ],
                                     ),
-                                    shape: BoxShape.circle,
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Icon(
-                                    Icons.people_rounded,
-                                    size: isTablet ? 18 : 16,
+                                    Icons.pets,
+                                    size: isTablet ? 16 : 14,
                                     color: accentColor,
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(width: 10),
-                            Flexible(
-                              child: Text(
-                                '${pet.mutualFriends} ${isArabic() ? 'صديق مشترك' : 'mutual friend${pet.mutualFriends! > 1 ? 's' : ''}'}',
-                                style: TextStyle(
-                                  fontSize: isTablet ? 13.5 : 12.5,
-                                  color: isDark ? Color(0xFFAEAEB2) : Color(0xFF48484A),
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.2,
-                                ),
-                              ),
+
+                            SizedBox(height: 8),
+
+                            // Age and breed
+                            _buildInfoRow(
+                              icon: Icons.cake_outlined,
+                              text:
+                                  (pet.birthdate != null && pet.birthdate != '')
+                                      ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
+                                      : pet.breed?.enBreed ?? "Mixed breed",
+                              color: subTextColor,
+                              fontSize: subTextSize,
+                              isTablet: isTablet,
                             ),
                           ],
                         ),
                       ),
                     ],
-                    SizedBox(height: isTablet ? 18 : 16),
-                    FriendActionButton(
-                      onCancel: () {
-                        context.read<PetFriendsCubit>().cancelRequest(
-                          pet,
-                          SwitchProfileCubit.get(context).activeProfile!.pet!.petId!,
-                        );
-                      },
-                      pet: pet,
-                      onDismiss: () {
-                        context.read<PetFriendsCubit>().suggestedFriends.remove(pet);
-                        PetFriendsCubit.get(context).emit((SuggestedFriendsLoading()));
-                      },
-                      onSent: () {
-                        context.read<PetFriendsCubit>().sendFriendRequest(
-                          pet,
-                          SwitchProfileCubit.get(context).activeProfile!.pet!.petId!,
-                        );
-                      },
-                      isTablet: isTablet,
+                  ),
+
+                  SizedBox(height: isTablet ? 20 : 18),
+
+                  // Divider
+                  Container(
+                    height: 1,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          dividerColor,
+                          dividerColor.withOpacity(0.1),
+                          dividerColor,
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: isTablet ? 20 : 18),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildStatusChip(
+                        icon:
+                            pet.isSpayed == true
+                                ? Icons.check_circle_rounded
+                                : Icons.info_rounded,
+                        label:
+                            pet.isSpayed == true
+                                ? S.of(context).spayed
+                                : S.of(context).notSpayed,
+                        color:
+                            pet.isSpayed == true
+                                ? Color(0xFF34C759)
+                                : Color(0xFFFF3B30),
+                        isTablet: isTablet,
+                      ),
+
+                      SizedBox(width: 12),
+                      _buildStatusChip(
+                        icon: pet.gender == 1 ? Icons.male : Icons.female,
+                        label:
+                            pet.gender == 1
+                                ? S.of(context).male
+                                : S.of(context).female,
+                        color:
+                            pet.gender == 1
+                                ? Color(0xFF007AFF)
+                                : Color(0xFFFF2D55),
+                        isTablet: isTablet,
+                      ),
+                    ],
+                  ),
+                  if (pet.mutualFriends! > 0) ...[
+                    SizedBox(height: isTablet ? 20 : 18),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isTablet ? 16 : 14,
+                        vertical: isTablet ? 14 : 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: mutualBgColor,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: dividerColor, width: 1),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  accentColor.withOpacity(0.2),
+                                  accentColor.withOpacity(0.1),
+                                ],
+                              ),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.people_rounded,
+                              size: isTablet ? 20 : 18,
+                              color: accentColor,
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Flexible(
+                            child: Text(
+                              '${pet.mutualFriends} ${isArabic() ? 'صديق مشترك' : 'mutual friend${pet.mutualFriends! > 1 ? 's' : ''}'}',
+                              style: TextStyle(
+                                fontSize: isTablet ? 14.0 : 13.0,
+                                color:
+                                    isDark
+                                        ? Color(0xFFAEAEB2)
+                                        : Color(0xFF48484A),
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.2,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
-                ),
+
+                  SizedBox(height: isTablet ? 24 : 20),
+                  FriendActionButton(
+                    onCancel: () {
+                      context.read<PetFriendsCubit>().cancelRequest(
+                        pet,
+                        SwitchProfileCubit.get(
+                          context,
+                        ).activeProfile!.pet!.petId!,
+                      );
+                    },
+                    pet: pet,
+                    onDismiss: () {
+                      context.read<PetFriendsCubit>().suggestedFriends.remove(
+                        pet,
+                      );
+                      PetFriendsCubit.get(
+                        context,
+                      ).emit((SuggestedFriendsLoading()));
+                    },
+                    onSent: () {
+                      context.read<PetFriendsCubit>().sendFriendRequest(
+                        pet,
+                        SwitchProfileCubit.get(
+                          context,
+                        ).activeProfile!.pet!.petId!,
+                      );
+                    },
+                    isTablet: isTablet,
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget _buildPetAvatar({
+    required PetEntities pet,
+    required bool isDark,
+    required double avatarRadius,
+    required Color accentColor,
+    required Color cardColor,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          colors: [accentColor.withOpacity(0.8), accentColor.withOpacity(0.5)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: accentColor.withOpacity(0.4),
+            blurRadius: 16,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.all(3.5),
+      child: Container(
+        decoration: BoxDecoration(shape: BoxShape.circle, color: cardColor),
+        padding: EdgeInsets.all(3),
+        child: CircleAvatar(
+          radius: avatarRadius,
+          backgroundColor: isDark ? Color(0xFF3A3A3C) : Color(0xFFE5E5EA),
+          backgroundImage:
+              pet.imageName?.isNotEmpty == true
+                  ? NetworkImage(imageUrl + pet.imageName!)
+                  : null,
+          child:
+              pet.imageName?.isNotEmpty != true
+                  ? Text(
+                    pet.petName!.substring(0, 1).toUpperCase(),
+                    style: TextStyle(
+                      fontSize: avatarRadius * 0.7,
+                      fontWeight: FontWeight.w800,
+                      color: accentColor,
+                      letterSpacing: 1,
+                    ),
+                  )
+                  : null,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow({
+    required IconData icon,
+    required String text,
+    required Color color,
+    required double fontSize,
+    required bool isTablet,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, size: isTablet ? 16 : 14, color: color),
+        SizedBox(width: 6),
+        Flexible(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: fontSize,
+              color: color,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.1,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusChip({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required bool isTablet,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: isTablet ? 24 : 20, color: color),
+        SizedBox(width: 6),
+        Flexible(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: isTablet ? 16.5 : 14.5,
+              fontWeight: FontWeight.w700,
+              color: color,
+              letterSpacing: 0.2,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -368,8 +481,6 @@ class FriendActionButton extends StatefulWidget {
 
 class _FriendActionButtonState extends State<FriendActionButton>
     with SingleTickerProviderStateMixin {
-  bool _isRejectPressed = false;
-  bool _isAcceptPressed = false;
   late AnimationController _scaleController;
   late Animation<double> _scaleAnimation;
 
@@ -380,7 +491,7 @@ class _FriendActionButtonState extends State<FriendActionButton>
       duration: Duration(milliseconds: 150),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
       CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
     );
   }
@@ -394,37 +505,23 @@ class _FriendActionButtonState extends State<FriendActionButton>
   @override
   Widget build(BuildContext context) {
     final isDark = MainCubit.get(context).isDark;
-    final buttonHeight = widget.isTablet ? 54.0 : 50.0;
-    final fontSize = widget.isTablet ? 15.5 : 15.0;
-    final iconSize = widget.isTablet ? 20.0 : 18.0;
+    final buttonHeight = widget.isTablet ? 56.0 : 52.0;
+    final fontSize = widget.isTablet ? 16.0 : 15.0;
+    final iconSize = widget.isTablet ? 22.0 : 20.0;
 
-    // Professional color schemes
     final primaryColor = isDark ? Color(0xFF0A84FF) : Color(0xFF007AFF);
     final dangerColor = isDark ? Color(0xFFFF453A) : Color(0xFFFF3B30);
-
-    final rejectGradient = isDark
-        ? [Color(0xFF3A3A3C), Color(0xFF2C2C2E)]
-        : [Color(0xFFF2F2F7), Color(0xFFE5E5EA)];
-    
-    final acceptGradient = [
-      primaryColor,
-      primaryColor.withOpacity(0.85),
-    ];
-
-    final unsentGradient = [
-      dangerColor,
-      dangerColor.withOpacity(0.85),
-    ];
-
+    final rejectBgColor = isDark ? Color(0xFF2C2C2E) : Color(0xFFF2F2F7);
     final rejectTextColor = isDark ? Color(0xFFEBEBF5) : Color(0xFF48484A);
     final acceptTextColor = Colors.white;
 
-    final isSent = PetFriendsCubit.get(context).sentRequests.contains(widget.pet);
+    final isSent = PetFriendsCubit.get(
+      context,
+    ).sentRequests.contains(widget.pet);
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final isNarrow = constraints.maxWidth < 350;
-        
         return Row(
           children: [
             Expanded(
@@ -437,32 +534,35 @@ class _FriendActionButtonState extends State<FriendActionButton>
                   curve: Curves.easeInOut,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: _isAcceptPressed
-                          ? (isSent
-                              ? unsentGradient.reversed.toList()
-                              : acceptGradient.reversed.toList())
-                          : (isSent ? unsentGradient : acceptGradient),
+                      colors:
+                          isSent
+                              ? [dangerColor, dangerColor.withOpacity(0.85)]
+                              : [primaryColor, primaryColor.withOpacity(0.9)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
-                    borderRadius: BorderRadius.circular(widget.isTablet ? 16 : 14),
+                    borderRadius: BorderRadius.circular(
+                      widget.isTablet ? 18 : 16,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: (isSent ? dangerColor : primaryColor)
-                            .withOpacity(0.35),
-                        blurRadius: 12,
+                            .withOpacity(0.4),
+                        blurRadius: 16,
                         offset: Offset(0, 6),
+                        spreadRadius: -2,
                       ),
                     ],
                   ),
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(widget.isTablet ? 16 : 14),
+                      borderRadius: BorderRadius.circular(
+                        widget.isTablet ? 18 : 16,
+                      ),
                       onTap: isSent ? widget.onCancel : widget.onSent,
                       onHighlightChanged: (pressed) {
                         setState(() {
-                          _isAcceptPressed = pressed;
                           if (pressed) {
                             _scaleController.forward();
                           } else {
@@ -478,7 +578,9 @@ class _FriendActionButtonState extends State<FriendActionButton>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              isSent ? Icons.close_rounded : Icons.person_add_alt_1_rounded,
+                              isSent
+                                  ? Icons.close_rounded
+                                  : Icons.person_add_alt_1_rounded,
                               size: iconSize,
                               color: acceptTextColor,
                             ),
@@ -488,7 +590,9 @@ class _FriendActionButtonState extends State<FriendActionButton>
                                 child: Text(
                                   isSent
                                       ? (isArabic() ? "إلغاء الطلب" : 'Cancel')
-                                      : (isArabic() ? 'إضافة صديق' : 'Add Friend'),
+                                      : (isArabic()
+                                          ? 'إضافة صديق'
+                                          : 'Add Friend'),
                                   style: TextStyle(
                                     fontSize: fontSize,
                                     fontWeight: FontWeight.w700,
@@ -508,6 +612,8 @@ class _FriendActionButtonState extends State<FriendActionButton>
                 ),
               ),
             ),
+
+            // Dismiss button (only shown when not sent)
             if (!isSent) ...[
               SizedBox(width: widget.isTablet ? 14 : 12),
               Expanded(
@@ -517,30 +623,24 @@ class _FriendActionButtonState extends State<FriendActionButton>
                   height: buttonHeight,
                   curve: Curves.easeInOut,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: _isRejectPressed
-                          ? rejectGradient.reversed.toList()
-                          : rejectGradient,
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                    color: rejectBgColor,
+                    borderRadius: BorderRadius.circular(
+                      widget.isTablet ? 18 : 16,
                     ),
-                    borderRadius: BorderRadius.circular(widget.isTablet ? 16 : 14),
                     border: Border.all(
-                      color: isDark
-                          ? Color(0xFF48484A)
-                          : Color(0xFFD1D1D6),
+                      color: isDark ? Color(0xFF48484A) : Color(0xFFD1D1D6),
                       width: 1.5,
                     ),
                   ),
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(widget.isTablet ? 16 : 14),
+                      borderRadius: BorderRadius.circular(
+                        widget.isTablet ? 18 : 16,
+                      ),
                       onTap: widget.onDismiss,
                       onHighlightChanged: (pressed) {
-                        setState(() {
-                          _isRejectPressed = pressed;
-                        });
+                        setState(() {});
                       },
                       child: Padding(
                         padding: EdgeInsets.symmetric(

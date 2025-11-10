@@ -73,6 +73,8 @@ class RequestCard extends StatelessWidget {
                         color: isDark ? Colors.grey[400] : Colors.grey[600],
                       ),
                     ),
+                    SizedBox(height: 4),
+                 
                   ],
                 ),
               ),
