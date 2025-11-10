@@ -14,7 +14,6 @@ dependencies:
   audioplayers: ^5.2.1
   carousel_slider: ^5.0.0
   chewie: ^1.8.5
-  chucker_flutter: ^1.8.1
   cloud_firestore: ^5.4.4
   comment_tree: ^0.3.0
   cupertino_icons: ^1.0.8
@@ -43,6 +42,7 @@ dependencies:
   get_it: ^8.0.3
   google_fonts: ^6.2.1
   http: ^1.1.0
+  hydrated_bloc: ^9.1.5
   iconly: ^1.0.1
   image_picker: ^1.1.2
   internet_connection_checker: ^3.0.1

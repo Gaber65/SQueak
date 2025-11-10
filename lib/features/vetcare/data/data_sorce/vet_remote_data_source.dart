@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -93,7 +92,7 @@ class VetRemoteDataSource implements BaseVetRemoteDataSource {
     try {
       final basicAuth = _createBasicAuth();
       final dioWithInterceptor =
-          Dio()..interceptors.add(ChuckerDioInterceptor());
+          Dio();
 
       final response = await dioWithInterceptor.get(
         '${ConfigModel.baseApiUrlSqueak}$version/vetcare/client/$invitationCode',
@@ -113,7 +112,7 @@ class VetRemoteDataSource implements BaseVetRemoteDataSource {
     try {
       final basicAuth = _createBasicAuth();
       final dioWithInterceptor =
-          Dio()..interceptors.add(ChuckerDioInterceptor());
+          Dio();
 
       final response = await dioWithInterceptor.get(
         '${ConfigModel.baseApiUrlSqueak}$version/vetcare/client/$phone/$code',

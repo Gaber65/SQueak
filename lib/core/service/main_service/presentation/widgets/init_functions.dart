@@ -1,4 +1,3 @@
-import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 // ignore: depend_on_referenced_packages
 import 'package:firebase_core/firebase_core.dart';
@@ -150,7 +149,6 @@ class InitFunctions {
   }
 
   static Future<void> _configureChucker() async {
-    ChuckerFlutter.showOnRelease = true;
-    ChuckerFlutter.showNotification = true;
+
   }
 }

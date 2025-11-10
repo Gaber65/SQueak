@@ -5,9 +5,10 @@ import 'notification_initializer.dart';
 import 'notification_navigation.dart';
 
 class LocalNotificationHandler {
-
   /// Handle notification responses (clicks and actions)
-  static Future<void> handleNotificationResponse(NotificationResponse response) async {
+  static Future<void> handleNotificationResponse(
+    NotificationResponse response,
+  ) async {
     // print('Notification response received: ${response.payload}');
 
     if (response.payload == null) return;
@@ -40,17 +41,17 @@ class LocalNotificationHandler {
         final snoozeTime = now.add(Duration(minutes: 5));
 
         const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
-          'reminder_channel',
-          'Reminders',
-          importance: Importance.high,
-          priority: Priority.high,
-          sound: RawResourceAndroidNotificationSound('notification'),
-          actions: <AndroidNotificationAction>[
-            AndroidNotificationAction('snooze_action', 'Snooze'),
-            AndroidNotificationAction('ignore_action', 'Ignore'),
-          ],
-        );
+            AndroidNotificationDetails(
+              'reminder_channel',
+              'Reminders',
+              importance: Importance.high,
+              priority: Priority.high,
+              sound: RawResourceAndroidNotificationSound('notification'),
+              actions: <AndroidNotificationAction>[
+                AndroidNotificationAction('snooze_action', 'Snooze'),
+                AndroidNotificationAction('ignore_action', 'Ignore'),
+              ],
+            );
 
         await flutterLocalNotificationsPlugin.zonedSchedule(
           id,

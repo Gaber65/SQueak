@@ -124,11 +124,10 @@ class NotificationScheduler {
       title,
       body,
       scheduledDate,
-      platformChannelSpecifics,
+      const NotificationDetails(android: androidDetails),
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
       UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: matchComponents,
       payload: 'reminder_$id|$title|$body',
     );
 

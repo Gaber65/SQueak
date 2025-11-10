@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:app_links/app_links.dart';
 import 'package:squeak/features/settings/persentaion/controller/setting_cubit.dart';
 import '../../../../../features/auth/login/presentation/pages/login_screen.dart';
@@ -125,7 +124,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: S.delegate.supportedLocales,
-            navigatorObservers: [ChuckerFlutter.navigatorObserver],
           );
         },
       ),
