@@ -1,6 +1,4 @@
-import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 
 import '../../domain/entities/chat_entity.dart';
 
@@ -25,18 +23,6 @@ class ChatModel extends ChatEntity {
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
-    // Print raw incoming JSON for full visibility
-    try {
-      if (kDebugMode) {
-        print('📥 ChatModel.fromJson raw JSON: ${jsonEncode(json)}');
-      }
-    } catch (_) {
-      // Fallback to simple print if encoding fails
-      if (kDebugMode) {
-        print('📥 ChatModel.fromJson raw JSON (fallback): $json');
-      }
-    }
-
     final model = ChatModel(
       id: json['id'] ?? '',
       isGroup: json['isGroup'] ?? false,
@@ -54,18 +40,6 @@ class ChatModel extends ChatEntity {
       isBlockedByOther: json['isBlockedByOther'] ?? false,
       isReadOnly: json['isReadOnly'] ?? false,
     );
-
-    if (kDebugMode) {
-      print(
-        '=====================================================================',
-      );
-    }
-    if (kDebugMode) {
-      print(
-        '📥 ChatModel.fromJson parsed: isBlockByMe=${model.isBlockedByMe}, name=${model.name}, isBlockedByOther=${model.isBlockedByOther} 🐾',
-      );
-    }
-
     return model;
   }
 
@@ -87,25 +61,10 @@ class ChatModel extends ChatEntity {
       'isBlockedByOther': isBlockedByOther,
       'isReadOnly': isReadOnly,
     };
-    try {
-      if (kDebugMode) {
-        print('==============={Blocked By Other}====================');
-        print(map['isBlockedByOther']);
-        print('📤 ChatModel.toJson JSON: ${jsonEncode(map)}');
-      }
-    } catch (_) {
-      if (kDebugMode) {
-        print('📤 ChatModel.toJson map (fallback): $map');
-      }
-    }
-
     return map;
   }
 
   static List<ChatModel> fromJsonList(List<dynamic> list) {
-    if (kDebugMode) {
-      print('🧾 ChatModel.fromJsonList: parsing ${list.length} item(s)');
-    }
     return list.map((item) => ChatModel.fromJson(item)).toList();
   }
 }

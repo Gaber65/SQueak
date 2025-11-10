@@ -88,5 +88,22 @@ class ChatRepository implements BaseChatRepository {
       return Left(ServerFailure(failure.errorMessageModel));
     }
   }
+  
+  @override
+  Future<Either<Failure, bool>> clearChat(ClearChatParameters params) async {
+    try {
+      final result = await remoteDataSource.clearChat(params);
+      return Right(result);
+    } on ServerException catch (failure) {
+      return Left(ServerFailure(failure.errorMessageModel));
+    }
+  }
+  
 
+  
+  // @override
+  // Future<Either<Failure, bool>> deleteMessage(DeleteMessageParameters params) {
+  // }
+
+  
 }

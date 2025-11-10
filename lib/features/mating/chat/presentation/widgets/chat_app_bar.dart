@@ -49,6 +49,21 @@ class _ChatAppBarState extends State<ChatAppBar> {
           }
         });
       }
+
+      // Handle clear chat result to show feedback
+      if (state is ClearChatSuccess) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Chat cleared')),
+        );
+      }
+
+      if (state is ClearChatError) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.message)),
+        );
+      }
     });
   }
 
@@ -372,14 +387,15 @@ class _ChatAppBarState extends State<ChatAppBar> {
                             color: Colors.orange[50],
                           ),
                           child: Icon(
-                            Icons.exit_to_app,
+                            Icons.delete_forever,
                             color: Colors.orange[500],
                             size: 20,
                           ),
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          S.of(context).endChat,
+                          // Changing label from "End Chat" to "Clear Chat"
+                          'Clear Chat',
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 14,
@@ -421,7 +437,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
         _showUnBlockDialog(context);
         break;
       case 'end_chat':
-        _showEndChatDialog(context);
+        _showClearChatDialog(context);
         break;
       case 'rating':
         _showRatingDialog(context);
@@ -1093,34 +1109,45 @@ class _ChatAppBarState extends State<ChatAppBar> {
     });
   }
 
-  void _showEndChatDialog(BuildContext context) {
+  void _showClearChatDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text(S.of(context).endChat),
-            content: Text(S.of(context).endChatConfirmation),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(S.of(context).cancel),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('Chat ended')));
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-                child: Text(
-                  S.of(context).endChat,
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: Text('Clear chat messages'),
+        content: Text('Are you sure you want to clear messages in this conversation?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(S.of(context).cancel),
           ),
+          ElevatedButton(
+            onPressed: () {
+              // close the confirmation dialog
+              Navigator.pop(context);
+
+              // send clear request - onlyFromMe true by default here
+              widget.cubit.clearMessages(
+                ClearChatParameters(
+                  conversationId: widget.chat.id,
+                  onlyFromMe: true,
+                ),
+              );
+
+              // show immediate feedback
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Clearing chat...')),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+            child: Text(
+              'Clear',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

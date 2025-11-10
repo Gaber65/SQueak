@@ -14,6 +14,8 @@ abstract class BaseChatRemoteDataSource {
   Future<bool> renameChat(RenameChatParameters param);
   Future<bool> blockChat(BlockChatParameters param);
   Future<bool> ratingMating(RateMatingParameters param);
+  Future<bool> clearChat(ClearChatParameters param);
+  // Future<bool> deleteMessage(DeleteMessageParameters param);
 }
 
 class ChatRemoteDataSource implements BaseChatRemoteDataSource {
@@ -123,4 +125,45 @@ class ChatRemoteDataSource implements BaseChatRemoteDataSource {
       );
     }
   }
+  
+  @override
+  Future<bool> clearChat(ClearChatParameters param)async {
+    try {
+      final url = clearChatEndPoint(param.conversationId, deleteForMeOnly: param.onlyFromMe);
+      // Debug prints: URL, request params
+      print('CLEAR_CHAT -> URL: $url');
+      print('CLEAR_CHAT -> request: ${param.toJson()}');
+
+      final response = await DioFinalHelper.deleteData(
+        method: url,
+      );
+
+      // Debug prints: response status and body
+      print('CLEAR_CHAT -> response status: ${response.statusCode}');
+      print('CLEAR_CHAT -> response data: ${response.data}');
+
+      return response.data['success'];
+    } on DioException catch (e) {
+      throw ServerException(
+        errorMessageModel: ErrorMessageModel.fromJson(e.response?.data),
+      );
+    }
+  }
+  
+  // @override
+  // Future<bool> deleteMessage(DeleteMessageParameters param)async {
+  //   try {
+  //     final response = await DioFinalHelper.deleteData(
+  //       method:  ,
+  //       data: param.toJson(),
+  //     );
+  //     return response.data['success'];
+  //   } on DioException catch (e) {
+  //     throw ServerException(
+  //       errorMessageModel: ErrorMessageModel.fromJson(e.response?.data),
+  //     );
+  //   }
+  // }
+
+
 }

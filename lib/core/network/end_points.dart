@@ -167,6 +167,9 @@ const String cancelFriendshipEndPoint = '$version/petfriends/cancel';
 const String deleteFriendShipEndPoint = '$version/petfriends/delete';
 const String searchFriendsEndPoint = '$version/search/petfriends';
 const String getSentRequestsEndPoint = '$version/pet/sendrequest?MyPetId=';
+ String clearChatEndPoint(String conversationId, {bool deleteForMeOnly = true}) =>
+     '$version/conversations/$conversationId?DeleteForMeOnly=$deleteForMeOnly';
+ //  String deleteMessageEndPoint = '$version/messages/delete';
 
 /// Mating pet
 const String updatePetStatusEndPoint = '$version/pets/';

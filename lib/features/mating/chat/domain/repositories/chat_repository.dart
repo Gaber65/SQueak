@@ -11,7 +11,9 @@ abstract class BaseChatRepository {
   Future<Either<Failure, void>> finishMating(FinishMatingParameters matingId);
   Future<Either<Failure, bool>> blockChat(BlockChatParameters params);
   Future<Either<Failure, bool>> renameChat(RenameChatParameters params);
-
   Future<Either<Failure, bool>> rateMating(RateMatingParameters params);
+  Future<Either<Failure, bool>> clearChat(ClearChatParameters params);
+  // Future<Either<Failure, bool>> deleteMessage(DeleteMessageParameters params);
+  
 
 }

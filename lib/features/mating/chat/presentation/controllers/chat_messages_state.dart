@@ -98,3 +98,14 @@ class RateMatingError extends ChatMessagesState {
   List<Object> get props => [message];
 }
 
+class ClearChatLoading extends ChatMessagesState {}
+
+class ClearChatSuccess extends ChatMessagesState {}
+class ClearChatError extends ChatMessagesState {
+  final String message;
+
+  const ClearChatError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

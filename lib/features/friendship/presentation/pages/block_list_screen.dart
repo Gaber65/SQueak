@@ -290,13 +290,9 @@ void _showUnblockDialog(PetFriendRequestEntity friendRequest) {
         builder: (context, switchState) {
           final switchCubit = SwitchProfileCubit.get(context);
           final activeProfile = switchCubit.activeProfile;
-
-          // Show profile switch notification if no profile or not a pet profile
           if (activeProfile == null || activeProfile.type != ProfileType.pet) {
             return const ProfileSwitchNotificationScreen();
           }
-
-          // If we have a pet profile, show the blocked pets list
           return BlocBuilder<PetFriendsCubit, PetFriendsState>(
                 builder: (context, state) {
                   if (state is BlockedFriendsLoading) {

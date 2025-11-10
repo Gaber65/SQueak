@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/friendship/domain/entities/send_friend_message_parameters.dart';
 import '../../domain/entities/message_entity.dart';
+import '../../domain/usecases/clear_conversation_use_case.dart';
 import '../../domain/usecases/parameters.dart';
 import '../../domain/usecases/rate_mating_use_case.dart';
 import 'chat_messages_state.dart';
@@ -191,5 +192,28 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       },
     );
     return isSuccess;
+  }
+
+Future<void> clearMessages(ClearChatParameters parameters) async {
+    emit(ClearChatLoading());
+
+    final clearConversationUseCase = sl<ClearConversationUseCase>();
+    // Debug: log clear chat parameters
+    print('CUBIT.clearMessages -> params: ${parameters.toJson()}');
+    final result = await clearConversationUseCase(parameters);
+
+    result.fold(
+      (failure) {
+        emit(ClearChatError(failure.toString()));
+      },
+      (isSuccess) {
+        if (isSuccess) {
+          messagesList.clear();
+          emit(ClearChatSuccess());
+        } else {
+          emit(ClearChatError('Failed to clear chat'));
+        }
+      },
+    );
   }
 }

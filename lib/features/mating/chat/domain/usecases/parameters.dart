@@ -1,4 +1,3 @@
-
 class GetMessagesParameters {
   final String chatId;
 
@@ -99,4 +98,33 @@ class RateMatingParameters {
     'rate': rate,
     'rateComment': rateComment,
   };
+}
+
+class ClearChatParameters {
+  final String conversationId;
+  final bool onlyFromMe;
+
+  ClearChatParameters({required this.conversationId, required this.onlyFromMe});
+  Map<String, dynamic> toJson() {
+    return {'conversationId': conversationId, 'deleteForMeOnly': onlyFromMe};
+  }
+}
+
+class DeleteMessageParameters {
+  final String conversationId;
+  final bool onlyFromMe;
+  final String messageId;
+
+  DeleteMessageParameters({
+    required this.conversationId,
+    required this.onlyFromMe,
+    required this.messageId,
+  });
+  Map<String, dynamic> toJson() {
+    return {
+      'conversationId': conversationId,
+      'deleteForMeOnly': onlyFromMe,
+      'messageId': messageId
+      };
+  }
 }
