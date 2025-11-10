@@ -106,18 +106,9 @@ class NotificationScheduler {
       ],
     );
 
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidDetails,
-      iOS: DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-        sound: 'notification.mp3',
-      ),
-    );
 
     // Define repetition pattern
-    DateTimeComponents? matchComponents = _getMatchComponents(frequency);
+    _getMatchComponents(frequency);
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
       id,
