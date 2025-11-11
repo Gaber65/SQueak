@@ -4710,8 +4710,8 @@ class S {
   }
 
   /// `Link QR`
-  String get linkQr {
-    return Intl.message('Link QR', name: 'linkQr', desc: '', args: []);
+  String get linkQrCode {
+    return Intl.message('Link QR', name: 'linkQrCode', desc: '', args: []);
   }
 }
 

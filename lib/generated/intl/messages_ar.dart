@@ -539,6 +539,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "lastUpdated": MessageLookupByLibrary.simpleMessage("آخر تحديث"),
     "learnHow": MessageLookupByLibrary.simpleMessage("تعلم كيف"),
     "linkAnotherPet": MessageLookupByLibrary.simpleMessage("ربط صديق صغير آخر"),
+    "linkQrCode": MessageLookupByLibrary.simpleMessage("ربط رمز QR"),
     "linkedToQr": MessageLookupByLibrary.simpleMessage(
       "هذا الأليف مرتبط بالفعل برمز QR",
     ),

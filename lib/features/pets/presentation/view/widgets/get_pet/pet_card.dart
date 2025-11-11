@@ -228,7 +228,7 @@ class _PetCardState extends State<PetCard> {
                             },
                             icon: Icon(Icons.link, size: 18),
                             label: Text(
-                              S.of(context).linkQr,
+                              S.of(context).linkQrCode,
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,

@@ -565,7 +565,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "lastUpdated": MessageLookupByLibrary.simpleMessage("Last updated"),
     "learnHow": MessageLookupByLibrary.simpleMessage("Learn How"),
     "linkAnotherPet": MessageLookupByLibrary.simpleMessage("Link another pet"),
-    "linkQr": MessageLookupByLibrary.simpleMessage("Link QR"),
+    "linkQrCode": MessageLookupByLibrary.simpleMessage("Link QR"),
     "linkedToQr": MessageLookupByLibrary.simpleMessage(
       "This pet is already linked to a QR code",
     ),
