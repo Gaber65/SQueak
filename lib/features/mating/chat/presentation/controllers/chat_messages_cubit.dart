@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/friendship/domain/entities/send_friend_message_parameters.dart';
+import 'package:squeak/features/mating/chat/domain/usecases/delete_message_use_case.dart';
 import '../../domain/entities/message_entity.dart';
 import '../../domain/usecases/clear_conversation_use_case.dart';
 import '../../domain/usecases/parameters.dart';
@@ -89,6 +90,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
         
         // Create message entity from response
         final message = MessageEntity(
+          id: text,
           description: text,
           isRead: true,
           fromUserId: fromPetId,
@@ -198,8 +200,6 @@ Future<void> clearMessages(ClearChatParameters parameters) async {
     emit(ClearChatLoading());
 
     final clearConversationUseCase = sl<ClearConversationUseCase>();
-    // Debug: log clear chat parameters
-    // print('CUBIT.clearMessages -> params: ${parameters.toJson()}');
     final result = await clearConversationUseCase(parameters);
 
     result.fold(
@@ -212,6 +212,26 @@ Future<void> clearMessages(ClearChatParameters parameters) async {
           emit(ClearChatSuccess());
         } else {
           emit(ClearChatError('Failed to clear chat'));
+        }
+      },
+    );
+  }
+
+Future<void> deleteMessage(DeleteMessageParameters parameters) async {
+    emit(DeleteMessageLoading());
+
+    final deleteResult = await sl<DeleteMessageUseCase>()(parameters);
+
+    deleteResult.fold(
+      (failure) {
+        emit(DeleteMessageError(failure.toString()));
+      },
+      (isSuccess) {
+        if (isSuccess) {
+          messagesList.removeWhere((msg) => msg.id == parameters.messageId);
+          emit(DeleteMessageSuccess());
+        } else {
+          emit(DeleteMessageError('Failed to delete message'));
         }
       },
     );

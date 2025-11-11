@@ -1,16 +1,21 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/date_time_formatter.dart';
+import 'package:squeak/features/mating/chat/presentation/controllers/chat_messages_cubit.dart';
+import 'package:squeak/features/mating/chat/domain/usecases/parameters.dart';
+import 'package:squeak/generated/l10n.dart';
 import '../../domain/entities/message_entity.dart';
 
 class ChatMessageBubble extends StatefulWidget {
   final MessageEntity message;
   final bool isMe;
+  final String conversationId;
 
   const ChatMessageBubble({
     super.key,
     required this.message,
     required this.isMe,
+    required this.conversationId,
   });
 
   @override
@@ -62,7 +67,83 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return SlideTransition(
+    return GestureDetector(
+      onLongPress: () async {
+        bool onlyForMe = true; 
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return StatefulBuilder(builder: (context, setState) {
+              return AlertDialog(
+                title:  Text(S.of(context).deleteMessage),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    RadioListTile<bool>(
+                      value: true,
+                      groupValue: onlyForMe,
+                      onChanged: (v) => setState(() => onlyForMe = v ?? true),
+                      title:  Text(S.of(context).deleteMessageForMe),
+                    ),
+                    RadioListTile<bool>(
+                      value: false,
+                      groupValue: onlyForMe,
+                      onChanged: (v) => setState(() => onlyForMe = v ?? true),
+                      title:  Text(S.of(context).deleteMessageForEveryone),
+                    ),
+                  ],
+                ),
+                actions: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [                     
+                      ElevatedButton.icon(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        icon: Icon(Icons.cancel),
+                        label:  Text(S.of(context).cancel),
+                      ),
+                      ElevatedButton.icon(
+                        icon: Icon(Icons.delete_sweep_rounded),
+                        label:  Text(S.of(context).delete),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
+                        onPressed: () => Navigator.of(context).pop(true),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+              
+            });
+          },
+        );
+
+        if (confirmed == true) {
+          // Ensure message has an id
+          if (widget.message.id == null || widget.message.id!.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Cannot delete unsent message')),
+            );
+            return;
+          }
+
+          final params = DeleteMessageParameters(
+            conversationId: widget.conversationId,
+            onlyFromMe: onlyForMe,
+            messageId: widget.message.id!,
+          );
+
+          // Print request body
+          // ignore: avoid_print
+          print('DeleteMessage request body: ${params.toJson()}');
+
+          // Call cubit to delete
+          final cubit = ChatMessagesCubit.get(context);
+          await cubit.deleteMessage(params);
+        }
+      },
+      child: SlideTransition(
       position: _slideAnimation,
       child: ScaleTransition(
         scale: _scaleAnimation,
@@ -187,6 +268,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
           ),
         ),
       ),
+    )
     );
   }
 

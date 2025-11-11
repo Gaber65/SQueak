@@ -2,6 +2,7 @@ import '../../domain/entities/message_entity.dart';
 
 class MessageModel extends MessageEntity {
   const MessageModel({
+    required super.id,
     required super.description,
     super.image,
     super.video,
@@ -40,6 +41,7 @@ class MessageModel extends MessageEntity {
     }
 
     return MessageModel(
+      id: json['id'] ?? '',
       description: json['description'] ?? '',
       image: json['image'],
       video: json['video'],
@@ -54,6 +56,7 @@ class MessageModel extends MessageEntity {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'description': description,
       'image': image,
       'video': video,

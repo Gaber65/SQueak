@@ -102,9 +102,22 @@ class ClearChatLoading extends ChatMessagesState {}
 
 class ClearChatSuccess extends ChatMessagesState {}
 class ClearChatError extends ChatMessagesState {
+
   final String message;
 
   const ClearChatError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class DeleteMessageLoading extends ChatMessagesState {}
+class DeleteMessageSuccess extends ChatMessagesState {}
+class DeleteMessageError extends ChatMessagesState {
+
+  final String message;
+
+  const DeleteMessageError(this.message);
 
   @override
   List<Object> get props => [message];

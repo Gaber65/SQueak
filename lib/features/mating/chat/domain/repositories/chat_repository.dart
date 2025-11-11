@@ -13,7 +13,7 @@ abstract class BaseChatRepository {
   Future<Either<Failure, bool>> renameChat(RenameChatParameters params);
   Future<Either<Failure, bool>> rateMating(RateMatingParameters params);
   Future<Either<Failure, bool>> clearChat(ClearChatParameters params);
-  // Future<Either<Failure, bool>> deleteMessage(DeleteMessageParameters params);
+  Future<Either<Failure, bool>> deleteMessage(DeleteMessageParameters params);
   
 
 }

@@ -1,4 +1,5 @@
 class MessageEntity {
+  final String? id;
   final String description;
   final String? image;
   final String? video;
@@ -10,6 +11,7 @@ class MessageEntity {
   final bool toMe;
 
   const MessageEntity({
+     this.id,
     required this.description,
     this.image,
     this.video,

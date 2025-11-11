@@ -537,7 +537,11 @@
   "years":"سنوات",
   "day":"يوم",
   "wantToCancelThisFriend":"هل أنت متأكد أنك تريد إلغاء الصداقة؟",
-  "sendMessage":"محادثة"
+  "sendMessage":"محادثة",
+  "deleteMessage":"حذف الرسالة",
+  "deleteMessageForEveryone":"حذف الرسالة لدى الجميع",
+  "deleteMessageForMe":"حذف الرسالة لدي"
+
 
 
 

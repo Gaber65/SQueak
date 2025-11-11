@@ -4578,6 +4578,36 @@ class S {
   String get sendMessage {
     return Intl.message('Message', name: 'sendMessage', desc: '', args: []);
   }
+
+  /// `Delete Message`
+  String get deleteMessage {
+    return Intl.message(
+      'Delete Message',
+      name: 'deleteMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Message for Everyone`
+  String get deleteMessageForEveryone {
+    return Intl.message(
+      'Delete Message for Everyone',
+      name: 'deleteMessageForEveryone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Message for me`
+  String get deleteMessageForMe {
+    return Intl.message(
+      'Delete Message for me',
+      name: 'deleteMessageForMe',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

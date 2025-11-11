@@ -372,7 +372,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               children: [
                 if (showDateDivider)
                   _buildDateDivider(message.createdAt, theme, isDark),
-                ChatMessageBubble(message: message, isMe: !message.toMe),
+                ChatMessageBubble(message: message, isMe: !message.toMe, conversationId: widget.chat.id),
               ],
             );
           },

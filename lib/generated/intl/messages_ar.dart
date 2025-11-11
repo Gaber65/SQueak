@@ -338,6 +338,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "delete": MessageLookupByLibrary.simpleMessage("حذف"),
     "deleteComment": MessageLookupByLibrary.simpleMessage("حذف التعليق"),
     "deleteConfirmation": MessageLookupByLibrary.simpleMessage("تاكيد الحذف"),
+    "deleteMessage": MessageLookupByLibrary.simpleMessage("حذف الرسالة"),
+    "deleteMessageForEveryone": MessageLookupByLibrary.simpleMessage(
+      "حذف الرسالة لدى الجميع",
+    ),
+    "deleteMessageForMe": MessageLookupByLibrary.simpleMessage(
+      "حذف الرسالة لدي",
+    ),
     "deletePhoto": MessageLookupByLibrary.simpleMessage("حذف الصورة"),
     "divorced": MessageLookupByLibrary.simpleMessage("منفصل"),
     "divorced_desc": MessageLookupByLibrary.simpleMessage(

@@ -548,7 +548,10 @@
   "years": "Years",
   "days": "Days",
   "wantToCancelThisFriend": "Are you sure you want to cancel this friend ?",
-  "sendMessage": "Message"
+  "sendMessage": "Message",
+  "deleteMessage": "Delete Message",
+  "deleteMessageForEveryone": "Delete Message for Everyone",
+  "deleteMessageForMe": "Delete Message for me"
  
 
 

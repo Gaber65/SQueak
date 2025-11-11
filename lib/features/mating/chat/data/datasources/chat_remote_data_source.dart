@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import 'package:squeak/core/network/end_points.dart' as endpoints;
 import 'package:squeak/features/mating/chat/domain/usecases/parameters.dart';
 
 import '../models/chat_model.dart';
@@ -15,7 +16,7 @@ abstract class BaseChatRemoteDataSource {
   Future<bool> blockChat(BlockChatParameters param);
   Future<bool> ratingMating(RateMatingParameters param);
   Future<bool> clearChat(ClearChatParameters param);
-  // Future<bool> deleteMessage(DeleteMessageParameters param);
+  Future<bool> deleteMessage(DeleteMessageParameters param);
 }
 
 class ChatRemoteDataSource implements BaseChatRemoteDataSource {
@@ -130,18 +131,9 @@ class ChatRemoteDataSource implements BaseChatRemoteDataSource {
   Future<bool> clearChat(ClearChatParameters param)async {
     try {
       final url = clearChatEndPoint(param.conversationId, deleteForMeOnly: param.onlyFromMe);
-      // // Debug prints: URL, request params
-      // print('CLEAR_CHAT -> URL: $url');
-      // print('CLEAR_CHAT -> request: ${param.toJson()}');
-
       final response = await DioFinalHelper.deleteData(
         method: url,
       );
-
-      // // Debug prints: response status and body
-      // print('CLEAR_CHAT -> response status: ${response.statusCode}');
-      // print('CLEAR_CHAT -> response data: ${response.data}');
-
       return response.data['success'];
     } on DioException catch (e) {
       throw ServerException(
@@ -150,20 +142,20 @@ class ChatRemoteDataSource implements BaseChatRemoteDataSource {
     }
   }
   
-  // @override
-  // Future<bool> deleteMessage(DeleteMessageParameters param)async {
-  //   try {
-  //     final response = await DioFinalHelper.deleteData(
-  //       method:  ,
-  //       data: param.toJson(),
-  //     );
-  //     return response.data['success'];
-  //   } on DioException catch (e) {
-  //     throw ServerException(
-  //       errorMessageModel: ErrorMessageModel.fromJson(e.response?.data),
-  //     );
-  //   }
-  // }
+  @override
+  Future<bool> deleteMessage(DeleteMessageParameters param)async {
+    try {
+      final url = endpoints.deleteMessage(param.conversationId, param.messageId, param.onlyFromMe);
+      final response = await DioFinalHelper.deleteData(
+        method: url,
+      );
+      return response.data['success'];
+    } on DioException catch (e) {
+      throw ServerException(
+        errorMessageModel: ErrorMessageModel.fromJson(e.response?.data),
+      );
+    }
+  }
 
 
 }

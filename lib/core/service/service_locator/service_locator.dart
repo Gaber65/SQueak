@@ -2,6 +2,7 @@ import 'package:squeak/features/friendship/domain/usecases/delete_friendship.dar
 import 'package:squeak/features/friendship/domain/usecases/block_friend.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/rate_mating_use_case.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/clear_conversation_use_case.dart';
+import 'package:squeak/features/mating/chat/domain/usecases/delete_message_use_case.dart';
 import 'package:squeak/features/mating/profile/domain/usecases/get_pet_profile_history_usecase.dart';
 
 import '../../../features/layout/search/presentation/controller/search_cubit.dart';
@@ -439,6 +440,8 @@ class ServiceLocator {
     sl.registerLazySingleton(() => RateMatingUseCase(sl()));
   // Clear conversation (delete messages)
   sl.registerLazySingleton(() => ClearConversationUseCase(sl()));
+    // Delete single message use case
+    sl.registerLazySingleton(() => DeleteMessageUseCase(sl()));
 
     // Cubits
     sl.registerFactory(() => ChatListCubit(getChatsUseCase: sl()));

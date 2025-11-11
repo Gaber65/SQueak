@@ -353,6 +353,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteConfirmation": MessageLookupByLibrary.simpleMessage(
       "Delete Confirmation",
     ),
+    "deleteMessage": MessageLookupByLibrary.simpleMessage("Delete Message"),
+    "deleteMessageForEveryone": MessageLookupByLibrary.simpleMessage(
+      "Delete Message for Everyone",
+    ),
+    "deleteMessageForMe": MessageLookupByLibrary.simpleMessage(
+      "Delete Message for me",
+    ),
     "deletePhoto": MessageLookupByLibrary.simpleMessage("Delete Photo"),
     "divorced": MessageLookupByLibrary.simpleMessage("Divorced"),
     "divorced_desc": MessageLookupByLibrary.simpleMessage(
