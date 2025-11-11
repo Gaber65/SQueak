@@ -140,15 +140,12 @@ class _ChatListItem extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () async {
-            debugPrint('=================Conversation id==========================');
-            debugPrint('Conversation id: ${chat.id}'); 
             await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => MatingChatDetailScreen(chat: chat),
               ),
             );
-            // Reload chats after returning from chat screen
             if (petId.isNotEmpty) {
               PetFriendsCubit.get(context).loadChats(petId: petId);
             }

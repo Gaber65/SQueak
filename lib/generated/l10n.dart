@@ -1859,6 +1859,11 @@ class S {
     return Intl.message('Unspayed', name: 'notSpayed', desc: '', args: []);
   }
 
+  /// `Spayed`
+  String get sterilization {
+    return Intl.message('Spayed', name: 'sterilization', desc: '', args: []);
+  }
+
   /// `Edit Pet`
   String get editPet {
     return Intl.message('Edit Pet', name: 'editPet', desc: '', args: []);
@@ -1884,9 +1889,9 @@ class S {
     );
   }
 
-  /// `Date of birth`
+  /// `Birth Date`
   String get birthdate {
-    return Intl.message('Date of birth', name: 'birthdate', desc: '', args: []);
+    return Intl.message('Birth Date', name: 'birthdate', desc: '', args: []);
   }
 
   /// `Please enter date of birth`
@@ -4554,6 +4559,26 @@ class S {
     return Intl.message('Month', name: 'month', desc: '', args: []);
   }
 
+  /// `Months`
+  String get months {
+    return Intl.message('Months', name: 'months', desc: '', args: []);
+  }
+
+  /// `Week`
+  String get week {
+    return Intl.message('Week', name: 'week', desc: '', args: []);
+  }
+
+  /// `Weeks`
+  String get weeks {
+    return Intl.message('Weeks', name: 'weeks', desc: '', args: []);
+  }
+
+  /// `Year`
+  String get year {
+    return Intl.message('Year', name: 'year', desc: '', args: []);
+  }
+
   /// `Years`
   String get years {
     return Intl.message('Years', name: 'years', desc: '', args: []);
@@ -4562,6 +4587,11 @@ class S {
   /// `Days`
   String get days {
     return Intl.message('Days', name: 'days', desc: '', args: []);
+  }
+
+  /// `Day`
+  String get day {
+    return Intl.message('Day', name: 'day', desc: '', args: []);
   }
 
   /// `Are you sure you want to cancel this friend ?`
@@ -4607,6 +4637,81 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `Are you sure you want to delete`
+  String get deletePetConfirmation {
+    return Intl.message(
+      'Are you sure you want to delete',
+      name: 'deletePetConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Pet`
+  String get deletePet {
+    return Intl.message('Delete Pet', name: 'deletePet', desc: '', args: []);
+  }
+
+  /// `Appointment Doctor`
+  String get appointmentDoctor {
+    return Intl.message(
+      'Appointment Doctor',
+      name: 'appointmentDoctor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `QR Code Status`
+  String get qrCodeStatus {
+    return Intl.message(
+      'QR Code Status',
+      name: 'qrCodeStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This pet is already linked to a QR code`
+  String get linkedToQr {
+    return Intl.message(
+      'This pet is already linked to a QR code',
+      name: 'linkedToQr',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `QR Not Linked`
+  String get qrNotLinked {
+    return Intl.message(
+      'QR Not Linked',
+      name: 'qrNotLinked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This pet is not linked to a QR code. You can link it now or learn more about how it works.`
+  String get youCanLinkQrNow {
+    return Intl.message(
+      'This pet is not linked to a QR code. You can link it now or learn more about how it works.',
+      name: 'youCanLinkQrNow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Learn How`
+  String get learnHow {
+    return Intl.message('Learn How', name: 'learnHow', desc: '', args: []);
+  }
+
+  /// `Link QR`
+  String get linkQr {
+    return Intl.message('Link QR', name: 'linkQr', desc: '', args: []);
   }
 }
 

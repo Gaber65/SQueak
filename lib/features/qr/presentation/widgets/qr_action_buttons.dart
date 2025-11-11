@@ -118,26 +118,27 @@ class QrActionButtons extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.all(5),
-                    side: BorderSide(
-                      color:
-                          MainCubit.get(context).isDark
-                              ? Colors.white
-                              : Colors.grey.shade400,
-                      width: .5,
-                    ),
-                  ),
-                  onPressed: () => _showDeleteConfirmation(context),
-                  child: Icon(
-                    IconlyLight.delete,
-                    size: 16,
-                    color: ColorManager.red,
-                  ),
-                ),
-              ),
+              // Expanded(
+              //   child: OutlinedButton(
+              //     style: OutlinedButton.styleFrom(
+              //       padding: const EdgeInsets.all(5),
+              //       side: BorderSide(
+              //         color:
+              //             MainCubit.get(context).isDark
+              //                 ? Colors.white
+              //                 : Colors.grey.shade400,
+              //         width: .5,
+              //       ),
+              //     ),
+              //     onPressed: () => _showDeleteConfirmation(context),
+              //     child: Icon(
+              //       IconlyLight.delete,
+              //       size: 16,
+              //       color: ColorManager.red,
+              //     ),
+              //   ),
+              // ),
+           
             ],
           );
         } else {
@@ -202,26 +203,26 @@ class QrActionButtons extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.all(5),
-                    side: BorderSide(
-                      color:
-                          MainCubit.get(context).isDark
-                              ? Colors.white
-                              : Colors.grey.shade400,
-                      width: .5,
-                    ),
-                  ),
-                  onPressed: () => _showDeleteConfirmation(context),
-                  child: Icon(
-                    IconlyLight.delete,
-                    size: 16,
-                    color: ColorManager.red,
-                  ),
-                ),
-              ),
+              // Expanded(
+              //   child: OutlinedButton(
+              //     style: OutlinedButton.styleFrom(
+              //       padding: const EdgeInsets.all(5),
+              //       side: BorderSide(
+              //         color:
+              //             MainCubit.get(context).isDark
+              //                 ? Colors.white
+              //                 : Colors.grey.shade400,
+              //         width: .5,
+              //       ),
+              //     ),
+              //     onPressed: () => _showDeleteConfirmation(context),
+              //     child: Icon(
+              //       IconlyLight.delete,
+              //       size: 16,
+              //       color: ColorManager.red,
+              //     ),
+              //   ),
+              // ),
             ],
           );
         }
@@ -233,43 +234,43 @@ class QrActionButtons extends StatelessWidget {
     showDialog(context: context, builder: (context) => QrLinkDialog(pet: pet,cubit: c,isDarkMode: MainCubit.get(context).isDark,));
   }
 
-  void _showDeleteConfirmation(BuildContext context) {
-    showCustomConfirmationDialog(
-      context: context,
-      description:
-          isArabic()
-              ? Text.rich(
-                TextSpan(
-                  text: 'هل أنت متأكد أنك تريد حذف ',
-                  children: [
-                    TextSpan(
-                      text: pet.petName,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const TextSpan(text: '?'),
-                  ],
-                ),
-              )
-              : Text.rich(
-                TextSpan(
-                  text: 'Are you sure you want to delete ',
-                  children: [
-                    TextSpan(
-                      text: pet.petName,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const TextSpan(text: '?'),
-                  ],
-                ),
-              ),
-      imageUrl:
-          'https://img.freepik.com/premium-vector/sad-dog_161669-74.jpg?size=626&ext=jpg&uid=R78903714&ga=GA1.2.131510781.1692744483&semt=ais',
-      onConfirm: () async {
-        Navigator.of(context).pop(true);
-        await petCubit.deletePet(pet.petId.toString());
-      },
-    );
-  }
+  // void _showDeleteConfirmation(BuildContext context) {
+  //   showCustomConfirmationDialog(
+  //     context: context,
+  //     description:
+  //         isArabic()
+  //             ? Text.rich(
+  //               TextSpan(
+  //                 text: 'هل أنت متأكد أنك تريد حذف ',
+  //                 children: [
+  //                   TextSpan(
+  //                     text: pet.petName,
+  //                     style: const TextStyle(fontWeight: FontWeight.bold),
+  //                   ),
+  //                   const TextSpan(text: '?'),
+  //                 ],
+  //               ),
+  //             )
+  //             : Text.rich(
+  //               TextSpan(
+  //                 text: 'Are you sure you want to delete ',
+  //                 children: [
+  //                   TextSpan(
+  //                     text: pet.petName,
+  //                     style: const TextStyle(fontWeight: FontWeight.bold),
+  //                   ),
+  //                   const TextSpan(text: '?'),
+  //                 ],
+  //               ),
+  //             ),
+  //     imageUrl:
+  //         'https://img.freepik.com/premium-vector/sad-dog_161669-74.jpg?size=626&ext=jpg&uid=R78903714&ga=GA1.2.131510781.1692744483&semt=ais',
+  //     onConfirm: () async {
+  //       Navigator.of(context).pop(true);
+  //       await petCubit.deletePet(pet.petId.toString());
+  //     },
+  //   );
+  // }
 
   void _unlinkQr(BuildContext context, QrCubit c) {
     showDialog(

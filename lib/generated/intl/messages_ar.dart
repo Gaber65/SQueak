@@ -128,6 +128,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "appointmentButtonCancel": MessageLookupByLibrary.simpleMessage("إلغاء"),
     "appointmentButtonEdit": MessageLookupByLibrary.simpleMessage("تعديل"),
     "appointmentCanceled": MessageLookupByLibrary.simpleMessage("ملغى"),
+    "appointmentDoctor": MessageLookupByLibrary.simpleMessage(
+      " موعد مع الطبيب",
+    ),
     "appointmentDone": MessageLookupByLibrary.simpleMessage("تم"),
     "appointmentExamination": MessageLookupByLibrary.simpleMessage(
       "فحص العيادة",
@@ -334,6 +337,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "خصوصيتك وأمن بيانات عيادتك هما من أولوياتنا. نحن نطبق تدابير أمان وفقًا للمعايير الصناعية لحماية بياناتك من الوصول غير المصرح به أو التعديل أو الإفشاء. يتم تحديث أنظمتنا بانتظام لمعالجة الثغرات المحتملة وضمان أعلى مستوى من الحماية.",
     ),
     "date": MessageLookupByLibrary.simpleMessage("التاريخ"),
+    "day": MessageLookupByLibrary.simpleMessage("يوم"),
+    "days": MessageLookupByLibrary.simpleMessage("أيام"),
     "daysAgo": m1,
     "delete": MessageLookupByLibrary.simpleMessage("حذف"),
     "deleteComment": MessageLookupByLibrary.simpleMessage("حذف التعليق"),
@@ -345,6 +350,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteMessageForMe": MessageLookupByLibrary.simpleMessage(
       "حذف الرسالة لدي",
     ),
+    "deletePet": MessageLookupByLibrary.simpleMessage("  حذف الأليف الصغير"),
+    "deletePetConfirmation": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد أنك تريد حذف ",
+    ),
     "deletePhoto": MessageLookupByLibrary.simpleMessage("حذف الصورة"),
     "divorced": MessageLookupByLibrary.simpleMessage("منفصل"),
     "divorced_desc": MessageLookupByLibrary.simpleMessage(
@@ -354,7 +363,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit": MessageLookupByLibrary.simpleMessage("تحرير"),
     "editComment": MessageLookupByLibrary.simpleMessage("تعديل التعليق ..."),
     "editCommentPost": MessageLookupByLibrary.simpleMessage("تعديل تعليق"),
-    "editPet": MessageLookupByLibrary.simpleMessage("تعديل الصديق الصغير"),
+    "editPet": MessageLookupByLibrary.simpleMessage("تعديل الأليف الصغير"),
     "editReplyCommentPost": MessageLookupByLibrary.simpleMessage(
       "تعديل رد على تعليق",
     ),
@@ -528,7 +537,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "langMode": MessageLookupByLibrary.simpleMessage("وضع اللغة"),
     "language": MessageLookupByLibrary.simpleMessage("اللغه"),
     "lastUpdated": MessageLookupByLibrary.simpleMessage("آخر تحديث"),
+    "learnHow": MessageLookupByLibrary.simpleMessage("تعلم كيف"),
     "linkAnotherPet": MessageLookupByLibrary.simpleMessage("ربط صديق صغير آخر"),
+    "linkedToQr": MessageLookupByLibrary.simpleMessage(
+      "هذا الأليف مرتبط بالفعل برمز QR",
+    ),
     "littleFriend": MessageLookupByLibrary.simpleMessage("الصديق الصغير"),
     "location": MessageLookupByLibrary.simpleMessage("الموقع"),
     "login": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
@@ -587,7 +600,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "missing_information": MessageLookupByLibrary.simpleMessage(
       "المعلومات الناقصة:",
     ),
-    "month": MessageLookupByLibrary.simpleMessage("شهور"),
+    "month": MessageLookupByLibrary.simpleMessage("شهر"),
+    "months": MessageLookupByLibrary.simpleMessage("شهور"),
     "myFavorites": MessageLookupByLibrary.simpleMessage("مفضلتي"),
     "myPets": MessageLookupByLibrary.simpleMessage("أصدقائي الصغار"),
     "name": MessageLookupByLibrary.simpleMessage("الاسم"),
@@ -763,6 +777,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "ملف صديقك الصغير يحتاج إلى مزيد من المعلومات لفتح جميع المميزات",
     ),
     "publish": MessageLookupByLibrary.simpleMessage("نشر"),
+    "qrCodeStatus": MessageLookupByLibrary.simpleMessage("حالة رمز QR"),
+    "qrNotLinked": MessageLookupByLibrary.simpleMessage("QR غير مرتبط"),
     "qty": MessageLookupByLibrary.simpleMessage("الكمية"),
     "rate": MessageLookupByLibrary.simpleMessage("التقييم"),
     "rateYourExperience": MessageLookupByLibrary.simpleMessage("قيّم تجربتك"),
@@ -882,6 +898,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "startNewConversation": MessageLookupByLibrary.simpleMessage(
       "ابدأ محادثة جديدة لتراها هنا!",
     ),
+    "sterilization": MessageLookupByLibrary.simpleMessage("التعقيم"),
     "submit": MessageLookupByLibrary.simpleMessage("إرسال"),
     "submitRating": MessageLookupByLibrary.simpleMessage("إرسال التقييم"),
     "swapPet": MessageLookupByLibrary.simpleMessage(
@@ -984,6 +1001,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "welcomeToSqueak": MessageLookupByLibrary.simpleMessage(
       "مرحبًا بك في سكويك!",
     ),
+    "year": MessageLookupByLibrary.simpleMessage("سنة"),
     "years": MessageLookupByLibrary.simpleMessage("سنوات"),
     "yes": MessageLookupByLibrary.simpleMessage("نعم"),
     "yesterday": MessageLookupByLibrary.simpleMessage("أمس"),
@@ -992,6 +1010,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "youBlockedThisUserCannotViewProfile": MessageLookupByLibrary.simpleMessage(
       "لقد قمت بحظر هذا المستخدم. لا يمكنك عرض ملفه الشخصي أثناء حظره.",
+    ),
+    "youCanLinkQrNow": MessageLookupByLibrary.simpleMessage(
+      "هذا الأليف غير مرتبط برمز QR. يمكنك ربطه الآن أو معرفة المزيد عن كيفية العمل.",
     ),
     "youWontReceiveMessagesAnymore": MessageLookupByLibrary.simpleMessage(
       "لن تتلقى رسائل منه بعد الآن",

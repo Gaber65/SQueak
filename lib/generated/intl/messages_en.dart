@@ -134,6 +134,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "appointmentButtonCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "appointmentButtonEdit": MessageLookupByLibrary.simpleMessage("Edit"),
     "appointmentCanceled": MessageLookupByLibrary.simpleMessage("Canceled"),
+    "appointmentDoctor": MessageLookupByLibrary.simpleMessage(
+      "Appointment Doctor",
+    ),
     "appointmentDone": MessageLookupByLibrary.simpleMessage("Done"),
     "appointmentExamination": MessageLookupByLibrary.simpleMessage(
       "clinic exam",
@@ -187,7 +190,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "belowAverage": MessageLookupByLibrary.simpleMessage("Below Average"),
     "bill": MessageLookupByLibrary.simpleMessage("Bill"),
-    "birthdate": MessageLookupByLibrary.simpleMessage("Date of birth"),
+    "birthdate": MessageLookupByLibrary.simpleMessage("Birth Date"),
     "birthdateValidation": MessageLookupByLibrary.simpleMessage(
       "Please enter date of birth",
     ),
@@ -346,6 +349,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Your privacy and the security of your clinic\'s data are of utmost importance to us. We implement industry-standard security measures to protect your data against unauthorized access, alteration, and disclosure. Our systems are regularly updated to address potential vulnerabilities and ensure the highest level of protection.",
     ),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
+    "day": MessageLookupByLibrary.simpleMessage("Day"),
     "days": MessageLookupByLibrary.simpleMessage("Days"),
     "daysAgo": m1,
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
@@ -359,6 +363,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "deleteMessageForMe": MessageLookupByLibrary.simpleMessage(
       "Delete Message for me",
+    ),
+    "deletePet": MessageLookupByLibrary.simpleMessage("Delete Pet"),
+    "deletePetConfirmation": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to delete",
     ),
     "deletePhoto": MessageLookupByLibrary.simpleMessage("Delete Photo"),
     "divorced": MessageLookupByLibrary.simpleMessage("Divorced"),
@@ -555,7 +563,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "langMode": MessageLookupByLibrary.simpleMessage("language Mode"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "lastUpdated": MessageLookupByLibrary.simpleMessage("Last updated"),
+    "learnHow": MessageLookupByLibrary.simpleMessage("Learn How"),
     "linkAnotherPet": MessageLookupByLibrary.simpleMessage("Link another pet"),
+    "linkQr": MessageLookupByLibrary.simpleMessage("Link QR"),
+    "linkedToQr": MessageLookupByLibrary.simpleMessage(
+      "This pet is already linked to a QR code",
+    ),
     "littleFriend": MessageLookupByLibrary.simpleMessage("Little Friend"),
     "location": MessageLookupByLibrary.simpleMessage("location"),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
@@ -611,6 +624,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Missing Information:",
     ),
     "month": MessageLookupByLibrary.simpleMessage("Month"),
+    "months": MessageLookupByLibrary.simpleMessage("Months"),
     "myFavorites": MessageLookupByLibrary.simpleMessage("My favourites"),
     "myPets": MessageLookupByLibrary.simpleMessage("My pets"),
     "name": MessageLookupByLibrary.simpleMessage("Name"),
@@ -777,6 +791,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Your pet profile needs additional information to unlock all features",
     ),
     "publish": MessageLookupByLibrary.simpleMessage("Publish"),
+    "qrCodeStatus": MessageLookupByLibrary.simpleMessage("QR Code Status"),
+    "qrNotLinked": MessageLookupByLibrary.simpleMessage("QR Not Linked"),
     "qty": MessageLookupByLibrary.simpleMessage("Qty"),
     "rate": MessageLookupByLibrary.simpleMessage("Rate"),
     "rateYourExperience": MessageLookupByLibrary.simpleMessage(
@@ -913,6 +929,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "startNewConversation": MessageLookupByLibrary.simpleMessage(
       "Start a new conversation to see it here!",
     ),
+    "sterilization": MessageLookupByLibrary.simpleMessage("Spayed"),
     "submit": MessageLookupByLibrary.simpleMessage("Submit"),
     "submitRating": MessageLookupByLibrary.simpleMessage("Submit Rating"),
     "swapPet": MessageLookupByLibrary.simpleMessage(
@@ -1018,12 +1035,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "wantToCancelThisFriend": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to cancel this friend ?",
     ),
+    "week": MessageLookupByLibrary.simpleMessage("Week"),
+    "weeks": MessageLookupByLibrary.simpleMessage("Weeks"),
     "welcomeSubtitle": MessageLookupByLibrary.simpleMessage(
       "Find the perfect match for your beloved pets. Connect, chat, and create beautiful families together.",
     ),
     "welcomeToSqueak": MessageLookupByLibrary.simpleMessage(
       "Welcome to Squeak!",
     ),
+    "year": MessageLookupByLibrary.simpleMessage("Year"),
     "years": MessageLookupByLibrary.simpleMessage("Years"),
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
     "yesterday": MessageLookupByLibrary.simpleMessage("yesterday"),
@@ -1032,6 +1052,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "youBlockedThisUserCannotViewProfile": MessageLookupByLibrary.simpleMessage(
       "You have blocked this user. You cannot view this profile while you are blocked.",
+    ),
+    "youCanLinkQrNow": MessageLookupByLibrary.simpleMessage(
+      "This pet is not linked to a QR code. You can link it now or learn more about how it works.",
     ),
     "youWontReceiveMessagesAnymore": MessageLookupByLibrary.simpleMessage(
       "You won\'t receive messages anymore from this user.",

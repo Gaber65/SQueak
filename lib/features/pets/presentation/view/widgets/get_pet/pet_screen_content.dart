@@ -35,8 +35,6 @@ class PetScreenContent extends StatefulWidget {
 
 class _PetScreenContentState extends State<PetScreenContent> {
   bool _isSnackBarVisible = false;
-
-  // new states for selection mode
   bool _selectionMode = false;
   final Set<String> _selectedPets = {};
 
@@ -160,7 +158,6 @@ class _PetScreenContentState extends State<PetScreenContent> {
 
         body: _buildBody(),
         floatingActionButton: _buildFab(),
-        // Place FAB at the start side so it is left in LTR and right in RTL
         floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       ),
     );

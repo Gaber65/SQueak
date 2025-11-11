@@ -42,7 +42,6 @@ class PetScreen extends StatelessWidget {
                 );
               }
             },
-            // ✅ Only rebuild when pets list actually changes
             buildWhen: (previous, current) {
               return current is GetOwnerPetsLoadingState ||
                   current is GetOwnerPetsSuccessState ||
