@@ -8,12 +8,12 @@ class HistoryModel extends HistoryEntity {
   const HistoryModel({
     required super.id,
     super.marriageDate,
-    super.seperationDate,
-    required super.isSeperated,
+    super.separationDate,
+    required super.isSeparated,
     required super.isPregnant,
     super.pregnantDate,
-    required super.setAbaby,
-    super.setbabyDate,
+    required super.setABaby,
+    super.setBabyDate,
     required super.isMating,
     super.matingDate,
     super.pet,
@@ -21,7 +21,7 @@ class HistoryModel extends HistoryEntity {
     super.discoverAt,
     super.partnerRateStar,
     super.partnerRateComment,
-    required super.checkPregenantNotificationStatus,
+    required super.checkPregnantNotificationStatus,
     required super.isActive,
     required super.isDeleted,
   });
@@ -30,14 +30,14 @@ class HistoryModel extends HistoryEntity {
     return HistoryModel(
       id: json['id'] ?? '',
       marriageDate: (json['marriageDate'] ?? ''),
-      seperationDate: json['seperationDate'] != null
+      separationDate: json['seperationDate'] != null
           ? (json['seperationDate'])
           : null,
-      isSeperated: json['isSeperated'] ?? false,
+      isSeparated: json['isSeperated'] ?? false,
       isPregnant: json['isPregnant'] ?? false,
       pregnantDate: (json['pregnantDate'] ?? ''),
-      setAbaby: json['setAbaby'] ?? false,
-      setbabyDate: (json['setbabyDate'] ?? ''),
+      setABaby: json['setAbaby'] ?? false,
+      setBabyDate: (json['setbabyDate'] ?? ''),
       isMating: json['isMating'] ?? false,
       matingDate: (json['matingDate'] ?? ''),
       pet: json['pet'] != null ? PetData.fromJson(json['pet']) : null,
@@ -45,7 +45,7 @@ class HistoryModel extends HistoryEntity {
       discoverAt: (json['discoverAt'] ?? ''),
       partnerRateStar: json['partnerRateStar'],
       partnerRateComment: json['partnerRateComment'],
-      checkPregenantNotificationStatus:
+      checkPregnantNotificationStatus:
       json['checkPregenantNotificationSatues'] ?? false,
       isActive: json['isActive'] ?? true,
       isDeleted: json['isDeleted'] ?? false,
@@ -56,12 +56,12 @@ class HistoryModel extends HistoryEntity {
     return {
       'id': id,
       'marriageDate': marriageDate,
-      'seperationDate': seperationDate,
-      'isSeperated': isSeperated,
+      'seperationDate': separationDate,
+      'isSeperated': isSeparated,
       'isPregnant': isPregnant,
       'pregnantDate': pregnantDate,
-      'setAbaby': setAbaby,
-      'setbabyDate': setbabyDate,
+      'setAbaby': setABaby,
+      'setbabyDate': setBabyDate,
       'isMating': isMating,
       'matingDate': matingDate,
       'pet': pet != null ? (pet as PetData).toJson() : null,
@@ -69,7 +69,7 @@ class HistoryModel extends HistoryEntity {
       'discoverAt': discoverAt,
       'partnerRateStar': partnerRateStar,
       'partnerRateComment': partnerRateComment,
-      'checkPregenantNotificationSatues': checkPregenantNotificationStatus,
+      'checkPregenantNotificationSatues': checkPregnantNotificationStatus,
       'isActive': isActive,
       'isDeleted': isDeleted,
     };

@@ -673,6 +673,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "confirm password not equal password",
     ),
     "notSpayed": MessageLookupByLibrary.simpleMessage("Unspayed"),
+    "not_available": MessageLookupByLibrary.simpleMessage("Not Available"),
+    "not_available_desc": MessageLookupByLibrary.simpleMessage(
+      "Not available for mating",
+    ),
     "not_completed": MessageLookupByLibrary.simpleMessage("Not Completed"),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
     "notificationsAlert": MessageLookupByLibrary.simpleMessage(

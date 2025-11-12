@@ -3109,6 +3109,26 @@ class S {
     );
   }
 
+  /// `Not Available`
+  String get not_available {
+    return Intl.message(
+      'Not Available',
+      name: 'not_available',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not available for mating`
+  String get not_available_desc {
+    return Intl.message(
+      'Not available for mating',
+      name: 'not_available_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Divorced`
   String get divorced {
     return Intl.message('Divorced', name: 'divorced', desc: '', args: []);

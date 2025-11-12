@@ -350,13 +350,10 @@
   "update_pet_status": "Update Pet Status",
   "change_pet_status_for": "Change {petName}'s relationship status",
   "update_status": "Update Status",
-
   "single": "Single",
   "single_desc": "Not looking for mating",
-
   "available_for_mating": "Available for Mating",
   "available_for_mating_desc": "Ready to find a partner",
-
   "on_mating": "On Mating",
   "on_mating_desc": "Currently in a mating relationship",
 
@@ -368,7 +365,9 @@
 
   "has_set_its_baby": "Has Set Its Baby",
   "has_set_its_baby_desc": "Now a parent",
-
+  "not_available": "Not Available",
+  "not_available_desc": "Not available for mating",
+  
   "divorced": "Divorced",
   "divorced_desc": "Single again after mating",
   "mergePets":"Merge",

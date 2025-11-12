@@ -665,6 +665,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "تأكيد كلمة المرور غير مطابق لكلمة المرور",
     ),
     "notSpayed": MessageLookupByLibrary.simpleMessage("غير معقم"),
+    "not_available": MessageLookupByLibrary.simpleMessage(" غير متاح للتزاوج"),
+    "not_available_desc": MessageLookupByLibrary.simpleMessage(
+      "غير متاح للتزاوج الآن",
+    ),
     "not_completed": MessageLookupByLibrary.simpleMessage("غير مكتمل"),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
     "offlineMessagesContent": MessageLookupByLibrary.simpleMessage(

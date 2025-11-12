@@ -355,6 +355,8 @@
   "available_for_mating_desc": "جاهز للعثور على شريك",
   "on_mating": "في حالة تزاوج",
   "on_mating_desc": "في علاقة تزاوج حاليًا",
+  "not_available": " غير متاح للتزاوج",
+  "not_available_desc": "غير متاح للتزاوج الآن",
   "previously_mated": "تم التزاوج سابقًا",
   "previously_mated_desc": "أكمل عملية التزاوج",
   "pregnant": "حامل",
