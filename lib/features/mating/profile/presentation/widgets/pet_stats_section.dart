@@ -57,14 +57,14 @@ class PetStatsSection extends StatelessWidget {
             isDarkMode: isDarkMode,
             flex: 6,
           ),
-          StatItem(
-            icon: Icons.location_on_rounded,
-            label: S.of(context).location,
-            value: pet.owner?.address ?? S.of(context).unknown,
-            color: Colors.green,
-            isDarkMode: isDarkMode,
-            flex: 5,
-          ),
+          // StatItem(
+          //   icon: Icons.location_on_rounded,
+          //   label: S.of(context).location,
+          //   value: pet.owner?.address ?? S.of(context).unknown,
+          //   color: Colors.green,
+          //   isDarkMode: isDarkMode,
+          //   flex: 5,
+          // ),
           // StatItem(
           //   icon: Icons.star_rounded,
           //   label: 'Rating',
