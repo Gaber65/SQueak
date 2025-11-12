@@ -350,6 +350,7 @@
   "change_pet_status_for": "تغيير الحالة الاجتماعية لـ {petName}",
   "update_status": "تحديث الحالة",
   "single": "أعزب",
+  "married": "متزوج",
   "single_desc": "غير مهتم بالتزاوج",
   "available_for_mating": "متاح للتزاوج",
   "available_for_mating_desc": "جاهز للعثور على شريك",

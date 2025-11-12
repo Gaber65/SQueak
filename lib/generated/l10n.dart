@@ -3009,6 +3009,11 @@ class S {
     return Intl.message('Single', name: 'single', desc: '', args: []);
   }
 
+  /// `Married`
+  String get married {
+    return Intl.message('Married', name: 'married', desc: '', args: []);
+  }
+
   /// `Not looking for mating`
   String get single_desc {
     return Intl.message(

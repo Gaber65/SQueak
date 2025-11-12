@@ -561,6 +561,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "markAsMatingStarted": MessageLookupByLibrary.simpleMessage(
       "تعيين كبدء التزاوج",
     ),
+    "married": MessageLookupByLibrary.simpleMessage("متزوج"),
     "matchFound": MessageLookupByLibrary.simpleMessage("تم العثور على تطابق!"),
     "matches": MessageLookupByLibrary.simpleMessage("متشابهات"),
     "mating": MessageLookupByLibrary.simpleMessage("تزاوج"),
