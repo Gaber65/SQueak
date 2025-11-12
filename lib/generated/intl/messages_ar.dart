@@ -350,7 +350,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteMessageForMe": MessageLookupByLibrary.simpleMessage(
       "حذف الرسالة لدي",
     ),
-    "deletePet": MessageLookupByLibrary.simpleMessage("  حذف الأليف الصغير"),
+    "deletePet": MessageLookupByLibrary.simpleMessage("حذف صديقك الصغير"),
     "deletePetConfirmation": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد أنك تريد حذف ",
     ),
@@ -363,7 +363,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit": MessageLookupByLibrary.simpleMessage("تحرير"),
     "editComment": MessageLookupByLibrary.simpleMessage("تعديل التعليق ..."),
     "editCommentPost": MessageLookupByLibrary.simpleMessage("تعديل تعليق"),
-    "editPet": MessageLookupByLibrary.simpleMessage("تعديل الأليف الصغير"),
+    "editPet": MessageLookupByLibrary.simpleMessage("تعديل صديقك الصغير"),
     "editReplyCommentPost": MessageLookupByLibrary.simpleMessage(
       "تعديل رد على تعليق",
     ),
@@ -537,11 +537,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "langMode": MessageLookupByLibrary.simpleMessage("وضع اللغة"),
     "language": MessageLookupByLibrary.simpleMessage("اللغه"),
     "lastUpdated": MessageLookupByLibrary.simpleMessage("آخر تحديث"),
-    "learnHow": MessageLookupByLibrary.simpleMessage("تعلم كيف"),
+    "learnHow": MessageLookupByLibrary.simpleMessage("جرب الآن"),
     "linkAnotherPet": MessageLookupByLibrary.simpleMessage("ربط صديق صغير آخر"),
     "linkQrCode": MessageLookupByLibrary.simpleMessage("ربط رمز QR"),
     "linkedToQr": MessageLookupByLibrary.simpleMessage(
-      "هذا الأليف مرتبط بالفعل برمز QR",
+      " أليفك مرتبط بالفعل برمز QR",
     ),
     "littleFriend": MessageLookupByLibrary.simpleMessage("الصديق الصغير"),
     "location": MessageLookupByLibrary.simpleMessage("الموقع"),
@@ -1013,7 +1013,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "لقد قمت بحظر هذا المستخدم. لا يمكنك عرض ملفه الشخصي أثناء حظره.",
     ),
     "youCanLinkQrNow": MessageLookupByLibrary.simpleMessage(
-      "هذا الأليف غير مرتبط برمز QR. يمكنك ربطه الآن أو معرفة المزيد عن كيفية العمل.",
+      "أليفك غير مرتبط برمز QR. يمكنك ربطه الآن أو معرفة المزيد عن كيفية العمل.",
     ),
     "youWontReceiveMessagesAnymore": MessageLookupByLibrary.simpleMessage(
       "لن تتلقى رسائل منه بعد الآن",

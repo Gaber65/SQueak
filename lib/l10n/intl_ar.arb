@@ -223,7 +223,7 @@
   "spayed": "معقم",
   "sterilization": "التعقيم",
   "notSpayed": "غير معقم",
-  "editPet": "تعديل الأليف الصغير",
+  "editPet": "تعديل صديقك الصغير",
   "enterPetName": "ادخل اسم الصديق الصغير",
   "enterPetNameValidation": "من فضلك ادخل اسم الصديق الصغير",
   "birthdate": "تاريخ الميلاد",
@@ -546,13 +546,13 @@
   "deleteMessageForEveryone":"حذف الرسالة لدى الجميع",
   "deleteMessageForMe":"حذف الرسالة لدي",
   "deletePetConfirmation":"هل أنت متأكد أنك تريد حذف ",
-  "deletePet":"  حذف الأليف الصغير",
+  "deletePet":"حذف صديقك الصغير",
   "appointmentDoctor": " موعد مع الطبيب",
   "qrCodeStatus":"حالة رمز QR",
-  "linkedToQr":"هذا الأليف مرتبط بالفعل برمز QR",
+  "linkedToQr":" أليفك مرتبط بالفعل برمز QR",
   "qrNotLinked":"QR غير مرتبط",
-  "youCanLinkQrNow":"هذا الأليف غير مرتبط برمز QR. يمكنك ربطه الآن أو معرفة المزيد عن كيفية العمل.",
-  "learnHow":"تعلم كيف",
+  "youCanLinkQrNow":"أليفك غير مرتبط برمز QR. يمكنك ربطه الآن أو معرفة المزيد عن كيفية العمل.",
+  "learnHow":"جرب الآن",
   "linkQrCode":"ربط رمز QR"
 
 

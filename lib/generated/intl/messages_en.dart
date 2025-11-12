@@ -563,7 +563,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "langMode": MessageLookupByLibrary.simpleMessage("language Mode"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "lastUpdated": MessageLookupByLibrary.simpleMessage("Last updated"),
-    "learnHow": MessageLookupByLibrary.simpleMessage("Learn How"),
+    "learnHow": MessageLookupByLibrary.simpleMessage("Try Now"),
     "linkAnotherPet": MessageLookupByLibrary.simpleMessage("Link another pet"),
     "linkQrCode": MessageLookupByLibrary.simpleMessage("Link QR"),
     "linkedToQr": MessageLookupByLibrary.simpleMessage(

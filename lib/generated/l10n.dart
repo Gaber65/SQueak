@@ -4704,9 +4704,9 @@ class S {
     );
   }
 
-  /// `Learn How`
+  /// `Try Now`
   String get learnHow {
-    return Intl.message('Learn How', name: 'learnHow', desc: '', args: []);
+    return Intl.message('Try Now', name: 'learnHow', desc: '', args: []);
   }
 
   /// `Link QR`
