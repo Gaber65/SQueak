@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:squeak/core/debug/gloabal_api_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:app_links/app_links.dart';
@@ -8,7 +10,7 @@ import '../../../../../features/auth/login/presentation/pages/login_screen.dart'
 import '../../../../utils/export_path/export_files.dart';
 import '../../../../theme/app_theme.dart';
 
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
+
 StreamSubscription? sub;
 
 class MyApp extends StatefulWidget {
@@ -124,6 +126,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: S.delegate.supportedLocales,
+            builder: (context, child) {
+              // child is the Navigator/content; we place the floating button on top
+              return Stack(
+                children: [
+                  if (child != null) child,
+                  if (kDebugMode) const GlobalApiButton(),
+                ],
+              );
+            },
           );
         },
       ),

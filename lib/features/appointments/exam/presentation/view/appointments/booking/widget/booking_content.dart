@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -46,7 +44,6 @@ class _BookingContentState extends State<BookingContent> {
   String? time;
   bool initTheSelectedPetValue = false;
   PetEntities? petSelect;
-
 
   @override
   void initState() {
@@ -96,10 +93,7 @@ class _BookingContentState extends State<BookingContent> {
 
   void _handleCreateAppointment(BuildContext context) {
     if (time == null) {
-      infoToast(
-        context,
-        isArabic() ? 'الوقت مطلوب' : 'Please select time',
-      );
+      infoToast(context, isArabic() ? 'الوقت مطلوب' : 'Please select time');
       return;
     }
 
@@ -115,7 +109,9 @@ class _BookingContentState extends State<BookingContent> {
       context: context,
       petSqueakId: petSelect!.petId ?? '',
       clinicCode: widget.clinicCode,
-      selectedDate: DateTime.parse(AppointmentCubit.get(context).dateController.text),
+      selectedDate: DateTime.parse(
+        AppointmentCubit.get(context).dateController.text,
+      ),
       time: time,
       doctorId: doctorId,
       petName: petSelect!.petName ?? '',
@@ -169,7 +165,7 @@ class _BookingContentState extends State<BookingContent> {
         final cubit = AppointmentCubit.get(context);
 
         return WillPopScope(
-          onWillPop: () async  {
+          onWillPop: () async {
             Navigator.pop(context);
             return false;
           },
@@ -179,7 +175,7 @@ class _BookingContentState extends State<BookingContent> {
               onBookingPressed: () => _handleCreateAppointment(context),
             ),
             floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerFloat,
+                FloatingActionButtonLocation.centerFloat,
             floatingActionButton: CommentInputField(
               controller: cubit.commentController,
               isLoading: cubit.isLoading,

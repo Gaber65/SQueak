@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import 'package:squeak/core/debug/api_interceptor.dart';
 
 class DioFinalHelper {
   static late Dio dio;
@@ -27,11 +28,12 @@ class DioFinalHelper {
       ),
     );
     
-    // Only add ChuckerDioInterceptor if environment is test
+    // Add our ApiInterceptor in test environment so API calls are captured
     if (_currentEnvironment == Environment.test) {
-      DebugUtils.debugPrintEnv('DioFinalHelper: ChuckerDioInterceptor added for test environment');
+      dio.interceptors.add(ApiInterceptor());
+      DebugUtils.debugPrintEnv('DioFinalHelper: ApiInterceptor added for test environment');
     } else {
-      DebugUtils.debugPrintEnv('DioFinalHelper: ChuckerDioInterceptor skipped for ${_currentEnvironment?.name ?? 'unknown'} environment');
+      DebugUtils.debugPrintEnv('DioFinalHelper: ApiInterceptor skipped for ${_currentEnvironment?.name ?? 'unknown'} environment');
     }
   }
 

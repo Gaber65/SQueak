@@ -1,6 +1,7 @@
 // core
 export  'package:squeak/core/base_usecase/base_usecase.dart';
 export 'package:squeak/core/error/exception.dart';
+export 'package:squeak/core/service/main_service/presentation/screens/navigator_key.dart';
 export 'package:squeak/core/error/failure.dart';
 export 'package:squeak/core/network/config_model.dart';
 export 'package:squeak/core/network/dio.dart';

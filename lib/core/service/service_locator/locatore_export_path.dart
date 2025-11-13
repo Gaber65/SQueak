@@ -1,6 +1,7 @@
 export 'package:get_it/get_it.dart';
 export 'package:internet_connection_checker/internet_connection_checker.dart';
 export 'package:squeak/core/network/dio.dart';
+export 'package:squeak/core/service/main_service/presentation/screens/navigator_key.dart';
 export 'package:squeak/core/utils/export_path/export_files.dart';
 export 'package:squeak/features/appointments/exam/data/data_source/appointment_local_data_source.dart';
 export 'package:squeak/features/appointments/exam/data/data_source/appointment_remote_data_source.dart';
