@@ -7,10 +7,9 @@ class GlobalApiButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Small floating button at bottom-right
     return Positioned(
-      right: 16,
-      bottom: 24,
+      right: -5,
+      top: 150,
       child: FloatingActionButton(
         heroTag: 'api_tester_fab',
         mini: true,
