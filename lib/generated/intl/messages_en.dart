@@ -245,6 +245,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Chat ended successfully",
     ),
     "chatName": MessageLookupByLibrary.simpleMessage("Chat Name"),
+    "chatNotFoundError": MessageLookupByLibrary.simpleMessage(
+      "Chat not found. Please try again.",
+    ),
     "chatRenamedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Chat renamed successfully",
     ),

@@ -2,6 +2,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:widget_circular_animator/widget_circular_animator.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
@@ -45,10 +46,9 @@ Widget buildProfileSwitcherOverlay({
   required Animation<double> scale,
   required VoidCallback onClose,
 }) {
-  final petCubit = PetCubit.get(context);
-  final pets = petCubit.pets;
-  final owner = SettingCubit.get(context).profile;
   final switchProfileCubit = SwitchProfileCubit.get(context);
+  final petCubit = PetCubit.get(context);
+  final ownerSnapshot = SettingCubit.get(context).profile;
 
   final mq = MediaQuery.of(context);
   final targetWidth = mq.size.width * 0.9 > 400 ? 400 : 260;
@@ -81,53 +81,63 @@ Widget buildProfileSwitcherOverlay({
                   maxHeight: maxListHeight,
                   minWidth: 200,
                 ),
-                child: (pets.isEmpty && owner == null)
-                    ? buildProfileSwitcherShimmer(context)
-                    : ListView(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
-                  children: [
-                    if (owner != null)
-                      _buildProfileItem(
-                        context,
-                        title: owner.fullName,
-                        subtitle: isArabic() ? "مالك الحساب" : "Profile owner",
-                        image: imageUrl + (owner.imageName.isEmpty ? "" : owner.imageName),
-                        onTap: () {
-                          _switchProfileWithOverlay(
+                child: BlocBuilder<PetCubit, PetState>(
+                  bloc: petCubit,
+                  builder: (bContext, petState) {
+                    final pets = petCubit.pets;
+                    final owner = ownerSnapshot;
+
+                    if (pets.isEmpty && owner == null) {
+                      return buildProfileSwitcherShimmer(context);
+                    }
+
+                    return ListView(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      physics: const ClampingScrollPhysics(),
+                      children: [
+                        if (owner != null)
+                          _buildProfileItem(
                             context,
-                            switchProfileCubit,
-                            ActiveProfile(type: ProfileType.user, user: owner),
-                          );
-                        },
-                      ),
-                    for (final pet in pets)
-                      _buildProfileItem(
-                        context,
-                        title: pet.petName ?? "Pet",
-                        subtitle: (pet.birthdate != null && pet.birthdate != '')
-                            ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
-                            : pet.breed?.enBreed ?? "",
-                        image: imageUrl + (pet.imageName?.isNotEmpty == true ? pet.imageName! : ""),
-                        onTap: () {
-                          _switchProfileWithOverlay(
+                            title: owner.fullName,
+                            subtitle: isArabic() ? "مالك الحساب" : "Profile owner",
+                            image: imageUrl + (owner.imageName.isEmpty ? "" : owner.imageName),
+                            onTap: () {
+                              _switchProfileWithOverlay(
+                                context,
+                                switchProfileCubit,
+                                ActiveProfile(type: ProfileType.user, user: owner),
+                              );
+                            },
+                          ),
+                        for (final pet in pets)
+                          _buildProfileItem(
                             context,
-                            switchProfileCubit,
-                            ActiveProfile(type: ProfileType.pet, pet: pet),
-                          );
-                        },
-                      ),
-                    const Divider(height: 1),
-                    ListTile(
-                      leading: const Icon(Icons.pets, color: Colors.blue),
-                      title: Text(isArabic() ? " إدارة اصدقائك الصغار  " : "Manage Pets"),
-                      onTap: () {
-                        navigateToScreen(context, const PetScreen());
-                        onClose();
-                      },
-                    ),
-                  ],
+                            title: pet.petName ?? "Pet",
+                            subtitle: (pet.birthdate != null && pet.birthdate != '')
+                                ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
+                                : pet.breed?.enBreed ?? "",
+                            image: imageUrl + (pet.imageName?.isNotEmpty == true ? pet.imageName! : ""),
+                            onTap: () {
+                              _switchProfileWithOverlay(
+                                context,
+                                switchProfileCubit,
+                                ActiveProfile(type: ProfileType.pet, pet: pet),
+                              );
+                            },
+                          ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.pets, color: Colors.blue),
+                          title: Text(isArabic() ? " إدارة اصدقائك الصغار  " : "Manage Pets"),
+                          onTap: () {
+                            navigateToScreen(context, const PetScreen());
+                            onClose();
+                          },
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
@@ -137,8 +147,6 @@ Widget buildProfileSwitcherOverlay({
     ),
   );
 }
-
-/// Builds individual profile items
 Widget _buildProfileItem(
     BuildContext context, {
       required String title,
@@ -149,7 +157,6 @@ Widget _buildProfileItem(
   return ProfileSwitcherItem(title: title, subtitle: subtitle, image: image, onTap: onTap);
 }
 
-/// Safely switch profile and show temporary glass overlay
 void _switchProfileWithOverlay(
     BuildContext context,
     SwitchProfileCubit switchCubit,
@@ -200,7 +207,6 @@ void _switchProfileWithOverlay(
 
   overlay.insert(entry);
 
-  // Remove overlay safely after 2 seconds
   Future.delayed(const Duration(seconds: 2), () {
     if (entry.mounted) entry.remove();
   });

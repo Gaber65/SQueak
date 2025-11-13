@@ -408,6 +408,7 @@
   "respond": "رد",
   "matchFound": "تم العثور على تطابق!",
   "startConversation": "بدء المحادثة",
+  "chatNotFoundError": "لم يتم العثور على المحادثة. يرجى المحاولة مرة أخرى.",
   "matingActivity": "نشاط التزاوج",
   "noReceivedRequestsSub": "عندما تتلقى طلبات التزاوج، ستظهر هنا",
   "AllChats": "جميع المحادثات",

@@ -419,6 +419,7 @@
 
   "matchFound": "Match Found!",
   "startConversation": "Start Conversation",
+  "chatNotFoundError": "Chat not found. Please try again.",
   "noReceivedRequestsSub": "When you receive mating requests, they will appear here",
   "AllChats": "All Chats",
   "block" : "Block",

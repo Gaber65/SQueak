@@ -3529,6 +3529,16 @@ class S {
     );
   }
 
+  /// `Chat not found. Please try again.`
+  String get chatNotFoundError {
+    return Intl.message(
+      'Chat not found. Please try again.',
+      name: 'chatNotFoundError',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `When you receive mating requests, they will appear here`
   String get noReceivedRequestsSub {
     return Intl.message(

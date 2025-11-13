@@ -94,7 +94,11 @@ class ManageRequestMatingCubit extends Cubit<ManageRequestMatingState> {
   }
   ChatEntity? chatEntity;
 
-  Object getChatItem(List<ChatEntity> chatItem) {
-    return chatItem.firstWhere((element) => element.id == conversationId);
+  void getChatItem(List<ChatEntity> chatItem) {
+    try {
+      chatEntity = chatItem.firstWhere((element) => element.id == conversationId);
+    } catch (e) {
+      chatEntity = null;
+    }
   }
 }

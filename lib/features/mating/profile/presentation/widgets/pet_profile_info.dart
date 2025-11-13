@@ -3,7 +3,6 @@ import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/mating/profile/domain/entities/history_entities.dart';
 import 'package:squeak/features/mating/profile/presentation/widgets/pet_avatar.dart';
 import 'package:squeak/features/mating/profile/presentation/widgets/pet_gender_chip.dart';
-import 'package:squeak/features/mating/profile/presentation/widgets/pet_status_chip.dart';
 import 'package:squeak/features/mating/profile/presentation/widgets/status_manager_dialog.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
@@ -124,7 +123,7 @@ class PetProfileInfo extends StatelessWidget {
                   spacing: 12,
                   runSpacing: 8,
                   children: [
-                    PetStatusChip(pet: pet),
+                    // PetStatusChip(pet: pet),
                     PetGenderChip(pet: pet, isDarkMode: isDarkMode),
                   ],
                 ),

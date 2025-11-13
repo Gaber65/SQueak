@@ -233,6 +233,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "chatEnded": MessageLookupByLibrary.simpleMessage("تم إنهاء الدردشة بنجاح"),
     "chatName": MessageLookupByLibrary.simpleMessage("اسم الدردشة"),
+    "chatNotFoundError": MessageLookupByLibrary.simpleMessage(
+      "لم يتم العثور على المحادثة. يرجى المحاولة مرة أخرى.",
+    ),
     "chatRenamedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تمت إعادة تسمية الدردشة بنجاح",
     ),

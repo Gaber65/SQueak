@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dart';
 import 'package:squeak/features/mating/matingRequest/domain/entities/mating_request_entity.dart';
 import 'package:squeak/features/mating/matingRequest/presentation/screens/widgets/action_button.dart';
@@ -160,13 +161,56 @@ class RequestCardCompact extends StatelessWidget {
                     icon: Icons.chat,
                     color: ColorManager.primaryColor,
                     onTap: () {
-                      navigateToScreen(
-                        context,
-                        MatingChatDetailScreen(
-                          chat:
-                              ManageRequestMatingCubit.get(context).chatEntity!,
-                        ),
-                      );
+                      final cubit = ManageRequestMatingCubit.get(context);
+                      if (cubit.chatEntity != null) {
+                        navigateToScreen(
+                          context,
+                          MatingChatDetailScreen(chat: cubit.chatEntity!),
+                        );
+                      } else if (cubit.conversationId.isNotEmpty) {
+                        final newChat = ChatEntity(
+                          id: cubit.conversationId,
+                          name: pet.petName ?? 'Unknown',
+                          petId: pet.petId ?? '',
+                          matingId: '',
+                          isBlock: false,
+                          isBlockedByMe: false,
+                          isBlockedByOther: false,
+                          completeMarriageStatues: false,
+                          isReadOnly: false,
+                          isGroup: false,
+                          isPetChat: true,
+                          image: pet.imageName,
+                          groupImage: null,
+                          createdAt: DateTime.now().toIso8601String(),
+                          lastMessageSendDateTime: DateTime.now().toIso8601String(),
+                        );
+                        navigateToScreen(
+                          context,
+                          MatingChatDetailScreen(chat: newChat),
+                        );
+                      } else {
+                        final chatCubit = ChatListCubit.get(context);
+                        final petId =
+                            isReceived
+                                ? request.toPet.petId
+                                : request.fromPet.petId;
+
+                        chatCubit.loadChats(petId!).then((_) {
+                          cubit.getChatItem(chatCubit.allChats);
+                          if (cubit.chatEntity != null) {
+                            navigateToScreen(
+                              context,
+                              MatingChatDetailScreen(chat: cubit.chatEntity!),
+                            );
+                          } else {
+                            errorToast(
+                              context,
+                              S.of(context).chatNotFoundError,
+                            );
+                          }
+                        });
+                      }
                     },
                     label: S.of(context).startConversation,
                   ),
@@ -195,5 +239,4 @@ class RequestCardCompact extends StatelessWidget {
     }
     return '';
   }
-
 }
