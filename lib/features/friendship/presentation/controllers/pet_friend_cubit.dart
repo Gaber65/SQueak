@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:squeak/features/friendship/domain/entities/friend_request_stats.dart';
 import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
 import 'package:squeak/features/friendship/domain/usecases/update_pet_request.dart';
@@ -7,10 +8,11 @@ import 'package:squeak/features/friendship/domain/usecases/block_friend.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
+import 'package:squeak/features/pets/domain/entities/pet_entity_json_helper.dart';
 import '../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../domain/usecases/delete_friendship.dart';
 
-class PetFriendsCubit extends Cubit<PetFriendsState> {
+class PetFriendsCubit extends HydratedCubit<PetFriendsState> {
   PetFriendsCubit(
     this.getMyFriendsUseCase,
     this.getMyRequestsUseCase,
@@ -244,5 +246,35 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
         emit(BlockedFriendsLoaded(blockedFriends: blockedList));
       },
     );
+  }
+
+  @override
+  PetFriendsState? fromJson(Map<String, dynamic> json) {
+    try {
+      if (json['suggestedFriends'] != null) {
+        suggestedFriends = PetEntityJsonHelper.fromJsonList(json['suggestedFriends']);
+
+        return SuggestedFriendsLoaded(friends: suggestedFriends);
+      }
+      
+      return FriendsInitial();
+    } catch (e) {
+      return FriendsInitial();
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(PetFriendsState state) {
+    try {
+      if (state is SuggestedFriendsLoaded && suggestedFriends.isNotEmpty) {
+        return {
+          'suggestedFriends': PetEntityJsonHelper.toJsonList(suggestedFriends),
+          'timestamp': DateTime.now().toIso8601String(),
+        };
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 }

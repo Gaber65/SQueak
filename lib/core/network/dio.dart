@@ -30,7 +30,7 @@ class DioFinalHelper {
     
     // Add our ApiInterceptor in test environment so API calls are captured
     if (_currentEnvironment == Environment.test) {
-      dio.interceptors.add(ApiInterceptor());
+      dio.interceptors.add(ApiLoggerInterceptor());
       DebugUtils.debugPrintEnv('DioFinalHelper: ApiInterceptor added for test environment');
     } else {
       DebugUtils.debugPrintEnv('DioFinalHelper: ApiInterceptor skipped for ${_currentEnvironment?.name ?? 'unknown'} environment');

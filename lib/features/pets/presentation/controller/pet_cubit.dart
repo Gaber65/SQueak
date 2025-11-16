@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:squeak/core/base_usecase/base_usecase.dart';
 import 'package:squeak/core/network/dio.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import '../../../../features/pets/domain/entities/pet_entity.dart';
+import '../../../../features/pets/domain/entities/pet_entity_json_helper.dart';
 import '../../../../features/pets/domain/use_case/get_owner_pets_usecase.dart';
 import '../../../../features/pets/domain/use_case/get_all_breeds_usecase.dart';
 import '../../../../features/pets/domain/use_case/get_breeds_by_species_usecase.dart';
@@ -20,7 +22,7 @@ import '../../domain/use_case/merge_pets_usecase.dart';
 
 part 'pet_state.dart';
 
-class PetCubit extends Cubit<PetState> {
+class PetCubit extends HydratedCubit<PetState> {
   final GetOwnerPetsUseCase getOwnerPetsUseCase;
   final GetAllBreedsUseCase getAllBreedsUseCase;
   final GetBreedsBySpeciesUseCase getBreedsBySpeciesUseCase;
@@ -237,11 +239,12 @@ class PetCubit extends Cubit<PetState> {
 
     gender = pet.gender ?? 0;
     petId = pet.petId.toString();
-  specieId = pet.specieId.toString();
-  dropdownValueSpeciesId = pet.specieId ?? '';
-  dropdownValueSpecies = (dropdownValueSpeciesId == dogSpeciesId)
-    ? 'Dog'
-    : (dropdownValueSpeciesId == catSpeciesId ? 'Cat' : 'Pet');
+    specieId = pet.specieId.toString();
+    dropdownValueSpeciesId = pet.specieId ?? '';
+    dropdownValueSpecies =
+        (dropdownValueSpeciesId == dogSpeciesId)
+            ? 'Dog'
+            : (dropdownValueSpeciesId == catSpeciesId ? 'Cat' : 'Pet');
     spayed = pet.isSpayed ?? false;
     dropdownValueBreed = pet.breedId ?? '';
     emit(
@@ -497,6 +500,39 @@ class PetCubit extends Cubit<PetState> {
     final currentState =
         state is PetFormState ? state as PetFormState : _createFormState();
     emit(currentState.copyWith(passportImageName: name));
+  }
+
+  // use hydrated bloc
+  @override
+  PetState? fromJson(Map<String, dynamic> json) {
+    try {
+      // Restore pets list from persisted state
+      if (json['pets'] != null) {
+        pets = PetEntityJsonHelper.fromJsonList(json['pets']);
+      }
+
+      // Return the last known state or initial state
+      return const GetOwnerPetsSuccessState();
+    } catch (e) {
+      // If deserialization fails, return initial state
+      return PetInitial();
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(PetState state) {
+    try {
+      // Only persist when we have successfully loaded pets
+      if (state is GetOwnerPetsSuccessState && pets.isNotEmpty) {
+        return {
+          'pets': PetEntityJsonHelper.toJsonList(pets),
+          'timestamp': DateTime.now().toIso8601String(),
+        };
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 
   @override

@@ -10,7 +10,6 @@ import '../../../../../features/auth/login/presentation/pages/login_screen.dart'
 import '../../../../utils/export_path/export_files.dart';
 import '../../../../theme/app_theme.dart';
 
-
 StreamSubscription? sub;
 
 class MyApp extends StatefulWidget {
@@ -93,9 +92,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               ..requestNotificationPermissions();
           },
         ),
-        BlocProvider(
-          create: (context) => sl<SettingCubit>()..getOwnerData(),
-        ),
+        BlocProvider(create: (context) => sl<SettingCubit>()..getOwnerData()),
         BlocProvider(
           create:
               (context) =>
@@ -127,11 +124,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             ],
             supportedLocales: S.delegate.supportedLocales,
             builder: (context, child) {
-              // child is the Navigator/content; we place the floating button on top
+              // Determine if the global API button should be shown
+              final bool showGlobalApiButton =
+                  kDebugMode ||
+                  const bool.fromEnvironment(
+                    'SHOW_GLOBAL_API_BUTTON',
+                    defaultValue: false,
+                  ) ||
+                  (InitFunctions.currentEnvironment != Environment.pro);
               return Stack(
                 children: [
                   if (child != null) child,
-                  if (kDebugMode) const GlobalApiButton(),
+                  if (showGlobalApiButton) const GlobalApiButton(),
                 ],
               );
             },

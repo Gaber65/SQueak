@@ -1,56 +1,77 @@
 import 'package:dio/dio.dart';
-import 'api_logger.dart';
+import 'package:squeak/core/debug/api_logger.dart';
 
-String _makeId() => DateTime.now().microsecondsSinceEpoch.toString();
+class ApiLoggerInterceptor extends Interceptor {
+  final logger = ApiLogger.instance;
+  final Map<String, DateTime> _startTimes = {};
 
-class ApiInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-  final id = _makeId();
-    final apiCall = ApiCall(
-      id: id,
-      method: options.method,
-      url: options.uri.toString(),
-      requestHeaders: Map<String, dynamic>.from(options.headers.map((k, v) => MapEntry(k.toString(), v)) ),
-      requestBody: options.data,
+    final id = options.hashCode.toString();
+    
+    // Store start time
+    _startTimes[id] = DateTime.now();
+
+    // Log the request
+    logger.addCall(
+      ApiCall(
+        id: id,
+        method: options.method,
+        url: options.uri.toString(),
+        requestHeaders: options.headers.map((key, value) => MapEntry(key, value.toString())),
+        requestBody: options.data,
+        timestamp: DateTime.now(),
+      ),
     );
-    ApiLogger.instance.addCall(apiCall);
-    options.extra['__api_logger_id'] = id;
-    handler.next(options);
+
+    super.onRequest(options, handler);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    try {
-      final id = response.requestOptions.extra['__api_logger_id'] as String?;
-      if (id != null) {
-        ApiLogger.instance.updateCall(
-          id,
-          statusCode: response.statusCode,
-          responseBody: response.data,
-          responseHeaders: response.headers.map.map((k, v) => MapEntry(k, v.join(','))),
-          duration: Duration.zero,
-        );
-      }
-    } catch (_) {}
-    handler.next(response);
+    final id = response.requestOptions.hashCode.toString();
+    final startTime = _startTimes[id];
+
+    if (startTime != null) {
+      final duration = DateTime.now().difference(startTime);
+      _startTimes.remove(id);
+
+      // Update the call with response data and duration
+      logger.updateCall(
+        id,
+        statusCode: response.statusCode,
+        responseHeaders: response.headers.map.map(
+          (key, value) => MapEntry(key, value.join(', ')),
+        ),
+        responseBody: response.data,
+        duration: duration,
+      );
+    }
+
+    super.onResponse(response, handler);
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
-    try {
-      final id = err.requestOptions.extra['__api_logger_id'] as String?;
-      if (id != null) {
-        ApiLogger.instance.updateCall(
-          id,
-          statusCode: err.response?.statusCode,
-          responseBody: err.response?.data ?? err.message,
-          responseHeaders: err.response?.headers.map.map((k, v) => MapEntry(k, v.join(','))),
-          duration: Duration.zero,
-          error: err.message,
-        );
-      }
-    } catch (_) {}
-    handler.next(err);
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    final id = err.requestOptions.hashCode.toString();
+    final startTime = _startTimes[id];
+
+    if (startTime != null) {
+      final duration = DateTime.now().difference(startTime);
+      _startTimes.remove(id);
+
+      logger.updateCall(
+        id,
+        statusCode: err.response?.statusCode,
+        responseHeaders: err.response?.headers.map.map(
+          (key, value) => MapEntry(key, value.join(', ')),
+        ),
+        responseBody: err.response?.data ?? err.message,
+        duration: duration,
+        error: err.message,
+      );
+    }
+
+    super.onError(err, handler);
   }
 }

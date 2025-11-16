@@ -11,6 +11,60 @@ class ApiTesterScreen extends StatefulWidget {
 class _ApiTesterScreenState extends State<ApiTesterScreen> {
 	final logger = ApiLogger.instance;
 
+	Color _getMethodColor(String method) {
+		switch (method.toUpperCase()) {
+			case 'GET':
+				return Colors.blue;
+			case 'POST':
+				return Colors.green;
+			case 'PUT':
+				return Colors.orange;
+			case 'PATCH':
+				return Colors.purple;
+			case 'DELETE':
+				return Colors.red;
+			default:
+				return Colors.grey;
+		}
+	}
+
+	Color _getStatusColor(int? status) {
+		if (status == null) return Colors.grey;
+		if (status >= 200 && status < 300) return Colors.green;
+		if (status >= 400) return Colors.red;
+		return Colors.orange;
+	}
+
+	String _formatTime(String timestamp) {
+		try {
+			final dateTime = DateTime.parse(timestamp);
+			final hour = dateTime.hour.toString().padLeft(2, '0');
+			final minute = dateTime.minute.toString().padLeft(2, '0');
+			final second = dateTime.second.toString().padLeft(2, '0');
+			return '$hour:$minute:$second';
+		} catch (e) {
+			return timestamp;
+		}
+	}
+
+	String _formatDuration(Duration? duration) {
+		if (duration == null) return 'Pending...';
+		final ms = duration.inMilliseconds;
+		if (ms < 1000) {
+			return '$ms ms';
+		} else {
+			return '${(ms / 1000).toStringAsFixed(2)} s';
+		}
+	}
+
+	Color _getDurationColor(Duration? duration) {
+		if (duration == null) return Colors.grey;
+		final ms = duration.inMilliseconds;
+		if (ms < 200) return Colors.green;
+		if (ms < 1000) return Colors.orange;
+		return Colors.red;
+	}
+
 	@override
 	void initState() {
 		super.initState();
@@ -62,7 +116,9 @@ class _ApiTesterScreenState extends State<ApiTesterScreen> {
 							itemBuilder: (context, index) {
 								final call = calls[index];
 								final status = call.statusCode;
-								final color = _getStatusColor(status);
+								final methodColor = _getMethodColor(call.method);
+								final statusColor = _getStatusColor(status);
+								final durationColor = _getDurationColor(call.duration);
 
 								return Padding(
 									padding: const EdgeInsets.only(bottom: 8),
@@ -85,13 +141,13 @@ class _ApiTesterScreenState extends State<ApiTesterScreen> {
 																Container(
 																	padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
 																	decoration: BoxDecoration(
-																		color: color.withOpacity(0.1),
+																		color: methodColor.withOpacity(0.1),
 																		borderRadius: BorderRadius.circular(6),
 																	),
 																	child: Text(
 																		call.method,
 																		style: TextStyle(
-																			color: color,
+																			color: methodColor,
 																			fontWeight: FontWeight.w600,
 																			fontSize: 12,
 																		),
@@ -102,13 +158,13 @@ class _ApiTesterScreenState extends State<ApiTesterScreen> {
 																	Container(
 																		padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
 																		decoration: BoxDecoration(
-																			color: color.withOpacity(0.1),
+																			color: statusColor.withOpacity(0.1),
 																			borderRadius: BorderRadius.circular(4),
 																		),
 																		child: Text(
 																			status.toString(),
 																			style: TextStyle(
-																				color: color,
+																				color: statusColor,
 																				fontWeight: FontWeight.w600,
 																				fontSize: 11,
 																			),
@@ -134,15 +190,19 @@ class _ApiTesterScreenState extends State<ApiTesterScreen> {
 																Icon(Icons.access_time, size: 14, color: Colors.grey[500]),
 																const SizedBox(width: 4),
 																Text(
-																	call.timestamp.toString(),
+																	_formatTime(call.timestamp.toString()),
 																	style: TextStyle(fontSize: 12, color: Colors.grey[600]),
 																),
 																const SizedBox(width: 16),
-																Icon(Icons.timer, size: 14, color: Colors.grey[500]),
+																Icon(Icons.speed, size: 14, color: durationColor),
 																const SizedBox(width: 4),
 																Text(
-																	'${call.duration?.inMilliseconds ?? '-'} ms',
-																	style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+																	_formatDuration(call.duration),
+																	style: TextStyle(
+																		fontSize: 12,
+																		color: durationColor,
+																		fontWeight: FontWeight.w600,
+																	),
 																),
 															],
 														),
@@ -156,13 +216,6 @@ class _ApiTesterScreenState extends State<ApiTesterScreen> {
 						),
 		);
 	}
-
-	Color _getStatusColor(int? status) {
-		if (status == null) return Colors.grey;
-		if (status >= 200 && status < 300) return Colors.green;
-		if (status >= 400) return Colors.red;
-		return Colors.orange;
-	}
 }
 
 class ApiCallDetail extends StatelessWidget {
@@ -170,10 +223,66 @@ class ApiCallDetail extends StatelessWidget {
 
 	const ApiCallDetail({super.key, required this.call});
 
+	Color _getMethodColor(String method) {
+		switch (method.toUpperCase()) {
+			case 'GET':
+				return Colors.blue;
+			case 'POST':
+				return Colors.green;
+			case 'PUT':
+				return Colors.orange;
+			case 'PATCH':
+				return Colors.purple;
+			case 'DELETE':
+				return Colors.red;
+			default:
+				return Colors.grey;
+		}
+	}
+
+	Color _getStatusColor(int? status) {
+		if (status == null) return Colors.grey;
+		if (status >= 200 && status < 300) return Colors.green;
+		if (status >= 400) return Colors.red;
+		return Colors.orange;
+	}
+
+	String _formatTime(String timestamp) {
+		try {
+			final dateTime = DateTime.parse(timestamp);
+			final hour = dateTime.hour.toString().padLeft(2, '0');
+			final minute = dateTime.minute.toString().padLeft(2, '0');
+			final second = dateTime.second.toString().padLeft(2, '0');
+			return '$hour:$minute:$second';
+		} catch (e) {
+			return timestamp;
+		}
+	}
+
+	String _formatDuration(Duration? duration) {
+		if (duration == null) return 'N/A';
+		final ms = duration.inMilliseconds;
+		if (ms < 1000) {
+			return '$ms ms';
+		} else {
+			return '${(ms / 1000).toStringAsFixed(2)} s';
+		}
+	}
+
+	Color _getDurationColor(Duration? duration) {
+		if (duration == null) return Colors.grey;
+		final ms = duration.inMilliseconds;
+		if (ms < 200) return Colors.green;
+		if (ms < 1000) return Colors.orange;
+		return Colors.red;
+	}
+
 	@override
 	Widget build(BuildContext context) {
 		final status = call.statusCode;
-		final color = _getStatusColor(status);
+		final methodColor = _getMethodColor(call.method);
+		final statusColor = _getStatusColor(status);
+		final durationColor = _getDurationColor(call.duration);
 
 		return Scaffold(
 			backgroundColor: Colors.grey[50],
@@ -195,13 +304,13 @@ class ApiCallDetail extends StatelessWidget {
 											Container(
 												padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
 												decoration: BoxDecoration(
-													color: color.withOpacity(0.1),
+													color: methodColor.withOpacity(0.1),
 													borderRadius: BorderRadius.circular(6),
 												),
 												child: Text(
 													call.method,
 													style: TextStyle(
-														color: color,
+														color: methodColor,
 														fontWeight: FontWeight.w600,
 														fontSize: 13,
 													),
@@ -212,13 +321,13 @@ class ApiCallDetail extends StatelessWidget {
 												Container(
 													padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
 													decoration: BoxDecoration(
-														color: color.withOpacity(0.1),
+														color: statusColor.withOpacity(0.1),
 														borderRadius: BorderRadius.circular(6),
 													),
 													child: Text(
 														status.toString(),
 														style: TextStyle(
-															color: color,
+															color: statusColor,
 															fontWeight: FontWeight.w600,
 															fontSize: 13,
 														),
@@ -246,15 +355,19 @@ class ApiCallDetail extends StatelessWidget {
 											Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
 											const SizedBox(width: 6),
 											Text(
-												call.timestamp.toString(),
+												_formatTime(call.timestamp.toString()),
 												style: TextStyle(fontSize: 13, color: Colors.grey[700]),
 											),
 											const SizedBox(width: 20),
-											Icon(Icons.timer, size: 16, color: Colors.grey[600]),
+											Icon(Icons.speed, size: 16, color: durationColor),
 											const SizedBox(width: 6),
 											Text(
-												'${call.duration?.inMilliseconds ?? '-'} ms',
-												style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+												_formatDuration(call.duration),
+												style: TextStyle(
+													fontSize: 13,
+													color: durationColor,
+													fontWeight: FontWeight.w600,
+												),
 											),
 										],
 									),
@@ -348,12 +461,5 @@ class ApiCallDetail extends StatelessWidget {
 				),
 			],
 		);
-	}
-
-	Color _getStatusColor(int? status) {
-		if (status == null) return Colors.grey;
-		if (status >= 200 && status < 300) return Colors.green;
-		if (status >= 400) return Colors.red;
-		return Colors.orange;
 	}
 }

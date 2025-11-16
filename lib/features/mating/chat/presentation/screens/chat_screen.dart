@@ -48,7 +48,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     readOnlyAfterMating = widget.chat.isReadOnly;
 
     _isMatingStarted = _getChatStatus() == ChatStatus.onMating;
-    _isReadOnly = (isCompleted && !readOnlyAfterMating) || _isBlocked;
+    _isReadOnly = (isCompleted && readOnlyAfterMating) || _isBlocked;
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
