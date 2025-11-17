@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:squeak/core/service/global_widget/care_loading_widget.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
@@ -368,20 +369,10 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body:
           !areDataLoaded
-              ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16),
-                    Text(
-                      isArabic()
-                          ? 'جاري تحميل البيانات...'
-                          : 'Loading your data...',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
+              ? CareLoadingWidget(
+                theme: Theme.of(context),
+                isDark: MainCubit.get(context).isDark,
+                text: S.of(context).loadingInfo,
               )
               : SingleChildScrollView(
                 physics: BouncingScrollPhysics(),

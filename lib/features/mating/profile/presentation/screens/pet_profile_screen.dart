@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/service/global_widget/loadind_widget.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import 'package:squeak/features/mating/layoutMating/presentation/screens/widgets/profile_switcher_builder.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
@@ -33,7 +33,9 @@ class PetProfileScreen extends StatelessWidget {
           }
           if (state is ProfileChangeMatingSuccess) {
             ProfileMatingCubit.get(context).getPetProfileMating(state.petId);
-            ProfileMatingCubit.get(context).getPetProfileMatingHistory(state.petId);
+            ProfileMatingCubit.get(
+              context,
+            ).getPetProfileMatingHistory(state.petId);
             Navigator.pop(context);
           }
         },
@@ -84,13 +86,7 @@ class PetProfileScreen extends StatelessWidget {
                     onPressed: () => navigateAndFinish(context, LayoutScreen()),
                   ),
                 ),
-                body: state is ProfileGetMatingLoading
-                    ? LoadingStateWidget(
-                            theme: Theme.of(context),
-                            isDark: isDarkMode,
-                            s: S.of(context),
-                          )
-                    : NestedScrollView(
+                body: NestedScrollView(
                   headerSliverBuilder: (context, innerBoxIsScrolled) {
                     return [
                       if (cubit.petProfileMating != null)
@@ -112,7 +108,13 @@ class PetProfileScreen extends StatelessWidget {
                             pet: cubit.petProfileMating!,
                             isDarkMode: isDarkMode,
                           )
-                          : SizedBox(),
+                          : DogLoadingStateWidget(
+                            theme: Theme.of(context),
+                            isDark:
+                                Theme.of(context).brightness == Brightness.dark,
+                            s: S.of(context),
+                            text: S.of(context).loadingProfile,
+                          ),
                 ),
               );
             },

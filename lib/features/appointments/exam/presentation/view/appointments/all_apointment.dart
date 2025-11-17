@@ -3,13 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
+import 'package:squeak/core/service/global_widget/care_loading_widget.dart';
 import 'dart:async';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import '../../../../boarding/presentation/cubit/boarding_state.dart';
 import '../../../../boarding/presentation/screens/widgets/boarding_card.dart';
 import '../../../../boarding/presentation/screens/widgets/filter_boarding.dart';
 import '../component/filter_component.dart';
-import '../component/loading_widget.dart';
 import '../supplier/get_supplier.dart';
 import 'booking/widget/empty_data.dart';
 import 'card_appoinment_item.dart';
@@ -119,9 +119,10 @@ class AllAppointment extends StatelessWidget {
     final cached = _AppointmentCache.get<List<String>>(cacheKey);
     if (cached != null) return cached;
 
-    final names = _services
-        .map((service) => isAr ? service['ar']! : service['en']!)
-        .toList();
+    final names =
+        _services
+            .map((service) => isAr ? service['ar']! : service['en']!)
+            .toList();
     _AppointmentCache.set(cacheKey, names);
     return names;
   }
@@ -130,17 +131,9 @@ class AllAppointment extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => sl<UserAppointmentCubit>(),
-        ),
-        BlocProvider(
-          lazy: true,
-          create: (context) => sl<BoardingCubit>(),
-        ),
-        BlocProvider(
-          lazy: true,
-          create: (context) => sl<PetCubit>(),
-        ),
+        BlocProvider(create: (context) => sl<UserAppointmentCubit>()),
+        BlocProvider(lazy: true, create: (context) => sl<BoardingCubit>()),
+        BlocProvider(lazy: true, create: (context) => sl<PetCubit>()),
       ],
       child: _AllAppointmentContent(services: _getServiceNames(context)),
     );
@@ -168,13 +161,17 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
 
   @override
   void initState() {
-    debugPrint('AllAppointment:initState → ${DateTime.now().toIso8601String()}');
+    debugPrint(
+      'AllAppointment:initState → ${DateTime.now().toIso8601String()}',
+    );
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_onTabChanged);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      debugPrint('AllAppointment:postFrameCallback → ${DateTime.now().toIso8601String()}');
+      debugPrint(
+        'AllAppointment:postFrameCallback → ${DateTime.now().toIso8601String()}',
+      );
       if (mounted && !_examinationDataLoaded) {
         _loadExaminationDataInBackground();
         _examinationDataLoaded = true;
@@ -264,16 +261,19 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
     return MultiBlocListener(
       listeners: [
         BlocListener<UserAppointmentCubit, UserAppointmentState>(
-          listenWhen: (previous, current) =>
-              current is DeleteAppointmentSuccess ||
-              current is EditAppointment ||
-              current is GetAppointmentSuccess,
+          listenWhen:
+              (previous, current) =>
+                  current is DeleteAppointmentSuccess ||
+                  current is EditAppointment ||
+                  current is GetAppointmentSuccess,
           listener: (context, state) {
             if (state is DeleteAppointmentSuccess) {
               UserAppointmentCubit.get(context).getAppointment(false);
             }
             if (state is EditAppointment) {
-              UserAppointmentCubit.get(context).deleteAppointments(state.model.id);
+              UserAppointmentCubit.get(
+                context,
+              ).deleteAppointments(state.model.id);
             }
             if (state is GetAppointmentSuccess) {
               try {
@@ -303,10 +303,7 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
           appBar: _buildAppBar(context),
           body: TabBarView(
             controller: _tabController,
-            children: const [
-              _ExaminationTab(),
-              _BoardingTab(),
-            ],
+            children: const [_ExaminationTab(), _BoardingTab()],
           ),
         ),
       ),
@@ -353,9 +350,10 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
         child: Container(
           height: 50,
           decoration: BoxDecoration(
-            color: MainCubit.get(context).isDark
-                ? Colors.black26
-                : Colors.grey.shade200,
+            color:
+                MainCubit.get(context).isDark
+                    ? Colors.black26
+                    : Colors.grey.shade200,
             borderRadius: BorderRadius.circular(10),
           ),
           child: TabBar(
@@ -393,9 +391,10 @@ class _ExaminationTab extends StatelessWidget {
       builder: (context, state) {
         final cubit = UserAppointmentCubit.get(context);
         if (state is GetAppointmentLoading && cubit.appointments.isEmpty) {
-          return const LoadingWidget(
-            enMessage: 'Loading appointments...',
-            arMessage: 'جارٍ تحميل المواعيد...',
+          return CareLoadingWidget(
+            theme: Theme.of(context),
+            isDark: Theme.of(context).brightness == Brightness.dark,
+            text: S.of(context).loadingAppointments,
           );
         }
 
@@ -433,20 +432,22 @@ class _ExaminationFilters extends StatelessWidget {
         children: [
           Expanded(
             child: BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
-              buildWhen: (previous, current) =>
-                  current is AppointmentFiltered ||
-                  current is GetAppointmentSuccess ||
-                  current is AppointmentFilterCleared,
+              buildWhen:
+                  (previous, current) =>
+                      current is AppointmentFiltered ||
+                      current is GetAppointmentSuccess ||
+                      current is AppointmentFilterCleared,
               builder: (context, state) => buildStateFilter(context),
             ),
           ),
           // Rebuild pet filter when appointment filters change so the pet label updates
           Expanded(
             child: BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
-              buildWhen: (previous, current) =>
-                  current is AppointmentFiltered ||
-                  current is AppointmentFilterCleared ||
-                  current is GetAppointmentSuccess,
+              buildWhen:
+                  (previous, current) =>
+                      current is AppointmentFiltered ||
+                      current is AppointmentFilterCleared ||
+                      current is GetAppointmentSuccess,
               builder: (context, state) {
                 final pets = PetCubit.get(context).pets;
                 return buildPetFilter(context, pets);
@@ -454,10 +455,11 @@ class _ExaminationFilters extends StatelessWidget {
             ),
           ),
           BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
-            buildWhen: (previous, current) =>
-                current is AppointmentFiltered ||
-                current is GetAppointmentSuccess ||
-                current is AppointmentFilterCleared,
+            buildWhen:
+                (previous, current) =>
+                    current is AppointmentFiltered ||
+                    current is GetAppointmentSuccess ||
+                    current is AppointmentFilterCleared,
             builder: (context, state) {
               return Visibility(
                 visible: state is AppointmentFiltered,
@@ -482,10 +484,12 @@ class _ExaminationListPlaceholder extends StatefulWidget {
   const _ExaminationListPlaceholder();
 
   @override
-  State<_ExaminationListPlaceholder> createState() => _ExaminationListPlaceholderState();
+  State<_ExaminationListPlaceholder> createState() =>
+      _ExaminationListPlaceholderState();
 }
 
-class _ExaminationListPlaceholderState extends State<_ExaminationListPlaceholder>
+class _ExaminationListPlaceholderState
+    extends State<_ExaminationListPlaceholder>
     with PaginationMixin {
   List<dynamic> _cachedAppointments = [];
 
@@ -513,9 +517,8 @@ class _ExaminationListPlaceholderState extends State<_ExaminationListPlaceholder
 
   List<dynamic> _getAppointments(UserAppointmentState state) {
     final cubit = UserAppointmentCubit.get(context);
-  final appointments = state is AppointmentFiltered
-    ? state.appointments
-    : cubit.appointments;
+    final appointments =
+        state is AppointmentFiltered ? state.appointments : cubit.appointments;
 
     if (_cachedAppointments != appointments) {
       _cachedAppointments = appointments;
@@ -535,9 +538,10 @@ class _ExaminationListPlaceholderState extends State<_ExaminationListPlaceholder
         final appointments = _getAppointments(state);
 
         if (state is GetAppointmentLoading && appointments.isEmpty) {
-          return const LoadingWidget(
-            enMessage: 'Loading appointments...',
-            arMessage: 'جارٍ تحميل المواعيد...',
+          return CareLoadingWidget(
+            theme: Theme.of(context),
+            isDark: Theme.of(context).brightness == Brightness.dark,
+            text: S.of(context).loadingAppointments,
           );
         }
 
@@ -545,9 +549,13 @@ class _ExaminationListPlaceholderState extends State<_ExaminationListPlaceholder
           return emptyAppointment(context);
         }
 
-        final itemsToShow = (currentPage * _AppointmentConstants.pageSize).clamp(0, appointments.length);
+        final itemsToShow = (currentPage * _AppointmentConstants.pageSize)
+            .clamp(0, appointments.length);
         final maxItems = _AppointmentConstants.maxVisibleItems;
-        final displayed = appointments.sublist(0, itemsToShow.clamp(0, maxItems));
+        final displayed = appointments.sublist(
+          0,
+          itemsToShow.clamp(0, maxItems),
+        );
 
         return RefreshIndicator(
           onRefresh: () async {
@@ -563,15 +571,19 @@ class _ExaminationListPlaceholderState extends State<_ExaminationListPlaceholder
                 final appointment = displayed[index];
                 return RepaintBoundary(
                   key: ValueKey('appointment_${appointment.id}_$index'),
-                  child: buildItem(appointment, context, UserAppointmentCubit.get(context), index),
+                  child: buildItem(
+                    appointment,
+                    context,
+                    UserAppointmentCubit.get(context),
+                    index,
+                  ),
                 );
               }
               if (index == displayed.length && isLoadingMore) {
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: CircularProgressIndicator(),
-                  ),
+                return  CareLoadingWidget(
+                  theme: Theme.of(context),
+                  isDark: Theme.of(context).brightness == Brightness.dark,
+                  text: S.of(context).loadingAppointments,
                 );
               }
               return const SizedBox.shrink();
@@ -598,10 +610,12 @@ class _BoardingTab extends StatelessWidget {
       builder: (context, state) {
         final boardingCubit = BoardingCubit.get(context);
 
-        if (state is GetBoardingEntriesLoading && boardingCubit.boardingEntries.isEmpty) {
-          return const LoadingWidget(
-            enMessage: 'Loading boarding entries...',
-            arMessage: 'جارٍ تحميل مواعيد الإقامة...',
+        if (state is GetBoardingEntriesLoading &&
+            boardingCubit.boardingEntries.isEmpty) {
+          return CareLoadingWidget(
+            theme: Theme.of(context),
+            isDark: Theme.of(context).brightness == Brightness.dark,
+            text: S.of(context).loadingBoarding,
           );
         }
 
@@ -628,10 +642,11 @@ class _BoardingFilters extends StatelessWidget {
         children: [
           Expanded(
             child: BlocBuilder<BoardingCubit, BoardingState>(
-              buildWhen: (previous, current) =>
-                  current is BoardingFiltered ||
-                  current is BoardingFilteredClear ||
-                  current is GetBoardingEntriesSuccess,
+              buildWhen:
+                  (previous, current) =>
+                      current is BoardingFiltered ||
+                      current is BoardingFilteredClear ||
+                      current is GetBoardingEntriesSuccess,
               builder: (context, state) {
                 final pets = PetCubit.get(context).pets;
                 return buildPetFilterBoarding(context, pets);
@@ -640,18 +655,20 @@ class _BoardingFilters extends StatelessWidget {
           ),
           Expanded(
             child: BlocBuilder<BoardingCubit, BoardingState>(
-              buildWhen: (previous, current) =>
-                  current is BoardingFiltered ||
-                  current is GetBoardingEntriesSuccess ||
-                  current is BoardingFilteredClear,
+              buildWhen:
+                  (previous, current) =>
+                      current is BoardingFiltered ||
+                      current is GetBoardingEntriesSuccess ||
+                      current is BoardingFilteredClear,
               builder: (context, state) => buildStateFilterBoarding(context),
             ),
           ),
           BlocBuilder<BoardingCubit, BoardingState>(
-            buildWhen: (previous, current) =>
-                current is BoardingFiltered ||
-                current is GetBoardingEntriesSuccess ||
-                current is BoardingFilteredClear,
+            buildWhen:
+                (previous, current) =>
+                    current is BoardingFiltered ||
+                    current is GetBoardingEntriesSuccess ||
+                    current is BoardingFilteredClear,
             builder: (context, state) {
               return Visibility(
                 visible: state is BoardingFiltered,
@@ -708,9 +725,10 @@ class _BoardingListState extends State<_BoardingList> with PaginationMixin {
   int _getTotalItems() => _cachedEntries.length;
 
   List<dynamic> _getEntries() {
-    final entries = widget.state is BoardingFiltered
-        ? (widget.state as BoardingFiltered).filteredEntries
-        : widget.boardingCubit.boardingEntries;
+    final entries =
+        widget.state is BoardingFiltered
+            ? (widget.state as BoardingFiltered).filteredEntries
+            : widget.boardingCubit.boardingEntries;
 
     if (_cachedEntries != entries) {
       _cachedEntries = entries;
@@ -731,7 +749,10 @@ class _BoardingListState extends State<_BoardingList> with PaginationMixin {
 
     final isDarkMode = MainCubit.get(context).isDark;
 
-    final itemsToShow = (currentPage * _AppointmentConstants.pageSize).clamp(0, entries.length);
+    final itemsToShow = (currentPage * _AppointmentConstants.pageSize).clamp(
+      0,
+      entries.length,
+    );
     final maxItems = _AppointmentConstants.maxVisibleItems;
     final displayed = entries.sublist(0, itemsToShow.clamp(0, maxItems));
 
@@ -756,11 +777,10 @@ class _BoardingListState extends State<_BoardingList> with PaginationMixin {
             );
           }
           if (index == displayed.length && isLoadingMore) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: CircularProgressIndicator(),
-              ),
+            return CareLoadingWidget(
+              theme: Theme.of(context),
+              isDark: Theme.of(context).brightness == Brightness.dark,
+              text: S.of(context).loadingBoarding,
             );
           }
           return const SizedBox.shrink();

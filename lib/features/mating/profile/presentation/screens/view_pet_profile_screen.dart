@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import '../widgets/pet_profile_header.dart';
 import '../widgets/pet_tabs_section.dart';
 
@@ -61,15 +62,19 @@ class ViewPetProfileScreen extends StatelessWidget {
                 ];
               },
               body:
-              (cubit.petProfileMating != null)
-                  ? PetTabsSection(
-                pet: cubit.petProfileMating!,
-                isDarkMode: isDarkMode,
-              )
-                  : SizedBox(),
+                  (cubit.petProfileMating != null)
+                      ? PetTabsSection(
+                        pet: cubit.petProfileMating!,
+                        isDarkMode: isDarkMode,
+                      )
+                      : DogLoadingStateWidget(
+                        theme: Theme.of(context),
+                        isDark: Theme.of(context).brightness == Brightness.dark,
+                        s: S.of(context),
+                        text: S.of(context).loadingProfile,
+                      ),
             ),
           );
-
         },
       ),
     );

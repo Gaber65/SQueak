@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
+import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
 import 'package:squeak/features/friendship/presentation/widgets/empty_chats_widget.dart';
@@ -19,8 +20,11 @@ class ChatsTab extends StatelessWidget {
         final activePet = SwitchProfileCubit.get(context).activeProfile?.pet;
 
         if (state is ChatsLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return DogLoadingStateWidget(
+            theme: Theme.of(context),
+            isDark: Theme.of(context).brightness == Brightness.dark,
+            s: S.of(context),
+            text: S.of(context).loadingPetsChats,
           );
         } else if (state is ChatsLoadFailed) {
           return _buildErrorState(context, state.message);
@@ -30,8 +34,6 @@ class ChatsTab extends StatelessWidget {
           }
           return _buildChatsList(context, state.chats, activePet?.petId ?? '');
         }
-
-        // Default: show empty state
         return const EmptyChatsWidget();
       },
     );

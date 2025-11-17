@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:squeak/core/service/global_widget/care_loading_widget.dart';
 import 'package:squeak/core/service/global_widget/toast.dart';
-import 'package:squeak/features/appointments/exam/presentation/view/supplier/widgets/shimmer_loading.dart';
 import 'package:squeak/features/layout/search/presentation/controller/search_cubit.dart';
 import 'package:squeak/features/layout/search/presentation/widget/build_column_search_body.dart';
 import 'package:squeak/generated/l10n.dart';
@@ -53,7 +53,11 @@ class MySupplierScreen extends StatelessWidget {
     BuildContext context,
   ) {
     if (state is GetSupplierLoadingScreen && cubit.suppliers == null) {
-      return const ShimmerLoading();
+      return CareLoadingWidget(
+        theme: Theme.of(context),
+        isDark: Theme.of(context).brightness == Brightness.dark,
+        text: S.of(context).loadingClinics,
+      );
     }
 
     if (cubit.suppliers == null || cubit.suppliers!.data.isEmpty) {

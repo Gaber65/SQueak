@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:squeak/core/service/global_widget/care_loading_widget.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../data/models/files_and_prescription_for_pet_model.dart';
@@ -41,9 +42,11 @@ class PrescriptionForPetScreen extends StatelessWidget {
               padding: const EdgeInsets.all(12.0),
               child: filesAndPrescriptionForPetCubit
                       .getTheFilesAndPrescriptionForPetLoading
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
+                  ?  CareLoadingWidget(
+                        theme: Theme.of(context),
+                        isDark: Theme.of(context).brightness == Brightness.dark,
+                        text: S.of(context).loadingInfo,
+                      )
                   : ListView(
                       physics: BouncingScrollPhysics(),
                       children: [

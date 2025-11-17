@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
-import 'package:squeak/core/service/global_widget/loadind_widget.dart';
+import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
@@ -67,10 +67,11 @@ class _ChatListView extends StatelessWidget {
                     child: BlocBuilder<ChatListCubit, ChatListState>(
                       builder: (context, state) {
                         if (state is ChatListLoading) {
-                          return LoadingStateWidget(
+                          return DogLoadingStateWidget(
                             theme: theme,
                             isDark: isDark,
                             s: s,
+                            text: s.loadingPetsChats,
                           );
                         } else if (state is ChatListError) {
                           return _buildErrorState(
@@ -155,8 +156,6 @@ class _ChatListView extends StatelessWidget {
       ),
     );
   }
-
-  
 
   Widget _buildErrorState(
     BuildContext context,
@@ -273,16 +272,33 @@ class _ChatListView extends StatelessWidget {
     );
   }
 
-  Widget _buildChatsList(BuildContext context, String petId, List<ChatEntity> chats, ThemeData theme, bool isDark) {
+  Widget _buildChatsList(
+    BuildContext context,
+    String petId,
+    List<ChatEntity> chats,
+    ThemeData theme,
+    bool isDark,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
-        children: chats.map((chat) => _buildChatItem(context, petId, chat, theme, isDark)).toList(),
+        children:
+            chats
+                .map(
+                  (chat) => _buildChatItem(context, petId, chat, theme, isDark),
+                )
+                .toList(),
       ),
     );
   }
 
-  Widget _buildChatItem(BuildContext context, String petId, ChatEntity chat, ThemeData theme, bool isDark) {
+  Widget _buildChatItem(
+    BuildContext context,
+    String petId,
+    ChatEntity chat,
+    ThemeData theme,
+    bool isDark,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: ClipRRect(
@@ -322,13 +338,23 @@ class _ChatListView extends StatelessWidget {
                     context,
                     PageRouteBuilder(
                       transitionDuration: const Duration(milliseconds: 500),
-                      pageBuilder: (context, animation, secondaryAnimation) => MatingChatDetailScreen(chat: chat),
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      pageBuilder:
+                          (context, animation, secondaryAnimation) =>
+                              MatingChatDetailScreen(chat: chat),
+                      transitionsBuilder: (
+                        context,
+                        animation,
+                        secondaryAnimation,
+                        child,
+                      ) {
                         var begin = const Offset(1.0, 0.0);
                         var end = Offset.zero;
                         var curve = Curves.ease;
 
-                        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                        var tween = Tween(
+                          begin: begin,
+                          end: end,
+                        ).chain(CurveTween(curve: curve));
                         var offsetAnimation = animation.drive(tween);
                         return SlideTransition(
                           position: offsetAnimation,

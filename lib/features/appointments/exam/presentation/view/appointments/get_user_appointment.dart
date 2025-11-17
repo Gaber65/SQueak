@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
+import 'package:squeak/core/service/global_widget/care_loading_widget.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/card_appoinment_item.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/supplier/get_supplier.dart';
@@ -8,7 +9,6 @@ import '../../../../boarding/presentation/cubit/boarding_state.dart';
 import '../../../../boarding/presentation/screens/widgets/boarding_card.dart';
 import '../../../../boarding/presentation/screens/widgets/filter_boarding.dart';
 import '../component/filter_component.dart';
-import '../component/loading_widget.dart';
 import 'booking/widget/empty_data.dart';
 
 class GetUserAppointment extends StatelessWidget {
@@ -292,9 +292,10 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
     UserAppointmentState state,
   ) {
     if (state is GetAppointmentLoading && cubit.appointments.isEmpty) {
-      return LoadingWidget(
-        enMessage: 'Loading All appointments...',
-        arMessage: 'جاري تحميل جميع المواعيد...',
+      return CareLoadingWidget(
+        theme: Theme.of(context),
+        isDark: MainCubit.get(context).isDark,
+        text: S.of(context).loadingAppointments,
       );
     }
     if (cubit.appointments.isEmpty && state is! GetSupplierSuccess) {

@@ -573,6 +573,27 @@ class MessageLookup extends MessageLookupByLibrary {
       "This pet is already linked to a QR code",
     ),
     "littleFriend": MessageLookupByLibrary.simpleMessage("Little Friend"),
+    "loadingAppointments": MessageLookupByLibrary.simpleMessage(
+      "Loading Appointments...",
+    ),
+    "loadingBoarding": MessageLookupByLibrary.simpleMessage(
+      "Loading Boarding Types...",
+    ),
+    "loadingClinics": MessageLookupByLibrary.simpleMessage(
+      "Loading Clinics...",
+    ),
+    "loadingInfo": MessageLookupByLibrary.simpleMessage(
+      "Loading Information...",
+    ),
+    "loadingPetsChats": MessageLookupByLibrary.simpleMessage(
+      "Loading Pets Chats...",
+    ),
+    "loadingProfile": MessageLookupByLibrary.simpleMessage(
+      "Loading Profile...",
+    ),
+    "loadingServices": MessageLookupByLibrary.simpleMessage(
+      "Loading Services...",
+    ),
     "location": MessageLookupByLibrary.simpleMessage("location"),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
     "logout": MessageLookupByLibrary.simpleMessage("LogOut"),

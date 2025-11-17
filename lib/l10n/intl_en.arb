@@ -567,7 +567,14 @@
   "qrNotLinked":"QR Not Linked" ,
   "youCanLinkQrNow":"This pet is not linked to a QR code. You can link it now or learn more about how it works.",
   "learnHow":"Try Now",
-  "linkQrCode":"Link QR"
+  "linkQrCode":"Link QR",
+  "loadingProfile":"Loading Profile...",
+  "loadingPetsChats": "Loading Pets Chats...",
+  "loadingAppointments": "Loading Appointments...",
+  "loadingInfo":"Loading Information...",
+  "loadingClinics":"Loading Clinics...",
+  "loadingServices":"Loading Services...",
+  "loadingBoarding":"Loading Boarding Types..."
  
 
 

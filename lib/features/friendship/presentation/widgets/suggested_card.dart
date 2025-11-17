@@ -5,7 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
+import 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
+import 'package:squeak/features/mating/profile/presentation/screens/view_pet_profile_screen.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import 'package:squeak/generated/l10n.dart';
@@ -43,308 +45,319 @@ class SuggestedCard extends StatelessWidget {
             ? Colors.white.withOpacity(0.08)
             : Colors.black.withOpacity(0.06);
 
-    return Container(
-      margin: EdgeInsets.only(
-        bottom: isTablet ? 20 : 16,
-        left: isTablet ? 12 : 8,
-        right: isTablet ? 12 : 8,
-      ),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(isTablet ? 28 : 24),
-        border: Border.all(
-          color:
-              isDark
-                  ? Colors.white.withOpacity(0.1)
-                  : Colors.black.withOpacity(0.06),
-          width: 1,
+    return GestureDetector(
+      onTap: (){
+        navigateToScreen(
+                    context,
+                    ViewPetProfileScreen(
+                      petId:pet.petId!,
+                      isDarkMode: MainCubit.get(context).isDark,
+                    ),
+                  );
+      },
+      child: Container(
+        margin: EdgeInsets.only(
+          bottom: isTablet ? 20 : 16,
+          left: isTablet ? 12 : 8,
+          right: isTablet ? 12 : 8,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: shadowColor,
-            blurRadius: 24,
-            offset: Offset(0, 8),
-            spreadRadius: -4,
+        decoration: BoxDecoration(
+          color: cardColor,
+          borderRadius: BorderRadius.circular(isTablet ? 28 : 24),
+          border: Border.all(
+            color:
+                isDark
+                    ? Colors.white.withOpacity(0.1)
+                    : Colors.black.withOpacity(0.06),
+            width: 1,
           ),
-          BoxShadow(
-            color: shadowColor.withOpacity(0.5),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(isTablet ? 28 : 24),
-        child: Stack(
-          children: [
-            // Gradient overlay for depth
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors:
-                        isDark
-                            ? [
-                              Color(0xFF2C2C2E).withOpacity(0.3),
-                              Colors.transparent,
-                            ]
-                            : [Colors.white, Color(0xFFFAFBFC)],
+          boxShadow: [
+            BoxShadow(
+              color: shadowColor,
+              blurRadius: 24,
+              offset: Offset(0, 8),
+              spreadRadius: -4,
+            ),
+            BoxShadow(
+              color: shadowColor.withOpacity(0.5),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(isTablet ? 28 : 24),
+          child: Stack(
+            children: [
+              // Gradient overlay for depth
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors:
+                          isDark
+                              ? [
+                                Color(0xFF2C2C2E).withOpacity(0.3),
+                                Colors.transparent,
+                              ]
+                              : [Colors.white, Color(0xFFFAFBFC)],
+                    ),
                   ),
                 ),
               ),
-            ),
-
-            // Decorative background elements
-            Positioned(
-              top: -40,
-              right: -40,
-              child: Container(
-                width: 140,
-                height: 140,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      accentColor.withOpacity(0.1),
-                      accentColor.withOpacity(0.0),
-                    ],
+      
+              // Decorative background elements
+              Positioned(
+                top: -40,
+                right: -40,
+                child: Container(
+                  width: 140,
+                  height: 140,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        accentColor.withOpacity(0.1),
+                        accentColor.withOpacity(0.0),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-
-            Positioned(
-              bottom: -30,
-              left: -30,
-              child: Icon(
-                Icons.pets_rounded,
-                size: 100,
-                color: accentColor.withOpacity(0.05),
+      
+              Positioned(
+                bottom: -30,
+                left: -30,
+                child: Icon(
+                  Icons.pets_rounded,
+                  size: 100,
+                  color: accentColor.withOpacity(0.05),
+                ),
               ),
-            ),
-
-            // Main content
-            Padding(
-              padding: EdgeInsets.all(cardPadding),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Avatar and basic info section
-                  Row(
-                    children: [
-                      // Enhanced pet avatar
-                      _buildPetAvatar(
-                        pet: pet,
-                        isDark: isDark,
-                        avatarRadius: avatarRadius,
-                        accentColor: accentColor,
-                        cardColor: cardColor,
+      
+              // Main content
+              Padding(
+                padding: EdgeInsets.all(cardPadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Avatar and basic info section
+                    Row(
+                      children: [
+                        // Enhanced pet avatar
+                        _buildPetAvatar(
+                          pet: pet,
+                          isDark: isDark,
+                          avatarRadius: avatarRadius,
+                          accentColor: accentColor,
+                          cardColor: cardColor,
+                        ),
+      
+                        SizedBox(width: isTablet ? 18 : 16),
+      
+                        // Pet info
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Name with badge
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      pet.petName!,
+                                      style: TextStyle(
+                                        fontSize: nameSize,
+                                        fontWeight: FontWeight.w800,
+                                        color: nameColor,
+                                        letterSpacing: 0.3,
+                                        height: 1.2,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          accentColor.withOpacity(0.2),
+                                          accentColor.withOpacity(0.1),
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Icon(
+                                      Icons.pets,
+                                      size: isTablet ? 16 : 14,
+                                      color: accentColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+      
+                              SizedBox(height: 8),
+      
+                              // Age and breed
+                              _buildInfoRow(
+                                icon: Icons.cake_outlined,
+                                text:
+                                    (pet.birthdate != null && pet.birthdate != '')
+                                        ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
+                                        : pet.breed?.enBreed ?? "Mixed breed",
+                                color: subTextColor,
+                                fontSize: subTextSize,
+                                isTablet: isTablet,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+      
+                    SizedBox(height: isTablet ? 20 : 18),
+      
+                    // Divider
+                    Container(
+                      height: 1,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            dividerColor,
+                            dividerColor.withOpacity(0.1),
+                            dividerColor,
+                          ],
+                        ),
                       ),
-
-                      SizedBox(width: isTablet ? 18 : 16),
-
-                      // Pet info
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+      
+                    SizedBox(height: isTablet ? 20 : 18),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildStatusChip(
+                          icon:
+                              pet.isSpayed == true
+                                  ? Icons.check_circle_rounded
+                                  : Icons.info_rounded,
+                          label:
+                              pet.isSpayed == true
+                                  ? S.of(context).spayed
+                                  : S.of(context).notSpayed,
+                          color:
+                              pet.isSpayed == true
+                                  ? Color(0xFF34C759)
+                                  : Color(0xFFFF3B30),
+                          isTablet: isTablet,
+                        ),
+      
+                        SizedBox(width: 12),
+                        _buildStatusChip(
+                          icon: pet.gender == 1 ? Icons.male : Icons.female,
+                          label:
+                              pet.gender == 1
+                                  ? S.of(context).male
+                                  : S.of(context).female,
+                          color:
+                              pet.gender == 1
+                                  ? Color(0xFF007AFF)
+                                  : Color(0xFFFF2D55),
+                          isTablet: isTablet,
+                        ),
+                      ],
+                    ),
+                    if (pet.mutualFriends! > 0) ...[
+                      SizedBox(height: isTablet ? 20 : 18),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isTablet ? 16 : 14,
+                          vertical: isTablet ? 14 : 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: mutualBgColor,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: dividerColor, width: 1),
+                        ),
+                        child: Row(
                           children: [
-                            // Name with badge
-                            Row(
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    pet.petName!,
-                                    style: TextStyle(
-                                      fontSize: nameSize,
-                                      fontWeight: FontWeight.w800,
-                                      color: nameColor,
-                                      letterSpacing: 0.3,
-                                      height: 1.2,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                            Container(
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    accentColor.withOpacity(0.2),
+                                    accentColor.withOpacity(0.1),
+                                  ],
                                 ),
-                                SizedBox(width: 8),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        accentColor.withOpacity(0.2),
-                                        accentColor.withOpacity(0.1),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    Icons.pets,
-                                    size: isTablet ? 16 : 14,
-                                    color: accentColor,
-                                  ),
-                                ),
-                              ],
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.people_rounded,
+                                size: isTablet ? 20 : 18,
+                                color: accentColor,
+                              ),
                             ),
-
-                            SizedBox(height: 8),
-
-                            // Age and breed
-                            _buildInfoRow(
-                              icon: Icons.cake_outlined,
-                              text:
-                                  (pet.birthdate != null && pet.birthdate != '')
-                                      ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
-                                      : pet.breed?.enBreed ?? "Mixed breed",
-                              color: subTextColor,
-                              fontSize: subTextSize,
-                              isTablet: isTablet,
+                            SizedBox(width: 12),
+                            Flexible(
+                              child: Text(
+                                '${pet.mutualFriends} ${isArabic() ? 'صديق مشترك' : 'mutual friend${pet.mutualFriends! > 1 ? 's' : ''}'}',
+                                style: TextStyle(
+                                  fontSize: isTablet ? 14.0 : 13.0,
+                                  color:
+                                      isDark
+                                          ? Color(0xFFAEAEB2)
+                                          : Color(0xFF48484A),
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.2,
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
                     ],
-                  ),
-
-                  SizedBox(height: isTablet ? 20 : 18),
-
-                  // Divider
-                  Container(
-                    height: 1,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          dividerColor,
-                          dividerColor.withOpacity(0.1),
-                          dividerColor,
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: isTablet ? 20 : 18),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildStatusChip(
-                        icon:
-                            pet.isSpayed == true
-                                ? Icons.check_circle_rounded
-                                : Icons.info_rounded,
-                        label:
-                            pet.isSpayed == true
-                                ? S.of(context).spayed
-                                : S.of(context).notSpayed,
-                        color:
-                            pet.isSpayed == true
-                                ? Color(0xFF34C759)
-                                : Color(0xFFFF3B30),
-                        isTablet: isTablet,
-                      ),
-
-                      SizedBox(width: 12),
-                      _buildStatusChip(
-                        icon: pet.gender == 1 ? Icons.male : Icons.female,
-                        label:
-                            pet.gender == 1
-                                ? S.of(context).male
-                                : S.of(context).female,
-                        color:
-                            pet.gender == 1
-                                ? Color(0xFF007AFF)
-                                : Color(0xFFFF2D55),
-                        isTablet: isTablet,
-                      ),
-                    ],
-                  ),
-                  if (pet.mutualFriends! > 0) ...[
-                    SizedBox(height: isTablet ? 20 : 18),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isTablet ? 16 : 14,
-                        vertical: isTablet ? 14 : 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: mutualBgColor,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: dividerColor, width: 1),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  accentColor.withOpacity(0.2),
-                                  accentColor.withOpacity(0.1),
-                                ],
-                              ),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.people_rounded,
-                              size: isTablet ? 20 : 18,
-                              color: accentColor,
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          Flexible(
-                            child: Text(
-                              '${pet.mutualFriends} ${isArabic() ? 'صديق مشترك' : 'mutual friend${pet.mutualFriends! > 1 ? 's' : ''}'}',
-                              style: TextStyle(
-                                fontSize: isTablet ? 14.0 : 13.0,
-                                color:
-                                    isDark
-                                        ? Color(0xFFAEAEB2)
-                                        : Color(0xFF48484A),
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.2,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+      
+                    SizedBox(height: isTablet ? 24 : 20),
+                    FriendActionButton(
+                      onCancel: () {
+                        context.read<PetFriendsCubit>().cancelRequest(
+                          pet,
+                          SwitchProfileCubit.get(
+                            context,
+                          ).activeProfile!.pet!.petId!,
+                        );
+                      },
+                      pet: pet,
+                      onDismiss: () {
+                        context.read<PetFriendsCubit>().suggestedFriends.remove(
+                          pet,
+                        );
+                        PetFriendsCubit.get(
+                          context,
+                        ).emit((SuggestedFriendsLoading()));
+                      },
+                      onSent: () {
+                        context.read<PetFriendsCubit>().sendFriendRequest(
+                          pet,
+                          SwitchProfileCubit.get(
+                            context,
+                          ).activeProfile!.pet!.petId!,
+                        );
+                      },
+                      isTablet: isTablet,
                     ),
                   ],
-
-                  SizedBox(height: isTablet ? 24 : 20),
-                  FriendActionButton(
-                    onCancel: () {
-                      context.read<PetFriendsCubit>().cancelRequest(
-                        pet,
-                        SwitchProfileCubit.get(
-                          context,
-                        ).activeProfile!.pet!.petId!,
-                      );
-                    },
-                    pet: pet,
-                    onDismiss: () {
-                      context.read<PetFriendsCubit>().suggestedFriends.remove(
-                        pet,
-                      );
-                      PetFriendsCubit.get(
-                        context,
-                      ).emit((SuggestedFriendsLoading()));
-                    },
-                    onSent: () {
-                      context.read<PetFriendsCubit>().sendFriendRequest(
-                        pet,
-                        SwitchProfileCubit.get(
-                          context,
-                        ).activeProfile!.pet!.petId!,
-                      );
-                    },
-                    isTablet: isTablet,
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -578,9 +591,7 @@ class _FriendActionButtonState extends State<FriendActionButton>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              isSent
-                                  ? Icons.close_rounded
-                                  : Icons.pets,
+                              isSent ? Icons.close_rounded : Icons.pets,
                               size: iconSize,
                               color: acceptTextColor,
                             ),
@@ -612,7 +623,7 @@ class _FriendActionButtonState extends State<FriendActionButton>
                 ),
               ),
             ),
-
+        
             // Dismiss button (only shown when not sent)
             if (!isSent) ...[
               SizedBox(width: widget.isTablet ? 14 : 12),

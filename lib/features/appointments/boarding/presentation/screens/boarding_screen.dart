@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
+import 'package:squeak/core/service/global_widget/care_loading_widget.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/boarding/domain/repositories/boarding_repository.dart';
 import '../../../../pets/domain/entities/pet_entity.dart';
@@ -83,7 +84,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
   // ValueNotifiers for better performance
   final ValueNotifier<DateTime?> _entryDateNotifier = ValueNotifier(null);
   final ValueNotifier<DateTime?> _exitDateNotifier = ValueNotifier(null);
-  final ValueNotifier<BoardingTypeEntity?> _selectedBoardingTypeNotifier = 
+  final ValueNotifier<BoardingTypeEntity?> _selectedBoardingTypeNotifier =
       ValueNotifier(null);
   final ValueNotifier<double> _calculatedCostNotifier = ValueNotifier(0.0);
 
@@ -123,7 +124,9 @@ class _BoardingScreenState extends State<BoardingScreen> {
       return;
     }
 
-    final difference = _exitDateNotifier.value!.difference(_entryDateNotifier.value!);
+    final difference = _exitDateNotifier.value!.difference(
+      _entryDateNotifier.value!,
+    );
     double cost = 0;
 
     if (_selectedBoardingTypeNotifier.value!.unit == 1) {
@@ -169,7 +172,9 @@ class _BoardingScreenState extends State<BoardingScreen> {
       return;
     }
 
-    final difference = _exitDateNotifier.value!.difference(_entryDateNotifier.value!);
+    final difference = _exitDateNotifier.value!.difference(
+      _entryDateNotifier.value!,
+    );
     var createParams = CreateBoardingParams(
       clinicCode: widget.clinicCode,
       entryDate: _entryDateNotifier.value!.toUtc().toIso8601String(),
@@ -179,9 +184,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
       boardingTypeId: _selectedBoardingTypeNotifier.value!.id,
       vetICarePetId: petSelect!.petId ?? '',
     );
-    context.read<BoardingCubit>().createBoarding(
-      createParams, 
-    );
+    context.read<BoardingCubit>().createBoarding(createParams);
   }
 
   @override
@@ -203,7 +206,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
         var cubit = BoardingCubit.get(context);
         final petCubit = PetCubit.get(context);
         final pets = petCubit.pets;
-        
+
         // Show loading indicator while fetching boarding types
         final isLoadingBoardingTypes = state is GetBoardingTypesLoading;
         final hasBoardingTypes = cubit.boardingTypes.isNotEmpty;
@@ -235,10 +238,12 @@ class _BoardingScreenState extends State<BoardingScreen> {
                       state is CreateBoardingLoading ? null : _submitBoarding,
                   child:
                       state is CreateBoardingLoading
-                          ? const CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            )
+                          ? CareLoadingWidget(
+                            theme: Theme.of(context),
+                            isDark:
+                                Theme.of(context).brightness == Brightness.dark,
+                            text: S.of(context).loadingInfo,
+                          )
                           : const Icon(IconlyLight.send),
                 ),
               ],
@@ -268,25 +273,10 @@ class _BoardingScreenState extends State<BoardingScreen> {
 
                     // Boarding Type Dropdown with loading state
                     if (isLoadingBoardingTypes)
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            children: [
-                              const CircularProgressIndicator(),
-                              const SizedBox(height: 8),
-                              Text(
-                                isArabic() 
-                                    ? 'جاري تحميل أنواع الإقامة...'
-                                    : 'Loading boarding types...',
-                                style: TextStyle(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      CareLoadingWidget(
+                        theme: Theme.of(context),
+                        isDark: Theme.of(context).brightness == Brightness.dark,
+                        text: S.of(context).loadingBoarding,
                       )
                     else if (!hasBoardingTypes)
                       Container(
@@ -355,7 +345,8 @@ class _BoardingScreenState extends State<BoardingScreen> {
                               controller: _entryDateController,
                               selectedDateTime: entryDateTime,
                               boardingType: selectedBoardingType,
-                              onDateChanged: (date) => _onDateChanged(date, true),
+                              onDateChanged:
+                                  (date) => _onDateChanged(date, true),
                             );
                           },
                         );
@@ -376,7 +367,8 @@ class _BoardingScreenState extends State<BoardingScreen> {
                               controller: _exitDateController,
                               selectedDateTime: exitDateTime,
                               boardingType: selectedBoardingType,
-                              onDateChanged: (date) => _onDateChanged(date, false),
+                              onDateChanged:
+                                  (date) => _onDateChanged(date, false),
                             );
                           },
                         );

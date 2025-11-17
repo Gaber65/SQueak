@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/care_loading_widget.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 class DebugAppointmentAPI extends StatefulWidget {
@@ -209,7 +210,11 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
                   child: isLoading 
-                      ? CircularProgressIndicator() 
+                      ?  CareLoadingWidget(
+                        theme: Theme.of(context),
+                        isDark: Theme.of(context).brightness == Brightness.dark,
+                        text: S.of(context).loadingInfo,
+                      )
                       : Text('Create Appointment', style: TextStyle(fontSize: 16)),
                 ),
               ),

@@ -547,6 +547,27 @@ class MessageLookup extends MessageLookupByLibrary {
       " أليفك مرتبط بالفعل برمز QR",
     ),
     "littleFriend": MessageLookupByLibrary.simpleMessage("الصديق الصغير"),
+    "loadingAppointments": MessageLookupByLibrary.simpleMessage(
+      "جاري تحميل المواعيد...",
+    ),
+    "loadingBoarding": MessageLookupByLibrary.simpleMessage(
+      "جاري تحميل بيانات الإقامة...",
+    ),
+    "loadingClinics": MessageLookupByLibrary.simpleMessage(
+      "جاري تحميل العيادات...",
+    ),
+    "loadingInfo": MessageLookupByLibrary.simpleMessage(
+      "جاري تحميل البيانات...",
+    ),
+    "loadingPetsChats": MessageLookupByLibrary.simpleMessage(
+      "جاري تحميل دردشات الصغار الأليفة...",
+    ),
+    "loadingProfile": MessageLookupByLibrary.simpleMessage(
+      "جاري تحميل الملف الشخصي...",
+    ),
+    "loadingServices": MessageLookupByLibrary.simpleMessage(
+      "جاري تحميل الخدمات...",
+    ),
     "location": MessageLookupByLibrary.simpleMessage("الموقع"),
     "login": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
     "logout": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),

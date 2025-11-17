@@ -235,7 +235,7 @@ class _ToggleIconButton extends StatelessWidget {
     
     return Material(
       color: isSelected 
-        ? theme.primaryColor.withOpacity(0.1)
+        ? Colors.blue.withOpacity(0.1)
         : Colors.transparent,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
@@ -247,7 +247,7 @@ class _ToggleIconButton extends StatelessWidget {
             icon,
             size: 20,
             color: isSelected 
-              ? theme.primaryColor 
+              ? Colors.blue 
               : theme.textTheme.bodySmall?.color,
           ),
         ),

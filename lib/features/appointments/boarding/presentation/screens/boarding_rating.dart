@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
+import 'package:squeak/core/service/global_widget/care_loading_widget.dart';
+import 'package:squeak/generated/l10n.dart';
 import '../../../../../core/service/service_locator/service_locator.dart';
 import '../../../../../core/utils/theme/navigation_helper/navigation.dart';
 import '../../../../layout/layout/presentation/cubit/layout_cubit.dart';
@@ -235,7 +237,13 @@ class _RateBoardingState extends State<RateBoarding> {
             (canSubmit && !isLoading) ? () => _submitRating(context) : null,
             child:
             isLoading
-                ? const CircularProgressIndicator()
+                ? CareLoadingWidget(
+              theme: Theme.of(context),
+              isDark:
+                  Theme.of(context).brightness ==
+                      Brightness.dark,
+              text: S.of(context).loadingInfo,
+            )
                 : const Icon(IconlyLight.send),
           ),
         ],

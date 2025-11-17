@@ -557,7 +557,14 @@
   "qrNotLinked":"QR غير مرتبط",
   "youCanLinkQrNow":"أليفك غير مرتبط برمز QR. يمكنك ربطه الآن أو معرفة المزيد عن كيفية العمل.",
   "learnHow":"جرب الآن",
-  "linkQrCode":"ربط رمز QR"
+  "linkQrCode":"ربط رمز QR",
+  "loadingProfile":"جاري تحميل الملف الشخصي...",
+  "loadingPetsChats":"جاري تحميل دردشات الصغار الأليفة...",
+  "loadingAppointments":"جاري تحميل المواعيد...",
+  "loadingInfo":"جاري تحميل البيانات...",
+  "loadingClinics":"جاري تحميل العيادات...",
+  "loadingServices":"جاري تحميل الخدمات...",
+  "loadingBoarding":"جاري تحميل بيانات الإقامة..."
 
 
 

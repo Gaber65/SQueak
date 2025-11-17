@@ -4748,6 +4748,76 @@ class S {
   String get linkQrCode {
     return Intl.message('Link QR', name: 'linkQrCode', desc: '', args: []);
   }
+
+  /// `Loading Profile...`
+  String get loadingProfile {
+    return Intl.message(
+      'Loading Profile...',
+      name: 'loadingProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading Pets Chats...`
+  String get loadingPetsChats {
+    return Intl.message(
+      'Loading Pets Chats...',
+      name: 'loadingPetsChats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading Appointments...`
+  String get loadingAppointments {
+    return Intl.message(
+      'Loading Appointments...',
+      name: 'loadingAppointments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading Information...`
+  String get loadingInfo {
+    return Intl.message(
+      'Loading Information...',
+      name: 'loadingInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading Clinics...`
+  String get loadingClinics {
+    return Intl.message(
+      'Loading Clinics...',
+      name: 'loadingClinics',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading Services...`
+  String get loadingServices {
+    return Intl.message(
+      'Loading Services...',
+      name: 'loadingServices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading Boarding Types...`
+  String get loadingBoarding {
+    return Intl.message(
+      'Loading Boarding Types...',
+      name: 'loadingBoarding',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

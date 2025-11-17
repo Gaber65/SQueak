@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
+import 'package:squeak/core/service/global_widget/care_loading_widget.dart';
 import 'package:squeak/features/appointments/boarding/domain/entities/boarding_status.dart';
 import 'package:squeak/features/appointments/boarding/domain/entities/boarding_type_entity.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
@@ -123,7 +124,13 @@ class _BoardingAgainState extends State<BoardingAgain> {
                             },
                     icon:
                         cubit.isLoading
-                            ? const CircularProgressIndicator()
+                            ? CareLoadingWidget(
+                              theme: Theme.of(context),
+                              isDark:
+                                  Theme.of(context).brightness ==
+                                  Brightness.dark,
+                              text: S.of(context).loadingBoarding,
+                            )
                             : const Icon(IconlyLight.send),
                   ),
                   filled: true,
@@ -233,7 +240,9 @@ class _BoardingAgainState extends State<BoardingAgain> {
                                     (context) =>
                                         cubit.boardingTypes.map(
                                           (e) {
-                                            return PopupMenuItem<BoardingTypeEntity>(
+                                            return PopupMenuItem<
+                                              BoardingTypeEntity
+                                            >(
                                               value: e,
                                               child: SizedBox(
                                                 width:
