@@ -35,7 +35,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   bool _isBlocked = false;
   bool _isBlockedByMe = false;
   bool _isBlockedByOther = false;
-  bool readOnlyAfterMating = false;
 
   @override
   void initState() {
@@ -45,10 +44,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     _isBlockedByMe = widget.chat.isBlockedByMe;
     _isBlockedByOther = widget.chat.isBlockedByOther;
     isCompleted = widget.chat.completeMarriageStatues;
-    readOnlyAfterMating = widget.chat.isReadOnly;
 
     _isMatingStarted = _getChatStatus() == ChatStatus.onMating;
-    _isReadOnly = (isCompleted && readOnlyAfterMating) || _isBlocked;
+    _isReadOnly = (isCompleted && _isReadOnly) || _isBlocked;
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
