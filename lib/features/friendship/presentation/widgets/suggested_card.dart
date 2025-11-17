@@ -580,7 +580,7 @@ class _FriendActionButtonState extends State<FriendActionButton>
                             Icon(
                               isSent
                                   ? Icons.close_rounded
-                                  : Icons.person_add_alt_1_rounded,
+                                  : Icons.pets,
                               size: iconSize,
                               color: acceptTextColor,
                             ),
@@ -592,7 +592,7 @@ class _FriendActionButtonState extends State<FriendActionButton>
                                       ? (isArabic() ? "إلغاء الطلب" : 'Cancel')
                                       : (isArabic()
                                           ? 'إضافة صديق'
-                                          : 'Add Friend'),
+                                          : 'Furry Friend'),
                                   style: TextStyle(
                                     fontSize: fontSize,
                                     fontWeight: FontWeight.w700,

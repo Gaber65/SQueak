@@ -1,7 +1,6 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
-
 import '../../../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
 import '../../../../../../core/utils/theme/color_mangment/color_manager.dart';
 
@@ -29,12 +28,7 @@ class BottomNavigation extends StatelessWidget {
       gapLocation: GapLocation.none,
 
       onTap: onTap,
-      icons: [
-        IconlyLight.home,
-        IconlyLight.profile,
-        IconlyLight.user,
-        IconlyLight.chat,
-      ],
+      icons: [IconlyLight.home, Icons.pets, IconlyLight.send, IconlyLight.chat],
       activeIndex: currentIndex,
     );
   }

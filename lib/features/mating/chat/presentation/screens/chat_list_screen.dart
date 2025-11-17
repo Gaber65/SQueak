@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:squeak/core/service/global_widget/loadind_widget.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
@@ -66,7 +67,11 @@ class _ChatListView extends StatelessWidget {
                     child: BlocBuilder<ChatListCubit, ChatListState>(
                       builder: (context, state) {
                         if (state is ChatListLoading) {
-                          return _buildLoadingState(context, theme, isDark, s);
+                          return LoadingStateWidget(
+                            theme: theme,
+                            isDark: isDark,
+                            s: s,
+                          );
                         } else if (state is ChatListError) {
                           return _buildErrorState(
                             context,
@@ -151,47 +156,7 @@ class _ChatListView extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingState(
-    BuildContext context,
-    ThemeData theme,
-    bool isDark,
-    S s,
-  ) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height - 200,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            LottieBuilder.network(
-              'https://lottie.host/71b548e6-5cb4-4edb-ad43-cee69b516f49/0BKYpwc1Vc.json',
-              height: 200,
-              width: 200,
-            ),
-            const SizedBox(height: 24),
-            _buildGlassCard(
-              theme,
-              isDark,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 16,
-                ),
-                child: Text(
-                  s.fetchingPetChats,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  
 
   Widget _buildErrorState(
     BuildContext context,
