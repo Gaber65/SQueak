@@ -8,7 +8,7 @@ import 'package:squeak/features/friendship/presentation/widgets/empty_chats_widg
 import 'package:squeak/features/friendship/presentation/widgets/friends_tab.dart';
 import 'package:squeak/features/friendship/presentation/widgets/section_header_widget.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
-import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/mating_chat_list_tile.dart';
 
 class ChatsTab extends StatelessWidget {
   const ChatsTab({super.key});
@@ -44,18 +44,11 @@ class ChatsTab extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.red[400],
-          ),
+          Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
           const SizedBox(height: 16),
           Text(
             isArabic() ? 'فشل تحميل المحادثات' : 'Failed to load chats',
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
@@ -66,9 +59,12 @@ class ChatsTab extends StatelessWidget {
           const SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: () {
-              final activePet = SwitchProfileCubit.get(context).activeProfile?.pet;
+              final activePet =
+                  SwitchProfileCubit.get(context).activeProfile?.pet;
               if (activePet?.petId != null) {
-                PetFriendsCubit.get(context).loadChats(petId: activePet!.petId!);
+                PetFriendsCubit.get(
+                  context,
+                ).loadChats(petId: activePet!.petId!);
               }
             },
             icon: const Icon(Icons.refresh),
@@ -79,7 +75,11 @@ class ChatsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildChatsList(BuildContext context, List<ChatEntity> chats, String petId) {
+  Widget _buildChatsList(
+    BuildContext context,
+    List<ChatEntity> chats,
+    String petId,
+  ) {
     return RefreshIndicator(
       onRefresh: () async {
         if (petId.isNotEmpty) {
@@ -99,9 +99,14 @@ class ChatsTab extends StatelessWidget {
           ...chats.asMap().entries.map(
             (entry) => AnimatedItem(
               index: entry.key,
-              child: _ChatListItem(
+              child: MatingChatListTile(
                 chat: entry.value,
                 petId: petId,
+                onNavigateComplete: () async {
+                  if (petId.isNotEmpty) {
+                    await PetFriendsCubit.get(context).loadChats(petId: petId);
+                  }
+                },
               ),
             ),
           ),
@@ -111,215 +116,4 @@ class ChatsTab extends StatelessWidget {
   }
 }
 
-class _ChatListItem extends StatelessWidget {
-  final ChatEntity chat;
-  final String petId;
-
-  const _ChatListItem({
-    required this.chat,
-    required this.petId,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MatingChatDetailScreen(chat: chat),
-              ),
-            );
-            if (petId.isNotEmpty) {
-              PetFriendsCubit.get(context).loadChats(petId: petId);
-            }
-          },
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                // Avatar
-                _buildAvatar(chat, theme, isDark),
-                const SizedBox(width: 12),
-                
-                // Chat info
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        chat.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: theme.colorScheme.onSurface,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        formatFacebookTimePost(chat.lastMessageSendDateTime),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: theme.colorScheme.onSurface.withOpacity(0.5),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                // Status badges
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    if (chat.completeMarriageStatues)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFFFF6B9D), Color(0xFFFFC371)],
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Icon(Icons.favorite, color: Colors.white, size: 12),
-                            SizedBox(width: 4),
-                            Text(
-                              'Mating',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    if (chat.isBlock)
-                      Container(
-                        margin: const EdgeInsets.only(top: 4),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.red[400],
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.block, color: Colors.white, size: 12),
-                            const SizedBox(width: 4),
-                            Text(
-                              isArabic() ? 'محظور' : 'Blocked',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    if (!chat.completeMarriageStatues && !chat.isBlock)
-                      const Icon(
-                        Icons.chevron_right,
-                        color: Colors.grey,
-                      ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAvatar(ChatEntity chat, ThemeData theme, bool isDark) {
-    return Container(
-      width: 56,
-      height: 56,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: ColorManager.primaryColor.withOpacity(0.3),
-          width: 2,
-        ),
-      ),
-      child: ClipOval(
-        child: Builder(
-          builder: (context) {
-            final imagePath = chat.image;
-            if (imagePath == null || imagePath.isEmpty) {
-              return Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [
-                      ColorManager.primaryColor.withOpacity(0.2),
-                      ColorManager.primaryColor.withOpacity(0.1),
-                    ],
-                  ),
-                ),
-                child: Icon(
-                  Icons.pets,
-                  color: ColorManager.primaryColor,
-                  size: 28,
-                ),
-              );
-            }
-
-            // Otherwise try to load the network image and fallback on error
-            return Image.network(
-              imageUrl + imagePath,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [
-                        ColorManager.primaryColor.withOpacity(0.2),
-                        ColorManager.primaryColor.withOpacity(0.1),
-                      ],
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.pets,
-                    color: ColorManager.primaryColor,
-                    size: 28,
-                  ),
-                );
-              },
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
+// _ChatListItem removed; use MatingChatListTile instead for shared UI
