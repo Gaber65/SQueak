@@ -677,13 +677,31 @@ class _ChatListView extends StatelessWidget {
       final dt = msg.createdAt.toLocal();
       final now = DateTime.now();
       final diff = now.difference(dt);
+      final arabic = isArabic();
 
-      if (diff.inSeconds < 60) return 'Just now';
-      if (diff.inMinutes < 60) return '${diff.inMinutes} minutes ago';
-      if (diff.inHours < 24) return '${diff.inHours} hours ago';
-      if (diff.inDays == 1) return 'Yesterday at ${DateFormat('h:mm a').format(dt)}';
-      if (diff.inDays < 7) return DateFormat("EEEE 'at' h:mm a").format(dt);
-      return DateFormat("MMM d 'at' h:mm a").format(dt);
+      if (diff.inSeconds < 60) return arabic ? 'الآن' : 'Just now';
+      if (diff.inMinutes < 60) {
+        return arabic
+            ? 'منذ ${diff.inMinutes} دقيقة'
+            : '${diff.inMinutes} minutes ago';
+      }
+      if (diff.inHours < 24) {
+        return arabic ? 'منذ ${diff.inHours} ساعة' : '${diff.inHours} hours ago';
+      }
+      if (diff.inDays == 1) {
+        return arabic
+            ? 'أمس في ${DateFormat('h:mm a', 'ar').format(dt)}'
+            : 'Yesterday at ${DateFormat('h:mm a').format(dt)}';
+      }
+      if (diff.inDays < 7) {
+        return arabic
+            ? '${DateFormat('EEEE', 'ar').format(dt)} في ${DateFormat('h:mm a', 'ar').format(dt)}'
+            : DateFormat("EEEE 'at' h:mm a").format(dt);
+      }
+
+      return arabic
+          ? '${DateFormat('MMM d', 'ar').format(dt)} في ${DateFormat('h:mm a', 'ar').format(dt)}'
+          : DateFormat("MMM d 'at' h:mm a").format(dt);
     } catch (_) {
       return '';
     }
