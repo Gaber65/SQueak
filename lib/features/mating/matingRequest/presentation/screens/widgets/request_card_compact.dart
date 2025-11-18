@@ -184,6 +184,7 @@ class RequestCardCompact extends StatelessWidget {
                           groupImage: null,
                           createdAt: DateTime.now().toIso8601String(),
                           lastMessageSendDateTime: DateTime.now().toIso8601String(),
+                          unreadedCount: 0,
                         );
                         navigateToScreen(
                           context,

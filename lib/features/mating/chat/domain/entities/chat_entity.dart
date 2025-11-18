@@ -1,3 +1,5 @@
+import 'package:squeak/features/mating/chat/domain/entities/message_entity.dart';
+
 class ChatEntity {
   final String id;
   final bool isGroup;
@@ -14,6 +16,8 @@ class ChatEntity {
   final bool isBlockedByMe; 
   final bool isBlockedByOther; 
   final bool isReadOnly;
+  final int unreadedCount;
+  final MessageEntity? lastMessage;
 
   const ChatEntity({
     required this.id,
@@ -30,6 +34,8 @@ class ChatEntity {
     required this.isBlock,
     required  this.isBlockedByMe,
     required this.isBlockedByOther,
-    required this.isReadOnly
+    required this.isReadOnly,
+    required this.unreadedCount,
+     this.lastMessage,
   });
 }

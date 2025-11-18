@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:squeak/core/service/global_widget/loading_widget.dart';
@@ -386,24 +387,48 @@ class _ChatListView extends StatelessWidget {
                                 color: theme.colorScheme.onSurface,
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              formatFacebookTimePost(
-                                chat.lastMessageSendDateTime,
-                              ),
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: theme.colorScheme.onSurface.withOpacity(
-                                  0.5,
-                                ),
-                              ),
-                            ),
+                            const SizedBox(height: 6),
+                            _buildLastMessage(chat, theme, isDark),
                           ],
                         ),
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
+                          Text(
+                            _formatLastMessageTime(chat),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: theme.colorScheme.onSurface.withOpacity(
+                                0.5,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          if (chat.unreadedCount > 0)
+                            Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF25D366),
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 20,
+                                minHeight: 20,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  chat.unreadedCount > 99 
+                                      ? '99+' 
+                                      : chat.unreadedCount.toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
                           if (chat.completeMarriageStatues)
                             Container(
                               padding: const EdgeInsets.symmetric(
@@ -569,6 +594,99 @@ class _ChatListView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildLastMessage(ChatEntity chat, ThemeData theme, bool isDark) {
+    if (chat.lastMessage == null || chat.lastMessage!.description.isEmpty) {
+      return Text(
+        'No messages yet',
+        style: TextStyle(
+          fontSize: 14,
+          color: theme.colorScheme.onSurface.withOpacity(0.5),
+          fontStyle: FontStyle.italic,
+        ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      );
+    }
+
+    final message = chat.lastMessage!;
+    final isFromMe = !message.toMe ; 
+    
+    // Handle media messages
+    String messageText = message.description;
+    IconData? mediaIcon;
+    
+    if (message.image != null && message.image!.isNotEmpty) {
+      mediaIcon = Icons.image;
+      messageText = 'Photo';
+    } else if (message.video != null && message.video!.isNotEmpty) {
+      mediaIcon = Icons.videocam;
+      messageText = 'Video';
+    } else if (message.audio != null && message.audio!.isNotEmpty) {
+      mediaIcon = Icons.mic;
+      messageText = 'Audio';
+    }
+
+    return Row(
+      children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: !isFromMe ? Icon(
+              Icons.done_all,
+              size: 16,
+              color: message.isRead 
+                  ? const Color(0xFF25D366) 
+                  : theme.colorScheme.onSurface.withOpacity(0.5), 
+            ):null
+          ),
+        if (mediaIcon != null)
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: Icon(
+              mediaIcon,
+              size: 16,
+              color: isFromMe
+                  ? theme.colorScheme.onSurface.withOpacity(0.6)
+                  : theme.colorScheme.onSurface.withOpacity(0.7),
+            ),
+          ),
+        Expanded(
+          child: Text(
+            messageText,
+            style: TextStyle(
+              fontSize: 14,
+              color: isFromMe
+                  ? theme.colorScheme.onSurface.withOpacity(0.6) 
+                  : theme.colorScheme.onSurface.withOpacity(0.85), 
+              fontWeight: isFromMe ? FontWeight.normal : FontWeight.w500,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatLastMessageTime(ChatEntity chat) {
+    try {
+      final msg = chat.lastMessage;
+      if (msg == null) return '';
+
+      final dt = msg.createdAt.toLocal();
+      final now = DateTime.now();
+      final diff = now.difference(dt);
+
+      if (diff.inSeconds < 60) return 'Just now';
+      if (diff.inMinutes < 60) return '${diff.inMinutes} minutes ago';
+      if (diff.inHours < 24) return '${diff.inHours} hours ago';
+      if (diff.inDays == 1) return 'Yesterday at ${DateFormat('h:mm a').format(dt)}';
+      if (diff.inDays < 7) return DateFormat("EEEE 'at' h:mm a").format(dt);
+      return DateFormat("MMM d 'at' h:mm a").format(dt);
+    } catch (_) {
+      return '';
+    }
   }
 
   Widget _buildGlassCard(

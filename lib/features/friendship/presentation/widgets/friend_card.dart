@@ -126,6 +126,8 @@ class FriendCard extends StatelessWidget {
                         isBlockedByMe: chat?.isBlockedByMe ?? false,
                         isBlockedByOther: chat?.isBlockedByOther ?? false,
                         isReadOnly: chat?.isReadOnly ?? false,
+                        unreadedCount: 0,
+                        
                       );
                       Navigator.push(
                         context,
