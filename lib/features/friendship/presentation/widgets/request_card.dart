@@ -104,7 +104,7 @@ class RequestCard extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: FriendActionButton(
-                  label: isArabic() ? "لا الآن" : "Not Now",
+                  label: isArabic() ? "ليس الآن" : "Not Now",
                   icon: Icons.close,
                   textColor: Theme.of(context).brightness == Brightness.dark
                       ? Colors.grey[300]!

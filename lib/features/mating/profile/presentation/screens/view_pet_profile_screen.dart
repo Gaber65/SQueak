@@ -8,11 +8,15 @@ import '../widgets/pet_tabs_section.dart';
 class ViewPetProfileScreen extends StatelessWidget {
   final bool isDarkMode;
   final String petId;
+  final bool? isFriend;
+  final bool? isReceived;
 
   const ViewPetProfileScreen({
     super.key,
     this.isDarkMode = false,
     required this.petId,
+    this.isFriend,
+    this.isReceived,
   });
 
   @override

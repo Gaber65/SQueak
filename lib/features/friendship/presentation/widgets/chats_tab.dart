@@ -116,4 +116,3 @@ class ChatsTab extends StatelessWidget {
   }
 }
 
-// _ChatListItem removed; use MatingChatListTile instead for shared UI
