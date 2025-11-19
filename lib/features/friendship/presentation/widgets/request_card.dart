@@ -6,6 +6,8 @@ import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/friendship/domain/entities/friend_request_stats.dart';
 import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
 
+import '../../../mating/profile/presentation/screens/view_pet_profile_screen.dart';
+
 class RequestCard extends StatelessWidget {
   final PetFriendRequestEntity pet;
 
@@ -20,107 +22,122 @@ class RequestCard extends StatelessWidget {
     final shadowColor =
     isDark ? Colors.black26 : Colors.black.withOpacity(0.05);
 
-    return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(color: shadowColor, blurRadius: 4, offset: Offset(0, 2)),
-        ],
-      ),
-      child: Column(
-        children: [
-          /// 🐶 Pet Info
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundImage: NetworkImage(
-                  imageUrl + (pet.friendPetImage),
-                ),
-                child: (pet.friendPetImage.isEmpty)
-                    ? Text(
-                  pet.friendPetName.substring(0, 1).toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                )
-                    : null,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      pet.friendPetName,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                    Text(
-                      formatAge(DateTime.parse(
-                        pet.friendPetAge.substring(0, 10),
-                      )),
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                 
-                  ],
-                ),
-              ),
-
-            ],
+    return GestureDetector(
+      onTap: (){
+        navigateToScreen(
+          context,
+          ViewPetProfileScreen(
+            petId: pet.friendPetId,
+            isDarkMode: MainCubit.get(context).isDark,
+            isReceived: true,
+            activePetId:
+                SwitchProfileCubit.get(context).activeProfile?.pet?.petId,
+            requestEntity: pet,
           ),
-
-          const SizedBox(height: 16),
-
-          /// 🎯 Action Buttons
-          Row(
-            children: [
-              Expanded(
-                child: FriendActionButton(
-                  label:isArabic() ? "دعنا نلعب!" : "Let's Pawty!",
-                  icon: Icons.pets,
-                  backgroundColor: Colors.green,
-                  textColor: Colors.white,
-                  onPressed: () {
-                    context.read<PetFriendsCubit>().updateFriendRequest(
-                      pet,
-                      FriendshipStatus.accepted,
-                    );
-                  },
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 12),
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: cardColor,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(color: shadowColor, blurRadius: 4, offset: Offset(0, 2)),
+          ],
+        ),
+        child: Column(
+          children: [
+            /// 🐶 Pet Info
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 24,
+                  backgroundImage: NetworkImage(
+                    imageUrl + (pet.friendPetImage),
+                  ),
+                  child: (pet.friendPetImage.isEmpty)
+                      ? Text(
+                    pet.friendPetName.substring(0, 1).toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  )
+                      : null,
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: FriendActionButton(
-                  label: isArabic() ? "ليس الآن" : "Not Now",
-                  icon: Icons.close,
-                  textColor: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.grey[300]!
-                      : Colors.grey[700]!,
-                  outlined: true,
-                  onPressed: () {
-                    context.read<PetFriendsCubit>().updateFriendRequest(
-                      pet,
-                      FriendshipStatus.rejected,
-                    );
-                  },
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        pet.friendPetName,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      Text(
+                        formatAge(DateTime.parse(
+                          pet.friendPetAge.substring(0, 10),
+                        )),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                   
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          )
-        ],
+      
+              ],
+            ),
+      
+            const SizedBox(height: 16),
+      
+            /// 🎯 Action Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: FriendActionButton(
+                    label:isArabic() ? "دعنا نلعب!" : "Let's Pawty!",
+                    icon: Icons.pets,
+                    backgroundColor: Colors.green,
+                    textColor: Colors.white,
+                    onPressed: () {
+                      context.read<PetFriendsCubit>().updateFriendRequest(
+                        pet,
+                        FriendshipStatus.accepted,
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: FriendActionButton(
+                    label: isArabic() ? "ليس الآن" : "Not Now",
+                    icon: Icons.close,
+                    textColor: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey[300]!
+                        : Colors.grey[700]!,
+                    outlined: true,
+                    onPressed: () {
+                      context.read<PetFriendsCubit>().updateFriendRequest(
+                        pet,
+                        FriendshipStatus.rejected,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
+import 'package:squeak/features/friendship/domain/entities/friend_request_stats.dart';
+import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../widgets/pet_profile_header.dart';
 import '../widgets/pet_tabs_section.dart';
@@ -18,6 +20,7 @@ class ViewPetProfileScreen extends StatelessWidget {
   final bool? isSent;
   final String? activePetId;
   final String? conversationId;
+  final PetFriendRequestEntity? requestEntity;
 
   const ViewPetProfileScreen({
     super.key,
@@ -28,6 +31,7 @@ class ViewPetProfileScreen extends StatelessWidget {
     this.isSent,
     this.activePetId,
     this.conversationId,
+    this.requestEntity,
   });
 
   @override
@@ -75,6 +79,10 @@ class ViewPetProfileScreen extends StatelessWidget {
                   petId: activePetId ?? '',
                 );
               } else if (state is FriendRequestCancelled) {
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
+              } else if (state is FriendRequestUpdated) {
                 if (context.mounted) {
                   Navigator.of(context).pop();
                 }
@@ -134,7 +142,14 @@ class ViewPetProfileScreen extends StatelessWidget {
                                 cubit.petProfileMating!,
                                 isDarkMode,
                               ),
-                            if (isFriend == false && isSent != true)
+                            if (isReceived == true)
+                              _buildReceivedRequestButtons(
+                                context,
+                                cubit.petProfileMating!,
+                                isDarkMode,
+                                requestEntity,
+                              ),
+                            if (isFriend == false && isSent != true && isReceived != true)
                               _buildFriendRequestButtons(
                                 context,
                                 cubit.petProfileMating!,
@@ -205,6 +220,166 @@ class ViewPetProfileScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildReceivedRequestButtons(
+    BuildContext context,
+    PetEntities pet,
+    bool isDarkMode,
+    PetFriendRequestEntity? requestEntity,
+  ) {
+    if (requestEntity == null) return const SizedBox.shrink();
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Expanded(
+            child: ElevatedButton.icon(
+              onPressed: () {
+                context.read<PetFriendsCubit>().updateFriendRequest(
+                      requestEntity,
+                      FriendshipStatus.accepted,
+                    );
+              },
+              icon: Icon(Icons.pets, size: 16, color: Colors.white),
+              label: Text(
+                isArabic() ? "دعنا نلعب!" : "Let's Pawty!",
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: Colors.white,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 2,
+                shadowColor: Colors.green.withOpacity(0.3),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildRejectButton(context, pet, isDarkMode, requestEntity),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors:
+                    isDarkMode
+                        ? [const Color(0xFF2A2A2A), const Color(0xFF1E1E1E)]
+                        : [
+                          Theme.of(context).primaryColor,
+                          Theme.of(context).primaryColor.withOpacity(0.8),
+                        ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: (isDarkMode
+                          ? Colors.black
+                          : Theme.of(context).primaryColor)
+                      .withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ElevatedButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder:
+                      (context) =>
+                          PetInfoPopup(pet: pet, isDarkMode: isDarkMode),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 14,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Icon(Icons.pets, size: 20),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRejectButton(
+    BuildContext context,
+    PetEntities pet,
+    bool isDarkMode,
+    PetFriendRequestEntity requestEntity,
+  ) {
+    final rejectGradient =
+        isDarkMode
+            ? [Colors.grey[800]!, Colors.grey[700]!]
+            : [const Color(0xFFF5F5F5), const Color(0xFFE8E8E8)];
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: rejectGradient,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDarkMode ? Colors.grey[600]! : const Color(0xFFE0E0E0),
+          width: 2,
+        ),
+      ),
+      child: OutlinedButton.icon(
+        onPressed: () {
+          context.read<PetFriendsCubit>().updateFriendRequest(
+                requestEntity,
+                FriendshipStatus.rejected,
+              );
+        },
+        icon: Icon(
+          Icons.close,
+          size: 16,
+          color: isDarkMode ? Colors.grey[300]! : Colors.grey[700]!,
+        ),
+        label: Text(
+          isArabic() ? "ليس الآن" : "Not Now",
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+            color: isDarkMode ? Colors.grey[300]! : Colors.grey[700]!,
+          ),
+        ),
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(
+            color: isDarkMode ? Colors.grey[700]! : Colors.grey[300]!,
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+      ),
     );
   }
 
