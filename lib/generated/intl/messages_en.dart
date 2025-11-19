@@ -505,6 +505,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "forgotPass": MessageLookupByLibrary.simpleMessage("Forgot password?"),
     "fullName": MessageLookupByLibrary.simpleMessage("Full Name"),
+    "furryFriend": MessageLookupByLibrary.simpleMessage("Furry Friend"),
     "gaber": MessageLookupByLibrary.simpleMessage("testEN"),
     "gender": MessageLookupByLibrary.simpleMessage("gender"),
     "generalInformation": MessageLookupByLibrary.simpleMessage(

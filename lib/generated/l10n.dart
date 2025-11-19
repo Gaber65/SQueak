@@ -4818,6 +4818,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Furry Friend`
+  String get furryFriend {
+    return Intl.message(
+      'Furry Friend',
+      name: 'furryFriend',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

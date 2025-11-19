@@ -489,6 +489,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "forgotPass": MessageLookupByLibrary.simpleMessage("هل نسيت كلمة المرور؟"),
     "fullName": MessageLookupByLibrary.simpleMessage("الاسم الكامل"),
+    "furryFriend": MessageLookupByLibrary.simpleMessage("إضافة صديق"),
     "gaber": MessageLookupByLibrary.simpleMessage("اختبارEN"),
     "gender": MessageLookupByLibrary.simpleMessage("الجنس"),
     "generalInformation": MessageLookupByLibrary.simpleMessage("معلومات عامة"),
