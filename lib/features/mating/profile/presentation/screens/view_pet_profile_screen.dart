@@ -15,6 +15,7 @@ class ViewPetProfileScreen extends StatelessWidget {
   final String petId;
   final bool? isFriend;
   final bool? isReceived;
+  final bool? isSent;
   final String? activePetId;
   final String? conversationId;
 
@@ -24,6 +25,7 @@ class ViewPetProfileScreen extends StatelessWidget {
     required this.petId,
     this.isFriend,
     this.isReceived,
+    this.isSent,
     this.activePetId,
     this.conversationId,
   });
@@ -66,6 +68,13 @@ class ViewPetProfileScreen extends StatelessWidget {
                   Navigator.of(context).pop();
                 }
               } else if (state is DeleteFriendShipSuccess) {
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
+                context.read<PetFriendsCubit>().loadSentFriends(
+                  petId: activePetId ?? '',
+                );
+              } else if (state is FriendRequestCancelled) {
                 if (context.mounted) {
                   Navigator.of(context).pop();
                 }
@@ -119,7 +128,13 @@ class ViewPetProfileScreen extends StatelessWidget {
                                 activePetId: activePetId,
                                 conversationId: conversationId,
                               ),
-                            if (isFriend == false)
+                            if (isSent == true)
+                              _buildSentRequestButtons(
+                                context,
+                                cubit.petProfileMating!,
+                                isDarkMode,
+                              ),
+                            if (isFriend == false && isSent != true)
                               _buildFriendRequestButtons(
                                 context,
                                 cubit.petProfileMating!,
@@ -190,6 +205,111 @@ class ViewPetProfileScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildSentRequestButtons(
+    BuildContext context,
+    PetEntities pet,
+    bool isDarkMode,
+  ) {
+    final dangerColor =
+        isDarkMode ? const Color(0xFFFF453A) : const Color(0xFFFF3B30);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                context.read<PetFriendsCubit>().cancelRequest(
+                  pet,
+                  activePetId ?? '',
+                );
+              },
+              icon: Icon(Icons.cancel_outlined, size: 18, color: dangerColor),
+              label: Text(
+                S.of(context).cancelRequest,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.2,
+                  color: dangerColor,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: dangerColor, width: 1.3),
+                backgroundColor:
+                    isDarkMode
+                        ? dangerColor.withOpacity(0.07)
+                        : dangerColor.withOpacity(0.05),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 14,
+                  horizontal: 12,
+                ),
+                elevation: 0,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors:
+                        isDarkMode
+                            ? [const Color(0xFF2A2A2A), const Color(0xFF1E1E1E)]
+                            : [
+                              Theme.of(context).primaryColor,
+                              Theme.of(context).primaryColor.withOpacity(0.8),
+                            ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (isDarkMode
+                              ? Colors.black
+                              : Theme.of(context).primaryColor)
+                          .withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder:
+                          (context) =>
+                              PetInfoPopup(pet: pet, isDarkMode: isDarkMode),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Icon(Icons.pets, size: 20),
+                ),
+              ),
+             ],
+      ),
     );
   }
 

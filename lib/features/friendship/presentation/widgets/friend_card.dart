@@ -214,7 +214,7 @@ class FriendCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      icon: const Icon(IconlyBold.profile, size: 18),
+                      icon: const Icon(Icons.pets, size: 18),
                       label: Text(
                         S.of(context).viewProfile,
                         style: const TextStyle(

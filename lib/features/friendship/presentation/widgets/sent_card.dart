@@ -23,6 +23,11 @@ class SentCard extends StatelessWidget {
           ViewPetProfileScreen(
             petId: pet.petId!,
             isDarkMode: MainCubit.get(context).isDark,
+            isSent: true,
+            activePetId: SwitchProfileCubit.get(context)
+                .activeProfile!
+                .pet!
+                .petId!,
           ),
         );
       },
