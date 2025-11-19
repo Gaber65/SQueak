@@ -9,135 +9,285 @@ class PetInfoPopup extends StatelessWidget {
 
   const PetInfoPopup({super.key, required this.pet, required this.isDarkMode});
 
+  String _calculateAge(String? birthdate) {
+    if (birthdate == null || birthdate.isEmpty) return S.current.unknown;
+
+    try {
+      final birth = DateTime.parse(birthdate);
+      final now = DateTime.now();
+      final difference = now.difference(birth);
+
+      final years = difference.inDays ~/ 365;
+      final months = (difference.inDays % 365) ~/ 30;
+
+      if (years > 0) {
+        if (months > 0) {
+          return '$years ${years == 1 ? 'year' : 'years'}, $months ${months == 1 ? 'month' : 'months'}';
+        }
+        return '$years ${years == 1 ? 'year' : 'years'}';
+      } else if (months > 0) {
+        return '$months ${months == 1 ? 'month' : 'months'}';
+      } else {
+        final days = difference.inDays;
+        return '$days ${days == 1 ? 'day' : 'days'}';
+      }
+    } catch (e) {
+      return S.current.unknown;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+    final age = _calculateAge(pet.birthdate);
+
     return DraggableScrollableSheet(
-      initialChildSize: 0.55,
+      initialChildSize: 0.6,
       minChildSize: 0.3,
       maxChildSize: 0.95,
       builder: (context, scrollController) {
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.12),
-                blurRadius: 10,
-                offset: const Offset(0, -4),
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 20,
+                offset: const Offset(0, -5),
               ),
             ],
           ),
-          child: SingleChildScrollView(
-            controller: scrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+          child: Column(
+            children: [
+              // Drag handle
+              Center(
+                child: Container(
+                  width: 50,
+                  height: 5,
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade400,
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                Row(
+              ),
+
+              // Header with gradient background
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors:
+                        isDarkMode
+                            ? [Colors.purple.shade800, Colors.blue.shade800]
+                            : [Colors.purple.shade300, Colors.blue.shade300],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
+                ),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      textAlign: TextAlign.center,
-                      s.petDetails,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.pets,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          s.petDetails,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close_rounded),
+                      icon: const Icon(
+                        Icons.close_rounded,
+                        color: Colors.white,
+                      ),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.white.withOpacity(0.2),
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                PetStatsSection(pet: pet, isDarkMode: isDarkMode),
-                const SizedBox(height: 16),
-                _infoRow(
-                  context,
-                  Icons.pets,
-                  s.breed,
-                  pet.breed?.enBreed ?? s.unknown,
+              ),
+
+              // Scrollable content
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Stats section with card
+                      Card(
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: PetStatsSection(
+                            pet: pet,
+                            isDarkMode: isDarkMode,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Info cards
+                      _infoCard(
+                        context,
+                        Icons.category_rounded,
+                        s.breed,
+                        pet.breed?.enBreed ?? s.unknown,
+                        Colors.orange,
+                      ),
+                      const SizedBox(height: 12),
+                      _infoCard(
+                        context,
+                        Icons.cake_rounded,
+                        s.age,
+                        age,
+                        Colors.pink,
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _infoCard(
+                              context,
+                              pet.gender.toString() == '1'
+                                  ? Icons.male_rounded
+                                  : Icons.female_rounded,
+                              s.gender,
+                              pet.gender.toString() == '1' ? s.male : s.female,
+                              pet.gender.toString() == '1'
+                                  ? Colors.blue
+                                  : Colors.pinkAccent,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _infoCard(
+                              context,
+                              Icons.medical_services_rounded,
+                              s.sterilization,
+                              pet.isSpayed.toString() == 'false'
+                                  ? s.notSpayed
+                                  : s.spayed,
+                              Colors.green,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+
+                      _infoCard(
+                        context,
+                        Icons.person_rounded,
+                        s.ownerDetails,
+                        pet.owner?.fullName ?? s.unknown,
+                        Colors.purple,
+                      ),
+
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 8),
-                _infoRow(
-                  context,
-                  Icons.person,
-                  s.ownerDetails,
-                  pet.owner?.fullName ?? s.unknown,
-                ),
-                const SizedBox(height: 8),
-                _infoRow(
-                  context,
-                  Icons.location_on_rounded,
-                  s.gender,
-                  pet.gender.toString() == '1' ? s.male : s.female,
-                ),
-                const SizedBox(height: 8),
-                _infoRow(
-                  context,
-                  Icons.info_outline,
-                  s.birthdate,
-                  pet.birthdate ?? s.unknown,
-                ),
-                _infoRow(
-                  context,
-                  Icons.info_outline,
-                  s.sterilization,
-                  pet.isSpayed.toString() == 'false' ? s.notSpayed : s.spayed,
-                ),
-                const SizedBox(height: 16),
-                if ((pet.post.isNotEmpty))
-                  Text(s.posts, style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 8),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
     );
   }
 
-  Widget _infoRow(
+  Widget _infoCard(
     BuildContext context,
     IconData icon,
     String label,
     String value,
+    Color accentColor,
   ) {
-    final isDark = isDarkMode;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 20, color: isDark ? Colors.white70 : Colors.black54),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: Colors.grey),
-              ),
-              const SizedBox(height: 2),
-              Text(value, style: Theme.of(context).textTheme.bodyLarge),
-            ],
-          ),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color:
+            isDarkMode
+                ? Colors.grey.shade800.withOpacity(0.5)
+                : Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade200,
+          width: 1,
         ),
-      ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: accentColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, size: 24, color: accentColor),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color:
+                        isDarkMode
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
