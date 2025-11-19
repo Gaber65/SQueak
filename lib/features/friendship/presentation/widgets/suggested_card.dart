@@ -52,6 +52,11 @@ class SuggestedCard extends StatelessWidget {
                     ViewPetProfileScreen(
                       petId:pet.petId!,
                       isDarkMode: MainCubit.get(context).isDark,
+                      isFriend: false,
+                      activePetId: SwitchProfileCubit.get(context)
+                          .activeProfile!
+                          .pet!
+                          .petId!,
                     ),
                   );
       },

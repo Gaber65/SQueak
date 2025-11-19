@@ -208,7 +208,6 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     result.fold(
       (failure) => emit(BlockFriendshipFailed(message: failure.error.message)),
       (_) {
-        // remove from local friends list if present
         friends.removeWhere((p) => p.petId == pet.petId);
         emit(BlockFriendshipSuccess());
       },

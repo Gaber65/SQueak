@@ -9,38 +9,9 @@ class PetInfoPopup extends StatelessWidget {
 
   const PetInfoPopup({super.key, required this.pet, required this.isDarkMode});
 
-  String _calculateAge(String? birthdate) {
-    if (birthdate == null || birthdate.isEmpty) return S.current.unknown;
-
-    try {
-      final birth = DateTime.parse(birthdate);
-      final now = DateTime.now();
-      final difference = now.difference(birth);
-
-      final years = difference.inDays ~/ 365;
-      final months = (difference.inDays % 365) ~/ 30;
-
-      if (years > 0) {
-        if (months > 0) {
-          return '$years ${years == 1 ? 'year' : 'years'}, $months ${months == 1 ? 'month' : 'months'}';
-        }
-        return '$years ${years == 1 ? 'year' : 'years'}';
-      } else if (months > 0) {
-        return '$months ${months == 1 ? 'month' : 'months'}';
-      } else {
-        final days = difference.inDays;
-        return '$days ${days == 1 ? 'day' : 'days'}';
-      }
-    } catch (e) {
-      return S.current.unknown;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final age = _calculateAge(pet.birthdate);
-
     return DraggableScrollableSheet(
       initialChildSize: 0.6,
       minChildSize: 0.3,
@@ -134,7 +105,6 @@ class PetInfoPopup extends StatelessWidget {
                   ],
                 ),
               ),
-
               // Scrollable content
               Expanded(
                 child: SingleChildScrollView(
@@ -157,9 +127,7 @@ class PetInfoPopup extends StatelessWidget {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 24),
-
                       // Info cards
                       _infoCard(
                         context,
@@ -167,14 +135,6 @@ class PetInfoPopup extends StatelessWidget {
                         s.breed,
                         pet.breed?.enBreed ?? s.unknown,
                         Colors.orange,
-                      ),
-                      const SizedBox(height: 12),
-                      _infoCard(
-                        context,
-                        Icons.cake_rounded,
-                        s.age,
-                        age,
-                        Colors.pink,
                       ),
                       const SizedBox(height: 12),
                       Row(
@@ -207,7 +167,6 @@ class PetInfoPopup extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 12),
-
                       _infoCard(
                         context,
                         Icons.person_rounded,
@@ -215,8 +174,6 @@ class PetInfoPopup extends StatelessWidget {
                         pet.owner?.fullName ?? s.unknown,
                         Colors.purple,
                       ),
-
-                      const SizedBox(height: 24),
                     ],
                   ),
                 ),
