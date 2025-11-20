@@ -3,23 +3,32 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:squeak/core/service/signalr/signalr_service.dart';
 import 'core/service/service_locator/locatore_export_path.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize HydratedBloc storage for state persistence
-  HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: await getApplicationDocumentsDirectory(),
-  );
-
   Bloc.observer = MyBlocObserver();
 
   await InitFunctions.initialize();
+
+  Future.delayed(const Duration(seconds: 2), () async {
+    try {
+      final signalRService = SignalRService();
+      await signalRService.connect();
+      signalRService.onMessageReceived('ReceiveMessage', (arguments) {
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error connecting to SignalR: $e');
+      }
+    }
+  });
+
   if (kDebugMode) {
     print(CacheHelper.getData('token'));
-    
+
     // Print owner id from cached Owner data
     try {
       final ownerData = CacheHelper.getData('Owner');
@@ -33,12 +42,11 @@ Future<void> main() async {
     } catch (e) {
       print('Error reading owner id: $e');
     }
-  } 
+  }
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]).then((_) {
-   
     runApp(MyApp());
   });
 }

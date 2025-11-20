@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:squeak/core/widgets/signalr_connection_status_widget.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_status.dart';
 import 'package:squeak/features/mating/chat/domain/entities/message_entity.dart';
@@ -141,6 +142,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             appBar: ChatAppBar(chat: widget.chat, cubit: cubit),
             body: Column(
               children: [
+                const SignalRConnectionStatusWidget(),
                 if (isCompleted)
                   _buildStatusBanner(
                     theme,
@@ -370,7 +372,11 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               children: [
                 if (showDateDivider)
                   _buildDateDivider(message.createdAt, theme, isDark),
-                ChatMessageBubble(message: message, isMe: !message.toMe, conversationId: widget.chat.id),
+                ChatMessageBubble(
+                  message: message,
+                  isMe: !message.toMe,
+                  conversationId: widget.chat.id,
+                ),
               ],
             );
           },
@@ -696,12 +702,31 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     if (text.isEmpty) return;
     final fromPetId = widget.chat.id.isEmpty ? widget.chat.matingId : null;
     final toPetId = widget.chat.id.isEmpty ? widget.chat.petId : null;
+    final currentUserId = CacheHelper.getData('clintId') ?? '';
+    String? fromUserId;
+    String? toUserId;
+
+    if (widget.chat.lastMessage != null) {
+      if (widget.chat.lastMessage!.toMe) {
+        fromUserId = widget.chat.lastMessage!.toUserId;
+        toUserId = widget.chat.lastMessage!.fromUserId;
+      } else {
+        fromUserId = widget.chat.lastMessage!.fromUserId;
+        toUserId = widget.chat.lastMessage!.toUserId;
+      }
+    } else {
+      fromUserId = currentUserId;
+      toUserId = widget.chat.petId;
+    }
+
     cubit.sendMessage(
       chatId: widget.chat.id,
       text: text,
       isMe: true,
       fromPetId: fromPetId,
       toPetId: toPetId,
+      fromUserId: fromUserId,
+      toUserId: toUserId,
     );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import 'package:squeak/core/service/signalr/signalr_service.dart';
 import 'package:squeak/features/friendship/domain/entities/send_friend_message_parameters.dart';
+import 'package:squeak/features/mating/chat/data/models/message_model.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/delete_message_use_case.dart';
 import '../../domain/entities/message_entity.dart';
 import '../../domain/usecases/clear_conversation_use_case.dart';
@@ -31,9 +33,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
 
   List<MessageEntity> messagesList = [];
   Future<void> loadMessages(String chatId) async {
-   
-   
-    // If chatId is empty, this is a new conversation - don't load messages
     if (chatId.isEmpty) {
      
      emit(ChatMessagesLoaded([]));
@@ -62,14 +61,38 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     required bool isMe,
     String? fromPetId,
     String? toPetId,
+    String? fromUserId,
+    String? toUserId,
   }) async {
-    emit(MessageSending());
-
-   
-   
-    // Use friendship send message if fromPetId and toPetId are provided (new friend conversation)
+    emit(MessageSending());  
+    try {
+      final signalRService = SignalRService();
+      if (!signalRService.isConnected) {
+        await signalRService.connect();
+      }
+      final messageModel = MessageModel(
+        id: '',
+        description: text,
+        isRead: true,
+        fromUserId: fromUserId ?? '',
+        toUserId: toUserId ?? '',
+        createdAt: DateTime.now(),
+        toMe: false,
+      );
+      
+      final command = messageModel.toSignalRCommand(
+        conversationId: chatId.isEmpty ? null : chatId,
+        fromPetId: fromPetId,
+        toPetId: toPetId,
+      );
+      
+      await signalRService.sendMessageToUser(command);
+      
+    } catch (signalRError) {  
+      debugPrint('failed to send message via SignalR: $signalRError');
+    }
+    
     if (fromPetId != null && toPetId != null) {
-     
       final friendMessageUseCase = sl<SendFriendMessageUseCase>();
       
       final result = await friendMessageUseCase(
@@ -83,12 +106,8 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       );
 
       result.fold((failure) {
-       
-       emit(MessageSendError(failure.toString()));
+        emit(MessageSendError(failure.toString()));
       }, (response) {
-        
-        
-        // Create message entity from response
         final message = MessageEntity(
           id: text,
           description: text,
@@ -103,9 +122,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
         emit(MessageSent(message));
       });
     } else {
-      // Use regular mating message
-    
-     final result = await sendMessageUseCase(
+      final result = await sendMessageUseCase(
         SendMessageParameters(
           description: text,
           conversationId: chatId.isEmpty ? null : chatId,
@@ -116,11 +133,9 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       );
 
       result.fold((failure) {
-       
         emit(MessageSendError(failure.toString()));
       }, (message) {
-       
-       messagesList.add(message);
+        messagesList.add(message);
         emit(MessageSent(message));
       });
     }

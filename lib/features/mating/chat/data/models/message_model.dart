@@ -68,6 +68,25 @@ class MessageModel extends MessageEntity {
       'toMe': toMe,
     };
   }
+//signalR object
+  Map<String, dynamic> toSignalRCommand({
+    String? conversationId,
+    String? fromPetId,
+    String? toPetId,
+  }) {
+    return {
+      'description': description,
+      'image': image,
+      'video': video,
+      'audio': audio,
+      'fromUserId': fromUserId.isNotEmpty ? fromUserId : null,
+      'toUserId': toUserId.isNotEmpty ? toUserId : null,
+      'clinicId': null,
+      'conversationId': conversationId,
+      'fromPetId': fromPetId?.isNotEmpty == true ? fromPetId : null,
+      'toPetId': toPetId?.isNotEmpty == true ? toPetId : null,
+    };
+  }
 
   static List<MessageModel> fromJsonList(List<dynamic> list) {
     return list.map((item) => MessageModel.fromJson(item)).toList();
