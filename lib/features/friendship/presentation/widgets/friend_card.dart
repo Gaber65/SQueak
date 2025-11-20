@@ -119,7 +119,6 @@ class FriendCard extends StatelessWidget {
                         final switchProfileCubit =
                             context.read<SwitchProfileCubit>();
                         final activePet = switchProfileCubit.activeProfile?.pet;
-
                         if (activePet == null || activePet.petId == null) {
                           return;
                         }
@@ -142,7 +141,6 @@ class FriendCard extends StatelessWidget {
                           isReadOnly: chat?.isReadOnly ?? false,
                           unreadedCount: 0,
                         );
-
                         navigateToScreen(
                           context,
                           MatingChatDetailScreen(chat: chatEntity),
@@ -193,7 +191,6 @@ class FriendCard extends StatelessWidget {
                         final switchProfileCubit =
                             context.read<SwitchProfileCubit>();
                         final activePet = switchProfileCubit.activeProfile?.pet;
-
                         navigateToScreen(
                           context,
                           ViewPetProfileScreen(
