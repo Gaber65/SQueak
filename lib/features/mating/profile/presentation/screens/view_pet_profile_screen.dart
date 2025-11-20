@@ -39,10 +39,11 @@ class ViewPetProfileScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) =>
-              sl<ProfileMatingCubit>()
-                ..getPetProfileMating(petId)
-                ..getPetProfileMatingHistory(petId),
+          create:
+              (context) =>
+                  sl<ProfileMatingCubit>()
+                    ..getPetProfileMating(petId)
+                    ..getPetProfileMatingHistory(petId),
         ),
         BlocProvider(create: (context) => sl<PetFriendsCubit>()),
       ],
@@ -54,8 +55,12 @@ class ViewPetProfileScreen extends StatelessWidget {
                 errorToast(context, state.message);
               }
               if (state is ProfileChangeMatingSuccess) {
-                ProfileMatingCubit.get(context).getPetProfileMating(state.petId);
-                ProfileMatingCubit.get(context).getPetProfileMatingHistory(state.petId);
+                ProfileMatingCubit.get(
+                  context,
+                ).getPetProfileMating(state.petId);
+                ProfileMatingCubit.get(
+                  context,
+                ).getPetProfileMatingHistory(state.petId);
                 Navigator.pop(context);
               }
             },
@@ -63,14 +68,23 @@ class ViewPetProfileScreen extends StatelessWidget {
           BlocListener<PetFriendsCubit, PetFriendsState>(
             listener: (context, state) {
               if (state is BlockFriendshipSuccess ||
-                  state is FriendRequestCancelled ||
                   state is FriendRequestUpdated) {
                 if (context.mounted) Navigator.of(context).pop();
               } else if (state is DeleteFriendShipSuccess) {
-                if (context.mounted) Navigator.of(context).pop();
-                context.read<PetFriendsCubit>().loadSentFriends(
-                      petId: activePetId ?? '',
-                    );
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                  // Refresh the previous screen
+                  context.read<PetFriendsCubit>().loadSentFriends(
+                    petId: activePetId ?? '',
+                  );
+                }
+              } else if (state is FriendRequestCancelled) {
+                if (context.mounted && isSent == true) {
+                  Navigator.of(context).pop();
+                  context.read<PetFriendsCubit>().loadSentFriends(
+                    petId: activePetId ?? '',
+                  );
+                }
               }
             },
           ),
@@ -83,15 +97,16 @@ class ViewPetProfileScreen extends StatelessWidget {
                 elevation: 0,
                 title: Text(S.of(context).viewProfile),
                 backgroundColor: Colors.transparent,
-                actions: isFriend == true
-                    ? [
-                        IconButton(
-                          icon: _buildMoreOptionsIcon(isDarkMode),
-                          onPressed: () => _showMoreOptions(context, cubit),
-                        ),
-                        const SizedBox(width: 8),
-                      ]
-                    : null,
+                actions:
+                    isFriend == true
+                        ? [
+                          IconButton(
+                            icon: _buildMoreOptionsIcon(isDarkMode),
+                            onPressed: () => _showMoreOptions(context, cubit),
+                          ),
+                          const SizedBox(width: 8),
+                        ]
+                        : null,
               ),
               body: NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -109,47 +124,49 @@ class ViewPetProfileScreen extends StatelessWidget {
                       ),
                   ];
                 },
-                body: (cubit.petProfileMating != null)
-                    ? Column(
-                        children: [
-                          if (isFriend == true)
-                            MessageAndInfoButtons(
-                              pet: cubit.petProfileMating!,
-                              isDarkMode: isDarkMode,
-                              activePetId: activePetId,
-                              conversationId: conversationId,
+                body:
+                    (cubit.petProfileMating != null)
+                        ? Column(
+                          children: [
+                            if (isFriend == true)
+                              MessageAndInfoButtons(
+                                pet: cubit.petProfileMating!,
+                                isDarkMode: isDarkMode,
+                                activePetId: activePetId,
+                                conversationId: conversationId,
+                              ),
+                            if (isSent == true)
+                              _buildSentRequestButtons(
+                                context,
+                                cubit.petProfileMating!,
+                              ),
+                            if (isReceived == true)
+                              _buildReceivedRequestButtons(
+                                context,
+                                cubit.petProfileMating!,
+                              ),
+                            if (isFriend == false &&
+                                isSent != true &&
+                                isReceived != true)
+                              _buildFriendRequestButtons(
+                                context,
+                                cubit.petProfileMating!,
+                              ),
+                            Expanded(
+                              child: PetTabsSection(
+                                pet: cubit.petProfileMating!,
+                                isDarkMode: isDarkMode,
+                              ),
                             ),
-                          if (isSent == true)
-                            _buildSentRequestButtons(
-                              context,
-                              cubit.petProfileMating!,
-                            ),
-                          if (isReceived == true)
-                            _buildReceivedRequestButtons(
-                              context,
-                              cubit.petProfileMating!,
-                            ),
-                          if (isFriend == false &&
-                              isSent != true &&
-                              isReceived != true)
-                            _buildFriendRequestButtons(
-                              context,
-                              cubit.petProfileMating!,
-                            ),
-                          Expanded(
-                            child: PetTabsSection(
-                              pet: cubit.petProfileMating!,
-                              isDarkMode: isDarkMode,
-                            ),
-                          ),
-                        ],
-                      )
-                    : DogLoadingStateWidget(
-                        theme: Theme.of(context),
-                        isDark: Theme.of(context).brightness == Brightness.dark,
-                        s: S.of(context),
-                        text: S.of(context).loadingProfile,
-                      ),
+                          ],
+                        )
+                        : DogLoadingStateWidget(
+                          theme: Theme.of(context),
+                          isDark:
+                              Theme.of(context).brightness == Brightness.dark,
+                          s: S.of(context),
+                          text: S.of(context).loadingProfile,
+                        ),
               ),
             );
           },
@@ -163,9 +180,10 @@ class ViewPetProfileScreen extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: isDarkMode
-              ? [Color(0xFF2A2A2A), Color(0xFF1E1E1E)]
-              : [Color(0xFFE5E7EB), Color(0xFFD1D5DB)],
+          colors:
+              isDarkMode
+                  ? [Color(0xFF2A2A2A), Color(0xFF1E1E1E)]
+                  : [Color(0xFFE5E7EB), Color(0xFFD1D5DB)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -202,10 +220,7 @@ class ViewPetProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildReceivedRequestButtons(
-    BuildContext context,
-    PetEntities pet,
-  ) {
+  Widget _buildReceivedRequestButtons(BuildContext context, PetEntities pet) {
     if (requestEntity == null) return const SizedBox.shrink();
 
     return Padding(
@@ -216,9 +231,9 @@ class ViewPetProfileScreen extends StatelessWidget {
             child: AcceptRequestButton(
               onPressed: () {
                 context.read<PetFriendsCubit>().updateFriendRequest(
-                      requestEntity!,
-                      FriendshipStatus.accepted,
-                    );
+                  requestEntity!,
+                  FriendshipStatus.accepted,
+                );
               },
               label: isArabic() ? "دعنا نلعب!" : "Let's Pawty!",
             ),
@@ -228,9 +243,9 @@ class ViewPetProfileScreen extends StatelessWidget {
             child: RejectRequestButton(
               onPressed: () {
                 context.read<PetFriendsCubit>().updateFriendRequest(
-                      requestEntity!,
-                      FriendshipStatus.rejected,
-                    );
+                  requestEntity!,
+                  FriendshipStatus.rejected,
+                );
               },
               label: isArabic() ? "ليس الآن" : "Not Now",
               isDarkMode: isDarkMode,
@@ -243,10 +258,7 @@ class ViewPetProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSentRequestButtons(
-    BuildContext context,
-    PetEntities pet,
-  ) {
+  Widget _buildSentRequestButtons(BuildContext context, PetEntities pet) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -256,9 +268,9 @@ class ViewPetProfileScreen extends StatelessWidget {
             child: CancelRequestButton(
               onPressed: () {
                 context.read<PetFriendsCubit>().cancelRequest(
-                      pet,
-                      activePetId ?? '',
-                    );
+                  pet,
+                  activePetId ?? '',
+                );
               },
               label: S.of(context).cancelRequest,
               isDarkMode: isDarkMode,
@@ -271,21 +283,16 @@ class ViewPetProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFriendRequestButtons(
-    BuildContext context,
-    PetEntities pet,
-  ) {
+  Widget _buildFriendRequestButtons(BuildContext context, PetEntities pet) {
     return BlocBuilder<PetFriendsCubit, PetFriendsState>(
       builder: (context, state) {
         final petFriendsCubit = context.read<PetFriendsCubit>();
         final isSent = petFriendsCubit.sentRequests.contains(pet);
 
-        final primaryColor = isDarkMode 
-            ? const Color(0xFF0A84FF) 
-            : const Color(0xFF007AFF);
-        final dangerColor = isDarkMode 
-            ? const Color(0xFFFF453A) 
-            : const Color(0xFFFF3B30);
+        final primaryColor =
+            isDarkMode ? const Color(0xFF0A84FF) : const Color(0xFF007AFF);
+        final dangerColor =
+            isDarkMode ? const Color(0xFFFF453A) : const Color(0xFFFF3B30);
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -298,20 +305,19 @@ class ViewPetProfileScreen extends StatelessWidget {
                     if (isSent) {
                       petFriendsCubit.cancelRequest(pet, activePetId ?? '');
                     } else {
-                      petFriendsCubit.sendFriendRequest(
-                        pet,
-                        activePetId ?? '',
-                      );
+                      petFriendsCubit.sendFriendRequest(pet, activePetId ?? '');
                     }
                   },
                   icon: isSent ? Icons.close_rounded : Icons.pets,
-                  label: isSent
-                      ? (S.of(context).cancelRequest)
-                      : (S.of(context).furryFriend),
+                  label:
+                      isSent
+                          ? (S.of(context).cancel)
+                          : (S.of(context).furryFriend),
                   isDarkMode: isDarkMode,
-                  gradientColors: isSent
-                      ? [dangerColor, dangerColor.withOpacity(0.85)]
-                      : [primaryColor, primaryColor.withOpacity(0.9)],
+                  gradientColors:
+                      isSent
+                          ? [dangerColor, dangerColor.withOpacity(0.85)]
+                          : [primaryColor, primaryColor.withOpacity(0.9)],
                 ),
               ),
               const SizedBox(width: 12),
@@ -345,12 +351,13 @@ class GradientButtonContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final defaultGradient = isDarkMode
-        ? [const Color(0xFF2A2A2A), const Color(0xFF1E1E1E)]
-        : [
-            Theme.of(context).primaryColor,
-            Theme.of(context).primaryColor.withOpacity(0.8),
-          ];
+    final defaultGradient =
+        isDarkMode
+            ? [const Color(0xFF2A2A2A), const Color(0xFF1E1E1E)]
+            : [
+              Theme.of(context).primaryColor,
+              Theme.of(context).primaryColor.withOpacity(0.8),
+            ];
 
     return Container(
       decoration: BoxDecoration(
@@ -362,8 +369,10 @@ class GradientButtonContainer extends StatelessWidget {
         borderRadius: borderRadius ?? BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: (gradientColors?.first ?? 
-                (isDarkMode ? Colors.black : Theme.of(context).primaryColor))
+            color: (gradientColors?.first ??
+                    (isDarkMode
+                        ? Colors.black
+                        : Theme.of(context).primaryColor))
                 .withOpacity(0.3),
             blurRadius: blurRadius,
             offset: shadowOffset,
@@ -380,11 +389,7 @@ class PetInfoButton extends StatelessWidget {
   final PetEntities pet;
   final bool isDarkMode;
 
-  const PetInfoButton({
-    super.key,
-    required this.pet,
-    required this.isDarkMode,
-  });
+  const PetInfoButton({super.key, required this.pet, required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
@@ -396,20 +401,15 @@ class PetInfoButton extends StatelessWidget {
             context: context,
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
-            builder: (context) => PetInfoPopup(
-              pet: pet,
-              isDarkMode: isDarkMode,
-            ),
+            builder:
+                (context) => PetInfoPopup(pet: pet, isDarkMode: isDarkMode),
           );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 14,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -464,10 +464,7 @@ class GradientIconButton extends StatelessWidget {
         icon: Icon(icon, size: iconSize),
         label: Text(
           label,
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: fontWeight,
-          ),
+          style: TextStyle(fontSize: fontSize, fontWeight: fontWeight),
         ),
       ),
     );
@@ -519,9 +516,8 @@ class CancelRequestButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dangerColor = isDarkMode 
-        ? const Color(0xFFFF453A) 
-        : const Color(0xFFFF3B30);
+    final dangerColor =
+        isDarkMode ? const Color(0xFFFF453A) : const Color(0xFFFF3B30);
 
     return OutlinedButton.icon(
       onPressed: onPressed,
@@ -537,16 +533,12 @@ class CancelRequestButton extends StatelessWidget {
       ),
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: dangerColor, width: 1.3),
-        backgroundColor: isDarkMode
-            ? dangerColor.withOpacity(0.07)
-            : dangerColor.withOpacity(0.05),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        padding: const EdgeInsets.symmetric(
-          vertical: 14,
-          horizontal: 12,
-        ),
+        backgroundColor:
+            isDarkMode
+                ? dangerColor.withOpacity(0.07)
+                : dangerColor.withOpacity(0.05),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
         elevation: 0,
       ),
     );
@@ -581,9 +573,7 @@ class AcceptRequestButton extends StatelessWidget {
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         elevation: 2,
         shadowColor: Colors.green.withOpacity(0.3),
       ),
@@ -606,9 +596,10 @@ class RejectRequestButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rejectGradient = isDarkMode
-        ? [Colors.grey[800]!, Colors.grey[700]!]
-        : [const Color(0xFFF5F5F5), const Color(0xFFE8E8E8)];
+    final rejectGradient =
+        isDarkMode
+            ? [Colors.grey[800]!, Colors.grey[700]!]
+            : [const Color(0xFFF5F5F5), const Color(0xFFE8E8E8)];
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),

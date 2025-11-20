@@ -137,7 +137,7 @@ class MessageAndInfoButtons extends StatelessWidget {
       unreadedCount: 0,
     );
 
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
