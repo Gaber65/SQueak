@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/core/utils/enums/profile_type.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
@@ -54,7 +55,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
         appBar: AppBar(
           centerTitle: true,
           title: Text(
-            isArabic() ? 'الأصدقاء والطلبات' : 'Friends & Requests',
+           S.of(context).friendsAndRequests,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -72,24 +73,6 @@ class _FriendsScreenState extends State<FriendsScreen> {
                 if (state is ProfileLoaded) {
                   if (state.profile.type == ProfileType.pet) {
                     PetFriendsCubit.get(context).getFriends(
-                      petId:
-                          SwitchProfileCubit.get(
-                            context,
-                          ).activeProfile!.pet!.petId!,
-                    );
-                    PetFriendsCubit.get(context).loadSuggestedFriends(
-                      specieId:
-                          SwitchProfileCubit.get(
-                            context,
-                          ).activeProfile!.pet!.specieId!,
-                    );
-                    PetFriendsCubit.get(context).loadSentFriends(
-                      petId:
-                          SwitchProfileCubit.get(
-                            context,
-                          ).activeProfile!.pet!.petId!,
-                    );
-                    PetFriendsCubit.get(context).loadReceivedFriends(
                       petId:
                           SwitchProfileCubit.get(
                             context,
@@ -166,23 +149,63 @@ class _FriendsScreenState extends State<FriendsScreen> {
   }
 
   Widget buildTabContent(BuildContext context, PetFriendsCubit cubit) {
-    switch (cubit.selectedTab) {
-      case 0:
-        return FriendsTab(friends: cubit.friends);
-      case 1:
-        return SuggestedTab(suggested: cubit.suggestedFriends);
-      case 2:
-        // Show either received or sent based on filter
-        if (cubit.requestFilter == 'received') {
-          return ReceivedTab(requests: cubit.pendingRequests);
-        } else {
-          return SentTab(requests: cubit.sentRequests);
+    return BlocBuilder<PetFriendsCubit, PetFriendsState>(
+      builder: (context, state) {
+        final theme = Theme.of(context);
+        final isDark = theme.brightness == Brightness.dark;
+        if (state is FriendsLoading && cubit.selectedTab == 0) {
+          return DogLoadingStateWidget(
+            theme: theme,
+            isDark: isDark,
+            s: S.of(context),
+            text: S.of(context).loadingFriends,
+          );
         }
-      case 3:
-        return const ChatsTab();
-      default:
-        return FriendsTab(friends: cubit.friends);
-    }
+
+        if (state is SuggestedFriendsLoading && cubit.selectedTab == 1) {
+          return DogLoadingStateWidget(
+            theme: theme,
+            isDark: isDark,
+            s: S.of(context),
+            text: S.of(context).loadingSuggestions,
+          );
+        }
+
+        if (state is SuggestedFriendsLoading && cubit.selectedTab == 2) {
+          return DogLoadingStateWidget(
+            theme: theme,
+            isDark: isDark,
+            s: S.of(context),
+            text: S.of(context).loadingRequests,
+          );
+        }
+
+        if (state is ChatsLoading && cubit.selectedTab == 3) {
+          return DogLoadingStateWidget(
+            theme: theme,
+            isDark: isDark,
+            s: S.of(context),
+            text:S.of(context).loadingChats,
+          );
+        }
+        switch (cubit.selectedTab) {
+          case 0:
+            return FriendsTab(friends: cubit.friends);
+          case 1:
+            return SuggestedTab(suggested: cubit.suggestedFriends);
+          case 2:
+            if (cubit.requestFilter == 'received') {
+              return ReceivedTab(requests: cubit.pendingRequests);
+            } else {
+              return SentTab(requests: cubit.sentRequests);
+            }
+          case 3:
+            return const ChatsTab();
+          default:
+            return FriendsTab(friends: cubit.friends);
+        }
+      },
+    );
   }
 }
 

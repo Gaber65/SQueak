@@ -488,6 +488,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "طلب المتابعة غير متوفر",
     ),
     "forgotPass": MessageLookupByLibrary.simpleMessage("هل نسيت كلمة المرور؟"),
+    "friendsAndRequests": MessageLookupByLibrary.simpleMessage(
+      "الأصدقاء & الطلبات",
+    ),
     "fullName": MessageLookupByLibrary.simpleMessage("الاسم الكامل"),
     "furryFriend": MessageLookupByLibrary.simpleMessage("إضافة صديق"),
     "gaber": MessageLookupByLibrary.simpleMessage("اختبارEN"),
@@ -554,8 +557,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "loadingBoarding": MessageLookupByLibrary.simpleMessage(
       "جاري تحميل بيانات الإقامة...",
     ),
+    "loadingChats": MessageLookupByLibrary.simpleMessage(
+      "جاري تحميل المحادثات...",
+    ),
     "loadingClinics": MessageLookupByLibrary.simpleMessage(
       "جاري تحميل العيادات...",
+    ),
+    "loadingFriends": MessageLookupByLibrary.simpleMessage(
+      "جاري تحميل الأصدقاء...",
     ),
     "loadingInfo": MessageLookupByLibrary.simpleMessage(
       "جاري تحميل البيانات...",
@@ -566,8 +575,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "loadingProfile": MessageLookupByLibrary.simpleMessage(
       "جاري تحميل الملف الشخصي...",
     ),
+    "loadingRequests": MessageLookupByLibrary.simpleMessage(
+      "جاري تحميل الطلبات...",
+    ),
     "loadingServices": MessageLookupByLibrary.simpleMessage(
       "جاري تحميل الخدمات...",
+    ),
+    "loadingSuggestions": MessageLookupByLibrary.simpleMessage(
+      "جاري تحميل الاقتراحات...",
     ),
     "location": MessageLookupByLibrary.simpleMessage("الموقع"),
     "login": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),

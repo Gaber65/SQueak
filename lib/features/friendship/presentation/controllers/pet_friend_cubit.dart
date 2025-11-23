@@ -49,11 +49,38 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
 
   int selectedTab = 0;
   String requestFilter = 'received';
+  String? _currentPetId;
+  String? _currentSpecieId;
 
-  void changeTab(int tabIndex) {
+  void changeTab(int tabIndex, {String? petId, String? specieId}) {
     selectedTab = tabIndex;
+    if (petId != null) _currentPetId = petId;
+    if (specieId != null) _currentSpecieId = specieId;
+    
     emit(ChangeTab(tabIndex: tabIndex));
-    if (tabIndex == 3) {}
+    switch (tabIndex) {
+      case 0: 
+        if (_currentPetId != null) {
+          getFriends(petId: _currentPetId!);
+        }
+        break;
+      case 1: 
+        if (_currentSpecieId != null) {
+          loadSuggestedFriends(specieId: _currentSpecieId!);
+        }
+        break;
+      case 2: 
+        if (_currentPetId != null) {
+          loadReceivedFriends(petId: _currentPetId!);
+          loadSentFriends(petId: _currentPetId!);
+        }
+        break;
+      case 3: 
+        if (_currentPetId != null) {
+          loadChats(petId: _currentPetId!);
+        }
+        break;
+    }
   }
 
   void changeRequestFilter(String filter) {

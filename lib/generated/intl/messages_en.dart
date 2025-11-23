@@ -504,6 +504,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Follow Request Unavailable",
     ),
     "forgotPass": MessageLookupByLibrary.simpleMessage("Forgot password?"),
+    "friendsAndRequests": MessageLookupByLibrary.simpleMessage(
+      "Friends & Requests",
+    ),
     "fullName": MessageLookupByLibrary.simpleMessage("Full Name"),
     "furryFriend": MessageLookupByLibrary.simpleMessage("Furry Friend"),
     "gaber": MessageLookupByLibrary.simpleMessage("testEN"),
@@ -580,8 +583,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "loadingBoarding": MessageLookupByLibrary.simpleMessage(
       "Loading Boarding Types...",
     ),
+    "loadingChats": MessageLookupByLibrary.simpleMessage("Loading Chats..."),
     "loadingClinics": MessageLookupByLibrary.simpleMessage(
       "Loading Clinics...",
+    ),
+    "loadingFriends": MessageLookupByLibrary.simpleMessage(
+      "Loading Friends...",
     ),
     "loadingInfo": MessageLookupByLibrary.simpleMessage(
       "Loading Information...",
@@ -592,8 +599,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "loadingProfile": MessageLookupByLibrary.simpleMessage(
       "Loading Profile...",
     ),
+    "loadingRequests": MessageLookupByLibrary.simpleMessage(
+      "Loading Requests...",
+    ),
     "loadingServices": MessageLookupByLibrary.simpleMessage(
       "Loading Services...",
+    ),
+    "loadingSuggestions": MessageLookupByLibrary.simpleMessage(
+      "Loading Suggestions...",
     ),
     "location": MessageLookupByLibrary.simpleMessage("location"),
     "login": MessageLookupByLibrary.simpleMessage("Login"),

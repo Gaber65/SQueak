@@ -46,7 +46,17 @@ class TabBarPetFriend extends StatelessWidget {
                 label: isArabic() ? 'الأصدقاء' : 'Friends',
                 count: friendsCount,
                 isSelected: selectedTab == 0,
-                onTap: () => context.read<PetFriendsCubit>().changeTab(0),
+                onTap: () {
+                  final cubit = context.read<PetFriendsCubit>();
+                  final switchProfileCubit = context.read<SwitchProfileCubit>();
+                  final activePet = switchProfileCubit.activeProfile?.pet;
+                  
+                  cubit.changeTab(
+                    0,
+                    petId: activePet?.petId,
+                    specieId: activePet?.specieId,
+                  );
+                },
                 iconSize: iconSize,
                 fontSize: fontSize,
                 countSize: countSize,
@@ -56,7 +66,17 @@ class TabBarPetFriend extends StatelessWidget {
                 label: isArabic() ? 'الأصدقاء المقترحون' : 'Suggested',
                 count: suggestedCount,
                 isSelected: selectedTab == 1,
-                onTap: () => context.read<PetFriendsCubit>().changeTab(1),
+                onTap: () {
+                  final cubit = context.read<PetFriendsCubit>();
+                  final switchProfileCubit = context.read<SwitchProfileCubit>();
+                  final activePet = switchProfileCubit.activeProfile?.pet;
+                  
+                  cubit.changeTab(
+                    1,
+                    petId: activePet?.petId,
+                    specieId: activePet?.specieId,
+                  );
+                },
                 iconSize: iconSize,
                 fontSize: fontSize,
                 countSize: countSize,
@@ -66,7 +86,17 @@ class TabBarPetFriend extends StatelessWidget {
                 label: isArabic() ? 'الطلبات' : 'Requests',
                 count: receivedCount + sentCount,
                 isSelected: selectedTab == 2,
-                onTap: () => context.read<PetFriendsCubit>().changeTab(2),
+                onTap: () {
+                  final cubit = context.read<PetFriendsCubit>();
+                  final switchProfileCubit = context.read<SwitchProfileCubit>();
+                  final activePet = switchProfileCubit.activeProfile?.pet;
+                  
+                  cubit.changeTab(
+                    2,
+                    petId: activePet?.petId,
+                    specieId: activePet?.specieId,
+                  );
+                },
                 iconSize: iconSize,
                 fontSize: fontSize,
                 countSize: countSize,
@@ -78,18 +108,14 @@ class TabBarPetFriend extends StatelessWidget {
                 isSelected: selectedTab == 3,
                 onTap: () {
                   final cubit = context.read<PetFriendsCubit>();
-                  cubit.changeTab(3);
-                  
-                  // Load chats when Chats tab is clicked
                   final switchProfileCubit = context.read<SwitchProfileCubit>();
                   final activePet = switchProfileCubit.activeProfile?.pet;
                   
-                  if (activePet != null && activePet.petId != null) {
-                  
-                    cubit.loadChats(petId: activePet.petId!);
-                  } else {
-                
-                  }
+                  cubit.changeTab(
+                    3,
+                    petId: activePet?.petId,
+                    specieId: activePet?.specieId,
+                  );
                 },
                 iconSize: iconSize,
                 fontSize: fontSize,

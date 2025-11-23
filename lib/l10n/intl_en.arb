@@ -575,7 +575,12 @@
   "loadingClinics":"Loading Clinics...",
   "loadingServices":"Loading Services...",
   "loadingBoarding":"Loading Boarding Types...",
-  "furryFriend": "Furry Friend"
+  "furryFriend": "Furry Friend",
+  "loadingChats":"Loading Chats...",
+  "loadingRequests":"Loading Requests...",
+  "loadingSuggestions":"Loading Suggestions...",
+  "loadingFriends":"Loading Friends...",
+  "friendsAndRequests":"Friends & Requests"
  
 
 

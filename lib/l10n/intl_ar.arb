@@ -565,7 +565,12 @@
   "loadingClinics":"جاري تحميل العيادات...",
   "loadingServices":"جاري تحميل الخدمات...",
   "loadingBoarding":"جاري تحميل بيانات الإقامة...",
-  "furryFriend":"إضافة صديق"
+  "furryFriend":"إضافة صديق",
+  "loadingChats":"جاري تحميل المحادثات...",
+  "loadingRequests":"جاري تحميل الطلبات...",
+  "loadingSuggestions":"جاري تحميل الاقتراحات...",
+  "loadingFriends":"جاري تحميل الأصدقاء...",
+  "friendsAndRequests":"الأصدقاء & الطلبات"
 
 
 

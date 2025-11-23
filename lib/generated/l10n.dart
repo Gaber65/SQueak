@@ -4828,6 +4828,56 @@ class S {
       args: [],
     );
   }
+
+  /// `Loading Chats...`
+  String get loadingChats {
+    return Intl.message(
+      'Loading Chats...',
+      name: 'loadingChats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading Requests...`
+  String get loadingRequests {
+    return Intl.message(
+      'Loading Requests...',
+      name: 'loadingRequests',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading Suggestions...`
+  String get loadingSuggestions {
+    return Intl.message(
+      'Loading Suggestions...',
+      name: 'loadingSuggestions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading Friends...`
+  String get loadingFriends {
+    return Intl.message(
+      'Loading Friends...',
+      name: 'loadingFriends',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Friends & Requests`
+  String get friendsAndRequests {
+    return Intl.message(
+      'Friends & Requests',
+      name: 'friendsAndRequests',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
