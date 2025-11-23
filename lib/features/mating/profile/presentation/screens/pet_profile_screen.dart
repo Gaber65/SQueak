@@ -11,6 +11,7 @@ import '../../../../../core/utils/enums/profile_type.dart' show ProfileType;
 import '../../../../settings/persentaion/controller/setting_cubit.dart';
 import '../widgets/pet_profile_header.dart';
 import '../widgets/pet_tabs_section.dart';
+import 'view_pet_profile_screen.dart';
 
 class PetProfileScreen extends StatelessWidget {
   final bool isDarkMode;
@@ -104,9 +105,28 @@ class PetProfileScreen extends StatelessWidget {
                   },
                   body:
                       (cubit.petProfileMating != null)
-                          ? PetTabsSection(
-                            pet: cubit.petProfileMating!,
-                            isDarkMode: isDarkMode,
+                          ? Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: PetInfoButton(
+                                    pet: cubit.petProfileMating!,
+                                    isDarkMode: isDarkMode,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: PetTabsSection(
+                                  pet: cubit.petProfileMating!,
+                                  isDarkMode: isDarkMode,
+                                ),
+                              ),
+                            ],
                           )
                           : DogLoadingStateWidget(
                             theme: Theme.of(context),

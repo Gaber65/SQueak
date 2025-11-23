@@ -10,7 +10,6 @@ const String version = '/v1/api';
 String imageUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
 String videoUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
 String imageUrlWithVetICare = ConfigModel.serverFirstHalfOfImageUrl;
-// String chathub ='https://squeakapi.veticareapp.com/chathub';
 
 /// Auth & User Management
 const String registerEndPoint = '$version/signUp';
