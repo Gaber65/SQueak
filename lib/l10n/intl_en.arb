@@ -580,7 +580,9 @@
   "loadingRequests":"Loading Requests...",
   "loadingSuggestions":"Loading Suggestions...",
   "loadingFriends":"Loading Friends...",
-  "friendsAndRequests":"Friends & Requests"
+  "friendsAndRequests":"Friends & Requests",
+  "image":"Image",
+  "chatAuido":"Audio"
  
 
 

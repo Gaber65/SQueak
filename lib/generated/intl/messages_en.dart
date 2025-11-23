@@ -232,6 +232,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "chatArchivedReadOnly": MessageLookupByLibrary.simpleMessage(
       "This chat has been archived and is read-only",
     ),
+    "chatAuido": MessageLookupByLibrary.simpleMessage("Audio"),
     "chatBlocked": MessageLookupByLibrary.simpleMessage(
       "Chat blocked successfully",
     ),
@@ -545,6 +546,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Your information is used to provide and improve our services.",
     ),
     "ignore": MessageLookupByLibrary.simpleMessage("Ignore"),
+    "image": MessageLookupByLibrary.simpleMessage("Image"),
     "infoProtection": MessageLookupByLibrary.simpleMessage(
       "Information Protection",
     ),

@@ -570,8 +570,9 @@
   "loadingRequests":"جاري تحميل الطلبات...",
   "loadingSuggestions":"جاري تحميل الاقتراحات...",
   "loadingFriends":"جاري تحميل الأصدقاء...",
-  "friendsAndRequests":"الأصدقاء & الطلبات"
-
+  "friendsAndRequests":"الأصدقاء & الطلبات",
+  "image":"صورة",
+  "chatAuido":"ملف صوتي"
 
 
 

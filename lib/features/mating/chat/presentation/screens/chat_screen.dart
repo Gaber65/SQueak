@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:squeak/features/mating/chat/domain/entities/chat_status.dart';
 import 'package:squeak/features/mating/chat/domain/entities/message_entity.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/chat_app_bar.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/message_bubble.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/attachment_options_bottom_sheet.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../../pets/domain/entities/pet_entity.dart';
 import '../controllers/chat_messages_state.dart';
@@ -597,7 +599,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                           size: 22,
                         ),
                         onPressed: () {
-                          // Handle attachment
+                          AttachmentOptionsBottomSheet.show(
+                            context,
+                            onAttachmentSelected: _handleAttachment,
+                          );
                         },
                       ),
                     ],
@@ -695,6 +700,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         ),
       ),
     );
+  }
+
+  void _handleAttachment(File file, AttachmentType type) {
+    debugPrint('Attachment selected: ${file.path}, Type: $type');
   }
 
   void _sendMessage(ChatMessagesCubit cubit) {

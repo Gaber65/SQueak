@@ -224,6 +224,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "chatArchivedReadOnly": MessageLookupByLibrary.simpleMessage(
       "تمت أرشفة هذه الدردشة وهي للقراءة فقط",
     ),
+    "chatAuido": MessageLookupByLibrary.simpleMessage("ملف صوتي"),
     "chatBlocked": MessageLookupByLibrary.simpleMessage("تم حظر الدردشة بنجاح"),
     "chatBlockedByOther": MessageLookupByLibrary.simpleMessage(
       "قام بحظرك. لا يمكنك إرسال رسائل حتى يقوم بإلغاء الحظر.",
@@ -523,6 +524,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تُستخدم معلوماتك لتقديم وتحسين خدماتنا.",
     ),
     "ignore": MessageLookupByLibrary.simpleMessage("رفض"),
+    "image": MessageLookupByLibrary.simpleMessage("صورة"),
     "infoProtection": MessageLookupByLibrary.simpleMessage("حماية المعلومات"),
     "infoProtectionDesc": MessageLookupByLibrary.simpleMessage(
       "نحن نأخذ أمن البيانات على محمل الجد ونطبق تدابير مناسبة لحماية معلوماتك الشخصية من الوصول غير المصرح به أو التعديل أو الإفشاء.",
