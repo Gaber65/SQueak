@@ -222,6 +222,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "booking": MessageLookupByLibrary.simpleMessage("Booking"),
     "breed": MessageLookupByLibrary.simpleMessage("breed"),
     "cageSelect": MessageLookupByLibrary.simpleMessage("Select Cage"),
+    "camera": MessageLookupByLibrary.simpleMessage("Camera"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "cancelFollow": MessageLookupByLibrary.simpleMessage("Cancel"),
     "cancelFriend": MessageLookupByLibrary.simpleMessage("Cancel Friend"),
@@ -245,6 +246,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "chatEnded": MessageLookupByLibrary.simpleMessage(
       "Chat ended successfully",
     ),
+    "chatLocation": MessageLookupByLibrary.simpleMessage("Location"),
     "chatName": MessageLookupByLibrary.simpleMessage("Chat Name"),
     "chatNotFoundError": MessageLookupByLibrary.simpleMessage(
       "Chat not found. Please try again.",
@@ -378,6 +380,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Single again after mating",
     ),
     "doctorName": MessageLookupByLibrary.simpleMessage("Doctor Name"),
+    "document": MessageLookupByLibrary.simpleMessage("Document"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editComment": MessageLookupByLibrary.simpleMessage("Edit Comment . . . ."),
     "editCommentPost": MessageLookupByLibrary.simpleMessage("Edit Comment"),

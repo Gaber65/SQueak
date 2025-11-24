@@ -582,7 +582,10 @@
   "loadingFriends":"Loading Friends...",
   "friendsAndRequests":"Friends & Requests",
   "image":"Image",
-  "chatAuido":"Audio"
+  "chatAuido":"Audio",
+  "document":"Document",
+  "camera":"Camera",
+  "chatLocation":"Location"
  
 
 

@@ -572,7 +572,10 @@
   "loadingFriends":"جاري تحميل الأصدقاء...",
   "friendsAndRequests":"الأصدقاء & الطلبات",
   "image":"صورة",
-  "chatAuido":"ملف صوتي"
+  "chatAuido":"ملف صوتي",
+  "document":"مستند",
+  "camera":"كاميرا",
+  "chatLocation":"الموقع"
 
 
 

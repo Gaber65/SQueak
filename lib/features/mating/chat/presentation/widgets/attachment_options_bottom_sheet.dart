@@ -29,16 +29,28 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
   }
 
   Future<void> _handlePhoto(BuildContext context) async {
-    Navigator.pop(context);
+    final navigator = Navigator.of(context);
+    navigator.pop(); 
+    
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(
+    await picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 80,
     );
 
-    if (pickedFile != null) {
-      onAttachmentSelected(File(pickedFile.path), AttachmentType.image);
-    }
+    // if (pickedFile != null) {
+    //   await navigator.push(
+    //     MaterialPageRoute(
+    //       builder:
+    //           (context) => ImagePreviewScreen(
+    //             imageFile: File(pickedFile.path),
+    //             onSend: (file) {
+    //               onAttachmentSelected(file, AttachmentType.image);
+    //             },
+    //           ),
+    //     ),
+    //   );
+    // }
   }
 
   Future<void> _handleVideo(BuildContext context) async {
@@ -60,7 +72,9 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
         allowMultiple: false,
       );
 
-      if (result != null && result.files.isNotEmpty && result.files.single.path != null) {
+      if (result != null &&
+          result.files.isNotEmpty &&
+          result.files.single.path != null) {
         final file = File(result.files.single.path!);
         onAttachmentSelected(file, AttachmentType.audio);
       }
@@ -120,6 +134,36 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
                   label: S.of(context).chatAuido,
                   color: const Color(0xFFFF9800),
                   onTap: () => _handleAudio(context),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildOption(
+                  context,
+                  icon: Icons.file_copy_rounded,
+                  label: S.of(context).document,
+                  color: const Color(0xFF00D560),
+                  onTap: (){},
+                ),
+                _buildOption(
+                  context,
+                  icon: Icons.camera_alt_outlined,
+                  label: S.of(context).camera,
+                  color: const Color(0xFF665CFF),
+                  onTap: () {},
+                ),
+                _buildOption(
+                  context,
+                  icon: Icons.location_on_sharp,
+                  label: S.of(context).chatLocation,
+                  color: const Color(0xFFFF3939),
+                  onTap: () {},
                 ),
               ],
             ),

@@ -214,6 +214,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "booking": MessageLookupByLibrary.simpleMessage("الحجز"),
     "breed": MessageLookupByLibrary.simpleMessage("السلالة"),
     "cageSelect": MessageLookupByLibrary.simpleMessage("اختر قفصًا"),
+    "camera": MessageLookupByLibrary.simpleMessage("كاميرا"),
     "cancel": MessageLookupByLibrary.simpleMessage("الغاء"),
     "cancelFollow": MessageLookupByLibrary.simpleMessage("إلغاء المتابعة"),
     "cancelFriend": MessageLookupByLibrary.simpleMessage("إلغاء الصداقة"),
@@ -233,6 +234,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "هذه الدردشة محظورة. لا يمكن إرسال أو استقبال الرسائل.",
     ),
     "chatEnded": MessageLookupByLibrary.simpleMessage("تم إنهاء الدردشة بنجاح"),
+    "chatLocation": MessageLookupByLibrary.simpleMessage("الموقع"),
     "chatName": MessageLookupByLibrary.simpleMessage("اسم الدردشة"),
     "chatNotFoundError": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على المحادثة. يرجى المحاولة مرة أخرى.",
@@ -364,6 +366,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "أعزب مرة أخرى بعد التزاوج",
     ),
     "doctorName": MessageLookupByLibrary.simpleMessage("اسم الطبيب"),
+    "document": MessageLookupByLibrary.simpleMessage("مستند"),
     "edit": MessageLookupByLibrary.simpleMessage("تحرير"),
     "editComment": MessageLookupByLibrary.simpleMessage("تعديل التعليق ..."),
     "editCommentPost": MessageLookupByLibrary.simpleMessage("تعديل تعليق"),

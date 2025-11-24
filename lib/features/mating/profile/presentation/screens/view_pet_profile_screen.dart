@@ -16,6 +16,7 @@ class ViewPetProfileScreen extends StatelessWidget {
   final bool isDarkMode;
   final String petId;
   final bool? isFriend;
+  final bool? fromMating;
   final bool? isReceived;
   final bool? isSent;
   final String? activePetId;
@@ -27,6 +28,7 @@ class ViewPetProfileScreen extends StatelessWidget {
     this.isDarkMode = false,
     required this.petId,
     this.isFriend,
+    this.fromMating,
     this.isReceived,
     this.isSent,
     this.activePetId,
@@ -149,6 +151,11 @@ class ViewPetProfileScreen extends StatelessWidget {
                                 isSent != true &&
                                 isReceived != true)
                               _buildFriendRequestButtons(
+                                context,
+                                cubit.petProfileMating!,
+                              ),
+                            if (fromMating == true)
+                              _buildFullWidthPetInfoButton(
                                 context,
                                 cubit.petProfileMating!,
                               ),
@@ -326,6 +333,17 @@ class ViewPetProfileScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildFullWidthPetInfoButton(BuildContext context, PetEntities pet) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 8.0),
+      child: SizedBox(
+        width: double.infinity,
+        height: 56,
+        child: PetInfoButton(isDarkMode: isDarkMode, pet: pet),
+      ),
     );
   }
 }

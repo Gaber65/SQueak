@@ -128,6 +128,7 @@ class _PetFeedBody extends StatelessWidget {
                   navigateToScreen(
                     context,
                     ViewPetProfileScreen(
+                      fromMating: true,
                       petId: pet.petId!,
                       isDarkMode: MainCubit.get(context).isDark,
                     ),

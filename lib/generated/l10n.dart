@@ -4888,6 +4888,21 @@ class S {
   String get chatAuido {
     return Intl.message('Audio', name: 'chatAuido', desc: '', args: []);
   }
+
+  /// `Document`
+  String get document {
+    return Intl.message('Document', name: 'document', desc: '', args: []);
+  }
+
+  /// `Camera`
+  String get camera {
+    return Intl.message('Camera', name: 'camera', desc: '', args: []);
+  }
+
+  /// `Location`
+  String get chatLocation {
+    return Intl.message('Location', name: 'chatLocation', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

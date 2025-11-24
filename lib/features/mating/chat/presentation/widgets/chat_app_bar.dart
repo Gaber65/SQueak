@@ -403,6 +403,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
           navigateToScreen(
             context,
             ViewPetProfileScreen(
+              fromMating: true,
               petId: widget.chat.petId,
               isDarkMode: MainCubit.get(context).isDark,
             ),
