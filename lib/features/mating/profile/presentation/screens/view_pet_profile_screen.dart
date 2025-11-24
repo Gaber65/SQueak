@@ -338,11 +338,15 @@ class ViewPetProfileScreen extends StatelessWidget {
 
   Widget _buildFullWidthPetInfoButton(BuildContext context, PetEntities pet) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: SizedBox(
         width: double.infinity,
-        height: 56,
-        child: PetInfoButton(isDarkMode: isDarkMode, pet: pet),
+        child: GradientButtonContainer(
+          isDarkMode: isDarkMode,
+          child: PetInfoButton(
+            showLabel: true,
+            pet: pet, isDarkMode: isDarkMode),
+      ),
       ),
     );
   }
@@ -406,8 +410,9 @@ class GradientButtonContainer extends StatelessWidget {
 class PetInfoButton extends StatelessWidget {
   final PetEntities pet;
   final bool isDarkMode;
+  final bool? showLabel;
 
-  const PetInfoButton({super.key, required this.pet, required this.isDarkMode});
+  const PetInfoButton({super.key, required this.pet, required this.isDarkMode, this.showLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -432,7 +437,19 @@ class PetInfoButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: const Icon(Icons.pets, size: 20),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.pets, size: 20),
+            if (showLabel == true) ...[
+              const SizedBox(width: 8),
+              Text(
+                S.of(context).petDetails,
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

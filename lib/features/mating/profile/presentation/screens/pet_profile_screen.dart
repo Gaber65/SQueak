@@ -115,6 +115,7 @@ class PetProfileScreen extends StatelessWidget {
                                 child: SizedBox(
                                   width: double.infinity,
                                   child: PetInfoButton(
+                                    showLabel: true,
                                     pet: cubit.petProfileMating!,
                                     isDarkMode: isDarkMode,
                                   ),
