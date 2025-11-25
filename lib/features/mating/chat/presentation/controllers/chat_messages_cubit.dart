@@ -34,25 +34,25 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   List<MessageEntity> messagesList = [];
   Future<void> loadMessages(String chatId) async {
     if (chatId.isEmpty) {
-     
-     emit(ChatMessagesLoaded([]));
+      emit(ChatMessagesLoaded([]));
       return;
     }
-    
+
     emit(ChatMessagesLoading());
 
     final result = await getMessagesUseCase(
       GetMessagesParameters(chatId: chatId),
     );
 
-    result.fold((failure) {
-     
-     emit(ChatMessagesError(failure.toString()));
-    }, (messages) {
-     
-     messagesList = messages.reversed.toList();
-      emit(ChatMessagesLoaded(messages));
-    });
+    result.fold(
+      (failure) {
+        emit(ChatMessagesError(failure.toString()));
+      },
+      (messages) {
+        messagesList = messages.reversed.toList();
+        emit(ChatMessagesLoaded(messages));
+      },
+    );
   }
 
   Future<void> sendMessage({
@@ -64,7 +64,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     String? fromUserId,
     String? toUserId,
   }) async {
-    emit(MessageSending());  
+    emit(MessageSending());
     try {
       final signalRService = SignalRService();
       if (!signalRService.isConnected) {
@@ -79,22 +79,21 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
         createdAt: DateTime.now(),
         toMe: false,
       );
-      
+
       final command = messageModel.toSignalRCommand(
         conversationId: chatId.isEmpty ? null : chatId,
         fromPetId: fromPetId,
         toPetId: toPetId,
       );
-      
+
       await signalRService.sendMessageToUser(command);
-      
-    } catch (signalRError) {  
+    } catch (signalRError) {
       debugPrint('failed to send message via SignalR: $signalRError');
     }
-    
+
     if (fromPetId != null && toPetId != null) {
       final friendMessageUseCase = sl<SendFriendMessageUseCase>();
-      
+
       final result = await friendMessageUseCase(
         SendFriendPetMessageParameters(
           description: text,
@@ -105,22 +104,25 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
         ),
       );
 
-      result.fold((failure) {
-        emit(MessageSendError(failure.toString()));
-      }, (response) {
-        final message = MessageEntity(
-          id: text,
-          description: text,
-          isRead: true,
-          fromUserId: fromPetId,
-          toUserId: toPetId,
-          createdAt: DateTime.now(),
-          toMe: false,
-        );
-        
-        messagesList.add(message);
-        emit(MessageSent(message));
-      });
+      result.fold(
+        (failure) {
+          emit(MessageSendError(failure.toString()));
+        },
+        (response) {
+          final message = MessageEntity(
+            id: text,
+            description: text,
+            isRead: true,
+            fromUserId: fromPetId,
+            toUserId: toPetId,
+            createdAt: DateTime.now(),
+            toMe: false,
+          );
+
+          messagesList.add(message);
+          emit(MessageSent(message));
+        },
+      );
     } else {
       final result = await sendMessageUseCase(
         SendMessageParameters(
@@ -131,13 +133,15 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
           isRead: true,
         ),
       );
-
-      result.fold((failure) {
-        emit(MessageSendError(failure.toString()));
-      }, (message) {
-        messagesList.add(message);
-        emit(MessageSent(message));
-      });
+      result.fold(
+        (failure) {
+          emit(MessageSendError(failure.toString()));
+        },
+        (message) {
+          messagesList.add(message);
+          emit(MessageSent(message));
+        },
+      );
     }
   }
 
@@ -211,7 +215,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     return isSuccess;
   }
 
-Future<void> clearMessages(ClearChatParameters parameters) async {
+  Future<void> clearMessages(ClearChatParameters parameters) async {
     emit(ClearChatLoading());
 
     final clearConversationUseCase = sl<ClearConversationUseCase>();
@@ -232,7 +236,7 @@ Future<void> clearMessages(ClearChatParameters parameters) async {
     );
   }
 
-Future<void> deleteMessage(DeleteMessageParameters parameters) async {
+  Future<void> deleteMessage(DeleteMessageParameters parameters) async {
     emit(DeleteMessageLoading());
 
     final deleteResult = await sl<DeleteMessageUseCase>()(parameters);

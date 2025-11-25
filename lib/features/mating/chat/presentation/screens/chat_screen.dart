@@ -758,7 +758,6 @@ class _ChatBackgroundPainter extends CustomPainter {
 
     for (double y = 0; y < size.height; y += spacing) {
       for (double x = 0; x < size.width; x += spacing) {
-        // Draw paw print icons
         _drawPawPrint(canvas, paint, x, y, iconSize);
       }
     }

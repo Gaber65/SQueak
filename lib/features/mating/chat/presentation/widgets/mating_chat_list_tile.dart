@@ -239,7 +239,7 @@ class MatingChatListTile extends StatelessWidget {
 
     return Row(
       children: [
-        if (!isFromMe)
+        if (isFromMe)
           Padding(
             padding: const EdgeInsets.only(right: 4),
             child: Icon(Icons.done_all, size: 16, color: message.isRead ? const Color(0xFF25D366) : Theme.of(navigatorKey.currentContext!).colorScheme.onSurface.withOpacity(0.5)),

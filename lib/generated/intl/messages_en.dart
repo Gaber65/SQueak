@@ -92,6 +92,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "addAvailabilities": MessageLookupByLibrary.simpleMessage(
       "Add available times",
     ),
+    "addCaption": MessageLookupByLibrary.simpleMessage("Add a caption..."),
     "addComment": MessageLookupByLibrary.simpleMessage(
       "Add  Your Comment . . . .",
     ),

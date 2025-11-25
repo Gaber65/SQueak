@@ -92,6 +92,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "addAvailabilities": MessageLookupByLibrary.simpleMessage(
       "إضافة الأوقات المتاحة",
     ),
+    "addCaption": MessageLookupByLibrary.simpleMessage("إضافة وصف الصورة..."),
     "addComment": MessageLookupByLibrary.simpleMessage("أضف تعليقك ..."),
     "addPet": MessageLookupByLibrary.simpleMessage("إضافة صديق صغير"),
     "addPetChoose": MessageLookupByLibrary.simpleMessage("اختر..."),

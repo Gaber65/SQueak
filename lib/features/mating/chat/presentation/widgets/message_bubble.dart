@@ -1,5 +1,6 @@
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/utils/date_time_formatter.dart';
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_messages_cubit.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/parameters.dart';
@@ -307,7 +308,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: FastCachedImage(
-          url: widget.message.image!,
+          url: imageUrl + widget.message.image!,
           width: 220,
           height: 160,
           fit: BoxFit.cover,

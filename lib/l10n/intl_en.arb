@@ -585,7 +585,8 @@
   "chatAuido":"Audio",
   "document":"Document",
   "camera":"Camera",
-  "chatLocation":"Location"
+  "chatLocation":"Location",
+  "addCaption":"Add a caption..."
  
 
 

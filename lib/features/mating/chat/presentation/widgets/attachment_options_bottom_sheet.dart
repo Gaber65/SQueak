@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/image_preview_screen.dart';
 import 'package:squeak/generated/l10n.dart';
 
 enum AttachmentType { image, video, audio }
@@ -30,27 +31,27 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
 
   Future<void> _handlePhoto(BuildContext context) async {
     final navigator = Navigator.of(context);
-    navigator.pop(); 
-    
+    navigator.pop();
+
     final picker = ImagePicker();
-    await picker.pickImage(
+    final pickedFile = await picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 80,
     );
 
-    // if (pickedFile != null) {
-    //   await navigator.push(
-    //     MaterialPageRoute(
-    //       builder:
-    //           (context) => ImagePreviewScreen(
-    //             imageFile: File(pickedFile.path),
-    //             onSend: (file) {
-    //               onAttachmentSelected(file, AttachmentType.image);
-    //             },
-    //           ),
-    //     ),
-    //   );
-    // }
+    if (pickedFile != null) {
+      await navigator.push(
+        MaterialPageRoute(
+          builder:
+              (context) => ImagePreviewScreen(
+                imageFile: File(pickedFile.path),
+                onSend: (file) {
+                  onAttachmentSelected(file, AttachmentType.image);
+                },
+              ),
+        ),
+      );
+    }
   }
 
   Future<void> _handleVideo(BuildContext context) async {
@@ -149,7 +150,7 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
                   icon: Icons.file_copy_rounded,
                   label: S.of(context).document,
                   color: const Color(0xFF00D560),
-                  onTap: (){},
+                  onTap: () {},
                 ),
                 _buildOption(
                   context,

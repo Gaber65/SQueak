@@ -4903,6 +4903,16 @@ class S {
   String get chatLocation {
     return Intl.message('Location', name: 'chatLocation', desc: '', args: []);
   }
+
+  /// `Add a caption...`
+  String get addCaption {
+    return Intl.message(
+      'Add a caption...',
+      name: 'addCaption',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
