@@ -8,7 +8,7 @@ import 'package:squeak/generated/l10n.dart';
 enum AttachmentType { image, video, audio }
 
 class AttachmentOptionsBottomSheet extends StatelessWidget {
-  final Function(File file, AttachmentType type) onAttachmentSelected;
+  final Function(File file, AttachmentType type, {String? caption}) onAttachmentSelected;
 
   const AttachmentOptionsBottomSheet({
     super.key,
@@ -17,7 +17,7 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
 
   static Future<void> show(
     BuildContext context, {
-    required Function(File file, AttachmentType type) onAttachmentSelected,
+    required Function(File file, AttachmentType type, {String? caption}) onAttachmentSelected,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -40,13 +40,15 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
     );
 
     if (pickedFile != null) {
+      debugPrint('📷 AttachmentSheet: Photo selected from gallery');
       await navigator.push(
         MaterialPageRoute(
           builder:
               (context) => ImagePreviewScreen(
                 imageFile: File(pickedFile.path),
-                onSend: (file) {
-                  onAttachmentSelected(file, AttachmentType.image);
+                onSend: (file, caption) {
+                  debugPrint('✅ AttachmentSheet: Photo confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"');
+                  onAttachmentSelected(file, AttachmentType.image, caption: caption);
                 },
               ),
         ),
@@ -60,6 +62,7 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
     final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
 
     if (pickedFile != null) {
+      debugPrint('🎥 AttachmentSheet: Video selected from gallery');
       onAttachmentSelected(File(pickedFile.path), AttachmentType.video);
     }
   }
@@ -77,10 +80,11 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
           result.files.isNotEmpty &&
           result.files.single.path != null) {
         final file = File(result.files.single.path!);
+        debugPrint('🎵 AttachmentSheet: Audio file selected: ${file.path}');
         onAttachmentSelected(file, AttachmentType.audio);
       }
     } catch (e) {
-      debugPrint('Error picking audio file: $e');
+      debugPrint('❌ AttachmentSheet: Error picking audio file: $e');
     }
   }
 

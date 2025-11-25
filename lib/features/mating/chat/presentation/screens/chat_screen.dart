@@ -39,6 +39,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   bool _isBlockedByMe = false;
   bool _isBlockedByOther = false;
 
+  bool _isUploadingMedia = false;
+  File? _uploadingFile;
+  AttachmentType? _uploadingType;
+
   @override
   void initState() {
     super.initState();
@@ -142,10 +146,12 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             backgroundColor:
                 isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5),
             appBar: ChatAppBar(chat: widget.chat, cubit: cubit),
-            body: Column(
+            body: Stack(
               children: [
-                const SignalRConnectionStatusWidget(),
-                if (isCompleted)
+                Column(
+                  children: [
+                    const SignalRConnectionStatusWidget(),
+                    if (isCompleted)
                   _buildStatusBanner(
                     theme,
                     isDark,
@@ -182,7 +188,12 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 if (!_isReadOnly) _buildMessageInput(cubit, context, theme, s),
               ],
             ),
-          );
+            // WhatsApp-style upload loading overlay
+            if (_isUploadingMedia && _uploadingFile != null)
+              _buildUploadingOverlay(isDark),
+          ],
+        ),
+      );
         },
       ),
     );
@@ -599,9 +610,14 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                           size: 22,
                         ),
                         onPressed: () {
+                          final chatCubit = context.read<ChatMessagesCubit>();
+                          final mainCubit = context.read<MainCubit>();
+                          
                           AttachmentOptionsBottomSheet.show(
                             context,
-                            onAttachmentSelected: _handleAttachment,
+                            onAttachmentSelected: (file, type, {caption}) {
+                              _handleAttachment(file, type, chatCubit, mainCubit, caption: caption);
+                            },
                           );
                         },
                       ),
@@ -702,8 +718,173 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     );
   }
 
-  void _handleAttachment(File file, AttachmentType type) {
-    debugPrint('Attachment selected: ${file.path}, Type: $type');
+  Widget _buildUploadingOverlay(bool isDark) {
+    return Positioned.fill(
+      child: Container(
+        color: Colors.black.withOpacity(0.85),
+        child: Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 300),
+            margin: const EdgeInsets.all(40),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (_uploadingType == AttachmentType.image)
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                    child: Stack(
+                      children: [
+                        Image.file(
+                          _uploadingFile!,
+                          width: double.infinity,
+                          height: 300,
+                          fit: BoxFit.cover,
+                        ),
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.black.withOpacity(0.3),
+                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.5),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircularProgressIndicator(
+                        strokeWidth: 3,
+                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6200EA)),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        _uploadingType == AttachmentType.image
+                            ? 'Uploading image...'
+                            : _uploadingType == AttachmentType.video
+                                ? 'Uploading video...'
+                                : 'Uploading audio...',
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black87,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _handleAttachment(
+    File file,
+    AttachmentType type,
+    ChatMessagesCubit cubit,
+    MainCubit mainCubit, {
+    String? caption,
+  }) async {
+    debugPrint('📎 ChatScreen: Starting attachment upload - Type: $type, Caption: "${caption ?? '(no caption)'}"');
+
+    setState(() {
+      _isUploadingMedia = true;
+      _uploadingFile = file;
+      _uploadingType = type;
+    });
+
+    try {
+      String? mediaUrl;
+
+      if (type == AttachmentType.image) {
+        debugPrint('⬆️  ChatScreen: Uploading image to server...');
+        await mainCubit.getGlobalImage(file, UploadPlace.messageImage);
+        mediaUrl = mainCubit.modelImage?.data;
+        debugPrint('✅ ChatScreen: Image uploaded successfully - URL: $mediaUrl');
+      } else if (type == AttachmentType.video) {
+        debugPrint('⬆️  ChatScreen: Uploading video to server...');
+        await mainCubit.getGlobalVideo(file, UploadPlace.messageVideo);
+        mediaUrl = mainCubit.modelImage?.data;
+        debugPrint('✅ ChatScreen: Video uploaded successfully - URL: $mediaUrl');
+      } else if (type == AttachmentType.audio) {
+        debugPrint('⬆️  ChatScreen: Uploading audio to server...');
+        await mainCubit.getGlobalSound(file, UploadPlace.messageRecord);
+        mediaUrl = mainCubit.modelImage?.data;
+        debugPrint('✅ ChatScreen: Audio uploaded successfully - URL: $mediaUrl');
+      }
+
+      if (mediaUrl != null && mediaUrl.isNotEmpty) {
+        final text = caption ?? '';
+        debugPrint('💬 ChatScreen: Preparing to send message with media URL and caption');
+
+        final fromPetId = widget.chat.id.isEmpty ? widget.chat.matingId : null;
+        final toPetId = widget.chat.id.isEmpty ? widget.chat.petId : null;
+        final currentUserId = CacheHelper.getData('clintId') ?? '';
+        String? fromUserId;
+        String? toUserId;
+
+        if (widget.chat.lastMessage != null) {
+          if (widget.chat.lastMessage!.toMe) {
+            fromUserId = widget.chat.lastMessage!.toUserId;
+            toUserId = widget.chat.lastMessage!.fromUserId;
+          } else {
+            fromUserId = widget.chat.lastMessage!.fromUserId;
+            toUserId = widget.chat.lastMessage!.toUserId;
+          }
+        } else {
+          fromUserId = currentUserId;
+          toUserId = widget.chat.petId;
+        }
+
+        debugPrint('📤 ChatScreen: Sending message - Type: $type, Media URL: $mediaUrl, Caption: "$text"');
+        cubit.sendMessage(
+          chatId: widget.chat.id,
+          text: text,
+          isMe: true,
+          fromPetId: fromPetId,
+          toPetId: toPetId,
+          fromUserId: fromUserId,
+          toUserId: toUserId,
+          image: type == AttachmentType.image ? mediaUrl : null,
+          video: type == AttachmentType.video ? mediaUrl : null,
+          audio: type == AttachmentType.audio ? mediaUrl : null,
+        );
+        debugPrint('✅ ChatScreen: Message sent successfully with media attachment');
+      } else {
+        debugPrint('❌ ChatScreen: Media URL is null or empty, cannot send message');
+      }
+    } catch (e) {
+      debugPrint('❌ ChatScreen: Error uploading attachment: $e');
+      if (mounted) {
+        errorToast(context, 'Failed to send attachment');
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUploadingMedia = false;
+          _uploadingFile = null;
+          _uploadingType = null;
+        });
+      }
+    }
   }
 
   void _sendMessage(ChatMessagesCubit cubit) {

@@ -5,7 +5,7 @@ import 'package:squeak/generated/l10n.dart';
 
 class ImagePreviewScreen extends StatefulWidget {
   final File imageFile;
-  final Function(File file) onSend;
+  final Function(File file, String caption) onSend;
 
   const ImagePreviewScreen({
     super.key,
@@ -72,7 +72,9 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
   }
 
   void _handleSend() {
-    widget.onSend(_currentImage);
+    final caption = _captionController.text.trim();
+    debugPrint('📸 ImagePreview: Sending image with caption: "${caption.isEmpty ? '(no caption)' : caption}"');
+    widget.onSend(_currentImage, caption);
     Navigator.pop(context);
   }
 

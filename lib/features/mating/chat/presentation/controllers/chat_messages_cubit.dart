@@ -63,7 +63,11 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     String? toPetId,
     String? fromUserId,
     String? toUserId,
+    String? image,
+    String? video,
+    String? audio,
   }) async {
+    debugPrint('📨 ChatCubit: sendMessage called - Text: "$text", Image: $image, Video: $video, Audio: $audio');
     emit(MessageSending());
     try {
       final signalRService = SignalRService();
@@ -78,6 +82,9 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
         toUserId: toUserId ?? '',
         createdAt: DateTime.now(),
         toMe: false,
+        image: image,
+        video: video,
+        audio: audio,
       );
 
       final command = messageModel.toSignalRCommand(
@@ -101,6 +108,9 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
           fromPetId: fromPetId,
           toPetId: toPetId,
           isRead: true,
+          image: image,
+          video: video,
+          audio: audio,
         ),
       );
 
@@ -117,6 +127,9 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
             toUserId: toPetId,
             createdAt: DateTime.now(),
             toMe: false,
+            image: image,
+            video: video,
+            audio: audio,
           );
 
           messagesList.add(message);
@@ -131,6 +144,9 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
           fromPetId: fromPetId,
           toPetId: toPetId,
           isRead: true,
+          image: image,
+          video: video,
+          audio: audio,
         ),
       );
       result.fold(
