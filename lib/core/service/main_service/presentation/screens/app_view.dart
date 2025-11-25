@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:app_links/app_links.dart';
 import 'package:squeak/features/settings/persentaion/controller/setting_cubit.dart';
+import 'package:squeak/core/service/connectivity/conectivity_popup.dart';
 import '../../../../../features/auth/login/presentation/pages/login_screen.dart';
 import '../../../../utils/export_path/export_files.dart';
 import '../../../../theme/app_theme.dart';
@@ -132,11 +133,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                     defaultValue: false,
                   ) ||
                   (InitFunctions.currentEnvironment != Environment.pro);
-              return Stack(
-                children: [
-                  if (child != null) child,
-                  if (showGlobalApiButton) const GlobalApiButton(),
-                ],
+              return ConnectivityWrapper(
+                child: Stack(
+                  children: [
+                    if (child != null) child,
+                    if (showGlobalApiButton) const GlobalApiButton(),
+                  ],
+                ),
               );
             },
           );

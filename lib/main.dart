@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:squeak/core/service/signalr/signalr_service.dart';
+import 'package:squeak/core/service/connectivity/conectivity_services.dart';
 import 'core/service/service_locator/locatore_export_path.dart';
 
 Future<void> main() async {
@@ -12,6 +13,8 @@ Future<void> main() async {
   Bloc.observer = MyBlocObserver();
 
   await InitFunctions.initialize();
+
+  ConnectivityService().startMonitoring();
 
   Future.delayed(const Duration(seconds: 2), () async {
     try {

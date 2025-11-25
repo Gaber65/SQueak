@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/auth/enhanced_auth_validator.dart';
-import 'package:squeak/core/widgets/vc_enhanced_button.dart';
+import 'package:squeak/core/signalr/vc_enhanced_button.dart';
 import 'package:squeak/core/accessibility/accessibility_helper.dart';
 // Performance monitoring import removed for memory optimization
 

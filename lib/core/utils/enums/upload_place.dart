@@ -7,8 +7,8 @@ enum UploadPlace {
   commentImages(6),
   clinicImage(7),
   messageImage(8),
-  messageRecord(9),
-  messageVideo(11),
+  messageVideo(9),
+  messageRecord(11),
   passportImages(10);
 
   final int value;

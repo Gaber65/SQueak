@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:squeak/core/widgets/signalr_connection_status_widget.dart';
+import 'package:squeak/core/signalr/signalr_connection_status_widget.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_status.dart';
 import 'package:squeak/features/mating/chat/domain/entities/message_entity.dart';
