@@ -71,8 +71,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     emit(MessageSending());
     
     bool signalRSuccess = false;
-    
-    // Try sending via SignalR first
     try {
       final signalRService = SignalRService();
       if (!signalRService.isConnected) {
@@ -102,7 +100,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       
       signalRSuccess = true;
       
-      // Reload messages to show the sent message
+      // Reload messages to show the sent message immediately
       if (chatId.isNotEmpty) {
         await loadMessages(chatId);
       }

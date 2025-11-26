@@ -113,8 +113,8 @@ class SignalRService {
       debugPrint('   - toPetId: ${command['toPetId']}');
 
       const methodNames = [
-        'SenMessageToUser',
         'SendMessageToUser',
+        'SenMessageToUser',
         'SendMessage',
         'sendMessage',
       ];

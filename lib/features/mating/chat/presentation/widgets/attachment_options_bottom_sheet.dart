@@ -88,7 +88,7 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['mp3', 'wav', 'm4a', 'aac', 'ogg', 'flac' , 'mpeg'],
+        allowedExtensions: ['aac', 'ogg', 'opus', 'mp3', 'm4a', 'midi', 'amr', 'wma', 'wav', 'webm'],
         allowMultiple: false,
       );
 

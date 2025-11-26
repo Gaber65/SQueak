@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:record/record.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:squeak/core/signalr/signalr_connection_status_widget.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
@@ -43,9 +46,24 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   File? _uploadingFile;
   AttachmentType? _uploadingType;
 
+  // Recording variables
+  final AudioRecorder _audioRecorder = AudioRecorder();
+  bool _isRecording = false;
+  int _recordDuration = 0;
+  Timer? _recordTimer;
+  bool _hasText = false;
+  static const int _maxRecordDuration = 60; 
+  ChatMessagesCubit? _recordingCubit; 
+
   @override
   void initState() {
     super.initState();
+
+    _messageController.addListener(() {
+      setState(() {
+        _hasText = _messageController.text.trim().isNotEmpty;
+      });
+    });
 
     _isBlocked = widget.chat.isBlock;
     _isBlockedByMe = widget.chat.isBlockedByMe;
@@ -65,6 +83,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   void dispose() {
     _messageController.dispose();
     _animationController.dispose();
+    _recordTimer?.cancel();
+    _audioRecorder.dispose();
     super.dispose();
   }
 
@@ -192,6 +212,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 // WhatsApp-style upload loading overlay
                 if (_isUploadingMedia && _uploadingFile != null)
                   _buildUploadingOverlay(isDark),
+                // Recording overlay
+                if (_isRecording)
+                  _buildRecordingOverlay(isDark),
               ],
             ),
           );
@@ -636,49 +659,49 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               BlocBuilder<ChatMessagesCubit, ChatMessagesState>(
                 builder: (_, state) {
                   final isSending = state is MessageSending;
-                  return Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          theme.colorScheme.primary,
-                          theme.colorScheme.primary.withOpacity(0.8),
+                  final showMic = !_hasText && !isSending;
+                  
+                  return GestureDetector(
+                    onTap: showMic ? null : (isSending ? null : () => _sendMessage(cubit)),
+                    onLongPressStart: showMic ? (_) => _startRecording(cubit) : null,
+                    onLongPressEnd: showMic ? (_) => _stopRecording(cubit) : null,
+                    child: Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            theme.colorScheme.primary,
+                            theme.colorScheme.primary.withOpacity(0.8),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.colorScheme.primary.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
                         ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
                       ),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: theme.colorScheme.primary.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: isSending ? null : () => _sendMessage(cubit),
-                        borderRadius: BorderRadius.circular(24),
-                        child: Center(
-                          child:
-                              isSending
-                                  ? SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                  : Icon(
-                                    Icons.send_rounded,
+                      child: Center(
+                        child:
+                            isSending
+                                ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
                                     color: Colors.white,
-                                    size: 22,
                                   ),
-                        ),
+                                )
+                                : Icon(
+                                  showMic ? Icons.mic : Icons.send_rounded,
+                                  color: Colors.white,
+                                  size: 22,
+                                ),
                       ),
                     ),
                   );
@@ -947,6 +970,65 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     }
   }
 
+  Future<void> _startRecording(ChatMessagesCubit cubit) async {
+    try {
+      if (await _audioRecorder.hasPermission()) {
+        final dir = await getTemporaryDirectory();
+        final path = '${dir.path}/audio_${DateTime.now().millisecondsSinceEpoch}.m4a';
+        
+        await _audioRecorder.start(const RecordConfig(), path: path);
+        
+        setState(() {
+          _isRecording = true;
+          _recordDuration = 0;
+          _recordingCubit = cubit; // Store cubit reference
+        });
+
+        _recordTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+          setState(() {
+            _recordDuration++;
+          });
+          
+          // Auto-stop at max duration
+          if (_recordDuration >= _maxRecordDuration && _recordingCubit != null) {
+            _stopRecording(_recordingCubit!);
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint('❌ Error starting recording: $e');
+    }
+  }
+
+  Future<void> _stopRecording(ChatMessagesCubit cubit) async {
+    try {
+      _recordTimer?.cancel();
+      final path = await _audioRecorder.stop();
+      
+      setState(() {
+        _isRecording = false;
+      });
+
+      if (path != null && path.isNotEmpty) {
+        final file = File(path);
+        if (await file.exists()) {
+          final mainCubit = context.read<MainCubit>();
+          _handleAttachment(file, AttachmentType.audio, cubit, mainCubit);
+        }
+      }
+      
+      setState(() {
+        _recordDuration = 0;
+      });
+    } catch (e) {
+      debugPrint('❌ Error stopping recording: $e');
+      setState(() {
+        _isRecording = false;
+        _recordDuration = 0;
+      });
+    }
+  }
+
   void _sendMessage(ChatMessagesCubit cubit) {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
@@ -977,6 +1059,76 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       toPetId: toPetId,
       fromUserId: fromUserId,
       toUserId: toUserId,
+    );
+    
+    // Clear text field immediately after sending
+    _messageController.clear();
+  }
+
+  Widget _buildRecordingOverlay(bool isDark) {
+    final minutes = (_recordDuration ~/ 60).toString().padLeft(2, '0');
+    final seconds = (_recordDuration % 60).toString().padLeft(2, '0');
+    final isNearLimit = _recordDuration >= _maxRecordDuration - 10; // Last 10 seconds
+    
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: Container(
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        child: Row(
+          children: [
+            Container(
+              width: 12,
+              height: 12,
+              decoration: BoxDecoration(
+                color: isNearLimit ? Colors.orange : Colors.red,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              '$minutes:$seconds',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: isNearLimit 
+                    ? Colors.orange 
+                    : (isDark ? Colors.white : Colors.black87),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Row(
+                children: List.generate(
+                  20,
+                  (index) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 300 + (index * 50)),
+                      width: 3,
+                      height: 12 + (index % 3) * 8,
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            const Text(
+              '< Slide to cancel',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

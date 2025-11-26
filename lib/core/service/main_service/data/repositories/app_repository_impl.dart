@@ -97,12 +97,51 @@ class AppRepositoryImpl implements AppRepository {
     File file,
     UploadPlace uploadPlace,
   ) async {
+    // Detect audio subtype from file extension
+    String extension = file.path.split('.').last.toLowerCase();
+    String subtype;
+    
+    switch (extension) {
+      case 'mp3':
+        subtype = 'mpeg';
+        break;
+      case 'aac':
+        subtype = 'aac';
+        break;
+      case 'ogg':
+        subtype = 'ogg';
+        break;
+      case 'opus':
+        subtype = 'opus';
+        break;
+      case 'wav':
+        subtype = 'wav';
+        break;
+      case 'm4a':
+        subtype = 'x-m4a';
+        break;
+      case 'midi':
+        subtype = 'midi';
+        break;
+      case 'amr':
+        subtype = 'amr';
+        break;
+      case 'wma':
+        subtype = 'x-ms-wma';
+        break;
+      case 'webm':
+        subtype = 'webm';
+        break;
+      default:
+        subtype = 'mpeg'; // fallback to mp3
+    }
+    
     final result = await remoteDataSource.uploadFile(
       file,
       audioHelperEndPoint,
       uploadPlace.value,
       "audio",
-      "mpeg",
+      subtype,
     );
     try {
       return Right(result);

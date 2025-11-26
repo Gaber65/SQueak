@@ -19,7 +19,6 @@ class MediaPreviewScreen extends StatefulWidget {
     required this.onSend,
   });
 
-  // Legacy constructor for backward compatibility
   factory MediaPreviewScreen.legacy({
     required File mediaFile,
     bool isVideo = false,
