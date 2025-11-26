@@ -102,7 +102,7 @@ class AppRepositoryImpl implements AppRepository {
       audioHelperEndPoint,
       uploadPlace.value,
       "audio",
-      "Acc",
+      "mpeg",
     );
     try {
       return Right(result);

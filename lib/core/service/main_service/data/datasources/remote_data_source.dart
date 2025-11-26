@@ -39,7 +39,7 @@ class MainRemoteDataSource {
     try {
       // أولاً، نحاول الحصول على التوكن المخزن محلياً
       String? fbToken = CacheHelper.getData('DeviceToken');
-      
+
       // إذا لم يكن هناك توكن محلي، نحاول الحصول عليه من Firebase
       if (fbToken == null || fbToken.isEmpty) {
         try {
@@ -55,20 +55,20 @@ class MainRemoteDataSource {
           await CacheHelper.saveData('DeviceToken', fbToken);
         }
       }
-      
+
       // إرسال التوكن للسيرفر
       final response = await DioFinalHelper.postData(
         method: sendtoken,
-        data: {
-          "fbToken": fbToken,
-        },
+        data: {"fbToken": fbToken},
       );
-      
+
       // التحقق من نجاح العملية
       if (response.statusCode == 201 || response.statusCode == 200) {
         // print('Token saved successfully');
       } else {
-        throw Exception('Failed to save token: unexpected status code ${response.statusCode}');
+        throw Exception(
+          'Failed to save token: unexpected status code ${response.statusCode}',
+        );
       }
     } catch (e) {
       // print('Failed to save token: $e');
@@ -106,7 +106,7 @@ class MainRemoteDataSource {
         badge: true,
         sound: true,
       );
-      
+
       if (status.authorizationStatus == AuthorizationStatus.authorized) {
         try {
           final token = await FirebaseMessaging.instance.getToken();
@@ -118,7 +118,8 @@ class MainRemoteDataSource {
         } catch (tokenError) {
           // print('Error getting Firebase token: $tokenError');
           // في حالة الفشل، نحاول استخدام التوكن المؤقت
-          final tempToken = 'temp_token_${DateTime.now().millisecondsSinceEpoch}';
+          final tempToken =
+              'temp_token_${DateTime.now().millisecondsSinceEpoch}';
           await CacheHelper.saveData('DeviceToken', tempToken);
         }
       } else {
@@ -129,13 +130,13 @@ class MainRemoteDataSource {
       // الاستمرار بدون توكن Firebase
     }
   }
-  
+
   // دالة جديدة للتحقق من صلاحية التوكن وتحديثه إذا لزم الأمر
   Future<bool> validateAndRefreshToken() async {
     try {
       final currentToken = CacheHelper.getData('DeviceToken');
       final newToken = await FirebaseMessaging.instance.getToken();
-      
+
       if (newToken != null && newToken != currentToken) {
         await CacheHelper.saveData('DeviceToken', newToken);
         await saveToken();
@@ -158,22 +159,34 @@ class MainRemoteDataSource {
     String fileName = file.path.split('/').last;
 
     try {
-      File compressedFile = await compressImage(file);
+      File fileToUpload = file;
 
-      String compressedFilePath = compressedFile.path;
+      // Only compress if it's an image
+      if (type == 'image') {
+        fileToUpload = await compressImage(file);
+      }
+
+      String filePath = fileToUpload.path;
+      print('📤 Uploading $type file: $fileName to endpoint: $endpoint');
+      print('📦 Upload place: $uploadPlace, Content-Type: $type/$subtype');
+
       Response response = await DioFinalHelper.postData(
-        method: imageHelperEndPoint,
+        method: endpoint,
         data: FormData.fromMap({
           "File": await MultipartFile.fromFile(
-            compressedFilePath,
+            filePath,
             filename: fileName,
             contentType: MediaType(type, subtype),
           ),
           'UploadPlace': '$uploadPlace',
         }),
       );
+      print('✅ Upload successful: ${response.data}');
       return ImageModel.fromJson(response.data);
     } on DioException catch (e) {
+      print('❌ Upload failed - Status: ${e.response?.statusCode}');
+      print('❌ Error data: ${e.response?.data}');
+      print('❌ Error message: ${e.message}');
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

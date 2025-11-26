@@ -9,6 +9,7 @@ const String version = '/v1/api';
 /// Media URLs
 String imageUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
 String videoUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
+String audioUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
 String imageUrlWithVetICare = ConfigModel.serverFirstHalfOfImageUrl;
 
 /// Auth & User Management
@@ -64,8 +65,8 @@ const String allSpecialityPetEndPoint = '$version/specailiteis';
 
 /// Media Upload Helpers
 const String imageHelperEndPoint = '$version/images';
-const String videoHelperEndPoint = '/videos';
-const String audioHelperEndPoint = '/audio';
+const String videoHelperEndPoint = '$version/videos';
+const String audioHelperEndPoint = '$version/audio';
 
 /// Posts
 String createPostEndPoint(String postId) => '$version/posts?Id=$postId';

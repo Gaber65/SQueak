@@ -44,8 +44,9 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
       await navigator.push(
         MaterialPageRoute(
           builder:
-              (context) => ImagePreviewScreen(
-                imageFile: File(pickedFile.path),
+              (context) => MediaPreviewScreen(
+                mediaFile: File(pickedFile.path),
+                mediaType: MediaType.image,
                 onSend: (file, caption) {
                   debugPrint('✅ AttachmentSheet: Photo confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"');
                   onAttachmentSelected(file, AttachmentType.image, caption: caption);
@@ -57,22 +58,37 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
   }
 
   Future<void> _handleVideo(BuildContext context) async {
-    Navigator.pop(context);
+    final navigator = Navigator.of(context);
+    navigator.pop();
+
     final picker = ImagePicker();
     final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       debugPrint('🎥 AttachmentSheet: Video selected from gallery');
-      onAttachmentSelected(File(pickedFile.path), AttachmentType.video);
+      await navigator.push(
+        MaterialPageRoute(
+          builder: (context) => MediaPreviewScreen(
+            mediaFile: File(pickedFile.path),
+            mediaType: MediaType.video,
+            onSend: (file, caption) {
+              debugPrint('✅ AttachmentSheet: Video confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"');
+              onAttachmentSelected(file, AttachmentType.video, caption: caption);
+            },
+          ),
+        ),
+      );
     }
   }
 
   Future<void> _handleAudio(BuildContext context) async {
-    Navigator.pop(context);
+    final navigator = Navigator.of(context);
+    navigator.pop();
+
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['mp3', 'wav', 'm4a', 'aac', 'ogg', 'flac'],
+        allowedExtensions: ['mp3', 'wav', 'm4a', 'aac', 'ogg', 'flac' , 'mpeg'],
         allowMultiple: false,
       );
 
@@ -81,7 +97,19 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
           result.files.single.path != null) {
         final file = File(result.files.single.path!);
         debugPrint('🎵 AttachmentSheet: Audio file selected: ${file.path}');
-        onAttachmentSelected(file, AttachmentType.audio);
+        
+        await navigator.push(
+          MaterialPageRoute(
+            builder: (context) => MediaPreviewScreen(
+              mediaFile: file,
+              mediaType: MediaType.audio,
+              onSend: (file, caption) {
+                debugPrint('✅ AttachmentSheet: Audio confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"');
+                onAttachmentSelected(file, AttachmentType.audio, caption: caption);
+              },
+            ),
+          ),
+        );
       }
     } catch (e) {
       debugPrint('❌ AttachmentSheet: Error picking audio file: $e');

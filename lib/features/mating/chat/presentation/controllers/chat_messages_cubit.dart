@@ -69,6 +69,10 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   }) async {
     debugPrint('📨 ChatCubit: sendMessage called - Text: "$text", Image: $image, Video: $video, Audio: $audio');
     emit(MessageSending());
+    
+    bool signalRSuccess = false;
+    
+    // Try sending via SignalR first
     try {
       final signalRService = SignalRService();
       if (!signalRService.isConnected) {
@@ -94,11 +98,24 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       );
 
       await signalRService.sendMessageToUser(command);
+      debugPrint('✅ Message sent successfully via SignalR');
+      
+      signalRSuccess = true;
+      
+      // Reload messages to show the sent message
+      if (chatId.isNotEmpty) {
+        await loadMessages(chatId);
+      }
+      
+      return; // Exit early on success
     } catch (signalRError) {
-      debugPrint('failed to send message via SignalR: $signalRError');
+      debugPrint('❌ Failed to send message via SignalR: $signalRError');
+      debugPrint('🔄 Falling back to REST API...');
     }
 
-    if (fromPetId != null && toPetId != null) {
+    // Fallback to REST API if SignalR failed
+    if (!signalRSuccess) {
+      if (fromPetId != null && toPetId != null) {
       final friendMessageUseCase = sl<SendFriendMessageUseCase>();
 
       final result = await friendMessageUseCase(
@@ -136,28 +153,29 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
           emit(MessageSent(message));
         },
       );
-    } else {
-      final result = await sendMessageUseCase(
-        SendMessageParameters(
-          description: text,
-          conversationId: chatId.isEmpty ? null : chatId,
-          fromPetId: fromPetId,
-          toPetId: toPetId,
-          isRead: true,
-          image: image,
-          video: video,
-          audio: audio,
-        ),
-      );
-      result.fold(
-        (failure) {
-          emit(MessageSendError(failure.toString()));
-        },
-        (message) {
-          messagesList.add(message);
-          emit(MessageSent(message));
-        },
-      );
+      } else {
+        final result = await sendMessageUseCase(
+          SendMessageParameters(
+            description: text,
+            conversationId: chatId.isEmpty ? null : chatId,
+            fromPetId: fromPetId,
+            toPetId: toPetId,
+            isRead: true,
+            image: image,
+            video: video,
+            audio: audio,
+          ),
+        );
+        result.fold(
+          (failure) {
+            emit(MessageSendError(failure.toString()));
+          },
+          (message) {
+            messagesList.add(message);
+            emit(MessageSent(message));
+          },
+        );
+      }
     }
   }
 

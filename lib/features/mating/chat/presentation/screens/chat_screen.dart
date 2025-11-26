@@ -152,48 +152,49 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                   children: [
                     const SignalRConnectionStatusWidget(),
                     if (isCompleted)
-                  _buildStatusBanner(
-                    theme,
-                    isDark,
-                    Icons.lock_rounded,
-                    s.chatArchivedReadOnly,
-                    const Color(0xFF6C63FF),
-                  ),
-                if (_isBlockedByMe)
-                  _buildStatusBanner(
-                    theme,
-                    isDark,
-                    Icons.block_rounded,
-                    s.chatBlockedNoMessages,
-                    Colors.red,
-                  ),
-                if (_isBlockedByOther)
-                  _buildStatusBanner(
-                    theme,
-                    isDark,
-                    Icons.block_rounded,
-                    '${widget.chat.name} ${s.chatBlockedByOther}',
-                    Colors.red,
-                  ),
-                Expanded(
-                  child: _buildMessages(
-                    state,
-                    context,
-                    theme,
-                    isDark,
-                    s,
-                    cubit,
-                  ),
+                      _buildStatusBanner(
+                        theme,
+                        isDark,
+                        Icons.lock_rounded,
+                        s.chatArchivedReadOnly,
+                        const Color(0xFF6C63FF),
+                      ),
+                    if (_isBlockedByMe)
+                      _buildStatusBanner(
+                        theme,
+                        isDark,
+                        Icons.block_rounded,
+                        s.chatBlockedNoMessages,
+                        Colors.red,
+                      ),
+                    if (_isBlockedByOther)
+                      _buildStatusBanner(
+                        theme,
+                        isDark,
+                        Icons.block_rounded,
+                        '${widget.chat.name} ${s.chatBlockedByOther}',
+                        Colors.red,
+                      ),
+                    Expanded(
+                      child: _buildMessages(
+                        state,
+                        context,
+                        theme,
+                        isDark,
+                        s,
+                        cubit,
+                      ),
+                    ),
+                    if (!_isReadOnly)
+                      _buildMessageInput(cubit, context, theme, s),
+                  ],
                 ),
-                if (!_isReadOnly) _buildMessageInput(cubit, context, theme, s),
+                // WhatsApp-style upload loading overlay
+                if (_isUploadingMedia && _uploadingFile != null)
+                  _buildUploadingOverlay(isDark),
               ],
             ),
-            // WhatsApp-style upload loading overlay
-            if (_isUploadingMedia && _uploadingFile != null)
-              _buildUploadingOverlay(isDark),
-          ],
-        ),
-      );
+          );
         },
       ),
     );
@@ -612,11 +613,17 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                         onPressed: () {
                           final chatCubit = context.read<ChatMessagesCubit>();
                           final mainCubit = context.read<MainCubit>();
-                          
+
                           AttachmentOptionsBottomSheet.show(
                             context,
                             onAttachmentSelected: (file, type, {caption}) {
-                              _handleAttachment(file, type, chatCubit, mainCubit, caption: caption);
+                              _handleAttachment(
+                                file,
+                                type,
+                                chatCubit,
+                                mainCubit,
+                                caption: caption,
+                              );
                             },
                           );
                         },
@@ -733,9 +740,12 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (_uploadingType == AttachmentType.image)
+                if (_uploadingType == AttachmentType.image ||
+                    _uploadingType == AttachmentType.video)
                   ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
                     child: Stack(
                       children: [
                         Image.file(
@@ -762,7 +772,35 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                       ],
                     ),
                   ),
-                
+
+                if (_uploadingType == AttachmentType.audio)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24),
+                    child: Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFFF9800), Color(0xFFFF6F00)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFFF9800).withOpacity(0.4),
+                            blurRadius: 20,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.audiotrack_rounded,
+                        size: 48,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+
                 Padding(
                   padding: const EdgeInsets.all(24),
                   child: Column(
@@ -770,15 +808,17 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                     children: [
                       const CircularProgressIndicator(
                         strokeWidth: 3,
-                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6200EA)),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Color(0xFF6200EA),
+                        ),
                       ),
                       const SizedBox(height: 16),
                       Text(
                         _uploadingType == AttachmentType.image
                             ? 'Uploading image...'
                             : _uploadingType == AttachmentType.video
-                                ? 'Uploading video...'
-                                : 'Uploading audio...',
+                            ? 'Uploading video...'
+                            : 'Uploading audio...',
                         style: TextStyle(
                           color: isDark ? Colors.white : Colors.black87,
                           fontSize: 16,
@@ -803,7 +843,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     MainCubit mainCubit, {
     String? caption,
   }) async {
-    debugPrint('📎 ChatScreen: Starting attachment upload - Type: $type, Caption: "${caption ?? '(no caption)'}"');
+    debugPrint(
+      '📎 ChatScreen: Starting attachment upload - Type: $type, Caption: "${caption ?? '(no caption)'}"',
+    );
 
     setState(() {
       _isUploadingMedia = true;
@@ -818,22 +860,30 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         debugPrint('⬆️  ChatScreen: Uploading image to server...');
         await mainCubit.getGlobalImage(file, UploadPlace.messageImage);
         mediaUrl = mainCubit.modelImage?.data;
-        debugPrint('✅ ChatScreen: Image uploaded successfully - URL: $mediaUrl');
+        debugPrint(
+          '✅ ChatScreen: Image uploaded - modelImage: ${mainCubit.modelImage}, URL: $mediaUrl',
+        );
       } else if (type == AttachmentType.video) {
         debugPrint('⬆️  ChatScreen: Uploading video to server...');
         await mainCubit.getGlobalVideo(file, UploadPlace.messageVideo);
         mediaUrl = mainCubit.modelImage?.data;
-        debugPrint('✅ ChatScreen: Video uploaded successfully - URL: $mediaUrl');
+        debugPrint(
+          '✅ ChatScreen: Video uploaded - modelImage: ${mainCubit.modelImage}, URL: $mediaUrl',
+        );
       } else if (type == AttachmentType.audio) {
         debugPrint('⬆️  ChatScreen: Uploading audio to server...');
         await mainCubit.getGlobalSound(file, UploadPlace.messageRecord);
-        mediaUrl = mainCubit.modelImage?.data;
-        debugPrint('✅ ChatScreen: Audio uploaded successfully - URL: $mediaUrl');
+        final audioData = mainCubit.modelImage?.data;
+
+        mediaUrl = audioData;
+        debugPrint('✅ ChatScreen: Audio uploaded - filename: $mediaUrl');
       }
 
       if (mediaUrl != null && mediaUrl.isNotEmpty) {
         final text = caption ?? '';
-        debugPrint('💬 ChatScreen: Preparing to send message with media URL and caption');
+        debugPrint(
+          '💬 ChatScreen: Preparing to send message with media URL and caption',
+        );
 
         final fromPetId = widget.chat.id.isEmpty ? widget.chat.matingId : null;
         final toPetId = widget.chat.id.isEmpty ? widget.chat.petId : null;
@@ -854,7 +904,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           toUserId = widget.chat.petId;
         }
 
-        debugPrint('📤 ChatScreen: Sending message - Type: $type, Media URL: $mediaUrl, Caption: "$text"');
+        debugPrint(
+          '📤 ChatScreen: Sending message - Type: $type, Media URL: $mediaUrl, Caption: "$text"',
+        );
         cubit.sendMessage(
           chatId: widget.chat.id,
           text: text,
@@ -867,12 +919,20 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           video: type == AttachmentType.video ? mediaUrl : null,
           audio: type == AttachmentType.audio ? mediaUrl : null,
         );
-        debugPrint('✅ ChatScreen: Message sent successfully with media attachment');
+        debugPrint(
+          '✅ ChatScreen: Message sent successfully with media attachment',
+        );
       } else {
-        debugPrint('❌ ChatScreen: Media URL is null or empty, cannot send message');
+        debugPrint(
+          '❌ ChatScreen: Media URL is null or empty, cannot send message',
+        );
+        if (mounted) {
+          errorToast(context, 'Failed to upload media. Please try again.');
+        }
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint('❌ ChatScreen: Error uploading attachment: $e');
+      debugPrint('Stack trace: $stackTrace');
       if (mounted) {
         errorToast(context, 'Failed to send attachment');
       }

@@ -145,7 +145,10 @@ void resetState() {
     );
     result.fold(
       (l) => emit(VideoHelperError()),
-      (r) => emit(VideoHelperSuccess()),
+      (r) {
+        emit(VideoHelperSuccess());
+        modelImage = r;
+      },
     );
   }
 
@@ -156,7 +159,10 @@ void resetState() {
     );
     result.fold(
       (l) => emit(SoundHelperError()),
-      (r) => emit(SoundHelperSuccess()),
+      (r) {
+        emit(SoundHelperSuccess());
+        modelImage = r;
+      },
     );
   }
 }
