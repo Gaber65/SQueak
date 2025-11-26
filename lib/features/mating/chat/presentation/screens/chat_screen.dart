@@ -889,10 +889,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       } else if (type == AttachmentType.video) {
         debugPrint('⬆️  ChatScreen: Uploading video to server...');
         await mainCubit.getGlobalVideo(file, UploadPlace.messageVideo);
-        mediaUrl = mainCubit.modelImage?.data;
-        debugPrint(
-          '✅ ChatScreen: Video uploaded - modelImage: ${mainCubit.modelImage}, URL: $mediaUrl',
-        );
+        final videoData = mainCubit.modelImage?.data;
+
+        mediaUrl = videoData;
+        debugPrint('✅ ChatScreen: Video uploaded - filename: $mediaUrl');
       } else if (type == AttachmentType.audio) {
         debugPrint('⬆️  ChatScreen: Uploading audio to server...');
         await mainCubit.getGlobalSound(file, UploadPlace.messageRecord);
@@ -981,7 +981,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         setState(() {
           _isRecording = true;
           _recordDuration = 0;
-          _recordingCubit = cubit; // Store cubit reference
+          _recordingCubit = cubit; 
         });
 
         _recordTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -1060,8 +1060,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       fromUserId: fromUserId,
       toUserId: toUserId,
     );
-    
-    // Clear text field immediately after sending
     _messageController.clear();
   }
 
@@ -1120,7 +1118,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             ),
             const SizedBox(width: 16),
             const Text(
-              '< Slide to cancel',
+              '< Recording Now',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey,

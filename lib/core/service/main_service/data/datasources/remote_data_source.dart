@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:squeak/core/error/exception.dart';
 
@@ -167,8 +168,8 @@ class MainRemoteDataSource {
       }
 
       String filePath = fileToUpload.path;
-      print('📤 Uploading $type file: $fileName to endpoint: $endpoint');
-      print('📦 Upload place: $uploadPlace, Content-Type: $type/$subtype');
+      debugPrint('📤 Uploading $type file: $fileName to endpoint: $endpoint');
+      debugPrint('📦 Upload place: $uploadPlace, Content-Type: $type/$subtype');
 
       Response response = await DioFinalHelper.postData(
         method: endpoint,
@@ -181,12 +182,12 @@ class MainRemoteDataSource {
           'UploadPlace': '$uploadPlace',
         }),
       );
-      print('✅ Upload successful: ${response.data}');
+      debugPrint('✅ Upload successful: ${response.data}');
       return ImageModel.fromJson(response.data);
     } on DioException catch (e) {
-      print('❌ Upload failed - Status: ${e.response?.statusCode}');
-      print('❌ Error data: ${e.response?.data}');
-      print('❌ Error message: ${e.message}');
+      debugPrint('❌ Upload failed - Status: ${e.response?.statusCode}');
+      debugPrint('❌ Error data: ${e.response?.data}');
+      debugPrint('❌ Error message: ${e.message}');
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

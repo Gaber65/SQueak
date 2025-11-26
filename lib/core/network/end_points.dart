@@ -9,7 +9,7 @@ const String version = '/v1/api';
 /// Media URLs
 String imageUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
 String videoUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
-String audioUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
+String audioUrl = '${ConfigModel.baseApiUrlSqueak}/messageRecods/';
 String imageUrlWithVetICare = ConfigModel.serverFirstHalfOfImageUrl;
 
 /// Auth & User Management
