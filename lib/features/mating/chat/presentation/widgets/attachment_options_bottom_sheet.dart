@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/image_preview_screen.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/camera_screen.dart';
 import 'package:squeak/generated/l10n.dart';
 
 enum AttachmentType { image, video, audio }
 
 class AttachmentOptionsBottomSheet extends StatelessWidget {
-  final Function(File file, AttachmentType type, {String? caption}) onAttachmentSelected;
+  final Function(File file, AttachmentType type, {String? caption})
+  onAttachmentSelected;
 
   const AttachmentOptionsBottomSheet({
     super.key,
@@ -17,7 +19,8 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
 
   static Future<void> show(
     BuildContext context, {
-    required Function(File file, AttachmentType type, {String? caption}) onAttachmentSelected,
+    required Function(File file, AttachmentType type, {String? caption})
+    onAttachmentSelected,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -48,8 +51,14 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
                 mediaFile: File(pickedFile.path),
                 mediaType: MediaType.image,
                 onSend: (file, caption) {
-                  debugPrint('✅ AttachmentSheet: Photo confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"');
-                  onAttachmentSelected(file, AttachmentType.image, caption: caption);
+                  debugPrint(
+                    '✅ AttachmentSheet: Photo confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
+                  );
+                  onAttachmentSelected(
+                    file,
+                    AttachmentType.image,
+                    caption: caption,
+                  );
                 },
               ),
         ),
@@ -68,14 +77,21 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
       debugPrint('🎥 AttachmentSheet: Video selected from gallery');
       await navigator.push(
         MaterialPageRoute(
-          builder: (context) => MediaPreviewScreen(
-            mediaFile: File(pickedFile.path),
-            mediaType: MediaType.video,
-            onSend: (file, caption) {
-              debugPrint('✅ AttachmentSheet: Video confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"');
-              onAttachmentSelected(file, AttachmentType.video, caption: caption);
-            },
-          ),
+          builder:
+              (context) => MediaPreviewScreen(
+                mediaFile: File(pickedFile.path),
+                mediaType: MediaType.video,
+                onSend: (file, caption) {
+                  debugPrint(
+                    '✅ AttachmentSheet: Video confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
+                  );
+                  onAttachmentSelected(
+                    file,
+                    AttachmentType.video,
+                    caption: caption,
+                  );
+                },
+              ),
         ),
       );
     }
@@ -88,7 +104,18 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['aac', 'ogg', 'opus', 'mp3', 'm4a', 'midi', 'amr', 'wma', 'wav', 'webm'],
+        allowedExtensions: [
+          'aac',
+          'ogg',
+          'opus',
+          'mp3',
+          'm4a',
+          'midi',
+          'amr',
+          'wma',
+          'wav',
+          'webm',
+        ],
         allowMultiple: false,
       );
 
@@ -97,23 +124,43 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
           result.files.single.path != null) {
         final file = File(result.files.single.path!);
         debugPrint('🎵 AttachmentSheet: Audio file selected: ${file.path}');
-        
+
         await navigator.push(
           MaterialPageRoute(
-            builder: (context) => MediaPreviewScreen(
-              mediaFile: file,
-              mediaType: MediaType.audio,
-              onSend: (file, caption) {
-                debugPrint('✅ AttachmentSheet: Audio confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"');
-                onAttachmentSelected(file, AttachmentType.audio, caption: caption);
-              },
-            ),
+            builder:
+                (context) => MediaPreviewScreen(
+                  mediaFile: file,
+                  mediaType: MediaType.audio,
+                  onSend: (file, caption) {
+                    debugPrint(
+                      '✅ AttachmentSheet: Audio confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
+                    );
+                    onAttachmentSelected(
+                      file,
+                      AttachmentType.audio,
+                      caption: caption,
+                    );
+                  },
+                ),
           ),
         );
       }
     } catch (e) {
       debugPrint('❌ AttachmentSheet: Error picking audio file: $e');
     }
+  }
+
+  Future<void> _handleCamera(BuildContext context) async {
+    final navigator = Navigator.of(context);
+    navigator.pop();
+
+    await navigator.push(
+      MaterialPageRoute(
+        builder: (context) => CameraScreen(
+          onAttachmentSelected: onAttachmentSelected,
+        ),
+      ),
+    );
   }
 
   @override
@@ -179,16 +226,16 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
               children: [
                 _buildOption(
                   context,
-                  icon: Icons.file_copy_rounded,
-                  label: S.of(context).document,
-                  color: const Color(0xFF00D560),
-                  onTap: () {},
-                ),
-                _buildOption(
-                  context,
                   icon: Icons.camera_alt_outlined,
                   label: S.of(context).camera,
                   color: const Color(0xFF665CFF),
+                  onTap: () => _handleCamera(context),
+                ),
+                _buildOption(
+                  context,
+                  icon: Icons.file_copy_rounded,
+                  label: S.of(context).document,
+                  color: const Color(0xFF00D560),
                   onTap: () {},
                 ),
                 _buildOption(

@@ -10,6 +10,7 @@ enum MediaType { image, video, audio }
 class MediaPreviewScreen extends StatefulWidget {
   final File mediaFile;
   final MediaType mediaType;
+  final bool? cameraOption;
   final Function(File file, String caption) onSend;
 
   const MediaPreviewScreen({
@@ -17,6 +18,7 @@ class MediaPreviewScreen extends StatefulWidget {
     required this.mediaFile,
     this.mediaType = MediaType.image,
     required this.onSend,
+    this.cameraOption,
   });
 
   factory MediaPreviewScreen.legacy({
@@ -201,10 +203,10 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
     widget.onSend(_currentMedia, caption);
 
     await Future.delayed(const Duration(milliseconds: 500));
+  }
 
-    if (mounted) {
-      Navigator.pop(context);
-    }
+  void _handleBack() {
+    Navigator.pop(context);
   }
 
   @override
@@ -217,8 +219,11 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF1E1E1E),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          icon: Icon(
+            widget.cameraOption == true ? Icons.close : Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: _handleBack,
         ),
         title: const Text('Preview', style: TextStyle(color: Colors.white)),
         actions: [
