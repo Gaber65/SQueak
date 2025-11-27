@@ -6,6 +6,8 @@ import 'package:squeak/features/mating/chat/presentation/controllers/chat_messag
 import 'package:squeak/features/mating/chat/domain/usecases/parameters.dart';
 import 'package:squeak/generated/l10n.dart';
 import '../../domain/entities/message_entity.dart';
+import 'full_screen_media_viewer.dart';
+import 'audio_player_widget.dart';
 
 class ChatMessageBubble extends StatefulWidget {
   final MessageEntity message;
@@ -303,45 +305,57 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
 
   Widget _buildImageContent() {
     final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: FastCachedImage(
-          url: imageUrl + widget.message.image!,
-          width: 220,
-          height: 160,
-          fit: BoxFit.cover,
-          errorBuilder: (context, url, error) => Container(
-            width: 220,
-            height: 160,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.broken_image_rounded, color: Colors.grey[600], size: 40),
-                const SizedBox(height: 8),
-                Text(
-                  'Image not available',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                ),
-              ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => FullScreenMediaViewer(
+              mediaUrl: imageUrl + widget.message.image!,
+              mediaType: MediaType.image,
             ),
           ),
-          loadingBuilder: (context, progress) => Container(
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: FastCachedImage(
+            url: imageUrl + widget.message.image!,
             width: 220,
             height: 160,
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(12),
+            fit: BoxFit.cover,
+            errorBuilder: (context, url, error) => Container(
+              width: 220,
+              height: 160,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.broken_image_rounded, color: Colors.grey[600], size: 40),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Image not available',
+                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  ),
+                ],
+              ),
             ),
-            child: Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: theme.colorScheme.primary,
+            loadingBuilder: (context, progress) => Container(
+              width: 220,
+              height: 160,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: theme.colorScheme.primary,
+                ),
               ),
             ),
           ),
@@ -351,136 +365,90 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
   }
 
   Widget _buildVideoContent() {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      width: 220,
-      height: 160,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.black87, Colors.black54],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => FullScreenMediaViewer(
+              mediaUrl: videoUrl + widget.message.video!,
+              mediaType: MediaType.video,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        width: 220,
+        height: 160,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.black87, Colors.black54],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.play_arrow_rounded,
-                color: Colors.white,
-                size: 32,
+        child: Stack(
+          children: [
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.play_arrow_rounded,
+                  color: Colors.white,
+                  size: 32,
+                ),
               ),
             ),
-          ),
-          Positioned(
-            bottom: 8,
-            left: 8,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.6),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.videocam_rounded, color: Colors.white, size: 14),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Video',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
+            Positioned(
+              bottom: 8,
+              left: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.videocam_rounded, color: Colors.white, size: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Video',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildAudioContent() {
     final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: widget.isMe
-              ? [
-                  Colors.white.withOpacity(0.2),
-                  Colors.white.withOpacity(0.1),
-                ]
-              : [
-                  theme.colorScheme.primary.withOpacity(0.15),
-                  theme.colorScheme.primary.withOpacity(0.05),
-                ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: widget.isMe
-                  ? Colors.white.withOpacity(0.3)
-                  : theme.colorScheme.primary.withOpacity(0.2),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.play_arrow_rounded,
-              color: widget.isMe ? Colors.white : theme.colorScheme.primary,
-              size: 18,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Audio message',
-                style: TextStyle(
-                  color: widget.isMe ? Colors.white : theme.colorScheme.onSurface,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Text(
-                  DateTimeFormatter.formattedTime(
-                    widget.message.createdAt,
-                    Localizations.localeOf(context).toString(),
-                  ),
-                style: TextStyle(
-                  color: widget.isMe
-                      ? Colors.white.withOpacity(0.7)
-                      : theme.colorScheme.onSurface.withOpacity(0.6),
-                  fontSize: 11,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+    return AudioPlayerWidget(
+      audioUrl: audioUrl + widget.message.audio!,
+      isMe: widget.isMe,
+      primaryColor: theme.colorScheme.primary,
     );
   }
 
