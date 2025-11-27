@@ -4918,6 +4918,71 @@ class S {
       args: [],
     );
   }
+
+  /// `Playback Speed`
+  String get playbackSpeed {
+    return Intl.message(
+      'Playback Speed',
+      name: 'playbackSpeed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quality`
+  String get quality {
+    return Intl.message('Quality', name: 'quality', desc: '', args: []);
+  }
+
+  /// `Download`
+  String get download {
+    return Intl.message('Download', name: 'download', desc: '', args: []);
+  }
+
+  /// `Forward`
+  String get forward {
+    return Intl.message('Forward', name: 'forward', desc: '', args: []);
+  }
+
+  /// `Video Quality`
+  String get videoQuality {
+    return Intl.message(
+      'Video Quality',
+      name: 'videoQuality',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quality settings are determined by the video source.`
+  String get qualitySource {
+    return Intl.message(
+      'Quality settings are determined by the video source.',
+      name: 'qualitySource',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to load image.`
+  String get imageloadingFailed {
+    return Intl.message(
+      'Failed to load image.',
+      name: 'imageloadingFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to load video.`
+  String get videoLoadingFailed {
+    return Intl.message(
+      'Failed to load video.',
+      name: 'videoLoadingFailed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

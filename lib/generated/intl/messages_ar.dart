@@ -368,6 +368,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "doctorName": MessageLookupByLibrary.simpleMessage("اسم الطبيب"),
     "document": MessageLookupByLibrary.simpleMessage("مستند"),
+    "download": MessageLookupByLibrary.simpleMessage("تحميل"),
     "edit": MessageLookupByLibrary.simpleMessage("تحرير"),
     "editComment": MessageLookupByLibrary.simpleMessage("تعديل التعليق ..."),
     "editCommentPost": MessageLookupByLibrary.simpleMessage("تعديل تعليق"),
@@ -529,6 +530,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "ignore": MessageLookupByLibrary.simpleMessage("رفض"),
     "image": MessageLookupByLibrary.simpleMessage("صورة"),
+    "imageloadingFailed": MessageLookupByLibrary.simpleMessage(
+      "فشل تحميل الصورة",
+    ),
     "infoProtection": MessageLookupByLibrary.simpleMessage("حماية المعلومات"),
     "infoProtectionDesc": MessageLookupByLibrary.simpleMessage(
       "نحن نأخذ أمن البيانات على محمل الجد ونطبق تدابير مناسبة لحماية معلوماتك الشخصية من الوصول غير المصرح به أو التعديل أو الإفشاء.",
@@ -793,6 +797,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "photoPickerNotImplemented": MessageLookupByLibrary.simpleMessage(
       "اختيار الصورة غير متوفر بعد",
     ),
+    "playbackSpeed": MessageLookupByLibrary.simpleMessage("سرعة التشغيل"),
     "pleaseSelectBoarding": MessageLookupByLibrary.simpleMessage(
       "يرجى اختيار نوع الإقامة",
     ),
@@ -832,6 +837,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "qrCodeStatus": MessageLookupByLibrary.simpleMessage("حالة رمز QR"),
     "qrNotLinked": MessageLookupByLibrary.simpleMessage("QR غير مرتبط"),
     "qty": MessageLookupByLibrary.simpleMessage("الكمية"),
+    "quality": MessageLookupByLibrary.simpleMessage("الجودة"),
+    "qualitySource": MessageLookupByLibrary.simpleMessage(
+      "يتم تحديد إعدادات الجودة من خلال مصدر الفيديو.",
+    ),
     "rate": MessageLookupByLibrary.simpleMessage("التقييم"),
     "rateYourExperience": MessageLookupByLibrary.simpleMessage("قيّم تجربتك"),
     "ratingMating": MessageLookupByLibrary.simpleMessage("تقييم التزاوج"),
@@ -1033,9 +1042,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "version": MessageLookupByLibrary.simpleMessage("الإصدار"),
     "versionNumber": MessageLookupByLibrary.simpleMessage("الإصدار"),
     "video": MessageLookupByLibrary.simpleMessage("فيديو"),
+    "videoLoadingFailed": MessageLookupByLibrary.simpleMessage(
+      "فشل تحميل الفيديو",
+    ),
     "videoPickerNotImplemented": MessageLookupByLibrary.simpleMessage(
       "اختيار الفيديو غير متوفر بعد",
     ),
+    "videoQuality": MessageLookupByLibrary.simpleMessage("جودة الفيديو"),
     "view1Reply": MessageLookupByLibrary.simpleMessage("عرض رد واحد"),
     "viewAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
     "viewProfile": MessageLookupByLibrary.simpleMessage("عرض الملف الشخصي"),

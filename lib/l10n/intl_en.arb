@@ -587,7 +587,15 @@
   "document":"Document",
   "camera":"Camera",
   "chatLocation":"Location",
-  "addCaption":"Add a caption..."
+  "addCaption":"Add a caption...",
+  "playbackSpeed":"Playback Speed",
+  "quality":"Quality",
+  "download":"Download",
+  "forward":"Forward",
+  "videoQuality":"Video Quality",
+  "qualitySource":"Quality settings are determined by the video source.",
+  "imageloadingFailed":"Failed to load image.",
+  "videoLoadingFailed":"Failed to load video."
  
 
 

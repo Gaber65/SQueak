@@ -577,8 +577,19 @@
   "document":"مستند",
   "camera":"كاميرا",
   "chatLocation":"الموقع",
-  "addCaption":"إضافة وصف الصورة..."
-
+  "addCaption":"إضافة وصف الصورة...",
+  "playbackSpeed":"سرعة التشغيل",
+  "quality":"الجودة",
+  "download":"تحميل",
+  "share":"مشاركة",
+  "videoQuality":"جودة الفيديو",
+  "qualitySource":"يتم تحديد إعدادات الجودة من خلال مصدر الفيديو.",
+  "imageloadingFailed":"فشل تحميل الصورة",
+  "videoLoadingFailed":"فشل تحميل الفيديو",
+  "audioLoadingFailed":"فشل تحميل الصوت",
+  "documentLoadingFailed":"فشل تحميل المستند",
+  "locationLoadingFailed":"فشل تحميل الموقع",
+  "noInternetConnection":"لا يوجد اتصال بالإنترنت"
 
 
 

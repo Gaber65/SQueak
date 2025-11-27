@@ -382,6 +382,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "doctorName": MessageLookupByLibrary.simpleMessage("Doctor Name"),
     "document": MessageLookupByLibrary.simpleMessage("Document"),
+    "download": MessageLookupByLibrary.simpleMessage("Download"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editComment": MessageLookupByLibrary.simpleMessage("Edit Comment . . . ."),
     "editCommentPost": MessageLookupByLibrary.simpleMessage("Edit Comment"),
@@ -509,6 +510,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Follow Request Unavailable",
     ),
     "forgotPass": MessageLookupByLibrary.simpleMessage("Forgot password?"),
+    "forward": MessageLookupByLibrary.simpleMessage("Forward"),
     "friendsAndRequests": MessageLookupByLibrary.simpleMessage(
       "Friends & Requests",
     ),
@@ -551,6 +553,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "ignore": MessageLookupByLibrary.simpleMessage("Ignore"),
     "image": MessageLookupByLibrary.simpleMessage("Image"),
+    "imageloadingFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to load image.",
+    ),
     "infoProtection": MessageLookupByLibrary.simpleMessage(
       "Information Protection",
     ),
@@ -806,6 +811,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "photoPickerNotImplemented": MessageLookupByLibrary.simpleMessage(
       "Photo picker not implemented yet",
     ),
+    "playbackSpeed": MessageLookupByLibrary.simpleMessage("Playback Speed"),
     "pleaseSelectBoarding": MessageLookupByLibrary.simpleMessage(
       "Please select boarding Type name",
     ),
@@ -843,6 +849,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "qrCodeStatus": MessageLookupByLibrary.simpleMessage("QR Code Status"),
     "qrNotLinked": MessageLookupByLibrary.simpleMessage("QR Not Linked"),
     "qty": MessageLookupByLibrary.simpleMessage("Qty"),
+    "quality": MessageLookupByLibrary.simpleMessage("Quality"),
+    "qualitySource": MessageLookupByLibrary.simpleMessage(
+      "Quality settings are determined by the video source.",
+    ),
     "rate": MessageLookupByLibrary.simpleMessage("Rate"),
     "rateYourExperience": MessageLookupByLibrary.simpleMessage(
       "Rate Your Experience",
@@ -1068,9 +1078,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "version": MessageLookupByLibrary.simpleMessage("Version"),
     "versionNumber": MessageLookupByLibrary.simpleMessage("Version"),
     "video": MessageLookupByLibrary.simpleMessage("Video"),
+    "videoLoadingFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to load video.",
+    ),
     "videoPickerNotImplemented": MessageLookupByLibrary.simpleMessage(
       "Video picker not implemented yet",
     ),
+    "videoQuality": MessageLookupByLibrary.simpleMessage("Video Quality"),
     "view1Reply": MessageLookupByLibrary.simpleMessage("View 1 reply"),
     "viewAll": MessageLookupByLibrary.simpleMessage("View All"),
     "viewProfile": MessageLookupByLibrary.simpleMessage("View Profile"),
