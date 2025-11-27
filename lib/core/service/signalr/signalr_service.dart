@@ -4,7 +4,7 @@ import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 
 class SignalRService {
   static const String _hubUrl =
-      'https://squeakapi.veticareapp.com:8001/chathub';
+      'https://squeakapi.veticareapp.com:8001/conversationhub';
 
   HubConnection? _hubConnection;
 

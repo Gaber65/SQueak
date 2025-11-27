@@ -40,20 +40,14 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
     );
 
     _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOutBack,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
     );
 
     _slideAnimation = Tween<Offset>(
       begin: Offset(widget.isMe ? 0.2 : -0.2, 0),
       end: Offset.zero,
     ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
 
     _animationController.forward();
@@ -72,53 +66,54 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
 
     return GestureDetector(
       onLongPress: () async {
-        bool onlyForMe = true; 
+        bool onlyForMe = true;
         final confirmed = await showDialog<bool>(
           context: context,
           builder: (context) {
-            return StatefulBuilder(builder: (context, setState) {
-              return AlertDialog(
-                title:  Text(S.of(context).deleteMessage),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    RadioListTile<bool>(
-                      value: true,
-                      groupValue: onlyForMe,
-                      onChanged: (v) => setState(() => onlyForMe = v ?? true),
-                      title:  Text(S.of(context).deleteMessageForMe),
-                    ),
-                    RadioListTile<bool>(
-                      value: false,
-                      groupValue: onlyForMe,
-                      onChanged: (v) => setState(() => onlyForMe = v ?? true),
-                      title:  Text(S.of(context).deleteMessageForEveryone),
-                    ),
-                  ],
-                ),
-                actions: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [                     
-                      ElevatedButton.icon(
-                        onPressed: () => Navigator.of(context).pop(false),
-                        icon: Icon(Icons.cancel),
-                        label:  Text(S.of(context).cancel),
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: Text(S.of(context).deleteMessage),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      RadioListTile<bool>(
+                        value: true,
+                        groupValue: onlyForMe,
+                        onChanged: (v) => setState(() => onlyForMe = v ?? true),
+                        title: Text(S.of(context).deleteMessageForMe),
                       ),
-                      ElevatedButton.icon(
-                        icon: Icon(Icons.delete_sweep_rounded),
-                        label:  Text(S.of(context).delete),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                        ),
-                        onPressed: () => Navigator.of(context).pop(true),
+                      RadioListTile<bool>(
+                        value: false,
+                        groupValue: onlyForMe,
+                        onChanged: (v) => setState(() => onlyForMe = v ?? true),
+                        title: Text(S.of(context).deleteMessageForEveryone),
                       ),
                     ],
                   ),
-                ],
-              );
-              
-            });
+                  actions: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          icon: Icon(Icons.cancel),
+                          label: Text(S.of(context).cancel),
+                        ),
+                        ElevatedButton.icon(
+                          icon: Icon(Icons.delete_sweep_rounded),
+                          label: Text(S.of(context).delete),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          onPressed: () => Navigator.of(context).pop(true),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            );
           },
         );
 
@@ -137,9 +132,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
             messageId: widget.message.id!,
           );
 
-          // Print request body
-          // ignore: avoid_print
-          print('DeleteMessage request body: ${params.toJson()}');
+          debugPrint('DeleteMessage request body: ${params.toJson()}');
 
           // Call cubit to delete
           final cubit = ChatMessagesCubit.get(context);
@@ -147,131 +140,132 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
         }
       },
       child: SlideTransition(
-      position: _slideAnimation,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-          child: Row(
-            mainAxisAlignment:
-                widget.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              if (!widget.isMe) ..._buildSenderInfo(context),
-              Flexible(
-                child: Container(
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.7,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: widget.isMe
-                        ? LinearGradient(
-                            colors: [
-                              theme.colorScheme.primary,
-                              theme.colorScheme.primary.withOpacity(0.8),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          )
-                        : LinearGradient(
-                            colors: isDark
-                                ? [
-                                    Colors.grey[800]!,
-                                    Colors.grey[850]!,
-                                  ]
-                                : [
-                                    Colors.grey[200]!,
-                                    Colors.grey[100]!,
-                                  ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                    borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(20),
-                      topRight: const Radius.circular(20),
-                      bottomLeft: Radius.circular(widget.isMe ? 20 : 4),
-                      bottomRight: Radius.circular(widget.isMe ? 4 : 20),
+        position: _slideAnimation,
+        child: ScaleTransition(
+          scale: _scaleAnimation,
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+            child: Row(
+              mainAxisAlignment:
+                  widget.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                if (!widget.isMe) ..._buildSenderInfo(context),
+                Flexible(
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.7,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient:
+                          widget.isMe
+                              ? LinearGradient(
+                                colors: [
+                                  theme.colorScheme.primary,
+                                  theme.colorScheme.primary.withOpacity(0.8),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              )
+                              : LinearGradient(
+                                colors:
+                                    isDark
+                                        ? [Colors.grey[800]!, Colors.grey[850]!]
+                                        : [
+                                          Colors.grey[200]!,
+                                          Colors.grey[100]!,
+                                        ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(20),
+                        topRight: const Radius.circular(20),
+                        bottomLeft: Radius.circular(widget.isMe ? 20 : 4),
+                        bottomRight: Radius.circular(widget.isMe ? 4 : 20),
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Media content
-                      if (widget.message.image != null)
-                        _buildImageContent(),
-                      if (widget.message.video != null)
-                        _buildVideoContent(),
-                      if (widget.message.audio != null)
-                        _buildAudioContent(),
-
-                      // Text message
-                      if (widget.message.description.isNotEmpty)
-                        Text(
-                          widget.message.description,
-                          style: TextStyle(
-                            color: widget.isMe
-                                ? Colors.white
-                                : (isDark ? Colors.white : Colors.black87),
-                            fontSize: 15,
-                            height: 1.4,
-                          ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
                         ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Media content
+                        if (widget.message.image != null) _buildImageContent(),
+                        if (widget.message.video != null) _buildVideoContent(),
+                        if (widget.message.audio != null) _buildAudioContent(),
 
-                      // Timestamp and read status
-                      const SizedBox(height: 6),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                              Text(
-                                DateTimeFormatter.formattedTime(
-                                  widget.message.createdAt,
-                                  Localizations.localeOf(context).toString(),
-                                ),
+                        // Text message
+                        if (widget.message.description.isNotEmpty)
+                          Text(
+                            widget.message.description,
                             style: TextStyle(
-                              color: widget.isMe
-                                  ? Colors.white.withOpacity(0.8)
-                                  : (isDark
-                                      ? Colors.grey[400]
-                                      : Colors.grey[600]),
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
+                              color:
+                                  widget.isMe
+                                      ? Colors.white
+                                      : (isDark
+                                          ? Colors.white
+                                          : Colors.black87),
+                              fontSize: 15,
+                              height: 1.4,
                             ),
                           ),
-                          if (widget.isMe) ...[
-                            const SizedBox(width: 6),
-                            Icon(
-                              widget.message.isRead
-                                  ? Icons.done_all_rounded
-                                  : Icons.done_rounded,
-                              size: 16,
-                              color: widget.message.isRead
-                                  ? Colors.lightBlue[200]
-                                  : Colors.white.withOpacity(0.8),
+
+                        // Timestamp and read status
+                        const SizedBox(height: 6),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              DateTimeFormatter.formattedTime(
+                                widget.message.createdAt,
+                                Localizations.localeOf(context).toString(),
+                              ),
+                              style: TextStyle(
+                                color:
+                                    widget.isMe
+                                        ? Colors.white.withOpacity(0.8)
+                                        : (isDark
+                                            ? Colors.grey[400]
+                                            : Colors.grey[600]),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
+                            if (widget.isMe) ...[
+                              const SizedBox(width: 6),
+                              Icon(
+                                widget.message.isRead
+                                    ? Icons.done_all_rounded
+                                    : Icons.done_rounded,
+                                size: 16,
+                                color:
+                                    widget.message.isRead
+                                        ? Colors.lightBlue[200]
+                                        : Colors.white.withOpacity(0.8),
+                              ),
+                            ],
                           ],
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              if (widget.isMe) const SizedBox(width: 4),
-            ],
+                if (widget.isMe) const SizedBox(width: 4),
+              ],
+            ),
           ),
         ),
       ),
-    )
     );
   }
 
@@ -309,10 +303,11 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => FullScreenMediaViewer(
-              mediaUrl: imageUrl + widget.message.image!,
-              mediaType: MediaType.image,
-            ),
+            builder:
+                (context) => FullScreenMediaViewer(
+                  mediaUrl: imageUrl + widget.message.image!,
+                  mediaType: MediaType.image,
+                ),
           ),
         );
       },
@@ -325,39 +320,45 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
             width: 220,
             height: 160,
             fit: BoxFit.cover,
-            errorBuilder: (context, url, error) => Container(
-              width: 220,
-              height: 160,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.broken_image_rounded, color: Colors.grey[600], size: 40),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Image not available',
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            errorBuilder:
+                (context, url, error) => Container(
+                  width: 220,
+                  height: 160,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ],
-              ),
-            ),
-            loadingBuilder: (context, progress) => Container(
-              width: 220,
-              height: 160,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: theme.colorScheme.primary,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.broken_image_rounded,
+                        color: Colors.grey[600],
+                        size: 40,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Image not available',
+                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ),
+            loadingBuilder:
+                (context, progress) => Container(
+                  width: 220,
+                  height: 160,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ),
           ),
         ),
       ),
@@ -369,10 +370,11 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => FullScreenMediaViewer(
-              mediaUrl: videoUrl + widget.message.video!,
-              mediaType: MediaType.video,
-            ),
+            builder:
+                (context) => FullScreenMediaViewer(
+                  mediaUrl: videoUrl + widget.message.video!,
+                  mediaType: MediaType.video,
+                ),
           ),
         );
       },

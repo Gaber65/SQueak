@@ -35,13 +35,23 @@ class MatingChatListTile extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: isDark
-                    ? [Colors.white.withOpacity(0.05), Colors.white.withOpacity(0.02)]
-                    : [Colors.white.withOpacity(0.9), Colors.white.withOpacity(0.7)],
+                colors:
+                    isDark
+                        ? [
+                          Colors.white.withOpacity(0.05),
+                          Colors.white.withOpacity(0.02),
+                        ]
+                        : [
+                          Colors.white.withOpacity(0.9),
+                          Colors.white.withOpacity(0.7),
+                        ],
               ),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
+                color:
+                    isDark
+                        ? Colors.white.withOpacity(0.1)
+                        : Colors.black.withOpacity(0.05),
                 width: 1,
               ),
             ),
@@ -53,14 +63,27 @@ class MatingChatListTile extends StatelessWidget {
                     context,
                     PageRouteBuilder(
                       transitionDuration: const Duration(milliseconds: 500),
-                      pageBuilder: (context, animation, secondaryAnimation) => MatingChatDetailScreen(chat: chat),
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      pageBuilder:
+                          (context, animation, secondaryAnimation) =>
+                              MatingChatDetailScreen(chat: chat),
+                      transitionsBuilder: (
+                        context,
+                        animation,
+                        secondaryAnimation,
+                        child,
+                      ) {
                         var begin = const Offset(1.0, 0.0);
                         var end = Offset.zero;
                         var curve = Curves.ease;
-                        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                        var tween = Tween(
+                          begin: begin,
+                          end: end,
+                        ).chain(CurveTween(curve: curve));
                         var offsetAnimation = animation.drive(tween);
-                        return SlideTransition(position: offsetAnimation, child: child);
+                        return SlideTransition(
+                          position: offsetAnimation,
+                          child: child,
+                        );
                       },
                     ),
                   );
@@ -102,7 +125,9 @@ class MatingChatListTile extends StatelessWidget {
                             _formatLastMessageTime(chat),
                             style: TextStyle(
                               fontSize: 12,
-                              color: theme.colorScheme.onSurface.withOpacity(0.5),
+                              color: theme.colorScheme.onSurface.withOpacity(
+                                0.5,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -113,47 +138,103 @@ class MatingChatListTile extends StatelessWidget {
                                 color: const Color(0xFF25D366),
                                 shape: BoxShape.circle,
                               ),
-                              constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+                              constraints: const BoxConstraints(
+                                minWidth: 20,
+                                minHeight: 20,
+                              ),
                               child: Center(
                                 child: Text(
-                                  chat.unreadedCount > 99 ? '99+' : chat.unreadedCount.toString(),
-                                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                                  chat.unreadedCount > 99
+                                      ? '99+'
+                                      : chat.unreadedCount.toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
                           if (chat.completeMarriageStatues)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
-                                gradient: const LinearGradient(colors: [Color(0xFFFF6B9D), Color(0xFFFFC371)]),
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFFFF6B9D),
+                                    Color(0xFFFFC371),
+                                  ],
+                                ),
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
-                                  BoxShadow(color: const Color(0xFFFF6B9D).withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 2)),
+                                  BoxShadow(
+                                    color: const Color(
+                                      0xFFFF6B9D,
+                                    ).withOpacity(0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
                                 ],
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: const [
-                                  Icon(Icons.favorite, color: Colors.white, size: 12),
+                                  Icon(
+                                    Icons.favorite,
+                                    color: Colors.white,
+                                    size: 12,
+                                  ),
                                   SizedBox(width: 4),
-                                  Text('Mating', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                                  Text(
+                                    'Mating',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                           if (chat.isBlock)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(colors: [Colors.red[400]!, Colors.red[600]!]),
+                                gradient: LinearGradient(
+                                  colors: [Colors.red[400]!, Colors.red[600]!],
+                                ),
                                 borderRadius: BorderRadius.circular(20),
-                                boxShadow: [BoxShadow(color: Colors.red.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 2))],
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.red.withOpacity(0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.block, color: Colors.white, size: 12),
+                                  const Icon(
+                                    Icons.block,
+                                    color: Colors.white,
+                                    size: 12,
+                                  ),
                                   const SizedBox(width: 4),
-                                  Text(S.of(navigatorKey.currentContext!).block, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                                  Text(
+                                    S.of(navigatorKey.currentContext!).block,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -178,7 +259,12 @@ class MatingChatListTile extends StatelessWidget {
         height: 60,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: LinearGradient(colors: [ColorManager.primaryColor.withOpacity(0.2), ColorManager.primaryColor.withOpacity(0.1)]),
+          gradient: LinearGradient(
+            colors: [
+              ColorManager.primaryColor.withOpacity(0.2),
+              ColorManager.primaryColor.withOpacity(0.1),
+            ],
+          ),
         ),
         child: Icon(Icons.pets, color: ColorManager.primaryColor, size: 28),
       );
@@ -192,30 +278,52 @@ class MatingChatListTile extends StatelessWidget {
       height: 60,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: LinearGradient(colors: [ColorManager.primaryColor.withOpacity(0.3), ColorManager.primaryColor.withOpacity(0.1)]),
-        border: Border.all(color: ColorManager.primaryColor.withOpacity(0.3), width: 2),
+        gradient: LinearGradient(
+          colors: [
+            ColorManager.primaryColor.withOpacity(0.3),
+            ColorManager.primaryColor.withOpacity(0.1),
+          ],
+        ),
+        border: Border.all(
+          color: ColorManager.primaryColor.withOpacity(0.3),
+          width: 2,
+        ),
       ),
       child: ClipOval(
         child: Image.network(
           fullUrl,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(colors: [ColorManager.primaryColor.withOpacity(0.2), ColorManager.primaryColor.withOpacity(0.1)]),
-            ),
-            child: Icon(Icons.pets, color: ColorManager.primaryColor, size: 28),
-          ),
+          errorBuilder:
+              (context, error, stackTrace) => Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [
+                      ColorManager.primaryColor.withOpacity(0.2),
+                      ColorManager.primaryColor.withOpacity(0.1),
+                    ],
+                  ),
+                ),
+                child: Icon(
+                  Icons.pets,
+                  color: ColorManager.primaryColor,
+                  size: 28,
+                ),
+              ),
         ),
       ),
     );
   }
 
   Widget _buildLastMessage(ChatEntity chat, ThemeData theme) {
-    if (chat.lastMessage == null || chat.lastMessage!.description.isEmpty) {
+    if (chat.lastMessage == null) {
       return Text(
         isArabic() ? 'لا رسائل بعد' : 'No messages yet',
-        style: TextStyle(fontSize: 14, color: theme.colorScheme.onSurface.withOpacity(0.5), fontStyle: FontStyle.italic),
+        style: TextStyle(
+          fontSize: 14,
+          color: theme.colorScheme.onSurface.withOpacity(0.5),
+          fontStyle: FontStyle.italic,
+        ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       );
@@ -237,22 +345,56 @@ class MatingChatListTile extends StatelessWidget {
       messageText = isArabic() ? 'صوت' : 'Audio';
     }
 
+    // If no media and no description, show "No messages yet"
+    if (mediaIcon == null && messageText.isEmpty) {
+      return Text(
+        isArabic() ? 'لا رسائل بعد' : 'No messages yet',
+        style: TextStyle(
+          fontSize: 14,
+          color: theme.colorScheme.onSurface.withOpacity(0.5),
+          fontStyle: FontStyle.italic,
+        ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      );
+    }
+
     return Row(
       children: [
         if (isFromMe)
           Padding(
             padding: const EdgeInsets.only(right: 4),
-            child: Icon(Icons.done_all, size: 16, color: message.isRead ? const Color(0xFF25D366) : Theme.of(navigatorKey.currentContext!).colorScheme.onSurface.withOpacity(0.5)),
+            child: Icon(
+              Icons.done_all,
+              size: 16,
+              color:
+                  message.isRead
+                      ? const Color(0xFF25D366)
+                      : Theme.of(
+                        navigatorKey.currentContext!,
+                      ).colorScheme.onSurface.withOpacity(0.5),
+            ),
           ),
         if (mediaIcon != null)
           Padding(
             padding: const EdgeInsets.only(right: 4),
-            child: Icon(mediaIcon, size: 16, color: theme.colorScheme.onSurface.withOpacity(0.7)),
+            child: Icon(
+              mediaIcon,
+              size: 16,
+              color: theme.colorScheme.onSurface.withOpacity(0.7),
+            ),
           ),
         Expanded(
           child: Text(
             messageText,
-            style: TextStyle(fontSize: 14, color: isFromMe ? theme.colorScheme.onSurface.withOpacity(0.6) : theme.colorScheme.onSurface.withOpacity(0.85), fontWeight: isFromMe ? FontWeight.normal : FontWeight.w500),
+            style: TextStyle(
+              fontSize: 14,
+              color:
+                  isFromMe
+                      ? theme.colorScheme.onSurface.withOpacity(0.6)
+                      : theme.colorScheme.onSurface.withOpacity(0.85),
+              fontWeight: isFromMe ? FontWeight.normal : FontWeight.w500,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -266,18 +408,43 @@ class MatingChatListTile extends StatelessWidget {
       final msg = chat.lastMessage;
       if (msg == null) return '';
 
+      final hasImage = msg.image != null && msg.image!.isNotEmpty;
+      final hasVideo = msg.video != null && msg.video!.isNotEmpty;
+      final hasAudio = msg.audio != null && msg.audio!.isNotEmpty;
+      final hasDescription = msg.description.isNotEmpty;
+
+      if (!hasImage && !hasVideo && !hasAudio && !hasDescription) return '';
+
       final dt = msg.createdAt.toLocal();
       final now = DateTime.now();
       final diff = now.difference(dt);
       final arabic = isArabic();
 
       if (diff.inSeconds < 60) return arabic ? 'الآن' : 'Just now';
-      if (diff.inMinutes < 60) return arabic ? 'منذ ${diff.inMinutes} دقيقة' : '${diff.inMinutes} minutes ago';
-      if (diff.inHours < 24) return arabic ? 'منذ ${diff.inHours} ساعة' : '${diff.inHours} hours ago';
-      if (diff.inDays == 1) return arabic ? 'أمس في ${DateFormat('h:mm a', 'ar').format(dt)}' : 'Yesterday at ${DateFormat('h:mm a').format(dt)}';
-      if (diff.inDays < 7) return arabic ? '${DateFormat('EEEE', 'ar').format(dt)} في ${DateFormat('h:mm a', 'ar').format(dt)}' : DateFormat("EEEE 'at' h:mm a").format(dt);
+      if (diff.inMinutes < 60) {
+        return arabic
+            ? 'منذ ${diff.inMinutes} دقيقة'
+            : '${diff.inMinutes} minutes ago';
+      }
+      if (diff.inHours < 24) {
+        return arabic
+            ? 'منذ ${diff.inHours} ساعة'
+            : '${diff.inHours} hours ago';
+      }
+      if (diff.inDays == 1) {
+        return arabic
+            ? 'أمس في ${DateFormat('h:mm a', 'ar').format(dt)}'
+            : 'Yesterday at ${DateFormat('h:mm a').format(dt)}';
+      }
+      if (diff.inDays < 7) {
+        return arabic
+            ? '${DateFormat('EEEE', 'ar').format(dt)} في ${DateFormat('h:mm a', 'ar').format(dt)}'
+            : DateFormat("EEEE 'at' h:mm a").format(dt);
+      }
 
-      return arabic ? '${DateFormat('MMM d', 'ar').format(dt)} في ${DateFormat('h:mm a', 'ar').format(dt)}' : DateFormat("MMM d 'at' h:mm a").format(dt);
+      return arabic
+          ? '${DateFormat('MMM d', 'ar').format(dt)} في ${DateFormat('h:mm a', 'ar').format(dt)}'
+          : DateFormat("MMM d 'at' h:mm a").format(dt);
     } catch (_) {
       return '';
     }

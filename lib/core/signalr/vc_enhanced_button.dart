@@ -113,7 +113,7 @@ class _VCEnhancedButtonState extends State<VCEnhancedButton>
     final now = DateTime.now();
     if (_lastPressed != null && 
         now.difference(_lastPressed!) < widget.debounceTime) {
-      return; // Debounce the press
+      return; 
     }
     
     _lastPressed = now;
@@ -219,8 +219,6 @@ class _VCEnhancedButtonState extends State<VCEnhancedButton>
         ),
       ),
     );
-
-    // Add semantic label if provided
     if (widget.semanticLabel != null) {
       button = Semantics(
         label: widget.semanticLabel,
@@ -230,7 +228,6 @@ class _VCEnhancedButtonState extends State<VCEnhancedButton>
       );
     }
 
-    // Add tooltip if provided
     if (widget.tooltip != null) {
       button = Tooltip(
         message: widget.tooltip!,
