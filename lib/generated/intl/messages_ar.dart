@@ -992,6 +992,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "uniqueCode": MessageLookupByLibrary.simpleMessage("الرمز الفريد"),
     "unknown": MessageLookupByLibrary.simpleMessage("غير معروف"),
+    "unlinkQrCode": MessageLookupByLibrary.simpleMessage("إلغاء ربط رمز QR"),
     "updateAppointment": MessageLookupByLibrary.simpleMessage("تحديث الموعد"),
     "updateNotification": MessageLookupByLibrary.simpleMessage("إشعار التحديث"),
     "updateNotificationDesc": MessageLookupByLibrary.simpleMessage(

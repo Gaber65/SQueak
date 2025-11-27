@@ -568,6 +568,7 @@
   "youCanLinkQrNow":"This pet is not linked to a QR code. You can link it now or learn more about how it works.",
   "learnHow":"Try Now",
   "linkQrCode":"Link QR",
+  "unlinkQrCode":"Unlink QR",
   "loadingProfile":"Loading Profile...",
   "loadingPetsChats": "Loading Pets Chats...",
   "loadingAppointments": "Loading Appointments...",

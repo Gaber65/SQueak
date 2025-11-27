@@ -1020,6 +1020,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "uniqueCode": MessageLookupByLibrary.simpleMessage("Unique Code"),
     "unknown": MessageLookupByLibrary.simpleMessage("Unknown"),
+    "unlinkQrCode": MessageLookupByLibrary.simpleMessage("Unlink QR"),
     "updateAppointment": MessageLookupByLibrary.simpleMessage(
       "Update Appointment",
     ),

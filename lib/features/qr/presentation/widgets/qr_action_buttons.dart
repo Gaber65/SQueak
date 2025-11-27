@@ -13,11 +13,12 @@ class QrActionButtons extends StatelessWidget {
   final PetEntities pet;
   final PetCubit petCubit;
   final QrCubit c;
+  final bool ? isLinked;
   const QrActionButtons({
     super.key,
     required this.pet,
     required this.petCubit,
-    required this.c,
+    required this.c, this.isLinked,
   });
 
   @override
@@ -27,9 +28,9 @@ class QrActionButtons extends StatelessWidget {
 
       },
       builder: (context, state) {
-        final isLinked = pet.qrCodeId != null;
+       final linked = isLinked ?? false;
 
-        if (isLinked) {
+        if (linked) {
           return Row(
             children: [
               Expanded(

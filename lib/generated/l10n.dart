@@ -4749,6 +4749,11 @@ class S {
     return Intl.message('Link QR', name: 'linkQrCode', desc: '', args: []);
   }
 
+  /// `Unlink QR`
+  String get unlinkQrCode {
+    return Intl.message('Unlink QR', name: 'unlinkQrCode', desc: '', args: []);
+  }
+
   /// `Loading Profile...`
   String get loadingProfile {
     return Intl.message(

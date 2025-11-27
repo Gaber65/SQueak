@@ -947,7 +947,6 @@ class _PetScreenContentState extends State<PetScreenContent> {
             tween: Tween(begin: 0.0, end: 1.0),
             curve: Curves.easeOutBack,
             builder: (context, value, child) {
-              // Clamp the value to ensure it's between 0.0 and 1.0
               final clampedValue = value.clamp(0.0, 1.0);
               return Transform.translate(
                 offset: Offset(0, 20 * (1 - clampedValue)),

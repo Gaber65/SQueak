@@ -3,14 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/supplier/get_supplier.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../../qr/presentation/controller/qr_cubit.dart';
 import '../../../../../qr/presentation/widgets/qr_action_buttons.dart';
 import '../../../../../qr/presentation/widgets/qr_status_indicator.dart';
-import '../../../../../qr/presentation/widgets/qr_link_dialog.dart';
 import '../../../../domain/entities/pet_entity.dart';
 import '../../../controller/pet_cubit.dart';
 import '../../edit_pet_screen.dart';
+import 'qr_linked_dialog.dart';
+import 'qr_not_linked_dialog.dart';
 
 class PetCard extends StatefulWidget {
   final PetEntities pet;
@@ -38,220 +38,19 @@ class _PetCardState extends State<PetCard> {
   void _handleQrIconTap(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isLinked = widget.pet.qrCode?.isNotEmpty == true;
-    if (isLinked) {
-      showDialog(
-        context: context,
-        builder:
-            (dialogContext) => Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Colors.green.shade50, Colors.white],
+
+    showDialog(
+      context: context,
+      builder:
+          (ctx) =>
+              isLinked
+                  ? QrLinkedDialog(pet: widget.pet, qrCubit: widget.qrCubit)
+                  : QrNotLinkedDialog(
+                    pet: widget.pet,
+                    qrCubit: widget.qrCubit,
+                    isDark: isDark,
                   ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.check_circle_rounded,
-                        color: Colors.green,
-                        size: 60,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      S.of(context).qrCodeStatus,
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green.shade700,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      S.of(context).linkedToQr,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pop(dialogContext),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: Text(
-                          S.of(context).ok,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-      );
-    } else {
-      showDialog(
-        context: context,
-        builder:
-            (dialogContext) => Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      isDark ? Colors.grey.shade900 : Colors.orange.shade50,
-                      isDark ? Colors.grey.shade800 : Colors.white,
-                    ],
-                  ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.qr_code_2_rounded,
-                        color: Colors.orange,
-                        size: 60,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      S.of(context).qrNotLinked,
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.orange.shade700,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      S.of(context).youCanLinkQrNow,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color:
-                            isDark
-                                ? Colors.grey.shade400
-                                : Colors.grey.shade600,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () async {
-                              Navigator.pop(dialogContext);
-                              final url = Uri.parse(
-                                'https://veticareapp.com/qr/',
-                              );
-                              if (await canLaunchUrl(url)) {
-                                await launchUrl(
-                                  url,
-                                  mode: LaunchMode.externalApplication,
-                                );
-                              }
-                            },
-                            icon: Icon(Icons.info_outline, size: 18),
-                            label: Text(
-                              S.of(context).learnHow,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: ColorManager.primaryColor,
-                              side: BorderSide(
-                                color: ColorManager.primaryColor,
-                                width: 1.5,
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.pop(dialogContext);
-                              showDialog(
-                                context: context,
-                                builder:
-                                    (ctx) => QrLinkDialog(
-                                      pet: widget.pet,
-                                      cubit: widget.qrCubit,
-                                      isDarkMode: isDark,
-                                    ),
-                              );
-                            },
-                            icon: Icon(Icons.link, size: 18),
-                            label: Text(
-                              S.of(context).linkQrCode,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorManager.primaryColor,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-      );
-    }
+    );
   }
 
   @override
@@ -815,7 +614,7 @@ class _PetCardState extends State<PetCard> {
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     color:
-                                       isDark
+                                        isDark
                                             ? Colors.grey[850]
                                             : Colors.white,
                                     borderRadius: BorderRadius.circular(16),
@@ -831,6 +630,7 @@ class _PetCardState extends State<PetCard> {
                                     pet: widget.pet,
                                     petCubit: widget.cubit,
                                     c: widget.qrCubit,
+                                    isLinked: widget.pet.qrCode?.isNotEmpty,
                                   ),
                                 ),
                               ),

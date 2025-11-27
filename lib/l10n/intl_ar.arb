@@ -558,6 +558,7 @@
   "youCanLinkQrNow":"أليفك غير مرتبط برمز QR. يمكنك ربطه الآن أو معرفة المزيد عن كيفية العمل.",
   "learnHow":"جرب الآن",
   "linkQrCode":"ربط رمز QR",
+  "unlinkQrCode":"إلغاء ربط رمز QR",
   "loadingProfile":"جاري تحميل الملف الشخصي...",
   "loadingPetsChats":"جاري تحميل دردشات الصغار الأليفة...",
   "loadingAppointments":"جاري تحميل المواعيد...",
