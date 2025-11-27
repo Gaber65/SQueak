@@ -68,7 +68,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     String? audio,
   }) async {
     debugPrint('📨 ChatCubit: sendMessage called - Text: "$text", Image: $image, Video: $video, Audio: $audio');
-    emit(MessageSending());
+    // Don't emit MessageSending to avoid blocking the UI
     
     bool signalRSuccess = false;
     try {

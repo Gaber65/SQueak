@@ -42,9 +42,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   bool _isBlockedByMe = false;
   bool _isBlockedByOther = false;
 
-  bool _isUploadingMedia = false;
-  File? _uploadingFile;
-  AttachmentType? _uploadingType;
+  // Track uploading files to show in chat
+  final List<_UploadingMedia> _uploadingFiles = [];
 
   // Recording variables
   final AudioRecorder _audioRecorder = AudioRecorder();
@@ -108,7 +107,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           final cubit = ChatMessagesCubit.get(context);
 
           if (state is MessageSent) {
-            _messageController.clear();
             final lastIndex = cubit.messagesList.length - 1;
             if (lastIndex >= 0) {
               try {
@@ -209,9 +207,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                       _buildMessageInput(cubit, context, theme, s),
                   ],
                 ),
-                // WhatsApp-style upload loading overlay
-                if (_isUploadingMedia && _uploadingFile != null)
-                  _buildUploadingOverlay(isDark),
                 // Recording overlay
                 if (_isRecording)
                   _buildRecordingOverlay(isDark),
@@ -382,7 +377,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     ThemeData theme,
     bool isDark,
   ) {
-    if (messages.isEmpty) return _buildEmptyState(theme, isDark, S.of(context));
+    if (messages.isEmpty && _uploadingFiles.isEmpty) return _buildEmptyState(theme, isDark, S.of(context));
+
+    final totalItems = messages.length + _uploadingFiles.length;
 
     return Stack(
       children: [
@@ -398,24 +395,29 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           itemScrollController: _itemScrollController,
           itemPositionsListener: _itemPositionsListener,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          itemCount: messages.length,
+          itemCount: totalItems,
           itemBuilder: (_, index) {
-            final message = messages[index];
-            final showDateDivider =
-                index == 0 ||
-                !_isSameDay(messages[index - 1].createdAt, message.createdAt);
+            if (index < messages.length) {
+              final message = messages[index];
+              final showDateDivider =
+                  index == 0 ||
+                  !_isSameDay(messages[index - 1].createdAt, message.createdAt);
 
-            return Column(
-              children: [
-                if (showDateDivider)
-                  _buildDateDivider(message.createdAt, theme, isDark),
-                ChatMessageBubble(
-                  message: message,
-                  isMe: !message.toMe,
-                  conversationId: widget.chat.id,
-                ),
-              ],
-            );
+              return Column(
+                children: [
+                  if (showDateDivider)
+                    _buildDateDivider(message.createdAt, theme, isDark),
+                  ChatMessageBubble(
+                    message: message,
+                    isMe: !message.toMe,
+                    conversationId: widget.chat.id,
+                  ),
+                ],
+              );
+            } else {
+              final uploadIndex = index - messages.length;
+              return _buildUploadingBubble(_uploadingFiles[uploadIndex], theme, isDark);
+            }
           },
         ),
       ],
@@ -656,56 +658,37 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 ),
               ),
               const SizedBox(width: 8),
-              BlocBuilder<ChatMessagesCubit, ChatMessagesState>(
-                builder: (_, state) {
-                  final isSending = state is MessageSending;
-                  final showMic = !_hasText && !isSending;
-                  
-                  return GestureDetector(
-                    onTap: showMic ? null : (isSending ? null : () => _sendMessage(cubit)),
-                    onLongPressStart: showMic ? (_) => _startRecording(cubit) : null,
-                    onLongPressEnd: showMic ? (_) => _stopRecording(cubit) : null,
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            theme.colorScheme.primary,
-                            theme.colorScheme.primary.withOpacity(0.8),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.colorScheme.primary.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child:
-                            isSending
-                                ? SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                                : Icon(
-                                  showMic ? Icons.mic : Icons.send_rounded,
-                                  color: Colors.white,
-                                  size: 22,
-                                ),
-                      ),
+              GestureDetector(
+                onTap: _hasText ? () => _sendMessage(cubit) : null,
+                onLongPressStart: !_hasText ? (_) => _startRecording(cubit) : null,
+                onLongPressEnd: !_hasText ? (_) => _stopRecording(cubit) : null,
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        theme.colorScheme.primary,
+                        theme.colorScheme.primary.withOpacity(0.8),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                  );
-                },
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: theme.colorScheme.primary.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    _hasText ? Icons.send_rounded : Icons.mic,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                ),
               ),
             ],
           ),
@@ -748,116 +731,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     );
   }
 
-  Widget _buildUploadingOverlay(bool isDark) {
-    return Positioned.fill(
-      child: Container(
-        color: Colors.black.withOpacity(0.85),
-        child: Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 300),
-            margin: const EdgeInsets.all(40),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (_uploadingType == AttachmentType.image ||
-                    _uploadingType == AttachmentType.video)
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(20),
-                    ),
-                    child: Stack(
-                      children: [
-                        Image.file(
-                          _uploadingFile!,
-                          width: double.infinity,
-                          height: 300,
-                          fit: BoxFit.cover,
-                        ),
-                        Positioned.fill(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.black.withOpacity(0.3),
-                                  Colors.transparent,
-                                  Colors.black.withOpacity(0.5),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
 
-                if (_uploadingType == AttachmentType.audio)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 24),
-                    child: Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFFF9800), Color(0xFFFF6F00)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFFFF9800).withOpacity(0.4),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.audiotrack_rounded,
-                        size: 48,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const CircularProgressIndicator(
-                        strokeWidth: 3,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Color(0xFF6200EA),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        _uploadingType == AttachmentType.image
-                            ? 'Uploading image...'
-                            : _uploadingType == AttachmentType.video
-                            ? 'Uploading video...'
-                            : 'Uploading audio...',
-                        style: TextStyle(
-                          color: isDark ? Colors.white : Colors.black87,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   void _handleAttachment(
     File file,
@@ -866,48 +740,36 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     MainCubit mainCubit, {
     String? caption,
   }) async {
-    debugPrint(
-      '📎 ChatScreen: Starting attachment upload - Type: $type, Caption: "${caption ?? '(no caption)'}"',
-    );
-
+    final uploadId = DateTime.now().millisecondsSinceEpoch.toString();
+    
     setState(() {
-      _isUploadingMedia = true;
-      _uploadingFile = file;
-      _uploadingType = type;
+      _uploadingFiles.add(_UploadingMedia(
+        id: uploadId,
+        file: file,
+        type: type,
+        caption: caption ?? '',
+      ));
     });
 
     try {
       String? mediaUrl;
 
       if (type == AttachmentType.image) {
-        debugPrint('⬆️  ChatScreen: Uploading image to server...');
         await mainCubit.getGlobalImage(file, UploadPlace.messageImage);
         mediaUrl = mainCubit.modelImage?.data;
-        debugPrint(
-          '✅ ChatScreen: Image uploaded - modelImage: ${mainCubit.modelImage}, URL: $mediaUrl',
-        );
       } else if (type == AttachmentType.video) {
-        debugPrint('⬆️  ChatScreen: Uploading video to server...');
         await mainCubit.getGlobalVideo(file, UploadPlace.messageVideo);
-        final videoData = mainCubit.modelImage?.data;
-
-        mediaUrl = videoData;
-        debugPrint('✅ ChatScreen: Video uploaded - filename: $mediaUrl');
+        mediaUrl = mainCubit.modelImage?.data;
       } else if (type == AttachmentType.audio) {
-        debugPrint('⬆️  ChatScreen: Uploading audio to server...');
         await mainCubit.getGlobalSound(file, UploadPlace.messageRecord);
-        final audioData = mainCubit.modelImage?.data;
-
-        mediaUrl = audioData;
-        debugPrint('✅ ChatScreen: Audio uploaded - filename: $mediaUrl');
+        mediaUrl = mainCubit.modelImage?.data;
       }
 
-      if (mediaUrl != null && mediaUrl.isNotEmpty) {
-        final text = caption ?? '';
-        debugPrint(
-          '💬 ChatScreen: Preparing to send message with media URL and caption',
-        );
+      setState(() {
+        _uploadingFiles.removeWhere((item) => item.id == uploadId);
+      });
 
+      if (mediaUrl != null && mediaUrl.isNotEmpty) {
         final fromPetId = widget.chat.id.isEmpty ? widget.chat.matingId : null;
         final toPetId = widget.chat.id.isEmpty ? widget.chat.petId : null;
         final currentUserId = CacheHelper.getData('clintId') ?? '';
@@ -927,12 +789,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           toUserId = widget.chat.petId;
         }
 
-        debugPrint(
-          '📤 ChatScreen: Sending message - Type: $type, Media URL: $mediaUrl, Caption: "$text"',
-        );
         cubit.sendMessage(
           chatId: widget.chat.id,
-          text: text,
+          text: caption ?? '',
           isMe: true,
           fromPetId: fromPetId,
           toPetId: toPetId,
@@ -942,31 +801,14 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           video: type == AttachmentType.video ? mediaUrl : null,
           audio: type == AttachmentType.audio ? mediaUrl : null,
         );
-        debugPrint(
-          '✅ ChatScreen: Message sent successfully with media attachment',
-        );
       } else {
-        debugPrint(
-          '❌ ChatScreen: Media URL is null or empty, cannot send message',
-        );
-        if (mounted) {
-          errorToast(context, 'Failed to upload media. Please try again.');
-        }
+        if (mounted) errorToast(context, 'Upload failed');
       }
-    } catch (e, stackTrace) {
-      debugPrint('❌ ChatScreen: Error uploading attachment: $e');
-      debugPrint('Stack trace: $stackTrace');
-      if (mounted) {
-        errorToast(context, 'Failed to send attachment');
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isUploadingMedia = false;
-          _uploadingFile = null;
-          _uploadingType = null;
-        });
-      }
+    } catch (e) {
+      setState(() {
+        _uploadingFiles.removeWhere((item) => item.id == uploadId);
+      });
+      if (mounted) errorToast(context, 'Failed to send');
     }
   }
 
@@ -1129,6 +971,116 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       ),
     );
   }
+
+  Widget _buildUploadingBubble(_UploadingMedia upload, ThemeData theme, bool isDark) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Flexible(
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.7,
+              ),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    theme.colorScheme.primary.withOpacity(0.7),
+                    theme.colorScheme.primary.withOpacity(0.5),
+                  ],
+                ),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(4),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (upload.type == AttachmentType.image)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Stack(
+                        children: [
+                          Image.file(upload.file, width: 220, height: 160, fit: BoxFit.cover),
+                          Positioned.fill(
+                            child: Container(
+                              color: Colors.black38,
+                              child: Center(
+                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (upload.type == AttachmentType.video)
+                    Container(
+                      width: 220,
+                      height: 160,
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.videocam, color: Colors.white, size: 40),
+                          SizedBox(height: 8),
+                          CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+                          SizedBox(height: 8),
+                          Text('Uploading video...', style: TextStyle(color: Colors.white, fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                  if (upload.type == AttachmentType.audio)
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.mic, color: Colors.white, size: 24),
+                          SizedBox(width: 12),
+                          CircularProgressIndicator(color: Colors.white, strokeWidth: 2, strokeCap: StrokeCap.round),
+                          SizedBox(width: 12),
+                          Text('Uploading...', style: TextStyle(color: Colors.white)),
+                        ],
+                      ),
+                    ),
+                  if (upload.caption.isNotEmpty) ...[
+                    SizedBox(height: 8),
+                    Text(upload.caption, style: TextStyle(color: Colors.white)),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _UploadingMedia {
+  final String id;
+  final File file;
+  final AttachmentType type;
+  final String caption;
+
+  _UploadingMedia({
+    required this.id,
+    required this.file,
+    required this.type,
+    required this.caption,
+  });
 }
 
 class _ChatBackgroundPainter extends CustomPainter {

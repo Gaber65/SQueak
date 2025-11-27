@@ -453,6 +453,4 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
       primaryColor: theme.colorScheme.primary,
     );
   }
-
-  // Formatting moved to DateTimeFormatter
 }
