@@ -97,9 +97,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
   @override
   void dispose() {
-    // Disconnect from Conversation Hub when chat screen closes
     _disconnectFromConversationHub();
-    
     _messageController.dispose();
     _animationController.dispose();
     _recordTimer?.cancel();
@@ -137,7 +135,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   // Setup SignalR listener for typing status
   void _setupTypingListener() {
     _signalRService.onConversationMessageReceived(
-      'ReceiveTyping',
+      'FriendIsTyping',
       (arguments) {
         if (arguments != null && arguments.isNotEmpty && mounted) {
           final isTyping = arguments[0] as bool? ?? false;

@@ -240,7 +240,6 @@ class SignalRService {
       debugPrint('✅ Typing status sent successfully');
     } catch (e) {
       debugPrint('❌ Error sending typing status: $e');
-      // Don't rethrow - typing indicator is not critical
     }
   }
 
@@ -266,12 +265,11 @@ class SignalRService {
       debugPrint('✅ Typing indicator sent successfully');
     } catch (e) {
       debugPrint('❌ Error sending typing indicator: $e');
-      // Don't rethrow - typing indicator is not critical
     }
   }
 
   // Get unread message counts through General Hub
-  Future<Map<String, int>?> getUnreadMessageCounts(String petId) async {
+  Future<Map<String,int>?> getUnreadMessageCounts(String petId) async {
     try {
       if (!isGeneralHubConnected) {
         debugPrint('⚠️ General Hub not connected');
