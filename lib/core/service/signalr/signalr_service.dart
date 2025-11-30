@@ -1,434 +1,306 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:signalr_netcore/signalr_client.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 
+/// ===============================================================
+///  GLOBAL EVENT STREAM
+/// ===============================================================
+final StreamController<SignalEvent> signalEventStream =
+StreamController<SignalEvent>.broadcast();
+
+class SignalEvent {
+  final String hub;
+  final String method;
+  final List<Object?>? data;
+
+  SignalEvent(this.hub, this.method, this.data);
+
+  @override
+  String toString() => "[$hub] METHOD: $method → DATA: $data";
+}
+
+/// ===============================================================
+///  SIGNALR SERVICE
+/// ===============================================================
 class SignalRService {
-  // Hub URLs
+  // ---------------------------------------------------------------
+  // URLs
+  // ---------------------------------------------------------------
   static const String _conversationHubUrl =
       'https://squeakapi.veticareapp.com:8001/conversationhub';
   static const String _generalHubUrl =
       'https://squeakapi.veticareapp.com:8001/generalhub';
 
-  // Two separate hub connections
+  // Hub instances
   HubConnection? _conversationHub;
   HubConnection? _generalHub;
 
-  // Connection states
-  HubConnectionState get conversationHubState =>
-      _conversationHub?.state ?? HubConnectionState.Disconnected;
-
-  HubConnectionState get generalHubState =>
-      _generalHub?.state ?? HubConnectionState.Disconnected;
-
-  bool get isConversationHubConnected =>
-      conversationHubState == HubConnectionState.Connected;
-  bool get isGeneralHubConnected =>
-      generalHubState == HubConnectionState.Connected;
-
-  // Singleton pattern
+  // Singleton
   static final SignalRService _instance = SignalRService._internal();
   factory SignalRService() => _instance;
   SignalRService._internal();
 
-  // CONVERSATION HUB - For individual chat messages
-  // Connect when user opens a specific chat conversation
+  // ===============================================================
+  // CONNECTION STATUS
+  // ===============================================================
+  bool get isConversationHubConnected =>
+      _conversationHub?.state == HubConnectionState.Connected;
+
+  bool get isGeneralHubConnected =>
+      _generalHub?.state == HubConnectionState.Connected;
+
+  String? get conversationHubConnectionId => _conversationHub?.connectionId;
+  String? get generalHubConnectionId => _generalHub?.connectionId;
+
+  // ===============================================================
+  // CONNECT TO CONVERSATION HUB
+  // ===============================================================
   Future<void> connectToConversationHub() async {
     try {
-      debugPrint('📞 Starting Conversation Hub connection...');
       final token = CacheHelper.getData('token');
-      if (token == null || token.toString().isEmpty) {
-        debugPrint('❌ No token found - connection cancelled.');
+      if (token == null) {
+        debugPrint("❌ No token found for ConversationHub");
         return;
       }
 
-      // If already connected, skip
       if (_conversationHub != null && isConversationHubConnected) {
-        debugPrint('✅ Conversation Hub already connected');
+        debugPrint("✔️ ConversationHub already connected");
         return;
       }
 
-      // Disconnect if exists but not connected
-      if (_conversationHub != null && !isConversationHubConnected) {
-        debugPrint('🔄 Reconnecting Conversation Hub');
-        await disconnectFromConversationHub();
-      }
+      _conversationHub = HubConnectionBuilder()
+          .withUrl(
+        _conversationHubUrl,
+        options: HttpConnectionOptions(
+          accessTokenFactory: () async => token.toString(),
+          transport: HttpTransportType.WebSockets,
+        ),
+      )
+          .withAutomaticReconnect()
+          .build();
 
-      debugPrint('🔧 Creating Conversation Hub instance');
-      _conversationHub =
-          HubConnectionBuilder()
-              .withUrl(
-                _conversationHubUrl,
-                options: HttpConnectionOptions(
-                  accessTokenFactory: () async => token.toString(),
-                  requestTimeout: 30000,
-                  skipNegotiation: false,
-                  transport: HttpTransportType.WebSockets,
-                ),
-              )
-              .withAutomaticReconnect(
-                retryDelays: [0, 2000, 5000, 10000, 30000],
-              )
-              .build();
+      debugPrint("🚀 Connecting to ConversationHub…");
 
-      _registerConversationHubEvents();
+      _registerConversationEvents();
 
-      debugPrint('🚀 Connecting to Conversation Hub...');
       await _conversationHub!.start();
-      debugPrint('✅ Conversation Hub Connected!');
-      debugPrint('🆔 Connection ID: ${_conversationHub!.connectionId}');
+      debugPrint("✅ ConversationHub Connected");
+      debugPrint("🆔 ID: ${_conversationHub!.connectionId}");
     } catch (e) {
-      debugPrint('❌ Conversation Hub connection failed: $e');
-      rethrow;
+      debugPrint("❌ ConversationHub Error → $e");
     }
   }
 
-  // GENERAL HUB - For chat list updates and notifications
-  // Connect when user opens chat list screen
+  // ===============================================================
+  // CONNECT TO GENERAL HUB
+  // ===============================================================
   Future<void> connectToGeneralHub() async {
     try {
-      debugPrint('📋 Starting General Hub connection...');
       final token = CacheHelper.getData('token');
-      if (token == null || token.toString().isEmpty) {
-        debugPrint('❌ No token found - connection cancelled.');
+      if (token == null) {
+        debugPrint("❌ No token found for GeneralHub");
         return;
       }
 
-      // If already connected, skip
       if (_generalHub != null && isGeneralHubConnected) {
-        debugPrint('✅ General Hub already connected');
+        debugPrint("✔️ GeneralHub already connected");
         return;
       }
 
-      // Disconnect if exists but not connected
-      if (_generalHub != null && !isGeneralHubConnected) {
-        debugPrint('🔄 Reconnecting General Hub');
-        await disconnectFromGeneralHub();
-      }
+      _generalHub = HubConnectionBuilder()
+          .withUrl(
+        _generalHubUrl,
+        options: HttpConnectionOptions(
+          accessTokenFactory: () async => token.toString(),
+          transport: HttpTransportType.WebSockets,
+        ),
+      )
+          .withAutomaticReconnect()
+          .build();
 
-      debugPrint('🔧 Creating General Hub instance');
-      _generalHub =
-          HubConnectionBuilder()
-              .withUrl(
-                _generalHubUrl,
-                options: HttpConnectionOptions(
-                  accessTokenFactory: () async => token.toString(),
-                  requestTimeout: 30000,
-                  skipNegotiation: false,
-                  transport: HttpTransportType.WebSockets,
-                ),
-              )
-              .withAutomaticReconnect(
-                retryDelays: [0, 2000, 5000, 10000, 30000],
-              )
-              .build();
+      debugPrint("🚀 Connecting to GeneralHub…");
 
-      debugPrint('🚀 Connecting to General Hub...');
+      _registerGeneralEvents();
+
       await _generalHub!.start();
-      debugPrint('✅ General Hub Connected!');
-      _registerGeneralHubEvents();
-
-      _generalHub!.on('FriendIsTyping', (arguments) {
-        debugPrint('🔄 General Hub: FriendIsTyping...');
-        print(arguments![0]);
-      });
-
-      debugPrint('🆔 Connection ID: ${_generalHub!.connectionId}');
+      debugPrint("✅ GeneralHub Connected");
+      debugPrint("🆔 ID: ${_generalHub!.connectionId}");
     } catch (e) {
-      debugPrint('❌ General Hub connection failed: $e');
-      rethrow;
+      debugPrint("❌ GeneralHub Error → $e");
     }
   }
 
-  // Register events for Conversation Hub
-  void _registerConversationHubEvents() {
+  // ===============================================================
+  // REGISTER EVENTS
+  // ===============================================================
+  void _registerConversationEvents() {
     if (_conversationHub == null) return;
+    _registerEvents(_conversationHub!, "ConversationHub", [
+      "ReceiveMessageFromUser",
+      "NewMessage",
+      "SetTyping",
+    ]);
 
     _conversationHub!.onclose(({error}) {
-      debugPrint('🔴 Conversation Hub: Disconnected');
-      if (error != null) debugPrint('❌ Error: $error');
-    });
-
-    _conversationHub!.onreconnecting(({error}) {
-      debugPrint('🔄 Conversation Hub: Reconnecting...');
-      if (error != null) debugPrint('⚠️ Error: $error');
-    });
-
-    _conversationHub!.onreconnected(({connectionId}) {
-      debugPrint('✅ Conversation Hub: Reconnected!');
-      debugPrint('🆔 Connection ID: $connectionId');
+      debugPrint("🔴 ConversationHub Disconnected → $error");
     });
   }
 
-  // Register events for General Hub
-  void _registerGeneralHubEvents() {
+  void _registerGeneralEvents() {
     if (_generalHub == null) return;
+    _registerEvents(_generalHub!, "GeneralHub", [
+      "FriendIsTyping",
+      "ChatListUpdated",
+    ]);
 
     _generalHub!.onclose(({error}) {
-      debugPrint('🔴 General Hub: Disconnected');
-      if (error != null) debugPrint('❌ Error: $error');
-    });
-
-    _generalHub!.onreconnecting(({error}) {
-      debugPrint('🔄 General Hub: Reconnecting...');
-      if (error != null) debugPrint('⚠️ Error: $error');
-    });
-
-    _generalHub!.onreconnected(({connectionId}) {
-      debugPrint('✅ General Hub: Reconnected!');
-      debugPrint('🆔 Connection ID: $connectionId');
+      debugPrint("🔴 GeneralHub Disconnected → $error");
     });
   }
 
-  // Send message through Conversation Hub (used in chat screen)
-  Future<void> sendMessageToUser(Map<String, dynamic> command) async {
-    try {
-      debugPrint('📤 Sending message through Conversation Hub...');
-
-      // Ensure conversation hub is connected
-      if (!isConversationHubConnected) {
-        debugPrint('⚠️ Conversation Hub not connected, connecting...');
-        await connectToConversationHub();
-      }
-
-      debugPrint('📋 Message Info:');
-      debugPrint('   - conversationId: ${command['conversationId']}');
-      debugPrint('   - fromUserId: ${command['fromUserId']}');
-      debugPrint('   - toUserId: ${command['toUserId']}');
-
-      // Try different method names (server API might vary)
-      const methodNames = [
-        'SendMessageToUser',
-        'SenMessageToUser',
-        'SendMessage',
-        'sendMessage',
-      ];
-
-      bool success = false;
-      String? lastError;
-
-      for (final methodName in methodNames) {
-        try {
-          debugPrint('🔄 Trying method: $methodName');
-          await _conversationHub!.invoke(methodName, args: [command]);
-          debugPrint('✅ Message sent via: $methodName');
-          success = true;
-          break;
-        } catch (e) {
-          lastError = e.toString();
-          debugPrint('⚠️ Failed with $methodName: $e');
-          continue;
-        }
-      }
-
-      if (!success) {
-        debugPrint('❌ All send attempts failed. Last error: $lastError');
-        throw Exception('Failed to send message');
-      }
-    } catch (e) {
-      debugPrint('❌ Error sending message: $e');
-      rethrow;
+  void _registerEvents(HubConnection hub, String hubName, List<String> methods) {
+    for (var method in methods) {
+      hub.on(method, (arguments) {
+        debugPrint("📥 [$hubName] $method → $arguments");
+        signalEventStream.add(SignalEvent(hubName, method, arguments));
+      });
     }
   }
 
-  // Send typing status through Conversation Hub
+  // ===============================================================
+  // SEND MESSAGE
+  // ===============================================================
+  Future<void> sendMessage(Map<String, dynamic> command) async {
+    if (!isConversationHubConnected) await connectToConversationHub();
+
+    try {
+      await _conversationHub!.invoke("SendMessageToUser", args: [command]);
+      debugPrint("📤 Message Sent → $command");
+    } catch (e) {
+      debugPrint("❌ Error sending message: $e");
+    }
+  }
+
+  // ===============================================================
+  // TYPING INDICATOR (Conversation)
+  // ===============================================================
   Future<void> setTyping({
     required String conversationId,
     required String petId,
     required bool isTyping,
   }) async {
+    if (!isConversationHubConnected) return;
+
     try {
-      // Ensure conversation hub is connected
-      if (!isConversationHubConnected) {
-        debugPrint('⚠️ Conversation Hub not connected for typing indicator');
-        return;
-      }
-
-      debugPrint(
-        '⌨️ Sending typing status: $isTyping for conversation: $conversationId',
-      );
-
       await _conversationHub!.invoke(
-        'SetTyping',
+        "SetTyping",
         args: [conversationId, petId, isTyping],
       );
-
-      debugPrint('✅ Typing status sent successfully');
+      debugPrint("⌨️ SetTyping Sent → $conversationId | $petId | $isTyping");
     } catch (e) {
-      debugPrint('❌ Error sending typing status: $e');
-      // Don't rethrow - typing indicator is not critical
+      debugPrint("❌ Error SetTyping: $e");
     }
   }
 
-  // Send typing indicator through General Hub (for chat list)
+  // ===============================================================
+  // TYPING INDICATOR (General)
+  // ===============================================================
   Future<void> setTypingIndicator({
     required String toPetId,
     required bool isTyping,
   }) async {
+    if (!isGeneralHubConnected) return;
+
     try {
-      // Ensure general hub is connected
-      if (!isGeneralHubConnected) {
-        debugPrint('⚠️ General Hub not connected for typing indicator');
-        return;
-      }
-
-      debugPrint('⌨️ Sending typing indicator: $isTyping to pet: $toPetId');
-
-      await _generalHub!.invoke(
-        'SetTypingIndicator',
-        args: [toPetId, isTyping],
-      );
-
-      debugPrint('✅ Typing indicator sent successfully');
+      await _generalHub!.invoke("SetTypingIndicator", args: [toPetId, isTyping]);
+      debugPrint("📡 TypingIndicator Sent → $toPetId | $isTyping");
     } catch (e) {
-      debugPrint('❌ Error sending typing indicator: $e');
-      // Don't rethrow - typing indicator is not critical
+      debugPrint("❌ Error TypingIndicator: $e");
     }
   }
 
-  // Get unread message counts through General Hub
-  Future<Map<String, int>?> getUnreadMessageCounts(String petId) async {
-    try {
-      if (!isGeneralHubConnected) {
-        debugPrint('⚠️ General Hub not connected');
-        return null;
-      }
-
-      final result = await _generalHub!.invoke(
-        'GetUnreadMessageCounts',
-        args: [petId],
-      );
-
-      if (result is Map) {
-        return Map<String, int>.from(
-          result.map((key, value) => MapEntry(key.toString(), value as int)),
-        );
-      }
-
-      return null;
-    } catch (e) {
-      debugPrint('❌ Error getting unread counts: $e');
-      return null;
+  // ===============================================================
+  // onConversationMessageReceived
+  // ===============================================================
+  void onConversationMessageReceived(
+      String methodName,
+      Function(List<Object?>?) callback,
+      ) {
+    if (_conversationHub == null) {
+      debugPrint("❌ ConversationHub is null");
+      return;
     }
+
+    _conversationHub!.on(methodName, (arguments) {
+      debugPrint("📨 ConversationHub → $methodName : $arguments");
+      callback(arguments);
+    });
   }
 
-  // Mark all messages as read in a conversation
+  // ===============================================================
+  // markMessagesAsRead
+  // ===============================================================
   Future<void> markMessagesAsRead(String conversationId, String petId) async {
+    if (!isConversationHubConnected) return;
+
     try {
-      if (!isConversationHubConnected) {
-        debugPrint('⚠️ Conversation Hub not connected');
-        return;
-      }
-
-      debugPrint('📖 Marking messages as read...');
-      debugPrint('   - conversationId: $conversationId');
-      debugPrint('   - petId: $petId');
-
       await _conversationHub!.invoke(
         'MarkAllUnreadedMessagesInConversationAsRead',
         args: [conversationId, petId],
       );
-
-      debugPrint('✅ Messages marked as read');
+      debugPrint("📖 Messages marked as read → $conversationId");
     } catch (e) {
-      debugPrint('❌ Error marking messages as read: $e');
+      debugPrint("❌ markMessagesAsRead Error: $e");
     }
   }
 
-  // Listen for messages on Conversation Hub (for individual chat messages)
-  void onConversationMessageReceived(
-    String methodName,
-    Function(List<Object?>?) callback,
-  ) {
-    if (_conversationHub == null) {
-      debugPrint('❌ Conversation Hub not initialized');
-      return;
-    }
+  // ===============================================================
+  // getUnreadMessageCounts
+  // ===============================================================
+  Future<Map<String, int>?> getUnreadMessageCounts(String petId) async {
+    if (!isGeneralHubConnected) return null;
 
-    debugPrint('👂 Listening on Conversation Hub: $methodName');
-    _conversationHub!.on(methodName, (arguments) {
-      debugPrint('📨 Conversation Hub: Message received!');
-      debugPrint('📦 Data: $arguments');
-      callback(arguments);
-    });
+    try {
+      final result = await _generalHub!.invoke('GetUnreadMessageCounts', args: [petId]);
+      if (result is Map) {
+        return result.map((key, value) => MapEntry(key.toString(), value as int));
+      }
+    } catch (e) {
+      debugPrint("❌ getUnreadMessageCounts Error: $e");
+    }
+    return null;
   }
 
-  // Listen for updates on General Hub (for chat list updates)
-  void onGeneralMessageReceived(
-    String methodName,
-    Function(List<Object?>?) callback,
-  ) {
-    if (_generalHub == null) {
-      debugPrint('❌ General Hub not initialized');
-      return;
-    }
-
-    debugPrint('👂 Listening on General Hub: $methodName');
-    _generalHub!.on(methodName, (arguments) {
-      debugPrint('📨 General Hub: Update received!');
-      debugPrint('📦 Data: $arguments');
-      callback(arguments);
-    });
-  }
-
-  // Disconnect from Conversation Hub (when leaving a chat)
+  // ===============================================================
+  // DISCONNECT METHODS
+  // ===============================================================
   Future<void> disconnectFromConversationHub() async {
-    try {
-      if (_conversationHub == null) {
-        debugPrint('⚠️ Conversation Hub already disconnected');
-        return;
-      }
+    if (_conversationHub == null) return;
 
-      debugPrint('🔴 Disconnecting Conversation Hub...');
+    try {
       await _conversationHub!.stop();
-      _conversationHub = null;
-      debugPrint('✅ Conversation Hub disconnected');
+      debugPrint("🔴 ConversationHub Disconnected");
     } catch (e) {
-      debugPrint('❌ Error disconnecting Conversation Hub: $e');
-      _conversationHub = null;
+      debugPrint("❌ disconnectFromConversationHub Error: $e");
     }
+    _conversationHub = null;
   }
 
-  // Disconnect from General Hub (when leaving chat list screen)
   Future<void> disconnectFromGeneralHub() async {
+    if (_generalHub == null) return;
+
     try {
-      if (_generalHub == null) {
-        debugPrint('⚠️ General Hub already disconnected');
-        return;
-      }
-
-      debugPrint('🔴 Disconnecting General Hub...');
       await _generalHub!.stop();
-      _generalHub = null;
-      debugPrint('✅ General Hub disconnected');
+      debugPrint("🔴 GeneralHub Disconnected");
     } catch (e) {
-      debugPrint('❌ Error disconnecting General Hub: $e');
-      _generalHub = null;
+      debugPrint("❌ disconnectFromGeneralHub Error: $e");
     }
+    _generalHub = null;
   }
 
-  // Disconnect from both hubs (for complete cleanup)
   Future<void> disconnectAll() async {
-    await Future.wait([
-      disconnectFromConversationHub(),
-      disconnectFromGeneralHub(),
-    ]);
-    debugPrint('✅ All hubs disconnected');
-  }
-
-  // Get connection IDs
-  String? get conversationHubConnectionId => _conversationHub?.connectionId;
-  String? get generalHubConnectionId => _generalHub?.connectionId;
-
-  // Check connection status for both hubs
-  void checkConnection() {
-    debugPrint('📊 SignalR Connection Status:');
-    debugPrint('--- Conversation Hub (for chat messages) ---');
-    debugPrint('   - Connected: $isConversationHubConnected');
-    debugPrint('   - State: ${conversationHubState.toString()}');
-    debugPrint('   - Connection ID: ${conversationHubConnectionId ?? 'N/A'}');
-    debugPrint('--- General Hub (for chat list) ---');
-    debugPrint('   - Connected: $isGeneralHubConnected');
-    debugPrint('   - State: ${generalHubState.toString()}');
-    debugPrint('   - Connection ID: ${generalHubConnectionId ?? 'N/A'}');
+    await disconnectFromConversationHub();
+    await disconnectFromGeneralHub();
   }
 }

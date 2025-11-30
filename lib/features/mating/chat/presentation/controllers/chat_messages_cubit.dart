@@ -128,7 +128,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       );
 
       // Send message via SignalR Conversation Hub
-      await signalRService.sendMessageToUser(command);
+      await signalRService.sendMessage(command);
       debugPrint('✅ Message sent successfully via SignalR');
 
       // Reload messages to show the sent message immediately
