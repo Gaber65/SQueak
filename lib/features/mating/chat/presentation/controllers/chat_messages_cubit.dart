@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/core/service/signalr/signalr_service.dart';
-import 'package:squeak/features/friendship/domain/entities/send_friend_message_parameters.dart';
 import 'package:squeak/features/mating/chat/data/models/message_model.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/delete_message_use_case.dart';
 import '../../domain/entities/message_entity.dart';
@@ -55,6 +54,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     );
   }
 
+  // Send message only via SignalR (Conversation Hub)
   Future<void> sendMessage({
     required String chatId,
     required String text,
@@ -67,15 +67,20 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     String? video,
     String? audio,
   }) async {
-    debugPrint('📨 ChatCubit: sendMessage called - Text: "$text", Image: $image, Video: $video, Audio: $audio');
-    
-    bool signalRSuccess = false;
+    debugPrint(
+      '📨 ChatCubit: sendMessage called - Text: "$text", Image: $image, Video: $video, Audio: $audio',
+    );
+
     try {
       final signalRService = SignalRService();
+
       // Ensure Conversation Hub is connected before sending
       if (!signalRService.isConversationHubConnected) {
+        debugPrint('🔌 Connecting to Conversation Hub...');
         await signalRService.connectToConversationHub();
       }
+
+      // Create message model
       final messageModel = MessageModel(
         id: '',
         description: text,
@@ -89,92 +94,95 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
         audio: audio,
       );
 
+      // Prepare SignalR command
       final command = messageModel.toSignalRCommand(
         conversationId: chatId.isEmpty ? null : chatId,
         fromPetId: fromPetId,
         toPetId: toPetId,
       );
 
+      // Send message via SignalR Conversation Hub
       await signalRService.sendMessageToUser(command);
       debugPrint('✅ Message sent successfully via SignalR');
-      
-      signalRSuccess = true;
       
       // Reload messages to show the sent message immediately
       if (chatId.isNotEmpty) {
         await loadMessages(chatId);
       }
+
+      // Note: No need to manually add message to list or emit MessageSent
+      // The loadMessages() call above will fetch all messages including the new one
+      // This prevents the type mismatch error (MessageEntity vs MessageModel)
       
-      return; // Exit early on success
     } catch (signalRError) {
       debugPrint('❌ Failed to send message via SignalR: $signalRError');
-      debugPrint('🔄 Falling back to REST API...');
+      emit(MessageSendError(signalRError.toString()));
     }
 
-    // Fallback to REST API if SignalR failed
-    if (!signalRSuccess) {
-      if (fromPetId != null && toPetId != null) {
-      final friendMessageUseCase = sl<SendFriendMessageUseCase>();
-
-      final result = await friendMessageUseCase(
-        SendFriendPetMessageParameters(
-          description: text,
-          conversationId: chatId.isEmpty ? null : chatId,
-          fromPetId: fromPetId,
-          toPetId: toPetId,
-          isRead: true,
-          image: image,
-          video: video,
-          audio: audio,
-        ),
-      );
-
-      result.fold(
-        (failure) {
-          emit(MessageSendError(failure.toString()));
-        },
-        (response) {
-          final message = MessageEntity(
-            id: text,
-            description: text,
-            isRead: true,
-            fromUserId: fromPetId,
-            toUserId: toPetId,
-            createdAt: DateTime.now(),
-            toMe: false,
-            image: image,
-            video: video,
-            audio: audio,
-          );
-
-          messagesList.add(message);
-          emit(MessageSent(message));
-        },
-      );
-      } else {
-        final result = await sendMessageUseCase(
-          SendMessageParameters(
-            description: text,
-            conversationId: chatId.isEmpty ? null : chatId,
-            fromPetId: fromPetId,
-            toPetId: toPetId,
-            isRead: true,
-            image: image,
-            video: video,
-            audio: audio,
-          ),
-        );
-        result.fold(
-          (failure) {
-            emit(MessageSendError(failure.toString()));
-          },
-          (message) {
-            messagesList.add(message);
-            emit(MessageSent(message));
-          },
-        );
-      }
-    }
+    // REST API Fallback (commented out - only use SignalR)
+    // if (!signalRSuccess) {
+    //   if (fromPetId != null && toPetId != null) {
+    //     final friendMessageUseCase = sl<SendFriendMessageUseCase>();
+    //
+    //     final result = await friendMessageUseCase(
+    //       SendFriendPetMessageParameters(
+    //         description: text,
+    //         conversationId: chatId.isEmpty ? null : chatId,
+    //         fromPetId: fromPetId,
+    //         toPetId: toPetId,
+    //         isRead: true,
+    //         image: image,
+    //         video: video,
+    //         audio: audio,
+    //       ),
+    //     );
+    //
+    //     result.fold(
+    //       (failure) {
+    //         emit(MessageSendError(failure.toString()));
+    //       },
+    //       (response) {
+    //         final message = MessageEntity(
+    //           id: text,
+    //           description: text,
+    //           isRead: true,
+    //           fromUserId: fromPetId,
+    //           toUserId: toPetId,
+    //           createdAt: DateTime.now(),
+    //           toMe: false,
+    //           image: image,
+    //           video: video,
+    //           audio: audio,
+    //         );
+    //
+    //         messagesList.add(message);
+    //         emit(MessageSent(message));
+    //       },
+    //     );
+    //   } else {
+    //     final result = await sendMessageUseCase(
+    //       SendMessageParameters(
+    //         description: text,
+    //         conversationId: chatId.isEmpty ? null : chatId,
+    //         fromPetId: fromPetId,
+    //         toPetId: toPetId,
+    //         isRead: true,
+    //         image: image,
+    //         video: video,
+    //         audio: audio,
+    //       ),
+    //     );
+    //     result.fold(
+    //       (failure) {
+    //         emit(MessageSendError(failure.toString()));
+    //       },
+    //       (message) {
+    //         messagesList.add(message);
+    //         emit(MessageSent(message));
+    //       },
+    //     );
+    //   }
+    // }
   }
 
   Future<void> finishMating(FinishMatingParameters matingId) async {

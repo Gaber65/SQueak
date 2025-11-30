@@ -595,7 +595,11 @@
   "videoQuality":"Video Quality",
   "qualitySource":"Quality settings are determined by the video source.",
   "imageloadingFailed":"Failed to load image.",
-  "videoLoadingFailed":"Failed to load video."
+  "videoLoadingFailed":"Failed to load video.",
+  "editImage":"Edit Image",
+  "editVideo":"Edit Video",
+  "preview":"Preview",
+  "audioFile":"Audio File"
  
 
 

@@ -589,7 +589,13 @@
   "audioLoadingFailed":"فشل تحميل الصوت",
   "documentLoadingFailed":"فشل تحميل المستند",
   "locationLoadingFailed":"فشل تحميل الموقع",
-  "noInternetConnection":"لا يوجد اتصال بالإنترنت"
+  "noInternetConnection":"لا يوجد اتصال بالإنترنت",
+  "editImage":"تعديل الصورة",
+  "editVideo":"تعديل الفيديو",
+  "preview":"معاينة",
+  "audioFile":"ملف صوتي"
+
+
 
 
 

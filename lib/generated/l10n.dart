@@ -4983,6 +4983,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Edit Image`
+  String get editImage {
+    return Intl.message('Edit Image', name: 'editImage', desc: '', args: []);
+  }
+
+  /// `Edit Video`
+  String get editVideo {
+    return Intl.message('Edit Video', name: 'editVideo', desc: '', args: []);
+  }
+
+  /// `Preview`
+  String get preview {
+    return Intl.message('Preview', name: 'preview', desc: '', args: []);
+  }
+
+  /// `Audio File`
+  String get audioFile {
+    return Intl.message('Audio File', name: 'audioFile', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

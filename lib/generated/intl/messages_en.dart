@@ -174,6 +174,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Are you sure you want to unblock",
     ),
     "audio": MessageLookupByLibrary.simpleMessage("Audio"),
+    "audioFile": MessageLookupByLibrary.simpleMessage("Audio File"),
     "audioRecorderNotImplemented": MessageLookupByLibrary.simpleMessage(
       "Audio recorder not implemented yet",
     ),
@@ -386,10 +387,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editComment": MessageLookupByLibrary.simpleMessage("Edit Comment . . . ."),
     "editCommentPost": MessageLookupByLibrary.simpleMessage("Edit Comment"),
+    "editImage": MessageLookupByLibrary.simpleMessage("Edit Image"),
     "editPet": MessageLookupByLibrary.simpleMessage("Edit Pet"),
     "editReplyCommentPost": MessageLookupByLibrary.simpleMessage(
       "Edit Reply Comment",
     ),
+    "editVideo": MessageLookupByLibrary.simpleMessage("Edit Video"),
     "edit_profile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
     "email": MessageLookupByLibrary.simpleMessage("Email Address"),
     "emailCopied": MessageLookupByLibrary.simpleMessage(
@@ -829,6 +832,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "pregnant": MessageLookupByLibrary.simpleMessage("Pregnant"),
     "pregnant_desc": MessageLookupByLibrary.simpleMessage("Expecting babies"),
     "prescription": MessageLookupByLibrary.simpleMessage("Prescription"),
+    "preview": MessageLookupByLibrary.simpleMessage("Preview"),
     "previously_mated": MessageLookupByLibrary.simpleMessage(
       "Previously Mated",
     ),

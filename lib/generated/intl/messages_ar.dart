@@ -168,6 +168,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "هل أنت متأكد أنك تريد إلغاء حظر",
     ),
     "audio": MessageLookupByLibrary.simpleMessage("صوت"),
+    "audioFile": MessageLookupByLibrary.simpleMessage("ملف صوتي"),
     "audioRecorderNotImplemented": MessageLookupByLibrary.simpleMessage(
       "تسجيل الصوت غير متوفر بعد",
     ),
@@ -372,10 +373,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit": MessageLookupByLibrary.simpleMessage("تحرير"),
     "editComment": MessageLookupByLibrary.simpleMessage("تعديل التعليق ..."),
     "editCommentPost": MessageLookupByLibrary.simpleMessage("تعديل تعليق"),
+    "editImage": MessageLookupByLibrary.simpleMessage("تعديل الصورة"),
     "editPet": MessageLookupByLibrary.simpleMessage("تعديل صديقك الصغير"),
     "editReplyCommentPost": MessageLookupByLibrary.simpleMessage(
       "تعديل رد على تعليق",
     ),
+    "editVideo": MessageLookupByLibrary.simpleMessage("تعديل الفيديو"),
     "edit_profile": MessageLookupByLibrary.simpleMessage("تعديل الملف الشخصي"),
     "email": MessageLookupByLibrary.simpleMessage("عنوان البريد الإلكتروني"),
     "emailCopied": MessageLookupByLibrary.simpleMessage(
@@ -815,6 +818,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "pregnant": MessageLookupByLibrary.simpleMessage("حامل"),
     "pregnant_desc": MessageLookupByLibrary.simpleMessage("في انتظار الصغار"),
     "prescription": MessageLookupByLibrary.simpleMessage("الروشة"),
+    "preview": MessageLookupByLibrary.simpleMessage("معاينة"),
     "previously_mated": MessageLookupByLibrary.simpleMessage(
       "تم التزاوج سابقًا",
     ),

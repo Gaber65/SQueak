@@ -154,7 +154,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
       sourcePath: _currentMedia.path,
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Edit Image',
+          toolbarTitle: S.of(context).editImage,
           toolbarColor: const Color(0xFF6200EA),
           toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.original,
@@ -168,7 +168,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
           ],
         ),
         IOSUiSettings(
-          title: 'Edit Image',
+          title: S.of(context).editImage,
           aspectRatioPresets: [
             CropAspectRatioPreset.square,
             CropAspectRatioPreset.ratio3x2,
@@ -200,9 +200,12 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
       '📸 MediaPreview: Sending $mediaTypeName with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
     );
 
+    // Send the media
     widget.onSend(_currentMedia, caption);
-
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 
   void _handleBack() {
@@ -217,15 +220,16 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: const Color(0xFF1E1E1E),
         leading: IconButton(
           icon: Icon(
-            widget.cameraOption == true ? Icons.close : Icons.arrow_back,
+            widget.cameraOption == true ? Icons.close : Icons.arrow_back_ios_new,
             color: Colors.white,
           ),
           onPressed: _handleBack,
         ),
-        title: const Text('Preview', style: TextStyle(color: Colors.white)),
+        title:  Text(S.of(context).preview, style: TextStyle(color: Colors.white)),
         actions: [
           if (_isImage)
             IconButton(
@@ -317,8 +321,8 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                               ),
                             ),
                             const SizedBox(height: 24),
-                            const Text(
-                              'Audio File',
+                             Text(
+                              S.of(context).audioFile,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
@@ -459,7 +463,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                       enabled: !_isSending,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        hintText: 'Add a caption...',
+                        hintText: S.of(context).addCaption,
                         hintStyle: TextStyle(color: Colors.grey[400]),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
