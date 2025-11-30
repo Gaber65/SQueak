@@ -4,10 +4,10 @@ import 'package:signalr_netcore/signalr_client.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 
 /// ===============================================================
-///  GLOBAL EVENT STREAM
+/// GLOBAL EVENT STREAM
 /// ===============================================================
 final StreamController<SignalEvent> signalEventStream =
-StreamController<SignalEvent>.broadcast();
+    StreamController<SignalEvent>.broadcast();
 
 class SignalEvent {
   final String hub;
@@ -21,29 +21,21 @@ class SignalEvent {
 }
 
 /// ===============================================================
-///  SIGNALR SERVICE
+/// SIGNALR SERVICE
 /// ===============================================================
 class SignalRService {
-  // ---------------------------------------------------------------
-  // URLs
-  // ---------------------------------------------------------------
   static const String _conversationHubUrl =
       'https://squeakapi.veticareapp.com:8001/conversationhub';
   static const String _generalHubUrl =
       'https://squeakapi.veticareapp.com:8001/generalhub';
 
-  // Hub instances
   HubConnection? _conversationHub;
   HubConnection? _generalHub;
 
-  // Singleton
   static final SignalRService _instance = SignalRService._internal();
   factory SignalRService() => _instance;
   SignalRService._internal();
 
-  // ===============================================================
-  // CONNECTION STATUS
-  // ===============================================================
   bool get isConversationHubConnected =>
       _conversationHub?.state == HubConnectionState.Connected;
 
@@ -53,113 +45,72 @@ class SignalRService {
   String? get conversationHubConnectionId => _conversationHub?.connectionId;
   String? get generalHubConnectionId => _generalHub?.connectionId;
 
-  // ===============================================================
-  // CONNECT TO CONVERSATION HUB
-  // ===============================================================
+  /// ===============================================================
+  /// GENERIC CONNECT METHOD
+  /// ===============================================================
+  Future<HubConnection?> _connectHub(String hubUrl, String hubName) async {
+    final token = CacheHelper.getData('token');
+    if (token == null) {
+      debugPrint("❌ No token found for $hubName");
+      return null;
+    }
+
+    HubConnection? hub =
+        (hubName == "ConversationHub") ? _conversationHub : _generalHub;
+
+    if (hub != null && hub.state == HubConnectionState.Connected) {
+      debugPrint("✔️ $hubName already connected");
+      return hub;
+    }
+
+    hub =
+        HubConnectionBuilder()
+            .withUrl(
+              hubUrl,
+              options: HttpConnectionOptions(
+                accessTokenFactory: () async => token.toString(),
+                transport: HttpTransportType.WebSockets,
+              ),
+            )
+            .withAutomaticReconnect()
+            .build();
+
+    hub.onclose(({error}) {
+      debugPrint("🔴 $hubName Disconnected → $error");
+    });
+
+    try {
+      await hub.start();
+      debugPrint("✅ $hubName Connected");
+      debugPrint("🆔 ID: ${hub.connectionId}");
+      return hub;
+    } catch (e) {
+      debugPrint("❌ $hubName Error → $e");
+      return null;
+    }
+  }
+
   Future<void> connectToConversationHub() async {
-    try {
-      final token = CacheHelper.getData('token');
-      if (token == null) {
-        debugPrint("❌ No token found for ConversationHub");
-        return;
-      }
-
-      if (_conversationHub != null && isConversationHubConnected) {
-        debugPrint("✔️ ConversationHub already connected");
-        return;
-      }
-
-      _conversationHub = HubConnectionBuilder()
-          .withUrl(
-        _conversationHubUrl,
-        options: HttpConnectionOptions(
-          accessTokenFactory: () async => token.toString(),
-          transport: HttpTransportType.WebSockets,
-        ),
-      )
-          .withAutomaticReconnect()
-          .build();
-
-      debugPrint("🚀 Connecting to ConversationHub…");
-
-      _registerConversationEvents();
-
-      await _conversationHub!.start();
-      debugPrint("✅ ConversationHub Connected");
-      debugPrint("🆔 ID: ${_conversationHub!.connectionId}");
-    } catch (e) {
-      debugPrint("❌ ConversationHub Error → $e");
-    }
+    _conversationHub = await _connectHub(
+      _conversationHubUrl,
+      "ConversationHub",
+    );
+    _registerConversationEvents();
   }
 
-  // ===============================================================
-  // CONNECT TO GENERAL HUB
-  // ===============================================================
   Future<void> connectToGeneralHub() async {
-    try {
-      final token = CacheHelper.getData('token');
-      if (token == null) {
-        debugPrint("❌ No token found for GeneralHub");
-        return;
-      }
-
-      if (_generalHub != null && isGeneralHubConnected) {
-        debugPrint("✔️ GeneralHub already connected");
-        return;
-      }
-
-      _generalHub = HubConnectionBuilder()
-          .withUrl(
-        _generalHubUrl,
-        options: HttpConnectionOptions(
-          accessTokenFactory: () async => token.toString(),
-          transport: HttpTransportType.WebSockets,
-        ),
-      )
-          .withAutomaticReconnect()
-          .build();
-
-      debugPrint("🚀 Connecting to GeneralHub…");
-
-      _registerGeneralEvents();
-
-      await _generalHub!.start();
-      debugPrint("✅ GeneralHub Connected");
-      debugPrint("🆔 ID: ${_generalHub!.connectionId}");
-    } catch (e) {
-      debugPrint("❌ GeneralHub Error → $e");
-    }
+    _generalHub = await _connectHub(_generalHubUrl, "GeneralHub");
+    _registerGeneralEvents();
   }
 
-  // ===============================================================
-  // REGISTER EVENTS
-  // ===============================================================
-  void _registerConversationEvents() {
-    if (_conversationHub == null) return;
-    _registerEvents(_conversationHub!, "ConversationHub", [
-      "ReceiveMessageFromUser",
-      "NewMessage",
-      "SetTyping",
-    ]);
-
-    _conversationHub!.onclose(({error}) {
-      debugPrint("🔴 ConversationHub Disconnected → $error");
-    });
-  }
-
-  void _registerGeneralEvents() {
-    if (_generalHub == null) return;
-    _registerEvents(_generalHub!, "GeneralHub", [
-      "FriendIsTyping",
-      "ChatListUpdated",
-    ]);
-
-    _generalHub!.onclose(({error}) {
-      debugPrint("🔴 GeneralHub Disconnected → $error");
-    });
-  }
-
-  void _registerEvents(HubConnection hub, String hubName, List<String> methods) {
+  /// ===============================================================
+  /// GENERIC EVENT REGISTRATION
+  /// ===============================================================
+  void _registerEvents(
+    HubConnection hub,
+    String hubName,
+    List<String> methods,
+  ) {
     for (var method in methods) {
       hub.on(method, (arguments) {
         debugPrint("📥 [$hubName] $method → $arguments");
@@ -168,134 +119,156 @@ class SignalRService {
     }
   }
 
-  // ===============================================================
-  // SEND MESSAGE
-  // ===============================================================
-  Future<void> sendMessage(Map<String, dynamic> command) async {
-    if (!isConversationHubConnected) await connectToConversationHub();
+  void _registerConversationEvents() {
+    if (_conversationHub == null) return;
+    _registerEvents(_conversationHub!, "ConversationHub", [
+      "ReceiveMessageFromUser",
+      "NewMessage",
+      "SetTyping",
+    ]);
+  }
+
+  void _registerGeneralEvents() {
+    if (_generalHub == null) return;
+    _registerEvents(_generalHub!, "GeneralHub", [
+      "FriendIsTyping",
+      "ChatListUpdated",
+    ]);
+  }
+
+  /// ===============================================================
+  /// GENERIC INVOKE METHOD
+  /// ===============================================================
+  Future<T?> invokeHub<T>(
+    HubConnection hub,
+    String hubName,
+    String methodName, {
+    List<Object?>? args,
+  }) async {
+    if (hub.state != HubConnectionState.Connected) {
+      debugPrint("⚠️ $hubName is not connected, attempting to reconnect…");
+      await _connectHub(
+        hubName == "ConversationHub" ? _conversationHubUrl : _generalHubUrl,
+        hubName,
+      );
+    }
 
     try {
-      await _conversationHub!.invoke("SendMessageToUser", args: [command]);
-      debugPrint("📤 Message Sent → $command");
+      final result = await hub.invoke(methodName, args: args?.cast<Object>());
+      debugPrint("📤 [$hubName] $methodName → ${args ?? []}");
+      return result as T?;
     } catch (e) {
-      debugPrint("❌ Error sending message: $e");
+      debugPrint("❌ [$hubName] $methodName Error → $e");
+      return null;
     }
   }
 
-  // ===============================================================
-  // TYPING INDICATOR (Conversation)
-  // ===============================================================
+  /// ===============================================================
+  /// SEND MESSAGE
+  /// ===============================================================
+  Future<void> sendMessage(Map<String, dynamic> command) async {
+    if (!isConversationHubConnected) await connectToConversationHub();
+    if (_conversationHub != null) {
+      await invokeHub<void>(
+        _conversationHub!,
+        "ConversationHub",
+        "SendMessageToUser",
+        args: [command],
+      );
+    }
+  }
+
+  /// ===============================================================
+  /// TYPING INDICATORS
+  /// ===============================================================
   Future<void> setTyping({
     required String conversationId,
     required String petId,
     required bool isTyping,
   }) async {
-    if (!isConversationHubConnected) return;
-
-    try {
-      await _conversationHub!.invoke(
+    if (!isConversationHubConnected) await connectToConversationHub();
+    if (_conversationHub != null) {
+      await invokeHub<void>(
+        _conversationHub!,
+        "ConversationHub",
         "SetTyping",
         args: [conversationId, petId, isTyping],
       );
-      debugPrint("⌨️ SetTyping Sent → $conversationId | $petId | $isTyping");
-    } catch (e) {
-      debugPrint("❌ Error SetTyping: $e");
     }
   }
 
-  // ===============================================================
-  // TYPING INDICATOR (General)
-  // ===============================================================
   Future<void> setTypingIndicator({
     required String toPetId,
     required bool isTyping,
   }) async {
-    if (!isGeneralHubConnected) return;
-
-    try {
-      await _generalHub!.invoke("SetTypingIndicator", args: [toPetId, isTyping]);
-      debugPrint("📡 TypingIndicator Sent → $toPetId | $isTyping");
-    } catch (e) {
-      debugPrint("❌ Error TypingIndicator: $e");
+    if (!isGeneralHubConnected) await connectToGeneralHub();
+    if (_generalHub != null) {
+      await invokeHub<void>(
+        _generalHub!,
+        "GeneralHub",
+        "SetTypingIndicator",
+        args: [toPetId, isTyping],
+      );
     }
   }
 
-  // ===============================================================
-  // onConversationMessageReceived
-  // ===============================================================
+  /// ===============================================================
+  /// CONVERSATION MESSAGE CALLBACK
+  /// ===============================================================
   void onConversationMessageReceived(
-      String methodName,
-      Function(List<Object?>?) callback,
-      ) {
-    if (_conversationHub == null) {
-      debugPrint("❌ ConversationHub is null");
-      return;
-    }
-
-    _conversationHub!.on(methodName, (arguments) {
-      debugPrint("📨 ConversationHub → $methodName : $arguments");
-      callback(arguments);
+    String methodName,
+    Function(List<Object?>?) callback,
+  ) {
+    if (_conversationHub == null) return;
+    _conversationHub!.on(methodName, (args) {
+      callback(args);
     });
   }
 
-  // ===============================================================
-  // markMessagesAsRead
-  // ===============================================================
+  /// ===============================================================
+  /// MARK MESSAGES AS READ
+  /// ===============================================================
   Future<void> markMessagesAsRead(String conversationId, String petId) async {
-    if (!isConversationHubConnected) return;
-
-    try {
-      await _conversationHub!.invoke(
-        'MarkAllUnreadedMessagesInConversationAsRead',
+    if (!isConversationHubConnected) await connectToConversationHub();
+    if (_conversationHub != null) {
+      await invokeHub<void>(
+        _conversationHub!,
+        "ConversationHub",
+        "MarkAllUnreadedMessagesInConversationAsRead",
         args: [conversationId, petId],
       );
-      debugPrint("📖 Messages marked as read → $conversationId");
-    } catch (e) {
-      debugPrint("❌ markMessagesAsRead Error: $e");
     }
   }
 
-  // ===============================================================
-  // getUnreadMessageCounts
-  // ===============================================================
+  /// ===============================================================
+  /// GET UNREAD MESSAGE COUNTS
+  /// ===============================================================
   Future<Map<String, int>?> getUnreadMessageCounts(String petId) async {
-    if (!isGeneralHubConnected) return null;
-
-    try {
-      final result = await _generalHub!.invoke('GetUnreadMessageCounts', args: [petId]);
-      if (result is Map) {
-        return result.map((key, value) => MapEntry(key.toString(), value as int));
-      }
-    } catch (e) {
-      debugPrint("❌ getUnreadMessageCounts Error: $e");
-    }
-    return null;
+    if (!isGeneralHubConnected) await connectToGeneralHub();
+    final result = await invokeHub<Map<dynamic, dynamic>>(
+      _generalHub!,
+      "GeneralHub",
+      "GetUnreadMessageCounts",
+      args: [petId],
+    );
+    if (result == null) return null;
+    return result.map((key, value) => MapEntry(key.toString(), value as int));
   }
 
-  // ===============================================================
-  // DISCONNECT METHODS
-  // ===============================================================
+  /// ===============================================================
+  /// DISCONNECT METHODS
+  /// ===============================================================
   Future<void> disconnectFromConversationHub() async {
     if (_conversationHub == null) return;
-
-    try {
-      await _conversationHub!.stop();
-      debugPrint("🔴 ConversationHub Disconnected");
-    } catch (e) {
-      debugPrint("❌ disconnectFromConversationHub Error: $e");
-    }
+    await _conversationHub!.stop();
+    debugPrint("🔴 ConversationHub Disconnected");
     _conversationHub = null;
   }
 
   Future<void> disconnectFromGeneralHub() async {
     if (_generalHub == null) return;
-
-    try {
-      await _generalHub!.stop();
-      debugPrint("🔴 GeneralHub Disconnected");
-    } catch (e) {
-      debugPrint("❌ disconnectFromGeneralHub Error: $e");
-    }
+    await _generalHub!.stop();
+    debugPrint("🔴 GeneralHub Disconnected");
     _generalHub = null;
   }
 

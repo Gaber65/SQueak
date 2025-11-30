@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SignalR Test Hub</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.7/signalr.min.js" integrity="sha512-0oa5HNRj6TdPrpZ7iN/N06heQq7UZsV8c5+v2a2LJqP+2OT0vP8dI1p1x6LRe7uJz+4Km9vW6P4eX9pUKL2kWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        #messages { border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: scroll; margin-bottom: 10px; }
+        input, button { padding: 5px; margin: 5px 0; width: 100%; }
+    </style>
+</head>
+<body>
+
+<h2>SignalR Hub Test</h2>
+
+<div>
+    <label>Conversation Hub URL:</label>
+    <input type="text" id="hubUrl" value="https://squeakapi.veticareapp.com:8001/conversationhub">
+</div>
+
+<div>
+    <label>Token:</label>
+    <input type="text" id="token" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkJlYXJlciJ9.eyJ1bmlxdWVfbmFtZSI6Im1hbGVAZ21haWwuY29tIiwibmFtZWlkIjoiOWEzNmJjMDMtNTQxZS00Yjk5LThlNGMtODMzZGMzNGYyOWVjIiwic3ViIjoibWFsZUBnbWFpbC5jb20iLCJuYmYiOjE3NjQ1MjI3NDAsImV4cCI6MTc5NTYyNjc0MCwianRpIjoiMDJkNzg2MzktZmFjZi00OTY3LTlhMjgtMjk5ZDIwZjI5NzRmIiwiaWF0IjoxNzY0NTIyNzQwLCJpc3MiOiJodHRwOi8vYW9tYXIyMDEwLTAwMS1zaXRlMS5idGVtcHVybC5jb20vIn0.WqJ1UMsH0R-1neNFAPAdMknwR9bZ9WGRmKYSOSCL2FY">
+</div>
+
+<hr>
+
+<h3>Send Message</h3>
+<input type="text" id="conversationId" placeholder="Conversation ID" value="7dfa010a-da56-4052-9cb2-1bd3b0f16235">
+<input type="text" id="fromUserId" placeholder="From User ID" value="3b9b6de3-6f98-4cab-88e3-3efb741022c2">
+<input type="text" id="toUserId" placeholder="To User ID" value="9a36bc03-541e-4b99-8e4c-833dc34f29ec">
+<input type="text" id="description" placeholder="Message Text">
+<button id="sendBtn">Send Message</button>
+
+<hr>
+
+<h3>Received Messages</h3>
+<div id="messages"></div>
+
+<script>
+    let connection;
+
+    async function startConnection() {
+      const hubUrl = document.getElementById('hubUrl').value;
+      const token = document.getElementById('token').value;
+
+      connection = new signalR.HubConnectionBuilder()
+        .withUrl(hubUrl, { accessTokenFactory: () => token })
+        .withAutomaticReconnect()
+        .build();
+
+      connection.onclose(err => console.log("Disconnected", err));
+
+      // Example: Receive messages
+      connection.on("ReceiveMessage", (data) => {
+        const messagesDiv = document.getElementById('messages');
+        const p = document.createElement('p');
+        p.textContent = "Received: " + JSON.stringify(data);
+        messagesDiv.appendChild(p);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        console.log("Received:", data);
+      });
+
+      // Example: FriendIsTyping
+      connection.on("FriendIsTyping", (data) => {
+        const messagesDiv = document.getElementById('messages');
+        const p = document.createElement('p');
+        p.textContent = "Typing Event: " + JSON.stringify(data);
+        p.style.color = "green";
+        messagesDiv.appendChild(p);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        console.log("FriendIsTyping:", data);
+      });
+
+      try {
+        await connection.start();
+        console.log("✅ Connected to Hub");
+      } catch (err) {
+        console.error("❌ Connection failed", err);
+        setTimeout(startConnection, 5000);
+      }
+    }
+
+    startConnection();
+
+    // Send message button
+    document.getElementById('sendBtn').addEventListener('click', async () => {
+      const conversationId = document.getElementById('conversationId').value;
+      const fromUserId = document.getElementById('fromUserId').value;
+      const toUserId = document.getElementById('toUserId').value;
+      const messageText = document.getElementById('description').value;
+
+      const command = {
+        conversationId,
+        fromUserId,
+        toUserId,
+        description: messageText
+      };
+
+      try {
+        await connection.invoke("SendMessageToUser", command);
+        console.log("📤 Sent:", command);
+
+        const messagesDiv = document.getElementById('messages');
+        const p = document.createElement('p');
+        p.textContent = "Sent: " + JSON.stringify(command);
+        p.style.color = "blue";
+        messagesDiv.appendChild(p);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      } catch (err) {
+        console.error("❌ Send failed", err);
+      }
+    });
+</script>
+
+</body>
+</html>
