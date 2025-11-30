@@ -10,18 +10,20 @@ class SignalRService {
       'https://squeakapi.veticareapp.com:8001/generalhub';
 
   // Two separate hub connections
-  HubConnection? _conversationHub; 
-  HubConnection? _generalHub; 
+  HubConnection? _conversationHub;
+  HubConnection? _generalHub;
 
   // Connection states
   HubConnectionState get conversationHubState =>
       _conversationHub?.state ?? HubConnectionState.Disconnected;
-  
+
   HubConnectionState get generalHubState =>
       _generalHub?.state ?? HubConnectionState.Disconnected;
 
-  bool get isConversationHubConnected => conversationHubState == HubConnectionState.Connected;
-  bool get isGeneralHubConnected => generalHubState == HubConnectionState.Connected;
+  bool get isConversationHubConnected =>
+      conversationHubState == HubConnectionState.Connected;
+  bool get isGeneralHubConnected =>
+      generalHubState == HubConnectionState.Connected;
 
   // Singleton pattern
   static final SignalRService _instance = SignalRService._internal();
@@ -52,18 +54,21 @@ class SignalRService {
       }
 
       debugPrint('🔧 Creating Conversation Hub instance');
-      _conversationHub = HubConnectionBuilder()
-          .withUrl(
-            _conversationHubUrl,
-            options: HttpConnectionOptions(
-              accessTokenFactory: () async => token.toString(),
-              requestTimeout: 30000,
-              skipNegotiation: false,
-              transport: HttpTransportType.WebSockets,
-            ),
-          )
-          .withAutomaticReconnect(retryDelays: [0, 2000, 5000, 10000, 30000])
-          .build();
+      _conversationHub =
+          HubConnectionBuilder()
+              .withUrl(
+                _conversationHubUrl,
+                options: HttpConnectionOptions(
+                  accessTokenFactory: () async => token.toString(),
+                  requestTimeout: 30000,
+                  skipNegotiation: false,
+                  transport: HttpTransportType.WebSockets,
+                ),
+              )
+              .withAutomaticReconnect(
+                retryDelays: [0, 2000, 5000, 10000, 30000],
+              )
+              .build();
 
       _registerConversationHubEvents();
 
@@ -101,24 +106,32 @@ class SignalRService {
       }
 
       debugPrint('🔧 Creating General Hub instance');
-      _generalHub = HubConnectionBuilder()
-          .withUrl(
-            _generalHubUrl,
-            options: HttpConnectionOptions(
-              accessTokenFactory: () async => token.toString(),
-              requestTimeout: 30000,
-              skipNegotiation: false,
-              transport: HttpTransportType.WebSockets,
-            ),
-          )
-          .withAutomaticReconnect(retryDelays: [0, 2000, 5000, 10000, 30000])
-          .build();
-
-      _registerGeneralHubEvents();
+      _generalHub =
+          HubConnectionBuilder()
+              .withUrl(
+                _generalHubUrl,
+                options: HttpConnectionOptions(
+                  accessTokenFactory: () async => token.toString(),
+                  requestTimeout: 30000,
+                  skipNegotiation: false,
+                  transport: HttpTransportType.WebSockets,
+                ),
+              )
+              .withAutomaticReconnect(
+                retryDelays: [0, 2000, 5000, 10000, 30000],
+              )
+              .build();
 
       debugPrint('🚀 Connecting to General Hub...');
       await _generalHub!.start();
       debugPrint('✅ General Hub Connected!');
+      _registerGeneralHubEvents();
+
+      _generalHub!.on('FriendIsTyping', (arguments) {
+        debugPrint('🔄 General Hub: FriendIsTyping...');
+        print(arguments![0]);
+      });
+
       debugPrint('🆔 Connection ID: ${_generalHub!.connectionId}');
     } catch (e) {
       debugPrint('❌ General Hub connection failed: $e');
@@ -129,7 +142,7 @@ class SignalRService {
   // Register events for Conversation Hub
   void _registerConversationHubEvents() {
     if (_conversationHub == null) return;
-    
+
     _conversationHub!.onclose(({error}) {
       debugPrint('🔴 Conversation Hub: Disconnected');
       if (error != null) debugPrint('❌ Error: $error');
@@ -149,7 +162,7 @@ class SignalRService {
   // Register events for General Hub
   void _registerGeneralHubEvents() {
     if (_generalHub == null) return;
-    
+
     _generalHub!.onclose(({error}) {
       debugPrint('🔴 General Hub: Disconnected');
       if (error != null) debugPrint('❌ Error: $error');
@@ -170,7 +183,7 @@ class SignalRService {
   Future<void> sendMessageToUser(Map<String, dynamic> command) async {
     try {
       debugPrint('📤 Sending message through Conversation Hub...');
-      
+
       // Ensure conversation hub is connected
       if (!isConversationHubConnected) {
         debugPrint('⚠️ Conversation Hub not connected, connecting...');
@@ -230,7 +243,9 @@ class SignalRService {
         return;
       }
 
-      debugPrint('⌨️ Sending typing status: $isTyping for conversation: $conversationId');
+      debugPrint(
+        '⌨️ Sending typing status: $isTyping for conversation: $conversationId',
+      );
 
       await _conversationHub!.invoke(
         'SetTyping',
@@ -282,9 +297,9 @@ class SignalRService {
       );
 
       if (result is Map) {
-        return Map<String, int>.from(result.map(
-          (key, value) => MapEntry(key.toString(), value as int),
-        ));
+        return Map<String, int>.from(
+          result.map((key, value) => MapEntry(key.toString(), value as int)),
+        );
       }
 
       return null;
