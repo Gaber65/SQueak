@@ -53,8 +53,7 @@ class _ChatListView extends StatelessWidget {
             PetEntities?
           >(
             selector: (state) {
-              if (state is ProfileLoaded &&
-                  state.profile.type == ProfileType.pet) {
+              if (state is ProfileLoaded && state.profile.type == ProfileType.pet) {
                 cubit.loadChats(state.profile.pet!.petId!);
                 return state.profile.pet;
               }

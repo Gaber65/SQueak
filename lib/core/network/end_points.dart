@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
+import '../../features/layout/post/domain/repository/base_post_repository.dart';
 import 'config_model.dart';
 
 /// Base API paths
@@ -71,12 +72,23 @@ const String audioHelperEndPoint = '$version/audio';
 /// Posts
 String createPostEndPoint(String postId) => '$version/posts?Id=$postId';
 const String getUserPostsEndPoint = '$version/posts/user';
-String getPostEndPoint(int pageNumber) =>
-    '$version/posts/user/paggination?pageSize=30&pageNumber=$pageNumber';
+String getPostEndPoint(GetPostParams params) =>
+    '$version/posts/user/paggination?pageSize=30&pageNumber=${params.allPostUserPageNumber}&LoginAsPet=${params.isPet}&LoginAsPet=${params.isPet}&MyPetId=${params.petId}';
 String getDoctorPostEndPoint(int pageNumber) =>
     '$version/posts/doctor/paggination?pageSize=15&pageNumber=$pageNumber';
 const String deletePostEndPoint = '$version/posts';
 const String updatePostEndPoint = '$version/posts/';
+const String createPostEndPointText = '$version/posts/';
+
+
+/// Stories
+const String createStoryEndPoint = '$version/stories';
+const String getStoryEndPoint = '$version/stories';
+const String deleteStoryEndPoint = '$version/stories/';
+
+/// React
+const String getReactEndPoint = '$version/react/';
+const String reactEndPoint = '$version/react';
 
 /// Comments
 const String createCommentEndPoint = '$version/comments';
@@ -167,41 +179,50 @@ const String cancelFriendshipEndPoint = '$version/petfriends/cancel';
 const String deleteFriendShipEndPoint = '$version/petfriends/delete';
 const String searchFriendsEndPoint = '$version/search/petfriends';
 const String getSentRequestsEndPoint = '$version/pet/sendrequest?MyPetId=';
- String clearChatEndPoint(String conversationId, {bool deleteForMeOnly = true}) =>
-     '$version/conversations/$conversationId?DeleteForMeOnly=$deleteForMeOnly';
+String clearChatEndPoint(
+  String conversationId, {
+  bool deleteForMeOnly = true,
+}) => '$version/conversations/$conversationId?DeleteForMeOnly=$deleteForMeOnly';
 
- String deleteMessage(String conversationId,String messageId ,bool deleteForMeOnly ) =>
-     '$version/conversations/$conversationId/messages/$messageId?DeleteForMeOnly=$deleteForMeOnly';
+String deleteMessage(
+  String conversationId,
+  String messageId,
+  bool deleteForMeOnly,
+) =>
+    '$version/conversations/$conversationId/messages/$messageId?DeleteForMeOnly=$deleteForMeOnly';
 
 /// Mating pet
 const String updatePetStatusEndPoint = '$version/pets/';
- String getPetProfile(String petId) => '$version/pets/$petId/profile';
- String getPetHistoryProfile(String petId) => '$version/pets/id/history?id=$petId';
+String getPetProfile(String petId) => '$version/pets/$petId/profile';
+String getPetHistoryProfile(String petId) =>
+    '$version/pets/id/history?id=$petId';
 
- String getPetHistoryProfileSeperate(String historyId) => '$version/pets/history/$historyId/seperate';
- String getPetHistoryProfileSetBaby(String historyId) => '$version/pets/history/$historyId/seperate';
- String getPetHistoryProfilePregnant(String historyId) => '$version/pets/history/$historyId/SetBaby';
+String getPetHistoryProfileSeperate(String historyId) =>
+    '$version/pets/history/$historyId/seperate';
+String getPetHistoryProfileSetBaby(String historyId) =>
+    '$version/pets/history/$historyId/seperate';
+String getPetHistoryProfilePregnant(String historyId) =>
+    '$version/pets/history/$historyId/SetBaby';
 
 const String cancelRequestEndPoint = '$version/matingrequest/cancel';
 const String getAvailablePetsEndPoint = '$version/pets/available';
 const String sendMatingRequestEndPoint = '$version/matingrequest';
 const String getPetProfileEndPoint = '$version/pets/profile';
 const String getPetsByStatusEndPoint = '$version/pets/profile';
-String getMatingRequestsEndPoint(petId) => '$version/matingrequest?PetId=$petId';
+String getMatingRequestsEndPoint(petId) =>
+    '$version/matingrequest?PetId=$petId';
 String finishMatingRequestsEndPoint = '$version/matingrequest/finish';
 String getMatingSentEndPoint(petId) => '$version/mymatingrequest?PetId=$petId';
 
-
-
 /// Mating chat
-String getChatsEndPoint(petId) => '$version/conversations?ConversationType=1&PetId=$petId';
-String getMSGChatsEndPoint(conversationId) => '$version/messages?ConversationId=$conversationId';
+String getChatsEndPoint(petId) =>
+    '$version/conversations?ConversationType=1&PetId=$petId';
+String getMSGChatsEndPoint(conversationId) =>
+    '$version/messages?ConversationId=$conversationId';
 String sendMSGEndPoint = '$version/messages';
 String renameChatEndPoint = '$version/conversations/rename';
 String blockChatEndPoint = '$version/conversations/update/blocking';
 String rateMatingEndPoint = '$version/matingrequest/rate';
- 
-
 
 /// App State
 String? clintId;

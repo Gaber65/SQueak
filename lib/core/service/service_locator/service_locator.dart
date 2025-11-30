@@ -1,5 +1,8 @@
 import 'package:squeak/features/friendship/domain/usecases/delete_friendship.dart';
 import 'package:squeak/features/friendship/domain/usecases/block_friend.dart';
+import 'package:squeak/features/layout/post/domain/usecase/create_post.dart';
+import 'package:squeak/features/layout/stories/presentation/controllers/story_cubit.dart';
+
 import 'package:squeak/features/mating/chat/domain/usecases/rate_mating_use_case.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/clear_conversation_use_case.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/delete_message_use_case.dart';
@@ -18,7 +21,7 @@ class ServiceLocator {
     // Register Cubits
     sl.registerFactory(() => MainCubit(sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => CommentCubit(sl(), sl(), sl(), sl()));
-    sl.registerFactory(() => PostCubit(sl()));
+    sl.registerFactory(() => PostCubit(sl(), sl()));
     sl.registerFactory(() => SearchCubit(sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => NotificationsCubit(sl(), sl(), sl()));
     sl.registerFactory(
@@ -115,6 +118,7 @@ class ServiceLocator {
     sl.registerLazySingleton(() => DeleteCommentPostUseCase(sl()));
     sl.registerLazySingleton(() => CreateCommentUseCase(sl()));
     sl.registerLazySingleton(() => GetAllPostUseCase(sl()));
+    sl.registerLazySingleton(() => CreatePostUseCase(sl()));
 
     sl.registerLazySingleton(() => FollowClinicUseCase(sl()));
     sl.registerLazySingleton(() => GetClientFormVetUseCase(sl()));
@@ -401,8 +405,8 @@ class ServiceLocator {
     sl.registerLazySingleton(() => SendPetRequestUseCase(sl()));
     sl.registerLazySingleton(() => UpdatePetRequestUseCase(sl()));
     sl.registerLazySingleton(() => CancelFriendshipUseCase(sl()));
-  sl.registerLazySingleton(() => UnblockFriendUseCase(sl()));
-  sl.registerLazySingleton(() => BlockFriendUseCase(sl()));
+    sl.registerLazySingleton(() => UnblockFriendUseCase(sl()));
+    sl.registerLazySingleton(() => BlockFriendUseCase(sl()));
     sl.registerLazySingleton(() => DeleteFriendShipUseCase(sl()));
 
     sl.registerLazySingleton(() => GetMyRequestsUseCase(sl()));
@@ -419,8 +423,19 @@ class ServiceLocator {
 
     /// 🔹 Cubit
     sl.registerFactory(
-      () =>
-          PetFriendsCubit(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+      () => PetFriendsCubit(
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+      ),
     );
     // Data sources
     sl.registerLazySingleton<BaseChatRemoteDataSource>(
@@ -438,8 +453,8 @@ class ServiceLocator {
     sl.registerLazySingleton(() => BlockChatUseCase(sl()));
     sl.registerLazySingleton(() => RenameChatUseCase(sl()));
     sl.registerLazySingleton(() => RateMatingUseCase(sl()));
-  // Clear conversation (delete messages)
-  sl.registerLazySingleton(() => ClearConversationUseCase(sl()));
+    // Clear conversation (delete messages)
+    sl.registerLazySingleton(() => ClearConversationUseCase(sl()));
     // Delete single message use case
     sl.registerLazySingleton(() => DeleteMessageUseCase(sl()));
 
@@ -452,7 +467,7 @@ class ServiceLocator {
         startMatingUseCase: sl(),
         blockChatUseCase: sl(),
         renameChatUseCase: sl(),
-        rateMatingUseCase :sl(),
+        rateMatingUseCase: sl(),
       ),
     );
 
@@ -464,7 +479,7 @@ class ServiceLocator {
     sl.registerLazySingleton<MatingProfileDataSource>(
       () => MatingProfileDataSourceImpl(),
     );
-    sl.registerFactory(() => ProfileMatingCubit(sl(),sl(),sl()));
+    sl.registerFactory(() => ProfileMatingCubit(sl(), sl(), sl()));
 
     /// 🧱 Data Source
     sl.registerLazySingleton<PetMatingRemoteDataSource>(
@@ -518,5 +533,24 @@ class ServiceLocator {
     sl.registerLazySingleton<MatingRequestRemoteDataSource>(
       () => MatingRequestRemoteDataSourceImpl(),
     );
+
+    /// 📸 Stories
+    sl.registerLazySingleton<StoryRemoteDataSource>(
+      () => StoryRemoteDataSourceMock(),
+    );
+
+    sl.registerLazySingleton<StoryRepository>(() => StoryRepositoryImpl(sl()));
+
+    sl.registerLazySingleton(() => CreateStoryUseCase(sl()));
+    sl.registerLazySingleton(() => GetActiveStoriesUseCase(sl()));
+
+    sl.registerLazySingleton(() => StoryCubit(sl(), sl()));
+
+    ///react
+    sl.registerLazySingleton(() => ReactCubit(sl(), sl()));
+    sl.registerLazySingleton<BaseReactRepo>(() => ReactRepo(sl()));
+    sl.registerLazySingleton<ReactDataSource>(() => ReactDataSourceImpl());
+    sl.registerLazySingleton(() => ReactOnPostUseCase(sl()));
+    sl.registerLazySingleton(() => GetAllReactOnPostUseCase(sl()));
   }
 }

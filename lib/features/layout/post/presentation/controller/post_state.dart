@@ -17,3 +17,10 @@ class NoInternetConnection extends PostState {}
 class PaginationErrorState extends PostState {}
 class GetRefreshIndicatorState extends PostState {}
 
+
+class CreatePostLoadingState extends PostState {}
+class CreatePostSuccessState extends PostState {}
+class CreatePostErrorState extends PostState {
+  final String message;
+  CreatePostErrorState(this.message);
+}

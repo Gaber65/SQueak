@@ -1,18 +1,19 @@
-import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../../core/service/cache/shared_preferences/cache_helper.dart';
+import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+
 import '../../domain/entities/post_entity.dart';
-import '../../domain/usecase/get_user_posts_use_case.dart';
 import 'package:intl/intl.dart';
+
+import '../../domain/usecase/create_post.dart';
 
 part 'post_state.dart';
 
 class PostCubit extends Cubit<PostState> {
   final GetAllPostUseCase getAllPostUseCase;
-  PostCubit(this.getAllPostUseCase) : super(PostInitial()) {
-    init();
-  }
+  final CreatePostUseCase createPostUseCase;
 
+  PostCubit(this.getAllPostUseCase, this.createPostUseCase)
+    : super(PostInitial());
   static PostCubit get(context) => BlocProvider.of(context);
 
   int _pageNumber = 1;
@@ -20,33 +21,23 @@ class PostCubit extends Cubit<PostState> {
 
   List<PostEntity> get userPosts => List.unmodifiable(_userPosts);
 
-  Future<void> init() async {
-    _loadCachedPosts();
-    await getAllUserPosts();
-  }
-
-  void _loadCachedPosts() {
-    final cachedData = CacheHelper.getData('posts');
-    if (cachedData != null) {
-      final postsJson = json.decode(cachedData);
-      _userPosts
-        ..clear()
-        ..addAll(List<PostEntity>.from(postsJson.map((x) => PostEntity.fromJson(x))));
-      _sortUserPostsByDate();
-    }
-  }
-
-  Future<void> getAllUserPosts({bool pagination = false}) async {
+  Future<void> getAllUserPosts(String petId, {bool pagination = false}) async {
     emit(pagination ? PaginationLoadingState() : GetPostLoadingState());
 
-    final result = await getAllPostUseCase(_pageNumber);
+    final result = await getAllPostUseCase(
+      GetPostParams(
+        allPostUserPageNumber: _pageNumber,
+        isPet: petId.isNotEmpty,
+        petId: petId,
+      ),
+    );
     result.fold(
-          (_) => emit(GetPostErrorState()),
-          (posts) => _handlePostSuccess(posts),
+      (_) => emit(GetPostErrorState()),
+      (posts) => _handlePostSuccess(posts,pagination: pagination),
     );
   }
 
-  void _handlePostSuccess(Iterable<PostEntity> posts) {
+  void _handlePostSuccess(Iterable<PostEntity> posts,{bool pagination = false}) {
     _pageNumber++;
 
     if (posts.isEmpty) {
@@ -55,15 +46,15 @@ class PostCubit extends Cubit<PostState> {
     }
 
     final existingPostIds = _userPosts.map((post) => post.postId).toSet();
-    final newPosts = posts.where((post) => !existingPostIds.contains(post.postId)).toList();
+    final newPosts =
+        posts.where((post) => !existingPostIds.contains(post.postId)).toList();
 
     if (newPosts.isNotEmpty) {
       _userPosts.addAll(newPosts);
-      _sortUserPostsByDate();
+      if(!pagination){
+        _sortUserPostsByDate();
+      }
     }
-
-    final jsonToString = json.encode(_userPosts);
-    CacheHelper.saveData('posts', jsonToString);
 
     emit(GetPostSuccessState());
   }
@@ -77,10 +68,77 @@ class PostCubit extends Cubit<PostState> {
     });
   }
 
-  Future<void> handleRefresh() async {
+  Future<void> handleRefresh(String petId, {bool pagination = false}) async {
     await Future.delayed(const Duration(seconds: 1));
     _pageNumber = 1;
-    await getAllUserPosts();
+    await getAllUserPosts(petId, pagination: pagination);
     emit(GetRefreshIndicatorState());
+  }
+
+  Future<void> createPost(
+    String petId,
+    String title,
+    String content,
+    String? image,
+    String? video,
+  ) async {
+    emit(CreatePostLoadingState());
+
+    final result = await createPostUseCase(
+      CreatePostParams(
+        petId: petId,
+        content: content,
+        title: title,
+        postSocailMedias: [
+          {'image': image, 'video': video},
+        ],
+      ),
+    );
+
+    result.fold(
+      (failure) =>
+          emit(CreatePostErrorState(extractFirstErrorAuth(failure.error))),
+      (post) => emit(CreatePostSuccessState()),
+    );
+  }
+  Future<void> createPostWithMultipleMedia({
+    required String petId,
+    required String title,
+    required String content,
+    required List<Map<String, String?>> postSocialMedias,
+  }) async {
+    emit(CreatePostLoadingState());
+
+    try {
+      final result = await createPostUseCase(
+        CreatePostParams(
+          petId: petId,
+          content: content,
+          title: title,
+          postSocailMedias: postSocialMedias,
+        ),
+      );
+
+      result.fold(
+            (failure) => emit(CreatePostErrorState(extractFirstErrorAuth(failure.error))),
+            (post) {
+          emit(CreatePostSuccessState());
+        },
+      );
+    } catch (e) {
+      emit(CreatePostErrorState('Failed to create post: $e'));
+    }
+  }
+
+  void clearUserPosts() {
+    _pageNumber = 1;
+    _userPosts.clear();
+    emit(GetPostSuccessState()); // أو أي state مناسب بعد المسح
+  }
+
+  bool isClick = false;
+  void changeClick(){
+    isClick = !isClick;
+    emit(NoInternetConnection());
   }
 }

@@ -25,6 +25,7 @@ class SwitchProfileCubit extends Cubit<SwitchProfileState> {
   String image = imageUrl;
   String name = "S";
   String specieId = "";
+  String petID = "";
   Future<void> loadProfile() async {
     emit(ProfileLoading());
     final result = await getActiveProfile(const NoParameters());
@@ -36,9 +37,11 @@ class SwitchProfileCubit extends Cubit<SwitchProfileState> {
             activeProfile = profile;
             if (activeProfile!.type == ProfileType.pet) {
               image = imageUrl +activeProfile!.pet!.imageName!;
-              name = activeProfile!.pet!.petName!.substring(0, 1);
+              name = activeProfile!.pet!.petName!;
               specieId = activeProfile!.pet!.specieId!;
+              petID = activeProfile!.pet!.petId!;
             } else {
+              name = activeProfile!.user!.fullName;
               image = imageUrl + activeProfile!.user!.imageName;
             }
             emit(ProfileLoaded(profile));

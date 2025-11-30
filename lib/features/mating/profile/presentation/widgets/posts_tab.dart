@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/features/layout/post/presentation/widget/post_item.dart';
 import 'package:squeak/features/mating/profile/presentation/widgets/post_mating_item.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
+
+import '../../../../../core/network/end_points.dart';
+import '../../../../../core/service/global_widget/video_detail.dart';
+import '../../../../layout/post/domain/entities/post_entity.dart';
 
 class PostsTab extends StatefulWidget {
   final PetEntities pet;
@@ -107,9 +112,9 @@ class _SinglePostView extends StatelessWidget {
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
-            child: BuildPostItemMaying(
-              petEntities: pet,
+            child: BuildPostItem(
               postItem: post,
+              petId: pet.petId,
             ),
           ),
         ),
@@ -276,9 +281,9 @@ class _PostsListView extends StatelessWidget {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () => onPostTap(index),
-          child: BuildPostItemMaying(
-            petEntities: pet,
+          child: BuildPostItem(
             postItem: posts[index],
+            petId: pet.petId,
           ),
         );
       },
@@ -325,9 +330,10 @@ class _PostsGridView extends StatelessWidget {
 }
 
 //  Grid Item 
+// Grid Item
 class _PostGridItem extends StatelessWidget {
   final PetEntities pet;
-  final dynamic post;
+  final PostEntity post;
   final int index;
   final VoidCallback onTap;
 
@@ -353,27 +359,66 @@ class _PostGridItem extends StatelessWidget {
   }
 
   Widget _buildPostContent(BuildContext context) {
-    final hasImage = post.image != null && post.image!.isNotEmpty;
+    final images = post.postSocialMedia
+        ?.where((e) => e.imagePath != null && e.imagePath!.isNotEmpty)
+        .toList() ??
+        [];
 
-    return hasImage 
-      ? _PostImage(imageUrl: post.image!)
-      : _PostPlaceholder(
-          index: index,
-          title: post.title,
-        );
+    final videos = post.postSocialMedia
+        ?.where((e) => e.videoPath != null && e.videoPath!.isNotEmpty)
+        .toList() ??
+        [];
+
+    if (images.isEmpty && videos.isEmpty) {
+      return _PostPlaceholder(
+        index: index,
+        title: post.title,
+      );
+    }
+
+    // لو في صورة واحدة فقط
+    if (images.length == 1 && videos.isEmpty) {
+      return _PostImage(imagePath: images.first.imagePath!);
+    }
+
+    // لو في فيديو واحد فقط وبدون صور
+    if (videos.length == 1 && images.isEmpty) {
+      return VideoStringApp(video: imageUrl + videos.first.videoPath!);
+    }
+
+    // لو في عدة صور أو فيديوهات أو خليط
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 4,
+        mainAxisSpacing: 4,
+        childAspectRatio: 1,
+      ),
+      itemCount: images.length + videos.length,
+      itemBuilder: (context, i) {
+        if (i < images.length) {
+          return _PostImage(imagePath: images[i].imagePath!);
+        } else {
+          final vidIndex = i - images.length;
+          return VideoStringApp(video: imageUrl + videos[vidIndex].videoPath!);
+        }
+      },
+    );
   }
 }
 
-//Post Image 
+//Post Image
 class _PostImage extends StatelessWidget {
-  final String imageUrl;
+  final String imagePath;
 
-  const _PostImage({required this.imageUrl});
+  const _PostImage({required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
     return FastCachedImage(
-      url: imageUrl + imageUrl,
+      url: imageUrl + imagePath,
       fit: BoxFit.cover,
       errorBuilder: (context, exception, stackTrace) {
         return Container(

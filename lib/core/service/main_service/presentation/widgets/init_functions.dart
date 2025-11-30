@@ -9,7 +9,8 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/utils/firebase_token_helper.dart';
 import 'package:squeak/features/layout/notification/NotificationFCM/notification_message.dart';
 import '../../../../../firebase_options.dart';
-
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 @pragma('vm:entry-point')
 class InitFunctions {
   // Exposed current environment so other utilities can read it
@@ -139,6 +140,9 @@ class InitFunctions {
   }
 
   static Future<void> _initCache() async {
+    HydratedBloc.storage = await HydratedStorage.build(
+      storageDirectory: await getTemporaryDirectory(),
+    );
     await CacheHelper.init();
     await FastCachedImageConfig.init(clearCacheAfter: Duration(days: 20));
     CacheHelper.saveData('isReplayCommentOpen', false);

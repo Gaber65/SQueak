@@ -119,7 +119,10 @@ class PostNotification extends StatelessWidget {
                               );
                             }
 
-                            return BuildPostItem(postItem: cubit.postModel!);
+                            return BuildPostItem(
+                              postItem: cubit.postModel!,
+                              petId: null,
+                            );
                           },
                         ),
                       );

@@ -14,11 +14,9 @@ class PostRepository extends BasePostRepository {
 
   @override
   Future<Either<Failure, List<PostEntity>>> getAllUserPosts(
-    int allPostUserPageNumber,
+    GetPostParams params,
   ) async {
-    final result = await basePostRemoteDataSource.getPostDataSource(
-      allPostUserPageNumber,
-    );
+    final result = await basePostRemoteDataSource.getPostDataSource(params);
 
     try {
       return Right(result);
@@ -27,4 +25,18 @@ class PostRepository extends BasePostRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, PostEntity>> createPost(
+    CreatePostParams params,
+  ) async {
+    try {
+      final result = await basePostRemoteDataSource.createPostDataSource(
+        params,
+      );
+
+      return Right(result);
+    } on ServerException catch (failure) {
+      return Left(ServerFailure(failure.errorMessageModel));
+    }
+  }
 }
