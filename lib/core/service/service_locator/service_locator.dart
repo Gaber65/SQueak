@@ -10,6 +10,7 @@ import '../../../features/layout/search/presentation/controller/search_cubit.dar
 import '../../../features/mating/matingRequest/domain/usecases/update_mating_request.dart';
 import '../../../features/settings/persentaion/controller/setting_cubit.dart';
 import '../../../features/vetcare/presenation/controllers/follow_request/follow_request_cubit.dart';
+import '../signalr/signalr_service.dart';
 import 'locatore_export_path.dart';
 
 final sl = GetIt.instance;
@@ -455,9 +456,10 @@ class ServiceLocator {
         rateMatingUseCase :sl(),
       ),
     );
-    
+    sl.registerLazySingleton<SignalRService>(() => SignalRService());
+
     sl.registerFactory(
-      () => ChatListCubit(getChatsUseCase: sl()),
+      () => ChatListCubit(getChatsUseCase: sl() ,signalRService: sl()),
     );
 
     /// profile mating

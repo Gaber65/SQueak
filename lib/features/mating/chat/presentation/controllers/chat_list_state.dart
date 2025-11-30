@@ -29,3 +29,9 @@ class ChatListError extends ChatListState {
   @override
   List<Object> get props => [message];
 }
+
+class ChatListTypingUpdated extends ChatListState {
+  final Map<String, bool> friendsTyping; // key = petId, value = isTyping
+
+  const ChatListTypingUpdated(this.friendsTyping);
+}

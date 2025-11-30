@@ -28,8 +28,7 @@ class MatingChatDetailScreen extends StatefulWidget {
   State<MatingChatDetailScreen> createState() => _MatingChatDetailScreenState();
 }
 
-class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
-    with SingleTickerProviderStateMixin {
+class _MatingChatDetailScreenState extends State<MatingChatDetailScreen> with SingleTickerProviderStateMixin {
   final TextEditingController _messageController = TextEditingController();
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener =

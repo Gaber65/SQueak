@@ -32,6 +32,58 @@ class SignalRService {
   HubConnection? _conversationHub;
   HubConnection? _generalHub;
 
+  final StreamController<bool> _generalHubConnectionController =
+  StreamController<bool>.broadcast();
+  final StreamController<bool> _conversationHubConnectionController =
+  StreamController<bool>.broadcast();
+
+  Stream<bool> get generalHubConnectionStream =>
+      _generalHubConnectionController.stream;
+  Stream<bool> get conversationHubConnectionStream =>
+      _conversationHubConnectionController.stream;
+
+  // Update connection methods to use the streams
+  Future<void> connectToGeneralHub() async {
+    try {
+      _generalHub = await _connectHub(_generalHubUrl, "GeneralHub");
+      _registerGeneralEvents();
+      _generalHubConnectionController.add(true);
+      debugPrint('✅ GeneralHub connected successfully');
+    } catch (e) {
+      _generalHubConnectionController.add(false);
+      rethrow;
+    }
+  }
+
+  Future<void> connectToConversationHub() async {
+    try {
+      _conversationHub = await _connectHub(_conversationHubUrl, "ConversationHub");
+      _registerConversationEvents();
+      _conversationHubConnectionController.add(true);
+      debugPrint('✅ ConversationHub connected successfully');
+    } catch (e) {
+      _conversationHubConnectionController.add(false);
+      rethrow;
+    }
+  }
+
+  Future<void> disconnectFromGeneralHub() async {
+    if (_generalHub == null) return;
+    await _generalHub!.stop();
+    _generalHubConnectionController.add(false);
+    debugPrint("🔴 GeneralHub Disconnected");
+    _generalHub = null;
+  }
+
+  Future<void> disconnectFromConversationHub() async {
+    if (_conversationHub == null) return;
+    await _conversationHub!.stop();
+    _conversationHubConnectionController.add(false);
+    debugPrint("🔴 ConversationHub Disconnected");
+    _conversationHub = null;
+  }
+
+
   static final SignalRService _instance = SignalRService._internal();
   factory SignalRService() => _instance;
   SignalRService._internal();
@@ -90,18 +142,9 @@ class SignalRService {
     }
   }
 
-  Future<void> connectToConversationHub() async {
-    _conversationHub = await _connectHub(
-      _conversationHubUrl,
-      "ConversationHub",
-    );
-    _registerConversationEvents();
-  }
 
-  Future<void> connectToGeneralHub() async {
-    _generalHub = await _connectHub(_generalHubUrl, "GeneralHub");
-    _registerGeneralEvents();
-  }
+
+
 
   /// ===============================================================
   /// GENERIC EVENT REGISTRATION
@@ -122,7 +165,7 @@ class SignalRService {
   void _registerConversationEvents() {
     if (_conversationHub == null) return;
     _registerEvents(_conversationHub!, "ConversationHub", [
-      "ReceiveMessageFromUser",
+      "ReceiveMessage",
       "NewMessage",
       "SetTyping",
     ]);
@@ -258,19 +301,7 @@ class SignalRService {
   /// ===============================================================
   /// DISCONNECT METHODS
   /// ===============================================================
-  Future<void> disconnectFromConversationHub() async {
-    if (_conversationHub == null) return;
-    await _conversationHub!.stop();
-    debugPrint("🔴 ConversationHub Disconnected");
-    _conversationHub = null;
-  }
 
-  Future<void> disconnectFromGeneralHub() async {
-    if (_generalHub == null) return;
-    await _generalHub!.stop();
-    debugPrint("🔴 GeneralHub Disconnected");
-    _generalHub = null;
-  }
 
   Future<void> disconnectAll() async {
     await disconnectFromConversationHub();

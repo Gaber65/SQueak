@@ -30,33 +30,14 @@ class _ChatListScreenState extends State<ChatListScreen> {
   void initState() {
     super.initState();
     // Connect to General Hub when chat list screen opens
-    _connectToGeneralHub();
   }
 
   @override
   void dispose() {
     // Disconnect from General Hub when chat list screen closes
-    _disconnectFromGeneralHub();
     super.dispose();
   }
 
-  // Connect to General Hub for chat list updates
-  Future<void> _connectToGeneralHub() async {
-    try {
-      await _signalRService.connectToGeneralHub();
-    } catch (e) {
-      debugPrint('❌ Failed to connect to General Hub: $e');
-    }
-  }
-
-  // Disconnect from General Hub
-  Future<void> _disconnectFromGeneralHub() async {
-    try {
-      await _signalRService.disconnectFromGeneralHub();
-    } catch (e) {
-      debugPrint('❌ Failed to disconnect from General Hub: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
