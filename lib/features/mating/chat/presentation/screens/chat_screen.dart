@@ -180,11 +180,11 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     // ignore: unnecessary_null_comparison
     if (petId != null && widget.chat.id.isNotEmpty) {
       // Send to Conversation Hub (for in-chat typing)
-      _chatCubit!.sendTypingStatus(
-        conversationId: widget.chat.id,
-        petId: petId,
-        isTyping: isTyping,
-      );
+      // _chatCubit!.sendTypingStatus(
+      //   conversationId: widget.chat.id,
+      //   petId: petId,
+      //   isTyping: isTyping,
+      // );
 
       // Also send to General Hub (for chat list typing indicator)
       final otherPetId = widget.chat.petId;
@@ -726,6 +726,15 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                       Expanded(
                         child: TextFormField(
                           controller: _messageController,
+                          onChanged: (value) {
+                            if (value.isNotEmpty) {
+                              SignalRService().setTyping(
+                                petId: widget.chat.petId,
+                                conversationId: widget.chat.id,
+                                isTyping: true,
+                              );
+                            }
+                          },
                           decoration: InputDecoration(
                             hintText: localizations.typeMessage,
                             border: InputBorder.none,

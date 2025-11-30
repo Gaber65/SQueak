@@ -56,6 +56,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     isOtherUserTyping = isTyping;
     emit(TypingStatusChanged(isTyping));
   }
+
   Future<void> loadMessages(String chatId) async {
     if (chatId.isEmpty) {
       emit(ChatMessagesLoaded([]));
@@ -129,7 +130,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       // Send message via SignalR Conversation Hub
       await signalRService.sendMessageToUser(command);
       debugPrint('✅ Message sent successfully via SignalR');
-      
+
       // Reload messages to show the sent message immediately
       if (chatId.isNotEmpty) {
         await loadMessages(chatId);
@@ -138,7 +139,9 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       // Note: No need to manually add message to list or emit MessageSent
       // The loadMessages() call above will fetch all messages including the new one
       // This prevents the type mismatch error (MessageEntity vs MessageModel)
-      
+
+      messagesList.add(messageModel);
+      emit(MessageSent(messageModel));
     } catch (signalRError) {
       debugPrint('❌ Failed to send message via SignalR: $signalRError');
       emit(MessageSendError(signalRError.toString()));
