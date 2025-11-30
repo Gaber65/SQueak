@@ -112,6 +112,14 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   Future<void> _connectToConversationHub() async {
     try {
       await _signalRService.connectToConversationHub();
+      
+      // Mark messages as read when opening chat
+      if (widget.chat.id.isNotEmpty) {
+        final petId = widget.chat.petId;
+        if (petId.isNotEmpty) {
+          await _signalRService.markMessagesAsRead(widget.chat.id, petId);
+        }
+      }
     } catch (e) {
       debugPrint('❌ Failed to connect to Conversation Hub: $e');
     }

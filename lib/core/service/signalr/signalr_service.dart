@@ -296,6 +296,29 @@ class SignalRService {
     }
   }
 
+  // Mark all messages as read in a conversation
+  Future<void> markMessagesAsRead(String conversationId, String petId) async {
+    try {
+      if (!isConversationHubConnected) {
+        debugPrint('⚠️ Conversation Hub not connected');
+        return;
+      }
+
+      debugPrint('📖 Marking messages as read...');
+      debugPrint('   - conversationId: $conversationId');
+      debugPrint('   - petId: $petId');
+
+      await _conversationHub!.invoke(
+        'MarkAllUnreadedMessagesInConversationAsRead',
+        args: [conversationId, petId],
+      );
+
+      debugPrint('✅ Messages marked as read');
+    } catch (e) {
+      debugPrint('❌ Error marking messages as read: $e');
+    }
+  }
+
   // Listen for messages on Conversation Hub (for individual chat messages)
   void onConversationMessageReceived(
     String methodName,

@@ -3,6 +3,7 @@ import 'package:squeak/features/friendship/domain/usecases/block_friend.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/rate_mating_use_case.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/clear_conversation_use_case.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/delete_message_use_case.dart';
+import 'package:squeak/features/mating/chat/presentation/controllers/chat_list_cubit.dart';
 import 'package:squeak/features/mating/profile/domain/usecases/get_pet_profile_history_usecase.dart';
 
 import '../../../features/layout/search/presentation/controller/search_cubit.dart';
@@ -453,6 +454,10 @@ class ServiceLocator {
         renameChatUseCase: sl(),
         rateMatingUseCase :sl(),
       ),
+    );
+    
+    sl.registerFactory(
+      () => ChatListCubit(getChatsUseCase: sl()),
     );
 
     /// profile mating

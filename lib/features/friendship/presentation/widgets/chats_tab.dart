@@ -35,9 +35,12 @@ class _ChatsTabState extends State<ChatsTab> {
 
   Future<void> _connectToGeneralHub() async {
     try {
+      debugPrint('🔌 Connecting to General Hub from ChatsTab...');
       await _signalRService.connectToGeneralHub();
+      debugPrint('✅ General Hub connected successfully');
     } catch (e) {
       debugPrint('❌ Failed to connect to General Hub: $e');
+      // Don't crash the app if hub connection fails
     }
   }
 
