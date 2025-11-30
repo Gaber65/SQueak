@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import 'package:squeak/core/service/signalr/signalr_service.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
 import 'package:squeak/features/friendship/presentation/widgets/empty_chats_widget.dart';
 import 'package:squeak/features/friendship/presentation/widgets/friends_tab.dart';
@@ -10,8 +11,43 @@ import 'package:squeak/features/friendship/presentation/widgets/section_header_w
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/mating_chat_list_tile.dart';
 
-class ChatsTab extends StatelessWidget {
+class ChatsTab extends StatefulWidget {
   const ChatsTab({super.key});
+
+  @override
+  State<ChatsTab> createState() => _ChatsTabState();
+}
+
+class _ChatsTabState extends State<ChatsTab> {
+  final SignalRService _signalRService = SignalRService();
+
+  @override
+  void initState() {
+    super.initState();
+    _connectToGeneralHub();
+  }
+
+  @override
+  void dispose() {
+    _disconnectFromGeneralHub();
+    super.dispose();
+  }
+
+  Future<void> _connectToGeneralHub() async {
+    try {
+      await _signalRService.connectToGeneralHub();
+    } catch (e) {
+      debugPrint('❌ Failed to connect to General Hub: $e');
+    }
+  }
+
+  Future<void> _disconnectFromGeneralHub() async {
+    try {
+      await _signalRService.disconnectFromGeneralHub();
+    } catch (e) {
+      debugPrint('❌ Failed to disconnect from General Hub: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

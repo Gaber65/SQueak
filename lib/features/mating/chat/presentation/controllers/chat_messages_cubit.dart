@@ -72,8 +72,9 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     bool signalRSuccess = false;
     try {
       final signalRService = SignalRService();
-      if (!signalRService.isConnected) {
-        await signalRService.connect();
+      // Ensure Conversation Hub is connected before sending
+      if (!signalRService.isConversationHubConnected) {
+        await signalRService.connectToConversationHub();
       }
       final messageModel = MessageModel(
         id: '',

@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:squeak/core/service/signalr/signalr_service.dart';
 import 'package:squeak/core/service/connectivity/conectivity_services.dart';
 import 'core/service/service_locator/locatore_export_path.dart';
 
@@ -15,19 +14,6 @@ Future<void> main() async {
   await InitFunctions.initialize();
 
   ConnectivityService().startMonitoring();
-
-  Future.delayed(const Duration(seconds: 2), () async {
-    try {
-      final signalRService = SignalRService();
-      await signalRService.connect();
-      signalRService.onMessageReceived('ReceiveMessage', (arguments) {
-      });
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error connecting to SignalR: $e');
-      }
-    }
-  });
 
   if (kDebugMode) {
     print(CacheHelper.getData('token'));

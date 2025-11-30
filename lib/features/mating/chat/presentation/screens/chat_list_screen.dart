@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import 'package:squeak/core/service/signalr/signalr_service.dart';
 // removed unused imports; `MatingChatListTile` handles chat navigation
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../../../core/utils/enums/profile_type.dart';
@@ -14,8 +15,47 @@ import '../../domain/entities/chat_entity.dart';
 import '../controllers/chat_list_state.dart';
 import '../widgets/mating_chat_list_tile.dart';
 
-class ChatListScreen extends StatelessWidget {
+class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
+
+  @override
+  State<ChatListScreen> createState() => _ChatListScreenState();
+}
+
+class _ChatListScreenState extends State<ChatListScreen> {
+  final SignalRService _signalRService = SignalRService();
+
+  @override
+  void initState() {
+    super.initState();
+    // Connect to General Hub when chat list screen opens
+    _connectToGeneralHub();
+  }
+
+  @override
+  void dispose() {
+    // Disconnect from General Hub when chat list screen closes
+    _disconnectFromGeneralHub();
+    super.dispose();
+  }
+
+  // Connect to General Hub for chat list updates
+  Future<void> _connectToGeneralHub() async {
+    try {
+      await _signalRService.connectToGeneralHub();
+    } catch (e) {
+      debugPrint('❌ Failed to connect to General Hub: $e');
+    }
+  }
+
+  // Disconnect from General Hub
+  Future<void> _disconnectFromGeneralHub() async {
+    try {
+      await _signalRService.disconnectFromGeneralHub();
+    } catch (e) {
+      debugPrint('❌ Failed to disconnect from General Hub: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

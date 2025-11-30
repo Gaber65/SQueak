@@ -7,6 +7,7 @@ import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:squeak/core/signalr/signalr_connection_status_widget.dart';
+import 'package:squeak/core/service/signalr/signalr_service.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_status.dart';
 import 'package:squeak/features/mating/chat/domain/entities/message_entity.dart';
@@ -34,6 +35,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
   late AnimationController _animationController;
+  final SignalRService _signalRService = SignalRService();
 
   bool _isReadOnly = false;
   bool _isMatingStarted = false;
@@ -58,6 +60,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   void initState() {
     super.initState();
 
+    // Connect to Conversation Hub when chat screen opens
+    _connectToConversationHub();
+
     _messageController.addListener(() {
       setState(() {
         _hasText = _messageController.text.trim().isNotEmpty;
@@ -80,11 +85,32 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
   @override
   void dispose() {
+    // Disconnect from Conversation Hub when chat screen closes
+    _disconnectFromConversationHub();
+    
     _messageController.dispose();
     _animationController.dispose();
     _recordTimer?.cancel();
     _audioRecorder.dispose();
     super.dispose();
+  }
+
+  // Connect to Conversation Hub for real-time chat messages
+  Future<void> _connectToConversationHub() async {
+    try {
+      await _signalRService.connectToConversationHub();
+    } catch (e) {
+      debugPrint('❌ Failed to connect to Conversation Hub: $e');
+    }
+  }
+
+  // Disconnect from Conversation Hub
+  Future<void> _disconnectFromConversationHub() async {
+    try {
+      await _signalRService.disconnectFromConversationHub();
+    } catch (e) {
+      debugPrint('❌ Failed to disconnect from Conversation Hub: $e');
+    }
   }
 
   ChatStatus _getChatStatus() {

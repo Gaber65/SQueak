@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/signalr/signalr_service.dart';
 
+// Shows a banner when Conversation Hub (for chat messages) is disconnected
 class SignalRConnectionStatusWidget extends StatefulWidget {
   const SignalRConnectionStatusWidget({super.key});
 
@@ -26,7 +27,8 @@ class _SignalRConnectionStatusWidgetState
   void _checkConnection() {
     if (mounted) {
       setState(() {
-        _isConnected = _signalRService.isConnected;
+        // Check Conversation Hub connection (for chat messages)
+        _isConnected = _signalRService.isConversationHubConnected;
       });
     }
   }
@@ -99,6 +101,7 @@ class _SignalRConnectionStatusWidgetState
   }
 }
 
+// Small indicator showing Conversation Hub connection status
 class SignalRConnectionIndicator extends StatefulWidget {
   const SignalRConnectionIndicator({super.key});
 
@@ -122,7 +125,8 @@ class _SignalRConnectionIndicatorState
   void _checkConnection() {
     if (mounted) {
       setState(() {
-        _isConnected = _signalRService.isConnected;
+        // Check Conversation Hub connection
+        _isConnected = _signalRService.isConversationHubConnected;
       });
     }
   }
