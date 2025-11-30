@@ -444,7 +444,6 @@ class ServiceLocator {
     sl.registerLazySingleton(() => DeleteMessageUseCase(sl()));
 
     // Cubits
-    sl.registerFactory(() => ChatListCubit(getChatsUseCase: sl()));
     sl.registerFactory(
       () => ChatMessagesCubit(
         getMessagesUseCase: sl(),

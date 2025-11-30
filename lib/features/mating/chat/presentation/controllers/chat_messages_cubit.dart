@@ -31,6 +31,31 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       BlocProvider.of<ChatMessagesCubit>(context);
 
   List<MessageEntity> messagesList = [];
+  bool isOtherUserTyping = false;
+
+  // Send typing indicator
+  Future<void> sendTypingStatus({
+    required String conversationId,
+    required String petId,
+    required bool isTyping,
+  }) async {
+    try {
+      final signalRService = SignalRService();
+      await signalRService.setTyping(
+        conversationId: conversationId,
+        petId: petId,
+        isTyping: isTyping,
+      );
+    } catch (e) {
+      debugPrint('❌ Error sending typing status: $e');
+    }
+  }
+
+  // Update typing status when received from SignalR
+  void updateTypingStatus(bool isTyping) {
+    isOtherUserTyping = isTyping;
+    emit(TypingStatusChanged(isTyping));
+  }
   Future<void> loadMessages(String chatId) async {
     if (chatId.isEmpty) {
       emit(ChatMessagesLoaded([]));

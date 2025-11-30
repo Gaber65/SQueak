@@ -6,6 +6,7 @@ import 'package:squeak/features/mating/matingRequest/presentation/screens/widget
 import 'package:squeak/features/mating/profile/presentation/screens/view_pet_profile_screen.dart';
 import '../../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../../../pets/domain/entities/pet_entity.dart';
+import '../../../../chat/presentation/controllers/chat_list_cubit.dart';
 
 class RequestCardCompact extends StatelessWidget {
   final MatingRequestEntity request;

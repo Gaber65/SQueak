@@ -122,3 +122,12 @@ class DeleteMessageError extends ChatMessagesState {
   @override
   List<Object> get props => [message];
 }
+
+class TypingStatusChanged extends ChatMessagesState {
+  final bool isTyping;
+
+  const TypingStatusChanged(this.isTyping);
+
+  @override
+  List<Object> get props => [isTyping];
+}

@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/core/service/signalr/signalr_service.dart';
+import 'package:squeak/features/mating/chat/presentation/controllers/chat_list_cubit.dart';
 // removed unused imports; `MatingChatListTile` handles chat navigation
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../../../core/utils/enums/profile_type.dart';

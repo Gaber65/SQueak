@@ -47,6 +47,12 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   // Track uploading files to show in chat
   final List<_UploadingMedia> _uploadingFiles = [];
 
+  // Typing indicator
+  bool _isOtherUserTyping = false;
+  Timer? _typingTimer;
+  bool _isCurrentlyTyping = false;
+  ChatMessagesCubit? _chatCubit;
+
   // Recording variables
   final AudioRecorder _audioRecorder = AudioRecorder();
   bool _isRecording = false;
@@ -67,6 +73,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       setState(() {
         _hasText = _messageController.text.trim().isNotEmpty;
       });
+      _handleTypingIndicator();
     });
 
     _isBlocked = widget.chat.isBlock;
@@ -81,6 +88,11 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
+
+    // Setup typing listener after a short delay to ensure cubit is ready
+    Future.delayed(const Duration(milliseconds: 100), () {
+      _setupTypingListener();
+    });
   }
 
   @override
@@ -91,6 +103,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     _messageController.dispose();
     _animationController.dispose();
     _recordTimer?.cancel();
+    _typingTimer?.cancel();
     _audioRecorder.dispose();
     super.dispose();
   }
@@ -113,6 +126,67 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     }
   }
 
+  // Setup SignalR listener for typing status
+  void _setupTypingListener() {
+    _signalRService.onConversationMessageReceived(
+      'ReceiveTyping',
+      (arguments) {
+        if (arguments != null && arguments.isNotEmpty && mounted) {
+          final isTyping = arguments[0] as bool? ?? false;
+          setState(() {
+            _isOtherUserTyping = isTyping;
+          });
+          debugPrint('👤 Other user typing: $isTyping');
+        }
+      },
+    );
+  }
+
+  // Handle typing indicator when user types
+  void _handleTypingIndicator() {
+    if (widget.chat.id.isEmpty) return;
+
+    final hasText = _messageController.text.trim().isNotEmpty;
+
+    // If user started typing
+    if (hasText && !_isCurrentlyTyping) {
+      _isCurrentlyTyping = true;
+      _sendTypingStatus(true);
+    }
+
+    // Reset timer
+    _typingTimer?.cancel();
+    _typingTimer = Timer(const Duration(seconds: 2), () {
+      if (_isCurrentlyTyping) {
+        _isCurrentlyTyping = false;
+        _sendTypingStatus(false);
+      }
+    });
+  }
+
+  // Send typing status via cubit
+  void _sendTypingStatus(bool isTyping) {
+    if (_chatCubit == null) return;
+    final petId = widget.chat.id.isEmpty ? widget.chat.matingId : widget.chat.petId;
+    
+    // ignore: unnecessary_null_comparison
+    if (petId != null && widget.chat.id.isNotEmpty) {
+      // Send to Conversation Hub (for in-chat typing)
+      _chatCubit!.sendTypingStatus(
+        conversationId: widget.chat.id,
+        petId: petId,
+        isTyping: isTyping,
+      );
+
+      // Also send to General Hub (for chat list typing indicator)
+      final otherPetId = widget.chat.petId;
+      _signalRService.setTypingIndicator(
+        toPetId: otherPetId,
+        isTyping: isTyping,
+      );
+    }
+  }
+
   ChatStatus _getChatStatus() {
     if (_isBlocked) return ChatStatus.blocked;
     if (isCompleted) return ChatStatus.completed;
@@ -131,6 +205,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       child: BlocConsumer<ChatMessagesCubit, ChatMessagesState>(
         listener: (context, state) {
           final cubit = ChatMessagesCubit.get(context);
+          _chatCubit = cubit;
 
           if (state is MessageSent) {
             final lastIndex = cubit.messagesList.length - 1;
@@ -180,6 +255,11 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 _isBlockedByOther = false;
               }
               _isReadOnly = _isBlocked;
+            });
+          }
+          if (state is TypingStatusChanged) {
+            setState(() {
+              _isOtherUserTyping = state.isTyping;
             });
           }
         },
@@ -446,6 +526,12 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             }
           },
         ),
+        if (_isOtherUserTyping)
+          Positioned(
+            bottom: 8,
+            left: 16,
+            child: _buildTypingIndicator(theme, isDark),
+          ),
       ],
     );
   }
@@ -1090,6 +1176,91 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTypingIndicator(ThemeData theme, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200],
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _TypingDot(delay: 0),
+          const SizedBox(width: 4),
+          _TypingDot(delay: 200),
+          const SizedBox(width: 4),
+          _TypingDot(delay: 400),
+        ],
+      ),
+    );
+  }
+}
+
+class _TypingDot extends StatefulWidget {
+  final int delay;
+
+  const _TypingDot({required this.delay});
+
+  @override
+  State<_TypingDot> createState() => _TypingDotState();
+}
+
+class _TypingDotState extends State<_TypingDot>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    _animation = Tween<double>(begin: 0.4, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    Future.delayed(Duration(milliseconds: widget.delay), () {
+      if (mounted) {
+        _controller.repeat(reverse: true);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return FadeTransition(
+      opacity: _animation,
+      child: Container(
+        width: 8,
+        height: 8,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: isDark ? Colors.grey[400] : Colors.grey[600],
+        ),
       ),
     );
   }

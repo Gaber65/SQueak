@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/core/utils/enums/profile_type.dart';
+import 'package:squeak/features/mating/chat/presentation/controllers/chat_list_cubit.dart';
 import 'package:squeak/features/settings/persentaion/controller/setting_cubit.dart';
 import '../../../../pets/domain/entities/pet_entity.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';

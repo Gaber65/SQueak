@@ -250,8 +250,8 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                                 size: 16,
                                 color:
                                     widget.message.isRead
-                                        ? Colors.lightBlue[200]
-                                        : Colors.white.withOpacity(0.8),
+                                        ? const Color(0xFF25D366) // WhatsApp green for read
+                                        : Colors.white.withOpacity(0.7),
                               ),
                             ],
                           ],

@@ -217,6 +217,85 @@ class SignalRService {
     }
   }
 
+  // Send typing status through Conversation Hub
+  Future<void> setTyping({
+    required String conversationId,
+    required String petId,
+    required bool isTyping,
+  }) async {
+    try {
+      // Ensure conversation hub is connected
+      if (!isConversationHubConnected) {
+        debugPrint('⚠️ Conversation Hub not connected for typing indicator');
+        return;
+      }
+
+      debugPrint('⌨️ Sending typing status: $isTyping for conversation: $conversationId');
+
+      await _conversationHub!.invoke(
+        'SetTyping',
+        args: [conversationId, petId, isTyping],
+      );
+
+      debugPrint('✅ Typing status sent successfully');
+    } catch (e) {
+      debugPrint('❌ Error sending typing status: $e');
+      // Don't rethrow - typing indicator is not critical
+    }
+  }
+
+  // Send typing indicator through General Hub (for chat list)
+  Future<void> setTypingIndicator({
+    required String toPetId,
+    required bool isTyping,
+  }) async {
+    try {
+      // Ensure general hub is connected
+      if (!isGeneralHubConnected) {
+        debugPrint('⚠️ General Hub not connected for typing indicator');
+        return;
+      }
+
+      debugPrint('⌨️ Sending typing indicator: $isTyping to pet: $toPetId');
+
+      await _generalHub!.invoke(
+        'SetTypingIndicator',
+        args: [toPetId, isTyping],
+      );
+
+      debugPrint('✅ Typing indicator sent successfully');
+    } catch (e) {
+      debugPrint('❌ Error sending typing indicator: $e');
+      // Don't rethrow - typing indicator is not critical
+    }
+  }
+
+  // Get unread message counts through General Hub
+  Future<Map<String, int>?> getUnreadMessageCounts(String petId) async {
+    try {
+      if (!isGeneralHubConnected) {
+        debugPrint('⚠️ General Hub not connected');
+        return null;
+      }
+
+      final result = await _generalHub!.invoke(
+        'GetUnreadMessageCounts',
+        args: [petId],
+      );
+
+      if (result is Map) {
+        return Map<String, int>.from(result.map(
+          (key, value) => MapEntry(key.toString(), value as int),
+        ));
+      }
+
+      return null;
+    } catch (e) {
+      debugPrint('❌ Error getting unread counts: $e');
+      return null;
+    }
+  }
+
   // Listen for messages on Conversation Hub (for individual chat messages)
   void onConversationMessageReceived(
     String methodName,
