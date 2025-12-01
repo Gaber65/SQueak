@@ -11,7 +11,7 @@ import 'package:squeak/features/friendship/presentation/widgets/empty_chats_widg
 import 'package:squeak/features/friendship/presentation/widgets/friends_tab.dart';
 import 'package:squeak/features/friendship/presentation/widgets/section_header_widget.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/mating_chat_list_tile.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/chat_widgets/mating_chat_list_tile.dart';
 
 class ChatsTab extends StatefulWidget {
   const ChatsTab({super.key});

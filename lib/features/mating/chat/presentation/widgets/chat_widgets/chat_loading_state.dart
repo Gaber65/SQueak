@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/service/service_locator/locatore_export_path.dart';
+import '../../../../../../core/service/service_locator/locatore_export_path.dart';
 
 class ChatLoadingState extends StatelessWidget {
   const ChatLoadingState({super.key});

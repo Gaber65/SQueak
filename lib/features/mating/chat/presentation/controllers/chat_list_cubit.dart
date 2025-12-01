@@ -7,14 +7,8 @@ import 'chat_list_state.dart';
 
 class ChatListCubit extends Cubit<ChatListState> {
   final GetChatsUseCase getChatsUseCase;
-  // final SignalRService signalRService;
 
-  // StreamSubscription<SignalEvent>? _signalSubscription;
-
-  /// قائمة الدردشات الحالية
   List<ChatEntity> allChats = [];
-
-  /// قائمة الـ typing indicators لكل pet
   Map<String, bool> friendsTyping = {};
 
   ChatListCubit({required this.getChatsUseCase, required Object signalRService})
@@ -62,9 +56,6 @@ class ChatListCubit extends Cubit<ChatListState> {
   //   });
   // }
 
-  /// =================================================
-  /// تحميل الدردشات من UseCase
-  /// =================================================
   Future<void> loadChats(String petId, {ChatStatus? status}) async {
     emit(ChatListLoading());
     final result = await getChatsUseCase(petId);

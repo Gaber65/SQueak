@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import '../controllers/chat_messages_state.dart';
+import '../../controllers/chat_messages_state.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/rating_pet_mating.dart';
-import '../../../profile/presentation/screens/view_pet_profile_screen.dart';
-import '../../domain/entities/chat_entity.dart';
-import '../../domain/usecases/parameters.dart';
+import '../../../../profile/presentation/screens/view_pet_profile_screen.dart';
+import '../../../domain/entities/chat_entity.dart';
+import '../../../domain/usecases/parameters.dart';
 
 class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
   final ChatEntity chat;

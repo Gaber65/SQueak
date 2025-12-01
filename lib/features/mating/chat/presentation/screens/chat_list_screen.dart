@@ -12,7 +12,7 @@ import '../../../../settings/persentaion/controller/setting_cubit.dart';
 import '../../../layoutMating/presentation/screens/widgets/profile_switcher_builder.dart';
 import '../../domain/entities/chat_entity.dart';
 import '../controllers/chat_list_state.dart';
-import '../widgets/mating_chat_list_tile.dart';
+import '../widgets/chat_widgets/mating_chat_list_tile.dart';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});

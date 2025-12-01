@@ -5,9 +5,9 @@ import 'package:squeak/core/utils/date_time_formatter.dart';
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_messages_cubit.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/parameters.dart';
 import 'package:squeak/generated/l10n.dart';
-import '../../domain/entities/message_entity.dart';
-import 'full_screen_media_viewer.dart';
-import 'audio_player_widget.dart';
+import '../../../domain/entities/message_entity.dart';
+import '../attach_files_in_chat/full_screen_media_viewer.dart';
+import '../attach_files_in_chat/audio_player_widget.dart';
 
 class ChatMessageBubble extends StatefulWidget {
   final MessageEntity message;

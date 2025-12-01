@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import '../../domain/entities/message_entity.dart';
+import '../../../domain/entities/message_entity.dart';
 import 'message_bubble.dart';
-import 'date_divider.dart';
+import '../chat_widgets/date_divider.dart';
 import 'uploading_bubble.dart';
-import 'typing_indicator.dart';
-import 'chat_background_painter.dart';
+import '../typing_indicator.dart';
+import '../chat_widgets/chat_background_painter.dart';
 
 class MessagesList extends StatelessWidget {
   final List<MessageEntity> messages;

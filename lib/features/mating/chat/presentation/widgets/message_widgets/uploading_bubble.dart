@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'attachment_options_bottom_sheet.dart';
+import '../attach_files_in_chat/attachment_options_bottom_sheet.dart';
 
 class UploadingMedia {
   final String id;

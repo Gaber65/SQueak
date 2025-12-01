@@ -2,8 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import '../../domain/entities/chat_entity.dart';
-import '../screens/chat_screen.dart';
+import '../../../domain/entities/chat_entity.dart';
+import '../../screens/chat_screen.dart';
 
 class MatingChatListTile extends StatelessWidget {
   final ChatEntity chat;

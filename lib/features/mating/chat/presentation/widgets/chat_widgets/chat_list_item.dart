@@ -3,9 +3,9 @@ import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 
-import '../../../../../core/utils/theme/color_mangment/color_manager.dart';
-import '../../../../../core/utils/theme/decorations/decorations.dart';
-import '../../../../../generated/l10n.dart';
+import '../../../../../../core/utils/theme/color_mangment/color_manager.dart';
+import '../../../../../../core/utils/theme/decorations/decorations.dart';
+import '../../../../../../generated/l10n.dart';
 
 class ChatListItem extends StatelessWidget {
   final ChatEntity chat;

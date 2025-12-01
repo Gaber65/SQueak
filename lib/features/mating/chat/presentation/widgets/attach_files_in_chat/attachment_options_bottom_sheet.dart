@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/image_preview_screen.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/camera_screen.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/image_preview_screen.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/camera_screen.dart';
 import 'package:squeak/generated/l10n.dart';
 
 enum AttachmentType { image, video, audio }

@@ -8,16 +8,16 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:squeak/core/signalr/signalr_connection_status_widget.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_status.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/chat_app_bar.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/attachment_options_bottom_sheet.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/chat_widgets/chat_app_bar.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/attachment_options_bottom_sheet.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/status_banner.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/chat_empty_state.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/chat_error_state.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/chat_loading_state.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/messages_list.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/message_input_widget.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/recording_overlay.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/uploading_bubble.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/chat_widgets/chat_empty_state.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/chat_widgets/chat_error_state.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/chat_widgets/chat_loading_state.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/message_widgets/messages_list.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/message_widgets/message_input_widget.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/recording_overlay.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/message_widgets/uploading_bubble.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../../pets/domain/entities/pet_entity.dart';
 import '../controllers/chat_messages_state.dart';
@@ -61,21 +61,16 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   int _recordDuration = 0;
   Timer? _recordTimer;
   bool _hasText = false;
-  static const int _maxRecordDuration = 60;
+  static const int _maxRecordDuration = 120;
   ChatMessagesCubit? _recordingCubit;
 
   @override
   void initState() {
     super.initState();
-
-    // Connect to Conversation Hub when chat screen opens
-    // _connectToConversationHub();
-
     _messageController.addListener(() {
       setState(() {
         _hasText = _messageController.text.trim().isNotEmpty;
       });
-      // _handleTypingIndicator();
     });
 
     _isBlocked = widget.chat.isBlock;
@@ -90,16 +85,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-
-    // Setup typing listener after a short delay to ensure cubit is ready
-    // Future.delayed(const Duration(milliseconds: 100), () {
-    //   _setupTypingListener();
-    // });
   }
 
   @override
   void dispose() {
-    // _disconnectFromConversationHub();
     _messageController.dispose();
     _animationController.dispose();
     _recordTimer?.cancel();
@@ -108,92 +97,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     super.dispose();
   }
 
-  // Connect to Conversation Hub for real-time chat messages
-  // Future<void> _connectToConversationHub() async {
-  //   try {
-  //     await _signalRService.connectToConversationHub();
-
-  //     // Mark messages as read when opening chat
-  //     if (widget.chat.id.isNotEmpty) {
-  //       final petId = widget.chat.petId;
-  //       if (petId.isNotEmpty) {
-  //         await _signalRService.markMessagesAsRead(widget.chat.id, petId);
-  //       }
-  //     }
-  //   } catch (e) {
-  //     debugPrint('❌ Failed to connect to Conversation Hub: $e');
-  //   }
-  // }
-
-  // Disconnect from Conversation Hub
-  // Future<void> _disconnectFromConversationHub() async {
-  //   try {
-  //     await _signalRService.disconnectFromConversationHub();
-  //   } catch (e) {
-  //     debugPrint('❌ Failed to disconnect from Conversation Hub: $e');
-  //   }
-  // }
-
-  // // Setup SignalR listener for typing status
-  // void _setupTypingListener() {
-  //   _signalRService.onConversationMessageReceived('FriendIsTyping', (
-  //     arguments,
-  //   ) {
-  //     if (arguments != null && arguments.isNotEmpty && mounted) {
-  //       final isTyping = arguments[0] as bool? ?? false;
-  //       setState(() {
-  //         _isOtherUserTyping = isTyping;
-  //       });
-  //       debugPrint('👤 Other user typing: $isTyping');
-  //     }
-  //   });
-  // }
-
-  // // Handle typing indicator when user types
-  // void _handleTypingIndicator() {
-  //   if (widget.chat.id.isEmpty) return;
-
-  //   final hasText = _messageController.text.trim().isNotEmpty;
-
-  //   // If user started typing
-  //   if (hasText && !_isCurrentlyTyping) {
-  //     _isCurrentlyTyping = true;
-  //     _sendTypingStatus(true);
-  //   }
-
-  //   // Reset timer
-  //   _typingTimer?.cancel();
-  //   _typingTimer = Timer(const Duration(seconds: 2), () {
-  //     if (_isCurrentlyTyping) {
-  //       _isCurrentlyTyping = false;
-  //       _sendTypingStatus(false);
-  //     }
-  //   });
-  // }
-
-  // // Send typing status via cubit
-  // void _sendTypingStatus(bool isTyping) {
-  //   if (_chatCubit == null) return;
-  //   final petId =
-  //       widget.chat.id.isEmpty ? widget.chat.matingId : widget.chat.petId;
-
-  //   // ignore: unnecessary_null_comparison
-  //   if (petId != null && widget.chat.id.isNotEmpty) {
-  //     // Send to Conversation Hub (for in-chat typing)
-  //     // _chatCubit!.sendTypingStatus(
-  //     //   conversationId: widget.chat.id,
-  //     //   petId: petId,
-  //     //   isTyping: isTyping,
-  //     // );
-
-  //     // Also send to General Hub (for chat list typing indicator)
-  //     final otherPetId = widget.chat.petId;
-  //     _signalRService.setTypingIndicator(
-  //       toPetId: otherPetId,
-  //       isTyping: isTyping,
-  //     );
-  //   }
-  // }
+  
 
   ChatStatus _getChatStatus() {
     if (_isBlocked) return ChatStatus.blocked;

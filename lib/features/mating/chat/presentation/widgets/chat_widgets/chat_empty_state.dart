@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../../../../../core/service/service_locator/locatore_export_path.dart';
+import '../../../../../../core/service/service_locator/locatore_export_path.dart';
 
 class ChatEmptyState extends StatelessWidget {
   const ChatEmptyState({super.key});
