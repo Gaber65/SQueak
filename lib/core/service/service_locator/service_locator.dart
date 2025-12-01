@@ -1,3 +1,4 @@
+import 'package:squeak/core/service/signalr/signalr_service.dart';
 import 'package:squeak/features/friendship/domain/usecases/delete_friendship.dart';
 import 'package:squeak/features/friendship/domain/usecases/block_friend.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/rate_mating_use_case.dart';
@@ -10,7 +11,6 @@ import '../../../features/layout/search/presentation/controller/search_cubit.dar
 import '../../../features/mating/matingRequest/domain/usecases/update_mating_request.dart';
 import '../../../features/settings/persentaion/controller/setting_cubit.dart';
 import '../../../features/vetcare/presenation/controllers/follow_request/follow_request_cubit.dart';
-import '../signalr/signalr_service.dart';
 import 'locatore_export_path.dart';
 
 final sl = GetIt.instance;

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/service/signalr/signalr_service.dart';
 import 'package:squeak/features/friendship/domain/entities/friend_request_stats.dart';
 import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
 import 'package:squeak/features/friendship/domain/usecases/update_pet_request.dart';
@@ -255,43 +254,43 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
       (chatsList) {
         chats = chatsList;
         emit(ChatsLoaded(chats: chatsList));
-        _fetchUnreadCounts(petId);
+        // _fetchUnreadCounts(petId);
       },
     );
   }
 
-  Future<void> _fetchUnreadCounts(String petId) async {
-    final signalRService = SignalRService();
-    final unreadCounts = await signalRService.getUnreadMessageCounts(petId);
+  // Future<void> _fetchUnreadCounts(String petId) async {
+  //   // final signalRService = SignalRService();
+  //   final unreadCounts = await signalRService.getUnreadMessageCounts(petId);
     
-    if (unreadCounts != null && chats.isNotEmpty) {
-      final updatedChats = chats.map((chat) {
-        final count = unreadCounts.length;
-        return ChatEntity(
-          id: chat.id,
-          isGroup: chat.isGroup,
-          isPetChat: chat.isPetChat,
-          name: chat.name,
-          image: chat.image,
-          groupImage: chat.groupImage,
-          petId: chat.petId,
-          matingId: chat.matingId,
-          completeMarriageStatues: chat.completeMarriageStatues,
-          createdAt: chat.createdAt,
-          lastMessageSendDateTime: chat.lastMessageSendDateTime,
-          isBlock: chat.isBlock,
-          isBlockedByMe: chat.isBlockedByMe,
-          isBlockedByOther: chat.isBlockedByOther,
-          isReadOnly: chat.isReadOnly,
-          unreadedCount: count,
-          lastMessage: chat.lastMessage,
-        );
-      }).toList();
+  //   if (unreadCounts != null && chats.isNotEmpty) {
+  //     final updatedChats = chats.map((chat) {
+  //       final count = unreadCounts.length;
+  //       return ChatEntity(
+  //         id: chat.id,
+  //         isGroup: chat.isGroup,
+  //         isPetChat: chat.isPetChat,
+  //         name: chat.name,
+  //         image: chat.image,
+  //         groupImage: chat.groupImage,
+  //         petId: chat.petId,
+  //         matingId: chat.matingId,
+  //         completeMarriageStatues: chat.completeMarriageStatues,
+  //         createdAt: chat.createdAt,
+  //         lastMessageSendDateTime: chat.lastMessageSendDateTime,
+  //         isBlock: chat.isBlock,
+  //         isBlockedByMe: chat.isBlockedByMe,
+  //         isBlockedByOther: chat.isBlockedByOther,
+  //         isReadOnly: chat.isReadOnly,
+  //         unreadedCount: count,
+  //         lastMessage: chat.lastMessage,
+  //       );
+  //     }).toList();
       
-      chats = updatedChats;
-      emit(ChatsLoaded(chats: updatedChats));
-    }
-  }
+  //     chats = updatedChats;
+  //     emit(ChatsLoaded(chats: updatedChats));
+  //   }
+  // }
 
   Future<void> loadBlockedFriends({required String petId}) async {
     emit(BlockedFriendsLoading());

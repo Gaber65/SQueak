@@ -12,6 +12,10 @@ String videoUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
 String audioUrl = '${ConfigModel.baseApiUrlSqueak}/messageRecods/';
 String imageUrlWithVetICare = ConfigModel.serverFirstHalfOfImageUrl;
 
+// chatHubs
+ String generalHubEndPoint = '${ConfigModel.baseApiUrlSqueak}/generalhub';
+ String conversationHubEndPoint = '${ConfigModel.baseApiUrlSqueak}/conversationhub';
+
 /// Auth & User Management
 const String registerEndPoint = '$version/signUp';
 const String registerQrEndPoint = '$version/qr/signup';
