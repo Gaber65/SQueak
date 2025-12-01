@@ -21,12 +21,12 @@ class ChatsTab extends StatefulWidget {
 }
 
 class _ChatsTabState extends State<ChatsTab> {
-  // final SignalRService _signalRService = SignalRService();
   bool _isConnecting = false;
   StreamSubscription<SignalEvent>? _eventSubscription;
   final Map<String, bool> _typingStates = {};
   final Map<String, int> _unreadCounts = {};
   String? _currentActivePetId;
+  final SignalRGeneralHubService _generalHub = SignalRGeneralHubService();
 
   @override
   void initState() {
@@ -36,30 +36,131 @@ class _ChatsTabState extends State<ChatsTab> {
 
   Future<void> _initializeSignalR() async {
     if (_isConnecting) return;
-
     _isConnecting = true;
 
     try {
-      // Connect to both hubs for full real-time functionality
-      // await _signalRService.connectToGeneralHub();
-      // await _signalRService.connectToConversationHub();
+      // Get active pet ID
+      final activePet = SwitchProfileCubit.get(context).activeProfile?.pet;
+      if (activePet?.petId == null) {
+        debugPrint('❌ No active pet ID found');
+        return;
+      }
+      
+      _currentActivePetId = activePet!.petId;
+      debugPrint('🔄 Connecting to GeneralHub for pet: $_currentActivePetId');
+
+      // Connect to GeneralHub
+      await _generalHub.connect(
+        petId: _currentActivePetId!,
+        fullName: activePet.petName,
+        image: activePet.imageName,
+      );
+
+      debugPrint('✅ GeneralHub connected successfully from ChatsTab');
+      
+      // Setup event listeners
+      _setupEventListeners();
+      
+      // Fire the 3 events after successful connection
+      _fireInitialEvents();
+    } catch (e) {
+      debugPrint('❌ Failed to connect GeneralHub: $e');
+     
 
       // Listen for real-time events
       _setupEventListeners();
 
       debugPrint('✅ Both hubs connected successfully from ChatsTab');
-    } catch (e) {
-      debugPrint('❌ Hub connection failed: $e');
-      // Don't crash the app - connection will retry automatically
     } finally {
       _isConnecting = false;
     }
   }
 
   void _setupEventListeners() {
+    debugPrint('🎧 Setting up GeneralHub event listeners...');
+    
     _eventSubscription = signalEventStream.stream.listen((event) {
-      _handleSignalEvent(event);
+      if (event.hub == 'GeneralHub') {
+        debugPrint('📥 GeneralHub Event: ${event.method}');
+        _handleSignalEvent(event);
+      }
     });
+  }
+
+  void _fireInitialEvents() {
+    if (_currentActivePetId == null) return;
+    
+    debugPrint('🔥 Firing initial GeneralHub events...');
+
+    // Register event listeners first
+    // 1. ConnectionRegistered event listener
+    _generalHub.onConnectionRegistered((data) {
+      debugPrint('✅ Event Fired: ConnectionRegistered - Data: $data');
+      if (mounted) {
+        setState(() {
+          // Handle connection data if needed
+        });
+      }
+    });
+
+    // 2. FriendConnectionChanged event listener
+    _generalHub.onFriendConnectionChanged((data) {
+      debugPrint('✅ Event Fired: FriendConnectionChanged - Data: $data');
+      if (mounted) {
+        _refreshChatsList();
+      }
+    });
+
+    // 3. UnreadedMessagesCount event listener
+    _generalHub.onUnreadedMessagesCount((data) {
+      debugPrint('✅ Event Fired: UnreadedMessagesCount - Data: $data');
+      if (mounted) {
+        setState(() {
+          final counts = data['UnreadCounts'] as Map<String, dynamic>?;
+          if (counts != null) {
+            _unreadCounts.clear();
+            counts.forEach((key, value) {
+              _unreadCounts[key] = value as int;
+            });
+          }
+        });
+      }
+    });
+
+    debugPrint('✅ All 3 event listeners registered successfully');
+    
+    // Now invoke server methods to trigger the events
+    _requestInitialData();
+  }
+  
+  Future<void> _requestInitialData() async {
+    if (_currentActivePetId == null) return;
+    
+    debugPrint('📡 Requesting initial data from server...');
+    
+    try {
+      // Request online friends (triggers FriendConnectionChanged events)
+      final onlineFriends = await _generalHub.getAllMyOnlinePetFriends(_currentActivePetId!);
+      if (onlineFriends != null) {
+        debugPrint('✅ Got ${onlineFriends.length} online friends');
+      }
+      
+      // Request unread message counts (triggers UnreadedMessagesCount event)
+      final unreadCounts = await _generalHub.getUnreadMessageCounts(_currentActivePetId!);
+      if (unreadCounts != null) {
+        debugPrint('✅ Got unread counts: $unreadCounts');
+        if (mounted) {
+          setState(() {
+            _unreadCounts.clear();
+            _unreadCounts.addAll(unreadCounts);
+          });
+        }
+      }
+      
+      debugPrint('✅ Initial data requests completed');
+    } catch (e) {
+      debugPrint('⚠️ Error requesting initial data: $e');
+    }
   }
 
   void _handleSignalEvent(SignalEvent event) {
@@ -265,6 +366,8 @@ class _ChatsTabState extends State<ChatsTab> {
 
   @override
   void dispose() {
+    debugPrint('🔌 Disconnecting GeneralHub from ChatsTab');
+    _generalHub.disconnect();
     _eventSubscription?.cancel();
     // _signalRService.disconnectAll();
     super.dispose();

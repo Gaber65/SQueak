@@ -11,8 +11,8 @@ import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dar
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import 'package:squeak/generated/l10n.dart';
-import '../../../../core/network/end_points.dart';
-import '../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
+import '../../../../../core/network/end_points.dart';
+import '../../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
 
 class FriendCard extends StatelessWidget {
   final PetEntities pet;

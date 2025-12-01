@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'core/service/cache/shared_preferences/cache_helper.dart';
-import 'core/service/signalr/signalr_service.dart';
+import 'core/service/signalr/signalr_conversation_services.dart';
+import 'core/service/signalr/signalr_general_service.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +37,8 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final SignalRService _signalR = SignalRService();
+  final SignalRConversationHubService _conversationHub = SignalRConversationHubService();
+  final SignalRGeneralHubService _generalHub = SignalRGeneralHubService();
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
@@ -50,11 +52,14 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _initSignalR() async {
-    await _signalR.connectToGeneralHub();
-    await _signalR.connectToConversationHub();
+    await _generalHub.connect(petId: 'your-pet-id');
+    await _conversationHub.connect(
+      conversationId: '7dfa010a-da56-4052-9cb2-1bd3b0f16235',
+      petId: 'c82a5cfc-ec59-4cb1-bcfb-4331d39c6388',
+    );
 
     // الاستماع لجميع الأحداث
-    signalEventStream.stream.listen((event) {
+    conversationSignalEventStream.stream.listen((event) {
       if (event.hub == "ConversationHub") {
         if (event.method == "ReceiveMessageFromUser" || event.method == "NewMessage") {
           final data = event.data?.first as Map<String, dynamic>?;
@@ -118,14 +123,15 @@ class _ChatScreenState extends State<ChatScreen> {
       "Description": text,
     };
 
-    await _signalR.sendMessage(command);
+    await _conversationHub.sendMessageToUser(command);
   }
 
   @override
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
-    _signalR.disconnectAll();
+    _conversationHub.disconnect();
+    _generalHub.disconnect();
     super.dispose();
   }
 

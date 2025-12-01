@@ -1,4 +1,5 @@
-import 'package:squeak/core/service/signalr/signalr_service.dart';
+import 'package:squeak/core/service/signalr/signalr_conversation_services.dart';
+import 'package:squeak/core/service/signalr/signalr_general_service.dart';
 import 'package:squeak/features/friendship/domain/usecases/delete_friendship.dart';
 import 'package:squeak/features/friendship/domain/usecases/block_friend.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/rate_mating_use_case.dart';
@@ -456,10 +457,11 @@ class ServiceLocator {
         rateMatingUseCase :sl(),
       ),
     );
-    sl.registerLazySingleton<SignalRService>(() => SignalRService());
+    sl.registerLazySingleton<SignalRConversationHubService>(() => SignalRConversationHubService());
+    sl.registerLazySingleton<SignalRGeneralHubService>(() => SignalRGeneralHubService());
 
     sl.registerFactory(
-      () => ChatListCubit(getChatsUseCase: sl() ,signalRService: sl()),
+      () => ChatListCubit(getChatsUseCase: sl(), signalRService: sl<SignalRGeneralHubService>()),
     );
 
     /// profile mating

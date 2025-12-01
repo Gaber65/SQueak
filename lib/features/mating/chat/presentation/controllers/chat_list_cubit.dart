@@ -12,49 +12,10 @@ class ChatListCubit extends Cubit<ChatListState> {
   Map<String, bool> friendsTyping = {};
 
   ChatListCubit({required this.getChatsUseCase, required Object signalRService})
-    : super(ChatListInitial()) {
-    // _listenToSignalR();
-  }
+    : super(ChatListInitial());
 
   static ChatListCubit get(context) => BlocProvider.of(context);
 
-  // void _listenToSignalR() {
-  //   signalRService.connectToGeneralHub().catchError((e) {
-  //     debugPrint('❌ Failed to connect to GeneralHub: $e');
-  //   });
-
-  //   signalRService.connectToConversationHub().catchError((e) {
-  //     debugPrint('❌ Failed to connect to ConversationHub: $e');
-  //   });
-
-  //   _signalSubscription = signalEventStream.stream.listen((event) {
-  //     debugPrint("🔔 Event received: $event");
-
-  //     if (event.hub == "GeneralHub") {
-  //       switch (event.method) {
-  //         case "FriendIsTyping":
-  //           emit(ChatListTypingUpdated(friendsTyping));
-  //           break;
-  //         case "ChatListUpdated":
-  //           // ممكن تعمل loadChats هنا لو عايز تحدث القائمة
-  //           break;
-  //       }
-  //     }
-
-  //     if (event.hub == "ConversationHub") {
-  //       switch (event.method) {
-  //         case "ReceiveMessage":
-  //         case "NewMessage":
-  //           // لو عايز تحدث الـ chat list فورًا
-  //           loadChats("petId"); // ضع الـ petId المناسب
-  //           break;
-  //         case "SetTyping":
-  //           emit(ChatListTypingUpdated(friendsTyping));
-  //           break;
-  //       }
-  //     }
-  //   });
-  // }
 
   Future<void> loadChats(String petId, {ChatStatus? status}) async {
     emit(ChatListLoading());

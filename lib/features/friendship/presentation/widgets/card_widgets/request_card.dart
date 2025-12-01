@@ -6,7 +6,7 @@ import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/friendship/domain/entities/friend_request_stats.dart';
 import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
 
-import '../../../mating/profile/presentation/screens/view_pet_profile_screen.dart';
+import '../../../../mating/profile/presentation/screens/view_pet_profile_screen.dart';
 
 class RequestCard extends StatelessWidget {
   final PetFriendRequestEntity pet;

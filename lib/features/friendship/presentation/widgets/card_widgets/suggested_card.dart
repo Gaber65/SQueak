@@ -12,8 +12,8 @@ import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import 'package:squeak/generated/l10n.dart';
 
-import '../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
-import '../controllers/pet_friend_cubit.dart';
+import '../../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
+import '../../controllers/pet_friend_cubit.dart';
 
 class SuggestedCard extends StatelessWidget {
   final PetEntities pet;

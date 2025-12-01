@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:squeak/core/service/signalr/signalr_service.dart';
+import 'package:squeak/core/service/signalr/signalr_conversation_services.dart';
 import '../../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../domain/entities/chat_entity.dart';
 import '../attach_files_in_chat/attachment_options_bottom_sheet.dart';
@@ -72,7 +72,7 @@ class MessageInputWidget extends StatelessWidget {
                           controller: messageController,
                           onChanged: (value) {
                             if (value.isNotEmpty) {
-                              SignalRService().setTyping(
+                              SignalRConversationHubService().setTyping(
                                 petId: chat.petId,
                                 conversationId: chat.id,
                                 isTyping: true,

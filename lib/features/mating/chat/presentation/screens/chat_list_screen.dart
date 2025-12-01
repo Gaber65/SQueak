@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import 'package:squeak/core/service/signalr/signalr_general_service.dart';
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_list_cubit.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../../../core/utils/enums/profile_type.dart';
@@ -22,16 +24,121 @@ class ChatListScreen extends StatefulWidget {
 }
 
 class _ChatListScreenState extends State<ChatListScreen> {
+  final SignalRGeneralHubService _generalHub = SignalRGeneralHubService();
+  StreamSubscription<SignalEvent>? _eventSubscription;
+  String? _currentPetId;
 
   @override
   void initState() {
     super.initState();
-    // Connect to General Hub when chat list screen opens
+    _connectToGeneralHub();
+  }
+
+  Future<void> _connectToGeneralHub() async {
+    try {
+      // Get active pet from context
+      await Future.delayed(const Duration(milliseconds: 100));
+      
+      final activePet = SwitchProfileCubit.get(context).activeProfile?.pet;
+      if (activePet?.petId == null) {
+        debugPrint('❌ ChatListScreen: No active pet ID found');
+        return;
+      }
+      
+      _currentPetId = activePet!.petId;
+      debugPrint('🔄 ChatListScreen: Connecting to GeneralHub for pet: $_currentPetId');
+
+      await _generalHub.connect(
+        petId: _currentPetId!,
+        fullName: activePet.petName,
+        image: activePet.imageName,
+      );
+
+      debugPrint('✅ ChatListScreen: GeneralHub connected successfully');
+      
+      _setupEventListeners();
+      _fireInitialEvents();
+    } catch (e) {
+      debugPrint('❌ ChatListScreen: Failed to connect GeneralHub: $e');
+    }
+  }
+
+  void _setupEventListeners() {
+    debugPrint('🎧 ChatListScreen: Setting up GeneralHub event listeners...');
+    
+    _eventSubscription = signalEventStream.stream.listen((event) {
+      if (event.hub == 'GeneralHub') {
+        debugPrint('📥 ChatListScreen GeneralHub Event: ${event.method}');
+      }
+    });
+  }
+
+  void _fireInitialEvents() {
+    if (_currentPetId == null) return;
+    
+    debugPrint('🔥 ChatListScreen: Firing initial GeneralHub events...');
+
+    // Register event listeners
+    // 1. ConnectionRegistered
+    _generalHub.onConnectionRegistered((data) {
+      debugPrint('✅ ChatListScreen Event Fired: ConnectionRegistered - $data');
+    });
+
+    // 2. FriendConnectionChanged
+    _generalHub.onFriendConnectionChanged((data) {
+      debugPrint('✅ ChatListScreen Event Fired: FriendConnectionChanged - $data');
+      if (mounted) {
+        // Reload chat list when friend connection changes
+        final cubit = context.read<ChatListCubit>();
+        cubit.loadChats(_currentPetId!);
+      }
+    });
+
+    // 3. UnreadedMessagesCount
+    _generalHub.onUnreadedMessagesCount((data) {
+      debugPrint('✅ ChatListScreen Event Fired: UnreadedMessagesCount - $data');
+      if (mounted) {
+        // Reload chat list to update unread counts
+        final cubit = context.read<ChatListCubit>();
+        cubit.loadChats(_currentPetId!);
+      }
+    });
+
+    debugPrint('✅ ChatListScreen: All 3 event listeners registered successfully');
+    
+    // Request initial data from server
+    _requestInitialData();
+  }
+  
+  Future<void> _requestInitialData() async {
+    if (_currentPetId == null) return;
+    
+    debugPrint('📡 ChatListScreen: Requesting initial data from server...');
+    
+    try {
+      // Request online friends data
+      final onlineFriends = await _generalHub.getAllMyOnlinePetFriends(_currentPetId!);
+      if (onlineFriends != null) {
+        debugPrint('✅ ChatListScreen: Got ${onlineFriends.length} online friends');
+      }
+      
+      // Request unread message counts
+      final unreadCounts = await _generalHub.getUnreadMessageCounts(_currentPetId!);
+      if (unreadCounts != null) {
+        debugPrint('✅ ChatListScreen: Got unread counts: $unreadCounts');
+      }
+      
+      debugPrint('✅ ChatListScreen: Initial data requests completed');
+    } catch (e) {
+      debugPrint('⚠️ ChatListScreen: Error requesting initial data: $e');
+    }
   }
 
   @override
   void dispose() {
-    // Disconnect from General Hub when chat list screen closes
+    debugPrint('🔌 ChatListScreen: Disconnecting GeneralHub');
+    _eventSubscription?.cancel();
+    _generalHub.disconnect();
     super.dispose();
   }
 

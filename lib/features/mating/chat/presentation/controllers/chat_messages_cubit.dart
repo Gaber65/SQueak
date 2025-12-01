@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import 'package:squeak/core/service/signalr/signalr_service.dart';
+import 'package:squeak/core/service/signalr/signalr_conversation_services.dart';
 import 'package:squeak/features/mating/chat/data/models/message_model.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/delete_message_use_case.dart';
 import '../../domain/entities/message_entity.dart';
@@ -40,7 +40,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     required bool isTyping,
   }) async {
     try {
-      final signalRService = SignalRService();
+      final signalRService = SignalRConversationHubService();
       await signalRService.setTyping(
         conversationId: conversationId,
         petId: petId,
@@ -98,12 +98,15 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     );
 
     try {
-      final signalRService = SignalRService();
+      final signalRService = SignalRConversationHubService();
 
       // Ensure Conversation Hub is connected before sending
-      if (!signalRService.isConversationHubConnected) {
+      if (!signalRService.isConnected) {
         debugPrint('🔌 Connecting to Conversation Hub...');
-        await signalRService.connectToConversationHub();
+        await signalRService.connect(
+          conversationId: chatId,
+          petId: fromPetId ?? '',
+        );
       }
 
       // Create message model
@@ -128,7 +131,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       );
 
       // Send message via SignalR Conversation Hub
-      await signalRService.sendMessage(command);
+      await signalRService.sendMessageToUser(command);
       debugPrint('✅ Message sent successfully via SignalR');
 
       // Reload messages to show the sent message immediately

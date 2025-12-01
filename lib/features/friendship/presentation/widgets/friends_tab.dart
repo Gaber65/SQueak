@@ -6,14 +6,14 @@ import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
-import 'package:squeak/features/friendship/presentation/widgets/request_card.dart';
+import 'package:squeak/features/friendship/presentation/widgets/card_widgets/request_card.dart';
 import 'package:squeak/features/friendship/presentation/widgets/section_header_widget.dart';
-import 'package:squeak/features/friendship/presentation/widgets/sent_card.dart';
+import 'package:squeak/features/friendship/presentation/widgets/card_widgets/sent_card.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 import '../../../profile_switch/Presentation/cubit/switch_profile_cubit.dart';
-import 'friend_card.dart';
-import 'suggested_card.dart';
+import 'card_widgets/friend_card.dart';
+import 'card_widgets/suggested_card.dart';
 
 class AnimatedItem extends StatelessWidget {
   final Widget child;
