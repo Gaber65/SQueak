@@ -70,9 +70,13 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   void initState() {
     super.initState();
     _messageController.addListener(() {
+      final hasText = _messageController.text.trim().isNotEmpty;
       setState(() {
-        _hasText = _messageController.text.trim().isNotEmpty;
+        _hasText = hasText;
       });
+
+      // Send typing indicator
+      _handleTypingIndicator(hasText);
     });
 
     _isBlocked = widget.chat.isBlock;
@@ -91,6 +95,17 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
   @override
   void dispose() {
+    // Stop typing indicator before leaving
+    if (mounted) {
+      try {
+        context.read<ChatAppCubit>().setTyping(
+          conversationId: widget.chat.id,
+          isTyping: false,
+        );
+        context.read<ChatAppCubit>().leaveConversation();
+      } catch (_) {}
+    }
+
     _messageController.dispose();
     _animationController.dispose();
     _recordTimer?.cancel();
@@ -104,6 +119,38 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     if (isCompleted) return ChatStatus.completed;
     if (_isMatingStarted) return ChatStatus.onMating;
     return ChatStatus.active;
+  }
+
+  void _handleTypingIndicator(bool isTyping) {
+    _typingTimer?.cancel();
+
+    if (isTyping) {
+      // Immediately send typing=true
+      if (mounted) {
+        context.read<ChatAppCubit>().setTyping(
+          conversationId: widget.chat.id,
+          isTyping: true,
+        );
+      }
+
+      // Set timer to send typing=false after 2 seconds of inactivity
+      _typingTimer = Timer(const Duration(seconds: 2), () {
+        if (mounted) {
+          context.read<ChatAppCubit>().setTyping(
+            conversationId: widget.chat.id,
+            isTyping: false,
+          );
+        }
+      });
+    } else {
+      // Send typing=false immediately when text is cleared
+      if (mounted) {
+        context.read<ChatAppCubit>().setTyping(
+          conversationId: widget.chat.id,
+          isTyping: false,
+        );
+      }
+    }
   }
 
   @override
@@ -150,6 +197,14 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                       _itemScrollController.jumpTo(index: lastIndex);
                     } catch (_) {}
                   }
+                });
+              }
+
+              // Handle typing indicator from friend
+              if (state is FriendTypingInConversation &&
+                  state.conversationId == widget.chat.id) {
+                setState(() {
+                  _isOtherUserTyping = state.isTyping;
                 });
               }
             },
@@ -221,6 +276,12 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             final cubit = ChatMessagesCubit.get(context);
 
             return BlocBuilder<ChatAppCubit, ChatAppState>(
+              buildWhen: (previous, current) {
+                // Rebuild when online status or typing status changes
+                return current is FriendOnlineStatusChanged ||
+                    current is FriendTypingInConversation ||
+                    current is ChatAppConnected;
+              },
               builder: (context, chatAppState) {
                 final chatAppCubit = context.read<ChatAppCubit>();
 

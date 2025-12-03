@@ -1,5 +1,5 @@
 class PetConnectionDto {
-  final String petId;               
+  final String petId;
   final String fullName;
   final String image;
   final bool isOnline;
@@ -15,11 +15,13 @@ class PetConnectionDto {
 
   factory PetConnectionDto.fromJson(Map<String, dynamic> json) {
     return PetConnectionDto(
-      petId: json['PetId'] ?? '',
-      fullName: json['FullName'] ?? '',
-      image: json['Image'] ?? '',
-      isOnline: json['IsOnline'] ?? false,
-      connectionIds: List<String>.from(json['ConnectionIds'] ?? []),
+      petId: json['PetId'] ?? json['petId'] ?? '',
+      fullName: json['FullName'] ?? json['fullName'] ?? '',
+      image: json['Image'] ?? json['image'] ?? '',
+      isOnline: json['IsOnline'] ?? json['isOnline'] ?? false,
+      connectionIds: List<String>.from(
+        json['ConnectionIds'] ?? json['connectionIds'] ?? [],
+      ),
     );
   }
 

@@ -35,11 +35,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
     try {
       // Connect to GeneralHub
-      await generalHub.connect(
-        petId: petId,
-        fullName: fullName,
-        image: image,
-      );
+      await generalHub.connect(petId: petId, fullName: fullName, image: image);
 
       // Setup event listeners
       _setupGeneralHubListeners();
@@ -68,6 +64,8 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
       if (friendPetId != null) {
         onlineFriends[friendPetId] = isOnline;
+        print('🔄 Friend $friendPetId online status changed to: $isOnline');
+        print('📊 Current online friends: $onlineFriends');
         emit(FriendOnlineStatusChanged(friendPetId, isOnline));
       }
     });
@@ -79,6 +77,8 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
       if (conversationId != null) {
         unreadCounts[conversationId] = count;
+        print('📬 Unread count for $conversationId changed to: $count');
+        print('📊 Current unread counts: $unreadCounts');
         emit(UnreadCountUpdated(conversationId, count));
       }
     });
@@ -90,6 +90,8 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
       if (friendPetId != null) {
         typingIndicators[friendPetId] = isTyping;
+        print('⌨️ Friend $friendPetId typing status changed to: $isTyping');
+        print('📊 Current typing indicators: $typingIndicators');
         emit(FriendTypingInGeneral(friendPetId, isTyping));
       }
     });
@@ -106,15 +108,27 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       // Get online friends
       final friends = await generalHub.getAllMyOnlinePetFriends(petId);
       if (friends != null) {
+        print('📥 Raw friends data: $friends');
         for (var friend in friends) {
-          onlineFriends[friend.petId] = friend.isOnline;
+          print('👤 Processing friend: ${friend.toString()}');
+          print('   - petId: "${friend.petId}"');
+          print('   - isOnline: ${friend.isOnline}');
+
+          if (friend.petId != null && friend.petId.isNotEmpty) {
+            onlineFriends[friend.petId] = friend.isOnline;
+          } else {
+            print('⚠️ Friend has empty petId!');
+          }
         }
+        print('✅ Loaded ${friends.length} online friends');
+        print('📊 Initial online friends: $onlineFriends');
       }
 
       // Get unread message counts
       final counts = await generalHub.getUnreadMessageCounts(petId);
       if (counts != null) {
         unreadCounts = counts;
+        print('✅ Loaded unread counts: $unreadCounts');
       }
     } catch (e) {
       print('Error loading initial data: $e');
@@ -170,7 +184,16 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       final friendPetId = data['PetId'] as String?;
 
       if (friendPetId != null && currentConversationId != null) {
-        emit(FriendTypingInConversation(currentConversationId!, friendPetId, isTyping));
+        print(
+          '⌨️ Friend $friendPetId typing in conversation $currentConversationId: $isTyping',
+        );
+        emit(
+          FriendTypingInConversation(
+            currentConversationId!,
+            friendPetId,
+            isTyping,
+          ),
+        );
       }
     });
 
@@ -205,9 +228,10 @@ class ChatAppCubit extends Cubit<ChatAppState> {
   }
 
   void _listenToConversationEvents() {
-    _conversationEventSubscription = conversationSignalEventStream.stream.listen((event) {
-      print('📡 Conversation Event: ${event.method}');
-    });
+    _conversationEventSubscription = conversationSignalEventStream.stream
+        .listen((event) {
+          print('📡 Conversation Event: ${event.method}');
+        });
   }
 
   MessageEntity? _parseMessage(Map<String, dynamic> data) {
@@ -221,9 +245,10 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         isRead: data['IsRead'] as bool? ?? false,
         fromUserId: data['FromUserId'] as String? ?? '',
         toUserId: data['ToUserId'] as String? ?? '',
-        createdAt: data['CreatedAt'] != null
-            ? DateTime.parse(data['CreatedAt'])
-            : DateTime.now(),
+        createdAt:
+            data['CreatedAt'] != null
+                ? DateTime.parse(data['CreatedAt'])
+                : DateTime.now(),
         toMe: data['ToMe'] as bool? ?? false,
       );
     } catch (e) {

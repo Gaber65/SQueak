@@ -77,13 +77,8 @@ class _ChatListViewState extends State<_ChatListView> {
       _currentPetId = pet.petId;
       debugPrint("🔄 Connecting to GeneralHub for pet: $_currentPetId)");
 
-      // Initialize ChatAppCubit if not already created
-      if (!mounted) return;
-      final chatAppCubit = context.read<ChatAppCubit>();
-      if (chatAppCubit.state is! ChatAppConnected) {
-        await chatAppCubit.initialize();
-      }
-
+      // Note: ChatAppCubit will handle the GeneralHub connection
+      // We just set up our local event listeners here
       await _generalHub.connect(
         petId: pet.petId!,
         fullName: pet.petName,
@@ -339,6 +334,13 @@ class _ChatListViewState extends State<_ChatListView> {
     bool isDark,
   ) {
     return BlocBuilder<ChatAppCubit, ChatAppState>(
+      buildWhen: (previous, current) {
+        // Rebuild when online status, typing status, or unread count changes
+        return current is FriendOnlineStatusChanged ||
+            current is FriendTypingInGeneral ||
+            current is UnreadCountUpdated ||
+            current is ChatAppConnected;
+      },
       builder: (context, chatAppState) {
         final chatAppCubit = context.read<ChatAppCubit>();
 
