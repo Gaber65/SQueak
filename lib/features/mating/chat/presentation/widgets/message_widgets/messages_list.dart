@@ -14,6 +14,7 @@ class MessagesList extends StatelessWidget {
   final ItemPositionsListener itemPositionsListener;
   final String conversationId;
   final bool isOtherUserTyping;
+  final bool isMyTyping;
 
   const MessagesList({
     super.key,
@@ -23,6 +24,7 @@ class MessagesList extends StatelessWidget {
     required this.itemPositionsListener,
     required this.conversationId,
     this.isOtherUserTyping = false,
+    this.isMyTyping = false,
   });
 
   bool _isSameDay(DateTime date1, DateTime date2) {
@@ -35,7 +37,9 @@ class MessagesList extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final totalItems = messages.length + uploadingFiles.length;
+    // Add typing indicators to total count
+    final typingCount = (isMyTyping ? 1 : 0) + (isOtherUserTyping ? 1 : 0);
+    final totalItems = messages.length + uploadingFiles.length + typingCount;
 
     return Stack(
       children: [
@@ -53,18 +57,52 @@ class MessagesList extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           itemCount: totalItems,
           itemBuilder: (_, index) {
+            // Check if this is a typing indicator slot
+            final messagesAndUploadsCount =
+                messages.length + uploadingFiles.length;
+
+            // If at the end and typing indicators should show
+            if (index >= messagesAndUploadsCount) {
+              final typingIndex = index - messagesAndUploadsCount;
+
+              // Show other user's typing indicator first (left side)
+              if (typingIndex == 0 && isOtherUserTyping) {
+                return Padding(
+                  padding: const EdgeInsets.only(left: 4, top: 4, bottom: 8),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: const TypingIndicator(),
+                  ),
+                );
+              }
+
+              // Show my typing indicator (right side)
+              if ((typingIndex == 0 && !isOtherUserTyping && isMyTyping) ||
+                  (typingIndex == 1 && isOtherUserTyping && isMyTyping)) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 4, top: 4, bottom: 8),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: const TypingIndicator(),
+                  ),
+                );
+              }
+            }
+
             if (index < messages.length) {
               final message = messages[index];
               final showDateDivider =
                   index == 0 ||
                   !_isSameDay(messages[index - 1].createdAt, message.createdAt);
 
+              final isMe = !message.toMe;
+
               return Column(
                 children: [
                   if (showDateDivider) DateDivider(date: message.createdAt),
                   ChatMessageBubble(
                     message: message,
-                    isMe: !message.toMe,
+                    isMe: isMe,
                     conversationId: conversationId,
                   ),
                 ],
@@ -75,8 +113,6 @@ class MessagesList extends StatelessWidget {
             }
           },
         ),
-        if (isOtherUserTyping)
-          const Positioned(bottom: 8, left: 16, child: TypingIndicator()),
       ],
     );
   }

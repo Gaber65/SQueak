@@ -55,6 +55,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
   // Typing indicator
   bool _isOtherUserTyping = false;
+  bool _isMyTyping = false;
   Timer? _typingTimer;
 
   // Recording variables
@@ -125,30 +126,55 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     _typingTimer?.cancel();
 
     if (isTyping) {
-      // Immediately send typing=true
+      // Update local state and send typing=true
       if (mounted) {
-        context.read<ChatAppCubit>().setTyping(
-          conversationId: widget.chat.id,
-          isTyping: true,
-        );
+        setState(() {
+          _isMyTyping = true;
+        });
+
+        // Safely access ChatAppCubit if available
+        try {
+          context.read<ChatAppCubit>().setTyping(
+            conversationId: widget.chat.id,
+            isTyping: true,
+          );
+        } catch (_) {
+          // Provider not available yet
+        }
       }
 
       // Set timer to send typing=false after 2 seconds of inactivity
       _typingTimer = Timer(const Duration(seconds: 2), () {
         if (mounted) {
+          setState(() {
+            _isMyTyping = false;
+          });
+
+          try {
+            context.read<ChatAppCubit>().setTyping(
+              conversationId: widget.chat.id,
+              isTyping: false,
+            );
+          } catch (_) {
+            // Provider not available yet
+          }
+        }
+      });
+    } else {
+      // Update local state and send typing=false immediately when text is cleared
+      if (mounted) {
+        setState(() {
+          _isMyTyping = false;
+        });
+
+        try {
           context.read<ChatAppCubit>().setTyping(
             conversationId: widget.chat.id,
             isTyping: false,
           );
+        } catch (_) {
+          // Provider not available yet
         }
-      });
-    } else {
-      // Send typing=false immediately when text is cleared
-      if (mounted) {
-        context.read<ChatAppCubit>().setTyping(
-          conversationId: widget.chat.id,
-          isTyping: false,
-        );
       }
     }
   }
@@ -374,6 +400,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         itemPositionsListener: _itemPositionsListener,
         conversationId: widget.chat.id,
         isOtherUserTyping: _isOtherUserTyping,
+        isMyTyping: _isMyTyping,
       );
     }
     return const ChatEmptyState();

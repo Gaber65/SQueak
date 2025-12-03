@@ -85,14 +85,17 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
     // Friend typing in general
     generalHub.onFriendIsTyping((data) {
-      final friendPetId = data['PetId'] as String?;
-      final isTyping = data['IsTyping'] as bool? ?? false;
+      print('📥 Raw typing data: $data');
+      final friendPetId = (data['PetId'] ?? data['petId']) as String?;
+      final isTyping = (data['IsTyping'] ?? data['isTyping']) as bool? ?? false;
 
-      if (friendPetId != null) {
+      if (friendPetId != null && friendPetId.isNotEmpty) {
         typingIndicators[friendPetId] = isTyping;
         print('⌨️ Friend $friendPetId typing status changed to: $isTyping');
         print('📊 Current typing indicators: $typingIndicators');
         emit(FriendTypingInGeneral(friendPetId, isTyping));
+      } else {
+        print('⚠️ Typing event has empty petId!');
       }
     });
   }
@@ -180,10 +183,13 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
     // Friend typing in conversation
     conversationHub.onFriendIsTyping((data) {
-      final isTyping = data['IsTyping'] as bool? ?? false;
-      final friendPetId = data['PetId'] as String?;
+      print('📥 Raw typing data (conversation): $data');
+      final isTyping = (data['IsTyping'] ?? data['isTyping']) as bool? ?? false;
+      final friendPetId = (data['PetId'] ?? data['petId']) as String?;
 
-      if (friendPetId != null && currentConversationId != null) {
+      if (friendPetId != null &&
+          friendPetId.isNotEmpty &&
+          currentConversationId != null) {
         print(
           '⌨️ Friend $friendPetId typing in conversation $currentConversationId: $isTyping',
         );
