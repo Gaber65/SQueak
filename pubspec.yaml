@@ -68,7 +68,9 @@ dependencies:
   video_player: ^2.9.2
   widget_circular_animator: ^1.0.0
   scrollable_positioned_list: 
-  signalr_netcore: ^1.3.6 
+  signalr_netcore: ^1.3.6
+  event_bus: ^2.0.1
+  logging: ^1.3.0 
 
 dev_dependencies:
   flutter_lints: ^5.0.0

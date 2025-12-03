@@ -39,13 +39,11 @@ class _ChatsTabState extends State<ChatsTab> {
     _isConnecting = true;
 
     try {
-      // Get active pet ID
       final activePet = SwitchProfileCubit.get(context).activeProfile?.pet;
       if (activePet?.petId == null) {
         debugPrint('❌ No active pet ID found');
         return;
       }
-      
       _currentActivePetId = activePet!.petId;
       debugPrint('🔄 Connecting to GeneralHub for pet: $_currentActivePetId');
 
@@ -57,28 +55,22 @@ class _ChatsTabState extends State<ChatsTab> {
       );
 
       debugPrint('✅ GeneralHub connected successfully from ChatsTab');
-      
+
       // Setup event listeners
       _setupEventListeners();
-      
+
       // Fire the 3 events after successful connection
       _fireInitialEvents();
     } catch (e) {
       debugPrint('❌ Failed to connect GeneralHub: $e');
-     
-
-      // Listen for real-time events
       _setupEventListeners();
-
       debugPrint('✅ Both hubs connected successfully from ChatsTab');
     } finally {
       _isConnecting = false;
     }
   }
-
   void _setupEventListeners() {
     debugPrint('🎧 Setting up GeneralHub event listeners...');
-    
     _eventSubscription = signalEventStream.stream.listen((event) {
       if (event.hub == 'GeneralHub') {
         debugPrint('📥 GeneralHub Event: ${event.method}');
@@ -89,64 +81,25 @@ class _ChatsTabState extends State<ChatsTab> {
 
   void _fireInitialEvents() {
     if (_currentActivePetId == null) return;
-    
-    debugPrint('🔥 Firing initial GeneralHub events...');
-
-    // Register event listeners first
-    // 1. ConnectionRegistered event listener
-    _generalHub.onConnectionRegistered((data) {
-      debugPrint('✅ Event Fired: ConnectionRegistered - Data: $data');
-      if (mounted) {
-        setState(() {
-          // Handle connection data if needed
-        });
-      }
-    });
-
-    // 2. FriendConnectionChanged event listener
-    _generalHub.onFriendConnectionChanged((data) {
-      debugPrint('✅ Event Fired: FriendConnectionChanged - Data: $data');
-      if (mounted) {
-        _refreshChatsList();
-      }
-    });
-
-    // 3. UnreadedMessagesCount event listener
-    _generalHub.onUnreadedMessagesCount((data) {
-      debugPrint('✅ Event Fired: UnreadedMessagesCount - Data: $data');
-      if (mounted) {
-        setState(() {
-          final counts = data['UnreadCounts'] as Map<String, dynamic>?;
-          if (counts != null) {
-            _unreadCounts.clear();
-            counts.forEach((key, value) {
-              _unreadCounts[key] = value as int;
-            });
-          }
-        });
-      }
-    });
-
-    debugPrint('✅ All 3 event listeners registered successfully');
-    
-    // Now invoke server methods to trigger the events
+    debugPrint('🔥 Requesting initial data from server...');
+    debugPrint('ℹ️  Events will be handled through centralized stream');
     _requestInitialData();
   }
-  
+
   Future<void> _requestInitialData() async {
     if (_currentActivePetId == null) return;
-    
     debugPrint('📡 Requesting initial data from server...');
-    
     try {
-      // Request online friends (triggers FriendConnectionChanged events)
-      final onlineFriends = await _generalHub.getAllMyOnlinePetFriends(_currentActivePetId!);
+      final onlineFriends = await _generalHub.getAllMyOnlinePetFriends(
+        _currentActivePetId!,
+      );
       if (onlineFriends != null) {
         debugPrint('✅ Got ${onlineFriends.length} online friends');
       }
-      
-      // Request unread message counts (triggers UnreadedMessagesCount event)
-      final unreadCounts = await _generalHub.getUnreadMessageCounts(_currentActivePetId!);
+
+      final unreadCounts = await _generalHub.getUnreadMessageCounts(
+        _currentActivePetId!,
+      );
       if (unreadCounts != null) {
         debugPrint('✅ Got unread counts: $unreadCounts');
         if (mounted) {
@@ -156,7 +109,7 @@ class _ChatsTabState extends State<ChatsTab> {
           });
         }
       }
-      
+
       debugPrint('✅ Initial data requests completed');
     } catch (e) {
       debugPrint('⚠️ Error requesting initial data: $e');
@@ -166,54 +119,40 @@ class _ChatsTabState extends State<ChatsTab> {
   void _handleSignalEvent(SignalEvent event) {
     debugPrint('📥 SignalR Event: ${event.hub} - ${event.method}');
 
-    switch (event.hub) {
-      case 'GeneralHub':
-        _handleGeneralHubEvent(event);
-        break;
-      case 'ConversationHub':
-        _handleConversationHubEvent(event);
-        break;
+    if (event.hub == 'GeneralHub') {
+      _handleGeneralHubEvent(event);
     }
   }
 
   void _handleGeneralHubEvent(SignalEvent event) {
+    debugPrint('📥 GeneralHub Event: ${event.method}');
+
     switch (event.method) {
-      case 'ChatListUpdated':
-        _refreshChatsList();
-        _showSnackBar('Chat list updated');
+      case 'ConnectionRegistered':
+        _handleConnectionRegistered(event.data);
+        break;
+
+      case 'FriendConnectionChanged':
+        _handleFriendConnectionChange(event.data);
+        break;
+
+      case 'UnreadedMessagesCountPetConversation':
+        _handleUnreadCountsUpdate(event.data);
         break;
 
       case 'FriendIsTyping':
         _handleGlobalTypingIndicator(event.data);
         break;
 
-      case 'UnreadedMessagesCountPetConversation':
-        _handleUnreadCountsUpdate(event.data);
+      case 'ChatListUpdated':
+        _refreshChatsList();
+        _showSnackBar('Chat list updated');
         break;
+
       case 'ReceiveMessage':
       case 'NewMessage':
         _refreshChatsList();
         _handleNewMessage(event.data);
-        break;
-      case 'FriendConnectionChanged':
-        _handleFriendConnectionChange(event.data);
-        break;
-    }
-  }
-
-  void _handleConversationHubEvent(SignalEvent event) {
-    switch (event.method) {
-      case 'ReceiveMessage':
-      case 'NewMessage':
-        _refreshChatsList();
-        _handleNewMessage(event.data);
-        break;
-      case 'SetTyping':
-        _handleConversationTyping(event.data);
-        break;
-
-      case 'MessageIsRead':
-        _handleMessageRead(event.data);
         break;
     }
   }
@@ -225,9 +164,7 @@ class _ChatsTabState extends State<ChatsTab> {
         final petId = typingData['PetId'] as String?;
         final isTyping = typingData['IsTyping'] as bool?;
         final petName = typingData['PetName'] as String?;
-
         if (petId != null && isTyping != null) {
-          // Update typing state for the pet
           setState(() {
             _typingStates[petId] = isTyping;
           });
@@ -240,27 +177,15 @@ class _ChatsTabState extends State<ChatsTab> {
     }
   }
 
-  void _handleConversationTyping(List<Object?>? data) {
-    if (data != null && data.length >= 3) {
-      final conversationId = data[0] as String?;
-      final petId = data[1] as String?;
-      final isTyping = data[2] as bool?;
-
-      if (conversationId != null && petId != null && isTyping != null) {
-        // Update typing state for specific conversation
-        setState(() {
-          _typingStates[conversationId] = isTyping;
-        });
-      }
-    }
-  }
-
   void _handleUnreadCountsUpdate(List<Object?>? data) {
     if (data != null && data.isNotEmpty) {
       final countsData = data.first as Map<String, dynamic>?;
       if (countsData != null) {
-        final unreadCounts = countsData['UnreadedCounts'] as Map<dynamic, dynamic>?;
-        if (unreadCounts != null) {
+        final unreadCounts =
+            (countsData['UnreadedCounts'] ?? countsData['UnreadCounts'])
+                as Map<dynamic, dynamic>?;
+
+        if (unreadCounts != null && mounted) {
           setState(() {
             _unreadCounts.clear();
             unreadCounts.forEach((key, value) {
@@ -268,6 +193,19 @@ class _ChatsTabState extends State<ChatsTab> {
             });
           });
           debugPrint('📊 Unread counts updated: $_unreadCounts');
+        }
+      }
+    }
+  }
+
+  void _handleConnectionRegistered(List<Object?>? data) {
+    if (data != null && data.isNotEmpty) {
+      final connectionData = data.first as Map<String, dynamic>?;
+      if (connectionData != null) {
+        debugPrint('✅ Connection Registered: $connectionData');
+        if (mounted) {
+          setState(() {
+          });
         }
       }
     }
@@ -281,8 +219,15 @@ class _ChatsTabState extends State<ChatsTab> {
         final isOnline = connectionData['IsOnline'] as bool?;
         final petName = connectionData['FullName'] as String?;
 
-        if (petId != null && isOnline != null) {
-          _showSnackBar('$petName is now ${isOnline ? 'online' : 'offline'}');
+        debugPrint(
+          '👥 Friend Status: $petName ${isOnline == true ? 'online' : 'offline'}',
+        );
+        if (mounted) {
+          _refreshChatsList();
+
+          if (petId != null && isOnline != null && petName != null) {
+            _showSnackBar('$petName is now ${isOnline ? 'online' : 'offline'}');
+          }
         }
       }
     }
@@ -294,11 +239,7 @@ class _ChatsTabState extends State<ChatsTab> {
       if (messageData != null) {
         final fromPetId = messageData['FromPetId'] as String?;
         final conversationId = messageData['ConversationId'] as String?;
-
-        // Refresh to show new message in list
         _refreshChatsList();
-
-        // Show notification for new message
         if (fromPetId != null && conversationId != null) {
           _showNewMessageNotification(fromPetId, conversationId);
         }
@@ -306,27 +247,11 @@ class _ChatsTabState extends State<ChatsTab> {
     }
   }
 
-  void _handleMessageRead(List<Object?>? data) {
-    if (data != null && data.isNotEmpty) {
-      final readData = data.first as Map<String, dynamic>?;
-      if (readData != null) {
-        final conversationId = readData['ConversationId'] as String?;
-
-        if (conversationId != null) {
-          // Update unread count for this conversation
-          setState(() {
-            _unreadCounts[conversationId] = 0;
-          });
-        }
-      }
-    }
-  }
 
   void _showNewMessageNotification(String fromPetId, String conversationId) {
-    // You can implement local notifications here
-    debugPrint('📨 New message from $fromPetId in conversation $conversationId');
-
-    // Show snackbar notification
+    debugPrint(
+      '📨 New message from $fromPetId in conversation $conversationId',
+    );
     _showSnackBar('New message received');
   }
 
@@ -349,27 +274,13 @@ class _ChatsTabState extends State<ChatsTab> {
     }
   }
 
-
-
-  // Future<void> _loadUnreadCounts() async {
-  //   final activePet = SwitchProfileCubit.get(context).activeProfile?.pet;
-  //   if (activePet?.petId != null) {
-  //     final counts = await _signalRService.getUnreadMessageCounts(activePet!.petId!);
-  //     if (counts != null) {
-  //       setState(() {
-  //         _unreadCounts.clear();
-  //         _unreadCounts.addAll(counts);
-  //       });
-  //     }
-  //   }
-  // }
+ 
 
   @override
   void dispose() {
     debugPrint('🔌 Disconnecting GeneralHub from ChatsTab');
     _generalHub.disconnect();
     _eventSubscription?.cancel();
-    // _signalRService.disconnectAll();
     super.dispose();
   }
 
@@ -377,20 +288,16 @@ class _ChatsTabState extends State<ChatsTab> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Connection Status Indicator
-        // _buildConnectionStatus(),
-
-        // Chats List
+        _buildConnectionStatus(),
         Expanded(
           child: BlocBuilder<PetFriendsCubit, PetFriendsState>(
             builder: (context, state) {
-              final activePet = SwitchProfileCubit.get(context).activeProfile?.pet;
+              final activePet =
+                  SwitchProfileCubit.get(context).activeProfile?.pet;
               _currentActivePetId = activePet?.petId;
-
-              // Load unread counts when state changes
               if (state is ChatsLoaded) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  // _loadUnreadCounts();
+                  
                 });
               }
 
@@ -407,7 +314,11 @@ class _ChatsTabState extends State<ChatsTab> {
                 if (state.chats.isEmpty) {
                   return const EmptyChatsWidget();
                 }
-                return _buildChatsList(context, state.chats, activePet?.petId ?? '');
+                return _buildChatsList(
+                  context,
+                  state.chats,
+                  activePet?.petId ?? '',
+                );
               }
               return const EmptyChatsWidget();
             },
@@ -417,56 +328,58 @@ class _ChatsTabState extends State<ChatsTab> {
     );
   }
 
-  // Widget _buildConnectionStatus() {
-  //   return StreamBuilder<bool>(
-  //     // stream: _signalRService.conversationHubConnectionStream,
-  //     builder: (context, snapshot) {
-  //       final isConnected = snapshot.data ?? _signalRService.isGeneralHubConnected;
+  Widget _buildConnectionStatus() {
+    return StreamBuilder<bool>(
+      stream: _generalHub.connectionStream,
+      builder: (context, snapshot) {
+        final isConnected = snapshot.data ?? _generalHub.isConnected;
 
-  //       return AnimatedContainer(
-  //         duration: const Duration(milliseconds: 300),
-  //         height: isConnected ? 0 : 40,
-  //         child: AnimatedOpacity(
-  //           duration: const Duration(milliseconds: 300),
-  //           opacity: isConnected ? 0 : 1,
-  //           child: Container(
-  //             width: double.infinity,
-  //             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-  //             color: Colors.orange[100],
-  //             child: Row(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               children: [
-  //                 Icon(
-  //                   Icons.signal_wifi_off,
-  //                   color: Colors.orange[800],
-  //                   size: 16,
-  //                 ),
-  //                 const SizedBox(width: 8),
-  //                 Text(
-  //                   'Connecting to chat...',
-  //                   style: TextStyle(
-  //                     color: Colors.orange[800],
-  //                     fontSize: 14,
-  //                     fontWeight: FontWeight.w500,
-  //                   ),
-  //                 ),
-  //                 const SizedBox(width: 8),
-  //                 SizedBox(
-  //                   height: 16,
-  //                   width: 16,
-  //                   child: CircularProgressIndicator(
-  //                     strokeWidth: 2,
-  //                     valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[800]!),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          height: isConnected ? 0 : 40,
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 300),
+            opacity: isConnected ? 0 : 1,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              color: Colors.orange[100],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.signal_wifi_off,
+                    color: Colors.orange[800],
+                    size: 16,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Connecting to chat...',
+                    style: TextStyle(
+                      color: Colors.orange[800],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    height: 16,
+                    width: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.orange[800]!,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   Widget _buildErrorState(BuildContext context, String message) {
     return Center(
@@ -488,9 +401,12 @@ class _ChatsTabState extends State<ChatsTab> {
           const SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: () {
-              final activePet = SwitchProfileCubit.get(context).activeProfile?.pet;
+              final activePet =
+                  SwitchProfileCubit.get(context).activeProfile?.pet;
               if (activePet?.petId != null) {
-                PetFriendsCubit.get(context).loadChats(petId: activePet!.petId!);
+                PetFriendsCubit.get(
+                  context,
+                ).loadChats(petId: activePet!.petId!);
               }
             },
             icon: const Icon(Icons.refresh),
@@ -508,43 +424,37 @@ class _ChatsTabState extends State<ChatsTab> {
   }
 
   Widget _buildChatsList(
-      BuildContext context,
-      List<ChatEntity> chats,
-      String petId,
-      ) {
+    BuildContext context,
+    List<ChatEntity> chats,
+    String petId,
+  ) {
     return RefreshIndicator(
       onRefresh: () async {
         if (petId.isNotEmpty) {
           await PetFriendsCubit.get(context).loadChats(petId: petId);
-          // await _loadUnreadCounts();
         }
       },
       child: StreamBuilder<SignalEvent>(
         stream: signalEventStream.stream,
         builder: (context, snapshot) {
-          // This will rebuild on real-time events
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              // Header with connection status
               _buildChatsHeader(chats.length),
               const SizedBox(height: 16),
-
-              // Chats list
               ...chats.asMap().entries.map(
-                    (entry) => AnimatedItem(
+                (entry) => AnimatedItem(
                   index: entry.key,
                   child: MatingChatListTile(
                     chat: entry.value,
                     petId: petId,
                     onNavigateComplete: () async {
                       if (petId.isNotEmpty) {
-                        await PetFriendsCubit.get(context).loadChats(petId: petId);
-                        // await _loadUnreadCounts();
+                        await PetFriendsCubit.get(
+                          context,
+                        ).loadChats(petId: petId);
                       }
                     },
-                    // Enhanced with real-time features
-
                   ),
                 ),
               ),
@@ -577,38 +487,39 @@ class _ChatsTabState extends State<ChatsTab> {
       children: [
         // Refresh unread counts
         IconButton(
-          icon:  Icon(Icons.refresh),
+          icon: Icon(Icons.refresh),
           onPressed: () {},
           tooltip: 'Refresh unread counts',
         ),
         // Connection status indicator
-        // StreamBuilder<bool>(
-        //   // stream: _signalRService.generalHubConnectionStream,
-        //   builder: (context, snapshot) {
-        //     final isConnected = snapshot.data ?? _signalRService.isGeneralHubConnected;
-        //     return Container(
-        //       width: 12,
-        //       height: 12,
-        //       decoration: BoxDecoration(
-        //         color: isConnected ? Colors.green : Colors.red,
-        //         shape: BoxShape.circle,
-        //         boxShadow: [
-        //           BoxShadow(
-        //             color: isConnected ? Colors.green.withOpacity(0.5) : Colors.red.withOpacity(0.5),
-        //             blurRadius: 4,
-        //             spreadRadius: 1,
-        //           ),
-        //         ],
-        //       ),
-        //     );
-        //   },
-        // ),
-     
+        StreamBuilder<bool>(
+          stream: _generalHub.connectionStream,
+          builder: (context, snapshot) {
+            final isConnected = snapshot.data ?? _generalHub.isConnected;
+            return Container(
+              width: 12,
+              height: 12,
+              decoration: BoxDecoration(
+                color: isConnected ? Colors.green : Colors.red,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color:
+                        isConnected
+                            ? Colors.green.withOpacity(0.5)
+                            : Colors.red.withOpacity(0.5),
+                    blurRadius: 4,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ],
     );
   }
 
-  // Helper method to check language
   bool isArabic() {
     return Localizations.localeOf(context).languageCode == 'ar';
   }

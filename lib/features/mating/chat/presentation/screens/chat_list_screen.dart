@@ -77,14 +77,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
     if (_currentPetId == null) return;
     
     debugPrint('🔥 ChatListScreen: Firing initial GeneralHub events...');
-
-    // Register event listeners
-    // 1. ConnectionRegistered
     _generalHub.onConnectionRegistered((data) {
       debugPrint('✅ ChatListScreen Event Fired: ConnectionRegistered - $data');
     });
 
-    // 2. FriendConnectionChanged
     _generalHub.onFriendConnectionChanged((data) {
       debugPrint('✅ ChatListScreen Event Fired: FriendConnectionChanged - $data');
       if (mounted) {
@@ -94,7 +90,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
       }
     });
 
-    // 3. UnreadedMessagesCount
+
     _generalHub.onUnreadedMessagesCount((data) {
       debugPrint('✅ ChatListScreen Event Fired: UnreadedMessagesCount - $data');
       if (mounted) {
