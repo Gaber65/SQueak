@@ -98,6 +98,7 @@ class _ChatHomePageState extends State<ChatHomePage> {
 
                       return ChatListItemNew(
                         chat: chat,
+                        petId: cubit.petId,
                         isOnline: cubit.onlineFriends[chat.petId] ?? false,
                         isTyping: cubit.typingIndicators[chat.petId] ?? false,
                         unreadCount: cubit.unreadCounts[chat.id] ?? chat.unreadedCount,

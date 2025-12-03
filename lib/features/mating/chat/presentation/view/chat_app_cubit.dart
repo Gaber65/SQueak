@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/signalr/signalr_conversation_services.dart';
+import 'package:squeak/features/mating/chat/data/models/message_model.dart';
 import 'package:squeak/features/mating/chat/domain/entities/message_entity.dart';
 import '../../../../../core/service/signalr/signalr_general_service.dart';
 import 'chat_app_state.dart';
@@ -175,13 +176,8 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
     // Receive message
     conversationHub.onMessageReceived((data) {
-
-      print(data.toString());
-      print('///////////////////////////////');
-      final message = _parseMessage(data);
-      if (message != null && currentConversationId != null) {
-        emit(MessageReceived(currentConversationId!, message));
-      }
+      var mod = MessageModel.fromJson(data);
+      emit(MessageReceived(currentConversationId!, mod));
     });
 
     // Message is read

@@ -5,6 +5,7 @@ import 'ChatConversationPage.dart';
 
 class ChatListItemNew extends StatelessWidget {
   final ChatEntity chat;
+  final String petId;
   final bool isOnline;
   final bool isTyping;
   final int unreadCount;
@@ -13,6 +14,7 @@ class ChatListItemNew extends StatelessWidget {
     super.key,
     required this.chat,
     required this.isOnline,
+    required this.petId,
     required this.isTyping,
     required this.unreadCount,
   });
@@ -84,7 +86,7 @@ class ChatListItemNew extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ChatConversationPage(chat: chat),
+            builder: (context) => ChatConversationPage(chat: chat,petId: petId,),
           ),
         );
       },

@@ -34,22 +34,18 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   List<MessageEntity> messagesList = [];
   bool isOtherUserTyping = false;
 
-
   // Update typing status when received from SignalR
   void updateTypingStatus(bool isTyping) {
     isOtherUserTyping = isTyping;
     emit(TypingStatusChanged(isTyping));
   }
 
-  Future<void> loadMessages(String chatId,String petId) async {
+  Future<void> loadMessages(String chatId, String petId) async {
     if (chatId.isEmpty) {
       emit(ChatMessagesLoaded([]));
       return;
     }
-signalRService.connect(
-  conversationId: chatId,
-  petId: petId,
-);
+    signalRService.connect(conversationId: chatId, petId: petId);
 
     emit(ChatMessagesLoading());
 
@@ -86,7 +82,6 @@ signalRService.connect(
     );
 
     try {
-
       // Ensure Conversation Hub is connected before sending
       if (!signalRService.isConnected) {
         debugPrint('🔌 Connecting to Conversation Hub...');
@@ -123,7 +118,7 @@ signalRService.connect(
 
       // Reload messages to show the sent message immediately
       if (chatId.isNotEmpty) {
-        await loadMessages(chatId,fromPetId!);
+        await loadMessages(chatId, fromPetId!);
       }
 
       // Note: No need to manually add message to list or emit MessageSent

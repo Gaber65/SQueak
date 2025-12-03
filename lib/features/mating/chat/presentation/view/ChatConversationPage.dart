@@ -10,8 +10,13 @@ import 'chat_app_state.dart';
 
 class ChatConversationPage extends StatefulWidget {
   final ChatEntity chat;
+  final String petId;
 
-  const ChatConversationPage({super.key, required this.chat});
+  const ChatConversationPage({
+    super.key,
+    required this.chat,
+    required this.petId,
+  });
 
   @override
   State<ChatConversationPage> createState() => _ChatConversationPageState();
@@ -25,21 +30,14 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
   @override
   void initState() {
     super.initState();
-
-
   }
 
-
-
-  void _handleTyping(String text ,ChatAppCubit cubit) {
+  void _handleTyping(String text, ChatAppCubit cubit) {
     final isCurrentlyTyping = text.isNotEmpty;
 
     if (isCurrentlyTyping != _isTyping) {
       _isTyping = isCurrentlyTyping;
-      cubit.setTyping(
-        conversationId: widget.chat.id,
-        isTyping: _isTyping,
-      );
+      cubit.setTyping(conversationId: widget.chat.id, isTyping: _isTyping);
     }
   }
 
@@ -73,10 +71,17 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => ChatAppCubit(petId: widget.chat.petId, fullName: '', image: '')..joinConversation(widget.chat.id)..markMessagesAsRead(widget.chat.id),
+          create:
+              (context) =>
+                  ChatAppCubit(petId: widget.petId, fullName: '', image: '')
+                    ..joinConversation(widget.chat.id)
+                    ..markMessagesAsRead(widget.petId),
         ),
         BlocProvider(
-          create: (context) => sl<ChatMessagesCubit>()..loadMessages(widget.chat.id, widget.chat.petId),
+          create:
+              (context) =>
+                  sl<ChatMessagesCubit>()
+                    ..loadMessages(widget.chat.id, widget.petId),
         ),
       ],
       child: BlocBuilder<ChatMessagesCubit, ChatMessagesState>(
@@ -148,7 +153,8 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
                         builder: (context, messagesState) {
                           if (messagesState is ChatMessagesLoading) {
                             return const Center(
-                                child: CircularProgressIndicator());
+                              child: CircularProgressIndicator(),
+                            );
                           }
 
                           if (messagesState is ChatMessagesError) {
@@ -157,13 +163,12 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
 
                           if (messagesState is ChatMessagesLoaded) {
                             final messages =
-                                context
-                                    .read<ChatMessagesCubit>()
-                                    .messagesList;
+                                context.read<ChatMessagesCubit>().messagesList;
 
                             if (messages.isEmpty) {
                               return const Center(
-                                  child: Text('No messages yet'));
+                                child: Text('No messages yet'),
+                              );
                             }
 
                             return ListView.builder(
@@ -176,9 +181,9 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
 
                                 return Align(
                                   alignment:
-                                  isMe
-                                      ? Alignment.centerRight
-                                      : Alignment.centerLeft,
+                                      isMe
+                                          ? Alignment.centerRight
+                                          : Alignment.centerLeft,
                                   child: Container(
                                     margin: const EdgeInsets.only(bottom: 8),
                                     padding: const EdgeInsets.symmetric(
@@ -186,19 +191,21 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
                                       vertical: 10,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: isMe ? Colors.blue : Colors
-                                          .grey[300],
+                                      color:
+                                          isMe ? Colors.blue : Colors.grey[300],
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           message.description,
                                           style: TextStyle(
                                             color:
-                                            isMe ? Colors.white : Colors.black,
+                                                isMe
+                                                    ? Colors.white
+                                                    : Colors.black,
                                           ),
                                         ),
                                         const SizedBox(height: 4),
@@ -210,9 +217,9 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
                                               style: TextStyle(
                                                 fontSize: 10,
                                                 color:
-                                                isMe
-                                                    ? Colors.white70
-                                                    : Colors.black54,
+                                                    isMe
+                                                        ? Colors.white70
+                                                        : Colors.black54,
                                               ),
                                             ),
                                             if (isMe) ...[
@@ -223,9 +230,9 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
                                                     : Icons.done,
                                                 size: 14,
                                                 color:
-                                                message.isRead
-                                                    ? Colors.blue[200]
-                                                    : Colors.white70,
+                                                    message.isRead
+                                                        ? Colors.blue[200]
+                                                        : Colors.white70,
                                               ),
                                             ],
                                           ],
@@ -269,16 +276,16 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
                               vertical: 8,
                             ),
                           ),
-                          onChanged:(value) {
-                            _handleTyping(value, ChatAppCubit.get(context) );
-                          } ,
+                          onChanged: (value) {
+                            _handleTyping(value, ChatAppCubit.get(context));
+                          },
                           onSubmitted: (_) => _sendMessage(context),
                         ),
                       ),
                       const SizedBox(width: 8),
                       IconButton(
                         icon: const Icon(Icons.send),
-                        onPressed:() => _sendMessage(context),
+                        onPressed: () => _sendMessage(context),
                         color: Colors.blue,
                       ),
                     ],
@@ -293,7 +300,6 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
   }
 
   String _formatTime(DateTime dateTime) {
-    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute
-        .toString().padLeft(2, '0')}';
+    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 }

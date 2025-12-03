@@ -367,8 +367,6 @@ class SignalRConversationHubService {
       }
     });
   }
-
-
   void onReadMessage(Function(bool isRead) callback) {
     _hub.on("ReadMessage", (args) {
       if (args != null && args.isNotEmpty) {
