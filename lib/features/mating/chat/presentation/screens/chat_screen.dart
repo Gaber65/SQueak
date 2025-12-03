@@ -21,6 +21,8 @@ import 'package:squeak/features/mating/chat/presentation/widgets/message_widgets
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../../pets/domain/entities/pet_entity.dart';
 import '../controllers/chat_messages_state.dart';
+import '../view/chat_app_cubit.dart';
+import '../view/chat_app_state.dart';
 
 class MatingChatDetailScreen extends StatefulWidget {
   final PetEntities? pet;
@@ -97,8 +99,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     super.dispose();
   }
 
-  
-
   ChatStatus _getChatStatus() {
     if (_isBlocked) return ChatStatus.blocked;
     if (isCompleted) return ChatStatus.completed;
@@ -112,124 +112,185 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return BlocProvider(
-      create: (_) => sl<ChatMessagesCubit>()..loadMessages(widget.chat.id,widget.pet!.petId!),
-      child: BlocConsumer<ChatMessagesCubit, ChatMessagesState>(
-        listener: (context, state) {
-          final cubit = ChatMessagesCubit.get(context);
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create:
+              (_) => ChatAppCubit(
+                petId: widget.pet!.petId!,
+                fullName: widget.pet!.petName ?? '',
+                image: widget.pet!.imageName ?? '',
+              )..joinConversation(widget.chat.id),
+        ),
+        BlocProvider(
+          create:
+              (_) =>
+                  sl<ChatMessagesCubit>()
+                    ..loadMessages(widget.chat.id, widget.pet!.petId!),
+        ),
+      ],
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<ChatAppCubit, ChatAppState>(
+            listener: (context, state) {
+              if (state is MessageReceived &&
+                  state.conversationId == widget.chat.id) {
+                // Add new message to list
+                final messagesCubit = context.read<ChatMessagesCubit>();
+                messagesCubit.addReceivedMessage(state.message);
 
-          if (state is MessageSent) {
-            final lastIndex = cubit.messagesList.length - 1;
-            if (lastIndex >= 0) {
-              try {
-                _itemScrollController.jumpTo(index: lastIndex);
-              } catch (_) {}
-            }
-            _animationController.forward().then(
-              (_) => _animationController.reverse(),
-            );
-          } else if (state is MessageSendError) {
-            errorToast(context, state.message);
-          }
-          if (state is ChatMessagesLoaded) {
-            final messages = cubit.messagesList.toList();
-            if (messages.isNotEmpty) {
-              final lastIndex = messages.length - 1;
+                // Mark as read
+                context.read<ChatAppCubit>().markMessagesAsRead(widget.chat.id);
 
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                try {
-                  _itemScrollController.jumpTo(index: lastIndex);
-                } catch (_) {}
-              });
-            }
-          }
-          if (state is MatingFinishSuccess) {
-            setState(() {
-              isCompleted = true;
-              _isReadOnly = true;
-            });
-          }
-          if (state is RenameChatError) {
-            errorToast(context, state.message);
-          }
-          if (state is BlockChatError) {
-            errorToast(context, state.message);
-          }
-          if (state is BlockChatSuccess) {
-            setState(() {
-              _isBlocked = !_isBlocked;
-              if (_isBlocked) {
-                _isBlockedByMe = true;
-                _isBlockedByOther = false;
-              } else {
-                _isBlockedByMe = false;
-                _isBlockedByOther = false;
+                // Scroll to bottom
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  final lastIndex = messagesCubit.messagesList.length - 1;
+                  if (lastIndex >= 0) {
+                    try {
+                      _itemScrollController.jumpTo(index: lastIndex);
+                    } catch (_) {}
+                  }
+                });
               }
-              _isReadOnly = _isBlocked;
-            });
-          }
-          if (state is TypingStatusChanged) {
-            setState(() {
-              _isOtherUserTyping = state.isTyping;
-            });
-          }
-        },
-        builder: (context, state) {
-          final cubit = ChatMessagesCubit.get(context);
+            },
+          ),
+          BlocListener<ChatMessagesCubit, ChatMessagesState>(
+            listener: (context, state) {
+              final cubit = ChatMessagesCubit.get(context);
 
-          return Scaffold(
-            backgroundColor:
-                isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5),
-            appBar: ChatAppBar(chat: widget.chat, cubit: cubit),
-            body: Stack(
-              children: [
-                Column(
-                  children: [
-                    const SignalRConnectionStatusWidget(),
-                    if (isCompleted)
-                      StatusBanner(
-                        icon: Icons.lock_rounded,
-                        text: s.chatArchivedReadOnly,
-                        accentColor: const Color(0xFF6C63FF),
-                      ),
-                    if (_isBlockedByMe)
-                      StatusBanner(
-                        icon: Icons.block_rounded,
-                        text: s.chatBlockedNoMessages,
-                        accentColor: Colors.red,
-                      ),
-                    if (_isBlockedByOther)
-                      StatusBanner(
-                        icon: Icons.block_rounded,
-                        text: '${widget.chat.name} ${s.chatBlockedByOther}',
-                        accentColor: Colors.red,
-                      ),
-                    Expanded(child: _buildMessages(state, cubit)),
-                    if (!_isReadOnly)
-                      MessageInputWidget(
-                        messageController: _messageController,
-                        chat: widget.chat,
-                        hasText: _hasText,
-                        onSendMessage: () => _sendMessage(cubit),
-                        onStartRecording: () => _startRecording(cubit),
-                        onStopRecording: () => _stopRecording(cubit),
-                        onAttachmentSelected: (file, type) {
-                          final mainCubit = context.read<MainCubit>();
-                          _handleAttachment(file, type, cubit, mainCubit);
-                        },
-                      ),
-                  ],
-                ),
-                // Recording overlay
-                if (_isRecording)
-                  RecordingOverlay(
-                    recordDuration: _recordDuration,
-                    maxRecordDuration: _maxRecordDuration,
+              if (state is MessageSent) {
+                final lastIndex = cubit.messagesList.length - 1;
+                if (lastIndex >= 0) {
+                  try {
+                    _itemScrollController.jumpTo(index: lastIndex);
+                  } catch (_) {}
+                }
+                _animationController.forward().then(
+                  (_) => _animationController.reverse(),
+                );
+              } else if (state is MessageSendError) {
+                errorToast(context, state.message);
+              }
+              if (state is ChatMessagesLoaded) {
+                final messages = cubit.messagesList.toList();
+                if (messages.isNotEmpty) {
+                  final lastIndex = messages.length - 1;
+
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    try {
+                      _itemScrollController.jumpTo(index: lastIndex);
+                    } catch (_) {}
+                  });
+                }
+              }
+              if (state is MatingFinishSuccess) {
+                setState(() {
+                  isCompleted = true;
+                  _isReadOnly = true;
+                });
+              }
+              if (state is RenameChatError) {
+                errorToast(context, state.message);
+              }
+              if (state is BlockChatError) {
+                errorToast(context, state.message);
+              }
+              if (state is BlockChatSuccess) {
+                setState(() {
+                  _isBlocked = !_isBlocked;
+                  if (_isBlocked) {
+                    _isBlockedByMe = true;
+                    _isBlockedByOther = false;
+                  } else {
+                    _isBlockedByMe = false;
+                    _isBlockedByOther = false;
+                  }
+                  _isReadOnly = _isBlocked;
+                });
+              }
+              if (state is TypingStatusChanged) {
+                setState(() {
+                  _isOtherUserTyping = state.isTyping;
+                });
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<ChatMessagesCubit, ChatMessagesState>(
+          builder: (context, state) {
+            final cubit = ChatMessagesCubit.get(context);
+
+            return BlocBuilder<ChatAppCubit, ChatAppState>(
+              builder: (context, chatAppState) {
+                final chatAppCubit = context.read<ChatAppCubit>();
+
+                return Scaffold(
+                  backgroundColor:
+                      isDark
+                          ? const Color(0xFF121212)
+                          : const Color(0xFFF5F5F5),
+                  appBar: ChatAppBar(
+                    chat: widget.chat,
+                    cubit: cubit,
+                    isOnline:
+                        chatAppCubit.onlineFriends[widget.chat.petId] ?? false,
+                    isTyping:
+                        chatAppCubit.typingIndicators[widget.chat.petId] ??
+                        false,
                   ),
-              ],
-            ),
-          );
-        },
+                  body: Stack(
+                    children: [
+                      Column(
+                        children: [
+                          const SignalRConnectionStatusWidget(),
+                          if (isCompleted)
+                            StatusBanner(
+                              icon: Icons.lock_rounded,
+                              text: s.chatArchivedReadOnly,
+                              accentColor: const Color(0xFF6C63FF),
+                            ),
+                          if (_isBlockedByMe)
+                            StatusBanner(
+                              icon: Icons.block_rounded,
+                              text: s.chatBlockedNoMessages,
+                              accentColor: Colors.red,
+                            ),
+                          if (_isBlockedByOther)
+                            StatusBanner(
+                              icon: Icons.block_rounded,
+                              text:
+                                  '${widget.chat.name} ${s.chatBlockedByOther}',
+                              accentColor: Colors.red,
+                            ),
+                          Expanded(child: _buildMessages(state, cubit)),
+                          if (!_isReadOnly)
+                            MessageInputWidget(
+                              messageController: _messageController,
+                              chat: widget.chat,
+                              hasText: _hasText,
+                              onSendMessage: () => _sendMessage(cubit),
+                              onStartRecording: () => _startRecording(cubit),
+                              onStopRecording: () => _stopRecording(cubit),
+                              onAttachmentSelected: (file, type) {
+                                final mainCubit = context.read<MainCubit>();
+                                _handleAttachment(file, type, cubit, mainCubit);
+                              },
+                            ),
+                        ],
+                      ),
+                      // Recording overlay
+                      if (_isRecording)
+                        RecordingOverlay(
+                          recordDuration: _recordDuration,
+                          maxRecordDuration: _maxRecordDuration,
+                        ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -241,7 +302,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     if (state is ChatMessagesError) {
       return ChatErrorState(
         message: state.message,
-        onRetry: () => cubit.loadMessages(widget.chat.id,widget.pet!.petId!),
+        onRetry: () => cubit.loadMessages(widget.chat.id, widget.pet!.petId!),
       );
     }
     if (cubit.messagesList.isNotEmpty || _uploadingFiles.isNotEmpty) {

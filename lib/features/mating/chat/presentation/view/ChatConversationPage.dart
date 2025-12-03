@@ -129,6 +129,7 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
                         // Add new message to list
                         final messagesCubit = context.read<ChatMessagesCubit>();
                         messagesCubit.messagesList.add(state.message);
+                        // ignore: invalid_use_of_protected_member
                         messagesCubit.emit(
                           ChatMessagesLoaded(messagesCubit.messagesList),
                         );

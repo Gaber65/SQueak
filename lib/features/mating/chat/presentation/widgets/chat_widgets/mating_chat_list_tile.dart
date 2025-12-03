@@ -11,6 +11,9 @@ class MatingChatListTile extends StatelessWidget {
   final String petId;
   final Future<void> Function()? onNavigateComplete;
   final bool compact;
+  final bool isOnline;
+  final bool isTyping;
+  final int unreadCount;
 
   const MatingChatListTile({
     super.key,
@@ -18,6 +21,9 @@ class MatingChatListTile extends StatelessWidget {
     required this.petId,
     this.onNavigateComplete,
     this.compact = false,
+    this.isOnline = false,
+    this.isTyping = false,
+    this.unreadCount = 0,
   });
 
   @override
@@ -257,69 +263,108 @@ class MatingChatListTile extends StatelessWidget {
 
   Widget _buildAvatar(ChatEntity chat) {
     final img = chat.image ?? '';
+
+    Widget avatarWidget;
     if (img.isEmpty) {
-      return Container(
+      avatarWidget = Container(
         width: 60,
         height: 60,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: LinearGradient(
             colors: [
-              ColorManager.primaryColor.withOpacity(0.2),
+              ColorManager.primaryColor.withOpacity(0.3),
               ColorManager.primaryColor.withOpacity(0.1),
             ],
           ),
         ),
         child: Icon(Icons.pets, color: ColorManager.primaryColor, size: 28),
       );
-    }
+    } else {
+      final base = imageUrl;
+      final fullUrl = base + img;
 
-    final base = imageUrl;
-    final fullUrl = base + img;
-
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(
-          colors: [
-            ColorManager.primaryColor.withOpacity(0.3),
-            ColorManager.primaryColor.withOpacity(0.1),
-          ],
+      avatarWidget = Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            colors: [
+              ColorManager.primaryColor.withOpacity(0.3),
+              ColorManager.primaryColor.withOpacity(0.1),
+            ],
+          ),
+          border: Border.all(
+            color: ColorManager.primaryColor.withOpacity(0.3),
+            width: 2,
+          ),
         ),
-        border: Border.all(
-          color: ColorManager.primaryColor.withOpacity(0.3),
-          width: 2,
-        ),
-      ),
-      child: ClipOval(
-        child: Image.network(
-          fullUrl,
-          fit: BoxFit.cover,
-          errorBuilder:
-              (context, error, stackTrace) => Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [
-                      ColorManager.primaryColor.withOpacity(0.2),
-                      ColorManager.primaryColor.withOpacity(0.1),
-                    ],
+        child: ClipOval(
+          child: Image.network(
+            fullUrl,
+            fit: BoxFit.cover,
+            errorBuilder:
+                (context, error, stackTrace) => Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        ColorManager.primaryColor.withOpacity(0.2),
+                        ColorManager.primaryColor.withOpacity(0.1),
+                      ],
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.pets,
+                    color: ColorManager.primaryColor,
+                    size: 28,
                   ),
                 ),
-                child: Icon(
-                  Icons.pets,
-                  color: ColorManager.primaryColor,
-                  size: 28,
-                ),
-              ),
+          ),
         ),
-      ),
+      );
+    }
+
+    // Wrap with online indicator
+    return Stack(
+      children: [
+        avatarWidget,
+        if (isOnline)
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              width: 16,
+              height: 16,
+              decoration: BoxDecoration(
+                color: Colors.green,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
   Widget _buildLastMessage(ChatEntity chat, ThemeData theme) {
+    // Show typing indicator if friend is typing
+    if (isTyping) {
+      return Row(
+        children: [
+          Text(
+            isArabic() ? 'يكتب...' : 'typing...',
+            style: TextStyle(
+              fontSize: 14,
+              color: ColorManager.primaryColor,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
+      );
+    }
+
     if (chat.lastMessage == null) {
       return Text(
         isArabic() ? 'لا رسائل بعد' : 'No messages yet',

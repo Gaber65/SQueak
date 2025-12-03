@@ -17,6 +17,8 @@ import '../../../layoutMating/presentation/screens/widgets/profile_switcher_buil
 import '../../domain/entities/chat_entity.dart';
 import '../widgets/chat_widgets/mating_chat_list_tile.dart';
 import '../controllers/chat_list_state.dart';
+import '../view/chat_app_cubit.dart';
+import '../view/chat_app_state.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
@@ -56,14 +58,15 @@ class _ChatListViewState extends State<_ChatListView> {
     super.initState();
 
     // Listen for profile loaded ONCE → connect hub
-    _profileSubscription =
-        context.read<SwitchProfileCubit>().stream.listen((state) {
-          if (state is ProfileLoaded &&
-              state.profile.type == ProfileType.pet &&
-              !_hubConnected) {
-            _connectHub(state.profile.pet!);
-          }
-        });
+    _profileSubscription = context.read<SwitchProfileCubit>().stream.listen((
+      state,
+    ) {
+      if (state is ProfileLoaded &&
+          state.profile.type == ProfileType.pet &&
+          !_hubConnected) {
+        _connectHub(state.profile.pet!);
+      }
+    });
   }
 
   // -------------------------------------------------------------
@@ -73,6 +76,13 @@ class _ChatListViewState extends State<_ChatListView> {
     try {
       _currentPetId = pet.petId;
       debugPrint("🔄 Connecting to GeneralHub for pet: $_currentPetId)");
+
+      // Initialize ChatAppCubit if not already created
+      if (!mounted) return;
+      final chatAppCubit = context.read<ChatAppCubit>();
+      if (chatAppCubit.state is! ChatAppConnected) {
+        await chatAppCubit.initialize();
+      }
 
       await _generalHub.connect(
         petId: pet.petId!,
@@ -134,12 +144,12 @@ class _ChatListViewState extends State<_ChatListView> {
     if (_currentPetId == null) return;
 
     try {
-      final onlineFriends =
-      await _generalHub.getAllMyOnlinePetFriends(_currentPetId!);
+      final onlineFriends = await _generalHub.getAllMyOnlinePetFriends(
+        _currentPetId!,
+      );
       debugPrint("👥 Online friends count: ${onlineFriends?.length}");
 
-      final unread =
-      await _generalHub.getUnreadMessageCounts(_currentPetId!);
+      final unread = await _generalHub.getUnreadMessageCounts(_currentPetId!);
       debugPrint("📨 Unread messages: $unread");
     } catch (e) {
       debugPrint("⚠ Initial data error: $e");
@@ -168,13 +178,26 @@ class _ChatListViewState extends State<_ChatListView> {
     return BlocSelector<SwitchProfileCubit, SwitchProfileState, PetEntities?>(
       selector: (state) {
         if (state is ProfileLoaded && state.profile.pet != null) {
-          cubit.loadChats(state.profile.pet!.petId!);
-          return state.profile.pet;
+          final pet = state.profile.pet!;
+          cubit.loadChats(pet.petId!);
+          return pet;
         }
         return null;
       },
       builder: (_, pet) {
-        return _buildMainUi(pet);
+        if (pet == null) {
+          return Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+
+        return BlocProvider(
+          create:
+              (context) => ChatAppCubit(
+                petId: pet.petId!,
+                fullName: pet.petName ?? '',
+                image: pet.imageName ?? '',
+              )..initialize(),
+          child: _buildMainUi(pet),
+        );
       },
     );
   }
@@ -186,19 +209,40 @@ class _ChatListViewState extends State<_ChatListView> {
 
     return Scaffold(
       backgroundColor:
-      isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5),
-      body: BlocConsumer<ChatListCubit, ChatListState>(
-        listener: (_, __) {},
-        builder: (context, state) {
-          return CustomScrollView(
-            slivers: [
-              _buildAppBar(context, theme, isDark),
-              SliverToBoxAdapter(
-                child: _buildChatListContent(state, activePet),
-              ),
-            ],
-          );
-        },
+          isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5),
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<ChatAppCubit, ChatAppState>(
+            listener: (context, state) {
+              // Refresh chat list on relevant SignalR events
+              if (state is UnreadCountUpdated ||
+                  state is MessageReceived ||
+                  state is FriendOnlineStatusChanged) {
+                if (activePet?.petId != null) {
+                  context.read<ChatListCubit>().loadChats(activePet!.petId!);
+                }
+              }
+
+              if (state is ChatAppError) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(state.message)));
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<ChatListCubit, ChatListState>(
+          builder: (context, state) {
+            return CustomScrollView(
+              slivers: [
+                _buildAppBar(context, theme, isDark),
+                SliverToBoxAdapter(
+                  child: _buildChatListContent(state, activePet),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -207,10 +251,10 @@ class _ChatListViewState extends State<_ChatListView> {
   //  APP BAR
   // -------------------------------------------------------------
   SliverAppBar _buildAppBar(
-      BuildContext context,
-      ThemeData theme,
-      bool isDark,
-      ) {
+    BuildContext context,
+    ThemeData theme,
+    bool isDark,
+  ) {
     return SliverAppBar(
       floating: true,
       pinned: true,
@@ -237,7 +281,8 @@ class _ChatListViewState extends State<_ChatListView> {
       return DogLoadingStateWidget(
         theme: theme,
         isDark: isDark,
-        text: "Loading chats...", s: S.of(context),
+        text: "Loading chats...",
+        s: S.of(context),
       );
     }
 
@@ -250,8 +295,8 @@ class _ChatListViewState extends State<_ChatListView> {
 
       return RefreshIndicator(
         onRefresh: () async {
-          if (pet?.petId != null) {
-            await context.read<ChatListCubit>().loadChats(pet!.petId!);
+          if (pet.petId != null) {
+            await context.read<ChatListCubit>().loadChats(pet.petId!);
           }
         },
         child: _buildChatTiles(pet!.petId!, state.chats, theme, isDark),
@@ -288,25 +333,40 @@ class _ChatListViewState extends State<_ChatListView> {
   }
 
   Widget _buildChatTiles(
-      String petId,
-      List<ChatEntity> chats,
-      ThemeData theme,
-      bool isDark,
-      ) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: chats
-            .map(
-              (chat) => MatingChatListTile(
-            chat: chat,
-            petId: petId,
-            onNavigateComplete: () =>
-                context.read<ChatListCubit>().loadChats(petId),
+    String petId,
+    List<ChatEntity> chats,
+    ThemeData theme,
+    bool isDark,
+  ) {
+    return BlocBuilder<ChatAppCubit, ChatAppState>(
+      builder: (context, chatAppState) {
+        final chatAppCubit = context.read<ChatAppCubit>();
+
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children:
+                chats
+                    .map(
+                      (chat) => MatingChatListTile(
+                        chat: chat,
+                        petId: petId,
+                        isOnline:
+                            chatAppCubit.onlineFriends[chat.petId] ?? false,
+                        isTyping:
+                            chatAppCubit.typingIndicators[chat.petId] ?? false,
+                        unreadCount:
+                            chatAppCubit.unreadCounts[chat.id] ??
+                            chat.unreadedCount,
+                        onNavigateComplete:
+                            () =>
+                                context.read<ChatListCubit>().loadChats(petId),
+                      ),
+                    )
+                    .toList(),
           ),
-        )
-            .toList(),
-      ),
+        );
+      },
     );
   }
 }

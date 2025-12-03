@@ -40,6 +40,12 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     emit(TypingStatusChanged(isTyping));
   }
 
+  // Add received message from SignalR
+  void addReceivedMessage(MessageEntity message) {
+    messagesList.add(message);
+    emit(ChatMessagesLoaded(List.from(messagesList)));
+  }
+
   Future<void> loadMessages(String chatId, String petId) async {
     if (chatId.isEmpty) {
       emit(ChatMessagesLoaded([]));

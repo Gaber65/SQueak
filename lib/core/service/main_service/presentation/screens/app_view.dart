@@ -114,7 +114,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             themeMode: cubit.isDark ? ThemeMode.dark : ThemeMode.light,
             debugShowCheckedModeBanner: false,
             navigatorKey: navigatorKey,
-            home: ChatApp(petId: 'b0ae0b8b-ec59-4801-b62e-1fcc5992596c', fullName: '', image: ''),
+            home: appStartPoint,
             locale:
                 cubit.language == 'en'
                     ? const Locale('en')

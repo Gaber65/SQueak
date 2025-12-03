@@ -10,8 +10,16 @@ import '../../../domain/usecases/parameters.dart';
 class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
   final ChatEntity chat;
   final ChatMessagesCubit cubit;
+  final bool isOnline;
+  final bool isTyping;
 
-  const ChatAppBar({super.key, required this.chat, required this.cubit});
+  const ChatAppBar({
+    super.key,
+    required this.chat,
+    required this.cubit,
+    this.isOnline = false,
+    this.isTyping = false,
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -51,16 +59,16 @@ class _ChatAppBarState extends State<ChatAppBar> {
       // Handle clear chat result to show feedback
       if (state is ClearChatSuccess) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Chat cleared')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Chat cleared')));
       }
 
       if (state is ClearChatError) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(state.message)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(state.message)));
       }
     });
   }
@@ -72,16 +80,20 @@ class _ChatAppBarState extends State<ChatAppBar> {
   }
 
   String _getStatusText(context) {
+    if (widget.isTyping) return isArabic() ? 'يكتب...' : 'typing...';
     if (_isBlockedByMe) return S.of(context).block;
     if (_isBlockedByOther) return S.of(context).block;
     if (widget.chat.completeMarriageStatues) return S.of(context).completed;
+    if (widget.isOnline) return isArabic() ? 'متصل' : 'Online';
     return S.of(context).active;
   }
 
   Color _getStatusColor() {
+    if (widget.isTyping) return ColorManager.primaryColor;
     if (_isBlockedByMe || _isBlockedByOther) return Colors.red;
     if (widget.chat.completeMarriageStatues) return const Color(0xFF6C63FF);
-    return Colors.green;
+    if (widget.isOnline) return Colors.green;
+    return Colors.grey;
   }
 
   @override
@@ -396,7 +408,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
   void _handleAction(BuildContext context, String value) {
     switch (value) {
       case 'view_profile':
-
         if (_isBlockedByMe || _isBlockedByOther) {
           _showBlockedProfileDialog(context);
         } else {
@@ -823,95 +834,93 @@ class _ChatAppBarState extends State<ChatAppBar> {
   void _showBlockedProfileDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        elevation: 8,
-        child: Container(
-          padding: const EdgeInsets.all(28),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.red.shade50,
-                Colors.orange.shade50,
-              ],
+      builder:
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            elevation: 8,
+            child: Container(
+              padding: const EdgeInsets.all(28),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Colors.red.shade50, Colors.orange.shade50],
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.red.shade200,
+                          blurRadius: 20,
+                          spreadRadius: 5,
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.block_rounded,
+                      size: 50,
+                      color: Colors.red.shade400,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    S.of(context).profileBlocked,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade800,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    _isBlockedByMe
+                        ? S.of(context).youBlockedThisUserCannotViewProfile
+                        : S.of(context).thisUserBlockedYouCannotViewProfile,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey.shade600,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 28),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red.shade400,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        S.of(context).okay,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.red.shade200,
-                      blurRadius: 20,
-                      spreadRadius: 5,
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.block_rounded,
-                  size: 50,
-                  color: Colors.red.shade400,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                S.of(context).profileBlocked,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade800,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                _isBlockedByMe
-                    ? S.of(context).youBlockedThisUserCannotViewProfile
-                    : S.of(context).thisUserBlockedYouCannotViewProfile,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.grey.shade600,
-                  height: 1.5,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 28),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.shade400,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    S.of(context).okay,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -1095,78 +1104,86 @@ class _ChatAppBarState extends State<ChatAppBar> {
   void _showClearChatDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: Row(
-          children: [
-            Icon(Icons.pets, color: Colors.orange[700], size: 28),
-            SizedBox(width: 12),
-            Expanded(child: Text(S.of(context).clearChatMessages)),
-          ],
-        ),
-        content: Text(S.of(context).clearChatConfirmation),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.grey[600],
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(S.of(context).cancel),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              widget.cubit.clearMessages(
-                ClearChatParameters(
-                  conversationId: widget.chat.id,
-                  onlyFromMe: true,
-                ),
-              );
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Row(
-                      children: [
-                        Icon(Icons.cleaning_services, color: Colors.white, size: 20),
-                        SizedBox(width: 8),
-                        Text('Clearing chat...'),
-                      ],
-                    ),
-                    backgroundColor: Colors.orange[700],
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange[700],
-              foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              elevation: 2,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+            title: Row(
               children: [
-                Icon(Icons.delete_sweep, size: 20),
-                SizedBox(width: 8),
-                Text(
-                  S.of(context).clearChat,
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-                ),
+                Icon(Icons.pets, color: Colors.orange[700], size: 28),
+                SizedBox(width: 12),
+                Expanded(child: Text(S.of(context).clearChatMessages)),
               ],
             ),
+            content: Text(S.of(context).clearChatConfirmation),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.grey[600],
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                ),
+                child: Text(S.of(context).cancel),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  widget.cubit.clearMessages(
+                    ClearChatParameters(
+                      conversationId: widget.chat.id,
+                      onlyFromMe: true,
+                    ),
+                  );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Row(
+                          children: [
+                            Icon(
+                              Icons.cleaning_services,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            SizedBox(width: 8),
+                            Text('Clearing chat...'),
+                          ],
+                        ),
+                        backgroundColor: Colors.orange[700],
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange[700],
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 2,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.delete_sweep, size: 20),
+                    SizedBox(width: 8),
+                    Text(
+                      S.of(context).clearChat,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }
