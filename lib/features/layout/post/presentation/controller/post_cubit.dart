@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import 'package:squeak/features/layout/post/domain/usecase/delete_post_usecase.dart';
 
 import '../../domain/entities/post_entity.dart';
 import 'package:intl/intl.dart';
@@ -11,9 +12,13 @@ part 'post_state.dart';
 class PostCubit extends Cubit<PostState> {
   final GetAllPostUseCase getAllPostUseCase;
   final CreatePostUseCase createPostUseCase;
+  final DeletePostUseCase deletePostUseCase;
 
-  PostCubit(this.getAllPostUseCase, this.createPostUseCase)
-    : super(PostInitial());
+  PostCubit(
+    this.getAllPostUseCase,
+    this.createPostUseCase,
+    this.deletePostUseCase,
+  ) : super(PostInitial());
   static PostCubit get(context) => BlocProvider.of(context);
 
   int _pageNumber = 1;
@@ -33,11 +38,14 @@ class PostCubit extends Cubit<PostState> {
     );
     result.fold(
       (_) => emit(GetPostErrorState()),
-      (posts) => _handlePostSuccess(posts,pagination: pagination),
+      (posts) => _handlePostSuccess(posts, pagination: pagination),
     );
   }
 
-  void _handlePostSuccess(Iterable<PostEntity> posts,{bool pagination = false}) {
+  void _handlePostSuccess(
+    Iterable<PostEntity> posts, {
+    bool pagination = false,
+  }) {
     _pageNumber++;
 
     if (posts.isEmpty) {
@@ -51,7 +59,7 @@ class PostCubit extends Cubit<PostState> {
 
     if (newPosts.isNotEmpty) {
       _userPosts.addAll(newPosts);
-      if(!pagination){
+      if (!pagination) {
         _sortUserPostsByDate();
       }
     }
@@ -75,32 +83,6 @@ class PostCubit extends Cubit<PostState> {
     emit(GetRefreshIndicatorState());
   }
 
-  Future<void> createPost(
-    String petId,
-    String title,
-    String content,
-    String? image,
-    String? video,
-  ) async {
-    emit(CreatePostLoadingState());
-
-    final result = await createPostUseCase(
-      CreatePostParams(
-        petId: petId,
-        content: content,
-        title: title,
-        postSocailMedias: [
-          {'image': image, 'video': video},
-        ],
-      ),
-    );
-
-    result.fold(
-      (failure) =>
-          emit(CreatePostErrorState(extractFirstErrorAuth(failure.error))),
-      (post) => emit(CreatePostSuccessState()),
-    );
-  }
   Future<void> createPostWithMultipleMedia({
     required String petId,
     required String title,
@@ -108,37 +90,71 @@ class PostCubit extends Cubit<PostState> {
     required List<Map<String, String?>> postSocialMedias,
   }) async {
     emit(CreatePostLoadingState());
+    final result = await createPostUseCase(
+      CreatePostParams(
+        id: '',
+        petId: petId,
+        content: content,
+        title: title,
+        postSocailMedias: postSocialMedias,
+      ),
+    );
 
-    try {
-      final result = await createPostUseCase(
-        CreatePostParams(
-          petId: petId,
-          content: content,
-          title: title,
-          postSocailMedias: postSocialMedias,
-        ),
-      );
+    result.fold(
+      (failure) {
+        emit(CreatePostErrorState(extractFirstErrorAuth(failure.error)));
+      },
+      (post) {
+        emit(CreatePostSuccessState());
+      },
+    );
+  }
 
-      result.fold(
-            (failure) => emit(CreatePostErrorState(extractFirstErrorAuth(failure.error))),
-            (post) {
-          emit(CreatePostSuccessState());
-        },
-      );
-    } catch (e) {
-      emit(CreatePostErrorState('Failed to create post: $e'));
-    }
+  Future<void> updatePostWithMultipleMedia({
+    required String petId,
+    required String id,
+    required String title,
+    required String content,
+    required List<Map<String, String?>> postSocialMedias,
+  }) async {
+    emit(CreatePostLoadingState());
+    final result = await createPostUseCase(
+      CreatePostParams(
+        id: id,
+        petId: petId,
+        content: content,
+        title: title,
+        postSocailMedias: postSocialMedias,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        emit(CreatePostErrorState(extractFirstErrorAuth(failure.error)));
+      },
+      (post) {
+        emit(CreatePostSuccessState());
+      },
+    );
+  }
+
+  Future<void> deletePost(String postId) async {
+    emit(DeletePostLoadingState());
+    final result = await deletePostUseCase(postId);
+    result.fold(
+      (failure) {
+        emit(DeletePostErrorState(extractFirstErrorAuth(failure.error)));
+      },
+      (post) {
+        _userPosts.removeWhere((post) => post.postId == postId);
+        emit(DeletePostSuccessState());
+      },
+    );
   }
 
   void clearUserPosts() {
     _pageNumber = 1;
     _userPosts.clear();
-    emit(GetPostSuccessState()); // أو أي state مناسب بعد المسح
-  }
-
-  bool isClick = false;
-  void changeClick(){
-    isClick = !isClick;
-    emit(NoInternetConnection());
+    emit(GetPostSuccessState());
   }
 }

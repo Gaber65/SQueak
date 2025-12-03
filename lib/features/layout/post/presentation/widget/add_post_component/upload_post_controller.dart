@@ -22,7 +22,6 @@ class UploadPostController {
   late Animation<double> fadeAnimation;
   late Animation<Offset> slideAnimation;
   final FocusNode textFocusNode = FocusNode();
-  final TextEditingController textEditingController = TextEditingController();
   final TextEditingController textContentEditingController =
       TextEditingController();
 
@@ -50,7 +49,6 @@ class UploadPostController {
   void dispose() {
     animationController.dispose();
     textFocusNode.dispose();
-    textEditingController.dispose();
     textContentEditingController.dispose();
   }
 
@@ -116,11 +114,10 @@ class UploadPostController {
     BuildContext context,
     CommunityCubit cubit,
   ) async {
-    final text = textEditingController.text.trim();
     final content = textContentEditingController.text.trim();
 
     // Validation
-    if (text.isEmpty && cubit.mediaFiles.isEmpty) {
+    if (content.isEmpty && cubit.mediaFiles.isEmpty) {
       return dialogs.showValidationDialog(
         context,
         'Missing Content',
@@ -129,14 +126,6 @@ class UploadPostController {
       );
     }
 
-    if (text.length > 100) {
-      return dialogs.showValidationDialog(
-        context,
-        'Text Too Long',
-        'Post text cannot exceed 100 characters.',
-        'لا يمكن أن يتجاوز نص المنشور 100 حرف.',
-      );
-    }
 
     if (content.length > 1000) {
       return dialogs.showValidationDialog(
@@ -166,7 +155,12 @@ class UploadPostController {
 
     if (cubit.mediaFiles.isEmpty) {
       // Text-only post
-      return await postCubit.createPost(petID, text, content, '', '');
+      return await postCubit.createPostWithMultipleMedia(
+        petId: petID,
+        title: '',
+        content: content,
+        postSocialMedias: [],
+      );
     } else {
       // Post with multiple media
       return await _uploadMultipleMediaAndCreatePost(
@@ -174,7 +168,7 @@ class UploadPostController {
         cubit: cubit,
         postCubit: postCubit,
         mainCubit: mainCubit,
-        text: text,
+        text: '',
         content: content,
       );
     }
@@ -232,7 +226,7 @@ class UploadPostController {
 
   void handleClose(BuildContext context, CommunityCubit cubit) {
     final hasContent =
-        textEditingController.text.trim().isNotEmpty ||
+        textContentEditingController.text.trim().isNotEmpty ||
         cubit.mediaFiles.isNotEmpty;
 
     if (hasContent) {
@@ -244,7 +238,7 @@ class UploadPostController {
 
   Future<bool> onWillPop(BuildContext context, CommunityCubit cubit) async {
     final hasContent =
-        textEditingController.text.trim().isNotEmpty ||
+        textContentEditingController.text.trim().isNotEmpty ||
         cubit.mediaFiles.isNotEmpty;
 
     if (hasContent) {

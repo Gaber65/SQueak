@@ -20,7 +20,11 @@ class HomeScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => sl<PostCubit>(),
       child: BlocConsumer<PostCubit, PostState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is DeletePostErrorState) {
+            errorToast(context, state.message);
+          }
+        },
         builder: (context, postState) {
           var cubit = PostCubit.get(context);
           String imagePath = '';
@@ -30,13 +34,18 @@ class HomeScreen extends StatelessWidget {
             PetEntities?
           >(
             selector: (state) {
-              if (state is ProfileLoaded && state.profile.type == ProfileType.pet) {
+              if (state is ProfileLoaded &&
+                  state.profile.type == ProfileType.pet) {
                 cubit.clearUserPosts();
                 cubit.getAllUserPosts(state.profile.pet!.petId!);
-                imagePath =  imageUrl+ state.profile.pet!.imageName!;
+                imagePath = imageUrl + state.profile.pet!.imageName!;
                 return state.profile.pet;
-              } else if (state is ProfileLoaded && state.profile.type == ProfileType.user) {
-                imagePath = imageUrl+ state.profile.user!.imageName;
+              } else if (state is ProfileLoaded &&
+                  state.profile.type == ProfileType.user) {
+                imagePath = imageUrl + state.profile.user!.imageName;
+                cubit.clearUserPosts();
+                cubit.getAllUserPosts('');
+              } else {
                 cubit.clearUserPosts();
                 cubit.getAllUserPosts('');
               }

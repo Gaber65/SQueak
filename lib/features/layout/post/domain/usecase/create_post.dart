@@ -11,6 +11,6 @@ class CreatePostUseCase extends BaseUseCase<PostEntity, CreatePostParams> {
 
   @override
   Future<Either<Failure, PostEntity>> call(CreatePostParams params) async {
-    return await basePostRepository.createPost(params);
+    return await basePostRepository.createAndUpdatePost(params);
   }
 }

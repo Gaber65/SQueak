@@ -24,3 +24,10 @@ class CreatePostErrorState extends PostState {
   final String message;
   CreatePostErrorState(this.message);
 }
+
+class DeletePostLoadingState extends PostState {}
+class DeletePostSuccessState extends PostState {}
+class DeletePostErrorState extends PostState {
+  final String message;
+  DeletePostErrorState(this.message);
+}

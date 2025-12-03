@@ -5,7 +5,7 @@ import '../../../../layout/presentation/screens/layout_screen.dart';
 import 'upload_post_controller.dart';
 
 class UploadPostSnackbars {
-  final UploadPostController controller;
+  final dynamic controller;
 
   UploadPostSnackbars(this.controller);
 

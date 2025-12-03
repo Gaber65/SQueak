@@ -18,36 +18,16 @@ class _ReactionDetailsSheetState extends State<ReactionDetailsSheet>
   List<Tab> _tabs = [];
   ReactionSummary? reactionData;
 
-  static const List<String> facebookReactionIcon = [
-    "assets/react/cat/like_fill_cat.jpg",
-    "assets/react/cat/love.jpg",
-    "assets/react/cat/haha.jpg",
-    "assets/react/cat/sad.jpg",
-    "assets/react/cat/angry.jpg",
-  ];
+
 
   @override
   void initState() {
     super.initState();
+    if (!mounted) return;
     ReactCubit.get(context).getAllReactions(widget.postId);
   }
 
-  String _getReactionIcon(ReactType type) {
-    switch (type) {
-      case ReactType.like:
-        return facebookReactionIcon[0];
-      case ReactType.love:
-        return facebookReactionIcon[1];
-      case ReactType.happy:
-        return facebookReactionIcon[2];
-      case ReactType.sad:
-        return facebookReactionIcon[3];
-      case ReactType.angry:
-        return facebookReactionIcon[4];
-      default:
-        return facebookReactionIcon[0];
-    }
-  }
+
 
   List<Tab> _buildTabs() {
     final tabs = <Tab>[];
@@ -143,7 +123,7 @@ class _ReactionDetailsSheetState extends State<ReactionDetailsSheet>
         ),
         child: ClipOval(
           child: Image.asset(
-            _getReactionIcon(type),
+            getReactionIcon(type),
             width: 20,
             height: 20,
             fit: BoxFit.cover,
@@ -174,7 +154,7 @@ class _ReactionDetailsSheetState extends State<ReactionDetailsSheet>
           mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset(
-              _getReactionIcon(type),
+              getReactionIcon(type),
               width: 24,
               height: 24,
             ),
@@ -415,7 +395,7 @@ class _ReactionDetailsSheetState extends State<ReactionDetailsSheet>
                     ],
                   ),
                   child: Image.asset(
-                    _getReactionIcon(reactType),
+                    getReactionIcon(reactType),
                     width: 20,
                     height: 20,
                   ),

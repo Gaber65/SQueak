@@ -166,6 +166,7 @@ class CommentCubit extends Cubit<CommentState> {
   @override
   Future<void> close() async {
     await CacheHelper.saveData('isReplayCommentOpen', false);
+    await CacheHelper.saveData('isBottomSheetOpen', false);
     super.close();
   }
 }

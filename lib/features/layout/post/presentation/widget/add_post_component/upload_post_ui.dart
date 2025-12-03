@@ -38,7 +38,7 @@ class UploadPostUI extends StatelessWidget {
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context, CommunityCubit cubit) {
-    final bool hasContent = controller.textEditingController.text.trim().isNotEmpty ||
+    final bool hasContent = controller.textContentEditingController.text.trim().isNotEmpty ||
         cubit.mediaFiles.isNotEmpty;
 
     return AppBar(
@@ -326,36 +326,6 @@ class UploadPostUI extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField() {
-    return TextField(
-      controller: controller.textEditingController,
-      focusNode: controller.textFocusNode,
-      maxLines: null,
-      minLines: 1,
-      maxLength: 100,
-      style: TextStyle(
-        fontSize: 16,
-        color: Colors.grey[900],
-        height: 1.6,
-        fontWeight: FontWeight.w400,
-      ),
-      textDirection: controller.getTextDirection(controller.textEditingController.text),
-      decoration: InputDecoration(
-        hintText: 'What\'s on your mind, ${widget.name.split(' ').first}?',
-        hintStyle: TextStyle(
-          fontSize: 16,
-          color: Colors.grey[400],
-          fontWeight: FontWeight.w400,
-        ),
-        border: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        contentPadding: EdgeInsets.zero,
-        counterText: '',
-      ),
-      onChanged: (text) => controller.setState(() {}),
-    );
-  }
 
   Widget _buildTextFieldContent() {
     return TextField(

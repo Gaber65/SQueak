@@ -35,22 +35,6 @@ class _ReactionButtonState extends State<ReactionButton> {
   int? reactionIndex;
   int totalReact = 0;
 
-  int getReactionTypeInvers(int? reactionIndex) {
-    if (reactionIndex == null) {
-      return ReactType.none.index;
-    } else if (reactionIndex == 5) {
-      return ReactType.like.index;
-    } else if (reactionIndex == 3) {
-      return ReactType.love.index;
-    } else if (reactionIndex == 1) {
-      return ReactType.happy.index;
-    } else if (reactionIndex == 2) {
-      return ReactType.sad.index;
-    } else if (reactionIndex == 4) {
-      return ReactType.angry.index;
-    }
-    return 0;
-  }
 
   @override
   void initState() {

@@ -9,8 +9,9 @@ import '../controller/comment_cubit.dart';
 import '../screens/comment.dart';
 
 class EditComment extends StatefulWidget {
-  const EditComment({super.key, required this.comment});
+  const EditComment({super.key, required this.comment , required this.petId});
   final CommentEntity comment;
+  final String petId;
 
   @override
   State<EditComment> createState() => _EditCommentState();
@@ -60,7 +61,7 @@ class _EditCommentState extends State<EditComment>
             commentController.clear();
             navigateAndFinish(
               context,
-              CommentScreen(postId: widget.comment.postId),
+              CommentScreen(postId: widget.comment.postId,petID: widget.petId),
             );
           }
         },

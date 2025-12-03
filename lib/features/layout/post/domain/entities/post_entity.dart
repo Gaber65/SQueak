@@ -101,6 +101,7 @@ class SpecieEntityPost {
 
 class PetOwnerEntity {
   final String? petName;
+  final String? petId;
   final int? gender;
   final String? breedId;
   final String? specieId;
@@ -110,6 +111,7 @@ class PetOwnerEntity {
     required this.petName,
     required this.gender,
     required this.breedId,
+    required this.petId,
     required this.specieId,
     required this.imageName,
   });
@@ -129,6 +131,9 @@ class MediaItem {
     required this.thumbnail,
     required this.duration,
   });
+
+  bool get isImage => type == MediaType.image;
+  bool get isVideo => type == MediaType.video;
 }
 
-// =================== Data Models ===================
+enum MediaType { image, video }

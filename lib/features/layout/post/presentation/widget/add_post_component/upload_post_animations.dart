@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:squeak/features/layout/post/presentation/widget/add_post_component/upload_post_controller.dart';
 
 class UploadPostAnimations {
-  final UploadPostController controller;
+  final dynamic controller;
+
 
   UploadPostAnimations(this.controller);
 

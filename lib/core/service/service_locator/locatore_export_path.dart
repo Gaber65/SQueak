@@ -192,7 +192,7 @@ export 'package:squeak/features/layout/stories/data/datasources/story_remote_dat
 export 'package:squeak/features/layout/stories/data/repositories/story_repository_impl.dart';
 export 'package:squeak/features/layout/stories/domain/repositories/story_repository.dart';
 export 'package:squeak/features/layout/stories/domain/usecases/create_story.dart';
-export 'package:squeak/features/layout/stories/domain/usecases/get_active_stories.dart';
+export 'package:squeak/features/layout/stories/domain/usecases/get_my_active_stories_usecase.dart';
 
 
 

@@ -18,10 +18,12 @@ class SuccessComment extends StatelessWidget {
     required this.comments,
     required this.cubit,
     required this.isScrolle,
+    required this.petID,
   });
   final GlobalKey<ScaffoldState> scaffoldKey;
   final List<CommentEntity> comments;
   final CommentCubit cubit;
+  final String petID;
   final bool isScrolle;
   @override
   Widget build(BuildContext context) {
@@ -52,6 +54,7 @@ class SuccessComment extends StatelessWidget {
                   data: data,
                   scaffoldKey: scaffoldKey,
                   cubit: cubit,
+                  petID: petID,
                   index: index,
                   comments: comments,
                   showReplies: true,
@@ -64,6 +67,7 @@ class SuccessComment extends StatelessWidget {
                   cubit: cubit,
                   index: index,
                   comments: comments,
+                  petID: petID,
                   showReplies: false,
                 );
               },

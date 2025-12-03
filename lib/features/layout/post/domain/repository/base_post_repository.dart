@@ -7,7 +7,11 @@ abstract class BasePostRepository {
   Future<Either<Failure, List<PostEntity>>> getAllUserPosts(
     GetPostParams params,
   );
-  Future<Either<Failure, PostEntity>> createPost(CreatePostParams params);
+  Future<Either<Failure, PostEntity>> createAndUpdatePost(
+    CreatePostParams params,
+  );
+
+  Future<Either<Failure, bool>> deletePost(String id);
 }
 
 class GetPostParams {
@@ -24,6 +28,7 @@ class GetPostParams {
 
 class CreatePostParams {
   final String title;
+  final String? id;
   final String content;
   final List<Map<String, dynamic>> postSocailMedias;
   final String petId;
@@ -33,10 +38,13 @@ class CreatePostParams {
     required this.content,
     required this.petId,
     required this.postSocailMedias,
+    required this.id,
   });
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
+
       'title': title,
       'content': content,
       'postSocailMedias': postSocailMedias,
@@ -44,5 +52,4 @@ class CreatePostParams {
       'petId': petId,
     };
   }
-
 }

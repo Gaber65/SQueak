@@ -7,6 +7,8 @@ abstract class BasePostRemoteDataSource {
   Future<List<PostDataModel>> getPostDataSource(GetPostParams params);
 
   Future<PostDataModel> createPostDataSource(CreatePostParams params);
+
+  Future<bool> deletePostDataSource(String id);
 }
 
 class PostRemoteDataSource extends BasePostRemoteDataSource {
@@ -31,13 +33,34 @@ class PostRemoteDataSource extends BasePostRemoteDataSource {
   @override
   Future<PostDataModel> createPostDataSource(CreatePostParams params) async {
     try {
-      Response result = await DioFinalHelper.postData(
-        method: createPostEndPointText,
-        data: params.toJson(),
-      );
-      return PostDataModel.fromJson(result.data['data']);
+      final isNew = params.id?.isEmpty ?? true;
+      final response =
+          isNew
+              ? await DioFinalHelper.postData(
+                method: createPostEndPointText,
+                data: params.toJson(),
+              )
+              : await DioFinalHelper.patchData(
+                method: '$createPostEndPointText${params.id}',
+                data: params.toJson(),
+              );
+
+      return PostDataModel.fromJson(response.data['data']);
     } on DioException catch (e) {
-      print(e.response?.data);
+      throw ServerException(
+        errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
+      );
+    }
+  }
+
+  @override
+  Future<bool> deletePostDataSource(String id) async {
+    try {
+      final re = await DioFinalHelper.deleteData(
+        method: '$createPostEndPointText$id',
+      );
+      return re.data['success'] ;
+    } on DioException catch (e) {
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

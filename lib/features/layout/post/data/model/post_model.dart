@@ -111,6 +111,7 @@ class PetOwnerModel extends PetOwnerEntity {
   PetOwnerModel({
     required super.petName,
     required super.gender,
+    required super.petId,
     required super.breedId,
     required super.specieId,
     required super.imageName,
@@ -121,6 +122,7 @@ class PetOwnerModel extends PetOwnerEntity {
       petName: json['petName'],
       gender: json['gender'],
       breedId: json['breedId'],
+      petId: json['id'],
       specieId: json['specieId'],
       imageName: json['imageName'],
     );

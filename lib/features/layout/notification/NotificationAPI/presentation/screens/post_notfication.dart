@@ -132,6 +132,7 @@ class PostNotification extends StatelessWidget {
                     SliverList(
                       delegate: SliverChildListDelegate([
                         SuccessComment(
+                          petID: '',
                           scaffoldKey: scaffoldKey,
                           cubit: cubitComment,
                           isScrolle: false,

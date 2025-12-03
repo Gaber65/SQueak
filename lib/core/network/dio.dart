@@ -47,6 +47,7 @@ class DioFinalHelper {
   static Future<Response> getData({
     required String method,
     String? token,
+    Map<String, dynamic>? query,
     bool language = false,
   }) async {
     await _ensureValidToken();
@@ -59,7 +60,12 @@ class DioFinalHelper {
               ? 'ar'
               : 'en',
     };
-    return await dio.get(method);
+
+    if (query != null) {
+      dio.options.queryParameters = query;
+    }
+
+    return await dio.get(method ,);
   }
 
   static Future<Response> postData({

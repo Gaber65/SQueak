@@ -1,3 +1,6 @@
+import '../../presentation/animated_reaction/reaction_data.dart';
+import '../repo/base_react_repo.dart';
+
 class ReactionPet {
   final String petName;
   final String imageName;
@@ -28,6 +31,57 @@ class ReactionItem {
     required this.petId,
     required this.pet,
   });
+}
+
+int getReactionType(int? reactionIndex) {
+  if (reactionIndex == null) {
+    return ReactType.none.index;
+  } else if (reactionIndex == 0) {
+    return ReactType.like.index;
+  } else if (reactionIndex == 1) {
+    return ReactType.love.index;
+  } else if (reactionIndex == 2) {
+    return ReactType.happy.index;
+  } else if (reactionIndex == 3) {
+    return ReactType.sad.index;
+  } else if (reactionIndex == 4) {
+    return ReactType.angry.index;
+  }
+  return 0;
+}
+
+int getReactionTypeInvers(int? reactionIndex) {
+  if (reactionIndex == null) {
+    return ReactType.none.index;
+  } else if (reactionIndex == 5) {
+    return ReactType.like.index;
+  } else if (reactionIndex == 3) {
+    return ReactType.love.index;
+  } else if (reactionIndex == 1) {
+    return ReactType.happy.index;
+  } else if (reactionIndex == 2) {
+    return ReactType.sad.index;
+  } else if (reactionIndex == 4) {
+    return ReactType.angry.index;
+  }
+  return 0;
+}
+
+String getReactionIcon(ReactType type) {
+  switch (type) {
+    case ReactType.like:
+      return ReactionData.facebookReactionIcon[0];
+    case ReactType.love:
+      return ReactionData.facebookReactionIcon[1];
+    case ReactType.happy:
+      return ReactionData.facebookReactionIcon[2];
+    case ReactType.sad:
+      return ReactionData.facebookReactionIcon[3];
+    case ReactType.angry:
+      return ReactionData.facebookReactionIcon[4];
+    default:
+      return ReactionData.facebookReactionIcon[0];
+  }
 }
 
 class ReactionSummary {

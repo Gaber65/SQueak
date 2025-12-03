@@ -3,12 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 import '../../controllers/story_cubit.dart';
 import '../../controllers/story_state.dart';
 import '../common/app_strings.dart';
 
 class CreateStoryModal extends StatefulWidget {
-  const CreateStoryModal({super.key});
+  const CreateStoryModal({super.key, required this.petId});
+
+  final String petId;
 
   @override
   State<CreateStoryModal> createState() => _CreateStoryModalState();
@@ -32,14 +35,17 @@ class _CreateStoryModalState extends State<CreateStoryModal> {
 
     return BlocConsumer<StoryCubit, StoryState>(
       listener: (context, state) {
-        if (state.status == StoryStatus.success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(AppStrings.storyPostedSuccess(context))),
-          );
-        } else if (state.status == StoryStatus.failure &&
-            state.errorMessage != null) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+        if (state.status.index == StoryStatus.error.index) {
+          setState(() => _isPosting = true);
+          errorToast(context, state.errorMessage!);
+        }
+        if (state.status.index == StoryStatus.success.index) {
+          setState(() => _isPosting = false);
+          successToast(context, AppStrings.storyPostedSuccess(context));
+          Navigator.pop(context);
+        }
+        if (state.status.index == StoryStatus.creating.index) {
+          setState(() => _isPosting = true);
         }
       },
       builder: (context, state) {
@@ -116,51 +122,62 @@ class _CreateStoryModalState extends State<CreateStoryModal> {
                     children: [
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: _isPosting
-                              ? null
-                              : () {
-                            setState(() => _selectedFile = null);
-                            Navigator.pop(context);
-                          },
+                          onPressed:
+                              _isPosting
+                                  ? null
+                                  : () {
+                                    setState(() => _selectedFile = null);
+                                    Navigator.pop(context);
+                                  },
                           child: Text(AppStrings.cancelStory(context)),
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: (_selectedFile == null || _isPosting)
-                              ? null
-                              : () async {
-                            setState(() => _isPosting = true);
+                          onPressed:
+                              (_selectedFile == null || _isPosting)
+                                  ? null
+                                  : () async {
+                                    setState(() => _isPosting = true);
+                                    MainCubit.get(context)
+                                        .getGlobalImage(
+                                          _selectedFile!,
+                                          UploadPlace.storyImages,
+                                        )
+                                        .then((value) async {
+                                          await cubit.createStory(
+                                            petId: widget.petId,
+                                            image:
+                                                MainCubit.get(
+                                                  context,
+                                                ).modelImage!.data,
+                                          );
+                                        });
 
-                            await cubit.postStory(
-                              imageFile: _selectedFile!,
-                              ownerId: "owner-123",
-                              ownerName: "You",
-                              ownerAvatarUrl: "",
-                            );
+                                    if (!mounted) return;
 
-                            if (!mounted) return;
+                                    setState(() => _isPosting = false);
 
-                            setState(() => _isPosting = false);
-
-                            if (cubit.state.status ==
-                                StoryStatus.success) {
-                              Navigator.pop(context);
-                            }
-                          },
-                          child: _isPosting
-                              ? const SizedBox(
-                            height: 18,
-                            width: 18,
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2),
-                          )
-                              : Text(AppStrings.postStory(context)),
+                                    if (cubit.state.status ==
+                                        StoryStatus.creating) {
+                                      Navigator.pop(context);
+                                    }
+                                  },
+                          child:
+                              _isPosting
+                                  ? const SizedBox(
+                                    height: 18,
+                                    width: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                  : Text(AppStrings.postStory(context)),
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),

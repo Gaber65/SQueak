@@ -21,4 +21,7 @@ class AppStrings {
 
   static String cancelStory(BuildContext context) =>
       _isArabic(context) ? 'إلغاء القصة' : 'Cancel';
+
+  static String deleteStoryisDonw(BuildContext context) =>
+      _isArabic(context) ? 'تم حذف القصة' : 'Story deleted successfully!';
 }
