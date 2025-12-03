@@ -69,6 +69,7 @@ class _ChatsTabState extends State<ChatsTab> {
       _isConnecting = false;
     }
   }
+
   void _setupEventListeners() {
     debugPrint('🎧 Setting up GeneralHub event listeners...');
     _eventSubscription = signalEventStream.stream.listen((event) {
@@ -204,8 +205,7 @@ class _ChatsTabState extends State<ChatsTab> {
       if (connectionData != null) {
         debugPrint('✅ Connection Registered: $connectionData');
         if (mounted) {
-          setState(() {
-          });
+          setState(() {});
         }
       }
     }
@@ -247,7 +247,6 @@ class _ChatsTabState extends State<ChatsTab> {
     }
   }
 
-
   void _showNewMessageNotification(String fromPetId, String conversationId) {
     debugPrint(
       '📨 New message from $fromPetId in conversation $conversationId',
@@ -274,8 +273,6 @@ class _ChatsTabState extends State<ChatsTab> {
     }
   }
 
- 
-
   @override
   void dispose() {
     debugPrint('🔌 Disconnecting GeneralHub from ChatsTab');
@@ -284,43 +281,26 @@ class _ChatsTabState extends State<ChatsTab> {
     super.dispose();
   }
 
+  List<ChatEntity> chats = [];
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         _buildConnectionStatus(),
         Expanded(
-          child: BlocBuilder<PetFriendsCubit, PetFriendsState>(
+          child: BlocConsumer<PetFriendsCubit, PetFriendsState>(
+            listener: (context, state) {
+              if (state is ChatsLoaded) {
+                chats = state.chats;
+              }
+            },
             builder: (context, state) {
               final activePet =
                   SwitchProfileCubit.get(context).activeProfile?.pet;
               _currentActivePetId = activePet?.petId;
-              if (state is ChatsLoaded) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  
-                });
-              }
 
-              if (state is ChatsLoading) {
-                return DogLoadingStateWidget(
-                  theme: Theme.of(context),
-                  isDark: Theme.of(context).brightness == Brightness.dark,
-                  s: S.of(context),
-                  text: S.of(context).loadingPetsChats,
-                );
-              } else if (state is ChatsLoadFailed) {
-                return _buildErrorState(context, state.message);
-              } else if (state is ChatsLoaded) {
-                if (state.chats.isEmpty) {
-                  return const EmptyChatsWidget();
-                }
-                return _buildChatsList(
-                  context,
-                  state.chats,
-                  activePet?.petId ?? '',
-                );
-              }
-              return const EmptyChatsWidget();
+              return _buildChatsList(context, chats, activePet?.petId ?? '');
             },
           ),
         ),

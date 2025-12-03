@@ -17,6 +17,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   final BlockChatUseCase blockChatUseCase;
   final RenameChatUseCase renameChatUseCase;
   final RateMatingUseCase rateMatingUseCase;
+  final signalRService = SignalRConversationHubService();
 
   ChatMessagesCubit({
     required this.getMessagesUseCase,
@@ -33,23 +34,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   List<MessageEntity> messagesList = [];
   bool isOtherUserTyping = false;
 
-  // Send typing indicator
-  Future<void> sendTypingStatus({
-    required String conversationId,
-    required String petId,
-    required bool isTyping,
-  }) async {
-    try {
-      final signalRService = SignalRConversationHubService();
-      await signalRService.setTyping(
-        conversationId: conversationId,
-        petId: petId,
-        isTyping: isTyping,
-      );
-    } catch (e) {
-      debugPrint('❌ Error sending typing status: $e');
-    }
-  }
 
   // Update typing status when received from SignalR
   void updateTypingStatus(bool isTyping) {
@@ -57,11 +41,15 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     emit(TypingStatusChanged(isTyping));
   }
 
-  Future<void> loadMessages(String chatId) async {
+  Future<void> loadMessages(String chatId,String petId) async {
     if (chatId.isEmpty) {
       emit(ChatMessagesLoaded([]));
       return;
     }
+signalRService.connect(
+  conversationId: chatId,
+  petId: petId,
+);
 
     emit(ChatMessagesLoading());
 
@@ -98,7 +86,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     );
 
     try {
-      final signalRService = SignalRConversationHubService();
 
       // Ensure Conversation Hub is connected before sending
       if (!signalRService.isConnected) {
@@ -125,7 +112,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
 
       // Prepare SignalR command
       final command = messageModel.toSignalRCommand(
-        conversationId: chatId.isEmpty ? null : chatId,
+        conversationId: chatId,
         fromPetId: fromPetId,
         toPetId: toPetId,
       );
@@ -136,7 +123,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
 
       // Reload messages to show the sent message immediately
       if (chatId.isNotEmpty) {
-        await loadMessages(chatId);
+        await loadMessages(chatId,fromPetId!);
       }
 
       // Note: No need to manually add message to list or emit MessageSent

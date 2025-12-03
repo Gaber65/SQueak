@@ -78,9 +78,12 @@ class PetEntities {
       'breed': breed?.toJson(),
       'ownerId': ownerId,
       'isSelected': isSelected,
-      
     };
   }
+
+  /// to do copyWith
+  PetEntities copyWith({String? petId}) =>
+      PetEntities(petId: this.petId ?? petId);
 }
 
 class BreedEntity {

@@ -1,5 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
@@ -9,141 +10,22 @@ import 'package:squeak/core/service/signalr/signalr_general_service.dart';
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_list_cubit.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../../../core/utils/enums/profile_type.dart';
+import '../../../../profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
 import '../../../../settings/persentaion/controller/setting_cubit.dart';
 import '../../../layoutMating/presentation/screens/widgets/profile_switcher_builder.dart';
 import '../../domain/entities/chat_entity.dart';
-import '../controllers/chat_list_state.dart';
 import '../widgets/chat_widgets/mating_chat_list_tile.dart';
+import '../controllers/chat_list_state.dart';
 
-class ChatListScreen extends StatefulWidget {
+class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
-
-  @override
-  State<ChatListScreen> createState() => _ChatListScreenState();
-}
-
-class _ChatListScreenState extends State<ChatListScreen> {
-  final SignalRGeneralHubService _generalHub = SignalRGeneralHubService();
-  StreamSubscription<SignalEvent>? _eventSubscription;
-  String? _currentPetId;
-
-  @override
-  void initState() {
-    super.initState();
-    _connectToGeneralHub();
-  }
-
-  Future<void> _connectToGeneralHub() async {
-    try {
-      // Get active pet from context
-      await Future.delayed(const Duration(milliseconds: 100));
-      
-      final activePet = SwitchProfileCubit.get(context).activeProfile?.pet;
-      if (activePet?.petId == null) {
-        debugPrint('❌ ChatListScreen: No active pet ID found');
-        return;
-      }
-      
-      _currentPetId = activePet!.petId;
-      debugPrint('🔄 ChatListScreen: Connecting to GeneralHub for pet: $_currentPetId');
-
-      await _generalHub.connect(
-        petId: _currentPetId!,
-        fullName: activePet.petName,
-        image: activePet.imageName,
-      );
-
-      debugPrint('✅ ChatListScreen: GeneralHub connected successfully');
-      
-      _setupEventListeners();
-      _fireInitialEvents();
-    } catch (e) {
-      debugPrint('❌ ChatListScreen: Failed to connect GeneralHub: $e');
-    }
-  }
-
-  void _setupEventListeners() {
-    debugPrint('🎧 ChatListScreen: Setting up GeneralHub event listeners...');
-    
-    _eventSubscription = signalEventStream.stream.listen((event) {
-      if (event.hub == 'GeneralHub') {
-        debugPrint('📥 ChatListScreen GeneralHub Event: ${event.method}');
-      }
-    });
-  }
-
-  void _fireInitialEvents() {
-    if (_currentPetId == null) return;
-    
-    debugPrint('🔥 ChatListScreen: Firing initial GeneralHub events...');
-    _generalHub.onConnectionRegistered((data) {
-      debugPrint('✅ ChatListScreen Event Fired: ConnectionRegistered - $data');
-    });
-
-    _generalHub.onFriendConnectionChanged((data) {
-      debugPrint('✅ ChatListScreen Event Fired: FriendConnectionChanged - $data');
-      if (mounted) {
-        // Reload chat list when friend connection changes
-        final cubit = context.read<ChatListCubit>();
-        cubit.loadChats(_currentPetId!);
-      }
-    });
-
-
-    _generalHub.onUnreadedMessagesCount((data) {
-      debugPrint('✅ ChatListScreen Event Fired: UnreadedMessagesCount - $data');
-      if (mounted) {
-        // Reload chat list to update unread counts
-        final cubit = context.read<ChatListCubit>();
-        cubit.loadChats(_currentPetId!);
-      }
-    });
-
-    debugPrint('✅ ChatListScreen: All 3 event listeners registered successfully');
-    
-    // Request initial data from server
-    _requestInitialData();
-  }
-  
-  Future<void> _requestInitialData() async {
-    if (_currentPetId == null) return;
-    
-    debugPrint('📡 ChatListScreen: Requesting initial data from server...');
-    
-    try {
-      // Request online friends data
-      final onlineFriends = await _generalHub.getAllMyOnlinePetFriends(_currentPetId!);
-      if (onlineFriends != null) {
-        debugPrint('✅ ChatListScreen: Got ${onlineFriends.length} online friends');
-      }
-      
-      // Request unread message counts
-      final unreadCounts = await _generalHub.getUnreadMessageCounts(_currentPetId!);
-      if (unreadCounts != null) {
-        debugPrint('✅ ChatListScreen: Got unread counts: $unreadCounts');
-      }
-      
-      debugPrint('✅ ChatListScreen: Initial data requests completed');
-    } catch (e) {
-      debugPrint('⚠️ ChatListScreen: Error requesting initial data: $e');
-    }
-  }
-
-  @override
-  void dispose() {
-    debugPrint('🔌 ChatListScreen: Disconnecting GeneralHub');
-    _eventSubscription?.cancel();
-    _generalHub.disconnect();
-    super.dispose();
-  }
-
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => sl<ChatListCubit>()),
+        BlocProvider(create: (_) => sl<ChatListCubit>()),
         BlocProvider(create: (_) => sl<PetCubit>()..getOwnerPets()),
         BlocProvider(create: (_) => sl<SettingCubit>()..getOwnerData()),
         BlocProvider(create: (_) => sl<SwitchProfileCubit>()..loadProfile()),
@@ -153,358 +35,277 @@ class _ChatListScreenState extends State<ChatListScreen> {
   }
 }
 
-class _ChatListView extends StatelessWidget {
+class _ChatListView extends StatefulWidget {
   const _ChatListView();
 
   @override
+  State<_ChatListView> createState() => _ChatListViewState();
+}
+
+class _ChatListViewState extends State<_ChatListView> {
+  final SignalRGeneralHubService _generalHub = SignalRGeneralHubService();
+
+  StreamSubscription<SignalEvent>? _eventSubscription;
+  StreamSubscription<SwitchProfileState>? _profileSubscription;
+
+  String? _currentPetId;
+  bool _hubConnected = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Listen for profile loaded ONCE → connect hub
+    _profileSubscription =
+        context.read<SwitchProfileCubit>().stream.listen((state) {
+          if (state is ProfileLoaded &&
+              state.profile.type == ProfileType.pet &&
+              !_hubConnected) {
+            _connectHub(state.profile.pet!);
+          }
+        });
+  }
+
+  // -------------------------------------------------------------
+  //  CONNECT HUB EXACTLY ONCE
+  // -------------------------------------------------------------
+  Future<void> _connectHub(PetEntities pet) async {
+    try {
+      _currentPetId = pet.petId;
+      debugPrint("🔄 Connecting to GeneralHub for pet: $_currentPetId)");
+
+      await _generalHub.connect(
+        petId: pet.petId!,
+        fullName: pet.petName,
+        image: pet.imageName,
+      );
+
+      _hubConnected = true;
+      debugPrint("✅ GeneralHub connected!");
+
+      _setupHubEvents();
+      _requestInitialData();
+    } catch (e) {
+      debugPrint("❌ Hub connection error: $e");
+    }
+  }
+
+  // -------------------------------------------------------------
+  //  SIGNALR EVENT HANDLERS (REAL-TIME)
+  // -------------------------------------------------------------
+  void _setupHubEvents() {
+    debugPrint("🎧 Listening for SignalR events...");
+
+    // Listen to all hub events
+    _eventSubscription = signalEventStream.stream.listen((event) {
+      if (event.hub == "GeneralHub") {
+        debugPrint("📥 GeneralHub Event → ${event.method}");
+      }
+    });
+
+    // Friend online/offline
+    _generalHub.onFriendConnectionChanged((data) {
+      debugPrint("🔥 FriendConnectionChanged → $data");
+      if (_currentPetId != null) {
+        context.read<ChatListCubit>().loadChats(_currentPetId!);
+      }
+    });
+
+    // Unread messages count
+    _generalHub.onUnreadedMessagesCount((data) {
+      debugPrint("🔥 UnreadMessagesCount → $data");
+      if (_currentPetId != null) {
+        context.read<ChatListCubit>().loadChats(_currentPetId!);
+      }
+    });
+
+    // Connection confirmation
+    _generalHub.onConnectionRegistered((data) {
+      debugPrint("🔥 ConnectionRegistered → $data");
+    });
+
+    debugPrint("🎧 SignalR event listeners registered");
+  }
+
+  // -------------------------------------------------------------
+  //  CALL INITIAL DATA FROM HUB
+  // -------------------------------------------------------------
+  Future<void> _requestInitialData() async {
+    if (_currentPetId == null) return;
+
+    try {
+      final onlineFriends =
+      await _generalHub.getAllMyOnlinePetFriends(_currentPetId!);
+      debugPrint("👥 Online friends count: ${onlineFriends?.length}");
+
+      final unread =
+      await _generalHub.getUnreadMessageCounts(_currentPetId!);
+      debugPrint("📨 Unread messages: $unread");
+    } catch (e) {
+      debugPrint("⚠ Initial data error: $e");
+    }
+  }
+
+  // -------------------------------------------------------------
+  //  CLEANUP
+  // -------------------------------------------------------------
+  @override
+  void dispose() {
+    debugPrint("🔌 DISCONNECTING HUB...");
+    _profileSubscription?.cancel();
+    _eventSubscription?.cancel();
+    _generalHub.disconnect();
+    super.dispose();
+  }
+
+  // -------------------------------------------------------------
+  //  UI
+  // -------------------------------------------------------------
+  @override
   Widget build(BuildContext context) {
-    final s = S.of(context);
+    final cubit = context.read<ChatListCubit>();
+
+    return BlocSelector<SwitchProfileCubit, SwitchProfileState, PetEntities?>(
+      selector: (state) {
+        if (state is ProfileLoaded && state.profile.pet != null) {
+          cubit.loadChats(state.profile.pet!.petId!);
+          return state.profile.pet;
+        }
+        return null;
+      },
+      builder: (_, pet) {
+        return _buildMainUi(pet);
+      },
+    );
+  }
+
+  // MAIN UI BUILDER
+  Widget _buildMainUi(PetEntities? activePet) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5),
+      isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5),
       body: BlocConsumer<ChatListCubit, ChatListState>(
-        listener: (context, state) {},
+        listener: (_, __) {},
         builder: (context, state) {
-          var cubit = ChatListCubit.get(context);
-          return BlocSelector<
-            SwitchProfileCubit,
-            SwitchProfileState,
-            PetEntities?
-          >(
-            selector: (state) {
-              if (state is ProfileLoaded &&
-                  state.profile.type == ProfileType.pet) {
-                cubit.loadChats(state.profile.pet!.petId!);
-                return state.profile.pet;
-              }
-              return null;
-            },
-            builder: (context, activePet) {
-              return CustomScrollView(
-                slivers: [
-                  _buildModernAppBar(context, theme, isDark, s),
-                  SliverToBoxAdapter(
-                    child: BlocBuilder<ChatListCubit, ChatListState>(
-                      builder: (context, state) {
-                        if (state is ChatListLoading) {
-                          return DogLoadingStateWidget(
-                            theme: theme,
-                            isDark: isDark,
-                            s: s,
-                            text: s.loadingPetsChats,
-                          );
-                        } else if (state is ChatListError) {
-                          return _buildErrorState(
-                            context,
-                            theme,
-                            isDark,
-                            state,
-                            s,
-                          );
-                        } else if (state is ChatListLoaded) {
-                          if (state.chats.isEmpty) {
-                            return _buildEmptyState(context, theme, isDark, s);
-                          } else {
-                            return RefreshIndicator(
-                              onRefresh: () async {
-                                if (activePet?.petId != null) {
-                                  await cubit.loadChats(activePet!.petId!);
-                                }
-                              },
-                              child: _buildChatsList(
-                                context,
-                                activePet?.petId ?? '',
-                                state.chats,
-                                theme,
-                                isDark,
-                              ),
-                            );
-                          }
-                        }
-
-                        return _buildEmptyState(context, theme, isDark, s);
-                      },
-                    ),
-                  ),
-                ],
-              );
-            },
+          return CustomScrollView(
+            slivers: [
+              _buildAppBar(context, theme, isDark),
+              SliverToBoxAdapter(
+                child: _buildChatListContent(state, activePet),
+              ),
+            ],
           );
         },
       ),
     );
   }
 
-  Widget _buildModernAppBar(
-    BuildContext context,
-    ThemeData theme,
-    bool isDark,
-    S s,
-  ) {
+  // -------------------------------------------------------------
+  //  APP BAR
+  // -------------------------------------------------------------
+  SliverAppBar _buildAppBar(
+      BuildContext context,
+      ThemeData theme,
+      bool isDark,
+      ) {
     return SliverAppBar(
       floating: true,
-      centerTitle: true,
       pinned: true,
-      elevation: 0,
       title: Text(
-        s.allChats,
+        "All Chats",
         style: TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.bold,
           color: theme.colorScheme.onSurface,
         ),
       ),
-      backgroundColor: Colors.transparent,
       actions: [buildProfileSwitcher(context)],
-      leading: IconButton(
-        icon: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color:
-                isDark
-                    ? Colors.white.withOpacity(0.1)
-                    : Colors.black.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: theme.colorScheme.onSurface,
-            size: 18,
-          ),
-        ),
-        onPressed: () => navigateAndFinish(context, LayoutScreen()),
-      ),
     );
   }
 
-  Widget _buildErrorState(
-    BuildContext context,
-    ThemeData theme,
-    bool isDark,
-    ChatListError state,
-    S s,
-  ) {
-    return Container(
-      height: MediaQuery.of(context).size.height - 200,
-      padding: const EdgeInsets.all(24),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            LottieBuilder.network(
-              'https://lottie.host/b1930cd0-34dc-4097-9233-a36331b2372b/Oqk8zoLEPO.json',
-              height: 200,
-              width: 200,
-            ),
-            const SizedBox(height: 24),
-            _buildGlassCard(
-              theme,
-              isDark,
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    Text(
-                      s.somethingWentWrong,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.error,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '${s.errorColon} ${state.message}',
-                      style: TextStyle(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 24),
-                    _buildModernButton(
-                      context,
-                      theme,
-                      isDark,
-                      label: s.tryAgain,
-                      icon: Icons.refresh_rounded,
-                      onPressed:
-                          () => context.read<ChatListCubit>().loadChats(''),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  // -------------------------------------------------------------
+  //  CHAT LIST LOGIC
+  // -------------------------------------------------------------
+  Widget _buildChatListContent(ChatListState state, PetEntities? pet) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    if (state is ChatListLoading) {
+      return DogLoadingStateWidget(
+        theme: theme,
+        isDark: isDark,
+        text: "Loading chats...", s: S.of(context),
+      );
+    }
+
+    if (state is ChatListError) {
+      return _buildError(state.message);
+    }
+
+    if (state is ChatListLoaded) {
+      if (state.chats.isEmpty) return _buildEmpty();
+
+      return RefreshIndicator(
+        onRefresh: () async {
+          if (pet?.petId != null) {
+            await context.read<ChatListCubit>().loadChats(pet!.petId!);
+          }
+        },
+        child: _buildChatTiles(pet!.petId!, state.chats, theme, isDark),
+      );
+    }
+
+    return _buildEmpty();
   }
 
-  Widget _buildEmptyState(
-    BuildContext context,
-    ThemeData theme,
-    bool isDark,
-    S s,
-  ) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height - 200,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            LottieBuilder.network(
-              'https://lottie.host/efe816d3-f5da-499c-b0b5-ffc0cd6f713e/oj7UhZc4wU.json',
-              height: 200,
-              width: 200,
-            ),
-            const SizedBox(height: 24),
-            _buildGlassCard(
-              theme,
-              isDark,
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    Text(
-                      s.noChatsYet,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      s.startMatchingToChat,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildChatsList(
-    BuildContext context,
-    String petId,
-    List<ChatEntity> chats,
-    ThemeData theme,
-    bool isDark,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  Widget _buildError(String message) {
+    return Center(
       child: Column(
-        children: chats.map((chat) {
-          return MatingChatListTile(
-            chat: chat,
-            petId: petId,
-            onNavigateComplete: () async => ChatListCubit.get(context).loadChats(petId),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildGlassCard(
-    ThemeData theme,
-    bool isDark, {
-    required Widget child,
-  }) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors:
-                  isDark
-                      ? [
-                        Colors.white.withOpacity(0.1),
-                        Colors.white.withOpacity(0.05),
-                      ]
-                      : [
-                        Colors.white.withOpacity(0.9),
-                        Colors.white.withOpacity(0.7),
-                      ],
-            ),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color:
-                  isDark
-                      ? Colors.white.withOpacity(0.2)
-                      : Colors.black.withOpacity(0.1),
-              width: 1,
-            ),
+        children: [
+          Lottie.network(
+            "https://lottie.host/b1930cd0-34dc-4097-9233-a36331b2372b/Oqk8zoLEPO.json",
           ),
-          child: child,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildModernButton(
-    BuildContext context,
-    ThemeData theme,
-    bool isDark, {
-    required String label,
-    required IconData icon,
-    required VoidCallback onPressed,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            ColorManager.primaryColor,
-            ColorManager.primaryColor.withOpacity(0.8),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: ColorManager.primaryColor.withOpacity(0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
+          Text("Error: $message"),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, color: Colors.white, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+    );
+  }
+
+  Widget _buildEmpty() {
+    return Center(
+      child: Column(
+        children: [
+          Lottie.network(
+            "https://lottie.host/efe816d3-f5da-499c-b0b5-ffc0cd6f713e/oj7UhZc4wU.json",
           ),
-        ),
+          const Text("No chats yet"),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChatTiles(
+      String petId,
+      List<ChatEntity> chats,
+      ThemeData theme,
+      bool isDark,
+      ) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: chats
+            .map(
+              (chat) => MatingChatListTile(
+            chat: chat,
+            petId: petId,
+            onNavigateComplete: () =>
+                context.read<ChatListCubit>().loadChats(petId),
+          ),
+        )
+            .toList(),
       ),
     );
   }

@@ -130,11 +130,11 @@ class _ConversationHubManager {
       );
     });
 
-    // Event 4: ReceiveMessage - New message received
-    _connection!.on("ReceiveMessage", (arguments) {
-      _logger.fine('Event received: ReceiveMessage - $arguments');
+    // Event 4: MessageReceived - New message received
+    _connection!.on("MessageReceived", (arguments) {
+      _logger.fine('Event received: MessageReceived - $arguments');
       conversationSignalEventStream.add(
-        ConversationSignalEvent("ConversationHub", "ReceiveMessage", arguments),
+        ConversationSignalEvent("ConversationHub", "MessageReceived", arguments),
       );
     });
 
@@ -359,8 +359,8 @@ class SignalRConversationHubService {
   }
 
 
-  void onReceiveMessage(Function(Map<String, dynamic> data) callback) {
-    _hub.on("ReceiveMessage", (args) {
+  void onMessageReceived(Function(Map<String, dynamic> data) callback) {
+    _hub.on("MessageReceived", (args) {
       if (args != null && args.isNotEmpty) {
         final data = Map<String, dynamic>.from(args[0] as Map);
         callback(data);

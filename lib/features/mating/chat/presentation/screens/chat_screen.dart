@@ -113,7 +113,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     final isDark = theme.brightness == Brightness.dark;
 
     return BlocProvider(
-      create: (_) => sl<ChatMessagesCubit>()..loadMessages(widget.chat.id),
+      create: (_) => sl<ChatMessagesCubit>()..loadMessages(widget.chat.id,widget.pet!.petId!),
       child: BlocConsumer<ChatMessagesCubit, ChatMessagesState>(
         listener: (context, state) {
           final cubit = ChatMessagesCubit.get(context);
@@ -241,7 +241,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     if (state is ChatMessagesError) {
       return ChatErrorState(
         message: state.message,
-        onRetry: () => cubit.loadMessages(widget.chat.id),
+        onRetry: () => cubit.loadMessages(widget.chat.id,widget.pet!.petId!),
       );
     }
     if (cubit.messagesList.isNotEmpty || _uploadingFiles.isNotEmpty) {
@@ -296,7 +296,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       });
 
       if (mediaUrl != null && mediaUrl.isNotEmpty) {
-        final fromPetId = widget.chat.id.isEmpty ? widget.chat.matingId : null;
+        final fromPetId = widget.pet!.petId;
         final toPetId = widget.chat.id.isEmpty ? widget.chat.petId : null;
         final currentUserId = CacheHelper.getData('clintId') ?? '';
         String? fromUserId;

@@ -5,6 +5,8 @@ import 'package:squeak/core/debug/gloabal_api_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:app_links/app_links.dart';
+import 'package:squeak/features/mating/chat/presentation/screens/chat_list_screen.dart';
+import 'package:squeak/features/mating/chat/presentation/view/ChatApp.dart';
 import 'package:squeak/features/settings/persentaion/controller/setting_cubit.dart';
 import 'package:squeak/core/service/connectivity/conectivity_popup.dart';
 import '../../../../../features/auth/login/presentation/pages/login_screen.dart';
@@ -112,7 +114,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             themeMode: cubit.isDark ? ThemeMode.dark : ThemeMode.light,
             debugShowCheckedModeBanner: false,
             navigatorKey: navigatorKey,
-            home: appStartPoint,
+            home: ChatApp(petId: 'b0ae0b8b-ec59-4801-b62e-1fcc5992596c', fullName: '', image: ''),
             locale:
                 cubit.language == 'en'
                     ? const Locale('en')

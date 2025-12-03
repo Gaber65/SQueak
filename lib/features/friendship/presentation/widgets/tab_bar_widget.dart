@@ -29,14 +29,14 @@ class TabBarPetFriend extends StatelessWidget {
 
     return Container(
       color: isDark ? Colors.black.withOpacity(0.1) : Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: LayoutBuilder(
         builder: (context, constraints) {
           // Responsive scaling factor
           double width = constraints.maxWidth;
-          double iconSize = width * 0.06; // scales with width
-          double fontSize = width * 0.03;
-          double countSize = width * 0.028;
+          double iconSize = width * 0.03; // scales with width
+          double fontSize = width * 0.02;
+          double countSize = width * 0.02;
 
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
