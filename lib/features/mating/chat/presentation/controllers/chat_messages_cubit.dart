@@ -33,33 +33,9 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   List<MessageEntity> messagesList = [];
   bool isOtherUserTyping = false;
 
-  // Update typing status when received from SignalR
-  // void updateTypingStatus(bool isTyping) {
-  //   isOtherUserTyping = isTyping;
-  //   emit(TypingStatusChanged(isTyping));
-  // }
 
-  // Add received message from SignalR
-  void addReceivedMessage(MessageEntity message, String senderID) {
-
-    print('--------------------');
-    print(senderID);
-    print(message.fromUserId);
-    print('--------------------');
-    print(message.toMe);
-
-
-    final updatedMessage = message.copyWith(
-      toMe: senderID == message.fromUserId || senderID == message.toUserId,
-    );
-    print('--------------------');
-    print(senderID);
-    print(message.fromUserId);
-    print('--------------------');
-    print(message.toMe);
-
-
-    messagesList.add(updatedMessage);
+ void addReceivedMessage(MessageEntity message, String senderID) {
+    messagesList.add(message);
     emit(ChatMessagesLoaded(List.from(messagesList)));
   }
 

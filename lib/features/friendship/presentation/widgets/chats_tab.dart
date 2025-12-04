@@ -10,6 +10,7 @@ import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/chat_widgets/mating_chat_list_tile.dart';
 import 'package:squeak/features/mating/chat/presentation/view/chat_app_cubit.dart';
 import 'package:squeak/features/mating/chat/presentation/view/chat_app_state.dart';
+import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 class ChatsTab extends StatefulWidget {
   const ChatsTab({super.key});

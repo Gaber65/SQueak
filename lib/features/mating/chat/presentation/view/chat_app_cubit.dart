@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/signalr/signalr_conversation_services.dart';
 import 'package:squeak/features/mating/chat/data/models/message_model.dart';
-import 'package:squeak/features/mating/chat/domain/entities/message_entity.dart';
 import '../../../../../core/service/signalr/signalr_general_service.dart';
 import 'chat_app_state.dart';
 
@@ -21,6 +20,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
   Map<String, int> unreadCounts = {};
   Map<String, bool> typingIndicators = {};
   String? currentConversationId;
+  String? currentUserId;
 
   static ChatAppCubit get(context) => BlocProvider.of(context);
 
@@ -138,21 +138,17 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     }
   }
 
-  // ==================== CONVERSATION METHODS ====================
 
   Future<void> joinConversation(String conversationId) async {
     try {
       emit(JoiningConversation(conversationId));
 
       currentConversationId = conversationId;
-
-      // Connect to conversation hub
       await conversationHub.connect(
         conversationId: conversationId,
         petId: petId,
       );
 
-      // Setup conversation listeners
       _setupConversationListeners();
       _listenToConversationEvents();
 
@@ -172,6 +168,12 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     // Pet joined
     conversationHub.onPetJoinedToConversation((data) {
       print('✅ Pet joined conversation: $data');
+      // Store current user's ID when joining
+      final joinedUserId = data['userId'] as String?;
+      if (joinedUserId != null) {
+        currentUserId = joinedUserId;
+        print('💾 Stored current userId: $currentUserId');
+      }
       emit(PetJoinedConversation(data));
     });
 
@@ -206,9 +208,6 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     // Receive message
     conversationHub.onMessageReceived((data) {
       var message = MessageModel.fromJson(data);
-      print('message.toMe ${message.toMe} ');
-      message.copyWith(toMe:!message.toMe );
-      print('message.toMe ${message.toMe} ');
       emit(MessageReceived(currentConversationId!, message));
     });
 
@@ -240,7 +239,6 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         });
   }
 
-  // ==================== ACTIONS ====================
 
   Future<void> sendMessage({
     required String conversationId,
@@ -296,6 +294,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     try {
       await conversationHub.disconnect();
       currentConversationId = null;
+      currentUserId = null;
       emit(ConversationLeft());
     } catch (e) {
       print('Error leaving conversation: $e');
