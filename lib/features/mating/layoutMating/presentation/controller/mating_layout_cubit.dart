@@ -24,7 +24,7 @@ class MatingLayoutCubit extends Cubit<MatingLayoutState> {
       isDarkMode: MainCubit.get(navigatorKey.currentState!.context).isDark,
     ),
     const MatingRequestsScreen(),
-    ChatListScreen(),
+    const ChatListScreen(),
   ];
 
   void changeIndex(int index) {

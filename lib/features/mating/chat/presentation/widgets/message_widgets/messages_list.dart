@@ -37,7 +37,6 @@ class MessagesList extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    // Add typing indicators to total count
     final typingCount = (isMyTyping ? 1 : 0) + (isOtherUserTyping ? 1 : 0);
     final totalItems = messages.length + uploadingFiles.length + typingCount;
 
@@ -57,15 +56,10 @@ class MessagesList extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           itemCount: totalItems,
           itemBuilder: (_, index) {
-            // Check if this is a typing indicator slot
             final messagesAndUploadsCount =
                 messages.length + uploadingFiles.length;
-
-            // If at the end and typing indicators should show
             if (index >= messagesAndUploadsCount) {
               final typingIndex = index - messagesAndUploadsCount;
-
-              // Show other user's typing indicator first (left side)
               if (typingIndex == 0 && isOtherUserTyping) {
                 return Padding(
                   padding: const EdgeInsets.only(left: 4, top: 4, bottom: 8),
@@ -75,8 +69,6 @@ class MessagesList extends StatelessWidget {
                   ),
                 );
               }
-
-              // Show my typing indicator (right side)
               if ((typingIndex == 0 && !isOtherUserTyping && isMyTyping) ||
                   (typingIndex == 1 && isOtherUserTyping && isMyTyping)) {
                 return Padding(
@@ -88,7 +80,6 @@ class MessagesList extends StatelessWidget {
                 );
               }
             }
-
             if (index < messages.length) {
               final message = messages[index];
               final showDateDivider =

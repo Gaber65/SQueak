@@ -41,7 +41,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
   late AnimationController _animationController;
-  // final SignalRService _signalRService = SignalRService();
 
   bool _isReadOnly = false;
   bool _isMatingStarted = false;

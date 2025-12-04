@@ -131,9 +131,7 @@ class _ChatListViewState extends State<_ChatListView> {
     debugPrint("🎧 SignalR event listeners registered");
   }
 
-  // -------------------------------------------------------------
-  //  CALL INITIAL DATA FROM HUB
-  // -------------------------------------------------------------
+
   Future<void> _requestInitialData() async {
     if (_currentPetId == null) return;
 
@@ -150,9 +148,7 @@ class _ChatListViewState extends State<_ChatListView> {
     }
   }
 
-  // -------------------------------------------------------------
-  //  CLEANUP
-  // -------------------------------------------------------------
+
   @override
   void dispose() {
     debugPrint("🔌 DISCONNECTING HUB...");

@@ -255,7 +255,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
             data['CreatedAt'] != null
                 ? DateTime.parse(data['CreatedAt'])
                 : DateTime.now(),
-        toMe: data['ToMe'] as bool? ?? false,
+        toMe: (data['ToMe'] as bool?) ?? false,
       );
     } catch (e) {
       print('Error parsing message: $e');

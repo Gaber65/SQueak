@@ -34,10 +34,10 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   bool isOtherUserTyping = false;
 
   // Update typing status when received from SignalR
-  void updateTypingStatus(bool isTyping) {
-    isOtherUserTyping = isTyping;
-    emit(TypingStatusChanged(isTyping));
-  }
+  // void updateTypingStatus(bool isTyping) {
+  //   isOtherUserTyping = isTyping;
+  //   emit(TypingStatusChanged(isTyping));
+  // }
 
   // Add received message from SignalR
   void addReceivedMessage(MessageEntity message) {
@@ -69,52 +69,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     );
   }
 
-  // Send message only via SignalR (Conversation Hub)
-  // Future<void> sendMessage({
-  //   required String chatId,
-  //   required String text,
-  //   required bool isMe,
-  //   String? fromPetId,
-  //   String? toPetId,
-  //   String? fromUserId,
-  //   String? toUserId,
-  //   String? image,
-  //   String? video,
-  //   String? audio,
-  // }) async {
-  //   debugPrint(
-  //     '📨 ChatCubit: sendMessage called - Text: "$text", Image: $image, Video: $video, Audio: $audio',
-  //   );
-
-  //   try {
-  //     if (!signalRService.isConnected) {
-  //       debugPrint('🔌 Connecting to Conversation Hub...');
-  //       await signalRService.connect(
-  //         conversationId: chatId,
-  //         petId: fromPetId ?? '',
-  //       );
-  //     }
-      
-  //     final command = messageModel.toSignalRCommand(
-  //       conversationId: chatId,
-  //       fromPetId: fromPetId,
-  //       toPetId: toPetId,
-  //     );
-
-  //     await signalRService.sendMessageToUser(command);
-  //     debugPrint('✅ Message sent successfully via SignalR');
-  //     if (chatId.isNotEmpty) {
-  //       await loadMessages(chatId, fromPetId!);
-  //     }
- //     messagesList.add(messageModel);
-  //     emit(MessageSent(messageModel));
-  //   } catch (signalRError) {
-  //     debugPrint('❌ Failed to send message via SignalR: $signalRError');
-  //     emit(MessageSendError(signalRError.toString()));
-  //   }
-
- 
-  // }
 
   Future<void> finishMating(FinishMatingParameters matingId) async {
     emit(MatingFinish());
