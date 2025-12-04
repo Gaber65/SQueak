@@ -11,13 +11,6 @@ class StoryPage extends StatelessWidget {
   final String petID;
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<StoryCubit>()..loadMyStories(
-        petID,
-      )..loadFriendsStories(
-        petID,
-      ),
-      child: StoriesBar(imagePath: imagePath,petID:petID),
-    );
+    return StoriesBar(imagePath: imagePath,petID:petID);
   }
 }

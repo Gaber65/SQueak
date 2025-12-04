@@ -9,6 +9,7 @@ import '../../../../pets/domain/entities/pet_entity.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
 import '../../../react/presentation/controller/react_cubit.dart';
+import '../../../stories/presentation/controllers/story_cubit.dart';
 import '../widget/add_post_form.dart';
 import '../widget/build_search_box.dart';
 import '../widget/loading_posts.dart';
@@ -20,10 +21,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => sl<PostCubit>(),
-        ),
-
+        BlocProvider(create: (context) => sl<PostCubit>()),
+        BlocProvider(create: (context) => sl<StoryCubit>()),
       ],
       child: BlocConsumer<PostCubit, PostState>(
         listener: (context, state) {
@@ -35,14 +34,21 @@ class HomeScreen extends StatelessWidget {
           var cubit = PostCubit.get(context);
           String imagePath = '';
           return BlocSelector<
-              SwitchProfileCubit,
-              SwitchProfileState,
-              PetEntities?
+            SwitchProfileCubit,
+            SwitchProfileState,
+            PetEntities?
           >(
             selector: (state) {
               if (state is ProfileLoaded &&
                   state.profile.type == ProfileType.pet) {
                 cubit.clearUserPosts();
+
+                StoryCubit.get(
+                  context,
+                ).loadMyStories(state.profile.pet!.petId!);
+                StoryCubit.get(
+                  context,
+                ).loadFriendsStories(state.profile.pet!.petId!);
                 cubit.getAllUserPosts(state.profile.pet!.petId!);
                 imagePath = imageUrl + state.profile.pet!.imageName!;
                 return state.profile.pet;
@@ -87,11 +93,13 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(PostCubit cubit,
-      PostState state,
-      String petId,
-      BuildContext context,
-      String imagePath,) {
+  Widget _buildBody(
+    PostCubit cubit,
+    PostState state,
+    String petId,
+    BuildContext context,
+    String imagePath,
+  ) {
     if (state is GetPostLoadingState && cubit.userPosts.isEmpty) {
       return buildShimmerLoading();
     }

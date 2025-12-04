@@ -15,6 +15,7 @@ import '../../domain/usecases/get_story_reactions_usecase.dart';
 import '../../domain/usecases/react_to_story_usecase.dart';
 
 class StoryCubit extends Cubit<StoryState> {
+
   final CreateStoryUseCase createStoryUseCase;
   final DeleteStoryUseCase deleteStoryUseCase;
   final GetMyActiveStoriesUseCase getMyActiveStoriesUseCase;
