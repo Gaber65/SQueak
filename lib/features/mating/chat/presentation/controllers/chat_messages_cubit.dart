@@ -42,24 +42,8 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   // Add received message from SignalR
   void addReceivedMessage(MessageEntity message, String senderID) {
 
-    print('--------------------');
-    print(senderID);
-    print(message.fromUserId);
-    print('--------------------');
-    print(message.toMe);
 
-
-    final updatedMessage = message.copyWith(
-      toMe: senderID == message.fromUserId || senderID == message.toUserId,
-    );
-    print('--------------------');
-    print(senderID);
-    print(message.fromUserId);
-    print('--------------------');
-    print(message.toMe);
-
-
-    messagesList.add(updatedMessage);
+    messagesList.add(message);
     emit(ChatMessagesLoaded(List.from(messagesList)));
   }
 
