@@ -1,4 +1,3 @@
-import '../../../../mating/chat/presentation/widgets/full_screen_media_viewer.dart';
 
 class PostEntity {
   final String? postId;

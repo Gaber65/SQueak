@@ -40,8 +40,26 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   // }
 
   // Add received message from SignalR
-  void addReceivedMessage(MessageEntity message) {
-    messagesList.add(message);
+  void addReceivedMessage(MessageEntity message, String senderID) {
+
+    print('--------------------');
+    print(senderID);
+    print(message.fromUserId);
+    print('--------------------');
+    print(message.toMe);
+
+
+    final updatedMessage = message.copyWith(
+      toMe: senderID == message.fromUserId || senderID == message.toUserId,
+    );
+    print('--------------------');
+    print(senderID);
+    print(message.fromUserId);
+    print('--------------------');
+    print(message.toMe);
+
+
+    messagesList.add(updatedMessage);
     emit(ChatMessagesLoaded(List.from(messagesList)));
   }
 
@@ -68,7 +86,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       },
     );
   }
-
 
   Future<void> finishMating(FinishMatingParameters matingId) async {
     emit(MatingFinish());

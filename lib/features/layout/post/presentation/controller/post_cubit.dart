@@ -13,11 +13,15 @@ class PostCubit extends Cubit<PostState> {
   final GetAllPostUseCase getAllPostUseCase;
   final CreatePostUseCase createPostUseCase;
   final DeletePostUseCase deletePostUseCase;
+  final ReactOnPostUseCase reactOnPostUseCase;
+  final GetAllReactOnPostUseCase getAllReactOnPostUseCase;
 
   PostCubit(
     this.getAllPostUseCase,
     this.createPostUseCase,
     this.deletePostUseCase,
+    this.reactOnPostUseCase,
+    this.getAllReactOnPostUseCase,
   ) : super(PostInitial());
   static PostCubit get(context) => BlocProvider.of(context);
 
@@ -157,4 +161,34 @@ class PostCubit extends Cubit<PostState> {
     _userPosts.clear();
     emit(GetPostSuccessState());
   }
+
+  Future<void> getAllReactions(String postId) async {
+    emit(GetReactionsLoading());
+
+    final result = await getAllReactOnPostUseCase.call(postId);
+    result.fold(
+          (failure) =>
+          emit(GetReactionsFailure(extractFirstErrorAuth(failure.error))),
+          (reactList) => emit(GetReactionsSuccess(reactions: reactList)),
+    );
+  }
+
+
+
+
+  Future<void> reactOnPost(ReactParams reactParams, int? reactionIndex) async {
+    reactParams.reactType = getReactionType(reactionIndex);
+
+    emit(CreateReactionLoading());
+
+    final result = await reactOnPostUseCase.call(reactParams);
+    result.fold(
+          (failure) =>
+          emit(CreateReactionFailure(extractFirstErrorAuth(failure.error))),
+          (actionResult) {
+        emit(CreateReactionSuccess(actionResult: actionResult));
+      },
+    );
+  }
+
 }

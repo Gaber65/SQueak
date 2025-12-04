@@ -31,7 +31,7 @@ class ServiceLocator {
     // Register Cubits
     sl.registerFactory(() => MainCubit(sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => CommentCubit(sl(), sl(), sl(), sl()));
-    sl.registerFactory(() => PostCubit(sl(), sl(), sl()));
+    sl.registerFactory(() => PostCubit(sl(), sl(), sl() , sl(), sl()));
     sl.registerFactory(() => SearchCubit(sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => NotificationsCubit(sl(), sl(), sl()));
     sl.registerFactory(
@@ -579,7 +579,6 @@ class ServiceLocator {
     ));
 
     ///react
-    sl.registerLazySingleton(() => ReactCubit(sl(), sl()));
     sl.registerLazySingleton<BaseReactRepo>(() => ReactRepo(sl()));
     sl.registerLazySingleton<ReactDataSource>(() => ReactDataSourceImpl());
     sl.registerLazySingleton(() => ReactOnPostUseCase(sl()));

@@ -206,8 +206,7 @@ class _ChatListViewState extends State<_ChatListView> {
             listener: (context, state) {
               // Refresh chat list on relevant SignalR events
               if (state is UnreadCountUpdated ||
-                  state is MessageReceived ||
-                  state is FriendOnlineStatusChanged) {
+                  state is MessageReceived || state is FriendOnlineStatusChanged) {
                 if (activePet?.petId != null) {
                   context.read<ChatListCubit>().loadChats(activePet!.petId!);
                 }
@@ -294,7 +293,7 @@ class _ChatListViewState extends State<_ChatListView> {
             await context.read<ChatListCubit>().loadChats(pet.petId!);
           }
         },
-        child: _buildChatTiles(pet!.petId!, state.chats, theme, isDark),
+        child: _buildChatTiles(pet!, state.chats, theme, isDark),
       );
     }
 
@@ -328,7 +327,7 @@ class _ChatListViewState extends State<_ChatListView> {
   }
 
   Widget _buildChatTiles(
-    String petId,
+    PetEntities pet,
     List<ChatEntity> chats,
     ThemeData theme,
     bool isDark,
@@ -352,7 +351,7 @@ class _ChatListViewState extends State<_ChatListView> {
                     .map(
                       (chat) => MatingChatListTile(
                         chat: chat,
-                        petId: petId,
+                        petEntities: pet,
                         isOnline:
                             chatAppCubit.onlineFriends[chat.petId] ?? false,
                         isTyping:
@@ -362,7 +361,7 @@ class _ChatListViewState extends State<_ChatListView> {
                             chat.unreadedCount,
                         onNavigateComplete:
                             () =>
-                                context.read<ChatListCubit>().loadChats(petId),
+                                context.read<ChatListCubit>().loadChats(pet.petId!),
                       ),
                     )
                     .toList(),

@@ -206,18 +206,25 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         listeners: [
           BlocListener<ChatAppCubit, ChatAppState>(
             listener: (context, state) {
-              if (state is MessageReceived &&
-                  state.conversationId == widget.chat.id) {
+              if (state is ConversationJoined) {
+                ChatAppCubit.get(context).markMessagesAsRead(widget.chat.id);
+              }
+
+              if (state is MessageReceived && state.conversationId == widget.chat.id) {
                 // Add new message to list
-                final messagesCubit = context.read<ChatMessagesCubit>();
-                messagesCubit.addReceivedMessage(state.message);
+                ChatMessagesCubit.get(
+                  context,
+                ).addReceivedMessage(state.message , widget.pet!.ownerId);
 
                 // Mark as read
-                context.read<ChatAppCubit>().markMessagesAsRead(widget.chat.id);
+                ChatMessagesCubit.get(
+                  context,
+                ).markMessagesAsRead(widget.chat.id);
 
                 // Scroll to bottom
                 Future.delayed(const Duration(milliseconds: 100), () {
-                  final lastIndex = messagesCubit.messagesList.length - 1;
+                  final lastIndex =
+                      ChatMessagesCubit.get(context).messagesList.length - 1;
                   if (lastIndex >= 0) {
                     try {
                       _itemScrollController.jumpTo(index: lastIndex);

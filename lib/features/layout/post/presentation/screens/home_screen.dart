@@ -8,6 +8,7 @@ import '../../../../../core/utils/enums/profile_type.dart' show ProfileType;
 import '../../../../pets/domain/entities/pet_entity.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
+import '../../../react/presentation/controller/react_cubit.dart';
 import '../widget/add_post_form.dart';
 import '../widget/build_search_box.dart';
 import '../widget/loading_posts.dart';
@@ -17,8 +18,13 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<PostCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => sl<PostCubit>(),
+        ),
+
+      ],
       child: BlocConsumer<PostCubit, PostState>(
         listener: (context, state) {
           if (state is DeletePostErrorState) {
@@ -29,9 +35,9 @@ class HomeScreen extends StatelessWidget {
           var cubit = PostCubit.get(context);
           String imagePath = '';
           return BlocSelector<
-            SwitchProfileCubit,
-            SwitchProfileState,
-            PetEntities?
+              SwitchProfileCubit,
+              SwitchProfileState,
+              PetEntities?
           >(
             selector: (state) {
               if (state is ProfileLoaded &&
@@ -81,13 +87,11 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(
-    PostCubit cubit,
-    PostState state,
-    String petId,
-    BuildContext context,
-    String imagePath,
-  ) {
+  Widget _buildBody(PostCubit cubit,
+      PostState state,
+      String petId,
+      BuildContext context,
+      String imagePath,) {
     if (state is GetPostLoadingState && cubit.userPosts.isEmpty) {
       return buildShimmerLoading();
     }

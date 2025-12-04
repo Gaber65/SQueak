@@ -14,8 +14,9 @@ String audioUrl = '${ConfigModel.baseApiUrlSqueak}/messageRecods/';
 String imageUrlWithVetICare = ConfigModel.serverFirstHalfOfImageUrl;
 
 // chatHubs
- String generalHubEndPoint = '${ConfigModel.baseApiUrlSqueak}/generalhub';
- String conversationHubEndPoint = '${ConfigModel.baseApiUrlSqueak}/conversationhub';
+String generalHubEndPoint = '${ConfigModel.baseApiUrlSqueak}/generalhub';
+String conversationHubEndPoint =
+    '${ConfigModel.baseApiUrlSqueak}/conversationhub';
 
 /// Auth & User Management
 const String registerEndPoint = '$version/signUp';
@@ -223,6 +224,7 @@ String sendMSGEndPoint = '$version/messages';
 String renameChatEndPoint = '$version/conversations/rename';
 String blockChatEndPoint = '$version/conversations/update/blocking';
 String rateMatingEndPoint = '$version/matingrequest/rate';
+ 
 
 const String createStoryEndPoint = '$version/pet/stories/';
 const String deleteStoryEndPoint = '$version/pet/stories/'; // + /{id}
