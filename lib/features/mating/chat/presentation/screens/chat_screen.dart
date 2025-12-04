@@ -54,7 +54,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
   // Typing indicator
   bool _isOtherUserTyping = false;
-  bool _isMyTyping = false;
   Timer? _typingTimer;
 
   // Recording variables
@@ -96,21 +95,26 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
   @override
   void dispose() {
-    // Stop typing indicator before leaving
+    // Clear typing indicator and stop timer before leaving
+    _typingTimer?.cancel();
+    
     if (mounted) {
       try {
+        // Ensure typing indicator is cleared
         context.read<ChatAppCubit>().setTyping(
           conversationId: widget.chat.id,
           isTyping: false,
         );
+        // Leave the conversation
         context.read<ChatAppCubit>().leaveConversation();
-      } catch (_) {}
+      } catch (_) {
+        // Provider may not be available
+      }
     }
 
     _messageController.dispose();
     _animationController.dispose();
     _recordTimer?.cancel();
-    _typingTimer?.cancel();
     _audioRecorder.dispose();
     super.dispose();
   }
@@ -126,13 +130,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     _typingTimer?.cancel();
 
     if (isTyping) {
-      // Update local state and send typing=true
+      // Send typing=true to server (other user will see this)
       if (mounted) {
-        setState(() {
-          _isOtherUserTyping = true;
-        });
-
-        // Safely access ChatAppCubit if available
         try {
           context.read<ChatAppCubit>().setTyping(
             conversationId: widget.chat.id,
@@ -146,10 +145,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       // Set timer to send typing=false after 2 seconds of inactivity
       _typingTimer = Timer(const Duration(seconds: 2), () {
         if (mounted) {
-          setState(() {
-            _isMyTyping = false;
-          });
-
           try {
             context.read<ChatAppCubit>().setTyping(
               conversationId: widget.chat.id,
@@ -161,12 +156,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         }
       });
     } else {
-      // Update local state and send typing=false immediately when text is cleared
+      // Send typing=false immediately when text is cleared
       if (mounted) {
-        setState(() {
-          _isMyTyping = false;
-        });
-
         try {
           context.read<ChatAppCubit>().setTyping(
             conversationId: widget.chat.id,
@@ -421,7 +412,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         itemPositionsListener: _itemPositionsListener,
         conversationId: widget.chat.id,
         isOtherUserTyping: _isOtherUserTyping,
-        isMyTyping: _isMyTyping,
       );
     }
     return const ChatEmptyState();

@@ -14,7 +14,6 @@ class MessagesList extends StatelessWidget {
   final ItemPositionsListener itemPositionsListener;
   final String conversationId;
   final bool isOtherUserTyping;
-  final bool isMyTyping;
 
   const MessagesList({
     super.key,
@@ -24,7 +23,6 @@ class MessagesList extends StatelessWidget {
     required this.itemPositionsListener,
     required this.conversationId,
     this.isOtherUserTyping = false,
-    this.isMyTyping = false,
   });
 
   bool _isSameDay(DateTime date1, DateTime date2) {
@@ -37,7 +35,7 @@ class MessagesList extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final typingCount = (isMyTyping ? 1 : 0) + (isOtherUserTyping ? 1 : 0);
+    final typingCount = isOtherUserTyping ? 1 : 0;
     final totalItems = messages.length + uploadingFiles.length + typingCount;
 
     return Stack(
@@ -59,22 +57,12 @@ class MessagesList extends StatelessWidget {
             final messagesAndUploadsCount =
                 messages.length + uploadingFiles.length;
             if (index >= messagesAndUploadsCount) {
-              final typingIndex = index - messagesAndUploadsCount;
-              if (typingIndex == 0 && isOtherUserTyping) {
+              // Only show typing indicator for other user
+              if (isOtherUserTyping) {
                 return Padding(
                   padding: const EdgeInsets.only(left: 4, top: 4, bottom: 8),
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: const TypingIndicator(),
-                  ),
-                );
-              }
-              if ((typingIndex == 0 && !isOtherUserTyping && isMyTyping) ||
-                  (typingIndex == 1 && isOtherUserTyping && isMyTyping)) {
-                return Padding(
-                  padding: const EdgeInsets.only(right: 4, top: 4, bottom: 8),
-                  child: Align(
-                    alignment: Alignment.centerRight,
                     child: const TypingIndicator(),
                   ),
                 );

@@ -85,6 +85,7 @@ class MessageModel extends MessageEntity {
       'conversationId': conversationId,
       'fromPetId': fromPetId?.isNotEmpty == true ? fromPetId : null,
       'toPetId': toPetId?.isNotEmpty == true ? toPetId : null,
+      'toMe': toMe,
     };
   }
 
