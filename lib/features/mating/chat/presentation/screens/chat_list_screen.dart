@@ -10,7 +10,6 @@ import 'package:squeak/core/service/signalr/signalr_general_service.dart';
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_list_cubit.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../../../core/utils/enums/profile_type.dart';
-import '../../../../profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
 import '../../../../settings/persentaion/controller/setting_cubit.dart';
 import '../../../layoutMating/presentation/screens/widgets/profile_switcher_builder.dart';
@@ -228,6 +227,11 @@ class _ChatListViewState extends State<_ChatListView> {
         ],
         child: BlocBuilder<ChatListCubit, ChatListState>(
           builder: (context, state) {
+            // Debug logging
+            final chatAppCubit = context.read<ChatAppCubit>();
+            debugPrint('📊 Typing indicators: ${chatAppCubit.typingIndicators}');
+            debugPrint('📊 Online friends: ${chatAppCubit.onlineFriends}');
+            
             return CustomScrollView(
               slivers: [
                 _buildAppBar(context, theme, isDark),

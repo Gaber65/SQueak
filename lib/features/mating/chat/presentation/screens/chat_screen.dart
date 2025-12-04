@@ -66,6 +66,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   bool _hasText = false;
   static const int _maxRecordDuration = 120;
   ChatMessagesCubit? _recordingCubit;
+  ChatAppCubit? _recordingChatAppCubit;
 
   @override
   void initState() {
@@ -129,7 +130,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       // Update local state and send typing=true
       if (mounted) {
         setState(() {
-          _isMyTyping = true;
+          _isOtherUserTyping = true;
         });
 
         // Safely access ChatAppCubit if available
@@ -229,9 +230,19 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               // Handle typing indicator from friend
               if (state is FriendTypingInConversation &&
                   state.conversationId == widget.chat.id) {
-                setState(() {
-                  _isOtherUserTyping = state.isTyping;
-                });
+                if (mounted) {
+                  setState(() {
+                    _isOtherUserTyping = state.isTyping;
+                  });
+                }
+              }
+
+              // Handle errors
+              if (state is ChatAppError) {
+                debugPrint('❌ ChatAppCubit Error: ${state.message}');
+                if (mounted) {
+                  errorToast(context, state.message);
+                }
               }
             },
           ),
@@ -306,6 +317,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 // Rebuild when online status or typing status changes
                 return current is FriendOnlineStatusChanged ||
                     current is FriendTypingInConversation ||
+                    current is PetLeftConversation ||
                     current is ChatAppConnected;
               },
               builder: (context, chatAppState) {
@@ -355,12 +367,22 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                               messageController: _messageController,
                               chat: widget.chat,
                               hasText: _hasText,
-                              onSendMessage: () => _sendMessage(cubit),
-                              onStartRecording: () => _startRecording(cubit),
-                              onStopRecording: () => _stopRecording(cubit),
-                              onAttachmentSelected: (file, type) {
+                              onSendMessage:
+                                  () => _sendMessage(cubit, chatAppCubit),
+                              onStartRecording:
+                                  () => _startRecording(cubit, chatAppCubit),
+                              onStopRecording:
+                                  () => _stopRecording(cubit, chatAppCubit),
+                              onAttachmentSelected: (file, type, {caption}) {
                                 final mainCubit = context.read<MainCubit>();
-                                _handleAttachment(file, type, cubit, mainCubit);
+                                _handleAttachment(
+                                  file,
+                                  type,
+                                  cubit,
+                                  mainCubit,
+                                  chatAppCubit,
+                                  caption: caption,
+                                );
                               },
                             ),
                         ],
@@ -410,21 +432,24 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     File file,
     AttachmentType type,
     ChatMessagesCubit cubit,
-    MainCubit mainCubit, {
+    MainCubit mainCubit,
+    ChatAppCubit chatAppCubit, {
     String? caption,
   }) async {
     final uploadId = DateTime.now().millisecondsSinceEpoch.toString();
 
-    setState(() {
-      _uploadingFiles.add(
-        UploadingMedia(
-          id: uploadId,
-          file: file,
-          type: type,
-          caption: caption ?? '',
-        ),
-      );
-    });
+    if (mounted) {
+      setState(() {
+        _uploadingFiles.add(
+          UploadingMedia(
+            id: uploadId,
+            file: file,
+            type: type,
+            caption: caption ?? '',
+          ),
+        );
+      });
+    }
 
     try {
       String? mediaUrl;
@@ -440,54 +465,42 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         mediaUrl = mainCubit.modelImage?.data;
       }
 
-      setState(() {
-        _uploadingFiles.removeWhere((item) => item.id == uploadId);
-      });
+      if (mounted) {
+        setState(() {
+          _uploadingFiles.removeWhere((item) => item.id == uploadId);
+        });
+      }
 
       if (mediaUrl != null && mediaUrl.isNotEmpty) {
-        final fromPetId = widget.pet!.petId;
-        final toPetId = widget.chat.id.isEmpty ? widget.chat.petId : null;
-        final currentUserId = CacheHelper.getData('clintId') ?? '';
-        String? fromUserId;
-        String? toUserId;
-
-        if (widget.chat.lastMessage != null) {
-          if (widget.chat.lastMessage!.toMe) {
-            fromUserId = widget.chat.lastMessage!.toUserId;
-            toUserId = widget.chat.lastMessage!.fromUserId;
-          } else {
-            fromUserId = widget.chat.lastMessage!.fromUserId;
-            toUserId = widget.chat.lastMessage!.toUserId;
-          }
-        } else {
-          fromUserId = currentUserId;
-          toUserId = widget.chat.petId;
-        }
-
-        cubit.sendMessage(
-          chatId: widget.chat.id,
-          text: caption ?? '',
-          isMe: true,
-          fromPetId: fromPetId,
-          toPetId: toPetId,
-          fromUserId: fromUserId,
-          toUserId: toUserId,
+        debugPrint('📤 Sending media message: $mediaUrl');
+        await chatAppCubit.sendMessage(
+          conversationId: widget.chat.id,
+          toPetId: widget.chat.petId,
+          description: caption ?? '',
           image: type == AttachmentType.image ? mediaUrl : null,
           video: type == AttachmentType.video ? mediaUrl : null,
           audio: type == AttachmentType.audio ? mediaUrl : null,
         );
+        debugPrint('✅ Media message sent successfully');
       } else {
+        debugPrint('❌ Upload failed: mediaUrl is null or empty');
         if (mounted) errorToast(context, 'Upload failed');
       }
     } catch (e) {
-      setState(() {
-        _uploadingFiles.removeWhere((item) => item.id == uploadId);
-      });
-      if (mounted) errorToast(context, 'Failed to send');
+      debugPrint('❌ Error in _handleAttachment: $e');
+      if (mounted) {
+        setState(() {
+          _uploadingFiles.removeWhere((item) => item.id == uploadId);
+        });
+      }
+      if (mounted) errorToast(context, 'Failed to send: $e');
     }
   }
 
-  Future<void> _startRecording(ChatMessagesCubit cubit) async {
+  Future<void> _startRecording(
+    ChatMessagesCubit cubit,
+    ChatAppCubit chatAppCubit,
+  ) async {
     try {
       if (await _audioRecorder.hasPermission()) {
         final dir = await getTemporaryDirectory();
@@ -496,21 +509,27 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
         await _audioRecorder.start(const RecordConfig(), path: path);
 
-        setState(() {
-          _isRecording = true;
-          _recordDuration = 0;
-          _recordingCubit = cubit;
-        });
+        if (mounted) {
+          setState(() {
+            _isRecording = true;
+            _recordDuration = 0;
+            _recordingCubit = cubit;
+            _recordingChatAppCubit = chatAppCubit;
+          });
+        }
 
         _recordTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-          setState(() {
-            _recordDuration++;
-          });
+          if (mounted) {
+            setState(() {
+              _recordDuration++;
+            });
+          }
 
           // Auto-stop at max duration
           if (_recordDuration >= _maxRecordDuration &&
-              _recordingCubit != null) {
-            _stopRecording(_recordingCubit!);
+              _recordingCubit != null &&
+              _recordingChatAppCubit != null) {
+            _stopRecording(_recordingCubit!, _recordingChatAppCubit!);
           }
         });
       }
@@ -519,66 +538,60 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     }
   }
 
-  Future<void> _stopRecording(ChatMessagesCubit cubit) async {
+  Future<void> _stopRecording(
+    ChatMessagesCubit cubit,
+    ChatAppCubit chatAppCubit,
+  ) async {
     try {
       _recordTimer?.cancel();
       final path = await _audioRecorder.stop();
 
-      setState(() {
-        _isRecording = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isRecording = false;
+        });
+      }
 
       if (path != null && path.isNotEmpty) {
         final file = File(path);
         if (await file.exists()) {
           final mainCubit = context.read<MainCubit>();
-          _handleAttachment(file, AttachmentType.audio, cubit, mainCubit);
+          _handleAttachment(
+            file,
+            AttachmentType.audio,
+            cubit,
+            mainCubit,
+            chatAppCubit,
+          );
         }
       }
 
-      setState(() {
-        _recordDuration = 0;
-      });
+      if (mounted) {
+        setState(() {
+          _recordDuration = 0;
+        });
+      }
     } catch (e) {
       debugPrint('❌ Error stopping recording: $e');
-      setState(() {
-        _isRecording = false;
-        _recordDuration = 0;
-      });
+      if (mounted) {
+        setState(() {
+          _isRecording = false;
+          _recordDuration = 0;
+        });
+      }
     }
   }
 
-  void _sendMessage(ChatMessagesCubit cubit) {
+  void _sendMessage(ChatMessagesCubit cubit, ChatAppCubit chatAppCubit) {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
-    final fromPetId = widget.chat.id.isEmpty ? widget.chat.matingId : null;
-    final toPetId = widget.chat.id.isEmpty ? widget.chat.petId : null;
-    final currentUserId = CacheHelper.getData('clintId') ?? '';
-    String? fromUserId;
-    String? toUserId;
 
-    if (widget.chat.lastMessage != null) {
-      if (widget.chat.lastMessage!.toMe) {
-        fromUserId = widget.chat.lastMessage!.toUserId;
-        toUserId = widget.chat.lastMessage!.fromUserId;
-      } else {
-        fromUserId = widget.chat.lastMessage!.fromUserId;
-        toUserId = widget.chat.lastMessage!.toUserId;
-      }
-    } else {
-      fromUserId = currentUserId;
-      toUserId = widget.chat.petId;
-    }
-
-    cubit.sendMessage(
-      chatId: widget.chat.id,
-      text: text,
-      isMe: true,
-      fromPetId: fromPetId,
-      toPetId: toPetId,
-      fromUserId: fromUserId,
-      toUserId: toUserId,
+    chatAppCubit.sendMessage(
+      conversationId: widget.chat.id,
+      toPetId: widget.chat.petId,
+      description: text,
     );
+
     _messageController.clear();
   }
 }

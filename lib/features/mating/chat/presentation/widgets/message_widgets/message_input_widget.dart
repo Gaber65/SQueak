@@ -14,7 +14,8 @@ class MessageInputWidget extends StatelessWidget {
   final VoidCallback onSendMessage;
   final VoidCallback onStartRecording;
   final VoidCallback onStopRecording;
-  final Function(File file, AttachmentType type) onAttachmentSelected;
+  final Function(File file, AttachmentType type, {String? caption})
+  onAttachmentSelected;
 
   const MessageInputWidget({
     super.key,
@@ -115,7 +116,11 @@ class MessageInputWidget extends StatelessWidget {
                           AttachmentOptionsBottomSheet.show(
                             context,
                             onAttachmentSelected: (file, type, {caption}) {
-                              onAttachmentSelected(file, type);
+                              onAttachmentSelected(
+                                file,
+                                type,
+                                caption: caption,
+                              );
                             },
                           );
                         },

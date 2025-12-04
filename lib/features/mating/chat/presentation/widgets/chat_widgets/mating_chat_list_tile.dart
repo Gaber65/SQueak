@@ -353,12 +353,24 @@ class MatingChatListTile extends StatelessWidget {
     if (isTyping) {
       return Row(
         children: [
+          SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                ColorManager.primaryColor,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
           Text(
             isArabic() ? 'يكتب...' : 'typing...',
             style: TextStyle(
               fontSize: 14,
               color: ColorManager.primaryColor,
               fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],

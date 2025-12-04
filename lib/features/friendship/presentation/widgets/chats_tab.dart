@@ -3,11 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
-import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/core/service/signalr/signalr_general_service.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
-import 'package:squeak/features/friendship/presentation/widgets/empty_chats_widget.dart';
 import 'package:squeak/features/friendship/presentation/widgets/friends_tab.dart';
 import 'package:squeak/features/friendship/presentation/widgets/section_header_widget.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
@@ -361,47 +359,6 @@ class _ChatsTabState extends State<ChatsTab> {
     );
   }
 
-  Widget _buildErrorState(BuildContext context, String message) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
-          const SizedBox(height: 16),
-          Text(
-            isArabic() ? 'فشل تحميل المحادثات' : 'Failed to load chats',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            message,
-            style: TextStyle(color: Colors.grey[600]),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: () {
-              final activePet =
-                  SwitchProfileCubit.get(context).activeProfile?.pet;
-              if (activePet?.petId != null) {
-                PetFriendsCubit.get(
-                  context,
-                ).loadChats(petId: activePet!.petId!);
-              }
-            },
-            icon: const Icon(Icons.refresh),
-            label: Text(isArabic() ? 'حاول مرة أخرى' : 'Try Again'),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            onPressed: _initializeSignalR,
-            icon: const Icon(Icons.wifi),
-            label: Text(isArabic() ? 'إعادة الاتصال' : 'Reconnect Hubs'),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildChatsList(
     BuildContext context,
@@ -428,6 +385,7 @@ class _ChatsTabState extends State<ChatsTab> {
                   child: MatingChatListTile(
                     chat: entry.value,
                     petId: petId,
+                    isTyping: _typingStates[entry.value.petId] ?? false,
                     onNavigateComplete: () async {
                       if (petId.isNotEmpty) {
                         await PetFriendsCubit.get(
