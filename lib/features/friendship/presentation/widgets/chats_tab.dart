@@ -77,7 +77,7 @@ class _ChatsTabState extends State<ChatsTab> {
                 },
               ),
             ],
-            child: _buildChatsList(context, chats, activePet.petId ?? ''),
+            child: _buildChatsList(context, chats, activePet),
           );
         },
       ),
@@ -87,12 +87,12 @@ class _ChatsTabState extends State<ChatsTab> {
   Widget _buildChatsList(
     BuildContext context,
     List<ChatEntity> chats,
-    String petId,
+    PetEntities activePet,
   ) {
     return RefreshIndicator(
       onRefresh: () async {
-        if (petId.isNotEmpty) {
-          await PetFriendsCubit.get(context).loadChats(petId: petId);
+        if (activePet.petId!.isNotEmpty) {
+          await PetFriendsCubit.get(context).loadChats(petId: activePet.petId!);
         }
       },
       child: BlocBuilder<ChatAppCubit, ChatAppState>(
@@ -114,15 +114,15 @@ class _ChatsTabState extends State<ChatsTab> {
               ...chats.map(
                 (chat) => MatingChatListTile(
                   chat: chat,
-                  petId: petId,
+                  petEntities: activePet,
                   isOnline: chatAppCubit.onlineFriends[chat.petId] ?? false,
                   isTyping: chatAppCubit.typingIndicators[chat.petId] ?? false,
                   unreadCount:
                       chatAppCubit.unreadCounts[chat.id] ?? chat.unreadedCount,
                   onNavigateComplete: () async {
-                    if (petId.isNotEmpty) {
+                    if (activePet.petId!.isNotEmpty) {
                       await PetFriendsCubit.get(context)
-                          .loadChats(petId: petId);
+                          .loadChats(petId: activePet.petId!);
                     }
                   },
                 ),

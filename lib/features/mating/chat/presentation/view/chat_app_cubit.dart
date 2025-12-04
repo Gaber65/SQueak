@@ -205,8 +205,11 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
     // Receive message
     conversationHub.onMessageReceived((data) {
-      var mod = MessageModel.fromJson(data);
-      emit(MessageReceived(currentConversationId!, mod));
+      var message = MessageModel.fromJson(data);
+      print('message.toMe ${message.toMe} ');
+      message.copyWith(toMe:!message.toMe );
+      print('message.toMe ${message.toMe} ');
+      emit(MessageReceived(currentConversationId!, message));
     });
 
     // Message is read
@@ -218,18 +221,15 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
     // Message sent but not online
     conversationHub.onMessageSentAndPetIsNotOnline((data) {
-      final message = _parseMessage(data);
-      if (message != null && currentConversationId != null) {
-        emit(MessageSentOffline(currentConversationId!, message));
-      }
+      final message = MessageModel.fromJson(data);
+
+      emit(MessageSentUnread(currentConversationId!, message));
     });
 
     // Message sent but not read yet
     conversationHub.onMessageSentAndNotReadYet((data) {
-      final message = _parseMessage(data);
-      if (message != null && currentConversationId != null) {
-        emit(MessageSentUnread(currentConversationId!, message));
-      }
+      final message = MessageModel.fromJson(data);
+      emit(MessageSentUnread(currentConversationId!, message));
     });
   }
 
@@ -238,29 +238,6 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         .listen((event) {
           print('📡 Conversation Event: ${event.method}');
         });
-  }
-
-  MessageEntity? _parseMessage(Map<String, dynamic> data) {
-    try {
-      return MessageEntity(
-        id: data['Id'] as String?,
-        description: data['Description'] as String? ?? '',
-        image: data['Image'] as String?,
-        video: data['Video'] as String?,
-        audio: data['Audio'] as String?,
-        isRead: data['IsRead'] as bool? ?? false,
-        fromUserId: data['FromUserId'] as String? ?? '',
-        toUserId: data['ToUserId'] as String? ?? '',
-        createdAt:
-            data['CreatedAt'] != null
-                ? DateTime.parse(data['CreatedAt'])
-                : DateTime.now(),
-        toMe: (data['ToMe'] as bool?) ?? false,
-      );
-    } catch (e) {
-      print('Error parsing message: $e');
-      return null;
-    }
   }
 
   // ==================== ACTIONS ====================

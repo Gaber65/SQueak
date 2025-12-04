@@ -16,12 +16,14 @@ class CommentItemCard extends StatelessWidget {
   final int index;
   final List<CommentEntity> comments;
   final bool showReplies;
+  final String petID;
   const CommentItemCard({
     super.key,
     required this.data,
     required this.scaffoldKey,
     required this.cubit,
     required this.index,
+    required this.petID,
     required this.comments,
     required this.showReplies,
   });
@@ -100,7 +102,7 @@ class CommentItemCard extends StatelessWidget {
           .showBottomSheet(
         backgroundColor: Colors.transparent,
         elevation: 0,
-            (context) => CommentActionSheet(comment: data),
+            (context) => CommentActionSheet(comment: data , petID: petID),
       )
           .closed
           .then((value) {

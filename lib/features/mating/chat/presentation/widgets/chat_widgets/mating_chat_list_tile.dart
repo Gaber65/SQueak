@@ -8,7 +8,7 @@ import '../../screens/chat_screen.dart';
 
 class MatingChatListTile extends StatelessWidget {
   final ChatEntity chat;
-  final String petId;
+  final PetEntities petEntities;
   final Future<void> Function()? onNavigateComplete;
   final bool compact;
   final bool isOnline;
@@ -18,7 +18,7 @@ class MatingChatListTile extends StatelessWidget {
   const MatingChatListTile({
     super.key,
     required this.chat,
-    required this.petId,
+    required this.petEntities,
     this.onNavigateComplete,
     this.compact = false,
     this.isOnline = false,
@@ -74,7 +74,7 @@ class MatingChatListTile extends StatelessWidget {
                           (context, animation, secondaryAnimation) =>
                               MatingChatDetailScreen(
                                 chat: chat,
-                                pet: PetEntities().copyWith(petId: petId),
+                                pet: petEntities,
                               ),
                       transitionsBuilder: (
                         context,

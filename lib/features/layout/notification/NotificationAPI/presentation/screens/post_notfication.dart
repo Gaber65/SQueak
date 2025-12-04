@@ -119,7 +119,10 @@ class PostNotification extends StatelessWidget {
                               );
                             }
 
-                            return BuildPostItem(postItem: cubit.postModel!);
+                            return BuildPostItem(
+                              postItem: cubit.postModel!,
+                              petId: null,
+                            );
                           },
                         ),
                       );
@@ -129,6 +132,7 @@ class PostNotification extends StatelessWidget {
                     SliverList(
                       delegate: SliverChildListDelegate([
                         SuccessComment(
+                          petID: '',
                           scaffoldKey: scaffoldKey,
                           cubit: cubitComment,
                           isScrolle: false,

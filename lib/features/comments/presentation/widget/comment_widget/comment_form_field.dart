@@ -12,6 +12,7 @@ Widget buildPaddingFormComment(
     bool isReplayCommentOpen,
     TextEditingController commentController,
     String postId,
+    String petID,
     ) {
   final isDark = MainCubit.get(context).isDark;
 
@@ -55,9 +56,7 @@ Widget buildPaddingFormComment(
                   cubit.createComment(
                     postId: postId,
                     content: commentController.text,
-                    petId: CacheHelper.getData('isPet') == true
-                        ? CacheHelper.getData('activeId')
-                        : null,
+                    petId: petID,
                     parentId: isReplayCommentOpen
                         ? CacheHelper.getData('replayCommentID')
                         : null,

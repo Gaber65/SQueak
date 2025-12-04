@@ -94,7 +94,7 @@ class CommentRemoteDataSource extends BaseCommentRemoteDataSource {
         method: getCommentEndPoint + parameters.postId!,
         language: true,
       );
-      return (result.data['data']['comments'] as List)
+      return (result.data['data']['result'] as List)
           .map((e) => CommentModel.fromJson(e))
           .toList();
     } on DioException catch (e) {
