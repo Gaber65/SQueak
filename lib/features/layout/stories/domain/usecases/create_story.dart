@@ -3,7 +3,6 @@ import 'package:dartz/dartz.dart';
 import 'package:squeak/core/error/failure.dart';
 
 import '../../../../../core/base_usecase/base_usecase.dart';
-import '../entities/story.dart';
 import '../repositories/story_repository.dart';
 
 class CreateStoryUseCase extends BaseUseCase<String, CreateStoryParams> {

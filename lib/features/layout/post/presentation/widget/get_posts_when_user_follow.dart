@@ -92,7 +92,7 @@ void showGuideOverlay(BuildContext context) {
     ),
   );
 
-  Overlay.of(context)?.insert(overlayEntry);
+  Overlay.of(context).insert(overlayEntry);
 }
 
 

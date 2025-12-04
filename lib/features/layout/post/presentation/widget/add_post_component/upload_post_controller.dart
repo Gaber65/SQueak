@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart'
     show MainCubit;
@@ -10,7 +8,6 @@ import '../../controller/post_cubit.dart';
 import 'upload_post_animations.dart';
 import 'upload_post_dialogs.dart';
 import 'upload_post_snackbars.dart';
-import 'upload_post_helpers.dart';
 
 class UploadPostController {
   final TickerProvider vsync;

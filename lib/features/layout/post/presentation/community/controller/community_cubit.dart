@@ -27,13 +27,13 @@ class CommunityCubit extends Cubit<CommunityState> {
   // Pick multiple images
   Future<void> pickMultipleImages({required ImageSource source}) async {
     try {
-      final List<XFile>? pickedFiles = await picker.pickMultipleMedia(
+      final List<XFile> pickedFiles = await picker.pickMultipleMedia(
         maxWidth: 1920,
         maxHeight: 1080,
         imageQuality: 85,
       );
 
-      if (pickedFiles != null && pickedFiles.isNotEmpty) {
+      if (pickedFiles.isNotEmpty) {
         // Check if adding these files would exceed the limit
         if (mediaFiles.length + pickedFiles.length > maxMediaFiles) {
           emit(MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'));
@@ -79,13 +79,13 @@ class CommunityCubit extends Cubit<CommunityState> {
   Future<void> pickMixedMedia({required ImageSource source}) async {
     try {
       // For mixed media, we'll use pickFiles which allows both
-      final List<XFile>? files = await picker.pickMultipleMedia(
+      final List<XFile> files = await picker.pickMultipleMedia(
         maxWidth: 1920,
         maxHeight: 1080,
         imageQuality: 85,
       );
 
-      if (files != null && files.isNotEmpty) {
+      if (files.isNotEmpty) {
         // Check if adding these files would exceed the limit
         if (mediaFiles.length + files.length > maxMediaFiles) {
           emit(MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'));

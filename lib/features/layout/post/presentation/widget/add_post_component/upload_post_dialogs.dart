@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../../core/utils/theme/color_mangment/color_manager.dart';
-import 'upload_post_controller.dart';
 
 class UploadPostDialogs {
   final dynamic controller;

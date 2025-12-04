@@ -92,6 +92,7 @@ class MessageModel extends MessageEntity {
   static List<MessageModel> fromJsonList(List<dynamic> list) {
     return list.map((item) => MessageModel.fromJson(item)).toList();
   }
+  @override
   MessageModel copyWith({
     String? id,
     String? description,

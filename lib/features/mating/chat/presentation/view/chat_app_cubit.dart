@@ -117,7 +117,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
           print('   - petId: "${friend.petId}"');
           print('   - isOnline: ${friend.isOnline}');
 
-          if (friend.petId != null && friend.petId.isNotEmpty) {
+          if (friend.petId.isNotEmpty) {
             onlineFriends[friend.petId] = friend.isOnline;
           } else {
             print('⚠️ Friend has empty petId!');

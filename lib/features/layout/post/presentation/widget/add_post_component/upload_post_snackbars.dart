@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../core/utils/theme/navigation_helper/navigation.dart';
 import '../../../../layout/presentation/screens/layout_screen.dart';
-import 'upload_post_controller.dart';
 
 class UploadPostSnackbars {
   final dynamic controller;

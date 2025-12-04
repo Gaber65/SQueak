@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:squeak/features/layout/post/presentation/widget/post_item.dart';
-import 'package:squeak/features/mating/profile/presentation/widgets/post_mating_item.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 import '../../../../../core/network/end_points.dart';

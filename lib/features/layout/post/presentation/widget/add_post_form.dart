@@ -7,7 +7,6 @@ import '../screens/upload_post.dart';
 import 'get_posts_when_user_follow.dart';
 
 Widget buildWhatsonyourmindSanjay(BuildContext context ,String petId) {
-  GlobalKey buttonKey = GlobalKey();
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Row(

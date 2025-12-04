@@ -8,8 +8,6 @@ import '../../../../../core/utils/enums/profile_type.dart' show ProfileType;
 import '../../../../pets/domain/entities/pet_entity.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
-import '../../../react/presentation/controller/react_cubit.dart';
-import '../widget/add_post_form.dart';
 import '../widget/build_search_box.dart';
 import '../widget/loading_posts.dart';
 
