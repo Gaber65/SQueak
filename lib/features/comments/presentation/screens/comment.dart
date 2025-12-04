@@ -8,12 +8,10 @@ import '../widget/comment_widget/loading_comment.dart';
 import '../widget/comment_widget/success_comment.dart';
 
 class CommentScreen extends StatelessWidget {
-  CommentScreen({
-    super.key,
-    required this.postId,
-  });
+  CommentScreen({super.key, required this.postId, required this.petID});
 
   final String postId;
+  final String petID;
 
   final TextEditingController commentController = TextEditingController();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -31,25 +29,26 @@ class CommentScreen extends StatelessWidget {
         builder: (context, state) {
           final cubit = CommentCubit.get(context);
           final isBottomSheetOpen = CacheHelper.getBool('isBottomSheetOpen');
-          final isReplayCommentOpen =
-          CacheHelper.getBool('isReplayCommentOpen');
+          final isReplayCommentOpen = CacheHelper.getBool('isReplayCommentOpen',);
 
           return Scaffold(
             key: scaffoldKey,
             resizeToAvoidBottomInset: true,
-            appBar:buildAppBar(context, state),
+            appBar: buildAppBar(context, state),
             body: _buildBody(context, cubit, state, isReplayCommentOpen),
             floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: isBottomSheetOpen
-                ? null
-                : buildPaddingFormComment(
-              cubit,
-              context,
-              isReplayCommentOpen,
-              commentController,
-              postId,
-            ),
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton:
+                isBottomSheetOpen
+                    ? null
+                    : buildPaddingFormComment(
+                      cubit,
+                      context,
+                      isReplayCommentOpen,
+                      commentController,
+                      postId,
+                      petID,
+                    ),
           );
         },
       ),
@@ -57,11 +56,11 @@ class CommentScreen extends StatelessWidget {
   }
 
   Widget _buildBody(
-      BuildContext context,
-      CommentCubit cubit,
-      CommentState state,
-      bool isReplayCommentOpen,
-      ) {
+    BuildContext context,
+    CommentCubit cubit,
+    CommentState state,
+    bool isReplayCommentOpen,
+  ) {
     if (state is GetCommentLoading) {
       return CommentWidget(scaffoldKey: scaffoldKey);
     }
@@ -79,6 +78,7 @@ class CommentScreen extends StatelessWidget {
         children: [
           Expanded(
             child: SuccessComment(
+              petID: petID,
               scaffoldKey: scaffoldKey,
               cubit: cubit,
               isScrolle: true,

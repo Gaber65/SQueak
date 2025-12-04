@@ -81,6 +81,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/react/cat/
     - assets/notification.mp3
     - assets/content/pet_tips.json
 flutter_intl:

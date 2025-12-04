@@ -108,6 +108,8 @@ Widget buildProfileSwitcherOverlay({
                                 switchProfileCubit,
                                 ActiveProfile(type: ProfileType.user, user: owner),
                               );
+                              onClose();
+
                             },
                           ),
                         for (final pet in pets)
@@ -124,6 +126,8 @@ Widget buildProfileSwitcherOverlay({
                                 switchProfileCubit,
                                 ActiveProfile(type: ProfileType.pet, pet: pet),
                               );
+                              onClose();
+
                             },
                           ),
                         const Divider(height: 1),

@@ -1,3 +1,4 @@
+import 'package:squeak/features/layout/post/data/model/post_model.dart';
 import 'package:squeak/features/settings/domain/entities/owner_entite.dart';
 
 import '../../../layout/post/domain/entities/post_entity.dart';
@@ -73,7 +74,6 @@ class PetEntities {
       'owner': owner?.toMap(),
       'maritalStatus': maritalStatus,
       'availableForMating': availableForMating,
-      'post': post.map((e) => e.toJson()).toList(),
       'petMarriage': petMarriage,
       'breed': breed?.toJson(),
       'ownerId': ownerId,
