@@ -44,20 +44,39 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       emit(ChatMessagesLoaded([]));
       return;
     }
-    signalRService.connect(conversationId: chatId, petId: petId);
+    
+    print('🔌 Connecting to SignalR conversation hub...');
+    await signalRService.connect(conversationId: chatId, petId: petId);
+    print('✅ Connected to conversation hub');
 
     emit(ChatMessagesLoading());
 
+    print('📥 Loading messages for chat: $chatId');
     final result = await getMessagesUseCase(
       GetMessagesParameters(chatId: chatId),
     );
 
     result.fold(
       (failure) {
+        print('❌ Failed to load messages: $failure');
         emit(ChatMessagesError(failure.toString()));
       },
-      (messages) {
+      (messages) async {
         messagesList = messages.reversed.toList();
+        print('✅ Loaded ${messagesList.length} messages');
+        
+        // Mark all messages as read when opening the chat
+        print('📖 Marking all unread messages as read...');
+        try {
+          await signalRService.markAllUnreadedMessagesInConversationAsRead(
+            conversationId: chatId,
+            petId: petId,
+          );
+          print('✅ All messages marked as read');
+        } catch (e) {
+          print('❌ Error marking messages as read: $e');
+        }
+        
         emit(ChatMessagesLoaded(messages));
       },
     );

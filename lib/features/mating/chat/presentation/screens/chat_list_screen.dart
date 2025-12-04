@@ -357,8 +357,7 @@ class _ChatListViewState extends State<_ChatListView> {
                         isTyping:
                             chatAppCubit.typingIndicators[chat.petId] ?? false,
                         unreadCount:
-                            chatAppCubit.unreadCounts[chat.id] ??
-                            chat.unreadedCount,
+                            chatAppCubit.unreadCounts[chat.id] ?? 0,
                         onNavigateComplete:
                             () =>
                                 context.read<ChatListCubit>().loadChats(pet.petId!),

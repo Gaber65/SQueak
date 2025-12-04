@@ -71,23 +71,7 @@ class ChatListItem extends StatelessWidget {
                 ),
               ),
 
-              if (chat.unreadedCount > 0)
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: ColorManager.primaryColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '${chat.unreadedCount}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                )
-              else if (chat.completeMarriageStatues)
+               if (chat.completeMarriageStatues)
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,

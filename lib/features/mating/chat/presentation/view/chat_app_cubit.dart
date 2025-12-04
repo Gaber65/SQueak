@@ -72,14 +72,17 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
     // Unread messages count
     generalHub.onUnreadedMessagesCount((data) {
+      print('📥 Raw unread count data: $data');
       final conversationId = data['ConversationId'] as String?;
       final count = data['Count'] as int? ?? 0;
 
       if (conversationId != null) {
         unreadCounts[conversationId] = count;
-        print('📬 Unread count for $conversationId changed to: $count');
-        print('📊 Current unread counts: $unreadCounts');
+        print('📬 Unread count for conversation $conversationId changed to: $count');
+        print('📊 Current unread counts map: $unreadCounts');
         emit(UnreadCountUpdated(conversationId, count));
+      } else {
+        print('⚠️ Unread count event missing ConversationId!');
       }
     });
 
@@ -131,35 +134,53 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       final counts = await generalHub.getUnreadMessageCounts(petId);
       if (counts != null) {
         unreadCounts = counts;
-        print('✅ Loaded unread counts: $unreadCounts');
+        print('✅ Loaded ${counts.length} unread counts: $unreadCounts');
+        print('📋 Conversation IDs with unread messages: ${counts.keys.toList()}');
+      } else {
+        print('⚠️ No unread counts returned from server');
       }
     } catch (e) {
-      print('Error loading initial data: $e');
+      print('❌ Error loading initial data: $e');
     }
   }
 
 
   Future<void> joinConversation(String conversationId) async {
     try {
+      print('🔵 Starting to join conversation: $conversationId');
       emit(JoiningConversation(conversationId));
 
       currentConversationId = conversationId;
+      print('🔌 Connecting to conversation hub...');
       await conversationHub.connect(
         conversationId: conversationId,
         petId: petId,
       );
+      print('✅ Connected to conversation hub');
 
       _setupConversationListeners();
       _listenToConversationEvents();
 
       // Get unread messages
+      print('📥 Fetching unread message IDs...');
       final unreadIds = await conversationHub.getUnreadMessageIds(
         conversationId: conversationId,
         petId: petId,
       );
+      print('📬 Found ${unreadIds?.length ?? 0} unread messages');
+
+      // Mark all messages as read when opening the conversation
+      print('📖 Marking all unread messages as read...');
+      await conversationHub.markAllUnreadedMessagesInConversationAsRead(
+        conversationId: conversationId,
+        petId: petId,
+      );
+      print('✅ All messages marked as read');
 
       emit(ConversationJoined(conversationId, unreadIds ?? []));
+      print('🎉 Successfully joined conversation: $conversationId');
     } catch (e) {
+      print('❌ Error joining conversation: $e');
       emit(ChatAppError('Failed to join conversation: $e'));
     }
   }

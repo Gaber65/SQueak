@@ -260,8 +260,13 @@ class SignalRGeneralHubService {
   Future<Map<String, int>?> getUnreadMessageCounts(String petId) async {
     final result =
     await _hub.invoke<Map<dynamic, dynamic>>("GetUnreadMessageCounts", args: [petId]);
-    if (result == null) return null;
-    return result.map((k, v) => MapEntry(k.toString(), v as int));
+    if (result == null) {
+      print('⚠️ GetUnreadMessageCounts returned null for petId: $petId');
+      return null;
+    }
+    final counts = result.map((k, v) => MapEntry(k.toString(), v as int));
+    print('📊 GetUnreadMessageCounts result for petId $petId: $counts');
+    return counts;
   }
 
   void onConnectionRegistered(Function(Map<String, dynamic>) callback) {

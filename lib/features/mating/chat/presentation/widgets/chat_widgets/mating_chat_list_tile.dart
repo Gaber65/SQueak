@@ -141,7 +141,7 @@ class MatingChatListTile extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 6),
-                          if (chat.unreadedCount > 0)
+                          if (unreadCount > 0)
                             Container(
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
@@ -154,9 +154,9 @@ class MatingChatListTile extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  chat.unreadedCount > 99
+                                  unreadCount > 99
                                       ? '99+'
-                                      : chat.unreadedCount.toString(),
+                                      : unreadCount.toString(),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 10,
