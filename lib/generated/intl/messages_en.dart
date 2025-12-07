@@ -578,9 +578,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "invoiceNo": MessageLookupByLibrary.simpleMessage("Invoice No"),
     "itemName": MessageLookupByLibrary.simpleMessage("Item Name"),
     "justNow": MessageLookupByLibrary.simpleMessage("just now"),
-    "labelPost": MessageLookupByLibrary.simpleMessage(
-      "What\\\'s on your mind ?",
-    ),
+    "labelPost": MessageLookupByLibrary.simpleMessage("What\'s on your mind ?"),
     "langMode": MessageLookupByLibrary.simpleMessage("language Mode"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "lastUpdated": MessageLookupByLibrary.simpleMessage("Last updated"),

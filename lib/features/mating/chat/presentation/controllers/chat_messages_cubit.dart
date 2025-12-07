@@ -33,8 +33,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   List<MessageEntity> messagesList = [];
   bool isOtherUserTyping = false;
 
-
- void addReceivedMessage(MessageEntity message, String senderID) {
+  void addReceivedMessage(MessageEntity message, String senderID) {
     messagesList.add(message);
     emit(ChatMessagesLoaded(List.from(messagesList)));
   }
@@ -44,7 +43,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       emit(ChatMessagesLoaded([]));
       return;
     }
-    
+
     print('🔌 Connecting to SignalR conversation hub...');
     await signalRService.connect(conversationId: chatId, petId: petId);
     print('✅ Connected to conversation hub');
@@ -64,7 +63,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       (messages) async {
         messagesList = messages.reversed.toList();
         print('✅ Loaded ${messagesList.length} messages');
-        
+
         // Mark all messages as read when opening the chat
         print('📖 Marking all unread messages as read...');
         try {
@@ -76,7 +75,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
         } catch (e) {
           print('❌ Error marking messages as read: $e');
         }
-        
+
         emit(ChatMessagesLoaded(messages));
       },
     );

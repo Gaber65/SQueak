@@ -489,10 +489,10 @@ class S {
     return Intl.message('Create Post ', name: 'createPost', desc: '', args: []);
   }
 
-  /// `What\'s on your mind ?`
+  /// `What's on your mind ?`
   String get labelPost {
     return Intl.message(
-      'What\\\'s on your mind ?',
+      'What\'s on your mind ?',
       name: 'labelPost',
       desc: '',
       args: [],
