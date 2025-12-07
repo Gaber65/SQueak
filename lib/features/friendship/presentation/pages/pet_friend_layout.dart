@@ -10,6 +10,7 @@ import 'package:squeak/features/friendship/presentation/widgets/tab_bar_widget.d
 import 'package:squeak/features/friendship/presentation/widgets/request_filter_widget.dart';
 import 'package:squeak/features/friendship/presentation/widgets/chats_tab.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
+import 'package:squeak/features/mating/chat/presentation/view/chat_app_cubit.dart';
 
 import '../../../auth/get_started/presentation/widgets/find_friends/search_bar_widget.dart';
 import '../../../settings/persentaion/controller/setting_cubit.dart';
@@ -43,19 +44,19 @@ class _FriendsScreenState extends State<FriendsScreen> {
         BlocProvider(create: (context) => sl<PetFriendsCubit>()),
         BlocProvider(create: (_) => sl<SwitchProfileCubit>()..loadProfile()),
         BlocProvider(
-              create: (_) => sl<PetCubit>()..getOwnerPets(),
-              lazy: false,
-            ),
-            BlocProvider(
-              create: (_) => sl<SettingCubit>()..getOwnerData(),
-              lazy: true,
-            ),
+          create: (_) => sl<PetCubit>()..getOwnerPets(),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (_) => sl<SettingCubit>()..getOwnerData(),
+          lazy: true,
+        ),
       ],
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: Text(
-           S.of(context).friendsAndRequests,
+            S.of(context).friendsAndRequests,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -94,7 +95,10 @@ class _FriendsScreenState extends State<FriendsScreen> {
               if (activeProfile == null) {
                 return const ProfileSwitchNotificationScreen();
               } else if (activeProfile.type == ProfileType.pet) {
-                return Column(
+                // Conditionally provide ChatAppCubit only when on Chats tab
+                final isChatsTab = cubit.selectedTab == 3;
+
+                Widget content = Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -138,6 +142,21 @@ class _FriendsScreenState extends State<FriendsScreen> {
                     Expanded(child: buildTabContent(context, cubit)),
                   ],
                 );
+
+                // Only wrap with ChatAppCubit when on Chats tab
+                if (isChatsTab) {
+                  return BlocProvider(
+                    create:
+                        (context) => ChatAppCubit(
+                          petId: activeProfile.pet!.petId!,
+                          fullName: activeProfile.pet!.petName ?? '',
+                          image: activeProfile.pet!.imageName ?? '',
+                        )..initialize(),
+                    child: content,
+                  );
+                }
+
+                return content;
               } else {
                 return const ProfileSwitchNotificationScreen();
               }
@@ -185,7 +204,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
             theme: theme,
             isDark: isDark,
             s: S.of(context),
-            text:S.of(context).loadingChats,
+            text: S.of(context).loadingChats,
           );
         }
         switch (cubit.selectedTab) {

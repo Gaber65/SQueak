@@ -7,7 +7,7 @@ import 'package:squeak/features/mating/chat/domain/entities/online_entity.dart';
 
 /// Broadcasts all SignalR events
 final StreamController<SignalEvent> signalEventStream =
-StreamController<SignalEvent>.broadcast();
+    StreamController<SignalEvent>.broadcast();
 
 class SignalEvent {
   final String hub;
@@ -45,9 +45,10 @@ class ConnectionInfo {
       fullName: json['FullName'] ?? '',
       image: json['Image'] ?? '',
       isOnline: json['IsOnline'] ?? false,
-      connectedAt: json['ConnectedAt'] != null
-          ? DateTime.parse(json['ConnectedAt'])
-          : DateTime.now(),
+      connectedAt:
+          json['ConnectedAt'] != null
+              ? DateTime.parse(json['ConnectedAt'])
+              : DateTime.now(),
     );
   }
 }
@@ -56,7 +57,7 @@ class ConnectionInfo {
 class _GeneralHubManager {
   HubConnection? _connection;
   final StreamController<bool> _connectionStateController =
-  StreamController<bool>.broadcast();
+      StreamController<bool>.broadcast();
   final Logger _logger = Logger('GeneralHub');
 
   Stream<bool> get connectionStream => _connectionStateController.stream;
@@ -86,17 +87,18 @@ class _GeneralHubManager {
       final urlWithParams =
           '$generalHubEndPoint?petId=$petId&fullName=${fullName ?? ''}&image=${image ?? ''}';
 
-      _connection = HubConnectionBuilder()
-          .withUrl(
-        urlWithParams,
-        options: HttpConnectionOptions(
-          accessTokenFactory: () async => token.toString(),
-          transport: HttpTransportType.WebSockets,
-        ),
-      )
-          .withAutomaticReconnect()
-          .configureLogging(_logger)
-          .build();
+      _connection =
+          HubConnectionBuilder()
+              .withUrl(
+                urlWithParams,
+                options: HttpConnectionOptions(
+                  accessTokenFactory: () async => token.toString(),
+                  transport: HttpTransportType.WebSockets,
+                ),
+              )
+              .withAutomaticReconnect()
+              .configureLogging(_logger)
+              .build();
 
       // Lifecycle events
       _connection!.onclose(({error}) {
@@ -109,6 +111,7 @@ class _GeneralHubManager {
       });
       _connection!.onreconnected(({connectionId}) {
         _logger.info('✅ Reconnected successfully. ConnectionId: $connectionId');
+        _registerEvents(); // Re-register events after reconnection
         _connectionStateController.add(true);
       });
 
@@ -120,7 +123,8 @@ class _GeneralHubManager {
 
       _connectionStateController.add(true);
       _logger.info(
-          '✅ Connected to GeneralHub. ConnectionId: ${_connection!.connectionId}');
+        '✅ Connected to GeneralHub. ConnectionId: ${_connection!.connectionId}',
+      );
     } catch (e, stackTrace) {
       _logger.severe('Failed to connect to GeneralHub: $e\n$stackTrace');
       _connectionStateController.add(false);
@@ -143,9 +147,15 @@ class _GeneralHubManager {
 
     _logger.info('Registering GeneralHub event listeners...');
 
+    // Unregister all handlers first to avoid duplicates
+    _connection!.off("ConnectionRegistered");
+    _connection!.off("FriendConnectionChanged");
+    _connection!.off("UnreadedMessagesCountPetConversation");
+    _connection!.off("FriendIsTyping");
+
     void registerEvent(String eventName) {
       _connection!.on(eventName, (args) {
-        print('📩 Event: $eventName -> $args');
+        print('📩 [GeneralHub] Event: $eventName -> $args');
         _logger.fine('Event received: $eventName - $args');
         signalEventStream.add(SignalEvent("GeneralHub", eventName, args));
       });
@@ -198,7 +208,7 @@ class _GeneralHubManager {
 /// SignalR GeneralHub service
 class SignalRGeneralHubService {
   static final SignalRGeneralHubService _instance =
-  SignalRGeneralHubService._internal();
+      SignalRGeneralHubService._internal();
   factory SignalRGeneralHubService() => _instance;
   SignalRGeneralHubService._internal() {
     _setupLogging();
@@ -211,7 +221,8 @@ class SignalRGeneralHubService {
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
       print(
-          '[${record.level.name}] [${record.loggerName}] ${record.time} => ${record.message}');
+        '[${record.level.name}] [${record.loggerName}] ${record.time} => ${record.message}',
+      );
     });
   }
 
@@ -232,8 +243,7 @@ class SignalRGeneralHubService {
 
   Future<List<PetConnectionDto>?> getAllMyOnlinePetFriends(String petId) async {
     if (!isConnected) {
-      _logger.warning(
-          'Cannot get online friends: Not connected to GeneralHub');
+      _logger.warning('Cannot get online friends: Not connected to GeneralHub');
       throw Exception('Not connected to GeneralHub');
     }
 
@@ -245,21 +255,27 @@ class SignalRGeneralHubService {
     if (result == null || result.isEmpty) return [];
 
     return result
-        .map((item) => PetConnectionDto.fromJson(
-        Map<String, dynamic>.from(item as Map)))
+        .map(
+          (item) =>
+              PetConnectionDto.fromJson(Map<String, dynamic>.from(item as Map)),
+        )
         .toList();
   }
 
-  Future<void> setTypingIndicator(
-      {required String toPetId, required bool isTyping}) async =>
+  Future<void> setTypingIndicator({
+    required String toPetId,
+    required bool isTyping,
+  }) async =>
       await _hub.invoke<void>("SetTypingIndicator", args: [toPetId, isTyping]);
 
   Future<bool?> isPetOnline(String petId) async =>
       await _hub.invoke<bool>("IsPetOnline", args: [petId]);
 
   Future<Map<String, int>?> getUnreadMessageCounts(String petId) async {
-    final result =
-    await _hub.invoke<Map<dynamic, dynamic>>("GetUnreadMessageCounts", args: [petId]);
+    final result = await _hub.invoke<Map<dynamic, dynamic>>(
+      "GetUnreadMessageCounts",
+      args: [petId],
+    );
     if (result == null) {
       print('⚠️ GetUnreadMessageCounts returned null for petId: $petId');
       return null;

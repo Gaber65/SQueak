@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dart';
+import 'package:squeak/features/mating/chat/presentation/view/chat_app_cubit.dart';
 import 'pet_info_popup.dart';
 
 class MessageAndInfoButtons extends StatelessWidget {
@@ -69,16 +71,23 @@ class MessageAndInfoButtons extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: isDarkMode
-                    ? [const Color(0xFF2A2A2A), const Color(0xFF1E1E1E)]
-                    : [Theme.of(context).primaryColor, Theme.of(context).primaryColor.withOpacity(0.8)],
+                colors:
+                    isDarkMode
+                        ? [const Color(0xFF2A2A2A), const Color(0xFF1E1E1E)]
+                        : [
+                          Theme.of(context).primaryColor,
+                          Theme.of(context).primaryColor.withOpacity(0.8),
+                        ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: (isDarkMode ? Colors.black : Theme.of(context).primaryColor).withOpacity(0.3),
+                  color: (isDarkMode
+                          ? Colors.black
+                          : Theme.of(context).primaryColor)
+                      .withOpacity(0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -90,17 +99,19 @@ class MessageAndInfoButtons extends StatelessWidget {
                   context: context,
                   isScrollControlled: true,
                   backgroundColor: Colors.transparent,
-                  builder: (context) => PetInfoPopup(
-                    pet: pet,
-                    isDarkMode: isDarkMode,
-                  ),
+                  builder:
+                      (context) =>
+                          PetInfoPopup(pet: pet, isDarkMode: isDarkMode),
                 );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 shadowColor: Colors.transparent,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 14,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -137,21 +148,32 @@ class MessageAndInfoButtons extends StatelessWidget {
       unreadedCount: 0,
     );
 
+    // Get active pet info for ChatAppCubit
+    final activePet = SwitchProfileCubit.get(context).activeProfile?.pet;
+
     Navigator.pushReplacement(
       context,
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
-        pageBuilder: (context, animation, secondaryAnimation) => MatingChatDetailScreen(
-          chat: chatEntity,
-        ),
+        pageBuilder:
+            (context, animation, secondaryAnimation) => BlocProvider(
+              create:
+                  (context) => ChatAppCubit(
+                    petId: activePet?.petId ?? activePetId ?? '',
+                    fullName: activePet?.petName ?? '',
+                    image: activePet?.imageName ?? '',
+                  )..initialize(),
+              child: MatingChatDetailScreen(chat: chatEntity, pet: activePet),
+            ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           var begin = const Offset(1.0, 0.0);
           var end = Offset.zero;
           var curve = Curves.ease;
 
-          var tween = Tween(begin: begin, end: end).chain(
-            CurveTween(curve: curve),
-          );
+          var tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
           var offsetAnimation = animation.drive(tween);
           return SlideTransition(position: offsetAnimation, child: child);
         },

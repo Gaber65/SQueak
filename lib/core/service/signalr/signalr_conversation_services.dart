@@ -25,6 +25,7 @@ class _ConversationHubManager {
   final StreamController<bool> _connectionStateController =
       StreamController<bool>.broadcast();
   final Logger _logger = Logger('ConversationHub');
+  bool _eventsRegistered = false;
 
   Stream<bool> get connectionStream => _connectionStateController.stream;
   bool get isConnected => _connection?.state == HubConnectionState.Connected;
@@ -76,6 +77,7 @@ class _ConversationHubManager {
 
       _connection!.onreconnected(({connectionId}) {
         _logger.info('✅ Reconnected successfully. ConnectionId: $connectionId');
+        _registerEvents(); // Re-register events after reconnection
         _connectionStateController.add(true);
       });
 
@@ -94,6 +96,7 @@ class _ConversationHubManager {
     if (_connection == null) return;
     
     _logger.info('Disconnecting from ConversationHub...');
+    _eventsRegistered = false; // Reset flag
     await _connection!.stop();
     _connectionStateController.add(false);
     _connection = null;
@@ -101,9 +104,17 @@ class _ConversationHubManager {
   }
 
   void _registerEvents() {
-    if (_connection == null) return;
+    if (_connection == null) {
+      _logger.warning('⚠️ Cannot register events - connection is null');
+      return;
+    }
 
-    _logger.info('Registering ConversationHub event listeners...');
+    if (_eventsRegistered) {
+      _logger.info('ℹ️ Events already registered, skipping...');
+      return;
+    }
+
+    _logger.info('🔧 Registering ConversationHub event listeners...');
 
     _connection!.on("PetIsJoinedToConversation", (arguments) {
       _logger.fine('Event received: PetIsJoinedToConversation - $arguments');
@@ -124,7 +135,8 @@ class _ConversationHubManager {
 
     // Event 3: FriendIsTyping - Typing indicator in conversation
     _connection!.on("FriendIsTyping", (arguments) {
-      _logger.fine('Event received: FriendIsTyping - $arguments');
+      print('🎯 [ConversationHub] FriendIsTyping event received: $arguments');
+      _logger.info('✅ Event received: FriendIsTyping - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent("ConversationHub", "FriendIsTyping", arguments),
       );
@@ -172,6 +184,8 @@ class _ConversationHubManager {
       );
     });
     
+    _eventsRegistered = true;
+    print('✅ [ConversationHub] All 8 event listeners registered successfully, including FriendIsTyping');
     _logger.info('✅ Event listeners registered successfully');
   }
 

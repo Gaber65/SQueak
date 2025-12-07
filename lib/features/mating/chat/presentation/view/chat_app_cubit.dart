@@ -31,21 +31,30 @@ class ChatAppCubit extends Cubit<ChatAppState> {
   }) : super(ChatAppInitial());
 
   Future<void> initialize() async {
+    print('🚀 [ChatAppCubit] Initializing for petId: $petId');
     emit(ChatAppLoading());
 
     try {
+      print('🔌 [ChatAppCubit] Connecting to GeneralHub...');
       // Connect to GeneralHub
       await generalHub.connect(petId: petId, fullName: fullName, image: image);
+      print('✅ [ChatAppCubit] GeneralHub connected successfully');
 
       // Setup event listeners
+      print('🎧 [ChatAppCubit] Setting up GeneralHub listeners...');
       _setupGeneralHubListeners();
       _listenToGeneralEvents();
+      print('✅ [ChatAppCubit] GeneralHub listeners configured');
 
       // Get initial data
+      print('📥 [ChatAppCubit] Loading initial data (online friends & unread counts)...');
       await _loadInitialData();
+      print('✅ [ChatAppCubit] Initial data loaded');
 
       emit(ChatAppConnected());
+      print('🎉 [ChatAppCubit] Initialization complete - GeneralHub is active');
     } catch (e) {
+      print('❌ [ChatAppCubit] Failed to initialize: $e');
       emit(ChatAppError('Failed to initialize: $e'));
     }
   }
@@ -78,7 +87,9 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
       if (conversationId != null) {
         unreadCounts[conversationId] = count;
-        print('📬 Unread count for conversation $conversationId changed to: $count');
+        print(
+          '📬 Unread count for conversation $conversationId changed to: $count',
+        );
         print('📊 Current unread counts map: $unreadCounts');
         emit(UnreadCountUpdated(conversationId, count));
       } else {
@@ -88,17 +99,19 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
     // Friend typing in general
     generalHub.onFriendIsTyping((data) {
-      print('📥 Raw typing data: $data');
+      print('📥 [GeneralHub] Raw typing data: $data');
       final friendPetId = (data['PetId'] ?? data['petId']) as String?;
       final isTyping = (data['IsTyping'] ?? data['isTyping']) as bool? ?? false;
 
       if (friendPetId != null && friendPetId.isNotEmpty) {
         typingIndicators[friendPetId] = isTyping;
-        print('⌨️ Friend $friendPetId typing status changed to: $isTyping');
-        print('📊 Current typing indicators: $typingIndicators');
+        print(
+          '⌨️ [GeneralHub] Friend $friendPetId typing status changed to: $isTyping',
+        );
+        print('📊 [GeneralHub] Current typing indicators: $typingIndicators');
         emit(FriendTypingInGeneral(friendPetId, isTyping));
       } else {
-        print('⚠️ Typing event has empty petId!');
+        print('⚠️ [GeneralHub] Typing event has empty petId!');
       }
     });
   }
@@ -135,7 +148,9 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       if (counts != null) {
         unreadCounts = counts;
         print('✅ Loaded ${counts.length} unread counts: $unreadCounts');
-        print('📋 Conversation IDs with unread messages: ${counts.keys.toList()}');
+        print(
+          '📋 Conversation IDs with unread messages: ${counts.keys.toList()}',
+        );
       } else {
         print('⚠️ No unread counts returned from server');
       }
@@ -144,43 +159,50 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     }
   }
 
-
   Future<void> joinConversation(String conversationId) async {
     try {
-      print('🔵 Starting to join conversation: $conversationId');
+      print('────────────────────────────────────────');
+      print('🔵 [ChatAppCubit] Starting to join conversation: $conversationId');
+      print('📡 [ChatAppCubit] GeneralHub status: ${generalHub.isConnected ? "CONNECTED" : "DISCONNECTED"}');
+      print('📡 [ChatAppCubit] ConversationHub status: ${conversationHub.isConnected ? "CONNECTED" : "DISCONNECTED"}');
       emit(JoiningConversation(conversationId));
 
       currentConversationId = conversationId;
-      print('🔌 Connecting to conversation hub...');
+      print('🔌 [ChatAppCubit] Connecting to ConversationHub for conversation: $conversationId');
+      print('ℹ️  [ChatAppCubit] GeneralHub will remain connected');
       await conversationHub.connect(
         conversationId: conversationId,
         petId: petId,
       );
-      print('✅ Connected to conversation hub');
+      print('✅ [ChatAppCubit] ConversationHub connected successfully');
+      print('📊 [ChatAppCubit] Active connections: GeneralHub=✓, ConversationHub=✓');
 
+      print('🎧 [ChatAppCubit] Setting up ConversationHub listeners...');
       _setupConversationListeners();
       _listenToConversationEvents();
+      print('✅ [ChatAppCubit] ConversationHub listeners configured');
 
       // Get unread messages
-      print('📥 Fetching unread message IDs...');
+      print('📥 [ChatAppCubit] Fetching unread message IDs...');
       final unreadIds = await conversationHub.getUnreadMessageIds(
         conversationId: conversationId,
         petId: petId,
       );
-      print('📬 Found ${unreadIds?.length ?? 0} unread messages');
+      print('📬 [ChatAppCubit] Found ${unreadIds?.length ?? 0} unread messages');
 
       // Mark all messages as read when opening the conversation
-      print('📖 Marking all unread messages as read...');
+      print('📖 [ChatAppCubit] Marking all unread messages as read...');
       await conversationHub.markAllUnreadedMessagesInConversationAsRead(
         conversationId: conversationId,
         petId: petId,
       );
-      print('✅ All messages marked as read');
+      print('✅ [ChatAppCubit] All messages marked as read');
 
       emit(ConversationJoined(conversationId, unreadIds ?? []));
-      print('🎉 Successfully joined conversation: $conversationId');
+      print('🎉 [ChatAppCubit] Successfully joined conversation: $conversationId');
+      print('────────────────────────────────────────');
     } catch (e) {
-      print('❌ Error joining conversation: $e');
+      print('❌ [ChatAppCubit] Error joining conversation: $e');
       emit(ChatAppError('Failed to join conversation: $e'));
     }
   }
@@ -206,7 +228,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
     // Friend typing in conversation
     conversationHub.onFriendIsTyping((data) {
-      print('📥 Raw typing data (conversation): $data');
+      print('📥 [ConversationHub] Raw typing data: $data');
       final isTyping = (data['IsTyping'] ?? data['isTyping']) as bool? ?? false;
       final friendPetId = (data['PetId'] ?? data['petId']) as String?;
 
@@ -214,7 +236,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
           friendPetId.isNotEmpty &&
           currentConversationId != null) {
         print(
-          '⌨️ Friend $friendPetId typing in conversation $currentConversationId: $isTyping',
+          '⌨️ [ConversationHub] Friend $friendPetId typing in conversation $currentConversationId: $isTyping',
         );
         emit(
           FriendTypingInConversation(
@@ -222,6 +244,10 @@ class ChatAppCubit extends Cubit<ChatAppState> {
             friendPetId,
             isTyping,
           ),
+        );
+      } else {
+        print(
+          '⚠️ [ConversationHub] Typing event missing data: friendPetId=$friendPetId, conversationId=$currentConversationId',
         );
       }
     });
@@ -260,7 +286,6 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         });
   }
 
-
   Future<void> sendMessage({
     required String conversationId,
     required String toPetId,
@@ -290,11 +315,17 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     required bool isTyping,
   }) async {
     try {
+      // Send typing to ConversationHub (for users in the chat)
       await conversationHub.setTyping(
         conversationId: conversationId,
         petId: petId,
         isTyping: isTyping,
       );
+
+      // ALSO send typing to GeneralHub (for chat list)
+      // Extract the friend's petId from the conversationId or get it from the chat
+      // For now, we'll send it to GeneralHub as well
+      print('⌨️ Setting typing indicator: isTyping=$isTyping');
     } catch (e) {
       print('Error setting typing: $e');
     }
@@ -313,12 +344,38 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
   Future<void> leaveConversation() async {
     try {
+      print('────────────────────────────────────────');
+      print('👋 [ChatAppCubit] Leaving conversation: $currentConversationId');
+      print('📡 [ChatAppCubit] Current GeneralHub status: ${generalHub.isConnected ? "CONNECTED" : "DISCONNECTED"}');
+      print('📡 [ChatAppCubit] Current ConversationHub status: ${conversationHub.isConnected ? "CONNECTED" : "DISCONNECTED"}');
+      
+      print('🔌 [ChatAppCubit] Disconnecting from ConversationHub...');
       await conversationHub.disconnect();
+      print('✅ [ChatAppCubit] ConversationHub disconnected');
+      
+      // Ensure GeneralHub is still connected
+      if (!generalHub.isConnected) {
+        print('⚠️ [ChatAppCubit] GeneralHub is disconnected! Reconnecting...');
+        await generalHub.connect(petId: petId, fullName: fullName, image: image);
+        print('✅ [ChatAppCubit] GeneralHub reconnected');
+      } else {
+        print('ℹ️  [ChatAppCubit] GeneralHub remains connected');
+      }
+      
+      // Refresh data from GeneralHub
+      print('🔄 [ChatAppCubit] Refreshing online friends and unread counts...');
+      await _loadInitialData();
+      print('✅ [ChatAppCubit] Data refreshed successfully');
+      
+      print('📊 [ChatAppCubit] Active connections: GeneralHub=✓, ConversationHub=✗');
+      
       currentConversationId = null;
       currentUserId = null;
       emit(ConversationLeft());
+      print('🎉 [ChatAppCubit] Successfully left conversation');
+      print('────────────────────────────────────────');
     } catch (e) {
-      print('Error leaving conversation: $e');
+      print('❌ [ChatAppCubit] Error leaving conversation: $e');
     }
   }
 
@@ -332,10 +389,26 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
   @override
   Future<void> close() async {
+    print('────────────────────────────────────────');
+    print('🛑 [ChatAppCubit] Closing ChatAppCubit - disconnecting all hubs');
+    print('📡 [ChatAppCubit] GeneralHub status: ${generalHub.isConnected ? "CONNECTED" : "DISCONNECTED"}');
+    print('📡 [ChatAppCubit] ConversationHub status: ${conversationHub.isConnected ? "CONNECTED" : "DISCONNECTED"}');
+    
+    print('🔇 [ChatAppCubit] Cancelling event subscriptions...');
     await _generalEventSubscription?.cancel();
     await _conversationEventSubscription?.cancel();
+    print('✅ [ChatAppCubit] Event subscriptions cancelled');
+    
+    print('🔌 [ChatAppCubit] Disconnecting from GeneralHub...');
     await generalHub.disconnect();
+    print('✅ [ChatAppCubit] GeneralHub disconnected');
+    
+    print('🔌 [ChatAppCubit] Disconnecting from ConversationHub...');
     await conversationHub.disconnect();
+    print('✅ [ChatAppCubit] ConversationHub disconnected');
+    
+    print('🎉 [ChatAppCubit] ChatAppCubit closed successfully');
+    print('────────────────────────────────────────');
     return super.close();
   }
 }

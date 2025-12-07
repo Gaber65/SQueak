@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:squeak/core/signalr/signalr_connection_status_widget.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_status.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/chat_widgets/chat_app_bar.dart';
@@ -65,10 +64,27 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   static const int _maxRecordDuration = 120;
   ChatMessagesCubit? _recordingCubit;
   ChatAppCubit? _recordingChatAppCubit;
+  ChatAppCubit? _chatAppCubit; // Store reference for dispose
 
   @override
   void initState() {
     super.initState();
+
+    print('════════════════════════════════════════');
+    print('💬 [MatingChatDetailScreen] Opening chat with: ${widget.chat.name}');
+    print('💬 [MatingChatDetailScreen] Conversation ID: ${widget.chat.id}');
+    print('💬 [MatingChatDetailScreen] Friend Pet ID: ${widget.chat.petId}');
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        print('🔌 [MatingChatDetailScreen] Joining conversation...');
+        print('📡 [MatingChatDetailScreen] This will connect to ConversationHub');
+        print('📡 [MatingChatDetailScreen] GeneralHub will remain connected');
+        _chatAppCubit = context.read<ChatAppCubit>();
+        _chatAppCubit?.joinConversation(widget.chat.id);
+      }
+    });
+
     _messageController.addListener(() {
       final hasText = _messageController.text.trim().isNotEmpty;
       setState(() {
@@ -97,21 +113,32 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   void dispose() {
     // Clear typing indicator and stop timer before leaving
     _typingTimer?.cancel();
-    
-    if (mounted) {
+
+    print('════════════════════════════════════════');
+    print('👋 [MatingChatDetailScreen] Leaving chat with: ${widget.chat.name}');
+    print('🔌 [MatingChatDetailScreen] Will disconnect from ConversationHub');
+    print('📡 [MatingChatDetailScreen] GeneralHub will remain connected');
+
+    // Use stored reference instead of context
+    if (_chatAppCubit != null) {
       try {
-        // Ensure typing indicator is cleared
-        context.read<ChatAppCubit>().setTyping(
+        print('⌨️ [MatingChatDetailScreen] Clearing typing indicator...');
+        _chatAppCubit!.setTyping(
           conversationId: widget.chat.id,
           isTyping: false,
         );
-        // Leave the conversation
-        context.read<ChatAppCubit>().leaveConversation();
-      } catch (_) {
-        // Provider may not be available
+        // Leave the conversation (disconnects ConversationHub, keeps GeneralHub connected)
+        print('🔌 [MatingChatDetailScreen] Calling leaveConversation...');
+        _chatAppCubit!.leaveConversation();
+        print('✅ [MatingChatDetailScreen] Successfully left conversation');
+      } catch (e) {
+        print('❌ [MatingChatDetailScreen] Error leaving conversation: $e');
       }
+    } else {
+      print('⚠️ [MatingChatDetailScreen] ChatAppCubit reference is null');
     }
 
+    print('════════════════════════════════════════');
     _messageController.dispose();
     _animationController.dispose();
     _recordTimer?.cancel();
@@ -180,14 +207,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       providers: [
         BlocProvider(
           create:
-              (_) => ChatAppCubit(
-                petId: widget.pet!.petId!,
-                fullName: widget.pet!.petName ?? '',
-                image: widget.pet!.imageName ?? '',
-              )..joinConversation(widget.chat.id),
-        ),
-        BlocProvider(
-          create:
               (_) =>
                   sl<ChatMessagesCubit>()
                     ..loadMessages(widget.chat.id, widget.pet!.petId!),
@@ -201,11 +220,12 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 ChatAppCubit.get(context).markMessagesAsRead(widget.chat.id);
               }
 
-              if (state is MessageReceived && state.conversationId == widget.chat.id) {
+              if (state is MessageReceived &&
+                  state.conversationId == widget.chat.id) {
                 // Add new message to list
                 ChatMessagesCubit.get(
                   context,
-                ).addReceivedMessage(state.message , widget.pet!.ownerId);
+                ).addReceivedMessage(state.message, widget.pet!.ownerId);
 
                 // Mark as read
                 ChatAppCubit.get(context).markMessagesAsRead(widget.chat.id);
@@ -336,7 +356,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                     children: [
                       Column(
                         children: [
-                          const SignalRConnectionStatusWidget(),
+                    
                           if (isCompleted)
                             StatusBanner(
                               icon: Icons.lock_rounded,

@@ -44,132 +44,40 @@ class _ChatListView extends StatefulWidget {
 }
 
 class _ChatListViewState extends State<_ChatListView> {
-  final SignalRGeneralHubService _generalHub = SignalRGeneralHubService();
-
-  StreamSubscription<SignalEvent>? _eventSubscription;
-  StreamSubscription<SwitchProfileState>? _profileSubscription;
-
   String? _currentPetId;
-  bool _hubConnected = false;
 
   @override
   void initState() {
     super.initState();
-
-    // Listen for profile loaded ONCE → connect hub
-    _profileSubscription = context.read<SwitchProfileCubit>().stream.listen((
-      state,
-    ) {
-      if (state is ProfileLoaded &&
-          state.profile.type == ProfileType.pet &&
-          !_hubConnected) {
-        _connectHub(state.profile.pet!);
-      }
-    });
   }
-
-  // -------------------------------------------------------------
-  //  CONNECT HUB EXACTLY ONCE
-  // -------------------------------------------------------------
-  Future<void> _connectHub(PetEntities pet) async {
-    try {
-      _currentPetId = pet.petId;
-      debugPrint("🔄 Connecting to GeneralHub for pet: $_currentPetId)");
-
-      // Note: ChatAppCubit will handle the GeneralHub connection
-      // We just set up our local event listeners here
-      await _generalHub.connect(
-        petId: pet.petId!,
-        fullName: pet.petName,
-        image: pet.imageName,
-      );
-
-      _hubConnected = true;
-      debugPrint("✅ GeneralHub connected!");
-
-      _setupHubEvents();
-      _requestInitialData();
-    } catch (e) {
-      debugPrint("❌ Hub connection error: $e");
-    }
-  }
-
-  // -------------------------------------------------------------
-  //  SIGNALR EVENT HANDLERS (REAL-TIME)
-  // -------------------------------------------------------------
-  void _setupHubEvents() {
-    debugPrint("🎧 Listening for SignalR events...");
-
-    // Listen to all hub events
-    _eventSubscription = signalEventStream.stream.listen((event) {
-      if (event.hub == "GeneralHub") {
-        debugPrint("📥 GeneralHub Event → ${event.method}");
-      }
-    });
-
-    // Friend online/offline
-    _generalHub.onFriendConnectionChanged((data) {
-      debugPrint("🔥 FriendConnectionChanged → $data");
-      if (_currentPetId != null) {
-        context.read<ChatListCubit>().loadChats(_currentPetId!);
-      }
-    });
-
-    // Unread messages count
-    _generalHub.onUnreadedMessagesCount((data) {
-      debugPrint("🔥 UnreadMessagesCount → $data");
-      if (_currentPetId != null) {
-        context.read<ChatListCubit>().loadChats(_currentPetId!);
-      }
-    });
-
-    // Connection confirmation
-    _generalHub.onConnectionRegistered((data) {
-      debugPrint("🔥 ConnectionRegistered → $data");
-    });
-
-    debugPrint("🎧 SignalR event listeners registered");
-  }
-
-
-  Future<void> _requestInitialData() async {
-    if (_currentPetId == null) return;
-
-    try {
-      final onlineFriends = await _generalHub.getAllMyOnlinePetFriends(
-        _currentPetId!,
-      );
-      debugPrint("👥 Online friends count: ${onlineFriends?.length}");
-
-      final unread = await _generalHub.getUnreadMessageCounts(_currentPetId!);
-      debugPrint("📨 Unread messages: $unread");
-    } catch (e) {
-      debugPrint("⚠ Initial data error: $e");
-    }
-  }
-
 
   @override
   void dispose() {
-    debugPrint("🔌 DISCONNECTING HUB...");
-    _profileSubscription?.cancel();
-    _eventSubscription?.cancel();
-    _generalHub.disconnect();
     super.dispose();
   }
 
   // -------------------------------------------------------------
   //  UI
   // -------------------------------------------------------------
+  // Note: ChatAppCubit is created here and connects to GeneralHub.
+  // GeneralHub remains connected even when navigating to individual chats.
+  // ConversationHub is connected/disconnected in the chat detail screen.
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<ChatListCubit>();
+
+    print('📋 [ChatListScreen] Building ChatListScreen');
+    print('📡 [ChatListScreen] This screen uses GeneralHub only (no ConversationHub)');
 
     return BlocSelector<SwitchProfileCubit, SwitchProfileState, PetEntities?>(
       selector: (state) {
         if (state is ProfileLoaded && state.profile.pet != null) {
           final pet = state.profile.pet!;
-          cubit.loadChats(pet.petId!);
+          if (_currentPetId != pet.petId) {
+            print('🔄 [ChatListScreen] Pet changed to: ${pet.petId}, loading chats...');
+            cubit.loadChats(pet.petId ?? '');
+            _currentPetId = pet.petId;
+          }
           return pet;
         }
         return null;
@@ -179,6 +87,8 @@ class _ChatListViewState extends State<_ChatListView> {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         }
 
+        print('🚀 [ChatListScreen] Creating ChatAppCubit for petId: ${pet.petId}');
+        print('🔌 [ChatListScreen] ChatAppCubit will connect to GeneralHub');
         return BlocProvider(
           create:
               (context) => ChatAppCubit(
@@ -206,7 +116,9 @@ class _ChatListViewState extends State<_ChatListView> {
             listener: (context, state) {
               // Refresh chat list on relevant SignalR events
               if (state is UnreadCountUpdated ||
-                  state is MessageReceived || state is FriendOnlineStatusChanged) {
+                  state is MessageReceived ||
+                  state is FriendOnlineStatusChanged) {
+                print('🔄 [ChatListScreen] Received SignalR event from GeneralHub, refreshing chat list');
                 if (activePet?.petId != null) {
                   context.read<ChatListCubit>().loadChats(activePet!.petId!);
                 }
@@ -224,9 +136,11 @@ class _ChatListViewState extends State<_ChatListView> {
           builder: (context, state) {
             // Debug logging
             final chatAppCubit = context.read<ChatAppCubit>();
-            debugPrint('📊 Typing indicators: ${chatAppCubit.typingIndicators}');
+            debugPrint(
+              '📊 Typing indicators: ${chatAppCubit.typingIndicators}',
+            );
             debugPrint('📊 Online friends: ${chatAppCubit.onlineFriends}');
-            
+
             return CustomScrollView(
               slivers: [
                 _buildAppBar(context, theme, isDark),
@@ -342,6 +256,11 @@ class _ChatListViewState extends State<_ChatListView> {
       },
       builder: (context, chatAppState) {
         final chatAppCubit = context.read<ChatAppCubit>();
+        
+        // Debug logging to see typing indicators
+        if (chatAppState is FriendTypingInGeneral) {
+          print('🔥 UI REBUILDING for typing: ${chatAppState.petId} -> ${chatAppCubit.typingIndicators[chatAppState.petId]}');
+        }
 
         return Padding(
           padding: const EdgeInsets.all(16),
@@ -349,19 +268,24 @@ class _ChatListViewState extends State<_ChatListView> {
             children:
                 chats
                     .map(
-                      (chat) => MatingChatListTile(
-                        chat: chat,
-                        petEntities: pet,
-                        isOnline:
-                            chatAppCubit.onlineFriends[chat.petId] ?? false,
-                        isTyping:
-                            chatAppCubit.typingIndicators[chat.petId] ?? false,
-                        unreadCount:
-                            chatAppCubit.unreadCounts[chat.id] ?? 0,
-                        onNavigateComplete:
-                            () =>
-                                context.read<ChatListCubit>().loadChats(pet.petId!),
-                      ),
+                      (chat) {
+                        final isTyping = chatAppCubit.typingIndicators[chat.petId] ?? false;
+                        if (isTyping) {
+                          print('✍️ Rendering ${chat.name} (${chat.petId}) with isTyping=true');
+                        }
+                        return MatingChatListTile(
+                          chat: chat,
+                          petEntities: pet,
+                          isOnline:
+                              chatAppCubit.onlineFriends[chat.petId] ?? false,
+                          isTyping: isTyping,
+                          unreadCount: chatAppCubit.unreadCounts[chat.id] ?? 0,
+                          onNavigateComplete:
+                              () => context.read<ChatListCubit>().loadChats(
+                                pet.petId!,
+                              ),
+                        );
+                      },
                     )
                     .toList(),
           ),

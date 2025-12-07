@@ -117,57 +117,78 @@ class _ChatAppBarState extends State<ChatAppBar> {
       ),
       title: Row(
         children: [
-          Container(
-            width: 45,
-            height: 45,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [
-                  ColorManager.primaryColor.withOpacity(0.3),
-                  ColorManager.primaryColor.withOpacity(0.1),
-                ],
+          Stack(
+            children: [
+              Container(
+                width: 45,
+                height: 45,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [
+                      ColorManager.primaryColor.withOpacity(0.3),
+                      ColorManager.primaryColor.withOpacity(0.1),
+                    ],
+                  ),
+                  border: Border.all(
+                    color: ColorManager.primaryColor.withOpacity(0.3),
+                    width: 2,
+                  ),
+                ),
+                child:
+                    (widget.chat.image != null && widget.chat.image!.isNotEmpty)
+                        ? ClipOval(
+                          child: Image.network(
+                            imageUrl + widget.chat.image!,
+                            width: 45,
+                            height: 45,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(
+                                Icons.pets,
+                                color: ColorManager.primaryColor,
+                              );
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    value:
+                                        loadingProgress.expectedTotalBytes != null
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                loadingProgress.expectedTotalBytes!
+                                            : null,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                        : const Icon(Icons.pets, color: ColorManager.primaryColor),
               ),
-              border: Border.all(
-                color: ColorManager.primaryColor.withOpacity(0.3),
-                width: 2,
-              ),
-            ),
-            child:
-                (widget.chat.image != null && widget.chat.image!.isNotEmpty)
-                    ? ClipOval(
-                      child: Image.network(
-                        imageUrl + widget.chat.image!,
-                        width: 45,
-                        height: 45,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(
-                            Icons.pets,
-                            color: ColorManager.primaryColor,
-                          );
-                        },
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                value:
-                                    loadingProgress.expectedTotalBytes != null
-                                        ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : null,
-                              ),
-                            ),
-                          );
-                        },
+              if (widget.isOnline && !_isBlockedByMe && !_isBlockedByOther)
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    width: 14,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 2,
                       ),
-                    )
-                    : const Icon(Icons.pets, color: ColorManager.primaryColor),
+                    ),
+                  ),
+                ),
+            ],
           ),
           const SizedBox(width: 12),
           Expanded(

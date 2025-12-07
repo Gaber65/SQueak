@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
@@ -40,47 +39,46 @@ class _ChatsTabState extends State<ChatsTab> {
     }
 
     _currentActivePetId = activePet!.petId;
+    
+    print('📋 [ChatsTab] Building ChatsTab for petId: ${activePet.petId}');
+    print('📡 [ChatsTab] This screen uses GeneralHub only (no ConversationHub)');
 
-    return BlocProvider(
-      create: (context) => ChatAppCubit(
-        petId: activePet.petId!,
-        fullName: activePet.petName ?? '',
-        image: activePet.imageName ?? '',
-      )..initialize(),
-      child: BlocConsumer<PetFriendsCubit, PetFriendsState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          List<ChatEntity> chats = [];
-          if (state is ChatsLoaded) {
-            chats = state.chats;
-          }
+    return BlocConsumer<PetFriendsCubit, PetFriendsState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        List<ChatEntity> chats = [];
+        if (state is ChatsLoaded) {
+          chats = state.chats;
+          print('✅ [ChatsTab] Loaded ${chats.length} chats');
+        }
 
-          return MultiBlocListener(
-            listeners: [
-              BlocListener<ChatAppCubit, ChatAppState>(
-                listener: (context, chatAppState) {
-                  // Refresh chat list on relevant SignalR events
-                  if (chatAppState is UnreadCountUpdated ||
-                      chatAppState is MessageReceived ||
-                      chatAppState is FriendOnlineStatusChanged) {
-                    if (activePet.petId != null) {
-                      PetFriendsCubit.get(context)
-                          .loadChats(petId: activePet.petId!);
-                    }
+        return MultiBlocListener(
+          listeners: [
+            BlocListener<ChatAppCubit, ChatAppState>(
+              listener: (context, chatAppState) {
+                // Refresh chat list on relevant SignalR events
+                if (chatAppState is UnreadCountUpdated ||
+                    chatAppState is MessageReceived ||
+                    chatAppState is FriendOnlineStatusChanged) {
+                  print('🔄 [ChatsTab] Received SignalR event from GeneralHub, refreshing chat list');
+                  if (activePet.petId != null) {
+                    PetFriendsCubit.get(
+                      context,
+                    ).loadChats(petId: activePet.petId!);
                   }
+                }
 
-                  if (chatAppState is ChatAppError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(chatAppState.message)),
-                    );
-                  }
-                },
-              ),
-            ],
-            child: _buildChatsList(context, chats, activePet),
-          );
-        },
-      ),
+                if (chatAppState is ChatAppError) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(chatAppState.message)));
+                }
+              },
+            ),
+          ],
+          child: _buildChatsList(context, chats, activePet),
+        );
+      },
     );
   }
 
@@ -118,11 +116,12 @@ class _ChatsTabState extends State<ChatsTab> {
                   isOnline: chatAppCubit.onlineFriends[chat.petId] ?? false,
                   isTyping: chatAppCubit.typingIndicators[chat.petId] ?? false,
                   unreadCount:
-                      chatAppCubit.unreadCounts[chat.id] ?? chat.unreadedCount,
+                      chatAppCubit.unreadCounts[chat.id] ?? 0,
                   onNavigateComplete: () async {
                     if (activePet.petId!.isNotEmpty) {
-                      await PetFriendsCubit.get(context)
-                          .loadChats(petId: activePet.petId!);
+                      await PetFriendsCubit.get(
+                        context,
+                      ).loadChats(petId: activePet.petId!);
                     }
                   },
                 ),
@@ -163,9 +162,10 @@ class _ChatsTabState extends State<ChatsTab> {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: isConnected
-                    ? Colors.green.withOpacity(0.5)
-                    : Colors.orange.withOpacity(0.5),
+                color:
+                    isConnected
+                        ? Colors.green.withOpacity(0.5)
+                        : Colors.orange.withOpacity(0.5),
                 blurRadius: 4,
                 spreadRadius: 1,
               ),
