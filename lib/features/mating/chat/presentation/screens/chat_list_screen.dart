@@ -67,14 +67,18 @@ class _ChatListViewState extends State<_ChatListView> {
     final cubit = context.read<ChatListCubit>();
 
     print('📋 [ChatListScreen] Building ChatListScreen');
-    print('📡 [ChatListScreen] This screen uses GeneralHub only (no ConversationHub)');
+    print(
+      '📡 [ChatListScreen] This screen uses GeneralHub only (no ConversationHub)',
+    );
 
     return BlocSelector<SwitchProfileCubit, SwitchProfileState, PetEntities?>(
       selector: (state) {
         if (state is ProfileLoaded && state.profile.pet != null) {
           final pet = state.profile.pet!;
           if (_currentPetId != pet.petId) {
-            print('🔄 [ChatListScreen] Pet changed to: ${pet.petId}, loading chats...');
+            print(
+              '🔄 [ChatListScreen] Pet changed to: ${pet.petId}, loading chats...',
+            );
             cubit.loadChats(pet.petId ?? '');
             _currentPetId = pet.petId;
           }
@@ -87,7 +91,9 @@ class _ChatListViewState extends State<_ChatListView> {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         }
 
-        print('🚀 [ChatListScreen] Creating ChatAppCubit for petId: ${pet.petId}');
+        print(
+          '🚀 [ChatListScreen] Creating ChatAppCubit for petId: ${pet.petId}',
+        );
         print('🔌 [ChatListScreen] ChatAppCubit will connect to GeneralHub');
         return BlocProvider(
           create:
@@ -117,8 +123,11 @@ class _ChatListViewState extends State<_ChatListView> {
               // Refresh chat list on relevant SignalR events
               if (state is UnreadCountUpdated ||
                   state is MessageReceived ||
-                  state is FriendOnlineStatusChanged) {
-                print('🔄 [ChatListScreen] Received SignalR event from GeneralHub, refreshing chat list');
+                  state is FriendOnlineStatusChanged ||
+                  state is NewMessageDetected) {
+                print(
+                  '🔄 [ChatListScreen] Received event from GeneralHub, refreshing chat list',
+                );
                 if (activePet?.petId != null) {
                   context.read<ChatListCubit>().loadChats(activePet!.petId!);
                 }
@@ -252,42 +261,42 @@ class _ChatListViewState extends State<_ChatListView> {
         return current is FriendOnlineStatusChanged ||
             current is FriendTypingInGeneral ||
             current is UnreadCountUpdated ||
+            current is UnreadCountsPolled ||
             current is ChatAppConnected;
       },
       builder: (context, chatAppState) {
         final chatAppCubit = context.read<ChatAppCubit>();
-        
+
         // Debug logging to see typing indicators
         if (chatAppState is FriendTypingInGeneral) {
-          print('🔥 UI REBUILDING for typing: ${chatAppState.petId} -> ${chatAppCubit.typingIndicators[chatAppState.petId]}');
+          print(
+            '🔥 UI REBUILDING for typing: ${chatAppState.petId} -> ${chatAppCubit.typingIndicators[chatAppState.petId]}',
+          );
         }
 
         return Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             children:
-                chats
-                    .map(
-                      (chat) {
-                        final isTyping = chatAppCubit.typingIndicators[chat.petId] ?? false;
-                        if (isTyping) {
-                          print('✍️ Rendering ${chat.name} (${chat.petId}) with isTyping=true');
-                        }
-                        return MatingChatListTile(
-                          chat: chat,
-                          petEntities: pet,
-                          isOnline:
-                              chatAppCubit.onlineFriends[chat.petId] ?? false,
-                          isTyping: isTyping,
-                          unreadCount: chatAppCubit.unreadCounts[chat.id] ?? 0,
-                          onNavigateComplete:
-                              () => context.read<ChatListCubit>().loadChats(
-                                pet.petId!,
-                              ),
-                        );
-                      },
-                    )
-                    .toList(),
+                chats.map((chat) {
+                  final isTyping =
+                      chatAppCubit.typingIndicators[chat.petId] ?? false;
+                  if (isTyping) {
+                    print(
+                      '✍️ Rendering ${chat.name} (${chat.petId}) with isTyping=true',
+                    );
+                  }
+                  return MatingChatListTile(
+                    chat: chat,
+                    petEntities: pet,
+                    isOnline: chatAppCubit.onlineFriends[chat.petId] ?? false,
+                    isTyping: isTyping,
+                    unreadCount: chatAppCubit.unreadCounts[chat.id] ?? 0,
+                    onNavigateComplete:
+                        () =>
+                            context.read<ChatListCubit>().loadChats(pet.petId!),
+                  );
+                }).toList(),
           ),
         );
       },

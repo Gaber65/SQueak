@@ -15,12 +15,14 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
   StreamSubscription? _generalEventSubscription;
   StreamSubscription? _conversationEventSubscription;
+  Timer? _pollingTimer;
 
   Map<String, bool> onlineFriends = {};
   Map<String, int> unreadCounts = {};
   Map<String, bool> typingIndicators = {};
   String? currentConversationId;
   String? currentUserId;
+  int _totalUnreadMessages = 0;
 
   static ChatAppCubit get(context) => BlocProvider.of(context);
 
@@ -52,6 +54,10 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       );
       await _loadInitialData();
       print('✅ [ChatAppCubit] Initial data loaded');
+
+      // Start periodic polling for unread messages
+      _startPeriodicPolling();
+      print('⏰ [ChatAppCubit] Started periodic polling every 2 seconds');
 
       emit(ChatAppConnected());
       print('🎉 [ChatAppCubit] Initialization complete - GeneralHub is active');
@@ -152,7 +158,12 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       final counts = await generalHub.getUnreadMessageCounts(petId);
       if (counts != null) {
         unreadCounts = counts;
+        _totalUnreadMessages = counts.values.fold(
+          0,
+          (sum, count) => sum + count,
+        );
         print('✅ Loaded ${counts.length} unread counts: $unreadCounts');
+        print('📊 Initial total unread messages: $_totalUnreadMessages');
         print(
           '📋 Conversation IDs with unread messages: ${counts.keys.toList()}',
         );
@@ -417,6 +428,136 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     }
   }
 
+  void _startPeriodicPolling() {
+    _pollingTimer?.cancel();
+    _pollingTimer = Timer.periodic(const Duration(seconds: 2), (_) async {
+      await Future.wait([_pollUnreadCounts(), _pollOnlineFriends()]);
+    });
+  }
+
+  Future<void> _pollUnreadCounts() async {
+    try {
+      print(
+        '🔍 [ChatAppCubit] Calling getUnreadMessageCounts for petId: $petId',
+      );
+      final counts = await generalHub.getUnreadMessageCounts(petId);
+
+      print('📊 [ChatAppCubit] ═══════════════════════════════════');
+      print('📊 [ChatAppCubit] GetUnreadMessageCounts Response:');
+      print('   - Type: ${counts.runtimeType}');
+      print('   - Is null: ${counts == null}');
+      print('   - Count of conversations: ${counts?.length ?? 0}');
+      print('   - Full response: $counts');
+      if (counts != null) {
+        counts.forEach((conversationId, count) {
+          print('   - Conversation[$conversationId]: $count unread messages');
+        });
+      }
+      print('📊 [ChatAppCubit] ═══════════════════════════════════');
+
+      if (counts != null) {
+        final newTotal = counts.values.fold(0, (sum, count) => sum + count);
+        final oldTotal = _totalUnreadMessages;
+
+        print(
+          '📈 [ChatAppCubit] Unread totals - Old: $oldTotal, New: $newTotal',
+        );
+        print('📋 [ChatAppCubit] Previous unread counts: $unreadCounts');
+
+        // Check if any conversation has new unread messages
+        bool hasNewMessages = false;
+        for (var conversationId in counts.keys) {
+          final oldCount = unreadCounts[conversationId] ?? 0;
+          final newCount = counts[conversationId] ?? 0;
+          if (newCount > oldCount) {
+            print(
+              '🔔 [ChatAppCubit] New message in conversation $conversationId: $oldCount -> $newCount',
+            );
+            hasNewMessages = true;
+          }
+        }
+
+        // Update unread counts
+        unreadCounts = counts;
+        emit(UnreadCountsPolled(counts));
+
+        // Emit new message detected if any conversation has new messages
+        if (hasNewMessages || newTotal > oldTotal) {
+          print(
+            '🔔 [ChatAppCubit] New message detected! Triggering chat list reload',
+          );
+          _totalUnreadMessages = newTotal;
+          emit(NewMessageDetected());
+        } else {
+          _totalUnreadMessages = newTotal;
+        }
+      }
+    } catch (e) {
+      print('❌ [ChatAppCubit] Failed to poll unread counts: $e');
+    }
+  }
+
+  Future<void> _pollOnlineFriends() async {
+    try {
+      print('🔍 [ChatAppCubit] Polling online friends for petId: $petId');
+      final friends = await generalHub.getAllMyOnlinePetFriends(petId);
+
+      print('📡 [ChatAppCubit] GetAllMyOnlinePetFriends result:');
+      print('   - Result type: ${friends.runtimeType}');
+      print('   - Is null: ${friends == null}');
+      print('   - Is empty: ${friends?.isEmpty ?? true}');
+      print('   - Count: ${friends?.length ?? 0}');
+
+      if (friends != null) {
+        print('   - Full result: $friends');
+        for (var i = 0; i < friends.length; i++) {
+          final friend = friends[i];
+          print(
+            '   - Friend[$i]: petId=${friend.petId}, isOnline=${friend.isOnline}, fullName=${friend.fullName}',
+          );
+        }
+
+        // Create a new map to track online status
+        final newOnlineStatus = <String, bool>{};
+
+        // Check for friends that went offline (were in old map but not in new list)
+        final currentOnlinePetIds = friends.map((f) => f.petId).toSet();
+        for (var petId in onlineFriends.keys) {
+          if (!currentOnlinePetIds.contains(petId) &&
+              onlineFriends[petId] == true) {
+            print('🔄 [ChatAppCubit] Friend $petId went offline');
+            emit(FriendOnlineStatusChanged(petId, false));
+          }
+        }
+
+        // Process current online friends
+        for (var friend in friends) {
+          final friendPetId = friend.petId;
+          if (friendPetId.isNotEmpty) {
+            newOnlineStatus[friendPetId] = friend.isOnline;
+
+            // Check if status changed
+            final wasOnline = onlineFriends[friendPetId] ?? false;
+            if (wasOnline != friend.isOnline) {
+              print(
+                '🔄 [ChatAppCubit] Friend $friendPetId status changed: $wasOnline -> ${friend.isOnline}',
+              );
+              emit(FriendOnlineStatusChanged(friendPetId, friend.isOnline));
+            }
+          }
+        }
+
+        // Update the online friends map (will be empty if no friends online)
+        onlineFriends = newOnlineStatus;
+        print('✅ [ChatAppCubit] Updated online friends map: $onlineFriends');
+      } else {
+        print('⚠️ [ChatAppCubit] GetAllMyOnlinePetFriends returned null');
+      }
+    } catch (e) {
+      print('❌ [ChatAppCubit] Failed to poll online friends: $e');
+    }
+  }
+
   Future<bool> checkIfPetOnline(String friendPetId) async {
     try {
       return await generalHub.isPetOnline(friendPetId) ?? false;
@@ -435,6 +576,10 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     print(
       '📡 [ChatAppCubit] ConversationHub status: ${conversationHub.isConnected ? "CONNECTED" : "DISCONNECTED"}',
     );
+
+    print('⏰ [ChatAppCubit] Stopping periodic polling...');
+    _pollingTimer?.cancel();
+    print('✅ [ChatAppCubit] Polling timer cancelled');
 
     print('🔇 [ChatAppCubit] Cancelling event subscriptions...');
     await _generalEventSubscription?.cancel();

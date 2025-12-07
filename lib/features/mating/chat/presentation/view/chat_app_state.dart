@@ -93,3 +93,15 @@ class MessagesMarkedAsRead extends ChatAppState {
   final String conversationId;
   MessagesMarkedAsRead(this.conversationId);
 }
+
+// Periodic polling events
+class UnreadCountsPolled extends ChatAppState {
+  final Map<String, int> counts;
+  final DateTime timestamp;
+  UnreadCountsPolled(this.counts) : timestamp = DateTime.now();
+}
+
+class NewMessageDetected extends ChatAppState {
+  final DateTime timestamp;
+  NewMessageDetected() : timestamp = DateTime.now();
+}

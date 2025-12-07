@@ -39,9 +39,11 @@ class _ChatsTabState extends State<ChatsTab> {
     }
 
     _currentActivePetId = activePet!.petId;
-    
+
     print('📋 [ChatsTab] Building ChatsTab for petId: ${activePet.petId}');
-    print('📡 [ChatsTab] This screen uses GeneralHub only (no ConversationHub)');
+    print(
+      '📡 [ChatsTab] This screen uses GeneralHub only (no ConversationHub)',
+    );
 
     return BlocConsumer<PetFriendsCubit, PetFriendsState>(
       listener: (context, state) {},
@@ -59,8 +61,11 @@ class _ChatsTabState extends State<ChatsTab> {
                 // Refresh chat list on relevant SignalR events
                 if (chatAppState is UnreadCountUpdated ||
                     chatAppState is MessageReceived ||
-                    chatAppState is FriendOnlineStatusChanged) {
-                  print('🔄 [ChatsTab] Received SignalR event from GeneralHub, refreshing chat list');
+                    chatAppState is FriendOnlineStatusChanged ||
+                    chatAppState is NewMessageDetected) {
+                  print(
+                    '🔄 [ChatsTab] Received event from GeneralHub, refreshing chat list',
+                  );
                   if (activePet.petId != null) {
                     PetFriendsCubit.get(
                       context,
@@ -99,6 +104,7 @@ class _ChatsTabState extends State<ChatsTab> {
           return current is FriendOnlineStatusChanged ||
               current is FriendTypingInGeneral ||
               current is UnreadCountUpdated ||
+              current is UnreadCountsPolled ||
               current is ChatAppConnected;
         },
         builder: (context, chatAppState) {
@@ -115,8 +121,7 @@ class _ChatsTabState extends State<ChatsTab> {
                   petEntities: activePet,
                   isOnline: chatAppCubit.onlineFriends[chat.petId] ?? false,
                   isTyping: chatAppCubit.typingIndicators[chat.petId] ?? false,
-                  unreadCount:
-                      chatAppCubit.unreadCounts[chat.id] ?? 0,
+                  unreadCount: chatAppCubit.unreadCounts[chat.id] ?? 0,
                   onNavigateComplete: () async {
                     if (activePet.petId!.isNotEmpty) {
                       await PetFriendsCubit.get(
