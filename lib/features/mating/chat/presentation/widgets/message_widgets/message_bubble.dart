@@ -13,12 +13,14 @@ class ChatMessageBubble extends StatefulWidget {
   final MessageEntity message;
   final bool isMe;
   final String conversationId;
+  final String? chatImage;
 
   const ChatMessageBubble({
     super.key,
     required this.message,
     required this.isMe,
     required this.conversationId,
+    this.chatImage,
   });
 
   @override
@@ -288,11 +290,41 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
             width: 2,
           ),
         ),
-        child: Icon(
-          Icons.pets,
-          size: 16,
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        child: (widget.chatImage != null && widget.chatImage!.isNotEmpty)
+            ? ClipOval(
+                child: Image.network(
+                  imageUrl + widget.chatImage!,
+                  width: 32,
+                  height: 32,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Icon(
+                    Icons.pets,
+                    size: 16,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
+            : Icon(
+                Icons.pets,
+                size: 16,
+                color: Theme.of(context).colorScheme.primary,
+              ),
       ),
     ];
   }

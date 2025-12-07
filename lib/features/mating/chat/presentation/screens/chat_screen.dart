@@ -54,6 +54,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   // Typing indicator
   bool _isOtherUserTyping = false;
   Timer? _typingTimer;
+  // Incoming typing detection (show only when user is actually writing)
+  int _incomingTypingEventCount = 0;
+  Timer? _incomingTypingResetTimer;
+  Timer? _incomingTypingHideTimer;
 
   // Recording variables
   final AudioRecorder _audioRecorder = AudioRecorder();
@@ -115,6 +119,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   void dispose() {
     // Clear typing indicator and stop timer before leaving
     _typingTimer?.cancel();
+    _incomingTypingResetTimer?.cancel();
+    _incomingTypingHideTimer?.cancel();
 
     print('════════════════════════════════════════');
     print('👋 [MatingChatDetailScreen] Leaving chat with: ${widget.chat.name}');
@@ -244,13 +250,67 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 });
               }
 
-              // Handle typing indicator from friend
+              // Handle typing indicator from friend.
+              // Only show the typing indicator when we detect active writing,
+              // not just when the other user focuses the text field. We do
+              // this by requiring multiple typing events within a short
+              // window before showing the indicator, and by hiding it after
+              // a short inactivity timeout.
               if (state is FriendTypingInConversation &&
                   state.conversationId == widget.chat.id) {
-                if (mounted) {
-                  setState(() {
-                    _isOtherUserTyping = state.isTyping;
-                  });
+                if (state.isTyping) {
+                  _incomingTypingEventCount++;
+                  _incomingTypingResetTimer?.cancel();
+                  _incomingTypingResetTimer = Timer(
+                    const Duration(milliseconds: 800),
+                    () {
+                      _incomingTypingEventCount = 0;
+                    },
+                  );
+                  if (_incomingTypingEventCount >= 2) {
+                    _incomingTypingHideTimer?.cancel();
+                    _incomingTypingHideTimer = Timer(
+                      const Duration(seconds: 2),
+                      () {
+                        if (mounted) {
+                          setState(() {
+                            _isOtherUserTyping = false;
+                          });
+                        }
+                      },
+                    );
+
+                    if (mounted && !_isOtherUserTyping) {
+                      setState(() {
+                        _isOtherUserTyping = true;
+                      });
+                    }
+                  }
+                } else {
+                  // Other user stopped typing -> clear immediately
+                  _incomingTypingResetTimer?.cancel();
+                  _incomingTypingEventCount = 0;
+                  _incomingTypingHideTimer?.cancel();
+                  if (mounted && _isOtherUserTyping) {
+                    setState(() {
+                      _isOtherUserTyping = false;
+                    });
+                  }
+                }
+              }
+
+              // Clear typing indicator when friend leaves conversation
+              if (state is PetLeftConversation) {
+                final data = state.data;
+                final leftPetId = data['petId']?.toString();
+                final leftConversationId = data['conversationId']?.toString();
+                if (leftPetId == widget.chat.petId ||
+                    leftConversationId == widget.chat.id) {
+                  if (mounted) {
+                    setState(() {
+                      _isOtherUserTyping = false;
+                    });
+                  }
                 }
               }
 
@@ -437,6 +497,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         itemScrollController: _itemScrollController,
         itemPositionsListener: _itemPositionsListener,
         conversationId: widget.chat.id,
+        chatImage: widget.chat.image,
         isOtherUserTyping: _isOtherUserTyping,
       );
     }

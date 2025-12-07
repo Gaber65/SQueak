@@ -13,6 +13,7 @@ class MessagesList extends StatelessWidget {
   final ItemScrollController itemScrollController;
   final ItemPositionsListener itemPositionsListener;
   final String conversationId;
+  final String? chatImage;
   final bool isOtherUserTyping;
 
   const MessagesList({
@@ -22,6 +23,7 @@ class MessagesList extends StatelessWidget {
     required this.itemScrollController,
     required this.itemPositionsListener,
     required this.conversationId,
+    this.chatImage,
     this.isOtherUserTyping = false,
   });
 
@@ -83,6 +85,8 @@ class MessagesList extends StatelessWidget {
                     message: message,
                     isMe: isMe,
                     conversationId: conversationId,
+                    // pass chat image so bubble can show sender avatar
+                    chatImage: chatImage,
                   ),
                 ],
               );
