@@ -16,8 +16,8 @@ import '../../../layoutMating/presentation/screens/widgets/profile_switcher_buil
 import '../../domain/entities/chat_entity.dart';
 import '../widgets/chat_widgets/mating_chat_list_tile.dart';
 import '../controllers/chat_list_state.dart';
-import '../view/chat_app_cubit.dart';
-import '../view/chat_app_state.dart';
+import '../controllers/chat_app_cubit.dart';
+import '../controllers/chat_app_state.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});

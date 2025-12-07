@@ -5,7 +5,7 @@ import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dart';
-import 'package:squeak/features/mating/chat/presentation/view/chat_app_cubit.dart';
+import 'package:squeak/features/mating/chat/presentation/controllers/chat_app_cubit.dart';
 import 'pet_info_popup.dart';
 
 class MessageAndInfoButtons extends StatelessWidget {

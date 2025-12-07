@@ -6,7 +6,7 @@ import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../domain/entities/chat_entity.dart';
 import '../../screens/chat_screen.dart';
-import '../../view/chat_app_cubit.dart';
+import '../../controllers/chat_app_cubit.dart';
 
 class MatingChatListTile extends StatelessWidget {
   final ChatEntity chat;

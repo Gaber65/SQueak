@@ -20,8 +20,8 @@ import 'package:squeak/features/mating/chat/presentation/widgets/message_widgets
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../../pets/domain/entities/pet_entity.dart';
 import '../controllers/chat_messages_state.dart';
-import '../view/chat_app_cubit.dart';
-import '../view/chat_app_state.dart';
+import '../controllers/chat_app_cubit.dart';
+import '../controllers/chat_app_state.dart';
 
 class MatingChatDetailScreen extends StatefulWidget {
   final PetEntities? pet;

@@ -8,7 +8,7 @@ import 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
 import 'package:squeak/features/mating/profile/presentation/screens/view_pet_profile_screen.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dart';
-import 'package:squeak/features/mating/chat/presentation/view/chat_app_cubit.dart';
+import 'package:squeak/features/mating/chat/presentation/controllers/chat_app_cubit.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import 'package:squeak/generated/l10n.dart';

@@ -10,7 +10,7 @@ import 'package:squeak/features/friendship/presentation/widgets/tab_bar_widget.d
 import 'package:squeak/features/friendship/presentation/widgets/request_filter_widget.dart';
 import 'package:squeak/features/friendship/presentation/widgets/chats_tab.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
-import 'package:squeak/features/mating/chat/presentation/view/chat_app_cubit.dart';
+import 'package:squeak/features/mating/chat/presentation/controllers/chat_app_cubit.dart';
 
 import '../../../auth/get_started/presentation/widgets/find_friends/search_bar_widget.dart';
 import '../../../settings/persentaion/controller/setting_cubit.dart';
