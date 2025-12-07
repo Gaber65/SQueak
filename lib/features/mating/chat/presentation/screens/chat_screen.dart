@@ -249,13 +249,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                   }
                 });
               }
-
-              // Handle typing indicator from friend.
-              // Only show the typing indicator when we detect active writing,
-              // not just when the other user focuses the text field. We do
-              // this by requiring multiple typing events within a short
-              // window before showing the indicator, and by hiding it after
-              // a short inactivity timeout.
               if (state is FriendTypingInConversation &&
                   state.conversationId == widget.chat.id) {
                 if (state.isTyping) {

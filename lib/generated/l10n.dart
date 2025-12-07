@@ -5003,6 +5003,11 @@ class S {
   String get audioFile {
     return Intl.message('Audio File', name: 'audioFile', desc: '', args: []);
   }
+
+  /// `Offline`
+  String get offline {
+    return Intl.message('Offline', name: 'offline', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

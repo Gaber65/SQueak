@@ -81,16 +81,14 @@ class _ChatAppBarState extends State<ChatAppBar> {
   }
 
   String _getStatusText(context) {
-    if (widget.isTyping) return isArabic() ? 'يكتب...' : 'typing...';
     if (_isBlockedByMe) return S.of(context).block;
     if (_isBlockedByOther) return S.of(context).block;
     if (widget.chat.completeMarriageStatues) return S.of(context).completed;
     if (widget.isOnline) return isArabic() ? 'متصل' : 'Online';
-    return S.of(context).active;
+    return S.of(context).offline;
   }
 
   Color _getStatusColor() {
-    if (widget.isTyping) return ColorManager.primaryColor;
     if (_isBlockedByMe || _isBlockedByOther) return Colors.red;
     if (widget.chat.completeMarriageStatues) return const Color(0xFF6C63FF);
     if (widget.isOnline) return Colors.green;

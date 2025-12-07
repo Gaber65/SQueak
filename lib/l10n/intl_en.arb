@@ -599,7 +599,9 @@
   "editImage":"Edit Image",
   "editVideo":"Edit Video",
   "preview":"Preview",
-  "audioFile":"Audio File"
+  "audioFile":"Audio File",
+  "offline":"Offline"
+  
  
 
 

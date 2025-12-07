@@ -725,6 +725,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "not_completed": MessageLookupByLibrary.simpleMessage("غير مكتمل"),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
+    "offline": MessageLookupByLibrary.simpleMessage("غير متصل"),
     "offlineMessagesContent": MessageLookupByLibrary.simpleMessage(
       "أنت حاليا غير متصل بالإنترنت.  التحقق من اتصالك بالإنترنت.",
     ),

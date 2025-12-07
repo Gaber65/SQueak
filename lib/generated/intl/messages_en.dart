@@ -733,6 +733,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "notificationsAlert": MessageLookupByLibrary.simpleMessage(
       "Notifications Alert",
     ),
+    "offline": MessageLookupByLibrary.simpleMessage("Offline"),
     "offlineMessagesContent": MessageLookupByLibrary.simpleMessage(
       " check your internet connection and try again",
     ),
