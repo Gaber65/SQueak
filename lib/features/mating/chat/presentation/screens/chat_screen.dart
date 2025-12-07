@@ -78,7 +78,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         print('🔌 [MatingChatDetailScreen] Joining conversation...');
-        print('📡 [MatingChatDetailScreen] This will connect to ConversationHub');
+        print(
+          '📡 [MatingChatDetailScreen] This will connect to ConversationHub',
+        );
         print('📡 [MatingChatDetailScreen] GeneralHub will remain connected');
         _chatAppCubit = context.read<ChatAppCubit>();
         _chatAppCubit?.joinConversation(widget.chat.id);
@@ -356,7 +358,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                     children: [
                       Column(
                         children: [
-                    
                           if (isCompleted)
                             StatusBanner(
                               icon: Icons.lock_rounded,
@@ -420,7 +421,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   }
 
   Widget _buildMessages(ChatMessagesState state, ChatMessagesCubit cubit) {
-    if (state is ChatMessagesLoading) {
+    if (state is ChatMessagesLoading || state is ChatMessagesInitial) {
       return const ChatLoadingState();
     }
     if (state is ChatMessagesError) {
