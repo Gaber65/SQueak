@@ -357,7 +357,6 @@ class MatingChatListTile extends StatelessWidget {
   }
 
   Widget _buildLastMessage(ChatEntity chat, ThemeData theme) {
-    // Show typing indicator if friend is typing
     if (isTyping) {
       return Row(
         children: [

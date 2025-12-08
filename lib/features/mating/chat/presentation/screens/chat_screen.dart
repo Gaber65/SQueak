@@ -236,7 +236,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 ).addReceivedMessage(state.message, widget.pet!.ownerId);
 
                 // Mark as read
-                ChatAppCubit.get(context).markMessagesAsRead(widget.chat.id);
+                // ChatAppCubit.get(context).markMessagesAsRead(widget.chat.id);
 
                 // Scroll to bottom
                 Future.delayed(const Duration(milliseconds: 100), () {
