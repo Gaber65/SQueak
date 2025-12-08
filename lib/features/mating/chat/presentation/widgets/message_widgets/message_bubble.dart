@@ -205,6 +205,8 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                         if (widget.message.image != null) _buildImageContent(),
                         if (widget.message.video != null) _buildVideoContent(),
                         if (widget.message.audio != null) _buildAudioContent(),
+                        if (widget.message.file != null)
+                          _buildDocumentContent(),
 
                         // Text message
                         if (widget.message.description.isNotEmpty)
@@ -252,7 +254,9 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                                 size: 16,
                                 color:
                                     widget.message.isRead
-                                        ? const Color(0xFF25D366) // WhatsApp green for read
+                                        ? const Color(
+                                          0xFF25D366,
+                                        ) // WhatsApp green for read
                                         : Colors.white.withOpacity(0.7),
                               ),
                             ],
@@ -290,41 +294,44 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
             width: 2,
           ),
         ),
-        child: (widget.chatImage != null && widget.chatImage!.isNotEmpty)
-            ? ClipOval(
-                child: Image.network(
-                  imageUrl + widget.chatImage!,
-                  width: 32,
-                  height: 32,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Icon(
-                    Icons.pets,
-                    size: 16,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: SizedBox(
-                        width: 12,
-                        height: 12,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : null,
+        child:
+            (widget.chatImage != null && widget.chatImage!.isNotEmpty)
+                ? ClipOval(
+                  child: Image.network(
+                    imageUrl + widget.chatImage!,
+                    width: 32,
+                    height: 32,
+                    fit: BoxFit.cover,
+                    errorBuilder:
+                        (context, error, stackTrace) => Icon(
+                          Icons.pets,
+                          size: 16,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                      ),
-                    );
-                  },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: SizedBox(
+                          width: 12,
+                          height: 12,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            value:
+                                loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                )
+                : Icon(
+                  Icons.pets,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-              )
-            : Icon(
-                Icons.pets,
-                size: 16,
-                color: Theme.of(context).colorScheme.primary,
-              ),
       ),
     ];
   }
@@ -483,6 +490,142 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
       audioUrl: audioUrl + widget.message.audio!,
       isMe: widget.isMe,
       primaryColor: theme.colorScheme.primary,
+    );
+  }
+
+  Widget _buildDocumentContent() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Extract file name from URL
+    final docUrl = widget.message.file!;
+    final fileName = docUrl.split('/').last.split('?').first;
+
+    // Determine file extension and icon
+    final extension = fileName.split('.').last.toUpperCase();
+    IconData icon;
+    Color iconColor;
+
+    switch (extension) {
+      case 'PDF':
+        icon = Icons.picture_as_pdf;
+        iconColor = Colors.red;
+        break;
+      case 'DOC':
+      case 'DOCX':
+        icon = Icons.description;
+        iconColor = Colors.blue;
+        break;
+      case 'XLS':
+      case 'XLSX':
+        icon = Icons.table_chart;
+        iconColor = Colors.green;
+        break;
+      case 'PPT':
+      case 'PPTX':
+        icon = Icons.slideshow;
+        iconColor = Colors.orange;
+        break;
+      case 'TXT':
+        icon = Icons.text_snippet;
+        iconColor = Colors.grey;
+        break;
+      case 'ZIP':
+      case 'RAR':
+      case '7Z':
+        icon = Icons.folder_zip;
+        iconColor = Colors.amber;
+        break;
+      default:
+        icon = Icons.insert_drive_file;
+        iconColor = Colors.blueGrey;
+    }
+
+    return InkWell(
+      onTap: () {
+        // TODO: Implement document download/viewing
+        debugPrint('Document tapped: $docUrl');
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: (widget.isMe
+                  ? Colors.white.withOpacity(0.2)
+                  : (isDark ? Colors.grey[900] : Colors.grey[300]))
+              ?.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color:
+                widget.isMe
+                    ? Colors.white.withOpacity(0.3)
+                    : (isDark ? Colors.grey[700]! : Colors.grey[400]!),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: iconColor, size: 32),
+            ),
+            const SizedBox(width: 12),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    fileName,
+                    style: TextStyle(
+                      color:
+                          widget.isMe
+                              ? Colors.white
+                              : (isDark ? Colors.white : Colors.black87),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: iconColor,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      extension,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              Icons.download_rounded,
+              color:
+                  widget.isMe
+                      ? Colors.white.withOpacity(0.8)
+                      : (isDark ? Colors.grey[400] : Colors.grey[600]),
+              size: 20,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

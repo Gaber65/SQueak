@@ -116,6 +116,7 @@ class _ConversationHubManager {
 
     _logger.info('🔧 Registering ConversationHub event listeners...');
 
+    // Event 1: PetIsJoinedToConversation - Pet joined the conversation
     _connection!.on("PetIsJoinedToConversation", (arguments) {
       _logger.fine('Event received: PetIsJoinedToConversation - $arguments');
       conversationSignalEventStream.add(
@@ -183,9 +184,18 @@ class _ConversationHubManager {
             "ConversationHub", "MessageSentAndNotReadYet", arguments),
       );
     });
+
+    // Event 9: UnreadedMessagesCountPetConversation - Unread message count update
+    _connection!.on("UnreadedMessagesCountPetConversation", (arguments) {
+      _logger.fine('Event received: UnreadedMessagesCountPetConversation - $arguments');
+      conversationSignalEventStream.add(
+        ConversationSignalEvent(
+            "ConversationHub", "UnreadedMessagesCountPetConversation", arguments),
+      );
+    });
     
     _eventsRegistered = true;
-    print('✅ [ConversationHub] All 8 event listeners registered successfully, including FriendIsTyping');
+    print('✅ [ConversationHub] All 9 event listeners registered successfully');
     _logger.info('✅ Event listeners registered successfully');
   }
 
@@ -362,7 +372,6 @@ class SignalRConversationHubService {
     });
   }
 
-
   void onFriendIsTyping(Function(Map<String, dynamic> data) callback) {
     _hub.on("FriendIsTyping", (args) {
       if (args != null && args.isNotEmpty) {
@@ -372,7 +381,6 @@ class SignalRConversationHubService {
     });
   }
 
-
   void onMessageReceived(Function(Map<String, dynamic> data) callback) {
     _hub.on("MessageReceived", (args) {
       if (args != null && args.isNotEmpty) {
@@ -381,6 +389,7 @@ class SignalRConversationHubService {
       }
     });
   }
+
   void onReadMessage(Function(bool isRead) callback) {
     _hub.on("ReadMessage", (args) {
       if (args != null && args.isNotEmpty) {
@@ -420,6 +429,15 @@ class SignalRConversationHubService {
     });
   }
 
+  void onUnreadedMessagesCountPetConversation(
+      Function(Map<String, dynamic> data) callback) {
+    _hub.on("UnreadedMessagesCountPetConversation", (args) {
+      if (args != null && args.isNotEmpty) {
+        final data = Map<String, dynamic>.from(args[0] as Map);
+        callback(data);
+      }
+    });
+  }
 
 
   void dispose() {

@@ -71,6 +71,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
             conversationId: chatId,
             petId: petId,
           );
+          print('================================================================================');
           print('✅ All messages marked as read');
         } catch (e) {
           print('❌ Error marking messages as read: $e');

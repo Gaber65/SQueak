@@ -236,7 +236,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 ).addReceivedMessage(state.message, widget.pet!.ownerId);
 
                 // Mark as read
-                // ChatAppCubit.get(context).markMessagesAsRead(widget.chat.id);
+                ChatAppCubit.get(context).markMessagesAsRead(widget.chat.id);
 
                 // Scroll to bottom
                 Future.delayed(const Duration(milliseconds: 100), () {
@@ -532,6 +532,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       } else if (type == AttachmentType.audio) {
         await mainCubit.getGlobalSound(file, UploadPlace.messageRecord);
         mediaUrl = mainCubit.modelImage?.data;
+      } else if (type == AttachmentType.file) {
+        await mainCubit.getGlobalDocument(file, UploadPlace.messageFiles);
+        mediaUrl = mainCubit.modelImage?.data;
       }
 
       if (mounted) {
@@ -549,6 +552,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           image: type == AttachmentType.image ? mediaUrl : null,
           video: type == AttachmentType.video ? mediaUrl : null,
           audio: type == AttachmentType.audio ? mediaUrl : null,
+          file: type == AttachmentType.file ? mediaUrl : null,
         );
         debugPrint('✅ Media message sent successfully');
       } else {

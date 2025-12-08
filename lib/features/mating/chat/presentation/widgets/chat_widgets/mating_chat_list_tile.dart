@@ -411,9 +411,11 @@ class MatingChatListTile extends StatelessWidget {
     } else if (message.audio != null && message.audio!.isNotEmpty) {
       mediaIcon = Icons.mic;
       messageText = isArabic() ? 'صوت' : 'Audio';
+    } else if (message.file != null && message.file!.isNotEmpty) {
+      mediaIcon = Icons.insert_drive_file;
+      messageText = isArabic() ? 'مستند' : 'Document';
     }
 
-    // If no media and no description, show "No messages yet"
     if (mediaIcon == null && messageText.isEmpty) {
       return Text(
         isArabic() ? 'لا رسائل بعد' : 'No messages yet',
@@ -440,7 +442,9 @@ class MatingChatListTile extends StatelessWidget {
                       ? const Color(0xFF25D366)
                       : Theme.of(
                         navigatorKey.currentContext!,
-                      ).colorScheme.onSurface.withOpacity(0.5),
+                      ).colorScheme.onSurface.withOpacity(
+                        0.5,
+                      ),
             ),
           ),
         if (mediaIcon != null)

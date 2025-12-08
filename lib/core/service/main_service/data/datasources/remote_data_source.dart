@@ -158,15 +158,11 @@ class MainRemoteDataSource {
     String subtype,
   ) async {
     String fileName = file.path.split('/').last;
-
     try {
       File fileToUpload = file;
-
-      // Only compress if it's an image
       if (type == 'image') {
         fileToUpload = await compressImage(file);
       }
-
       String filePath = fileToUpload.path;
       debugPrint('📤 Uploading $type file: $fileName to endpoint: $endpoint');
       debugPrint('📦 Upload place: $uploadPlace, Content-Type: $type/$subtype');
@@ -182,12 +178,8 @@ class MainRemoteDataSource {
           'UploadPlace': '$uploadPlace',
         }),
       );
-      debugPrint('✅ Upload successful: ${response.data}');
       return ImageModel.fromJson(response.data);
     } on DioException catch (e) {
-      debugPrint('❌ Upload failed - Status: ${e.response?.statusCode}');
-      debugPrint('❌ Error data: ${e.response?.data}');
-      debugPrint('❌ Error message: ${e.message}');
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

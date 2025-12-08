@@ -33,3 +33,7 @@ class VideoHelperError extends MainState {}
 class SoundHelperLoading extends MainState {}
 class SoundHelperSuccess extends MainState {}
 class SoundHelperError extends MainState {}
+
+class DocumentHelperLoading extends MainState {}
+class DocumentHelperSuccess extends MainState {}
+class DocumentHelperError extends MainState {}

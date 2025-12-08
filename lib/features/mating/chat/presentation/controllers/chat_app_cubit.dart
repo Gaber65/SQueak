@@ -312,6 +312,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     String? image,
     String? video,
     String? audio,
+    String? file,
   }) async {
     try {
       final command = {
@@ -321,6 +322,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         if (image != null) 'Image': image,
         if (video != null) 'Video': video,
         if (audio != null) 'Audio': audio,
+        if (file != null) 'file': file,
       };
 
       await conversationHub.sendMessageToUser(command);

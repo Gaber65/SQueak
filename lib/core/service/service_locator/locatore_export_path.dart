@@ -98,6 +98,7 @@ export '../main_service/domain/usecases/manage_token_use_case.dart';
 export '../main_service/domain/usecases/mange_upload_image_use_case.dart';
 export '../main_service/domain/usecases/mange_upload_sound_use_case.dart';
 export '../main_service/domain/usecases/mange_upload_video_use_case.dart';
+export '../main_service/domain/usecases/mange_upload_document_use_case.dart';
 export '../main_service/presentation/controller/main_cubit/main_cubit.dart';
 
 export 'package:squeak/features/vetcare/domain/use_case/follow_clinic_usecase.dart';

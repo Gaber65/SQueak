@@ -4,6 +4,7 @@ class MessageEntity {
   final String? image;
   final String? video;
   final String? audio;
+  final String? file;
   final bool isRead;
   final String fromUserId;
   final String toUserId;
@@ -11,11 +12,12 @@ class MessageEntity {
   final bool toMe;
 
   const MessageEntity({
-     this.id,
+    this.id,
     required this.description,
     this.image,
     this.video,
     this.audio,
+    this.file,
     required this.isRead,
     required this.fromUserId,
     required this.toUserId,
@@ -29,6 +31,7 @@ class MessageEntity {
     String? image,
     String? video,
     String? audio,
+    String? file,
     bool? isRead,
     String? fromUserId,
     String? toUserId,
@@ -41,6 +44,7 @@ class MessageEntity {
       image: image ?? this.image,
       video: video ?? this.video,
       audio: audio ?? this.audio,
+      file: file ?? this.file,
       isRead: isRead ?? this.isRead,
       fromUserId: fromUserId ?? this.fromUserId,
       toUserId: toUserId ?? this.toUserId,

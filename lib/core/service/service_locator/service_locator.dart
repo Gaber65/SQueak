@@ -29,7 +29,7 @@ final sl = GetIt.instance;
 class ServiceLocator {
   Future<void> init() async {
     // Register Cubits
-    sl.registerFactory(() => MainCubit(sl(), sl(), sl(), sl(), sl()));
+    sl.registerFactory(() => MainCubit(sl(), sl(), sl(), sl(), sl(), sl()));
     sl.registerFactory(() => CommentCubit(sl(), sl(), sl(), sl()));
     sl.registerFactory(() => PostCubit(sl(), sl(), sl() , sl(), sl()));
     sl.registerFactory(() => SearchCubit(sl(), sl(), sl(), sl(), sl()));
@@ -122,6 +122,9 @@ class ServiceLocator {
     );
     sl.registerLazySingleton<ManageUploadSoundUseCase>(
       () => ManageUploadSoundUseCase(sl()),
+    );
+    sl.registerLazySingleton<ManageUploadDocumentUseCase>(
+      () => ManageUploadDocumentUseCase(sl()),
     );
     sl.registerLazySingleton(() => UpdateCommentUseCase(sl()));
     sl.registerLazySingleton(() => GetCommentPostUseCase(sl()));
