@@ -5008,6 +5008,66 @@ class S {
   String get offline {
     return Intl.message('Offline', name: 'offline', desc: '', args: []);
   }
+
+  /// `Open in Browser`
+  String get openInBrowser {
+    return Intl.message(
+      'Open in Browser',
+      name: 'openInBrowser',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open in App`
+  String get openInApp {
+    return Intl.message('Open in App', name: 'openInApp', desc: '', args: []);
+  }
+
+  /// `Download started`
+  String get downloadStarted {
+    return Intl.message(
+      'Download started',
+      name: 'downloadStarted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cannot open document`
+  String get cannotOpenDocument {
+    return Intl.message(
+      'Cannot open document',
+      name: 'cannotOpenDocument',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to load document`
+  String get documentLoadingFailed {
+    return Intl.message(
+      'Failed to load document',
+      name: 'documentLoadingFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error`
+  String get error {
+    return Intl.message('Error', name: 'error', desc: '', args: []);
+  }
+
+  /// `Refresh`
+  String get refresh {
+    return Intl.message('Refresh', name: 'refresh', desc: '', args: []);
+  }
+
+  /// `Loading`
+  String get loading {
+    return Intl.message('Loading', name: 'loading', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

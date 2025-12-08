@@ -3,8 +3,10 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/generated/l10n.dart';
 import 'package:video_player/video_player.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'in_app_document_viewer.dart';
 
-enum MediaType { image, video }
+enum MediaType { image, video, document }
 
 class FullScreenMediaViewer extends StatefulWidget {
   final String mediaUrl;
@@ -32,6 +34,8 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
     super.initState();
     if (widget.mediaType == MediaType.video) {
       _initializeVideo();
+    } else if (widget.mediaType == MediaType.document) {
+      // Optionally, auto-download or open document
     }
   }
 
@@ -107,7 +111,9 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
             child:
                 widget.mediaType == MediaType.image
                     ? _buildImageViewer()
-                    : _buildVideoViewer(),
+                    : widget.mediaType == MediaType.video
+                    ? _buildVideoViewer()
+                    : _buildDocumentViewer(),
           ),
 
           // Close button and menu for video
@@ -119,8 +125,9 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // More options menu (only for video)
-                    if (widget.mediaType == MediaType.video)
+                    // More options menu (for video and document)
+                    if (widget.mediaType == MediaType.video ||
+                        widget.mediaType == MediaType.document)
                       Material(
                         color: Colors.black.withOpacity(0.5),
                         shape: const CircleBorder(),
@@ -136,42 +143,62 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
                           },
                           itemBuilder:
                               (context) => [
-                                PopupMenuItem(
-                                  value: 'speed',
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.speed,
-                                        color: Colors.white70,
-                                        size: 20,
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        '${S.of(context).playbackSpeed} (${_playbackSpeed}x)',
-                                        style: const TextStyle(
-                                          color: Colors.white,
+                                if (widget.mediaType == MediaType.video)
+                                  PopupMenuItem(
+                                    value: 'speed',
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.speed,
+                                          color: Colors.white70,
+                                          size: 20,
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          '${S.of(context).playbackSpeed} (${_playbackSpeed}x)',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                PopupMenuItem(
-                                  value: 'quality',
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.high_quality,
-                                        color: Colors.white70,
-                                        size: 20,
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        S.of(context).quality,
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ],
+                                if (widget.mediaType == MediaType.video)
+                                  PopupMenuItem(
+                                    value: 'quality',
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.high_quality,
+                                          color: Colors.white70,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          S.of(context).quality,
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
+                                if (widget.mediaType == MediaType.document)
+                                  PopupMenuItem(
+                                    value: 'open_external',
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.open_in_new,
+                                          color: Colors.white70,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          S.of(context).openInBrowser,
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 PopupMenuItem(
                                   value: 'download',
                                   child: Row(
@@ -308,8 +335,11 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
       case 'quality':
         _showQualityDialog();
         break;
+      case 'open_external':
+        _openDocumentInBrowser();
+        break;
       case 'download':
-        _downloadVideo();
+        _downloadMedia();
         break;
     }
   }
@@ -383,5 +413,181 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
     );
   }
 
-  void _downloadVideo() {}
+  void _downloadMedia() {
+
+  }
+
+  void _openInApp() {
+    final fileName = widget.mediaUrl.split('/').last.split('?').first;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder:
+            (context) => InAppDocumentViewer(
+              documentUrl: widget.mediaUrl,
+              fileName: fileName,
+            ),
+      ),
+    );
+  }
+
+  Future<void> _openDocumentInBrowser() async {
+    try {
+      final uri = Uri.parse(widget.mediaUrl);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(S.of(context).cannotOpenDocument),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ Error opening document: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${S.of(context).error}: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Widget _buildDocumentViewer() {
+    final fileName = widget.mediaUrl.split('/').last.split('?').first;
+    final extension = fileName.split('.').last.toUpperCase();
+
+    IconData icon;
+    Color iconColor;
+
+    switch (extension) {
+      case 'PDF':
+        icon = Icons.picture_as_pdf;
+        iconColor = Colors.red;
+        break;
+      case 'DOC':
+      case 'DOCX':
+        icon = Icons.description;
+        iconColor = Colors.blue;
+        break;
+      case 'XLS':
+      case 'XLSX':
+        icon = Icons.table_chart;
+        iconColor = Colors.green;
+        break;
+      case 'PPT':
+      case 'PPTX':
+        icon = Icons.slideshow;
+        iconColor = Colors.orange;
+        break;
+      case 'TXT':
+        icon = Icons.text_snippet;
+        iconColor = Colors.grey;
+        break;
+      case 'ZIP':
+      case 'RAR':
+      case '7Z':
+        icon = Icons.folder_zip;
+        iconColor = Colors.amber;
+        break;
+      default:
+        icon = Icons.insert_drive_file;
+        iconColor = Colors.blueGrey;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(40),
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 120, color: iconColor),
+          ),
+          const SizedBox(height: 32),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: iconColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              extension,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            fileName,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 48),
+          ElevatedButton.icon(
+            onPressed: _openInApp,
+            icon: const Icon(Icons.article_outlined),
+            label: Text(S.of(context).openInApp),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              backgroundColor: iconColor,
+              foregroundColor: Colors.white,
+              textStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: _openDocumentInBrowser,
+            icon: const Icon(Icons.open_in_new),
+            label: Text(S.of(context).openInBrowser),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              foregroundColor: Colors.white,
+              side: const BorderSide(color: Colors.white, width: 2),
+              textStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: _downloadMedia,
+            icon: const Icon(Icons.download_rounded),
+            label: Text(S.of(context).download),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              foregroundColor: Colors.white,
+              side: const BorderSide(color: Colors.white, width: 2),
+              textStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

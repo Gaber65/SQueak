@@ -8,6 +8,7 @@ import 'package:squeak/generated/l10n.dart';
 import '../../../domain/entities/message_entity.dart';
 import '../attach_files_in_chat/full_screen_media_viewer.dart';
 import '../attach_files_in_chat/audio_player_widget.dart';
+import '../attach_files_in_chat/in_app_document_viewer.dart';
 
 class ChatMessageBubble extends StatefulWidget {
   final MessageEntity message;
@@ -543,8 +544,44 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
 
     return InkWell(
       onTap: () {
-        // TODO: Implement document download/viewing
-        debugPrint('Document tapped: $docUrl');
+        final fullUrl = documentUrl + docUrl;
+        final extension = fileName.split('.').last.toLowerCase();
+
+        // Check if it's an image file
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].contains(extension)) {
+          // Open as image
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder:
+                  (context) => FullScreenMediaViewer(
+                    mediaUrl: fullUrl,
+                    mediaType: MediaType.image,
+                  ),
+            ),
+          );
+        } else if (extension == 'pdf') {
+          // Open PDF directly in app viewer
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder:
+                  (context) => InAppDocumentViewer(
+                    documentUrl: fullUrl,
+                    fileName: fileName,
+                  ),
+            ),
+          );
+        } else {
+          // For other documents, show options screen
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder:
+                  (context) => FullScreenMediaViewer(
+                    mediaUrl: fullUrl,
+                    mediaType: MediaType.document,
+                  ),
+            ),
+          );
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),

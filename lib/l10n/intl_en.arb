@@ -600,7 +600,15 @@
   "editVideo":"Edit Video",
   "preview":"Preview",
   "audioFile":"Audio File",
-  "offline":"Offline"
+  "offline":"Offline",
+  "openInBrowser":"Open in Browser",
+  "openInApp":"Open in App",
+  "downloadStarted":"Download started",
+  "cannotOpenDocument":"Cannot open document",
+  "documentLoadingFailed":"Failed to load document",
+  "error":"Error",
+  "refresh":"Refresh",
+  "loading":"Loading"
   
  
 

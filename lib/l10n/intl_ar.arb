@@ -594,7 +594,14 @@
   "editVideo":"تعديل الفيديو",
   "preview":"معاينة",
   "audioFile":"ملف صوتي",
-  "offline":"غير متصل"
+  "offline":"غير متصل",
+  "openInBrowser":"فتح في المتصفح",
+  "openInApp":"فتح في التطبيق",
+  "downloadStarted":"بدأ التحميل",
+  "cannotOpenDocument":"لا يمكن فتح المستند",
+  "error":"خطأ",
+  "refresh":"تحديث",
+  "loading":"تحميل"
 
 
 
