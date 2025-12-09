@@ -161,7 +161,6 @@ class AppRepositoryImpl implements AppRepository {
     File file,
     UploadPlace uploadPlace,
   ) async {
-    // Detect document subtype from file extension
     String extension = file.path.split('.').last.toLowerCase();
     String subtype;
     String type = 'application';

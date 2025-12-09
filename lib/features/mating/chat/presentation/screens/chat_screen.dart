@@ -6,6 +6,7 @@ import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
+import 'package:squeak/features/mating/chat/domain/entities/message_entity.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_status.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/chat_widgets/chat_app_bar.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/attachment_options_bottom_sheet.dart';
@@ -659,6 +660,42 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
+    // Add a local outgoing message so UI shows it immediately
+    try {
+      final tempId = 'local_${DateTime.now().millisecondsSinceEpoch}';
+      final localMsg = MessageEntity(
+        id: tempId,
+        description: text,
+        image: null,
+        video: null,
+        audio: null,
+        file: null,
+        isRead: false,
+        fromUserId: widget.pet?.ownerId ?? '',
+        toUserId: widget.chat.petId,
+        createdAt: DateTime.now(),
+        toMe: false,
+      );
+
+      cubit.messagesList.add(localMsg);
+      cubit.emit(ChatMessagesLoaded(List.from(cubit.messagesList)));
+
+      // Scroll to bottom after a short delay
+      Future.delayed(const Duration(milliseconds: 120), () {
+        final lastIndex = cubit.messagesList.length - 1;
+        if (lastIndex >= 0) {
+          try {
+            _itemScrollController.jumpTo(index: lastIndex);
+          } catch (_) {}
+        }
+      });
+
+      print('📤 [ChatScreen] Sent local message $tempId');
+    } catch (e) {
+      print('❌ [ChatScreen] Error adding local message: $e');
+    }
+
+    // Send to server via ChatAppCubit (SignalR)
     chatAppCubit.sendMessage(
       conversationId: widget.chat.id,
       toPetId: widget.chat.petId,
