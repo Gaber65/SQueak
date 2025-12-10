@@ -438,13 +438,11 @@ class MatingChatListTile extends StatelessWidget {
               Icons.done_all,
               size: 16,
               color:
-                  message.isRead
+                  message.isRead == true
                       ? const Color(0xFF25D366)
                       : Theme.of(
                         navigatorKey.currentContext!,
-                      ).colorScheme.onSurface.withOpacity(
-                        0.5,
-                      ),
+                      ).colorScheme.onSurface.withOpacity(0.5),
             ),
           ),
         if (mediaIcon != null)

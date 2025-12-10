@@ -40,85 +40,184 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   void _subscribeConversationEvents() {
     // Prevent multiple subscriptions
     _conversationEventSubscription?.cancel();
-    _conversationEventSubscription = conversationSignalEventStream.stream
-        .listen((event) {
+    _conversationEventSubscription = conversationSignalEventStream.stream.listen((
+      event,
+    ) {
       try {
         if (event.hub != 'ConversationHub') return;
 
         final method = event.method;
         print('📡 [ConversationEvent] Received: $method → ${event.data}');
 
-        if (method == 'MessageSentAndPetIsNotOnline' ||
-            method == 'MessageSentAndNotReadYet') {
-          final data = event.data;
-          if (data != null && data.isNotEmpty) {
-            final payload = data[0];
-            if (payload is Map) {
-              // Build MessageModel from payload
-              final serverMsg = MessageModel.fromJson(Map<String, dynamic>.from(payload));
-              final id = serverMsg.id ?? '';
+        switch (method) {
+          case 'MessageSentAndPetIsNotOnline':
+          case 'MessageSentAndNotReadYet':
+            final data = event.data;
+            if (data != null && data.isNotEmpty) {
+              final payload = data[0];
+              if (payload is Map) {
+                // Build MessageModel from payload
+                final serverMsg = MessageModel.fromJson(
+                  Map<String, dynamic>.from(payload),
+                );
+                final id = serverMsg.id ?? '';
 
-              // Update or insert into messagesList to reflect server-sent message
-              final existsById = messagesList.any((m) => m.id == id);
-              if (!existsById) {
-                // Try to find a local optimistic message match (by description, fromUserId, createdAt proximity)
-                final matchIndex = messagesList.indexWhere((m) {
-                  final sameSender = m.fromUserId == serverMsg.fromUserId;
-                  final sameText = m.description == serverMsg.description;
-                  final timeDiff = (serverMsg.createdAt.difference(m.createdAt).inSeconds).abs();
-                  return sameSender && sameText && timeDiff <= 10;
-                });
+                // Update or insert into messagesList to reflect server-sent message
+                final existsById = messagesList.any((m) => m.id == id);
+                if (!existsById) {
+                  // Try to find a local optimistic message match (by description, fromUserId, createdAt proximity)
+                  final matchIndex = messagesList.indexWhere((m) {
+                    final sameSender = m.fromUserId == serverMsg.fromUserId;
+                    final sameText = m.description == serverMsg.description;
+                    final timeDiff =
+                        (serverMsg.createdAt.difference(m.createdAt).inSeconds)
+                            .abs();
+                    return sameSender && sameText && timeDiff <= 10;
+                  });
 
-                if (matchIndex >= 0) {
-                  // Replace local optimistic message with server message
-                  messagesList[matchIndex] = serverMsg;
-                  print('🔁 [Messages] Replaced local message at index $matchIndex with server message $id');
+                  if (matchIndex >= 0) {
+                    // Replace local optimistic message with server message
+                    messagesList[matchIndex] = serverMsg;
+                    print(
+                      '🔁 [Messages] Replaced local message at index $matchIndex with server message $id',
+                    );
+                  } else {
+                    // Append server message
+                    messagesList.add(serverMsg);
+                    print(
+                      '➕ [Messages] Added server message $id to messagesList',
+                    );
+                  }
                 } else {
-                  // Append server message
-                  messagesList.add(serverMsg);
-                  print('➕ [Messages] Added server message $id to messagesList');
+                  print('ℹ️ [Messages] Server message $id already present');
                 }
-              } else {
-                print('ℹ️ [Messages] Server message $id already present');
-              }
 
-              // Set delivery status based on event type
-              if (method == 'MessageSentAndPetIsNotOnline') {
-                deliveryStatuses[id] = 'one';
-                print('✅ [Delivery] Message $id → delivered (one check)');
-              } else {
-                deliveryStatuses[id] = 'two_grey';
-                print('🟦🟦 [Delivery] Message $id → sent but not read (two grey checks)');
-              }
+                // Set delivery status based on event type
+                if (method == 'MessageSentAndPetIsNotOnline') {
+                  deliveryStatuses[id] = 'one';
+                  print('✅ [Delivery] Message $id → delivered (one check)');
+                } else {
+                  deliveryStatuses[id] = 'two_grey';
+                  print(
+                    '🟦🟦 [Delivery] Message $id → sent but not read (two grey checks)',
+                  );
+                }
 
-              emit(ChatMessagesLoaded(List.from(messagesList)));
+                emit(ChatMessagesLoaded(List.from(messagesList)));
+              } else {
+                print('⚠️ [Delivery] Payload is not a Map: $payload');
+              }
             } else {
-              print('⚠️ [Delivery] Payload is not a Map: $payload');
+              print('⚠️ [Delivery] Event data missing or empty for $method');
             }
-          } else {
-            print('⚠️ [Delivery] Event data missing or empty for $method');
-          }
-        } else if (method == 'MessageIsRead' || method == 'ReadMessage') {
-          // Server signals read - mark all outgoing messages as read for simplicity
-          print('📖 [Read] Received $method — marking outgoing messages as read (two colored checks)');
-          for (var i = 0; i < messagesList.length; i++) {
-            final m = messagesList[i];
-            if (!m.toMe) {
-              // outgoing message
-              if (m.id != null && m.id!.isNotEmpty) {
-                deliveryStatuses[m.id!] = 'two_colored';
-                print('✅✅ [Read] Message ${m.id} marked as read');
+            break;
+
+          case 'MessageRead':
+            // Single message was read by recipient
+            if (event.data != null && event.data!.isNotEmpty) {
+              final data = Map<String, dynamic>.from(event.data![0] as Map);
+              final messageId =
+                  data['MessageId']?.toString() ??
+                  data['messageId']?.toString();
+
+              if (messageId != null) {
+                print('📖 [ChatMessagesCubit] Message $messageId was read');
+
+                // Update delivery status to 'two_colored' (read)
+                deliveryStatuses[messageId] = 'two_colored';
+
+                // Update message in list
+                final index = messagesList.indexWhere((m) => m.id == messageId);
+                if (index != -1) {
+                  messagesList[index] = messagesList[index].copyWith(isRead: true);
+                  emit(ChatMessagesLoaded(List.from(messagesList)));
+                }
               }
             }
-          }
-          emit(ChatMessagesLoaded(List.from(messagesList)));
-        } else {
+            break;
+
+          case 'AllMessagesRead':
+            // All messages in conversation were read by recipient
+            if (event.data != null && event.data!.isNotEmpty) {
+              final data = Map<String, dynamic>.from(event.data![0] as Map);
+              final conversationId =
+                  data['ConversationId']?.toString() ??
+                  data['conversationId']?.toString();
+
+              print(
+                '📖📖 [ChatMessagesCubit] All messages read in conversation $conversationId',
+              );
+
+              // Mark all outgoing messages as read
+              for (var i = 0; i < messagesList.length; i++) {
+                if (!messagesList[i].toMe) {
+                  messagesList[i] = messagesList[i].copyWith(isRead: true);
+                  if (messagesList[i].id != null) {
+                    deliveryStatuses[messagesList[i].id!] = 'two_colored';
+                  }
+                }
+              }
+              emit(ChatMessagesLoaded(List.from(messagesList)));
+            }
+            break;
+
+          case 'MessageStatusChanged':
+            // Message status was changed
+            if (event.data != null && event.data!.isNotEmpty) {
+              final data = Map<String, dynamic>.from(event.data![0] as Map);
+              final messageId =
+                  data['MessageId']?.toString() ??
+                  data['messageId']?.toString();
+              final isRead = data['IsRead'] ?? data['isRead'] ?? false;
+
+              if (messageId != null) {
+                print(
+                  '🔄 [ChatMessagesCubit] Message $messageId status changed to isRead=$isRead',
+                );
+
+                deliveryStatuses[messageId] =
+                    isRead ? 'two_colored' : 'two_grey';
+
+                final index = messagesList.indexWhere((m) => m.id == messageId);
+                if (index != -1) {
+                  messagesList[index] = messagesList[index].copyWith(isRead: isRead);
+                  emit(ChatMessagesLoaded(List.from(messagesList)));
+                }
+              }
+            }
+            break;
+
+          case 'MessageIsRead':
+          case 'ReadMessage':
+            // Server signals read - mark all outgoing messages as read for simplicity
+            print(
+              '📖 [Read] Received $method — marking outgoing messages as read (two colored checks)',
+            );
+            for (var i = 0; i < messagesList.length; i++) {
+              final m = messagesList[i];
+              if (!m.toMe) {
+                // outgoing message
+                if (m.id != null && m.id!.isNotEmpty) {
+                  deliveryStatuses[m.id!] = 'two_colored';
+                  messagesList[i] = messagesList[i].copyWith(isRead: true);
+                  print('✅✅ [Read] Message ${m.id} marked as read');
+                }
+              }
+            }
+            emit(ChatMessagesLoaded(List.from(messagesList)));
+            break;
+
+          default:
+            // Handle other events
+            break;
         }
       } catch (e) {
+        print(
+          '⚠️ [ChatMessagesCubit] Error processing event ${event.method}: $e',
+        );
       }
     });
   }
-
 
   static get(BuildContext context) =>
       BlocProvider.of<ChatMessagesCubit>(context);
@@ -128,6 +227,21 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
 
   void addReceivedMessage(MessageEntity message, String senderID) {
     messagesList.add(message);
+    emit(ChatMessagesLoaded(List.from(messagesList)));
+  }
+
+  /// Mark all outgoing messages (messages sent by me) as read locally
+  /// This sets the `isRead` flag and updates deliveryStatuses to 'two_colored'.
+  void markOutgoingMessagesAsRead() {
+    for (var i = 0; i < messagesList.length; i++) {
+      final m = messagesList[i];
+      if (!m.toMe) {
+        messagesList[i] = messagesList[i].copyWith(isRead: true);
+        if (m.id != null && m.id!.isNotEmpty) {
+          deliveryStatuses[m.id!] = 'two_colored';
+        }
+      }
+    }
     emit(ChatMessagesLoaded(List.from(messagesList)));
   }
 
@@ -167,7 +281,9 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
             conversationId: chatId,
             petId: petId,
           );
-          print('================================================================================');
+          print(
+            '================================================================================',
+          );
           print('✅ All messages marked as read');
         } catch (e) {
           print('❌ Error marking messages as read: $e');
@@ -295,8 +411,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       await _conversationEventSubscription?.cancel();
       try {
         await signalRService.disconnect();
-      } catch (e) {
-      }
+      } catch (e) {}
       deliveryStatuses.clear();
     } catch (_) {}
     return super.close();

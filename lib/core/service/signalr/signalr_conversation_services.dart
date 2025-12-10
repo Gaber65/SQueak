@@ -218,8 +218,47 @@ class _ConversationHubManager {
       );
     });
 
+    // Event 10: MessageRead - Single message was read by recipient
+    _connection!.on("MessageRead", (arguments) {
+      print('📖 [ConversationHub] MessageRead event received: $arguments');
+      _logger.info('Event received: MessageRead - $arguments');
+      conversationSignalEventStream.add(
+        ConversationSignalEvent("ConversationHub", "MessageRead", arguments),
+      );
+    });
+
+    // Event 11: AllMessagesRead - All messages in conversation were read
+    _connection!.on("AllMessagesRead", (arguments) {
+      print(
+        '📖📖 [ConversationHub] AllMessagesRead event received: $arguments',
+      );
+      _logger.info('Event received: AllMessagesRead - $arguments');
+      conversationSignalEventStream.add(
+        ConversationSignalEvent(
+          "ConversationHub",
+          "AllMessagesRead",
+          arguments,
+        ),
+      );
+    });
+
+    // Event 12: MessageStatusChanged - Message status was changed
+    _connection!.on("MessageStatusChanged", (arguments) {
+      print(
+        '🔄 [ConversationHub] MessageStatusChanged event received: $arguments',
+      );
+      _logger.info('Event received: MessageStatusChanged - $arguments');
+      conversationSignalEventStream.add(
+        ConversationSignalEvent(
+          "ConversationHub",
+          "MessageStatusChanged",
+          arguments,
+        ),
+      );
+    });
+
     _eventsRegistered = true;
-    print('✅ [ConversationHub] All 9 event listeners registered successfully');
+    print('✅ [ConversationHub] All 12 event listeners registered successfully');
     _logger.info('✅ Event listeners registered successfully');
   }
 
@@ -458,6 +497,35 @@ class SignalRConversationHubService {
     Function(Map<String, dynamic> data) callback,
   ) {
     _hub.on("UnreadedMessagesCountPetConversation", (args) {
+      if (args != null && args.isNotEmpty) {
+        final data = Map<String, dynamic>.from(args[0] as Map);
+        callback(data);
+      }
+    });
+  }
+
+  void onSingleMessageRead(Function(Map<String, dynamic> data) callback) {
+    _hub.on("MessageRead", (args) {
+      if (args != null && args.isNotEmpty) {
+        final data = Map<String, dynamic>.from(args[0] as Map);
+        callback(data);
+      }
+    });
+  }
+
+  void onAllMessagesReadInConversation(
+    Function(Map<String, dynamic> data) callback,
+  ) {
+    _hub.on("AllMessagesRead", (args) {
+      if (args != null && args.isNotEmpty) {
+        final data = Map<String, dynamic>.from(args[0] as Map);
+        callback(data);
+      }
+    });
+  }
+
+  void onMessageStatusChanged(Function(Map<String, dynamic> data) callback) {
+    _hub.on("MessageStatusChanged", (args) {
       if (args != null && args.isNotEmpty) {
         final data = Map<String, dynamic>.from(args[0] as Map);
         callback(data);

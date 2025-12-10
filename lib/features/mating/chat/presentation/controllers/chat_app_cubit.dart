@@ -394,6 +394,39 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       }
     });
 
+    // Single message read by recipient
+    conversationHub.onSingleMessageRead((data) {
+      print('📖 [ChatAppCubit] Single message read: $data');
+      final messageId =
+          data['MessageId']?.toString() ?? data['messageId']?.toString();
+      if (messageId != null && currentConversationId != null) {
+        emit(SingleMessageRead(currentConversationId!, messageId));
+      }
+    });
+
+    // All messages in conversation read by recipient
+    conversationHub.onAllMessagesReadInConversation((data) {
+      print('📖📖 [ChatAppCubit] All messages read in conversation: $data');
+      final conversationId =
+          data['ConversationId']?.toString() ??
+          data['conversationId']?.toString();
+      if (conversationId != null) {
+        unreadCounts[conversationId] = 0;
+        emit(AllMessagesRead(conversationId));
+      }
+    });
+
+    // Message status changed
+    conversationHub.onMessageStatusChanged((data) {
+      print('🔄 [ChatAppCubit] Message status changed: $data');
+      final messageId =
+          data['MessageId']?.toString() ?? data['messageId']?.toString();
+      final isRead = data['IsRead'] ?? data['isRead'] ?? false;
+      if (messageId != null) {
+        emit(MessageStatusChanged(messageId, isRead));
+      }
+    });
+
     // Message sent but not online
     conversationHub.onMessageSentAndPetIsNotOnline((data) {
       final message = MessageModel.fromJson(data);

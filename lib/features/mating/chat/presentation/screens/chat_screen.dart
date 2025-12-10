@@ -18,6 +18,7 @@ import 'package:squeak/features/mating/chat/presentation/widgets/message_widgets
 import 'package:squeak/features/mating/chat/presentation/widgets/message_widgets/message_input_widget.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/recording_overlay.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/message_widgets/uploading_bubble.dart';
+import 'package:squeak/core/service/signalr/signalr_conversation_services.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../../pets/domain/entities/pet_entity.dart';
 import '../controllers/chat_messages_state.dart';
@@ -80,7 +81,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     print('💬 [MatingChatDetailScreen] Conversation ID: ${widget.chat.id}');
     print('💬 [MatingChatDetailScreen] Friend Pet ID: ${widget.chat.petId}');
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mounted) {
         print('🔌 [MatingChatDetailScreen] Joining conversation...');
         print(
@@ -88,7 +89,33 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         );
         print('📡 [MatingChatDetailScreen] GeneralHub will remain connected');
         _chatAppCubit = context.read<ChatAppCubit>();
-        _chatAppCubit?.joinConversation(widget.chat.id);
+        await _chatAppCubit?.joinConversation(widget.chat.id);
+
+        // Fire local PetIsJoinedToConversation event so listeners handle this immediately
+        print('✅ [MatingChatDetailScreen] انضم الحيوان الأليف للمحادثة: ${widget.chat.id}');
+        conversationSignalEventStream.add(
+          ConversationSignalEvent(
+            'ConversationHub',
+            'PetIsJoinedToConversation',
+            [
+              {
+                'ConversationId': widget.chat.id,
+                'PetId': widget.pet?.petId,
+              }
+            ],
+          ),
+        );
+
+        // Mark all messages as read when opening the chat
+        if (widget.pet?.petId != null) {
+          print('📖 [MatingChatDetailScreen] Marking conversation as read...');
+          await _chatAppCubit?.conversationHub
+              .markAllUnreadedMessagesInConversationAsRead(
+                conversationId: widget.chat.id,
+                petId: widget.pet!.petId!,
+              );
+          print('✅ [MatingChatDetailScreen] Conversation marked as read');
+        }
       }
     });
 
@@ -135,6 +162,20 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         _chatAppCubit!.setTyping(
           conversationId: widget.chat.id,
           isTyping: false,
+        );
+        // Fire local PetLeftConversation event before leaving so listeners update immediately
+        print('🔴 [MatingChatDetailScreen] مغادرة المحادثة - إطلاق حدث PetLeftConversation: ${widget.chat.id}');
+        conversationSignalEventStream.add(
+          ConversationSignalEvent(
+            'ConversationHub',
+            'PetLeftConversation',
+            [
+              {
+                'ConversationId': widget.chat.id,
+                'PetId': widget.pet?.petId,
+              }
+            ],
+          ),
         );
         // Leave the conversation (disconnects ConversationHub, keeps GeneralHub connected)
         print('🔌 [MatingChatDetailScreen] Calling leaveConversation...');
@@ -293,6 +334,26 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 }
               }
 
+              // When a pet joins the conversation (e.g., the other participant opened the chat)
+              if (state is PetJoinedConversation) {
+                final data = state.data;
+                final joinedPetId =
+                    data['petId']?.toString() ?? data['PetId']?.toString();
+                if (joinedPetId != null && joinedPetId == widget.chat.petId) {
+                  // The friend joined this conversation — mark our outgoing messages as read
+                  try {
+                    ChatMessagesCubit.get(context).markOutgoingMessagesAsRead();
+                    print(
+                      '📖 [MatingChatDetailScreen] Friend $joinedPetId joined — marked outgoing messages as read',
+                    );
+                  } catch (e) {
+                    print(
+                      '⚠️ [MatingChatDetailScreen] Error marking outgoing messages as read: $e',
+                    );
+                  }
+                }
+              }
+
               // Clear typing indicator when friend leaves conversation
               if (state is PetLeftConversation) {
                 final data = state.data;
@@ -402,8 +463,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                   appBar: ChatAppBar(
                     chat: widget.chat,
                     cubit: cubit,
-                      isOnline:
-                        chatAppCubit.generalHub.isPetOnlineFromDict(widget.chat.petId),
+                    isOnline: chatAppCubit.generalHub.isPetOnlineFromDict(
+                      widget.chat.petId,
+                    ),
                     isTyping:
                         chatAppCubit.typingIndicators[widget.chat.petId] ??
                         false,

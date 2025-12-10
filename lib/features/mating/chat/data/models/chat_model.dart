@@ -1,7 +1,4 @@
-
-
 import 'package:squeak/features/mating/chat/data/models/message_model.dart';
-
 import '../../domain/entities/chat_entity.dart';
 
 class ChatModel extends ChatEntity {
@@ -23,7 +20,6 @@ class ChatModel extends ChatEntity {
     required super.isReadOnly,
     required super.unreadedCount,
     required super.lastMessage,
-
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
@@ -44,17 +40,18 @@ class ChatModel extends ChatEntity {
       isBlockedByOther: json['isBlockedByOther'] ?? false,
       isReadOnly: json['isReadOnly'] ?? false,
       unreadedCount: json['unreadedCount'] ?? 0,
-      lastMessage: json['lastMessage'] != null
-          ? MessageModel.fromJson(json['lastMessage'])
-          : MessageModel(
-              id: '',
-              description: '',
-              isRead: false,
-              fromUserId: '',
-              toUserId: '',
-              createdAt: DateTime.now(),
-              toMe: false,
-            ),
+      lastMessage:
+          json['lastMessage'] != null
+              ? MessageModel.fromJson(json['lastMessage'])
+              : MessageModel(
+                id: '',
+                description: '',
+                isRead: false,
+                fromUserId: '',
+                toUserId: '',
+                createdAt: DateTime.now(),
+                toMe: false,
+              ),
     );
     return model;
   }

@@ -261,25 +261,25 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                                   IconData iconData;
                                   Color iconColor;
 
-                                  if (widget.message.isRead ||
+                                  if (widget.message.isRead == true ||
                                       status == 'two_colored') {
                                     iconData = Icons.done_all_rounded;
                                     iconColor = const Color(0xFF25D366);
                                   } else if (status == 'one') {
                                     iconData = Icons.done_rounded;
-                                    iconColor =
-                                        Theme.of(context).colorScheme.primary;
-                                  } else if (status == 'two_grey') {
+                                    iconColor = Colors.white;
+                                  } else if (widget.message.isRead == true ||
+                                      status == 'two') {
                                     iconData = Icons.done_all_rounded;
                                     iconColor = Colors.grey[400]!;
                                   } else {
                                     // fallback to previous single/double logic
                                     iconData =
-                                        widget.message.isRead
+                                        widget.message.isRead == true
                                             ? Icons.done_all_rounded
                                             : Icons.done_rounded;
                                     iconColor =
-                                        widget.message.isRead
+                                        widget.message.isRead == true
                                             ? const Color(0xFF25D366)
                                             : Colors.white.withOpacity(0.7);
                                   }

@@ -1,7 +1,7 @@
 import '../../domain/entities/message_entity.dart';
 
 class MessageModel extends MessageEntity {
-  const MessageModel({
+  MessageModel({
     required super.id,
     required super.description,
     super.image,
@@ -23,13 +23,13 @@ class MessageModel extends MessageEntity {
     } else {
       try {
         var tempDate = DateTime.parse(raw.toString());
-        
+
         if (tempDate.isUtc) {
           parsedCreatedAt = tempDate.toLocal();
         } else {
           parsedCreatedAt = DateTime.parse('${raw}Z').toLocal();
         }
-        
+
         if (parsedCreatedAt.year <= 1) parsedCreatedAt = DateTime.now();
       } catch (_) {
         try {
@@ -71,31 +71,33 @@ class MessageModel extends MessageEntity {
       'toMe': toMe,
     };
   }
-//signalR object
-  Map<String, dynamic> toSignalRCommand({
-    String? conversationId,
-    String? fromPetId,
-    String? toPetId,
-  }) {
-    return {
-      'description': description,
-      'image': image,
-      'video': video,
-      'audio': audio,
-      'file': file,
-      'fromUserId': fromUserId.isNotEmpty ? fromUserId : null,
-      'toUserId': toUserId.isNotEmpty ? toUserId : null,
-      'clinicId': null,
-      'conversationId': conversationId,
-      'fromPetId': fromPetId?.isNotEmpty == true ? fromPetId : null,
-      'toPetId': toPetId?.isNotEmpty == true ? toPetId : null,
-      'toMe': toMe,
-    };
-  }
+
+  //signalR object
+  // Map<String, dynamic> toSignalRCommand({
+  //   String? conversationId,
+  //   String? fromPetId,
+  //   String? toPetId,
+  // }) {
+  //   return {
+  //     'description': description,
+  //     'image': image,
+  //     'video': video,
+  //     'audio': audio,
+  //     'file': file,
+  //     'fromUserId': fromUserId.isNotEmpty ? fromUserId : null,
+  //     'toUserId': toUserId.isNotEmpty ? toUserId : null,
+  //     'clinicId': null,
+  //     'conversationId': conversationId,
+  //     'fromPetId': fromPetId?.isNotEmpty == true ? fromPetId : null,
+  //     'toPetId': toPetId?.isNotEmpty == true ? toPetId : null,
+  //     'toMe': toMe,
+  //   };
+  // }
 
   static List<MessageModel> fromJsonList(List<dynamic> list) {
     return list.map((item) => MessageModel.fromJson(item)).toList();
   }
+
   @override
   MessageModel copyWith({
     String? id,
@@ -105,6 +107,7 @@ class MessageModel extends MessageEntity {
     String? audio,
     String? file,
     bool? isRead,
+    bool? isDeliver,
     String? fromUserId,
     String? toUserId,
     DateTime? createdAt,
@@ -124,5 +127,4 @@ class MessageModel extends MessageEntity {
       toMe: toMe ?? this.toMe,
     );
   }
-
 }

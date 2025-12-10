@@ -288,9 +288,6 @@ class _ChatListViewState extends State<_ChatListView> {
                 chats.map((chat) {
                   final isTyping =
                       chatAppCubit.typingIndicators[chat.petId] ?? false;
-
-                  // استخدام القاموس من generalHub بدلاً من onlineFriends المحلي
-                  // Use dictionary from generalHub instead of local onlineFriends
                   final isOnline = chatAppCubit.generalHub.isPetOnlineFromDict(
                     chat.petId,
                   );

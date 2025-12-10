@@ -94,6 +94,24 @@ class MessagesMarkedAsRead extends ChatAppState {
   MessagesMarkedAsRead(this.conversationId);
 }
 
+// Read status events
+class SingleMessageRead extends ChatAppState {
+  final String conversationId;
+  final String messageId;
+  SingleMessageRead(this.conversationId, this.messageId);
+}
+
+class AllMessagesRead extends ChatAppState {
+  final String conversationId;
+  AllMessagesRead(this.conversationId);
+}
+
+class MessageStatusChanged extends ChatAppState {
+  final String messageId;
+  final bool isRead;
+  MessageStatusChanged(this.messageId, this.isRead);
+}
+
 // Periodic polling events
 class UnreadCountsPolled extends ChatAppState {
   final Map<String, int> counts;

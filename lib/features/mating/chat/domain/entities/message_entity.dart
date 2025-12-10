@@ -5,13 +5,13 @@ class MessageEntity {
   final String? video;
   final String? audio;
   final String? file;
-  final bool isRead;
+  final bool? isRead;
   final String fromUserId;
   final String toUserId;
   final DateTime createdAt;
   final bool toMe;
 
-  const MessageEntity({
+ const MessageEntity({
     this.id,
     required this.description,
     this.image,
