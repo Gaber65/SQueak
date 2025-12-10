@@ -18,8 +18,6 @@ class ChatsTab extends StatefulWidget {
 }
 
 class _ChatsTabState extends State<ChatsTab> {
-  String? _currentActivePetId;
-
   @override
   void initState() {
     super.initState();
@@ -38,9 +36,7 @@ class _ChatsTabState extends State<ChatsTab> {
       return Center(child: CircularProgressIndicator());
     }
 
-    _currentActivePetId = activePet!.petId;
-
-    print('📋 [ChatsTab] Building ChatsTab for petId: ${activePet.petId}');
+    print('📋 [ChatsTab] Building ChatsTab for petId: ${activePet!.petId}');
     print(
       '📡 [ChatsTab] This screen uses GeneralHub only (no ConversationHub)',
     );
@@ -119,7 +115,9 @@ class _ChatsTabState extends State<ChatsTab> {
                 (chat) => MatingChatListTile(
                   chat: chat,
                   petEntities: activePet,
-                  isOnline: chatAppCubit.onlineFriends[chat.petId] ?? false,
+                  isOnline: chatAppCubit.generalHub.isPetOnlineFromDict(
+                    chat.petId,
+                  ),
                   isTyping: chatAppCubit.typingIndicators[chat.petId] ?? false,
                   unreadCount: chatAppCubit.unreadCounts[chat.id] ?? 0,
                   onNavigateComplete: () async {

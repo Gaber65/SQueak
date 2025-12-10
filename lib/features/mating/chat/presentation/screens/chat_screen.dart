@@ -69,7 +69,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   static const int _maxRecordDuration = 120;
   ChatMessagesCubit? _recordingCubit;
   ChatAppCubit? _recordingChatAppCubit;
-  ChatAppCubit? _chatAppCubit; // Store reference for dispose
+  ChatAppCubit? _chatAppCubit;
 
   @override
   void initState() {
@@ -402,8 +402,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                   appBar: ChatAppBar(
                     chat: widget.chat,
                     cubit: cubit,
-                    isOnline:
-                        chatAppCubit.onlineFriends[widget.chat.petId] ?? false,
+                      isOnline:
+                        chatAppCubit.generalHub.isPetOnlineFromDict(widget.chat.petId),
                     isTyping:
                         chatAppCubit.typingIndicators[widget.chat.petId] ??
                         false,
@@ -678,7 +678,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       );
 
       cubit.messagesList.add(localMsg);
-      cubit.emit(ChatMessagesLoaded(List.from(cubit.messagesList)));
+      // Trigger UI update by creating new list reference
+      if (mounted) {
+        setState(() {});
+      }
 
       // Scroll to bottom after a short delay
       Future.delayed(const Duration(milliseconds: 120), () {

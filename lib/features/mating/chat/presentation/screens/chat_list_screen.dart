@@ -117,13 +117,22 @@ class _ChatListViewState extends State<_ChatListView> {
         listeners: [
           BlocListener<ChatAppCubit, ChatAppState>(
             listener: (context, state) {
-              // Refresh chat list on relevant SignalR events
-              if (state is UnreadCountUpdated ||
-                  state is MessageReceived ||
-                  state is FriendOnlineStatusChanged ||
-                  state is NewMessageDetected) {
+              // Use silent refresh for real-time updates (no loading indicator)
+              if (state is UnreadCountUpdated || state is NewMessageDetected) {
                 print(
-                  '🔄 [ChatListScreen] Received event from GeneralHub, refreshing chat list',
+                  '🔄 [ChatListScreen] Received ${state.runtimeType}, refreshing silently',
+                );
+                if (activePet?.petId != null) {
+                  context.read<ChatListCubit>().refreshChatsWithoutLoading(
+                    activePet!.petId!,
+                  );
+                }
+              }
+
+              // Full refresh only on leaving conversation (to update last message)
+              if (state is ConversationLeft) {
+                print(
+                  '🔄 [ChatListScreen] Left conversation, doing full refresh',
                 );
                 if (activePet?.petId != null) {
                   context.read<ChatListCubit>().loadChats(activePet!.petId!);
@@ -145,7 +154,7 @@ class _ChatListViewState extends State<_ChatListView> {
             debugPrint(
               '📊 Typing indicators: ${chatAppCubit.typingIndicators}',
             );
-            debugPrint('📊 Online friends: ${chatAppCubit.onlineFriends}');
+            debugPrint('📊 Online friends: ${chatAppCubit.generalHub.onlineFriendsDict}');
 
             return CustomScrollView(
               slivers: [
@@ -259,6 +268,7 @@ class _ChatListViewState extends State<_ChatListView> {
             current is FriendTypingInGeneral ||
             current is UnreadCountUpdated ||
             current is UnreadCountsPolled ||
+            current is NewMessageDetected ||
             current is ChatAppConnected;
       },
       builder: (context, chatAppState) {
@@ -278,15 +288,26 @@ class _ChatListViewState extends State<_ChatListView> {
                 chats.map((chat) {
                   final isTyping =
                       chatAppCubit.typingIndicators[chat.petId] ?? false;
+
+                  // استخدام القاموس من generalHub بدلاً من onlineFriends المحلي
+                  // Use dictionary from generalHub instead of local onlineFriends
+                  final isOnline = chatAppCubit.generalHub.isPetOnlineFromDict(
+                    chat.petId,
+                  );
+
                   if (isTyping) {
                     print(
-                      '✍️ Rendering ${chat.name} (${chat.petId}) with isTyping=true',
+                      '✍️ [ChatListScreen] عرض ${chat.name} (${chat.petId}) مع isTyping=true',
+                    );
+                    print(
+                      '✍️ [ChatListScreen] Rendering ${chat.name} (${chat.petId}) with isTyping=true',
                     );
                   }
+
                   return MatingChatListTile(
                     chat: chat,
                     petEntities: pet,
-                    isOnline: chatAppCubit.onlineFriends[chat.petId] ?? false,
+                    isOnline: isOnline,
                     isTyping: isTyping,
                     unreadCount: chatAppCubit.unreadCounts[chat.id] ?? 0,
                     onNavigateComplete:

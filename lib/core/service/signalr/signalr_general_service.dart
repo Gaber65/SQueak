@@ -3,7 +3,6 @@ import 'package:signalr_netcore/signalr_client.dart';
 import 'package:logging/logging.dart';
 import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
-import 'package:squeak/features/mating/chat/domain/entities/online_entity.dart';
 
 /// Broadcasts all SignalR events
 final StreamController<SignalEvent> signalEventStream =
@@ -20,7 +19,66 @@ class SignalEvent {
   String toString() => "[$hub] METHOD: $method → DATA: $data";
 }
 
-/// Connection info model
+/// DTO للأصدقاء المتصلين (PetConnectionDto)
+class PetConnectionDto {
+  final String petId;
+  final String fullName;
+  final String image;
+  final bool isOnline;
+
+  PetConnectionDto({
+    required this.petId,
+    required this.fullName,
+    required this.image,
+    required this.isOnline,
+  });
+
+  factory PetConnectionDto.fromJson(Map<String, dynamic> json) {
+    return PetConnectionDto(
+      petId: json['PetId'] ?? json['petId'] ?? '',
+      fullName: json['FullName'] ?? json['fullName'] ?? '',
+      image: json['Image'] ?? json['image'] ?? '',
+      isOnline: json['IsOnline'] ?? json['isOnline'] ?? false,
+    );
+  }
+
+  @override
+  String toString() =>
+      'PetConnectionDto(petId: $petId, fullName: $fullName, isOnline: $isOnline)';
+}
+
+/// حمولة تغيير الاتصال (ConnectionChangePayload)
+class ConnectionChangePayload {
+  final String petId;
+  final bool isOnline;
+  final String? connectionId;
+  final DateTime? connectedAt;
+
+  ConnectionChangePayload({
+    required this.petId,
+    required this.isOnline,
+    this.connectionId,
+    this.connectedAt,
+  });
+
+  factory ConnectionChangePayload.fromJson(Map<String, dynamic> json) {
+    return ConnectionChangePayload(
+      petId: json['PetId'] ?? json['petId'] ?? '',
+      isOnline: json['IsOnline'] ?? json['isOnline'] ?? false,
+      connectionId: json['ConnectionId'] ?? json['connectionId'],
+      connectedAt:
+          json['ConnectedAt'] != null
+              ? DateTime.parse(json['ConnectedAt'] as String)
+              : null,
+    );
+  }
+
+  @override
+  String toString() =>
+      'ConnectionChangePayload(petId: $petId, isOnline: $isOnline)';
+}
+
+/// Connection info model (kept for backward compatibility)
 class ConnectionInfo {
   final String connectionId;
   final String petId;
@@ -60,7 +118,17 @@ class _GeneralHubManager {
       StreamController<bool>.broadcast();
   final Logger _logger = Logger('GeneralHub');
 
+  // القاموس: تتبع حالة الاتصال لكل صديق (PetId -> IsOnline)
+  // THE DICTIONARY: Stores PetId -> IsOnline status
+  final Map<String, bool> _onlineFriendsDict = {};
+  final StreamController<Map<String, bool>> _onlineStatusController =
+      StreamController<Map<String, bool>>.broadcast();
+
   Stream<bool> get connectionStream => _connectionStateController.stream;
+  Stream<Map<String, bool>> get onlineStatusStream =>
+      _onlineStatusController.stream;
+  Map<String, bool> get onlineFriendsDict =>
+      Map.unmodifiable(_onlineFriendsDict);
   bool get isConnected => _connection?.state == HubConnectionState.Connected;
   String? get connectionId => _connection?.connectionId;
 
@@ -123,8 +191,22 @@ class _GeneralHubManager {
 
       _connectionStateController.add(true);
       _logger.info(
-        '✅ Connected to GeneralHub. ConnectionId: ${_connection!.connectionId}',
+        'Connected to GeneralHub successfully. Connection ID: ${_connection!.connectionId}',
       );
+
+      print(
+        '🌍 [GeneralHub] ═══════════════════════════════════════════════════',
+      );
+      print('🌍 [GeneralHub] تم الاتصال بنجاح بـ GeneralHub');
+      print('🌍 [GeneralHub] Successfully connected to GeneralHub');
+      print('🌍 [GeneralHub] Connection ID: ${_connection!.connectionId}');
+      print(
+        '🌍 [GeneralHub] ═══════════════════════════════════════════════════',
+      );
+
+      // الخطوة الأولى: جلب قائمة الأصدقاء المتصلين
+      // STEP 1: Fetch initial online friends list
+      await _fetchInitialOnlineFriends(petId);
     } catch (e, stackTrace) {
       _logger.severe('Failed to connect to GeneralHub: $e\n$stackTrace');
       _connectionStateController.add(false);
@@ -142,6 +224,65 @@ class _GeneralHubManager {
     _logger.info('Disconnected from GeneralHub');
   }
 
+  /// جلب قائمة الأصدقاء المتصلين الأولية وملء القاموس
+  /// Fetch initial online friends and populate the dictionary
+  Future<void> _fetchInitialOnlineFriends(String petId) async {
+    try {
+      print('📡 [GeneralHub] ══════════════════════════════════════════');
+      print('📡 [GeneralHub] جاري جلب قائمة الأصدقاء المتصلين الأولية...');
+      print('📡 [GeneralHub] Fetching initial online friends list...');
+      print('📡 [GeneralHub] Pet ID: $petId');
+
+      final result = await invoke<List<dynamic>>(
+        'GetAllMyOnlinePetFriends',
+        args: [petId],
+      );
+
+      if (result != null && result.isNotEmpty) {
+        print('✅ [GeneralHub] تم استلام ${result.length} صديق من الخادم');
+        print('✅ [GeneralHub] Received ${result.length} friends from server');
+
+        _onlineFriendsDict.clear();
+
+        for (var item in result) {
+          final friend = PetConnectionDto.fromJson(
+            item as Map<String, dynamic>,
+          );
+          _onlineFriendsDict[friend.petId] = friend.isOnline;
+
+          final statusAr = friend.isOnline ? 'متصل' : 'غير متصل';
+          final statusEn = friend.isOnline ? 'Online' : 'Offline';
+          print(
+            '   👤 ${friend.fullName} (${friend.petId}): $statusAr / $statusEn',
+          );
+        }
+
+        print(
+          '📊 [GeneralHub] إجمالي الأصدقاء في القاموس: ${_onlineFriendsDict.length}',
+        );
+        print(
+          '📊 [GeneralHub] Total friends in dictionary: ${_onlineFriendsDict.length}',
+        );
+        print('📊 [GeneralHub] Dictionary content: $_onlineFriendsDict');
+
+        // بث التحديث للواجهة
+        // Broadcast update to UI
+        _onlineStatusController.add(_onlineFriendsDict);
+        print('📢 [GeneralHub] تم بث حالة الاتصال الأولية للواجهة');
+        print('📢 [GeneralHub] Initial status broadcasted to UI');
+      } else {
+        print('⚠️ [GeneralHub] لم يتم العثور على أصدقاء متصلين');
+        print('⚠️ [GeneralHub] No online friends found');
+      }
+
+      print('📡 [GeneralHub] ══════════════════════════════════════════');
+    } catch (e, stackTrace) {
+      print('❌ [GeneralHub] خطأ في جلب الأصدقاء المتصلين: $e');
+      print('❌ [GeneralHub] Error fetching online friends: $e');
+      _logger.severe('Failed to fetch initial online friends: $e\n$stackTrace');
+    }
+  }
+
   void _registerEvents() {
     if (_connection == null) return;
 
@@ -157,6 +298,15 @@ class _GeneralHubManager {
       _connection!.on(eventName, (args) {
         print('📩 [GeneralHub] Event: $eventName -> $args');
         _logger.fine('Event received: $eventName - $args');
+
+        // معالجة خاصة لحدث تغيير الاتصال
+        // Special handling for FriendConnectionChanged event
+        if (eventName == 'FriendConnectionChanged' &&
+            args != null &&
+            args.isNotEmpty) {
+          _handleFriendConnectionChanged(args[0]);
+        }
+
         signalEventStream.add(SignalEvent("GeneralHub", eventName, args));
       });
     }
@@ -170,6 +320,59 @@ class _GeneralHubManager {
     ].forEach(registerEvent);
 
     _logger.info('✅ Event listeners registered successfully');
+    print('🎧 [GeneralHub] تم تسجيل مستمعي الأحداث بنجاح');
+    print('🎧 [GeneralHub] Event listeners registered successfully');
+  }
+
+  /// معالج حدث تغيير اتصال الصديق - يحدث القاموس في الخلفية
+  /// Handler for FriendConnectionChanged event - updates dictionary in background
+  void _handleFriendConnectionChanged(dynamic data) {
+    try {
+      print('🔄 [GeneralHub] ══════════════════════════════════════════');
+      print('🔄 [GeneralHub] تلقي حدث تغيير اتصال الصديق');
+      print('🔄 [GeneralHub] Received FriendConnectionChanged event');
+
+      final payload = ConnectionChangePayload.fromJson(
+        data as Map<String, dynamic>,
+      );
+
+      final oldStatus = _onlineFriendsDict[payload.petId];
+      final statusChangedAr =
+          oldStatus == null ? 'جديد' : (oldStatus ? 'متصل' : 'غير متصل');
+      final statusChangedEn =
+          oldStatus == null ? 'new' : (oldStatus ? 'online' : 'offline');
+      final newStatusAr = payload.isOnline ? 'متصل' : 'غير متصل';
+      final newStatusEn = payload.isOnline ? 'online' : 'offline';
+
+      print('   📝 Pet ID: ${payload.petId}');
+      print(
+        '   📝 الحالة السابقة / Previous: $statusChangedAr / $statusChangedEn',
+      );
+      print('   📝 الحالة الجديدة / New: $newStatusAr / $newStatusEn');
+
+      // تحديث القاموس
+      // Update the dictionary
+      _onlineFriendsDict[payload.petId] = payload.isOnline;
+
+      print('✅ [GeneralHub] تم تحديث القاموس بنجاح');
+      print('✅ [GeneralHub] Dictionary updated successfully');
+      print('📊 [GeneralHub] حجم القاموس الحالي: ${_onlineFriendsDict.length}');
+      print(
+        '📊 [GeneralHub] Current dictionary size: ${_onlineFriendsDict.length}',
+      );
+
+      // بث التحديث للواجهة (عمل في الخلفية)
+      // Broadcast update to UI (background job)
+      _onlineStatusController.add(_onlineFriendsDict);
+
+      print('📢 [GeneralHub] تم بث التحديث للواجهة في الخلفية');
+      print('📢 [GeneralHub] Update broadcasted to UI in background');
+      print('🔄 [GeneralHub] ══════════════════════════════════════════');
+    } catch (e, stackTrace) {
+      print('❌ [GeneralHub] خطأ في معالجة تغيير الاتصال: $e');
+      print('❌ [GeneralHub] Error handling connection change: $e');
+      _logger.severe('Error handling FriendConnectionChanged: $e\n$stackTrace');
+    }
   }
 
   Future<T?> invoke<T>(String methodName, {List<Object?>? args}) async {
@@ -202,6 +405,21 @@ class _GeneralHubManager {
 
   void dispose() {
     _connectionStateController.close();
+    _onlineStatusController.close();
+    _onlineFriendsDict.clear();
+  }
+
+  /// التحقق من حالة صديق معين من القاموس
+  /// Check if a specific friend is online from dictionary
+  bool isPetOnlineFromDict(String petId) {
+    final isOnline = _onlineFriendsDict[petId] ?? false;
+    print(
+      '🔍 [GeneralHub] فحص حالة $petId من القاموس: ${isOnline ? "متصل" : "غير متصل"}',
+    );
+    print(
+      '🔍 [GeneralHub] Checking $petId status from dictionary: ${isOnline ? "online" : "offline"}',
+    );
+    return isOnline;
   }
 }
 
@@ -227,8 +445,14 @@ class SignalRGeneralHubService {
   }
 
   Stream<bool> get connectionStream => _hub.connectionStream;
+  Stream<Map<String, bool>> get onlineStatusStream => _hub.onlineStatusStream;
+  Map<String, bool> get onlineFriendsDict => _hub.onlineFriendsDict;
   bool get isConnected => _hub.isConnected;
   String? get connectionId => _hub.connectionId;
+
+  /// التحقق من حالة صديق من القاموس المحلي (بدون استدعاء الخادم)
+  /// Check friend status from local dictionary (without server call)
+  bool isPetOnlineFromDict(String petId) => _hub.isPetOnlineFromDict(petId);
 
   Future<void> connect({
     required String petId,

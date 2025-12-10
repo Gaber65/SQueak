@@ -248,42 +248,49 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                             ),
                             if (widget.isMe) ...[
                               const SizedBox(width: 6),
-                              Builder(builder: (ctx) {
-                                final cubit = ChatMessagesCubit.get(ctx);
-                                final msgId = widget.message.id;
-                                final status = (msgId != null && msgId.isNotEmpty)
-                                    ? cubit.deliveryStatuses[msgId]
-                                    : null;
+                              Builder(
+                                builder: (ctx) {
+                                  final cubit = ChatMessagesCubit.get(ctx);
+                                  final msgId = widget.message.id;
+                                  final status =
+                                      (msgId != null && msgId.isNotEmpty)
+                                          ? cubit.deliveryStatuses[msgId]
+                                          : null;
 
-                                // Determine icon and color based on status
-                                IconData iconData;
-                                Color iconColor;
+                                  // Determine icon and color based on status
+                                  IconData iconData;
+                                  Color iconColor;
 
-                                if (widget.message.isRead || status == 'two_colored') {
-                                  iconData = Icons.done_all_rounded;
-                                  iconColor = const Color(0xFF25D366);
-                                } else if (status == 'one') {
-                                  iconData = Icons.done_rounded;
-                                  iconColor = Theme.of(context).colorScheme.primary;
-                                } else if (status == 'two_grey') {
-                                  iconData = Icons.done_all_rounded;
-                                  iconColor = Colors.grey[400]!;
-                                } else {
-                                  // fallback to previous single/double logic
-                                  iconData = widget.message.isRead
-                                      ? Icons.done_all_rounded
-                                      : Icons.done_rounded;
-                                  iconColor = widget.message.isRead
-                                      ? const Color(0xFF25D366)
-                                      : Colors.white.withOpacity(0.7);
-                                }
+                                  if (widget.message.isRead ||
+                                      status == 'two_colored') {
+                                    iconData = Icons.done_all_rounded;
+                                    iconColor = const Color(0xFF25D366);
+                                  } else if (status == 'one') {
+                                    iconData = Icons.done_rounded;
+                                    iconColor =
+                                        Theme.of(context).colorScheme.primary;
+                                  } else if (status == 'two_grey') {
+                                    iconData = Icons.done_all_rounded;
+                                    iconColor = Colors.grey[400]!;
+                                  } else {
+                                    // fallback to previous single/double logic
+                                    iconData =
+                                        widget.message.isRead
+                                            ? Icons.done_all_rounded
+                                            : Icons.done_rounded;
+                                    iconColor =
+                                        widget.message.isRead
+                                            ? const Color(0xFF25D366)
+                                            : Colors.white.withOpacity(0.7);
+                                  }
 
-                                return Icon(
-                                  iconData,
-                                  size: 16,
-                                  color: iconColor,
-                                );
-                              }),
+                                  return Icon(
+                                    iconData,
+                                    size: 16,
+                                    color: iconColor,
+                                  );
+                                },
+                              ),
                             ],
                           ],
                         ),
@@ -675,15 +682,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                 ],
               ),
             ),
-            const SizedBox(width: 8),
-            Icon(
-              Icons.download_rounded,
-              color:
-                  widget.isMe
-                      ? Colors.white.withOpacity(0.8)
-                      : (isDark ? Colors.grey[400] : Colors.grey[600]),
-              size: 20,
-            ),
+            // Download icon removed per design request
           ],
         ),
       ),

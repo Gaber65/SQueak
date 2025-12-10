@@ -16,7 +16,6 @@ class ChatListCubit extends Cubit<ChatListState> {
 
   static ChatListCubit get(context) => BlocProvider.of(context);
 
-
   Future<void> loadChats(String petId, {ChatStatus? status}) async {
     emit(ChatListLoading());
     final result = await getChatsUseCase(petId);
@@ -25,6 +24,22 @@ class ChatListCubit extends Cubit<ChatListState> {
       allChats = chats;
       emit(ChatListLoaded(allChats));
     });
+  }
+
+  /// Refresh chats without showing loading indicator (for real-time updates)
+  Future<void> refreshChatsWithoutLoading(String petId) async {
+    final result = await getChatsUseCase(petId);
+
+    result.fold(
+      (failure) {
+        // Silently fail, keep existing data
+        print('⚠️ [ChatListCubit] Silent refresh failed: $failure');
+      },
+      (chats) {
+        allChats = chats;
+        emit(ChatListLoaded(allChats));
+      },
+    );
   }
 
   @override

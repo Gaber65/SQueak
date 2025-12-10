@@ -4,7 +4,6 @@ import 'package:logging/logging.dart';
 import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 
-
 final StreamController<ConversationSignalEvent> conversationSignalEventStream =
     StreamController<ConversationSignalEvent>.broadcast();
 
@@ -18,7 +17,6 @@ class ConversationSignalEvent {
   @override
   String toString() => "[$hub] METHOD: $method → DATA: $data";
 }
-
 
 class _ConversationHubManager {
   HubConnection? _connection;
@@ -48,22 +46,25 @@ class _ConversationHubManager {
     }
 
     try {
-      _logger.info('Connecting to ConversationHub for conversationId: $conversationId, petId: $petId');
-      
+      _logger.info(
+        'Connecting to ConversationHub for conversationId: $conversationId, petId: $petId',
+      );
+
       final urlWithParams =
           '$conversationHubEndPoint?conversationId=$conversationId&petId=$petId';
 
-      _connection = HubConnectionBuilder()
-          .withUrl(
-            urlWithParams,
-            options: HttpConnectionOptions(
-              accessTokenFactory: () async => token.toString(),
-              transport: HttpTransportType.WebSockets,
-            ),
-          )
-          .withAutomaticReconnect()
-          .configureLogging(_logger)
-          .build();
+      _connection =
+          HubConnectionBuilder()
+              .withUrl(
+                urlWithParams,
+                options: HttpConnectionOptions(
+                  accessTokenFactory: () async => token.toString(),
+                  transport: HttpTransportType.WebSockets,
+                ),
+              )
+              .withAutomaticReconnect()
+              .configureLogging(_logger)
+              .build();
 
       _connection!.onclose(({error}) {
         _logger.warning('Connection closed. Error: $error');
@@ -84,7 +85,9 @@ class _ConversationHubManager {
       await _connection!.start();
       _registerEvents();
       _connectionStateController.add(true);
-      _logger.info('✅ Connected to ConversationHub. ConnectionId: ${_connection!.connectionId}');
+      _logger.info(
+        '✅ Connected to ConversationHub. ConnectionId: ${_connection!.connectionId}',
+      );
     } catch (e, stackTrace) {
       _logger.severe('Failed to connect to ConversationHub: $e\n$stackTrace');
       _connectionStateController.add(false);
@@ -94,7 +97,7 @@ class _ConversationHubManager {
 
   Future<void> disconnect() async {
     if (_connection == null) return;
-    
+
     _logger.info('Disconnecting from ConversationHub...');
     _eventsRegistered = false; // Reset flag
     await _connection!.stop();
@@ -121,7 +124,10 @@ class _ConversationHubManager {
       _logger.fine('Event received: PetIsJoinedToConversation - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent(
-            "ConversationHub", "PetIsJoinedToConversation", arguments),
+          "ConversationHub",
+          "PetIsJoinedToConversation",
+          arguments,
+        ),
       );
     });
 
@@ -130,7 +136,10 @@ class _ConversationHubManager {
       _logger.fine('Event received: PetLeftConversation - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent(
-            "ConversationHub", "PetLeftConversation", arguments),
+          "ConversationHub",
+          "PetLeftConversation",
+          arguments,
+        ),
       );
     });
 
@@ -147,7 +156,11 @@ class _ConversationHubManager {
     _connection!.on("MessageReceived", (arguments) {
       _logger.fine('Event received: MessageReceived - $arguments');
       conversationSignalEventStream.add(
-        ConversationSignalEvent("ConversationHub", "MessageReceived", arguments),
+        ConversationSignalEvent(
+          "ConversationHub",
+          "MessageReceived",
+          arguments,
+        ),
       );
     });
 
@@ -172,7 +185,10 @@ class _ConversationHubManager {
       _logger.fine('Event received: MessageSentAndPetIsNotOnline - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent(
-            "ConversationHub", "MessageSentAndPetIsNotOnline", arguments),
+          "ConversationHub",
+          "MessageSentAndPetIsNotOnline",
+          arguments,
+        ),
       );
     });
 
@@ -181,19 +197,27 @@ class _ConversationHubManager {
       _logger.fine('Event received: MessageSentAndNotReadYet - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent(
-            "ConversationHub", "MessageSentAndNotReadYet", arguments),
+          "ConversationHub",
+          "MessageSentAndNotReadYet",
+          arguments,
+        ),
       );
     });
 
     // Event 9: UnreadedMessagesCountPetConversation - Unread message count update
     _connection!.on("UnreadedMessagesCountPetConversation", (arguments) {
-      _logger.fine('Event received: UnreadedMessagesCountPetConversation - $arguments');
+      _logger.fine(
+        'Event received: UnreadedMessagesCountPetConversation - $arguments',
+      );
       conversationSignalEventStream.add(
         ConversationSignalEvent(
-            "ConversationHub", "UnreadedMessagesCountPetConversation", arguments),
+          "ConversationHub",
+          "UnreadedMessagesCountPetConversation",
+          arguments,
+        ),
       );
     });
-    
+
     _eventsRegistered = true;
     print('✅ [ConversationHub] All 9 event listeners registered successfully');
     _logger.info('✅ Event listeners registered successfully');
@@ -233,8 +257,6 @@ class _ConversationHubManager {
   }
 }
 
-
-
 class SignalRConversationHubService {
   static final SignalRConversationHubService _instance =
       SignalRConversationHubService._internal();
@@ -250,7 +272,9 @@ class SignalRConversationHubService {
   void _setupLogging() {
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
-      print('${record.level.name}: ${record.time}: ${record.loggerName}: ${record.message}');
+      print(
+        '${record.level.name}: ${record.time}: ${record.loggerName}: ${record.message}',
+      );
     });
   }
 
@@ -258,16 +282,12 @@ class SignalRConversationHubService {
   bool get isConnected => _hub.isConnected;
   String? get connectionId => _hub.connectionId;
 
-
   Future<void> connect({
     required String conversationId,
     required String petId,
   }) async {
     _logger.info('Connecting to ConversationHub...');
-    await _hub.connect(
-      conversationId: conversationId,
-      petId: petId,
-    );
+    await _hub.connect(conversationId: conversationId, petId: petId);
   }
 
   Future<void> disconnect() async {
@@ -284,7 +304,9 @@ class SignalRConversationHubService {
       throw Exception('Not connected to ConversationHub');
     }
 
-    _logger.fine('Setting typing indicator: conversationId=$conversationId, petId=$petId, isTyping=$isTyping');
+    _logger.fine(
+      'Setting typing indicator: conversationId=$conversationId, petId=$petId, isTyping=$isTyping',
+    );
     await _hub.invoke<void>(
       "SetTyping",
       args: [conversationId, petId, isTyping],
@@ -298,10 +320,7 @@ class SignalRConversationHubService {
     }
 
     _logger.info('Sending message to user: $command');
-    await _hub.invoke<void>(
-      "SendMessageToUser",
-      args: [command],
-    );
+    await _hub.invoke<void>("SendMessageToUser", args: [command]);
     _logger.fine('Message sent successfully');
   }
 
@@ -310,29 +329,36 @@ class SignalRConversationHubService {
     required String petId,
   }) async {
     if (!isConnected) {
-      _logger.warning('Cannot mark messages as read: Not connected to ConversationHub');
+      _logger.warning(
+        'Cannot mark messages as read: Not connected to ConversationHub',
+      );
       throw Exception('Not connected to ConversationHub');
     }
 
-    _logger.info('Marking all unread messages as read: conversationId=$conversationId, petId=$petId');
+    _logger.info(
+      'Marking all unread messages as read: conversationId=$conversationId, petId=$petId',
+    );
     await _hub.invoke<void>(
       "MarkAllUnreadedMessagesInConversationAsRead",
       args: [conversationId, petId],
     );
   }
 
-
   Future<List<String>?> getUnreadMessageIds({
     required String conversationId,
     required String petId,
   }) async {
     if (!isConnected) {
-      _logger.warning('Cannot get unread message IDs: Not connected to ConversationHub');
+      _logger.warning(
+        'Cannot get unread message IDs: Not connected to ConversationHub',
+      );
       throw Exception('Not connected to ConversationHub');
     }
 
     try {
-      _logger.info('Getting unread message IDs: conversationId=$conversationId, petId=$petId');
+      _logger.info(
+        'Getting unread message IDs: conversationId=$conversationId, petId=$petId',
+      );
       final result = await _hub.invoke<List<dynamic>>(
         "GetUnreadMessageIds",
         args: [conversationId, petId],
@@ -352,7 +378,6 @@ class SignalRConversationHubService {
     }
   }
 
-
   void onPetJoinedToConversation(Function(Map<String, dynamic> data) callback) {
     _hub.on("PetIsJoinedToConversation", (args) {
       if (args != null && args.isNotEmpty) {
@@ -361,7 +386,6 @@ class SignalRConversationHubService {
       }
     });
   }
-
 
   void onPetLeftConversation(Function(Map<String, dynamic> data) callback) {
     _hub.on("PetLeftConversation", (args) {
@@ -399,7 +423,6 @@ class SignalRConversationHubService {
     });
   }
 
- 
   void onMessageIsRead(Function(bool isRead) callback) {
     _hub.on("MessageIsRead", (args) {
       if (args != null && args.isNotEmpty) {
@@ -410,7 +433,8 @@ class SignalRConversationHubService {
   }
 
   void onMessageSentAndPetIsNotOnline(
-      Function(Map<String, dynamic> data) callback) {
+    Function(Map<String, dynamic> data) callback,
+  ) {
     _hub.on("MessageSentAndPetIsNotOnline", (args) {
       if (args != null && args.isNotEmpty) {
         final data = Map<String, dynamic>.from(args[0] as Map);
@@ -420,7 +444,8 @@ class SignalRConversationHubService {
   }
 
   void onMessageSentAndNotReadYet(
-      Function(Map<String, dynamic> data) callback) {
+    Function(Map<String, dynamic> data) callback,
+  ) {
     _hub.on("MessageSentAndNotReadYet", (args) {
       if (args != null && args.isNotEmpty) {
         final data = Map<String, dynamic>.from(args[0] as Map);
@@ -430,7 +455,8 @@ class SignalRConversationHubService {
   }
 
   void onUnreadedMessagesCountPetConversation(
-      Function(Map<String, dynamic> data) callback) {
+    Function(Map<String, dynamic> data) callback,
+  ) {
     _hub.on("UnreadedMessagesCountPetConversation", (args) {
       if (args != null && args.isNotEmpty) {
         final data = Map<String, dynamic>.from(args[0] as Map);
@@ -438,7 +464,6 @@ class SignalRConversationHubService {
       }
     });
   }
-
 
   void dispose() {
     _hub.dispose();

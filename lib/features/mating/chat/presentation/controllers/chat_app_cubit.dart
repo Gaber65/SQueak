@@ -17,9 +17,11 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
   StreamSubscription? _generalEventSubscription;
   StreamSubscription? _conversationEventSubscription;
+  StreamSubscription? _onlineStatusSubscription; // الاستماع لتحديثات القاموس
   Timer? _pollingTimer;
 
-  Map<String, bool> onlineFriends = {};
+  // تم إزالة onlineFriends المحلي - نستخدم القاموس من generalHub مباشرة
+  // Removed local onlineFriends - using dictionary from generalHub directly
   Map<String, int> unreadCounts = {};
   Map<String, bool> typingIndicators = {};
   String? currentConversationId;
@@ -35,35 +37,68 @@ class ChatAppCubit extends Cubit<ChatAppState> {
   }) : super(ChatAppInitial());
 
   Future<void> initialize() async {
+    print(
+      '🚀 [ChatAppCubit] ══════════════════════════════════════════════════════════════',
+    );
+    print('🚀 [ChatAppCubit] بدء التهيئة لـ petId: $petId');
     print('🚀 [ChatAppCubit] Initializing for petId: $petId');
     emit(ChatAppLoading());
 
     try {
+      print('🔌 [ChatAppCubit] الاتصال بـ GeneralHub...');
       print('🔌 [ChatAppCubit] Connecting to GeneralHub...');
-      // Connect to GeneralHub
+
+      // الاتصال بـ GeneralHub (سيقوم تلقائياً بجلب قائمة الأصدقاء المتصلين)
+      // Connect to GeneralHub (will automatically fetch online friends)
       await generalHub.connect(petId: petId, fullName: fullName, image: image);
+
+      print('✅ [ChatAppCubit] تم الاتصال بـ GeneralHub بنجاح');
       print('✅ [ChatAppCubit] GeneralHub connected successfully');
 
+      // الاستماع لتحديثات القاموس في الخلفية
+      // Listen to dictionary updates in background
+      print(
+        '🎧 [ChatAppCubit] بدء الاستماع لتحديثات حالة الاتصال من القاموس...',
+      );
+      print(
+        '🎧 [ChatAppCubit] Starting to listen to online status updates from dictionary...',
+      );
+      _listenToOnlineStatusUpdates();
+
       // Setup event listeners
+      print('🎧 [ChatAppCubit] إعداد مستمعي أحداث GeneralHub...');
       print('🎧 [ChatAppCubit] Setting up GeneralHub listeners...');
       _setupGeneralHubListeners();
       _listenToGeneralEvents();
+
+      print('✅ [ChatAppCubit] تم تكوين مستمعي GeneralHub');
       print('✅ [ChatAppCubit] GeneralHub listeners configured');
 
       // Get initial data
       print(
+        '📥 [ChatAppCubit] تحميل البيانات الأولية (عدد الرسائل غير المقروءة)...',
+      );
+      print(
         '📥 [ChatAppCubit] Loading initial data (online friends & unread counts)...',
       );
       await _loadInitialData();
+
+      print('✅ [ChatAppCubit] تم تحميل البيانات الأولية');
       print('✅ [ChatAppCubit] Initial data loaded');
 
-      // Start periodic polling for unread messages
-      _startPeriodicPolling();
-      print('⏰ [ChatAppCubit] Started periodic polling every 2 seconds');
+      // Periodic polling for unread messages is disabled to avoid frequent server calls
+      // If you need to re-enable, call `_startPeriodicPolling()` or implement a different trigger
+      print('⏸️ [ChatAppCubit] الاستطلاع الدوري معطل');
+      print('⏸️ [ChatAppCubit] Periodic polling disabled');
 
       emit(ChatAppConnected());
+      print('🎉 [ChatAppCubit] اكتمل التهيئة - GeneralHub نشط');
       print('🎉 [ChatAppCubit] Initialization complete - GeneralHub is active');
+      print(
+        '🚀 [ChatAppCubit] ══════════════════════════════════════════════════════════════',
+      );
     } catch (e) {
+      print('❌ [ChatAppCubit] فشل التهيئة: $e');
       print('❌ [ChatAppCubit] Failed to initialize: $e');
       emit(ChatAppError('Failed to initialize: $e'));
     }
@@ -72,19 +107,27 @@ class ChatAppCubit extends Cubit<ChatAppState> {
   void _setupGeneralHubListeners() {
     // Connection registered
     generalHub.onConnectionRegistered((data) {
-      print('✅ Connection Registered: $data');
+      print('✅ [ChatAppCubit] تسجيل الاتصال: $data');
+      print('✅ [ChatAppCubit] Connection Registered: $data');
       emit(ConnectionRegistered(data));
     });
 
-    // Friend connection changed
+    // Friend connection changed - لم نعد نحتاج لمعالجته هنا، القاموس يتعامل معه
+    // Friend connection changed - no longer need to handle here, dictionary handles it
     generalHub.onFriendConnectionChanged((data) {
       final friendPetId = data['PetId'] as String?;
       final isOnline = data['IsOnline'] as bool? ?? false;
 
       if (friendPetId != null) {
-        onlineFriends[friendPetId] = isOnline;
-        print('🔄 Friend $friendPetId online status changed to: $isOnline');
-        print('📊 Current online friends: $onlineFriends');
+        print(
+          '🔄 [ChatAppCubit] تغيير اتصال صديق: $friendPetId -> ${isOnline ? "متصل" : "غير متصل"}',
+        );
+        print(
+          '🔄 [ChatAppCubit] Friend $friendPetId online status changed to: $isOnline',
+        );
+
+        // القاموس في generalHub تم تحديثه بالفعل تلقائياً
+        // Dictionary in generalHub is already updated automatically
         emit(FriendOnlineStatusChanged(friendPetId, isOnline));
       }
     });
@@ -131,30 +174,93 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     _generalEventSubscription?.cancel();
 
     _generalEventSubscription = signalEventStream.stream.listen((event) {
-      print('📡 General Event: ${event.method}');
+      print('📡 General Event: ${event.method} -> ${event.data}');
+
+      // Handle UnreadedMessagesCountPetConversation event from stream
+      if (event.method == 'UnreadedMessagesCountPetConversation') {
+        try {
+          if (event.data != null && event.data!.isNotEmpty) {
+            final data = Map<String, dynamic>.from(event.data![0] as Map);
+            final conversationId =
+                (data['ConversationId'] ?? data['conversationId']) as String?;
+            final count = (data['Count'] ?? data['count']) as int? ?? 0;
+
+            print(
+              '📬 [GeneralHub Stream] Unread count event - ConversationId: $conversationId, Count: $count',
+            );
+
+            if (conversationId != null) {
+              unreadCounts[conversationId] = count;
+              print(
+                '📊 [GeneralHub Stream] Updated unreadCounts: $unreadCounts',
+              );
+              emit(UnreadCountUpdated(conversationId, count));
+            }
+          }
+        } catch (e) {
+          print(
+            '❌ [GeneralHub Stream] Error processing unread count event: $e',
+          );
+        }
+      }
     });
+  }
+
+  /// الاستماع لتحديثات القاموس من generalHub (عمل في الخلفية)
+  /// Listen to dictionary updates from generalHub (background job)
+  void _listenToOnlineStatusUpdates() {
+    _onlineStatusSubscription?.cancel();
+
+    _onlineStatusSubscription = generalHub.onlineStatusStream.listen((
+      statusMap,
+    ) {
+      print(
+        '📡 [ChatAppCubit] ══════════════════════════════════════════════════════════',
+      );
+      print('📡 [ChatAppCubit] تلقي تحديث القاموس من الخلفية');
+      print('📡 [ChatAppCubit] Received dictionary update from background');
+      print(
+        '📡 [ChatAppCubit] إجمالي الأصدقاء في القاموس: ${statusMap.length}',
+      );
+      print(
+        '📡 [ChatAppCubit] Total friends in dictionary: ${statusMap.length}',
+      );
+      print('📡 [ChatAppCubit] محتوى القاموس: $statusMap');
+      print('📡 [ChatAppCubit] Dictionary content: $statusMap');
+
+      // يمكن إصدار حدث لتحديث الواجهة إذا لزم الأمر
+      // Can emit event to update UI if needed
+      emit(ChatAppConnected()); // Force UI rebuild with new dictionary data
+
+      print(
+        '📡 [ChatAppCubit] ══════════════════════════════════════════════════════════',
+      );
+    });
+
+    print('🎧 [ChatAppCubit] تم الاشتراك في تحديثات القاموس');
+    print('🎧 [ChatAppCubit] Subscribed to dictionary updates');
   }
 
   Future<void> _loadInitialData() async {
     try {
-      // Get online friends
-      final friends = await generalHub.getAllMyOnlinePetFriends(petId);
-      if (friends != null) {
-        print('📥 Raw friends data: $friends');
-        for (var friend in friends) {
-          print('👤 Processing friend: ${friend.toString()}');
-          print('   - petId: "${friend.petId}"');
-          print('   - isOnline: ${friend.isOnline}');
-
-          if (friend.petId.isNotEmpty) {
-            onlineFriends[friend.petId] = friend.isOnline;
-          } else {
-            print('⚠️ Friend has empty petId!');
-          }
-        }
-        print('✅ Loaded ${friends.length} online friends');
-        print('📊 Initial online friends: $onlineFriends');
-      }
+      // لم نعد نحتاج لجلب الأصدقاء المتصلين - القاموس يحتوي عليهم بالفعل
+      // No longer need to fetch online friends - dictionary already has them
+      print(
+        '📊 [ChatAppCubit] تخطي جلب الأصدقاء المتصلين - القاموس يحتوي عليهم بالفعل',
+      );
+      print(
+        '📊 [ChatAppCubit] Skipping online friends fetch - dictionary already has them',
+      );
+      print(
+        '📊 [ChatAppCubit] الأصدقاء المتصلين من القاموس: ${generalHub.onlineFriendsDict.length}',
+      );
+      print(
+        '📊 [ChatAppCubit] Online friends from dictionary: ${generalHub.onlineFriendsDict.length}',
+      );
+      print('📊 [ChatAppCubit] محتوى القاموس: ${generalHub.onlineFriendsDict}');
+      print(
+        '📊 [ChatAppCubit] Dictionary content: ${generalHub.onlineFriendsDict}',
+      );
 
       // Get unread message counts
       final counts = await generalHub.getUnreadMessageCounts(petId);
@@ -169,6 +275,8 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         print(
           '📋 Conversation IDs with unread messages: ${counts.keys.toList()}',
         );
+        // Emit to trigger UI update
+        emit(UnreadCountsPolled(counts));
       } else {
         print('⚠️ No unread counts returned from server');
       }
@@ -298,6 +406,34 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       final message = MessageModel.fromJson(data);
       emit(MessageSentUnread(currentConversationId!, message));
     });
+
+    // Unread messages count update (fired after marking messages as read)
+    conversationHub.onUnreadedMessagesCountPetConversation((data) {
+      print('📬 [ConversationHub] UnreadedMessagesCountPetConversation: $data');
+      final conversationId =
+          (data['ConversationId'] ?? data['conversationId']) as String?;
+      final count = (data['Count'] ?? data['count']) as int? ?? 0;
+
+      if (conversationId != null) {
+        unreadCounts[conversationId] = count;
+        print(
+          '📊 [ConversationHub] Updated unreadCounts[$conversationId] = $count',
+        );
+        emit(UnreadCountUpdated(conversationId, count));
+      }
+    });
+
+    // // All messages marked as read (server sends this after markAllUnreadedMessagesInConversationAsRead)
+    // conversationHub.onAllMessagesRead((data) {
+    //   print('📖 [ConversationHub] AllMessagesRead event received: $data');
+    //   if (currentConversationId != null) {
+    //     unreadCounts[currentConversationId!] = 0;
+    //     print(
+    //       '📊 [ConversationHub] Set unreadCounts[$currentConversationId] = 0',
+    //     );
+    //     emit(UnreadCountUpdated(currentConversationId!, 0));
+    //   }
+    // });
   }
 
   void _listenToConversationEvents() {
@@ -355,6 +491,11 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         conversationId: conversationId,
         petId: petId,
       );
+      unreadCounts[conversationId] = 0;
+      print(
+        '📖 [ChatAppCubit] Marked messages as read, updating unread count to 0',
+      );
+      emit(UnreadCountUpdated(conversationId, 0));
     } catch (e) {
       print('Error marking messages as read: $e');
     }
@@ -363,12 +504,8 @@ class ChatAppCubit extends Cubit<ChatAppState> {
   Future<void> leaveConversation() async {
     try {
       await conversationHub.disconnect();
-      await generalHub.disconnect();
-      await generalHub.connect(petId: petId, fullName: fullName, image: image);
-      _setupGeneralHubListeners();
-      _listenToGeneralEvents();
-
-      // Refresh data from GeneralHub
+      print('🔌 [ChatAppCubit] Disconnected from ConversationHub');
+      print('📡 [ChatAppCubit] GeneralHub remains connected to receive events');
       print('🔄 [ChatAppCubit] Refreshing online friends and unread counts...');
       await _loadInitialData();
       print('📊 [ChatAppCubit] Unread counts: $unreadCounts');
@@ -388,117 +525,41 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     }
   }
 
-  void _startPeriodicPolling() {
-    _pollingTimer?.cancel();
-    _pollingTimer = Timer.periodic(const Duration(seconds: 2), (_) async {
-      await Future.wait([_pollUnreadCounts(), _pollOnlineFriends()]);
-    });
-  }
-
-  Future<void> _pollUnreadCounts() async {
-    try {
-      print(
-        '🔍 [ChatAppCubit] Calling getUnreadMessageCounts for petId: $petId',
-      );
-      final counts = await generalHub.getUnreadMessageCounts(petId);
-
-      print('📊 [ChatAppCubit] ═══════════════════════════════════');
-      print('📊 [ChatAppCubit] GetUnreadMessageCounts Response:');
-      print('   - Type: ${counts.runtimeType}');
-      print('   - Is null: ${counts == null}');
-      print('   - Count of conversations: ${counts?.length ?? 0}');
-      print('   - Full response: $counts');
-      if (counts != null) {
-        counts.forEach((conversationId, count) {
-          print('   - Conversation[$conversationId]: $count unread messages');
-        });
-      }
-      print('📊 [ChatAppCubit] ═══════════════════════════════════');
-
-      if (counts != null) {
-        final newTotal = counts.values.fold(0, (sum, count) => sum + count);
-        final oldTotal = _totalUnreadMessages;
-
-        print(
-          '📈 [ChatAppCubit] Unread totals - Old: $oldTotal, New: $newTotal',
-        );
-        print('📋 [ChatAppCubit] Previous unread counts: $unreadCounts');
-
-        // Check if any conversation has new unread messages
-        bool hasNewMessages = false;
-        for (var conversationId in counts.keys) {
-          final oldCount = unreadCounts[conversationId] ?? 0;
-          final newCount = counts[conversationId] ?? 0;
-          if (newCount > oldCount) {
-            print(
-              '🔔 [ChatAppCubit] New message in conversation $conversationId: $oldCount -> $newCount',
-            );
-            hasNewMessages = true;
-          }
-        }
-
-        // Update unread counts
-        unreadCounts = counts;
-        emit(UnreadCountsPolled(counts));
-        if (hasNewMessages || newTotal > oldTotal) {
-          _totalUnreadMessages = newTotal;
-          emit(NewMessageDetected());
-        } else {
-          _totalUnreadMessages = newTotal;
-        }
-      }
-    } catch (e) {}
-  }
-
-  Future<void> _pollOnlineFriends() async {
-    try {
-      final friends = await generalHub.getAllMyOnlinePetFriends(petId);
-
-      if (friends != null) {
-        final newOnlineStatus = <String, bool>{};
-        final currentOnlinePetIds = friends.map((f) => f.petId).toSet();
-        for (var petId in onlineFriends.keys) {
-          if (!currentOnlinePetIds.contains(petId) &&
-              onlineFriends[petId] == true) {
-            print('🔄 [ChatAppCubit] Friend $petId went offline');
-            emit(FriendOnlineStatusChanged(petId, false));
-          }
-        }
-
-        // Process current online friends
-        for (var friend in friends) {
-          final friendPetId = friend.petId;
-          if (friendPetId.isNotEmpty) {
-            newOnlineStatus[friendPetId] = friend.isOnline;
-
-            // Check if status changed
-            final wasOnline = onlineFriends[friendPetId] ?? false;
-            if (wasOnline != friend.isOnline) {
-              emit(FriendOnlineStatusChanged(friendPetId, friend.isOnline));
-            }
-          }
-        }
-
-        onlineFriends = newOnlineStatus;
-      } else {}
-    } catch (e) {}
-  }
-
+  /// فحص حالة الاتصال للصديق من القاموس المحلي (بدون استدعاء الخادم)
+  /// Check if pet is online from local dictionary (without server call)
   Future<bool> checkIfPetOnline(String friendPetId) async {
     try {
-      return await generalHub.isPetOnline(friendPetId) ?? false;
+      // استخدام القاموس المحلي بدلاً من استدعاء الخادم
+      // Use local dictionary instead of server call
+      final isOnline = generalHub.isPetOnlineFromDict(friendPetId);
+      print(
+        '🔍 [ChatAppCubit] فحص حالة الصديق $friendPetId من القاموس: ${isOnline ? "متصل" : "غير متصل"}',
+      );
+      print(
+        '🔍 [ChatAppCubit] Checking friend $friendPetId from dictionary: ${isOnline ? "online" : "offline"}',
+      );
+      return isOnline;
     } catch (e) {
+      print('❌ [ChatAppCubit] خطأ في فحص حالة الصديق: $e');
+      print('❌ [ChatAppCubit] Error checking friend status: $e');
       return false;
     }
   }
 
   @override
   Future<void> close() async {
+    print('🔴 [ChatAppCubit] إغلاق ChatAppCubit...');
+    print('🔴 [ChatAppCubit] Closing ChatAppCubit...');
+
     _pollingTimer?.cancel();
     await _generalEventSubscription?.cancel();
     await _conversationEventSubscription?.cancel();
+    await _onlineStatusSubscription?.cancel(); // إلغاء الاشتراك في القاموس
     await generalHub.disconnect();
     await conversationHub.disconnect();
+
+    print('🔴 [ChatAppCubit] تم الإغلاق');
+    print('🔴 [ChatAppCubit] Closed');
     return super.close();
   }
 }
