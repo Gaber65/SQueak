@@ -167,6 +167,29 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         print('⚠️ [GeneralHub] Typing event has empty petId!');
       }
     });
+
+    // Messages delivered when recipient comes online
+    // الرسائل تم توصيلها عندما اتصل المستقبِل بالتطبيق
+    generalHub.onMessagesDelivered((data) {
+      print('📦 [GeneralHub] Messages delivered event: $data');
+      final conversationId = data['ConversationId']?.toString();
+      final deliveredToPetId = data['DeliveredToPetId']?.toString();
+
+      if (conversationId != null) {
+        print(
+          '✅ [GeneralHub] رسائل المحادثة $conversationId تم توصيلها للمستقبِل $deliveredToPetId',
+        );
+        print(
+          '✅ [GeneralHub] Messages in conversation $conversationId delivered to $deliveredToPetId',
+        );
+
+        // Emit event so UI can update message statuses
+        // إرسال حدث لتحديث حالة الرسائل في الواجهة
+        conversationSignalEventStream.add(
+          ConversationSignalEvent('ConversationHub', 'MessagesDelivered', [data]),
+        );
+      }
+    });
   }
 
   void _listenToGeneralEvents() {
@@ -243,26 +266,6 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
   Future<void> _loadInitialData() async {
     try {
-      // لم نعد نحتاج لجلب الأصدقاء المتصلين - القاموس يحتوي عليهم بالفعل
-      // No longer need to fetch online friends - dictionary already has them
-      print(
-        '📊 [ChatAppCubit] تخطي جلب الأصدقاء المتصلين - القاموس يحتوي عليهم بالفعل',
-      );
-      print(
-        '📊 [ChatAppCubit] Skipping online friends fetch - dictionary already has them',
-      );
-      print(
-        '📊 [ChatAppCubit] الأصدقاء المتصلين من القاموس: ${generalHub.onlineFriendsDict.length}',
-      );
-      print(
-        '📊 [ChatAppCubit] Online friends from dictionary: ${generalHub.onlineFriendsDict.length}',
-      );
-      print('📊 [ChatAppCubit] محتوى القاموس: ${generalHub.onlineFriendsDict}');
-      print(
-        '📊 [ChatAppCubit] Dictionary content: ${generalHub.onlineFriendsDict}',
-      );
-
-      // Get unread message counts
       final counts = await generalHub.getUnreadMessageCounts(petId);
       if (counts != null) {
         unreadCounts = counts;
@@ -275,7 +278,6 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         print(
           '📋 Conversation IDs with unread messages: ${counts.keys.toList()}',
         );
-        // Emit to trigger UI update
         emit(UnreadCountsPolled(counts));
       } else {
         print('⚠️ No unread counts returned from server');
@@ -328,10 +330,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
       // Mark all messages as read when opening the conversation
       print('📖 [ChatAppCubit] Marking all unread messages as read...');
-      await conversationHub.markAllUnreadedMessagesInConversationAsRead(
-        conversationId: conversationId,
-        petId: petId,
-      );
+
       print('✅ [ChatAppCubit] All messages marked as read');
 
       emit(ConversationJoined(conversationId, unreadIds ?? []));
@@ -360,6 +359,13 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
     // Pet left
     conversationHub.onPetLeftConversation((data) {
+      print('👋 [ChatAppCubit] ═══════════════════════════════════════════');
+      print('👋 [ChatAppCubit] المستخدم الآخر غادر المحادثة');
+      print('👋 [ChatAppCubit] Other user left the conversation');
+      print('👋 [ChatAppCubit] Data: $data');
+      print('👋 [ChatAppCubit] الرسائل الجديدة ستكون بحالة delivered وليس seen');
+      print('👋 [ChatAppCubit] New messages will be delivered, not seen');
+      print('👋 [ChatAppCubit] ═══════════════════════════════════════════');
       emit(PetLeftConversation(data));
     });
 
@@ -381,10 +387,19 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       } else {}
     });
 
-    // Receive message
+    // Receive message (only incoming messages from other users)
+    // استقبال الرسالة (فقط الرسائل الواردة من المستخدمين الآخرين)
     conversationHub.onMessageReceived((data) {
       var message = MessageModel.fromJson(data);
-      emit(MessageReceived(currentConversationId!, message));
+      
+      // Only emit if this is an INCOMING message (toMe = true)
+      // فقط إرسال الحدث إذا كانت رسالة واردة (toMe = true)
+      if (message.toMe) {
+        print('📥 [ChatAppCubit] Received INCOMING message from other user');
+        emit(MessageReceived(currentConversationId!, message));
+      } else {
+        print('📤 [ChatAppCubit] Ignoring OUTGOING message (already handled by MessageSent events)');
+      }
     });
 
     // Message is read
@@ -416,27 +431,47 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       }
     });
 
-    // Message status changed
-    conversationHub.onMessageStatusChanged((data) {
-      print('🔄 [ChatAppCubit] Message status changed: $data');
-      final messageId =
-          data['MessageId']?.toString() ?? data['messageId']?.toString();
-      final isRead = data['IsRead'] ?? data['isRead'] ?? false;
-      if (messageId != null) {
-        emit(MessageStatusChanged(messageId, isRead));
-      }
-    });
+    // // Message status changed
+    // conversationHub.onMessageStatusChanged((data) {
+    //   print('🔄 [ChatAppCubit] Message status changed: $data');
+    //   final messageId =
+    //       data['MessageId']?.toString() ?? data['messageId']?.toString();
+    //   final isRead = data['IsRead'] ?? data['isRead'] ?? false;
+    //   if (messageId != null) {
+    //     emit(MessageStatusChanged(messageId, isRead));
+    //   }
+    // });
 
-    // Message sent but not online
+    // Message sent but recipient is not online
+    // الرسالة تم إرسالها لكن المستلم غير متصل
     conversationHub.onMessageSentAndPetIsNotOnline((data) {
       final message = MessageModel.fromJson(data);
+
+      print('🔵 [ChatAppCubit] ═══════════════════════════════════════════');
+      print('🔵 [ChatAppCubit] الرسالة تم إرسالها - المستلم غير متصل');
+      print('🔵 [ChatAppCubit] حالة الرسالة: MessageStatus.sent');
+      print('🔵 [ChatAppCubit] messageId: ${message.id}');
+      print('🔵 [ChatAppCubit] ═══════════════════════════════════════════');
 
       emit(MessageSentUnread(currentConversationId!, message));
     });
 
-    // Message sent but not read yet
+    // Message sent but not read yet (recipient online but not in chat)
+    // الرسالة تم إرسالها لكن لم تُقرأ بعد (المستلم متصل لكن ليس في المحادثة)
     conversationHub.onMessageSentAndNotReadYet((data) {
       final message = MessageModel.fromJson(data);
+
+      print('📬 [ChatAppCubit] ═══════════════════════════════════════════');
+      print(
+        '📬 [ChatAppCubit] الرسالة تم إرسالها - المستلم متصل لكن ليس في المحادثة',
+      );
+      print('📬 [ChatAppCubit] حالة الرسالة: MessageStatus.delivered');
+      print('📬 [ChatAppCubit] messageId: ${message.id}');
+      print('📬 [ChatAppCubit] ═══════════════════════════════════════════');
+
+      // Call markMessagesAsDelivered since recipient is online but not in chat
+      markMessagesAsDelivered(message.toUserId);
+
       emit(MessageSentUnread(currentConversationId!, message));
     });
 
@@ -456,7 +491,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       }
     });
 
-    // // All messages marked as read (server sends this after markAllUnreadedMessagesInConversationAsRead)
+    // All messages marked as read (server sends this after markAllUnreadedMessagesInConversationAsRead)
     // conversationHub.onAllMessagesRead((data) {
     //   print('📖 [ConversationHub] AllMessagesRead event received: $data');
     //   if (currentConversationId != null) {
@@ -511,28 +546,78 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         petId: petId,
         isTyping: isTyping,
       );
-
       print('⌨️ Setting typing indicator: isTyping=$isTyping');
     } catch (e) {
       print('Error setting typing: $e');
     }
   }
 
-  Future<void> markMessagesAsRead(String conversationId) async {
+  // Future<void> markMessagesAsRead(String conversationId) async {
+  //   try {
+  //     await conversationHub.markAllUnreadedMessagesInConversationAsRead(
+  //       conversationId: conversationId,
+  //       petId: petId,
+  //     );
+  //     unreadCounts[conversationId] = 0;
+  //     print(
+  //       '📖 [ChatAppCubit] Marked messages as read, updating unread count to 0',
+  //     );
+  //     emit(UnreadCountUpdated(conversationId, 0));
+  //   } catch (e) {
+  //     print('Error marking messages as read: $e');
+  //   }
+  // }
+
+  /// تعليم الرسائل كـ "تم التوصيل" عندما يكون المستلم متصل لكن ليس في المحادثة
+  /// Mark messages as delivered when recipient is online but not in chat
+  Future<void> markMessagesAsDelivered(String toPetId) async {
     try {
-      await conversationHub.markAllUnreadedMessagesInConversationAsRead(
-        conversationId: conversationId,
-        petId: petId,
-      );
-      unreadCounts[conversationId] = 0;
-      print(
-        '📖 [ChatAppCubit] Marked messages as read, updating unread count to 0',
-      );
-      emit(UnreadCountUpdated(conversationId, 0));
+      // التحقق من أن المستلم متصل لكن ليس في المحادثة الحالية
+      final isOnline = generalHub.isPetOnlineFromDict(toPetId);
+
+      print('📬 [ChatAppCubit] ═══════════════════════════════════════════');
+      print('📬 [ChatAppCubit] تعليم الرسائل كـ "تم التوصيل"');
+      print('📬 [ChatAppCubit] حالة الرسالة: MessageStatus.delivered');
+      print('📬 [ChatAppCubit] المستلم ($toPetId) متصل: $isOnline');
+      print('📬 [ChatAppCubit] المستلم ليس في المحادثة (لم يفتح الشات)');
+      print('📬 [ChatAppCubit] ═══════════════════════════════════════════');
+
+      if (isOnline) {
+        // await conversationHub.markMessagesAsDelivered(petId: toPetId);
+        print('✅ [ChatAppCubit] تم تعليم الرسائل بنجاح كـ delivered');
+      } else {
+        print(
+          '⚠️ [ChatAppCubit] المستلم غير متصل - لن يتم تعليم الرسائل كـ delivered',
+        );
+      }
     } catch (e) {
-      print('Error marking messages as read: $e');
+      print('❌ [ChatAppCubit] خطأ في تعليم الرسائل كـ delivered: $e');
     }
   }
+
+  /// تعليم الرسائل كـ "مقروءة" عندما يفتح المستخدم المحادثة ولم يغادرها
+  /// Mark messages as seen when user opens chat and hasn't left
+  // Future<void> markMessagesAsSeen(String conversationId) async {
+  //   try {
+  //     print('👁️ [ChatAppCubit] ═══════════════════════════════════════════');
+  //     print('👁️ [ChatAppCubit] تعليم الرسائل كـ "مقروءة"');
+  //     print('👁️ [ChatAppCubit] حالة الرسالة: MessageStatus.seen');
+  //     print('👁️ [ChatAppCubit] المستخدم فتح المحادثة ولم يغادرها');
+  //     print('👁️ [ChatAppCubit] conversationId: $conversationId');
+  //     print('👁️ [ChatAppCubit] ═══════════════════════════════════════════');
+
+  //     await conversationHub.markMessagesAsSeen(
+  //       conversationId: conversationId,
+  //       petId: petId,
+  //     );
+
+  //     unreadCounts[conversationId] = 0;
+  //     print('✅ [ChatAppCubit] تم تعليم الرسائل بنجاح كـ seen');
+  //     emit(UnreadCountUpdated(conversationId, 0));
+  //   } catch (e) {
+  //     print('❌ [ChatAppCubit] خطأ في تعليم الرسائل كـ seen: $e');
+  //   }
+  // }
 
   Future<void> leaveConversation() async {
     try {

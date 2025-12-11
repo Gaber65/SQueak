@@ -541,5 +541,19 @@ class SignalRGeneralHubService {
     });
   }
 
+  void onMessagesDelivered(Function(Map<String, dynamic>) callback) {
+    _hub.on('MessagesDelivered', (args) {
+      if (args != null && args.isNotEmpty) {
+        final data = args[0] is Map<String, dynamic>
+            ? args[0] as Map<String, dynamic>
+            : <String, dynamic>{};
+        signalEventStream.add(
+          SignalEvent('GeneralHub', 'MessagesDelivered', args),
+        );
+        callback(data);
+      }
+    });
+  }
+
   void dispose() => _hub.dispose();
 }

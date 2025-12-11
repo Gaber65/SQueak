@@ -46,7 +46,6 @@ class ChatModel extends ChatEntity {
               : MessageModel(
                 id: '',
                 description: '',
-                isRead: false,
                 fromUserId: '',
                 toUserId: '',
                 createdAt: DateTime.now(),

@@ -4,6 +4,7 @@ import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/utils/date_time_formatter.dart';
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_messages_cubit.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/parameters.dart';
+import 'package:squeak/features/mating/chat/domain/entities/message_status.dart';
 import 'package:squeak/generated/l10n.dart';
 import '../../../domain/entities/message_entity.dart';
 import '../attach_files_in_chat/full_screen_media_viewer.dart';
@@ -248,47 +249,29 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                             ),
                             if (widget.isMe) ...[
                               const SizedBox(width: 6),
-                              Builder(
-                                builder: (ctx) {
-                                  final cubit = ChatMessagesCubit.get(ctx);
+                              StreamBuilder<Map<String, MessageStatus>>(
+                                stream:
+                                    ChatMessagesCubit.get(
+                                      context,
+                                    ).messageStatusStream,
+                                initialData:
+                                    ChatMessagesCubit.get(
+                                      context,
+                                    ).messageStatuses,
+                                builder: (context, snapshot) {
                                   final msgId = widget.message.id;
-                                  final status =
+                                  final statusFromStream =
                                       (msgId != null && msgId.isNotEmpty)
-                                          ? cubit.deliveryStatuses[msgId]
+                                          ? snapshot.data != null
+                                              ? snapshot.data![msgId]
+                                              : null
                                           : null;
 
-                                  // Determine icon and color based on status
-                                  IconData iconData;
-                                  Color iconColor;
+                                  // Use stream status, fallback to message entity status
+                                  final status =
+                                      statusFromStream ?? widget.message.status;
 
-                                  if (widget.message.isRead == true ||
-                                      status == 'two_colored') {
-                                    iconData = Icons.done_all_rounded;
-                                    iconColor = const Color(0xFF25D366);
-                                  } else if (status == 'one') {
-                                    iconData = Icons.done_rounded;
-                                    iconColor = Colors.white;
-                                  } else if (widget.message.isRead == true ||
-                                      status == 'two') {
-                                    iconData = Icons.done_all_rounded;
-                                    iconColor = Colors.grey[400]!;
-                                  } else {
-                                    // fallback to previous single/double logic
-                                    iconData =
-                                        widget.message.isRead == true
-                                            ? Icons.done_all_rounded
-                                            : Icons.done_rounded;
-                                    iconColor =
-                                        widget.message.isRead == true
-                                            ? const Color(0xFF25D366)
-                                            : Colors.white.withOpacity(0.7);
-                                  }
-
-                                  return Icon(
-                                    iconData,
-                                    size: 16,
-                                    color: iconColor,
-                                  );
+                                  return _buildStatusIcon(status);
                                 },
                               ),
                             ],
@@ -305,6 +288,32 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
         ),
       ),
     );
+  }
+
+  /// Build WhatsApp-like status icon based on MessageStatus
+  Widget _buildStatusIcon(MessageStatus status) {
+    IconData iconData;
+    Color iconColor;
+
+    switch (status) {
+      case MessageStatus.sent:
+        // Single grey/white check - message reached server
+        iconData = Icons.done_rounded;
+        iconColor = Colors.white.withOpacity(0.8);
+        break;
+      case MessageStatus.delivered:
+        // Double grey checks - message delivered to recipient
+        iconData = Icons.done_all_rounded;
+        iconColor = Colors.white.withOpacity(0.7);
+        break;
+      case MessageStatus.seen:
+        // Double blue checks - message read by recipient
+        iconData = Icons.done_all_rounded;
+        iconColor = const Color(0xFF25D366); // WhatsApp green
+        break;
+    }
+
+    return Icon(iconData, size: 16, color: iconColor);
   }
 
   List<Widget> _buildSenderInfo(BuildContext context) {

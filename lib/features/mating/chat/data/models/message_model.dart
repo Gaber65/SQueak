@@ -1,4 +1,5 @@
 import '../../domain/entities/message_entity.dart';
+import '../../domain/entities/message_status.dart';
 
 class MessageModel extends MessageEntity {
   MessageModel({
@@ -8,7 +9,7 @@ class MessageModel extends MessageEntity {
     super.video,
     super.audio,
     super.file,
-    required super.isRead,
+    super.status = MessageStatus.sent,
     required super.fromUserId,
     required super.toUserId,
     required super.createdAt,
@@ -41,6 +42,33 @@ class MessageModel extends MessageEntity {
       }
     }
 
+    // تحديد حالة الرسالة من الـ API مباشرة
+    // Determine message status from API directly
+    // Backend values: 1=sent, 2=delivered, 3=seen
+    // Enum indices:   0=sent, 1=delivered, 2=seen
+    MessageStatus parsedStatus = MessageStatus.sent;
+    if (json['messageStatus'] != null) {
+      final statusValue = json['messageStatus'] as int;
+      // Backend sends 1-based values, enum is 0-based
+      switch (statusValue) {
+        case 1:
+          parsedStatus = MessageStatus.sent;
+          break;
+        case 2:
+          parsedStatus = MessageStatus.delivered;
+          break;
+        case 3:
+          parsedStatus = MessageStatus.seen;
+          break;
+        default:
+          parsedStatus = MessageStatus.sent;
+      }
+    }
+
+    print(
+      '📩 [MessageModel] حالة الرسالة: status=$parsedStatus (القيمة من الـ API: ${json['messageStatus']}) - ${json['id']?.toString().substring(0, 8) ?? 'new'}...',
+    );
+
     return MessageModel(
       id: json['id'] ?? '',
       description: json['description'] ?? '',
@@ -48,7 +76,7 @@ class MessageModel extends MessageEntity {
       video: json['video'],
       audio: json['audio'],
       file: json['file'],
-      isRead: json['isRead'] ?? false,
+      status: parsedStatus,
       fromUserId: json['fromUserId'] ?? '',
       toUserId: json['toUserId'] ?? '',
       createdAt: parsedCreatedAt,
@@ -64,35 +92,13 @@ class MessageModel extends MessageEntity {
       'video': video,
       'audio': audio,
       'file': file,
-      'isRead': isRead,
+      'status': status.index + 1,
       'fromUserId': fromUserId,
       'toUserId': toUserId,
       'createdAt': createdAt.toUtc().toIso8601String(),
       'toMe': toMe,
     };
   }
-
-  //signalR object
-  // Map<String, dynamic> toSignalRCommand({
-  //   String? conversationId,
-  //   String? fromPetId,
-  //   String? toPetId,
-  // }) {
-  //   return {
-  //     'description': description,
-  //     'image': image,
-  //     'video': video,
-  //     'audio': audio,
-  //     'file': file,
-  //     'fromUserId': fromUserId.isNotEmpty ? fromUserId : null,
-  //     'toUserId': toUserId.isNotEmpty ? toUserId : null,
-  //     'clinicId': null,
-  //     'conversationId': conversationId,
-  //     'fromPetId': fromPetId?.isNotEmpty == true ? fromPetId : null,
-  //     'toPetId': toPetId?.isNotEmpty == true ? toPetId : null,
-  //     'toMe': toMe,
-  //   };
-  // }
 
   static List<MessageModel> fromJsonList(List<dynamic> list) {
     return list.map((item) => MessageModel.fromJson(item)).toList();
@@ -106,8 +112,7 @@ class MessageModel extends MessageEntity {
     String? video,
     String? audio,
     String? file,
-    bool? isRead,
-    bool? isDeliver,
+    MessageStatus? status,
     String? fromUserId,
     String? toUserId,
     DateTime? createdAt,
@@ -120,7 +125,7 @@ class MessageModel extends MessageEntity {
       video: video ?? this.video,
       audio: audio ?? this.audio,
       file: file ?? this.file,
-      isRead: isRead ?? this.isRead,
+      status: status ?? this.status,
       fromUserId: fromUserId ?? this.fromUserId,
       toUserId: toUserId ?? this.toUserId,
       createdAt: createdAt ?? this.createdAt,

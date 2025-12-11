@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/domain/entities/message_entity.dart';
+import 'package:squeak/features/mating/chat/domain/entities/message_status.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_status.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/chat_widgets/chat_app_bar.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/attachment_options_bottom_sheet.dart';
@@ -81,43 +82,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     print('💬 [MatingChatDetailScreen] Conversation ID: ${widget.chat.id}');
     print('💬 [MatingChatDetailScreen] Friend Pet ID: ${widget.chat.petId}');
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (mounted) {
-        print('🔌 [MatingChatDetailScreen] Joining conversation...');
-        print(
-          '📡 [MatingChatDetailScreen] This will connect to ConversationHub',
-        );
-        print('📡 [MatingChatDetailScreen] GeneralHub will remain connected');
-        _chatAppCubit = context.read<ChatAppCubit>();
-        await _chatAppCubit?.joinConversation(widget.chat.id);
-
-        // Fire local PetIsJoinedToConversation event so listeners handle this immediately
-        print('✅ [MatingChatDetailScreen] انضم الحيوان الأليف للمحادثة: ${widget.chat.id}');
-        conversationSignalEventStream.add(
-          ConversationSignalEvent(
-            'ConversationHub',
-            'PetIsJoinedToConversation',
-            [
-              {
-                'ConversationId': widget.chat.id,
-                'PetId': widget.pet?.petId,
-              }
-            ],
-          ),
-        );
-
-        // Mark all messages as read when opening the chat
-        if (widget.pet?.petId != null) {
-          print('📖 [MatingChatDetailScreen] Marking conversation as read...');
-          await _chatAppCubit?.conversationHub
-              .markAllUnreadedMessagesInConversationAsRead(
-                conversationId: widget.chat.id,
-                petId: widget.pet!.petId!,
-              );
-          print('✅ [MatingChatDetailScreen] Conversation marked as read');
-        }
-      }
-    });
+    // REMOVED: No longer firing PetIsJoinedToConversation here
+    // Connection to hub will happen after messages are loaded
 
     _messageController.addListener(() {
       final hasText = _messageController.text.trim().isNotEmpty;
@@ -163,20 +129,17 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           conversationId: widget.chat.id,
           isTyping: false,
         );
-        // Fire local PetLeftConversation event before leaving so listeners update immediately
-        print('🔴 [MatingChatDetailScreen] مغادرة المحادثة - إطلاق حدث PetLeftConversation: ${widget.chat.id}');
-        conversationSignalEventStream.add(
-          ConversationSignalEvent(
-            'ConversationHub',
-            'PetLeftConversation',
-            [
-              {
-                'ConversationId': widget.chat.id,
-                'PetId': widget.pet?.petId,
-              }
-            ],
-          ),
+        
+        // Fire local PetLeftConversation event before leaving
+        print(
+          '🔴 [MatingChatDetailScreen] مغادرة المحادثة - إطلاق حدث PetLeftConversation: ${widget.chat.id}',
         );
+        conversationSignalEventStream.add(
+          ConversationSignalEvent('ConversationHub', 'PetLeftConversation', [
+            {'ConversationId': widget.chat.id, 'PetId': widget.pet?.petId},
+          ]),
+        );
+        
         // Leave the conversation (disconnects ConversationHub, keeps GeneralHub connected)
         print('🔌 [MatingChatDetailScreen] Calling leaveConversation...');
         _chatAppCubit!.leaveConversation();
@@ -267,29 +230,42 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           BlocListener<ChatAppCubit, ChatAppState>(
             listener: (context, state) {
               if (state is ConversationJoined) {
-                ChatAppCubit.get(context).markMessagesAsRead(widget.chat.id);
+                print(
+                  '👁️ [ChatScreen] المستخدم فتح المحادثة - calling markMessagesAsSeen',
+                );
+                print(
+                  '👁️ [ChatScreen] حالة الرسالة ستتغير إلى: MessageStatus.seen',
+                );
+                // ChatAppCubit.get(context).markMessagesAsSeen(widget.chat.id);
               }
 
               if (state is MessageReceived &&
                   state.conversationId == widget.chat.id) {
-                // Add new message to list
-                ChatMessagesCubit.get(
-                  context,
-                ).addReceivedMessage(state.message, widget.pet!.ownerId);
+                final cubit = ChatMessagesCubit.get(context);
+                
+                // Check if message already exists to prevent duplicates
+                // التحقق من عدم وجود الرسالة لمنع التكرار
+                final messageId = state.message.id;
+                final alreadyExists = messageId != null && 
+                    cubit.messagesList.any((m) => m.id == messageId);
+                
+                if (!alreadyExists) {
+                  print('📥 [ChatScreen] Adding new incoming message $messageId');
+                  cubit.addReceivedMessage(state.message, widget.pet!.ownerId);
 
-                // Mark as read
-                ChatAppCubit.get(context).markMessagesAsRead(widget.chat.id);
-
-                // Scroll to bottom
-                Future.delayed(const Duration(milliseconds: 100), () {
-                  final lastIndex =
-                      ChatMessagesCubit.get(context).messagesList.length - 1;
-                  if (lastIndex >= 0) {
-                    try {
-                      _itemScrollController.jumpTo(index: lastIndex);
-                    } catch (_) {}
-                  }
-                });
+                  // Scroll to bottom
+                  Future.delayed(const Duration(milliseconds: 100), () {
+                    final lastIndex =
+                        ChatMessagesCubit.get(context).messagesList.length - 1;
+                    if (lastIndex >= 0) {
+                      try {
+                        _itemScrollController.jumpTo(index: lastIndex);
+                      } catch (_) {}
+                    }
+                  });
+                } else {
+                  print('⚠️ [ChatScreen] Message $messageId already exists, skipping');
+                }
               }
               if (state is FriendTypingInConversation &&
                   state.conversationId == widget.chat.id) {
@@ -395,6 +371,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               } else if (state is MessageSendError) {
                 errorToast(context, state.message);
               }
+              
+              // NEW: Handle messages loaded successfully
               if (state is ChatMessagesLoaded) {
                 final messages = cubit.messagesList.toList();
                 if (messages.isNotEmpty) {
@@ -406,7 +384,11 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                     } catch (_) {}
                   });
                 }
+
+                // NOW join conversation and mark messages as read after successful load
+                _joinConversationAfterLoad();
               }
+              
               if (state is MatingFinishSuccess) {
                 setState(() {
                   isCompleted = true;
@@ -534,6 +516,48 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         ),
       ),
     );
+  }
+
+  // NEW METHOD: Join conversation and mark messages as read after successful load
+  Future<void> _joinConversationAfterLoad() async {
+    if (!mounted) return;
+
+    try {
+      print('🔌 [MatingChatDetailScreen] Messages loaded successfully');
+      print('🔌 [MatingChatDetailScreen] Now joining conversation...');
+      
+      _chatAppCubit = context.read<ChatAppCubit>();
+      await _chatAppCubit?.joinConversation(widget.chat.id);
+
+      print('✅ [MatingChatDetailScreen] Joined conversation: ${widget.chat.id}');
+
+      // Fire local PetIsJoinedToConversation event
+      print(
+        '✅ [MatingChatDetailScreen] انضم الحيوان الأليف للمحادثة: ${widget.chat.id}',
+      );
+      conversationSignalEventStream.add(
+        ConversationSignalEvent(
+          'ConversationHub',
+          'PetIsJoinedToConversation',
+          [
+            {'ConversationId': widget.chat.id, 'PetId': widget.pet?.petId},
+          ],
+        ),
+      );
+
+      // Mark all messages as read after joining
+      if (widget.pet?.petId != null && mounted) {
+        print('📖 [MatingChatDetailScreen] Marking all messages as read...');
+        await _chatAppCubit?.conversationHub
+            .markMessagesAsSeen(
+              conversationId: widget.chat.id,
+              petId: widget.pet!.petId!,
+            );
+        print('✅ [MatingChatDetailScreen] All messages marked as read');
+      }
+    } catch (e) {
+      print('❌ [MatingChatDetailScreen] Error in join/mark flow: $e');
+    }
   }
 
   Widget _buildMessages(ChatMessagesState state, ChatMessagesCubit cubit) {
@@ -722,51 +746,15 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
-    // Add a local outgoing message so UI shows it immediately
-    try {
-      final tempId = 'local_${DateTime.now().millisecondsSinceEpoch}';
-      final localMsg = MessageEntity(
-        id: tempId,
-        description: text,
-        image: null,
-        video: null,
-        audio: null,
-        file: null,
-        isRead: false,
-        fromUserId: widget.pet?.ownerId ?? '',
-        toUserId: widget.chat.petId,
-        createdAt: DateTime.now(),
-        toMe: false,
-      );
-
-      cubit.messagesList.add(localMsg);
-      // Trigger UI update by creating new list reference
-      if (mounted) {
-        setState(() {});
-      }
-
-      // Scroll to bottom after a short delay
-      Future.delayed(const Duration(milliseconds: 120), () {
-        final lastIndex = cubit.messagesList.length - 1;
-        if (lastIndex >= 0) {
-          try {
-            _itemScrollController.jumpTo(index: lastIndex);
-          } catch (_) {}
-        }
-      });
-
-      print('📤 [ChatScreen] Sent local message $tempId');
-    } catch (e) {
-      print('❌ [ChatScreen] Error adding local message: $e');
-    }
-
     // Send to server via ChatAppCubit (SignalR)
+    // The message will be added to the UI when we receive the MessageReceived event
     chatAppCubit.sendMessage(
       conversationId: widget.chat.id,
       toPetId: widget.chat.petId,
       description: text,
     );
 
+    print('📤 [ChatScreen] Sending message to server');
     _messageController.clear();
   }
 }
