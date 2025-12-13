@@ -328,7 +328,7 @@ class _ChatListViewState extends State<_ChatListView> {
         // Debug logging to see typing indicators
         if (chatAppState is FriendTypingInGeneral) {
           print(
-            '🔥 UI REBUILDING for typing: ${chatAppState.petId} -> ${chatAppCubit.typingIndicators[chatAppState.petId]}',
+            '🔥 UI REBUILDING for typing: ${chatAppState.toPetId} -> ${chatAppCubit.typingIndicators[chatAppState.toPetId]}',
           );
         }
 

@@ -27,9 +27,10 @@ class FriendOnlineStatusChanged extends ChatAppState {
 }
 
 class FriendTypingInGeneral extends ChatAppState {
-  final String petId;
+  final String toPetId;
   final bool isTyping;
-  FriendTypingInGeneral(this.petId, this.isTyping);
+  final String fromPetId; 
+  FriendTypingInGeneral(this.toPetId, this.isTyping , this.fromPetId);
 }
 
 // Unread count events

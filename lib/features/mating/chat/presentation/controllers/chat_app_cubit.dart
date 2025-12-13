@@ -166,6 +166,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
       final friendPetId = (data['PetId'] ?? data['petId']) as String?;
       final isTyping = (data['IsTyping'] ?? data['isTyping']) as bool? ?? false;
+      final fromPetId = (data['FromPetId'] ?? data['fromPetId']) as String?;
 
       print('🔍 [GeneralHub] Extracted petId: $friendPetId');
       print('🔍 [GeneralHub] Extracted isTyping: $isTyping');
@@ -191,7 +192,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         // Broadcast typing status to stream for real-time updates
         _typingIndicatorsController.add(Map.from(typingIndicators));
 
-        emit(FriendTypingInGeneral(friendPetId, isTyping));
+        emit(FriendTypingInGeneral(friendPetId, isTyping, fromPetId ?? ''));
       } else {
         print('⚠️ [GeneralHub] Typing event has empty petId!');
         print('⚠️ [GeneralHub] Available data: $data');
@@ -622,10 +623,11 @@ class ChatAppCubit extends Cubit<ChatAppState> {
   Future<void> setTypingInGeneral({
     required String petId,
     required bool isTyping,
+    required String fromPetId,
   }) async {
     try {
       // Send typing to general (for users in the chat)
-      await generalHub.setTypingIndicator(toPetId: petId, isTyping: isTyping);
+      await generalHub.setTypingIndicator(toPetId: petId, isTyping: isTyping,fromPetId: this.petId);
 
       print('⌨️ Setting typing indicator: isTyping=$isTyping');
     } catch (e) {

@@ -169,6 +169,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           context.read<ChatAppCubit>().setTypingInGeneral(
             petId: widget.chat.petId,
             isTyping: true,
+            fromPetId: widget.pet?.petId ?? '',
           );
         } catch (_) {}
       }
@@ -184,6 +185,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             context.read<ChatAppCubit>().setTypingInGeneral(
               petId: widget.chat.petId,
               isTyping: false,
+              fromPetId: widget.pet?.petId ?? '',
             );
           } catch (_) {
             // Provider not available yet

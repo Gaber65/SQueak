@@ -319,6 +319,11 @@ class _GeneralHubManager {
       "FriendIsTyping",
     ].forEach(registerEvent);
 
+    // Add catch-all handler for debugging (logs all unhandled events)
+    _connection!.onclose(({error}) {
+      print('🔴 [GeneralHub] الاتصال مغلق | Connection closed: $error');
+    });
+
     _logger.info('✅ Event listeners registered successfully');
     print('🎧 [GeneralHub] تم تسجيل مستمعي الأحداث بنجاح');
     print('🎧 [GeneralHub] Event listeners registered successfully');
@@ -489,8 +494,9 @@ class SignalRGeneralHubService {
   Future<void> setTypingIndicator({
     required String toPetId,
     required bool isTyping,
+    required String fromPetId,
   }) async =>
-      await _hub.invoke<void>("SetTypingIndicator", args: [toPetId, isTyping]);
+      await _hub.invoke<void>("SetTypingIndicator", args: [ toPetId, isTyping,fromPetId]);
 
   Future<bool?> isPetOnline(String petId) async =>
       await _hub.invoke<bool>("IsPetOnline", args: [petId]);
