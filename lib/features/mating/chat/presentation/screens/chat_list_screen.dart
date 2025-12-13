@@ -1,10 +1,10 @@
-// ignore_for_file: use_build_context_synchronously
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import 'package:squeak/core/service/connectivity/conectivity_services.dart';
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_list_cubit.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
@@ -43,13 +43,32 @@ class _ChatListView extends StatefulWidget {
 class _ChatListViewState extends State<_ChatListView> {
   String? _currentPetId;
 
+  StreamSubscription<bool>? _connectivitySubscription;
+
   @override
   void initState() {
     super.initState();
+    _setupConnectivityListener();
+  }
+
+  void _setupConnectivityListener() {
+    _connectivitySubscription = ConnectivityService().connectionStatus.listen((
+      isConnected,
+    ) {
+      if (isConnected && _currentPetId != null && mounted) {
+        print(
+          '🌐 [ChatListScreen] Connection restored, refreshing chats silently',
+        );
+        context.read<ChatListCubit>().refreshChatsWithoutLoading(
+          _currentPetId!,
+        );
+      }
+    });
   }
 
   @override
   void dispose() {
+    _connectivitySubscription?.cancel();
     super.dispose();
   }
 
@@ -129,6 +148,19 @@ class _ChatListViewState extends State<_ChatListView> {
                 }
               }
 
+              // Handle FriendOnlineStatusChanged - Persist delivered status
+              if (state is FriendOnlineStatusChanged) {
+                if (state.isOnline) {
+                  print(
+                    '🔄 [ChatListScreen] Friend ${state.petId} came online - updating local chat status',
+                  );
+                  context.read<ChatListCubit>().updateChatOnlineStatus(
+                    state.petId,
+                    true,
+                  );
+                }
+              }
+
               // Full refresh only on leaving conversation (to update last message)
               if (state is ConversationLeft) {
                 print(
@@ -143,6 +175,23 @@ class _ChatListViewState extends State<_ChatListView> {
                 ScaffoldMessenger.of(
                   context,
                 ).showSnackBar(SnackBar(content: Text(state.message)));
+              }
+            },
+          ),
+          BlocListener<ChatListCubit, ChatListState>(
+            listener: (context, state) {
+              if (state is ChatListLoaded) {
+                // When list loads, check if any friends are online and update status locally
+                // This handles the case where users are ALREADY online when the list loads
+                final chatAppCubit = context.read<ChatAppCubit>();
+                for (final chat in state.chats) {
+                  if (chatAppCubit.generalHub.isPetOnlineFromDict(chat.petId)) {
+                    context.read<ChatListCubit>().updateChatOnlineStatus(
+                      chat.petId,
+                      true,
+                    );
+                  }
+                }
               }
             },
           ),
@@ -294,7 +343,6 @@ class _ChatListViewState extends State<_ChatListView> {
                     chat.petId,
                   );
                   // الحصول على عدد الرسائل من القاموس
-                  
 
                   if (isTyping) {
                     print(

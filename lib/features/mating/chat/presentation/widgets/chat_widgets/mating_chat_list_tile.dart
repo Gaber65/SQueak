@@ -460,7 +460,9 @@ class MatingChatListTile extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 4),
             child: Icon(
-              message.status == MessageStatus.sent && !isOnline
+              message.status == MessageStatus.sent && isOnline
+                  ? Icons.done_all
+                  : message.status == MessageStatus.sent
                   ? Icons.check
                   : Icons.done_all,
               size: 16,
