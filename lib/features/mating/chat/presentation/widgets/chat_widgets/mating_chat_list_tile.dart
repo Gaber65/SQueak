@@ -14,9 +14,11 @@ class MatingChatListTile extends StatelessWidget {
   final PetEntities petEntities;
   final Future<void> Function()? onNavigateComplete;
   final bool compact;
-  final bool isOnline;
+  // isOnline و unreadCount سيتم الحصول عليهما من القاموس مباشرة
+  // isOnline and unreadCount will be fetched from dictionary directly
+  final bool isOnline; // kept for now but will use dict
   final bool isTyping;
-  final int unreadCount;
+  final int unreadCount; // kept for now but will use dict
 
   const MatingChatListTile({
     super.key,
@@ -33,240 +35,262 @@ class MatingChatListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final chatAppCubit = context.read<ChatAppCubit>();
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors:
-                    isDark
-                        ? [
-                          Colors.white.withOpacity(0.05),
-                          Colors.white.withOpacity(0.02),
-                        ]
-                        : [
-                          Colors.white.withOpacity(0.9),
-                          Colors.white.withOpacity(0.7),
-                        ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color:
-                    isDark
-                        ? Colors.white.withOpacity(0.1)
-                        : Colors.black.withOpacity(0.05),
-                width: 1,
-              ),
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () async {
-                  // Get the ChatAppCubit from current context before navigation
-                  final chatAppCubit = context.read<ChatAppCubit>();
+    return StreamBuilder<Map<String, bool>>(
+      stream: chatAppCubit.typingIndicatorsStream,
+      initialData: chatAppCubit.typingIndicators,
+      builder: (context, snapshot) {
+        // Get real-time typing status from stream
+        final typingMap = snapshot.data ?? {};
+        final isTypingNow = typingMap[chat.petId] ?? false;
 
-                  await Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      transitionDuration: const Duration(milliseconds: 500),
-                      pageBuilder:
-                          (context, animation, secondaryAnimation) =>
-                              BlocProvider.value(
-                                value: chatAppCubit,
-                                child: MatingChatDetailScreen(
-                                  chat: chat,
-                                  pet: petEntities,
-                                ),
-                              ),
-                      transitionsBuilder: (
+        // Debug logging to track typing status
+        if (typingMap.isNotEmpty) {
+          print('🎯 [MatingChatListTile] Chat: ${chat.name} (${chat.petId})');
+          print('🎯 [MatingChatListTile] Typing map: $typingMap');
+          print('🎯 [MatingChatListTile] Is typing now: $isTypingNow');
+        }
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors:
+                        isDark
+                            ? [
+                              Colors.white.withOpacity(0.05),
+                              Colors.white.withOpacity(0.02),
+                            ]
+                            : [
+                              Colors.white.withOpacity(0.9),
+                              Colors.white.withOpacity(0.7),
+                            ],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color:
+                        isDark
+                            ? Colors.white.withOpacity(0.1)
+                            : Colors.black.withOpacity(0.05),
+                    width: 1,
+                  ),
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () async {
+                      // Get the ChatAppCubit from current context before navigation
+                      final chatAppCubit = context.read<ChatAppCubit>();
+
+                      await Navigator.push(
                         context,
-                        animation,
-                        secondaryAnimation,
-                        child,
-                      ) {
-                        var begin = const Offset(1.0, 0.0);
-                        var end = Offset.zero;
-                        var curve = Curves.ease;
-                        var tween = Tween(
-                          begin: begin,
-                          end: end,
-                        ).chain(CurveTween(curve: curve));
-                        var offsetAnimation = animation.drive(tween);
-                        return SlideTransition(
-                          position: offsetAnimation,
-                          child: child,
-                        );
-                      },
-                    ),
-                  );
-
-                  try {
-                    if (onNavigateComplete != null) {
-                      await onNavigateComplete!();
-                    }
-                  } catch (_) {}
-                },
-                borderRadius: BorderRadius.circular(20),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      _buildAvatar(chat),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              chat.name,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: theme.colorScheme.onSurface,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            _buildLastMessage(chat, theme),
-                          ],
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 500),
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) =>
+                                  BlocProvider.value(
+                                    value: chatAppCubit,
+                                    child: MatingChatDetailScreen(
+                                      chat: chat,
+                                      pet: petEntities,
+                                    ),
+                                  ),
+                          transitionsBuilder: (
+                            context,
+                            animation,
+                            secondaryAnimation,
+                            child,
+                          ) {
+                            var begin = const Offset(1.0, 0.0);
+                            var end = Offset.zero;
+                            var curve = Curves.ease;
+                            var tween = Tween(
+                              begin: begin,
+                              end: end,
+                            ).chain(CurveTween(curve: curve));
+                            var offsetAnimation = animation.drive(tween);
+                            return SlideTransition(
+                              position: offsetAnimation,
+                              child: child,
+                            );
+                          },
                         ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                      );
+
+                      try {
+                        if (onNavigateComplete != null) {
+                          await onNavigateComplete!();
+                        }
+                      } catch (_) {}
+                    },
+                    borderRadius: BorderRadius.circular(20),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
                         children: [
-                          Text(
-                            _formatLastMessageTime(chat),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: theme.colorScheme.onSurface.withOpacity(
-                                0.5,
-                              ),
+                          _buildAvatar(chat),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  chat.name,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: theme.colorScheme.onSurface,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                _buildLastMessage(chat, theme, isTypingNow),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          if (unreadCount > 0)
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF25D366),
-                                shape: BoxShape.circle,
-                              ),
-                              constraints: const BoxConstraints(
-                                minWidth: 20,
-                                minHeight: 20,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  unreadCount > 99
-                                      ? '99+'
-                                      : unreadCount.toString(),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                _formatLastMessageTime(chat),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: theme.colorScheme.onSurface
+                                      .withOpacity(0.5),
                                 ),
                               ),
-                            ),
-                          if (chat.completeMarriageStatues)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFFFF6B9D),
-                                    Color(0xFFFFC371),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(
-                                      0xFFFF6B9D,
-                                    ).withOpacity(0.3),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
+                              const SizedBox(height: 6),
+                              if (unreadCount > 0)
+                                Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF25D366),
+                                    shape: BoxShape.circle,
                                   ),
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: const [
-                                  Icon(
-                                    Icons.favorite,
-                                    color: Colors.white,
-                                    size: 12,
+                                  constraints: const BoxConstraints(
+                                    minWidth: 20,
+                                    minHeight: 20,
                                   ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    'Mating',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
+                                  child: Center(
+                                    child: Text(
+                                      unreadCount > 99
+                                          ? '99+'
+                                          : unreadCount.toString(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          if (chat.isBlock)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [Colors.red[400]!, Colors.red[600]!],
                                 ),
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.red.withOpacity(0.3),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
+                              if (chat.completeMarriageStatues)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
                                   ),
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.block,
-                                    color: Colors.white,
-                                    size: 12,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    S.of(navigatorKey.currentContext!).block,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFFFF6B9D),
+                                        Color(0xFFFFC371),
+                                      ],
                                     ),
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(
+                                          0xFFFF6B9D,
+                                        ).withOpacity(0.3),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: const [
+                                      Icon(
+                                        Icons.favorite,
+                                        color: Colors.white,
+                                        size: 12,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Mating',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              if (chat.isBlock)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Colors.red[400]!,
+                                        Colors.red[600]!,
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.red.withOpacity(0.3),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.block,
+                                        color: Colors.white,
+                                        size: 12,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        S
+                                            .of(navigatorKey.currentContext!)
+                                            .block,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -357,8 +381,8 @@ class MatingChatListTile extends StatelessWidget {
     );
   }
 
-  Widget _buildLastMessage(ChatEntity chat, ThemeData theme) {
-    if (isTyping) {
+  Widget _buildLastMessage(ChatEntity chat, ThemeData theme, bool isTypingNow) {
+    if (isTypingNow) {
       return Row(
         children: [
           SizedBox(

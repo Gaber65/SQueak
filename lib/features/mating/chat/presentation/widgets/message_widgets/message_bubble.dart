@@ -9,6 +9,8 @@ import 'package:squeak/generated/l10n.dart';
 import '../../../domain/entities/message_entity.dart';
 import '../attach_files_in_chat/full_screen_media_viewer.dart';
 import '../attach_files_in_chat/audio_player_widget.dart';
+import 'package:squeak/features/mating/chat/presentation/controllers/chat_app_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../attach_files_in_chat/in_app_document_viewer.dart';
 
 class ChatMessageBubble extends StatefulWidget {
@@ -268,8 +270,26 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                                           : null;
 
                                   // Use stream status, fallback to message entity status
-                                  final status =
+                                  var status =
                                       statusFromStream ?? widget.message.status;
+
+                                  // UI Override: If friend is online && status is 'sent', force 'delivered'
+                                  // This is a visual fallback to ensure UI reflects "Online = Delivered"
+                                  try {
+                                    final chatAppCubit =
+                                        context.read<ChatAppCubit>();
+                                    final otherUserId =
+                                        widget.message.toUserId; // Receiver ID
+                                    // Only check if we are sender (toMe = false)
+                                    if (!widget.message.toMe &&
+                                        status == MessageStatus.sent) {
+                                      final isOnline = chatAppCubit.generalHub
+                                          .isPetOnlineFromDict(otherUserId);
+                                      if (isOnline) {
+                                        status = MessageStatus.delivered;
+                                      }
+                                    }
+                                  } catch (_) {}
 
                                   return _buildStatusIcon(status);
                                 },

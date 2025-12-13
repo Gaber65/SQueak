@@ -6,8 +6,6 @@ import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
-import 'package:squeak/features/mating/chat/domain/entities/message_entity.dart';
-import 'package:squeak/features/mating/chat/domain/entities/message_status.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_status.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/chat_widgets/chat_app_bar.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/attachment_options_bottom_sheet.dart';
@@ -50,14 +48,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   bool _isBlocked = false;
   bool _isBlockedByMe = false;
   bool _isBlockedByOther = false;
-
-  // Track uploading files to show in chat
   final List<UploadingMedia> _uploadingFiles = [];
-
-  // Typing indicator
   bool _isOtherUserTyping = false;
   Timer? _typingTimer;
-  // Incoming typing detection (show only when user is actually writing)
   int _incomingTypingEventCount = 0;
   Timer? _incomingTypingResetTimer;
   Timer? _incomingTypingHideTimer;
@@ -81,9 +74,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     print('💬 [MatingChatDetailScreen] Opening chat with: ${widget.chat.name}');
     print('💬 [MatingChatDetailScreen] Conversation ID: ${widget.chat.id}');
     print('💬 [MatingChatDetailScreen] Friend Pet ID: ${widget.chat.petId}');
-
-    // REMOVED: No longer firing PetIsJoinedToConversation here
-    // Connection to hub will happen after messages are loaded
 
     _messageController.addListener(() {
       final hasText = _messageController.text.trim().isNotEmpty;
@@ -129,7 +119,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           conversationId: widget.chat.id,
           isTyping: false,
         );
-        
+
         // Fire local PetLeftConversation event before leaving
         print(
           '🔴 [MatingChatDetailScreen] مغادرة المحادثة - إطلاق حدث PetLeftConversation: ${widget.chat.id}',
@@ -139,7 +129,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             {'ConversationId': widget.chat.id, 'PetId': widget.pet?.petId},
           ]),
         );
-        
+
         // Leave the conversation (disconnects ConversationHub, keeps GeneralHub connected)
         print('🔌 [MatingChatDetailScreen] Calling leaveConversation...');
         _chatAppCubit!.leaveConversation();
@@ -170,16 +160,17 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     _typingTimer?.cancel();
 
     if (isTyping) {
-      // Send typing=true to server (other user will see this)
       if (mounted) {
         try {
           context.read<ChatAppCubit>().setTyping(
             conversationId: widget.chat.id,
             isTyping: true,
           );
-        } catch (_) {
-          // Provider not available yet
-        }
+          context.read<ChatAppCubit>().setTypingInGeneral(
+            petId: widget.chat.petId,
+            isTyping: true,
+          );
+        } catch (_) {}
       }
 
       // Set timer to send typing=false after 2 seconds of inactivity
@@ -188,6 +179,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           try {
             context.read<ChatAppCubit>().setTyping(
               conversationId: widget.chat.id,
+              isTyping: false,
+            );
+            context.read<ChatAppCubit>().setTypingInGeneral(
+              petId: widget.chat.petId,
               isTyping: false,
             );
           } catch (_) {
@@ -242,15 +237,18 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               if (state is MessageReceived &&
                   state.conversationId == widget.chat.id) {
                 final cubit = ChatMessagesCubit.get(context);
-                
+
                 // Check if message already exists to prevent duplicates
                 // التحقق من عدم وجود الرسالة لمنع التكرار
                 final messageId = state.message.id;
-                final alreadyExists = messageId != null && 
+                final alreadyExists =
+                    messageId != null &&
                     cubit.messagesList.any((m) => m.id == messageId);
-                
+
                 if (!alreadyExists) {
-                  print('📥 [ChatScreen] Adding new incoming message $messageId');
+                  print(
+                    '📥 [ChatScreen] Adding new incoming message $messageId',
+                  );
                   cubit.addReceivedMessage(state.message, widget.pet!.ownerId);
 
                   // Scroll to bottom
@@ -264,7 +262,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                     }
                   });
                 } else {
-                  print('⚠️ [ChatScreen] Message $messageId already exists, skipping');
+                  print(
+                    '⚠️ [ChatScreen] Message $messageId already exists, skipping',
+                  );
                 }
               }
               if (state is FriendTypingInConversation &&
@@ -352,6 +352,16 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                   errorToast(context, state.message);
                 }
               }
+
+              // Handle FriendOnlineStatusChanged for optimistic UI updates
+              if (state is FriendOnlineStatusChanged) {
+                if (state.petId == widget.chat.petId && state.isOnline) {
+                  print(
+                    '🌟 [ChatScreen] Friend came online - Mark messages as delivered optimistically',
+                  );
+                  ChatMessagesCubit.get(context).markSentMessagesAsDelivered();
+                }
+              }
             },
           ),
           BlocListener<ChatMessagesCubit, ChatMessagesState>(
@@ -371,7 +381,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               } else if (state is MessageSendError) {
                 errorToast(context, state.message);
               }
-              
+
               // NEW: Handle messages loaded successfully
               if (state is ChatMessagesLoaded) {
                 final messages = cubit.messagesList.toList();
@@ -388,7 +398,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 // NOW join conversation and mark messages as read after successful load
                 _joinConversationAfterLoad();
               }
-              
+
               if (state is MatingFinishSuccess) {
                 setState(() {
                   isCompleted = true;
@@ -525,11 +535,13 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     try {
       print('🔌 [MatingChatDetailScreen] Messages loaded successfully');
       print('🔌 [MatingChatDetailScreen] Now joining conversation...');
-      
+
       _chatAppCubit = context.read<ChatAppCubit>();
       await _chatAppCubit?.joinConversation(widget.chat.id);
 
-      print('✅ [MatingChatDetailScreen] Joined conversation: ${widget.chat.id}');
+      print(
+        '✅ [MatingChatDetailScreen] Joined conversation: ${widget.chat.id}',
+      );
 
       // Fire local PetIsJoinedToConversation event
       print(
@@ -548,11 +560,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       // Mark all messages as read after joining
       if (widget.pet?.petId != null && mounted) {
         print('📖 [MatingChatDetailScreen] Marking all messages as read...');
-        await _chatAppCubit?.conversationHub
-            .markMessagesAsSeen(
-              conversationId: widget.chat.id,
-              petId: widget.pet!.petId!,
-            );
+        await _chatAppCubit?.conversationHub.markMessagesAsSeen(
+          conversationId: widget.chat.id,
+          petId: widget.pet!.petId!,
+        );
         print('✅ [MatingChatDetailScreen] All messages marked as read');
       }
     } catch (e) {

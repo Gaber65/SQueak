@@ -20,6 +20,14 @@ class ChatAppCubit extends Cubit<ChatAppState> {
   StreamSubscription? _onlineStatusSubscription; // الاستماع لتحديثات القاموس
   Timer? _pollingTimer;
 
+  // Stream controller for typing indicators
+  final StreamController<Map<String, bool>> _typingIndicatorsController =
+      StreamController<Map<String, bool>>.broadcast();
+
+  // Stream to listen to typing indicator changes
+  Stream<Map<String, bool>> get typingIndicatorsStream =>
+      _typingIndicatorsController.stream;
+
   // تم إزالة onlineFriends المحلي - نستخدم القاموس من generalHub مباشرة
   // Removed local onlineFriends - using dictionary from generalHub directly
   Map<String, int> unreadCounts = {};
@@ -153,23 +161,43 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     // Friend typing in general
     generalHub.onFriendIsTyping((data) {
       print('📥 [GeneralHub] Raw typing data: $data');
+      print('📥 [GeneralHub] Data keys: ${data.keys.toList()}');
+      print('📥 [GeneralHub] Data values: ${data.values.toList()}');
+
       final friendPetId = (data['PetId'] ?? data['petId']) as String?;
       final isTyping = (data['IsTyping'] ?? data['isTyping']) as bool? ?? false;
 
+      print('🔍 [GeneralHub] Extracted petId: $friendPetId');
+      print('🔍 [GeneralHub] Extracted isTyping: $isTyping');
+
       if (friendPetId != null && friendPetId.isNotEmpty) {
+        // Check if server is sending placeholder values
+        if (friendPetId == 'fromPetId') {
+          print(
+            '❌ [GeneralHub] ERROR: Server is sending placeholder "fromPetId" instead of actual petId!',
+          );
+          print(
+            '❌ [GeneralHub] This is a BACKEND BUG - the server must send actual GUID values',
+          );
+          print('❌ [GeneralHub] Full data received: $data');
+        }
+
         typingIndicators[friendPetId] = isTyping;
         print(
           '⌨️ [GeneralHub] Friend $friendPetId typing status changed to: $isTyping',
         );
         print('📊 [GeneralHub] Current typing indicators: $typingIndicators');
+
+        // Broadcast typing status to stream for real-time updates
+        _typingIndicatorsController.add(Map.from(typingIndicators));
+
         emit(FriendTypingInGeneral(friendPetId, isTyping));
       } else {
         print('⚠️ [GeneralHub] Typing event has empty petId!');
+        print('⚠️ [GeneralHub] Available data: $data');
       }
     });
 
-    // Messages delivered when recipient comes online
-    // الرسائل تم توصيلها عندما اتصل المستقبِل بالتطبيق
     generalHub.onMessagesDelivered((data) {
       print('📦 [GeneralHub] Messages delivered event: $data');
       final conversationId = data['ConversationId']?.toString();
@@ -186,7 +214,9 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         // Emit event so UI can update message statuses
         // إرسال حدث لتحديث حالة الرسائل في الواجهة
         conversationSignalEventStream.add(
-          ConversationSignalEvent('ConversationHub', 'MessagesDelivered', [data]),
+          ConversationSignalEvent('ConversationHub', 'MessagesDelivered', [
+            data,
+          ]),
         );
       }
     });
@@ -229,6 +259,9 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     });
   }
 
+  // Track previous online status to detect changes
+  final Map<String, bool> _lastOnlineStatus = {};
+
   /// الاستماع لتحديثات القاموس من generalHub (عمل في الخلفية)
   /// Listen to dictionary updates from generalHub (background job)
   void _listenToOnlineStatusUpdates() {
@@ -242,14 +275,43 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       );
       print('📡 [ChatAppCubit] تلقي تحديث القاموس من الخلفية');
       print('📡 [ChatAppCubit] Received dictionary update from background');
+
+      // Check for status changes (Offline -> Online)
+      for (final entry in statusMap.entries) {
+        final friendId = entry.key;
+        final isOnline = entry.value;
+        final wasOnline = _lastOnlineStatus[friendId] ?? false;
+
+        // Update local cache
+        _lastOnlineStatus[friendId] = isOnline;
+
+        // If user just came online (was offline/unknown -> is online)
+        if (isOnline && !wasOnline) {
+          print('🌟 [ChatAppCubit] Friend $friendId came ONLINE!');
+
+          // If we are connected to ConversationHub, try to mark messages as delivered
+          if (conversationHub.isConnected) {
+            print(
+              '🚀 [ChatAppCubit] Triggering markMessagesAsDelivered for $friendId',
+            );
+            markMessagesAsDelivered(friendId);
+          }
+
+          // Emit event so UI can react optimistically
+          emit(FriendOnlineStatusChanged(friendId, true));
+        }
+      }
+
       print(
         '📡 [ChatAppCubit] إجمالي الأصدقاء في القاموس: ${statusMap.length}',
       );
       print(
         '📡 [ChatAppCubit] Total friends in dictionary: ${statusMap.length}',
       );
-      print('📡 [ChatAppCubit] محتوى القاموس: $statusMap');
-      print('📡 [ChatAppCubit] Dictionary content: $statusMap');
+
+      // Update Unread Counts if we have data
+      // This is important because sometimes initial unread counts might be missed
+      // or if users come online, they might have read messages elsewhere
 
       // يمكن إصدار حدث لتحديث الواجهة إذا لزم الأمر
       // Can emit event to update UI if needed
@@ -363,14 +425,16 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       print('👋 [ChatAppCubit] المستخدم الآخر غادر المحادثة');
       print('👋 [ChatAppCubit] Other user left the conversation');
       print('👋 [ChatAppCubit] Data: $data');
-      print('👋 [ChatAppCubit] الرسائل الجديدة ستكون بحالة delivered وليس seen');
+      print(
+        '👋 [ChatAppCubit] الرسائل الجديدة ستكون بحالة delivered وليس seen',
+      );
       print('👋 [ChatAppCubit] New messages will be delivered, not seen');
       print('👋 [ChatAppCubit] ═══════════════════════════════════════════');
       emit(PetLeftConversation(data));
     });
 
     // Friend typing in conversation
-    conversationHub.onFriendIsTyping((data) {
+    generalHub.onFriendIsTyping((data) {
       final isTyping = (data['IsTyping'] ?? data['isTyping']) as bool? ?? false;
       final friendPetId = (data['PetId'] ?? data['petId']) as String?;
 
@@ -391,14 +455,16 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     // استقبال الرسالة (فقط الرسائل الواردة من المستخدمين الآخرين)
     conversationHub.onMessageReceived((data) {
       var message = MessageModel.fromJson(data);
-      
+
       // Only emit if this is an INCOMING message (toMe = true)
       // فقط إرسال الحدث إذا كانت رسالة واردة (toMe = true)
       if (message.toMe) {
         print('📥 [ChatAppCubit] Received INCOMING message from other user');
         emit(MessageReceived(currentConversationId!, message));
       } else {
-        print('📤 [ChatAppCubit] Ignoring OUTGOING message (already handled by MessageSent events)');
+        print(
+          '📤 [ChatAppCubit] Ignoring OUTGOING message (already handled by MessageSent events)',
+        );
       }
     });
 
@@ -546,30 +612,27 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         petId: petId,
         isTyping: isTyping,
       );
+
       print('⌨️ Setting typing indicator: isTyping=$isTyping');
     } catch (e) {
       print('Error setting typing: $e');
     }
   }
 
-  // Future<void> markMessagesAsRead(String conversationId) async {
-  //   try {
-  //     await conversationHub.markAllUnreadedMessagesInConversationAsRead(
-  //       conversationId: conversationId,
-  //       petId: petId,
-  //     );
-  //     unreadCounts[conversationId] = 0;
-  //     print(
-  //       '📖 [ChatAppCubit] Marked messages as read, updating unread count to 0',
-  //     );
-  //     emit(UnreadCountUpdated(conversationId, 0));
-  //   } catch (e) {
-  //     print('Error marking messages as read: $e');
-  //   }
-  // }
+  Future<void> setTypingInGeneral({
+    required String petId,
+    required bool isTyping,
+  }) async {
+    try {
+      // Send typing to general (for users in the chat)
+      await generalHub.setTypingIndicator(toPetId: petId, isTyping: isTyping);
 
-  /// تعليم الرسائل كـ "تم التوصيل" عندما يكون المستلم متصل لكن ليس في المحادثة
-  /// Mark messages as delivered when recipient is online but not in chat
+      print('⌨️ Setting typing indicator: isTyping=$isTyping');
+    } catch (e) {
+      print('Error setting typing: $e');
+    }
+  }
+
   Future<void> markMessagesAsDelivered(String toPetId) async {
     try {
       // التحقق من أن المستلم متصل لكن ليس في المحادثة الحالية
@@ -583,7 +646,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       print('📬 [ChatAppCubit] ═══════════════════════════════════════════');
 
       if (isOnline) {
-        // await conversationHub.markMessagesAsDelivered(petId: toPetId);
+        await conversationHub.markMessagesAsDelivered(petId: toPetId);
         print('✅ [ChatAppCubit] تم تعليم الرسائل بنجاح كـ delivered');
       } else {
         print(
@@ -673,6 +736,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     await _generalEventSubscription?.cancel();
     await _conversationEventSubscription?.cancel();
     await _onlineStatusSubscription?.cancel(); // إلغاء الاشتراك في القاموس
+    await _typingIndicatorsController.close();
     await generalHub.disconnect();
     await conversationHub.disconnect();
 

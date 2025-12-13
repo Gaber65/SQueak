@@ -154,7 +154,9 @@ class _ChatListViewState extends State<_ChatListView> {
             debugPrint(
               '📊 Typing indicators: ${chatAppCubit.typingIndicators}',
             );
-            debugPrint('📊 Online friends: ${chatAppCubit.generalHub.onlineFriendsDict}');
+            debugPrint(
+              '📊 Online friends: ${chatAppCubit.generalHub.onlineFriendsDict}',
+            );
 
             return CustomScrollView(
               slivers: [
@@ -291,6 +293,8 @@ class _ChatListViewState extends State<_ChatListView> {
                   final isOnline = chatAppCubit.generalHub.isPetOnlineFromDict(
                     chat.petId,
                   );
+                  // الحصول على عدد الرسائل من القاموس
+                  
 
                   if (isTyping) {
                     print(

@@ -54,26 +54,7 @@ class _ChatsTabState extends State<ChatsTab> {
           listeners: [
             BlocListener<ChatAppCubit, ChatAppState>(
               listener: (context, chatAppState) {
-                // Refresh chat list on relevant SignalR events
-                if (chatAppState is UnreadCountUpdated ||
-                    chatAppState is MessageReceived ||
-                    chatAppState is FriendOnlineStatusChanged ||
-                    chatAppState is NewMessageDetected) {
-                  print(
-                    '🔄 [ChatsTab] Received event from GeneralHub, refreshing chat list',
-                  );
-                  if (activePet.petId != null) {
-                    PetFriendsCubit.get(
-                      context,
-                    ).loadChats(petId: activePet.petId!);
-                  }
-                }
-
-                if (chatAppState is ChatAppError) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(chatAppState.message)));
-                }
+         
               },
             ),
           ],
@@ -97,29 +78,46 @@ class _ChatsTabState extends State<ChatsTab> {
       child: BlocBuilder<ChatAppCubit, ChatAppState>(
         buildWhen: (previous, current) {
           // Rebuild when online status, typing status, or unread count changes
-          return current is FriendOnlineStatusChanged ||
+          final shouldRebuild =
+              current is FriendOnlineStatusChanged ||
               current is FriendTypingInGeneral ||
               current is UnreadCountUpdated ||
               current is UnreadCountsPolled ||
+              current is NewMessageDetected ||
               current is ChatAppConnected;
+
+          if (shouldRebuild) {
+            print(
+              '🔄 [ChatsTab] Rebuilding chat list due to: ${current.runtimeType}',
+            );
+          }
+
+          return shouldRebuild;
         },
         builder: (context, chatAppState) {
           final chatAppCubit = context.read<ChatAppCubit>();
+
+          print('🏗️ [ChatsTab] Building chat list with ${chats.length} chats');
 
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
               _buildChatsHeader(chats.length),
               const SizedBox(height: 16),
-              ...chats.map(
-                (chat) => MatingChatListTile(
+              ...chats.map((chat) {
+                // الحصول على البيانات من القاموس مباشرة
+                // Get data from dictionary directly
+                final isOnline = chatAppCubit.generalHub.isPetOnlineFromDict(
+                  chat.petId,
+                );
+                
+
+                return MatingChatListTile(
                   chat: chat,
                   petEntities: activePet,
-                  isOnline: chatAppCubit.generalHub.isPetOnlineFromDict(
-                    chat.petId,
-                  ),
+                  isOnline: isOnline,
                   isTyping: chatAppCubit.typingIndicators[chat.petId] ?? false,
-                  unreadCount: chatAppCubit.unreadCounts[chat.id] ?? 0,
+                 unreadCount: chatAppCubit.unreadCounts[chat.id] ?? 0,
                   onNavigateComplete: () async {
                     if (activePet.petId!.isNotEmpty) {
                       await PetFriendsCubit.get(
@@ -127,8 +125,8 @@ class _ChatsTabState extends State<ChatsTab> {
                       ).loadChats(petId: activePet.petId!);
                     }
                   },
-                ),
-              ),
+                );
+              }),
             ],
           );
         },

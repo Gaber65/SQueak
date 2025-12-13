@@ -354,7 +354,6 @@ class SignalRConversationHubService {
     await _hub.disconnect();
   }
 
-  // ==================== HUB METHODS ====================
 
   /// Set typing indicator for current user in conversation
   Future<void> setTyping({

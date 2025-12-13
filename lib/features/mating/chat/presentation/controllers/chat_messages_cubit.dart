@@ -43,10 +43,37 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   Stream<Map<String, MessageStatus>> get messageStatusStream =>
       _statusStreamController.stream;
 
+  /// Get numeric weight for message status to allow comparison
+  int _getStatusWeight(MessageStatus status) {
+    switch (status) {
+      case MessageStatus.sent:
+        return 1;
+      case MessageStatus.delivered:
+        return 2;
+      case MessageStatus.seen:
+        return 3;
+    }
+  }
+
   /// Helper to update status and notify stream listeners
   /// تحديث حالة الرسالة وإبلاغ المستمعين
   void _updateMessageStatus(String messageId, MessageStatus status) {
     final oldStatus = messageStatuses[messageId];
+
+    // Prevent regression (e.g. Delivered -> Sent)
+    // منع التراجع في الحالة (مثلاً من تم التوصيل -> تم الإرسال)
+    if (oldStatus != null) {
+      final oldWeight = _getStatusWeight(oldStatus);
+      final newWeight = _getStatusWeight(status);
+
+      if (newWeight < oldWeight) {
+        print(
+          '⚠️ [تجاهل تحديث الحالة] محاولة تراجع الحالة للرسالة ${messageId.substring(0, 8)}... : ${oldStatus.name} ($oldWeight) -> ${status.name} ($newWeight)',
+        );
+        return;
+      }
+    }
+
     messageStatuses[messageId] = status;
     _statusStreamController.add(Map.from(messageStatuses));
     print(
@@ -332,6 +359,32 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       }
     }
     emit(ChatMessagesLoaded(List.from(messagesList)));
+  }
+
+  /// Mark all SENT messages as DELIVERED (optimistic update when user comes online)
+  void markSentMessagesAsDelivered() {
+    print(
+      '🚀 [ChatMessagesCubit] Optimistically marking SENT messages as DELIVERED',
+    );
+    bool hasChanges = false;
+
+    for (var i = 0; i < messagesList.length; i++) {
+      final m = messagesList[i];
+      if (!m.toMe && m.status == MessageStatus.sent) {
+        messagesList[i] = messagesList[i].copyWith(
+          status: MessageStatus.delivered,
+        );
+        if (m.id != null && m.id!.isNotEmpty) {
+          deliveryStatuses[m.id!] = 'two_grey';
+          _updateMessageStatus(m.id!, MessageStatus.delivered);
+          hasChanges = true;
+        }
+      }
+    }
+
+    if (hasChanges) {
+      emit(ChatMessagesLoaded(List.from(messagesList)));
+    }
   }
 
   Future<void> loadMessages(String chatId, String petId) async {
