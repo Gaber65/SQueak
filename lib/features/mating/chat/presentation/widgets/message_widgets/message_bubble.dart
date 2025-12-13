@@ -268,19 +268,12 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                                               ? snapshot.data![msgId]
                                               : null
                                           : null;
-
-                                  // Use stream status, fallback to message entity status
                                   var status =
                                       statusFromStream ?? widget.message.status;
-
-                                  // UI Override: If friend is online && status is 'sent', force 'delivered'
-                                  // This is a visual fallback to ensure UI reflects "Online = Delivered"
                                   try {
                                     final chatAppCubit =
                                         context.read<ChatAppCubit>();
-                                    final otherUserId =
-                                        widget.message.toUserId; // Receiver ID
-                                    // Only check if we are sender (toMe = false)
+                                    final otherUserId = widget.message.toUserId;
                                     if (!widget.message.toMe &&
                                         status == MessageStatus.sent) {
                                       final isOnline = chatAppCubit.generalHub
