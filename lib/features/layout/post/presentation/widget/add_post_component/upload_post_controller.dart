@@ -124,7 +124,7 @@ class UploadPostController {
     }
 
 
-    if (content.length > 1000) {
+    if (content.length >= 1000) {
       return dialogs.showValidationDialog(
         context,
         'Content Too Long',
@@ -133,15 +133,14 @@ class UploadPostController {
       );
     }
 
-    // Check file sizes
     for (final file in cubit.mediaFiles) {
       final sizeMB = file.lengthSync() / (1024 * 1024);
-      if (sizeMB > 15) {
+      if (sizeMB >= 10) {
         return dialogs.showValidationDialog(
           context,
           'File Too Large',
-          'File size cannot exceed 15MB.',
-          'لا يمكن أن يتجاوز حجم الملف 15 ميجابايت.',
+          'File size cannot exceed 10MB.',
+          'لا يمكن أن يتجاوز حجم الملف 10 ميجابايت.',
         );
       }
     }

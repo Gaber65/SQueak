@@ -197,4 +197,23 @@ class MainRemoteDataSource {
     final compressedFile = File(file.path)..writeAsBytesSync(result!);
     return compressedFile;
   }
+
+  String getImageSubtype(String filePath) {
+    String extension = filePath.split('.').last.toLowerCase();
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+        return 'jpeg';
+      case 'png':
+        return 'png';
+      case 'gif':
+        return 'gif';
+      case 'bmp':
+        return 'bmp';
+      case 'webp':
+        return 'webp';
+      default:
+        return 'jpeg'; 
+    }
+  }
 }

@@ -46,12 +46,14 @@ class AppRepositoryImpl implements AppRepository {
     File file,
     UploadPlace uploadPlace,
   ) async {
+    final subtype = remoteDataSource.getImageSubtype(file.path);
     final result = await remoteDataSource.uploadFile(
       file,
       imageHelperEndPoint,
       uploadPlace.value,
       "image",
-      "jpeg",
+      subtype,
+
     );
 
     try {
