@@ -29,8 +29,8 @@ class FriendOnlineStatusChanged extends ChatAppState {
 class FriendTypingInGeneral extends ChatAppState {
   final String toPetId;
   final bool isTyping;
-  final String fromPetId; 
-  FriendTypingInGeneral(this.toPetId, this.isTyping , this.fromPetId);
+  final String fromPetId;
+  FriendTypingInGeneral(this.toPetId, this.isTyping, this.fromPetId);
 }
 
 // Unread count events
@@ -121,6 +121,20 @@ class UnreadCountsPolled extends ChatAppState {
 }
 
 class NewMessageDetected extends ChatAppState {
+  final String conversationId;
+  final String fromPetId;
+  final String contentMessage;
+  final bool imageMessage;
+  final bool videoMessage;
+  final bool fileMessage;
   final DateTime timestamp;
-  NewMessageDetected() : timestamp = DateTime.now();
+
+  NewMessageDetected({
+    required this.conversationId,
+    required this.fromPetId,
+    required this.contentMessage,
+    this.imageMessage = false,
+    this.videoMessage = false,
+    this.fileMessage = false,
+  }) : timestamp = DateTime.now();
 }

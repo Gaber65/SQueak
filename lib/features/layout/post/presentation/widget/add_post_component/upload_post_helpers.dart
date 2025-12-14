@@ -66,11 +66,11 @@ class UploadPostHelpers {
       return 'Please write something or add media!';
     }
 
-    if (title.length > 100) {
+    if (title.length >= 100) {
       return 'Post title cannot exceed 100 characters.';
     }
 
-    if (content.length > 1000) {
+    if (content.length >= 1000) {
       return 'Post content cannot exceed 1000 characters.';
     }
 
@@ -113,7 +113,7 @@ class UploadPostHelpers {
 class UploadPostConstants {
   static const int maxTitleLength = 100;
   static const int maxContentLength = 1000;
-  static const double maxFileSizeMB = 15.0;
+  static const double maxFileSizeMB = 10.0;
   static const List<String> allowedImageExtensions = [
     'jpg',
     'jpeg',
@@ -142,7 +142,7 @@ extension CommunityCubitExtensions on CommunityCubit {
   int get videoCount => mediaTypes.where((type) => type == 'video').length;
 
   bool canAddMoreMedia() {
-    return mediaFiles.length < 10; 
+    return mediaFiles.length <= 10; 
   }
 
   String get mediaSummary {

@@ -654,6 +654,19 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           audio: type == AttachmentType.audio ? mediaUrl : null,
           file: type == AttachmentType.file ? mediaUrl : null,
         );
+
+        // Increase unread count with media type flags
+        await chatAppCubit.increaseUnreadMessageCount(
+          conversationId: widget.chat.id,
+          toPetId: widget.chat.petId,
+          fromPetId: widget.pet?.petId ?? '',
+          content: caption ?? '',
+          imageMessage: type == AttachmentType.image,
+          videoMessage: type == AttachmentType.video,
+          fileMessage:
+              type == AttachmentType.file || type == AttachmentType.audio,
+        );
+
         debugPrint('✅ Media message sent successfully');
       } else {
         debugPrint('❌ Upload failed: mediaUrl is null or empty');
@@ -758,20 +771,37 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   void _sendMessage(ChatMessagesCubit cubit, ChatAppCubit chatAppCubit) {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
+
+    // Stop typing indicator before sending
+    chatAppCubit.setTyping(
+      conversationId: widget.chat.id,
+      isTyping: false,
+    );
+    chatAppCubit.setTypingInGeneral(
+      petId: widget.chat.petId,
+      isTyping: false,
+      fromPetId: widget.pet?.petId ?? '',
+    );
+
     chatAppCubit.sendMessage(
       conversationId: widget.chat.id,
       toPetId: widget.chat.petId,
       description: text,
     );
 
-
     print('📤 [ChatScreen] Sending message to server');
-    chatAppCubit.increaseUnreadMessageCount(conversationId: widget.chat.id, toPetId: widget.chat.petId, fromPetId: widget.pet?.petId ?? '');
-    
+
+    // Increase unread count for recipient with message content
+    chatAppCubit.increaseUnreadMessageCount(
+      conversationId: widget.chat.id,
+      toPetId: widget.chat.petId,
+      fromPetId: widget.pet?.petId ?? '',
+      content: text,
+      imageMessage: false,
+      videoMessage: false,
+      fileMessage: false,
+    );
+
     _messageController.clear();
-
-   
-
   }
-
 }

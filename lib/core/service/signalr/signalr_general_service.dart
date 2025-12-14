@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:async';
 import 'package:signalr_netcore/signalr_client.dart';
 import 'package:logging/logging.dart';
@@ -294,7 +296,6 @@ class _GeneralHubManager {
     _connection!.off("UnreadedMessagesCountPetConversation");
     _connection!.off("FriendIsTyping");
     _connection!.off("IncreaseUnReadCount");
-    
 
     void registerEvent(String eventName) {
       _connection!.on(eventName, (args) {
@@ -507,11 +508,22 @@ class SignalRGeneralHubService {
     required String toPetId,
     required String fromPetId,
     required String conversationId,
-  }) async =>
-      await _hub.invoke<void>(
-        "IncreaseUnReadCountMessageForConversation",
-        args: [toPetId, fromPetId, conversationId],
-      );   
+    required String content,
+    bool? imageMessage,
+    bool? videoMessage,
+    bool? fileMessage,
+  }) async => await _hub.invoke<void>(
+    "IncreaseUnReadCountMessageForConversation",
+    args: [
+      toPetId,
+      fromPetId,
+      conversationId,
+      content,
+      imageMessage,
+      videoMessage,
+      fileMessage,
+    ],
+  );
 
   Future<Map<String, int>?> getUnreadMessageCounts(String petId) async {
     final result = await _hub.invoke<Map<dynamic, dynamic>>(
@@ -585,10 +597,10 @@ class SignalRGeneralHubService {
           SignalEvent('GeneralHub', 'IncreaseUnReadCount', args),
         );
         callback(data);
+        callback(data);
       }
     });
   }
-
 
   void dispose() => _hub.dispose();
 }

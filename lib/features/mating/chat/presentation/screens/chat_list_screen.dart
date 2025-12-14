@@ -150,8 +150,13 @@ class _ChatListViewState extends State<_ChatListView> {
               // Handle NewMessageDetected - Refresh to get new message details
               if (state is NewMessageDetected) {
                 print(
-                  '🔄 [ChatListScreen] Received NewMessageDetected, refreshing silently',
+                  '🔄 [ChatListScreen] Received NewMessageDetected for conversation: ${state.conversationId}',
                 );
+                print('   📨 From: ${state.fromPetId}');
+                print('   📝 Content: ${state.contentMessage}');
+                print('   🖼️ Image: ${state.imageMessage}');
+                print('   🎥 Video: ${state.videoMessage}');
+                print('   📎 File: ${state.fileMessage}');
                 if (activePet?.petId != null) {
                   context.read<ChatListCubit>().refreshChatsWithoutLoading(
                     activePet!.petId!,

@@ -180,17 +180,34 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       final unreadCount =
           (data['UnReadCount'] ?? data['unReadCount']) as int? ?? 0;
 
+      // Extract message content and type flags (new fields from server)
+      final contentMessage =
+          (data['contentMessage'] ??
+                  data['contentMessage'] ??
+                  data['ContentMessage'] ??
+                  data['contentMessage'])
+              ?.toString() ??
+          '';
+      final imageMessage =
+          (data['ImageMessage'] ?? data['imageMessage']) as bool? ?? false;
+      final videoMessage =
+          (data['VideoMessage'] ?? data['videoMessage']) as bool? ?? false;
+      final fileMessage =
+          (data['FileMessage'] ?? data['fileMessage']) as bool? ?? false;
+
       if (conversationId != null && conversationId.isNotEmpty) {
         print('📬 [GeneralHub] Processing unread count update');
         print('   Conversation ID: $conversationId');
         print('   From Pet: $fromPetId');
         print('   To Pet: $toPetId');
         print('   Server unread count: $unreadCount');
+        print('   💬 Content: $contentMessage');
+        print('   🖼️ Image Message: $imageMessage');
+        print('   🎥 Video Message: $videoMessage');
+        print('   📎 File Message: $fileMessage');
 
-        // Increment local unread count by 1
-        final currentCount = unreadCounts[conversationId] ?? 0;
-        final newCount = currentCount + 1;
-        unreadCounts[conversationId] = newCount;
+        // Use unread count directly from event (don't increment)
+        unreadCounts[conversationId] = unreadCount;
 
         // Calculate total unread messages
         _totalUnreadMessages = unreadCounts.values.fold(
@@ -198,8 +215,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
           (sum, count) => sum + count,
         );
 
-        print('📊 Previous count: $currentCount');
-        print('📊 New count (incremented): $newCount');
+        print('📊 Unread count from event: $unreadCount');
         print('📊 Updated unread counts map: $unreadCounts');
         print('📊 Total unread messages: $_totalUnreadMessages');
         print('📤 [GeneralHub] Emitting UnreadCountUpdated state');
@@ -207,7 +223,19 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         // Broadcast to stream for immediate UI update
         _unreadCountsController.add(Map.from(unreadCounts));
 
-        emit(UnreadCountUpdated(conversationId, newCount));
+        emit(UnreadCountUpdated(conversationId, unreadCount));
+
+        // Emit NewMessageDetected with message preview info
+        emit(
+          NewMessageDetected(
+            conversationId: conversationId,
+            fromPetId: fromPetId ?? '',
+            contentMessage: contentMessage,
+            imageMessage: imageMessage,
+            videoMessage: videoMessage,
+            fileMessage: fileMessage,
+          ),
+        );
 
         print('✅ [GeneralHub] Unread count update complete');
       } else {
@@ -668,6 +696,10 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     required String toPetId,
     required String fromPetId,
     required String conversationId,
+    required String content,
+    bool imageMessage = false,
+    bool videoMessage = false,
+    bool fileMessage = false,
   }) async {
     try {
       print('🔔 [ChatAppCubit] ══════════════════════════════════════════════');
@@ -682,6 +714,10 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         toPetId: toPetId,
         fromPetId: fromPetId,
         conversationId: conversationId,
+        content: content,
+        imageMessage: imageMessage,
+        videoMessage: videoMessage,
+        fileMessage: fileMessage,
       );
 
       print('✅ [ChatAppCubit] Successfully increased unread message count');
