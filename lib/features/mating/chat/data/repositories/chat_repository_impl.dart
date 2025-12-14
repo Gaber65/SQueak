@@ -20,13 +20,16 @@ class ChatRepository implements BaseChatRepository {
     }
   }
 
-
   @override
   Future<Either<Failure, List<MessageEntity>>> getMessages(
-    String chatId,
-  ) async {
+    String chatId, {
+    int pageNumber = 1,
+  }) async {
     try {
-      final messages = await remoteDataSource.getMessages(chatId);
+      final messages = await remoteDataSource.getMessages(
+        chatId,
+        pageNumber: pageNumber,
+      );
       return Right(messages);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));
@@ -63,7 +66,7 @@ class ChatRepository implements BaseChatRepository {
   ) async {
     try {
       final result = await remoteDataSource.blockChat(parameters);
-      return  Right(result);
+      return Right(result);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));
     }
@@ -73,7 +76,7 @@ class ChatRepository implements BaseChatRepository {
   Future<Either<Failure, bool>> renameChat(RenameChatParameters params) async {
     try {
       final result = await remoteDataSource.renameChat(params);
-      return  Right(result);
+      return Right(result);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));
     }
@@ -83,12 +86,12 @@ class ChatRepository implements BaseChatRepository {
   Future<Either<Failure, bool>> rateMating(RateMatingParameters params) async {
     try {
       final result = await remoteDataSource.ratingMating(params);
-      return  Right(result);
+      return Right(result);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));
     }
   }
-  
+
   @override
   Future<Either<Failure, bool>> clearChat(ClearChatParameters params) async {
     try {
@@ -100,7 +103,9 @@ class ChatRepository implements BaseChatRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> deleteMessage(DeleteMessageParameters params) async {
+  Future<Either<Failure, bool>> deleteMessage(
+    DeleteMessageParameters params,
+  ) async {
     try {
       final result = await remoteDataSource.deleteMessage(params);
       return Right(result);

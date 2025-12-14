@@ -1,7 +1,11 @@
 class GetMessagesParameters {
   final String chatId;
+  final int pageNumber;
 
-  const GetMessagesParameters({required this.chatId});
+  const GetMessagesParameters({
+    required this.chatId,
+    this.pageNumber = 1,
+  });
 }
 
 class SendMessageParameters {

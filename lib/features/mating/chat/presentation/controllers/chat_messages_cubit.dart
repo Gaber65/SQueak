@@ -339,6 +339,9 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
 
   List<MessageEntity> messagesList = [];
   bool isOtherUserTyping = false;
+  int currentPage = 1;
+  bool hasMoreMessages = true;
+  bool isLoadingMore = false;
 
   void addReceivedMessage(MessageEntity message, String senderID) {
     messagesList.add(message);
@@ -402,9 +405,14 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
 
     emit(ChatMessagesLoading());
 
-    print('📥 Loading messages for chat: $chatId');
+    // Reset pagination state
+    currentPage = 1;
+    hasMoreMessages = true;
+    messagesList.clear();
+
+    print('📥 Loading messages for chat: $chatId (page: $currentPage)');
     final result = await getMessagesUseCase(
-      GetMessagesParameters(chatId: chatId),
+      GetMessagesParameters(chatId: chatId, pageNumber: currentPage),
     );
 
     result.fold(
@@ -415,6 +423,9 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       (messages) async {
         messagesList = messages.reversed.toList();
         print('✅ Loaded ${messagesList.length} messages');
+
+        // Check if there are more messages to load
+        hasMoreMessages = messages.length >= 30; // Assuming page size is 30
 
         // Mark all messages as read when opening the chat
         print('📖 Marking all unread messages as read...');
@@ -432,6 +443,45 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
         }
 
         emit(ChatMessagesLoaded(messages));
+      },
+    );
+  }
+
+  Future<void> loadMoreMessages(String chatId) async {
+    if (!hasMoreMessages || isLoadingMore) {
+      print('⚠️ No more messages to load or already loading');
+      return;
+    }
+
+    isLoadingMore = true;
+    currentPage++;
+
+    print('📥 Loading more messages for chat: $chatId (page: $currentPage)');
+    final result = await getMessagesUseCase(
+      GetMessagesParameters(chatId: chatId, pageNumber: currentPage),
+    );
+
+    result.fold(
+      (failure) {
+        print('❌ Failed to load more messages: $failure');
+        currentPage--; // Revert page increment on failure
+        isLoadingMore = false;
+      },
+      (messages) {
+        if (messages.isEmpty) {
+          hasMoreMessages = false;
+          print('✅ No more messages available');
+        } else {
+          // Add new messages at the beginning (older messages)
+          messagesList.insertAll(0, messages.reversed.toList());
+          print('✅ Loaded ${messages.length} more messages (total: ${messagesList.length})');
+
+          // Check if there are more messages to load
+          hasMoreMessages = messages.length >= 30; // Assuming page size is 30
+        }
+        
+        isLoadingMore = false;
+        emit(ChatMessagesLoaded(List.from(messagesList)));
       },
     );
   }

@@ -592,6 +592,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         conversationId: widget.chat.id,
         chatImage: widget.chat.image,
         isOtherUserTyping: _isOtherUserTyping,
+        hasMoreMessages: cubit.hasMoreMessages,
+        isLoadingMore: cubit.isLoadingMore,
+        onLoadMore: () => cubit.loadMoreMessages(widget.chat.id),
       );
     }
     return const ChatEmptyState();
@@ -773,10 +776,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     if (text.isEmpty) return;
 
     // Stop typing indicator before sending
-    chatAppCubit.setTyping(
-      conversationId: widget.chat.id,
-      isTyping: false,
-    );
+    chatAppCubit.setTyping(conversationId: widget.chat.id, isTyping: false);
     chatAppCubit.setTypingInGeneral(
       petId: widget.chat.petId,
       isTyping: false,

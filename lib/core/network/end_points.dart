@@ -137,7 +137,7 @@ const String baseUrlMessageKey = 'https://fcm.googleapis.com/fcm/send';
 /// Chat
 String sendMassageEndPoint = '$version/messages';
 String getMassageUserEndPoint(String clinicId, int pageNumber) =>
-    '$version/messages/paggination?pageSize=50&pageNumber=$pageNumber&ClinicId=$clinicId';
+    '$version/messages/paggination?pageSize=30&pageNumber=$pageNumber&ClinicId=$clinicId';
 String getMassageAdminEndPoint({
   required String clinicId,
   required String userId,
@@ -222,6 +222,9 @@ String getChatsEndPoint(petId) =>
     '$version/conversations?ConversationType=1&PetId=$petId';
 String getMSGChatsEndPoint(conversationId) =>
     '$version/messages?ConversationId=$conversationId';
+String getMessagePagination(conversationId, pageNumber) =>
+    '$version/messages/paggination?ConversationId=$conversationId&PageNumber=$pageNumber&PageSize=30';
+    
 String sendMSGEndPoint = '$version/messages';
 String renameChatEndPoint = '$version/conversations/rename';
 String blockChatEndPoint = '$version/conversations/update/blocking';

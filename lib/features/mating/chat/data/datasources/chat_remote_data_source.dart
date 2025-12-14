@@ -9,7 +9,7 @@ import '../models/message_model.dart';
 
 abstract class BaseChatRemoteDataSource {
   Future<List<ChatModel>> getChats(petId);
-  Future<List<MessageModel>> getMessages(String chatId);
+  Future<List<MessageModel>> getMessages(String chatId, {int pageNumber = 1});
   Future<MessageModel> sendMessage(SendMessageParameters parameters);
   Future<void> finishMating(FinishMatingParameters matingId);
   Future<bool> renameChat(RenameChatParameters param);
@@ -37,12 +37,12 @@ class ChatRemoteDataSource implements BaseChatRemoteDataSource {
   }
 
   @override
-  Future<List<MessageModel>> getMessages(String chatId) async {
+  Future<List<MessageModel>> getMessages(String chatId, {int pageNumber = 1}) async {
     try {
       final response = await DioFinalHelper.getData(
-        method: getMSGChatsEndPoint(chatId),
+        method: getMessagePagination(chatId, pageNumber),
       );
-      return (response.data['data']['messageDtos'] as List)
+      return (response.data['data']['result'] as List)
           .map((chat) => MessageModel.fromJson(chat))
           .toList();
     } on DioException catch (e) {

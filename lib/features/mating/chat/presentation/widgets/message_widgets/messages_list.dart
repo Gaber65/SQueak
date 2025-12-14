@@ -7,7 +7,7 @@ import 'uploading_bubble.dart';
 import '../typing_indicator.dart';
 import '../chat_widgets/chat_background_painter.dart';
 
-class MessagesList extends StatelessWidget {
+class MessagesList extends StatefulWidget {
   final List<MessageEntity> messages;
   final List<UploadingMedia> uploadingFiles;
   final ItemScrollController itemScrollController;
@@ -15,6 +15,9 @@ class MessagesList extends StatelessWidget {
   final String conversationId;
   final String? chatImage;
   final bool isOtherUserTyping;
+  final VoidCallback? onLoadMore;
+  final bool hasMoreMessages;
+  final bool isLoadingMore;
 
   const MessagesList({
     super.key,
@@ -25,7 +28,46 @@ class MessagesList extends StatelessWidget {
     required this.conversationId,
     this.chatImage,
     this.isOtherUserTyping = false,
+    this.onLoadMore,
+    this.hasMoreMessages = false,
+    this.isLoadingMore = false,
   });
+
+  @override
+  State<MessagesList> createState() => _MessagesListState();
+}
+
+class _MessagesListState extends State<MessagesList> {
+  @override
+  void initState() {
+    super.initState();
+    widget.itemPositionsListener.itemPositions.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    widget.itemPositionsListener.itemPositions.removeListener(_onScroll);
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final positions = widget.itemPositionsListener.itemPositions.value;
+    
+    if (positions.isNotEmpty) {
+      final minPosition = positions
+          .where((position) => position.itemTrailingEdge > 0)
+          .reduce((min, position) => 
+              position.index < min.index ? position : min);
+      
+      if (minPosition.index <= 2 && 
+          widget.hasMoreMessages && 
+          !widget.isLoadingMore &&
+          widget.onLoadMore != null) {
+        print('Reached top, loading more messages...');
+        widget.onLoadMore!();
+      }
+    }
+  }
 
   bool _isSameDay(DateTime date1, DateTime date2) {
     return date1.year == date2.year &&
@@ -37,8 +79,9 @@ class MessagesList extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final typingCount = isOtherUserTyping ? 1 : 0;
-    final totalItems = messages.length + uploadingFiles.length + typingCount;
+    final typingCount = widget.isOtherUserTyping ? 1 : 0;
+    final loadingCount = widget.isLoadingMore ? 1 : 0;
+    final totalItems = widget.messages.length + widget.uploadingFiles.length + typingCount + loadingCount;
 
     return Stack(
       children: [
@@ -51,16 +94,30 @@ class MessagesList extends StatelessWidget {
           ),
         ),
         ScrollablePositionedList.builder(
-          itemScrollController: itemScrollController,
-          itemPositionsListener: itemPositionsListener,
+          itemScrollController: widget.itemScrollController,
+          itemPositionsListener: widget.itemPositionsListener,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           itemCount: totalItems,
           itemBuilder: (_, index) {
+            if (widget.isLoadingMore && index == 0) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Center(
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+              );
+            }
+            
+            final adjustedIndex = widget.isLoadingMore ? index - 1 : index;
             final messagesAndUploadsCount =
-                messages.length + uploadingFiles.length;
-            if (index >= messagesAndUploadsCount) {
-              // Only show typing indicator for other user
-              if (isOtherUserTyping) {
+                widget.messages.length + widget.uploadingFiles.length;
+                
+            if (adjustedIndex >= messagesAndUploadsCount) {
+              if (widget.isOtherUserTyping) {
                 return Padding(
                   padding: const EdgeInsets.only(left: 4, top: 4, bottom: 8),
                   child: Align(
@@ -69,12 +126,13 @@ class MessagesList extends StatelessWidget {
                   ),
                 );
               }
+              return const SizedBox.shrink();
             }
-            if (index < messages.length) {
-              final message = messages[index];
+            if (adjustedIndex < widget.messages.length) {
+              final message = widget.messages[adjustedIndex];
               final showDateDivider =
-                  index == 0 ||
-                  !_isSameDay(messages[index - 1].createdAt, message.createdAt);
+                  adjustedIndex == 0 ||
+                  !_isSameDay(widget.messages[adjustedIndex - 1].createdAt, message.createdAt);
 
               final isMe = !message.toMe;
 
@@ -84,15 +142,14 @@ class MessagesList extends StatelessWidget {
                   ChatMessageBubble(
                     message: message,
                     isMe: isMe,
-                    conversationId: conversationId,
-                    // pass chat image so bubble can show sender avatar
-                    chatImage: chatImage,
+                    conversationId: widget.conversationId,
+                    chatImage: widget.chatImage,
                   ),
                 ],
               );
             } else {
-              final uploadIndex = index - messages.length;
-              return UploadingBubble(upload: uploadingFiles[uploadIndex]);
+              final uploadIndex = adjustedIndex - widget.messages.length;
+              return UploadingBubble(upload: widget.uploadingFiles[uploadIndex]);
             }
           },
         ),
