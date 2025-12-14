@@ -28,6 +28,14 @@ class ChatAppCubit extends Cubit<ChatAppState> {
   Stream<Map<String, bool>> get typingIndicatorsStream =>
       _typingIndicatorsController.stream;
 
+  // Stream controller for unread counts
+  final StreamController<Map<String, int>> _unreadCountsController =
+      StreamController<Map<String, int>>.broadcast();
+
+  // Stream to listen to unread count changes
+  Stream<Map<String, int>> get unreadCountsStream =>
+      _unreadCountsController.stream;
+
   // تم إزالة onlineFriends المحلي - نستخدم القاموس من generalHub مباشرة
   // Removed local onlineFriends - using dictionary from generalHub directly
   Map<String, int> unreadCounts = {};
@@ -160,39 +168,57 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
     // Increase unread count (when recipient is online but not viewing conversation)
     generalHub.onIncreaseUnReadCount((data) {
-      print('📥 [GeneralHub] IncreaseUnReadCount event: $data');
-       final toPetId = data['ToPetId']?.toString();
-      final fromPetId = data['FromPetId']?.toString();
-      final conversationId = data['ConversationId']?.toString();
-     
-      final unreadCount = data['UnReadCount'] as int? ?? 0;
+      print('📥 [GeneralHub] ══════════════════════════════════════════════');
+      print('📥 [GeneralHub] IncreaseUnReadCount event received!');
+      print('📥 [GeneralHub] Raw data: $data');
 
-      if (conversationId != null) {
-        print(
-          '📬 [GeneralHub] Unread count increased for conversation $conversationId',
-        );
-        print('   From: $fromPetId');
-        print('   To: $toPetId');
-        print('   New unread count: $unreadCount');
+      // Try both PascalCase and camelCase field names for compatibility
+      final toPetId = (data['ToPetId'] ?? data['toPetId'])?.toString();
+      final fromPetId = (data['FromPetId'] ?? data['fromPetId'])?.toString();
+      final conversationId =
+          (data['ConversationId'] ?? data['conversationId'])?.toString();
+      final unreadCount =
+          (data['UnReadCount'] ?? data['unReadCount']) as int? ?? 0;
 
-        // Update local unread counts
-        unreadCounts[conversationId] = unreadCount;
-        
+      if (conversationId != null && conversationId.isNotEmpty) {
+        print('📬 [GeneralHub] Processing unread count update');
+        print('   Conversation ID: $conversationId');
+        print('   From Pet: $fromPetId');
+        print('   To Pet: $toPetId');
+        print('   Server unread count: $unreadCount');
+
+        // Increment local unread count by 1
+        final currentCount = unreadCounts[conversationId] ?? 0;
+        final newCount = currentCount + 1;
+        unreadCounts[conversationId] = newCount;
+
         // Calculate total unread messages
         _totalUnreadMessages = unreadCounts.values.fold(
           0,
           (sum, count) => sum + count,
         );
 
-        print('📊 Current unread counts map: $unreadCounts');
+        print('📊 Previous count: $currentCount');
+        print('📊 New count (incremented): $newCount');
+        print('📊 Updated unread counts map: $unreadCounts');
         print('📊 Total unread messages: $_totalUnreadMessages');
-        
-        emit(UnreadCountUpdated(conversationId, unreadCount));
-      } else {
-        print('⚠️ IncreaseUnReadCount event missing ConversationId!');
-      }
-    });
+        print('📤 [GeneralHub] Emitting UnreadCountUpdated state');
 
+        // Broadcast to stream for immediate UI update
+        _unreadCountsController.add(Map.from(unreadCounts));
+
+        emit(UnreadCountUpdated(conversationId, newCount));
+
+        print('✅ [GeneralHub] Unread count update complete');
+      } else {
+        print(
+          '⚠️ [GeneralHub] IncreaseUnReadCount event missing ConversationId!',
+        );
+        print('   Available keys: ${data.keys.toList()}');
+      }
+
+      print('📥 [GeneralHub] ══════════════════════════════════════════════');
+    });
 
     // Friend typing in general
     generalHub.onFriendIsTyping((data) {
@@ -638,27 +664,33 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     }
   }
 
- Future<void> increaseUnreadMessageCount({
+  Future<void> increaseUnreadMessageCount({
     required String toPetId,
     required String fromPetId,
     required String conversationId,
   }) async {
     try {
+      print('🔔 [ChatAppCubit] ══════════════════════════════════════════════');
+      print(
+        '🔔 [ChatAppCubit] Calling IncreaseUnReadCountMessageForConversation',
+      );
+      print('🔔 [ChatAppCubit] To Pet: $toPetId');
+      print('🔔 [ChatAppCubit] From Pet: $fromPetId');
+      print('🔔 [ChatAppCubit] Conversation: $conversationId');
+
       await generalHub.increaseUnReadCountMessageForConversation(
         toPetId: toPetId,
         fromPetId: fromPetId,
         conversationId: conversationId,
       );
-      print(
-        '✅ [ChatAppCubit] Increased unread message count for conversation $conversationId to $toPetId from $fromPetId',
-      );
+
+      print('✅ [ChatAppCubit] Successfully increased unread message count');
+      print('🔔 [ChatAppCubit] ══════════════════════════════════════════════');
     } catch (e) {
-      print(
-        '❌ [ChatAppCubit] Error increasing unread message count: $e',
-      );
+      print('❌ [ChatAppCubit] Error increasing unread message count: $e');
     }
   }
- 
+
   Future<void> setTyping({
     required String conversationId,
     required bool isTyping,
@@ -684,7 +716,11 @@ class ChatAppCubit extends Cubit<ChatAppState> {
   }) async {
     try {
       // Send typing to general (for users in the chat)
-      await generalHub.setTypingIndicator(toPetId: petId, isTyping: isTyping,fromPetId: this.petId);
+      await generalHub.setTypingIndicator(
+        toPetId: petId,
+        isTyping: isTyping,
+        fromPetId: this.petId,
+      );
 
       print('⌨️ Setting typing indicator: isTyping=$isTyping');
     } catch (e) {
@@ -772,6 +808,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     await _conversationEventSubscription?.cancel();
     await _onlineStatusSubscription?.cancel(); // إلغاء الاشتراك في القاموس
     await _typingIndicatorsController.close();
+    await _unreadCountsController.close();
     await generalHub.disconnect();
     await conversationHub.disconnect();
 

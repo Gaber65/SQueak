@@ -56,6 +56,7 @@ class UploadingBubble extends StatelessWidget {
                   if (upload.type == AttachmentType.image) _buildImageUpload(),
                   if (upload.type == AttachmentType.video) _buildVideoUpload(),
                   if (upload.type == AttachmentType.audio) _buildAudioUpload(),
+                  if (upload.type == AttachmentType.file) _buildFileUpload(),
                   if (upload.caption.isNotEmpty) ...[
                     const SizedBox(height: 8),
                     Text(
@@ -137,6 +138,30 @@ class UploadingBubble extends StatelessWidget {
           ),
           SizedBox(width: 12),
           Text('Uploading...', style: TextStyle(color: Colors.white)),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildFileUpload() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.insert_drive_file, color: Colors.white, size: 24),
+          SizedBox(width: 12),
+          CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 2,
+            strokeCap: StrokeCap.round,
+          ),
+          SizedBox(width: 12),
+          Text('Uploading file...', style: TextStyle(color: Colors.white)),
         ],
       ),
     );

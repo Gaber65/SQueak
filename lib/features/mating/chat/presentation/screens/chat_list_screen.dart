@@ -136,10 +136,21 @@ class _ChatListViewState extends State<_ChatListView> {
         listeners: [
           BlocListener<ChatAppCubit, ChatAppState>(
             listener: (context, state) {
-              // Use silent refresh for real-time updates (no loading indicator)
-              if (state is UnreadCountUpdated || state is NewMessageDetected) {
+              // Handle UnreadCountUpdated - Update counter in background without server fetch
+              if (state is UnreadCountUpdated) {
                 print(
-                  '🔄 [ChatListScreen] Received ${state.runtimeType}, refreshing silently',
+                  '🔔 [ChatListScreen] Received UnreadCountUpdated for conversation ${state.conversationId}: ${state.count}',
+                );
+                context.read<ChatListCubit>().updateUnreadCountLocally(
+                  state.conversationId,
+                  state.count,
+                );
+              }
+
+              // Handle NewMessageDetected - Refresh to get new message details
+              if (state is NewMessageDetected) {
+                print(
+                  '🔄 [ChatListScreen] Received NewMessageDetected, refreshing silently',
                 );
                 if (activePet?.petId != null) {
                   context.read<ChatListCubit>().refreshChatsWithoutLoading(
@@ -342,7 +353,6 @@ class _ChatListViewState extends State<_ChatListView> {
                   final isOnline = chatAppCubit.generalHub.isPetOnlineFromDict(
                     chat.petId,
                   );
-                  // الحصول على عدد الرسائل من القاموس
 
                   if (isTyping) {
                     print(
@@ -353,15 +363,27 @@ class _ChatListViewState extends State<_ChatListView> {
                     );
                   }
 
-                  return MatingChatListTile(
-                    chat: chat,
-                    petEntities: pet,
-                    isOnline: isOnline,
-                    isTyping: isTyping,
-                    unreadCount: chatAppCubit.unreadCounts[chat.id] ?? 0,
-                    onNavigateComplete:
-                        () =>
-                            context.read<ChatListCubit>().loadChats(pet.petId!),
+                  return StreamBuilder<Map<String, int>>(
+                    stream: chatAppCubit.unreadCountsStream,
+                    initialData: chatAppCubit.unreadCounts,
+                    builder: (context, snapshot) {
+                      // Get unread count from stream (real-time), fallback to chat entity
+                      final unreadCountsMap = snapshot.data ?? {};
+                      final unreadCount =
+                          unreadCountsMap[chat.id] ?? chat.unreadedCount;
+
+                      return MatingChatListTile(
+                        chat: chat,
+                        petEntities: pet,
+                        isOnline: isOnline,
+                        isTyping: isTyping,
+                        unreadCount: unreadCount,
+                        onNavigateComplete:
+                            () => context.read<ChatListCubit>().loadChats(
+                              pet.petId!,
+                            ),
+                      );
+                    },
                   );
                 }).toList(),
           ),

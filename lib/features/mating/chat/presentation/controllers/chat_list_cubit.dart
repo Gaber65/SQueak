@@ -74,6 +74,51 @@ class ChatListCubit extends Cubit<ChatListState> {
     }
   }
 
+  /// Update unread count locally without server fetch (background update)
+  void updateUnreadCountLocally(String conversationId, int newCount) {
+    print(
+      '📊 [ChatListCubit] Updating unread count locally for conversation $conversationId: $newCount',
+    );
+
+    final index = allChats.indexWhere((c) => c.id == conversationId);
+    if (index != -1) {
+      final chat = allChats[index];
+
+      // Manual copyWith since ChatEntity doesn't have one
+      final updatedChat = ChatEntity(
+        id: chat.id,
+        isGroup: chat.isGroup,
+        isPetChat: chat.isPetChat,
+        name: chat.name,
+        image: chat.image,
+        groupImage: chat.groupImage,
+        petId: chat.petId,
+        matingId: chat.matingId,
+        completeMarriageStatues: chat.completeMarriageStatues,
+        createdAt: chat.createdAt,
+        lastMessageSendDateTime: chat.lastMessageSendDateTime,
+        isBlock: chat.isBlock,
+        isBlockedByMe: chat.isBlockedByMe,
+        isBlockedByOther: chat.isBlockedByOther,
+        isReadOnly: chat.isReadOnly,
+        unreadedCount: newCount,
+        lastMessage: chat.lastMessage,
+      );
+
+      // Create a new list reference to ensure Bloc emits a change
+      final newChats = List<ChatEntity>.from(allChats);
+      newChats[index] = updatedChat;
+      allChats = newChats;
+
+      emit(ChatListLoaded(allChats));
+      print('✅ [ChatListCubit] Updated chat list with new unread count');
+    } else {
+      print(
+        '⚠️ [ChatListCubit] Conversation $conversationId not found in chat list',
+      );
+    }
+  }
+
   /// Refresh chats without showing loading indicator (for real-time updates)
   Future<void> refreshChatsWithoutLoading(String petId) async {
     final result = await getChatsUseCase(petId);
