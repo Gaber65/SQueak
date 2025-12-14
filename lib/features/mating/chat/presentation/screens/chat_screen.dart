@@ -758,16 +758,20 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   void _sendMessage(ChatMessagesCubit cubit, ChatAppCubit chatAppCubit) {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
-
-    // Send to server via ChatAppCubit (SignalR)
-    // The message will be added to the UI when we receive the MessageReceived event
     chatAppCubit.sendMessage(
       conversationId: widget.chat.id,
       toPetId: widget.chat.petId,
       description: text,
     );
 
+
     print('📤 [ChatScreen] Sending message to server');
+    chatAppCubit.increaseUnreadMessageCount(conversationId: widget.chat.id, toPetId: widget.chat.petId, fromPetId: widget.pet?.petId ?? '');
+    
     _messageController.clear();
+
+   
+
   }
+
 }

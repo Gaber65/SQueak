@@ -293,6 +293,8 @@ class _GeneralHubManager {
     _connection!.off("FriendConnectionChanged");
     _connection!.off("UnreadedMessagesCountPetConversation");
     _connection!.off("FriendIsTyping");
+    _connection!.off("IncreaseUnReadCount");
+    
 
     void registerEvent(String eventName) {
       _connection!.on(eventName, (args) {
@@ -317,6 +319,7 @@ class _GeneralHubManager {
       "FriendConnectionChanged",
       "UnreadedMessagesCountPetConversation",
       "FriendIsTyping",
+      "IncreaseUnReadCount",
     ].forEach(registerEvent);
 
     // Add catch-all handler for debugging (logs all unhandled events)
@@ -454,9 +457,6 @@ class SignalRGeneralHubService {
   Map<String, bool> get onlineFriendsDict => _hub.onlineFriendsDict;
   bool get isConnected => _hub.isConnected;
   String? get connectionId => _hub.connectionId;
-
-  /// التحقق من حالة صديق من القاموس المحلي (بدون استدعاء الخادم)
-  /// Check friend status from local dictionary (without server call)
   bool isPetOnlineFromDict(String petId) => _hub.isPetOnlineFromDict(petId);
 
   Future<void> connect({
@@ -495,11 +495,23 @@ class SignalRGeneralHubService {
     required String toPetId,
     required bool isTyping,
     required String fromPetId,
-  }) async =>
-      await _hub.invoke<void>("SetTypingIndicator", args: [ toPetId, isTyping,fromPetId]);
+  }) async => await _hub.invoke<void>(
+    "SetTypingIndicator",
+    args: [toPetId, isTyping, fromPetId],
+  );
 
   Future<bool?> isPetOnline(String petId) async =>
       await _hub.invoke<bool>("IsPetOnline", args: [petId]);
+
+  Future<void> increaseUnReadCountMessageForConversation({
+    required String toPetId,
+    required String fromPetId,
+    required String conversationId,
+  }) async =>
+      await _hub.invoke<void>(
+        "IncreaseUnReadCountMessageForConversation",
+        args: [toPetId, fromPetId, conversationId],
+      );   
 
   Future<Map<String, int>?> getUnreadMessageCounts(String petId) async {
     final result = await _hub.invoke<Map<dynamic, dynamic>>(
@@ -550,9 +562,10 @@ class SignalRGeneralHubService {
   void onMessagesDelivered(Function(Map<String, dynamic>) callback) {
     _hub.on('MessagesDelivered', (args) {
       if (args != null && args.isNotEmpty) {
-        final data = args[0] is Map<String, dynamic>
-            ? args[0] as Map<String, dynamic>
-            : <String, dynamic>{};
+        final data =
+            args[0] is Map<String, dynamic>
+                ? args[0] as Map<String, dynamic>
+                : <String, dynamic>{};
         signalEventStream.add(
           SignalEvent('GeneralHub', 'MessagesDelivered', args),
         );
@@ -560,6 +573,22 @@ class SignalRGeneralHubService {
       }
     });
   }
+
+  void onIncreaseUnReadCount(Function(Map<String, dynamic>) callback) {
+    _hub.on('IncreaseUnReadCount', (args) {
+      if (args != null && args.isNotEmpty) {
+        final data =
+            args[0] is Map<String, dynamic>
+                ? args[0] as Map<String, dynamic>
+                : <String, dynamic>{};
+        signalEventStream.add(
+          SignalEvent('GeneralHub', 'IncreaseUnReadCount', args),
+        );
+        callback(data);
+      }
+    });
+  }
+
 
   void dispose() => _hub.dispose();
 }

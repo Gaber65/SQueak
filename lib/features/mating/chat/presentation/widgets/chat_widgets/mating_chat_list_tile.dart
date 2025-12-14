@@ -14,11 +14,9 @@ class MatingChatListTile extends StatelessWidget {
   final PetEntities petEntities;
   final Future<void> Function()? onNavigateComplete;
   final bool compact;
-  // isOnline و unreadCount سيتم الحصول عليهما من القاموس مباشرة
-  // isOnline and unreadCount will be fetched from dictionary directly
-  final bool isOnline; // kept for now but will use dict
+  final bool isOnline; 
   final bool isTyping;
-  final int unreadCount; // kept for now but will use dict
+  final int unreadCount; 
 
   const MatingChatListTile({
     super.key,
@@ -41,11 +39,8 @@ class MatingChatListTile extends StatelessWidget {
       stream: chatAppCubit.typingIndicatorsStream,
       initialData: chatAppCubit.typingIndicators,
       builder: (context, snapshot) {
-        // Get real-time typing status from stream
         final typingMap = snapshot.data ?? {};
         final isTypingNow = typingMap[chat.petId] ?? false;
-
-        // Debug logging to track typing status
         if (typingMap.isNotEmpty) {
           print('🎯 [MatingChatListTile] Chat: ${chat.name} (${chat.petId})');
           print('🎯 [MatingChatListTile] Typing map: $typingMap');
@@ -385,17 +380,6 @@ class MatingChatListTile extends StatelessWidget {
     if (isTypingNow) {
       return Row(
         children: [
-          SizedBox(
-            width: 16,
-            height: 16,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                ColorManager.primaryColor,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
           Text(
             isArabic() ? 'يكتب...' : 'Typing...',
             style: TextStyle(

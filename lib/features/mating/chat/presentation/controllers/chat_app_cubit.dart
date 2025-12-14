@@ -158,6 +158,42 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       }
     });
 
+    // Increase unread count (when recipient is online but not viewing conversation)
+    generalHub.onIncreaseUnReadCount((data) {
+      print('📥 [GeneralHub] IncreaseUnReadCount event: $data');
+       final toPetId = data['ToPetId']?.toString();
+      final fromPetId = data['FromPetId']?.toString();
+      final conversationId = data['ConversationId']?.toString();
+     
+      final unreadCount = data['UnReadCount'] as int? ?? 0;
+
+      if (conversationId != null) {
+        print(
+          '📬 [GeneralHub] Unread count increased for conversation $conversationId',
+        );
+        print('   From: $fromPetId');
+        print('   To: $toPetId');
+        print('   New unread count: $unreadCount');
+
+        // Update local unread counts
+        unreadCounts[conversationId] = unreadCount;
+        
+        // Calculate total unread messages
+        _totalUnreadMessages = unreadCounts.values.fold(
+          0,
+          (sum, count) => sum + count,
+        );
+
+        print('📊 Current unread counts map: $unreadCounts');
+        print('📊 Total unread messages: $_totalUnreadMessages');
+        
+        emit(UnreadCountUpdated(conversationId, unreadCount));
+      } else {
+        print('⚠️ IncreaseUnReadCount event missing ConversationId!');
+      }
+    });
+
+
     // Friend typing in general
     generalHub.onFriendIsTyping((data) {
       print('📥 [GeneralHub] Raw typing data: $data');
@@ -602,6 +638,27 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     }
   }
 
+ Future<void> increaseUnreadMessageCount({
+    required String toPetId,
+    required String fromPetId,
+    required String conversationId,
+  }) async {
+    try {
+      await generalHub.increaseUnReadCountMessageForConversation(
+        toPetId: toPetId,
+        fromPetId: fromPetId,
+        conversationId: conversationId,
+      );
+      print(
+        '✅ [ChatAppCubit] Increased unread message count for conversation $conversationId to $toPetId from $fromPetId',
+      );
+    } catch (e) {
+      print(
+        '❌ [ChatAppCubit] Error increasing unread message count: $e',
+      );
+    }
+  }
+ 
   Future<void> setTyping({
     required String conversationId,
     required bool isTyping,
@@ -659,30 +716,6 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       print('❌ [ChatAppCubit] خطأ في تعليم الرسائل كـ delivered: $e');
     }
   }
-
-  /// تعليم الرسائل كـ "مقروءة" عندما يفتح المستخدم المحادثة ولم يغادرها
-  /// Mark messages as seen when user opens chat and hasn't left
-  // Future<void> markMessagesAsSeen(String conversationId) async {
-  //   try {
-  //     print('👁️ [ChatAppCubit] ═══════════════════════════════════════════');
-  //     print('👁️ [ChatAppCubit] تعليم الرسائل كـ "مقروءة"');
-  //     print('👁️ [ChatAppCubit] حالة الرسالة: MessageStatus.seen');
-  //     print('👁️ [ChatAppCubit] المستخدم فتح المحادثة ولم يغادرها');
-  //     print('👁️ [ChatAppCubit] conversationId: $conversationId');
-  //     print('👁️ [ChatAppCubit] ═══════════════════════════════════════════');
-
-  //     await conversationHub.markMessagesAsSeen(
-  //       conversationId: conversationId,
-  //       petId: petId,
-  //     );
-
-  //     unreadCounts[conversationId] = 0;
-  //     print('✅ [ChatAppCubit] تم تعليم الرسائل بنجاح كـ seen');
-  //     emit(UnreadCountUpdated(conversationId, 0));
-  //   } catch (e) {
-  //     print('❌ [ChatAppCubit] خطأ في تعليم الرسائل كـ seen: $e');
-  //   }
-  // }
 
   Future<void> leaveConversation() async {
     try {
