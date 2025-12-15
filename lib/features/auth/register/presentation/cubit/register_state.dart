@@ -15,7 +15,9 @@ class RegisterFormUpdatedState extends RegisterState {}
 
 // Country code detection states
 class CountryCodeDetectionLoadingState extends RegisterState {}
+
 class CountryCodeDetectionSuccessState extends RegisterState {}
+
 class CountryCodeDetectionErrorState extends RegisterState {
   final String error;
   const CountryCodeDetectionErrorState(this.error);
@@ -26,6 +28,7 @@ class CountryCodeDetectionErrorState extends RegisterState {
 
 // Countries loading states
 class CountriesLoadingState extends RegisterState {}
+
 class CountriesLoadedState extends RegisterState {
   final List<CountryEntity> countries;
   const CountriesLoadedState(this.countries);
@@ -33,6 +36,7 @@ class CountriesLoadedState extends RegisterState {
   @override
   List<Object> get props => [countries];
 }
+
 class CountriesErrorState extends RegisterState {
   final String error;
   const CountriesErrorState(this.error);
@@ -43,7 +47,9 @@ class CountriesErrorState extends RegisterState {
 
 // Registration states
 class RegistrationLoadingState extends RegisterState {}
+
 class RegistrationSuccessState extends RegisterState {}
+
 class RegistrationErrorState extends RegisterState {
   final String error;
   const RegistrationErrorState(this.error);

@@ -213,7 +213,7 @@ class MainRemoteDataSource {
       case 'webp':
         return 'webp';
       default:
-        return 'jpeg'; 
+        return 'jpeg';
     }
   }
 }

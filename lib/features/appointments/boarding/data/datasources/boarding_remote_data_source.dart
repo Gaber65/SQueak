@@ -25,7 +25,6 @@ class BoardingRemoteDataSourceImpl implements BoardingRemoteDataSource {
 
   @override
   Future<List<BoardingTypeModel>> getBoardingTypes(String clinicCode) async {
-
     try {
       final response = await DioFinalHelper.getData(
         method: boardingTypeEndPoint(clinicCode),

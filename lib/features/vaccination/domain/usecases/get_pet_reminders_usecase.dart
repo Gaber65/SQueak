@@ -6,7 +6,8 @@ import '../../../../core/utils/export_path/export_files.dart';
 import '../entities/reminder_entity.dart';
 import '../repositories/vaccination_repository.dart';
 
-class GetPetRemindersUseCase extends BaseUseCase<List<ReminderEntity>, PetIdParams> {
+class GetPetRemindersUseCase
+    extends BaseUseCase<List<ReminderEntity>, PetIdParams> {
   final VaccinationRepository repository;
 
   GetPetRemindersUseCase(this.repository);

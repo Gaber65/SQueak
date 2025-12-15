@@ -32,25 +32,34 @@ class PetFriendModel extends PetFriendRequestEntity {
       myPetId: json['myPetId'],
       friendPetId: json['friendPetId'],
       status: PetFriendStatus.values.firstWhere(
-            (e) => e.toString() == 'PetFriendStatus.${json['status']}',
+        (e) => e.toString() == 'PetFriendStatus.${json['status']}',
         orElse: () => PetFriendStatus.none,
       ),
       sendAt: json['sendAt'] != null ? DateTime.parse(json['sendAt']) : null,
       acceptedAt:
-      json['acceptedAt'] != null ? DateTime.parse(json['acceptedAt']) : null,
+          json['acceptedAt'] != null
+              ? DateTime.parse(json['acceptedAt'])
+              : null,
       rejectedAt:
-      json['rejectedAt'] != null ? DateTime.parse(json['rejectedAt']) : null,
+          json['rejectedAt'] != null
+              ? DateTime.parse(json['rejectedAt'])
+              : null,
       blockedAt:
-      json['blockedAt'] != null ? DateTime.parse(json['blockedAt']) : null,
+          json['blockedAt'] != null ? DateTime.parse(json['blockedAt']) : null,
       blockedBy: json['blockedBy'],
       canceledAt:
-      json['canceledAt'] != null ? DateTime.parse(json['canceledAt']) : null,
+          json['canceledAt'] != null
+              ? DateTime.parse(json['canceledAt'])
+              : null,
       unFriendAt:
-      json['unFriendAt'] != null ? DateTime.parse(json['unFriendAt']) : null,
+          json['unFriendAt'] != null
+              ? DateTime.parse(json['unFriendAt'])
+              : null,
       unFriendBy: json['unFriendBy'],
-      unBlockedAt: json['unBlockedAt'] != null
-          ? DateTime.parse(json['unBlockedAt'])
-          : null,
+      unBlockedAt:
+          json['unBlockedAt'] != null
+              ? DateTime.parse(json['unBlockedAt'])
+              : null,
       myPetName: json['myPetName'],
       myPetImage: json['myPetImage'],
       myPetAge: json['myPetAge'],

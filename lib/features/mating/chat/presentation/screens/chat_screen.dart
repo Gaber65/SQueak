@@ -487,15 +487,13 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         ),
       );
 
-
       if (widget.pet?.petId != null && mounted) {
-      await _chatAppCubit?.conversationHub.markMessagesAsSeen(
+        await _chatAppCubit?.conversationHub.markMessagesAsSeen(
           conversationId: widget.chat.id,
           petId: widget.pet!.petId!,
         );
-    }
-    } catch (e) {
-   }
+      }
+    } catch (e) {}
   }
 
   Widget _buildMessages(ChatMessagesState state, ChatMessagesCubit cubit) {

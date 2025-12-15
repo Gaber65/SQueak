@@ -29,7 +29,9 @@ class CommentScreen extends StatelessWidget {
         builder: (context, state) {
           final cubit = CommentCubit.get(context);
           final isBottomSheetOpen = CacheHelper.getBool('isBottomSheetOpen');
-          final isReplayCommentOpen = CacheHelper.getBool('isReplayCommentOpen',);
+          final isReplayCommentOpen = CacheHelper.getBool(
+            'isReplayCommentOpen',
+          );
 
           return Scaffold(
             key: scaffoldKey,

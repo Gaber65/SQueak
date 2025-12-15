@@ -4,12 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../../../service/main_service/presentation/controller/main_cubit/main_cubit.dart';
 
-
 class Decorations {
-  static BoxDecoration kDecorationOnlyRadius({
-    Color? color,
-    double? radius,
-  }) {
+  static BoxDecoration kDecorationOnlyRadius({Color? color, double? radius}) {
     return BoxDecoration(
       color: color ?? Colors.white,
       borderRadius: BorderRadius.all(Radius.circular(radius ?? 10)),
@@ -54,22 +50,23 @@ class Decorations {
 
   static BoxDecoration kDecorationLinearGradient() {
     return BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color.fromRGBO(102, 200, 206, 1),
-            Color.fromRGBO(80, 227, 194, 1)
-          ],
+      borderRadius: BorderRadius.circular(20),
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color.fromRGBO(102, 200, 206, 1),
+          Color.fromRGBO(80, 227, 194, 1),
+        ],
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.2),
+          blurRadius: 5,
+          offset: const Offset(0, 2),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ]);
+      ],
+    );
   }
 
   static BoxDecoration kDecorationBoxShadow({
@@ -85,14 +82,14 @@ class Decorations {
     required context,
   }) {
     return BoxDecoration(
-      color: color ??
-          (MainCubit.get(context).isDark
-              ? Colors.black26
-              : Colors.white),
+      color:
+          color ??
+          (MainCubit.get(context).isDark ? Colors.black26 : Colors.white),
       borderRadius: borderRadius ?? BorderRadius.circular(radius),
       boxShadow: [
         BoxShadow(
-          color: colorShadow ??
+          color:
+              colorShadow ??
               (MainCubit.get(context).isDark
                   ? Colors.black.withOpacity(0)
                   : Color(0xff000000).withOpacity(0.05)),
@@ -102,7 +99,8 @@ class Decorations {
         ),
       ],
       border: Border.all(
-        color: borderColor ??
+        color:
+            borderColor ??
             (MainCubit.get(context).isDark ? Colors.black45 : Colors.white),
         width: borderWidth ?? 0,
         style: BorderStyle.solid,
@@ -131,11 +129,12 @@ class Decorations {
     );
   }
 
-  static BoxDecoration kDecorationBoxShadowCircle(
-      {Color? color,
-        Color? colorShadow,
-        double? blurRadius,
-        int? spreadRadius}) {
+  static BoxDecoration kDecorationBoxShadowCircle({
+    Color? color,
+    Color? colorShadow,
+    double? blurRadius,
+    int? spreadRadius,
+  }) {
     return BoxDecoration(
       color: color ?? Colors.white,
       shape: BoxShape.circle,
@@ -159,10 +158,8 @@ class Decorations {
   }) {
     return BoxDecoration(
       color: backgroundColor ?? Colors.white,
-      borderRadius: borderRadius ??
-          BorderRadius.all(
-            Radius.circular(radius ?? 16),
-          ),
+      borderRadius:
+          borderRadius ?? BorderRadius.all(Radius.circular(radius ?? 16)),
       border: Border.all(
         color: borderColor ?? Colors.transparent,
         width: borderWidth ?? 0,
@@ -194,10 +191,7 @@ class Decorations {
   // ignore: non_constant_identifier_names
   static BoxDecoration KContinerBorder() {
     return BoxDecoration(
-      border: Border.all(
-        color: Colors.grey.shade200,
-        width: 1,
-      ),
+      border: Border.all(color: Colors.grey.shade200, width: 1),
       borderRadius: BorderRadius.circular(12),
     );
   }

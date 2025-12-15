@@ -26,7 +26,8 @@ class VcEmptyState extends StatelessWidget {
   factory VcEmptyState.pets({
     Key? key,
     String title = 'No pets yet',
-    String? subtitle = 'Add your first pet to get started with tracking their health and appointments.',
+    String? subtitle =
+        'Add your first pet to get started with tracking their health and appointments.',
     VoidCallback? onAddPet,
   }) {
     return VcEmptyState(
@@ -34,13 +35,14 @@ class VcEmptyState extends StatelessWidget {
       title: title,
       subtitle: subtitle,
       illustration: _PetIllustration(),
-      action: onAddPet != null
-          ? ElevatedButton.icon(
-              onPressed: onAddPet,
-              icon: const Icon(Icons.add),
-              label: const Text('Add Pet'),
-            )
-          : null,
+      action:
+          onAddPet != null
+              ? ElevatedButton.icon(
+                onPressed: onAddPet,
+                icon: const Icon(Icons.add),
+                label: const Text('Add Pet'),
+              )
+              : null,
     );
   }
 
@@ -48,7 +50,8 @@ class VcEmptyState extends StatelessWidget {
   factory VcEmptyState.appointments({
     Key? key,
     String title = 'No appointments',
-    String? subtitle = 'Schedule your first appointment to keep your pets healthy.',
+    String? subtitle =
+        'Schedule your first appointment to keep your pets healthy.',
     VoidCallback? onSchedule,
   }) {
     return VcEmptyState(
@@ -56,13 +59,14 @@ class VcEmptyState extends StatelessWidget {
       title: title,
       subtitle: subtitle,
       illustration: _AppointmentIllustration(),
-      action: onSchedule != null
-          ? ElevatedButton.icon(
-              onPressed: onSchedule,
-              icon: const Icon(Icons.schedule),
-              label: const Text('Schedule Appointment'),
-            )
-          : null,
+      action:
+          onSchedule != null
+              ? ElevatedButton.icon(
+                onPressed: onSchedule,
+                icon: const Icon(Icons.schedule),
+                label: const Text('Schedule Appointment'),
+              )
+              : null,
     );
   }
 
@@ -78,12 +82,13 @@ class VcEmptyState extends StatelessWidget {
       title: title,
       subtitle: subtitle,
       illustration: _SearchIllustration(),
-      action: onClear != null
-          ? TextButton(
-              onPressed: onClear,
-              child: const Text('Clear Search'),
-            )
-          : null,
+      action:
+          onClear != null
+              ? TextButton(
+                onPressed: onClear,
+                child: const Text('Clear Search'),
+              )
+              : null,
     );
   }
 
@@ -91,7 +96,8 @@ class VcEmptyState extends StatelessWidget {
   factory VcEmptyState.error({
     Key? key,
     String title = 'Something went wrong',
-    String? subtitle = 'Please try again or contact support if the problem persists.',
+    String? subtitle =
+        'Please try again or contact support if the problem persists.',
     VoidCallback? onRetry,
   }) {
     return VcEmptyState(
@@ -99,13 +105,14 @@ class VcEmptyState extends StatelessWidget {
       title: title,
       subtitle: subtitle,
       illustration: _ErrorIllustration(),
-      action: onRetry != null
-          ? ElevatedButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Try Again'),
-            )
-          : null,
+      action:
+          onRetry != null
+              ? ElevatedButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Try Again'),
+              )
+              : null,
     );
   }
 
@@ -121,20 +128,21 @@ class VcEmptyState extends StatelessWidget {
       title: title,
       subtitle: subtitle,
       illustration: _OfflineIllustration(),
-      action: onRetry != null
-          ? OutlinedButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
-            )
-          : null,
+      action:
+          onRetry != null
+              ? OutlinedButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Retry'),
+              )
+              : null,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: padding ?? const EdgeInsets.all(AppTheme.spacing32),
       child: Column(
@@ -181,7 +189,7 @@ class _PetIllustration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: 120,
       height: 120,
@@ -203,7 +211,7 @@ class _AppointmentIllustration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: 120,
       height: 120,
@@ -225,7 +233,7 @@ class _SearchIllustration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: 120,
       height: 120,
@@ -247,7 +255,7 @@ class _ErrorIllustration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: 120,
       height: 120,
@@ -269,7 +277,7 @@ class _OfflineIllustration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: 120,
       height: 120,

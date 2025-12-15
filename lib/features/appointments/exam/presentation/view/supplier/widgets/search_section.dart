@@ -14,7 +14,8 @@ Widget buildSearchTextField(AppointmentCubit cubit, BuildContext context) {
         // Ensure we're using the correct cubit instance
         final currentCubit = AppointmentCubit.get(context);
         currentCubit.filterSuppliers(query);
-      },      decoration: InputDecoration(
+      },
+      decoration: InputDecoration(
         prefixIcon: const Icon(Icons.search),
         hintText:
             isArabic() ? 'ابحث بالاسم او الكود' : 'Search by name or code',

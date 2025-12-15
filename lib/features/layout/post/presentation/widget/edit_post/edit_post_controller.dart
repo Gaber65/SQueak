@@ -9,7 +9,6 @@ import '../add_post_component/upload_post_animations.dart';
 import '../add_post_component/upload_post_dialogs.dart';
 import '../add_post_component/upload_post_snackbars.dart';
 
-
 class EditPostController {
   final TickerProvider vsync;
   final PostEntity postEntity;
@@ -21,8 +20,10 @@ class EditPostController {
   late Animation<double> fadeAnimation;
   late Animation<Offset> slideAnimation;
   final FocusNode textFocusNode = FocusNode();
-  final TextEditingController textContentEditingController = TextEditingController();
-  final TextEditingController textTitleEditingController = TextEditingController();
+  final TextEditingController textContentEditingController =
+      TextEditingController();
+  final TextEditingController textTitleEditingController =
+      TextEditingController();
 
   bool isLoading = false;
   late UploadPostAnimations animations;
@@ -131,9 +132,9 @@ class EditPostController {
 
   // Media handling methods
   Future<void> pickMultipleImages(
-      CommunityCubit cubit,
-      BuildContext context,
-      ) async {
+    CommunityCubit cubit,
+    BuildContext context,
+  ) async {
     try {
       await cubit.pickMultipleImages(source: ImageSource.gallery);
       setState(() {});
@@ -143,9 +144,9 @@ class EditPostController {
   }
 
   Future<void> pickMultipleVideos(
-      CommunityCubit cubit,
-      BuildContext context,
-      ) async {
+    CommunityCubit cubit,
+    BuildContext context,
+  ) async {
     try {
       await cubit.pickMultipleVideos(source: ImageSource.gallery);
       setState(() {});
@@ -166,9 +167,9 @@ class EditPostController {
   }
 
   Future<void> handlePostUpdate(
-      BuildContext context,
-      CommunityCubit cubit,
-      ) async {
+    BuildContext context,
+    CommunityCubit cubit,
+  ) async {
     final content = textContentEditingController.text.trim();
 
     // Validation
@@ -290,7 +291,8 @@ class EditPostController {
   }
 
   bool _hasContentChanged() {
-    return textContentEditingController.text.trim() != (postEntity.content ?? '') ||
+    return textContentEditingController.text.trim() !=
+            (postEntity.content ?? '') ||
         textTitleEditingController.text.trim() != (postEntity.title ?? '') ||
         existingMedia.length != (postEntity.postSocialMedia?.length ?? 0);
   }
@@ -322,9 +324,5 @@ class ExistingMediaItem {
   final String path;
   final String type; // 'image' or 'video'
 
-  ExistingMediaItem({
-    required this.id,
-    required this.path,
-    required this.type,
-  });
+  ExistingMediaItem({required this.id, required this.path, required this.type});
 }

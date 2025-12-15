@@ -142,7 +142,7 @@ class UploadingBubble extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildFileUpload() {
     return Container(
       padding: const EdgeInsets.all(16),

@@ -110,9 +110,7 @@ class _ChatsTabState extends State<ChatsTab> {
                     PetFriendsCubit.get(
                       context,
                     ).emit(ChatsLoaded(chats: updatedChats));
-
-                   
-                  } 
+                  }
                 }
               },
             ),
@@ -150,7 +148,6 @@ class _ChatsTabState extends State<ChatsTab> {
         builder: (context, chatAppState) {
           final chatAppCubit = context.read<ChatAppCubit>();
 
-        
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [

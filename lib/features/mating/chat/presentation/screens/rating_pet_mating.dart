@@ -223,17 +223,21 @@ class _PetMatingRatingScreenState extends State<PetMatingRatingScreen>
                   child: AnimatedBuilder(
                     animation: _scaleAnimation,
                     builder: (context, child) {
-                      final scale = isSelected && _rating == starIndex
-                          ? _scaleAnimation.value
-                          : 1.0;
+                      final scale =
+                          isSelected && _rating == starIndex
+                              ? _scaleAnimation.value
+                              : 1.0;
                       return Transform.scale(
                         scale: scale,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 6),
                           child: Icon(
-                            isSelected ? Icons.star_rounded : Icons.star_outline_rounded,
+                            isSelected
+                                ? Icons.star_rounded
+                                : Icons.star_outline_rounded,
                             size: 42,
-                            color: isSelected ? cs.secondary : cs.outlineVariant,
+                            color:
+                                isSelected ? cs.secondary : cs.outlineVariant,
                           ),
                         ),
                       );
@@ -316,24 +320,25 @@ class _PetMatingRatingScreenState extends State<PetMatingRatingScreen>
       ),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 200),
-        child: _isSubmitting
-            ? SizedBox(
-          key: const ValueKey('loading'),
-          width: 22,
-          height: 22,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: cs.onPrimaryContainer,
-          ),
-        )
-            : Text(
-          s.submitRating,
-          key: const ValueKey('text'),
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: cs.onPrimaryContainer,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        child:
+            _isSubmitting
+                ? SizedBox(
+                  key: const ValueKey('loading'),
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: cs.onPrimaryContainer,
+                  ),
+                )
+                : Text(
+                  s.submitRating,
+                  key: const ValueKey('text'),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: cs.onPrimaryContainer,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
       ),
     );
   }
@@ -347,7 +352,11 @@ class _PetMatingRatingScreenState extends State<PetMatingRatingScreen>
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3)),
+            border: Border.all(
+              color: Theme.of(
+                context,
+              ).colorScheme.outlineVariant.withOpacity(0.3),
+            ),
             gradient: LinearGradient(
               colors: [
                 Theme.of(context).colorScheme.surface.withOpacity(0.50),
@@ -373,7 +382,11 @@ class _PetMatingRatingScreenState extends State<PetMatingRatingScreen>
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.25)),
+            border: Border.all(
+              color: Theme.of(
+                context,
+              ).colorScheme.outlineVariant.withOpacity(0.25),
+            ),
             color: Theme.of(context).colorScheme.surface.withOpacity(0.35),
           ),
           child: child,

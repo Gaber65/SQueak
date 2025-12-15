@@ -1,4 +1,1 @@
-enum AppStartState {
-  login,
-  home,
-}
+enum AppStartState { login, home }

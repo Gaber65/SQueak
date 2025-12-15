@@ -1,8 +1,4 @@
-
-
 import 'package:squeak/features/profile_switch/domain/entities/profile_type_entity.dart';
-
-
 
 abstract class SwitchProfileState {}
 

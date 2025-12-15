@@ -84,4 +84,3 @@ Widget buildColumnSearchBody(
     ),
   );
 }
-

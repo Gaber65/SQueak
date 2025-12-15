@@ -7,7 +7,7 @@ class AboutCubit extends Cubit<AboutState> {
     fetchVersion();
   }
 
-  Future<void> fetchVersion () async {
+  Future<void> fetchVersion() async {
     try {
       emit(AboutLoading());
       PackageInfo packageInfo = await PackageInfo.fromPlatform();

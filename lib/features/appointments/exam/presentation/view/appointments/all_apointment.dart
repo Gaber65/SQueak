@@ -580,7 +580,7 @@ class _ExaminationListPlaceholderState
                 );
               }
               if (index == displayed.length && isLoadingMore) {
-                return  CareLoadingWidget(
+                return CareLoadingWidget(
                   theme: Theme.of(context),
                   isDark: Theme.of(context).brightness == Brightness.dark,
                   text: S.of(context).loadingAppointments,

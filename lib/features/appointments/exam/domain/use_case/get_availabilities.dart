@@ -4,14 +4,16 @@ import 'package:squeak/features/appointments/exam/domain/entities/availability_e
 
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 
-
-class GetAvailabilitiesUseCase implements BaseUseCase<List<Availability>, GetAvailabilitiesParams> {
+class GetAvailabilitiesUseCase
+    implements BaseUseCase<List<Availability>, GetAvailabilitiesParams> {
   final AppointmentRepository repository;
 
   GetAvailabilitiesUseCase(this.repository);
 
   @override
-  Future<Either<Failure, List<Availability>>> call(GetAvailabilitiesParams params) async {
+  Future<Either<Failure, List<Availability>>> call(
+    GetAvailabilitiesParams params,
+  ) async {
     return await repository.getAvailabilities(params.clinicCode);
   }
 }

@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/service/service_locator/locatore_export_path.dart';
 
-
 class BlockFriendUseCase extends BaseUseCase<bool, UnblockFriendParams> {
   final PetFriendRepository repository;
   BlockFriendUseCase(this.repository);
@@ -11,4 +10,3 @@ class BlockFriendUseCase extends BaseUseCase<bool, UnblockFriendParams> {
     return await repository.blockFriend(params);
   }
 }
-

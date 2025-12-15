@@ -20,12 +20,8 @@ class BlockedPetsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => sl<PetCubit>()..getOwnerPets(),
-        ),
-        BlocProvider(
-          create: (context) => sl<PetFriendsCubit>(),
-        ),
+        BlocProvider(create: (context) => sl<PetCubit>()..getOwnerPets()),
+        BlocProvider(create: (context) => sl<PetFriendsCubit>()),
         BlocProvider(
           create: (context) => sl<SwitchProfileCubit>()..loadProfile(),
         ),
@@ -41,7 +37,8 @@ class _BlockedPetsScreenContent extends StatefulWidget {
   const _BlockedPetsScreenContent({this.petId});
 
   @override
-  State<_BlockedPetsScreenContent> createState() => _BlockedPetsScreenContentState();
+  State<_BlockedPetsScreenContent> createState() =>
+      _BlockedPetsScreenContentState();
 }
 
 class _BlockedPetsScreenContentState extends State<_BlockedPetsScreenContent> {
@@ -78,12 +75,12 @@ class _BlockedPetsScreenContentState extends State<_BlockedPetsScreenContent> {
     }
   }
 
-void _showUnblockDialog(PetFriendRequestEntity friendRequest) {
+  void _showUnblockDialog(PetFriendRequestEntity friendRequest) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-        
+
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
@@ -94,9 +91,10 @@ void _showUnblockDialog(PetFriendRequestEntity friendRequest) {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isDarkMode 
-                      ? const Color(0xFF6B4EFF).withOpacity(0.2)
-                      : const Color(0xFF6B4EFF).withOpacity(0.1),
+                  color:
+                      isDarkMode
+                          ? const Color(0xFF6B4EFF).withOpacity(0.2)
+                          : const Color(0xFF6B4EFF).withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -141,9 +139,10 @@ void _showUnblockDialog(PetFriendRequestEntity friendRequest) {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                         side: BorderSide(
-                          color: isDarkMode 
-                              ? Colors.white24 
-                              : Colors.grey.shade300,
+                          color:
+                              isDarkMode
+                                  ? Colors.white24
+                                  : Colors.grey.shade300,
                           width: 1.5,
                         ),
                       ),
@@ -271,8 +270,11 @@ void _showUnblockDialog(PetFriendRequestEntity friendRequest) {
       body: BlocConsumer<SwitchProfileCubit, SwitchProfileState>(
         listener: (context, switchState) {
           try {
-            final activePet = SwitchProfileCubit.get(context).activeProfile?.pet;
-            if (activePet != null && activePet.petId != null && activePet.petId != _currentPetId) {
+            final activePet =
+                SwitchProfileCubit.get(context).activeProfile?.pet;
+            if (activePet != null &&
+                activePet.petId != null &&
+                activePet.petId != _currentPetId) {
               if (mounted) {
                 setState(() {
                   _currentPetId = activePet.petId;
@@ -281,7 +283,9 @@ void _showUnblockDialog(PetFriendRequestEntity friendRequest) {
                 _currentPetId = activePet.petId;
               }
               // load blocked friends once we have the current pet id
-              PetFriendsCubit.get(context).loadBlockedFriends(petId: _currentPetId!);
+              PetFriendsCubit.get(
+                context,
+              ).loadBlockedFriends(petId: _currentPetId!);
             }
           } catch (e) {
             if (kDebugMode) print('Error in SwitchProfile listener: $e');
@@ -294,348 +298,334 @@ void _showUnblockDialog(PetFriendRequestEntity friendRequest) {
             return const ProfileSwitchNotificationScreen();
           }
           return BlocBuilder<PetFriendsCubit, PetFriendsState>(
-                builder: (context, state) {
-                  if (state is BlockedFriendsLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: Color(0xFF6B4EFF),
-                      ),
-                    );
-                  }
-                  if (state is BlockedFriendsLoadFailed) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.error_outline,
-                            size: 60,
-                            color: Colors.red,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            '${S.of(context).errorColon} : ${state.message}',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.red,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: _loadBlockedFriends,
-                            child: Text(S.of(context).retry),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  final blockedFriends =
-                      state is BlockedFriendsLoaded
-                          ? state.blockedFriends
-                          : <PetFriendRequestEntity>[];
-                  if (blockedFriends.isEmpty) {
-                    return _buildEmptyState();
-                  }
-                  return Column(
+            builder: (context, state) {
+              if (state is BlockedFriendsLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(color: Color(0xFF6B4EFF)),
+                );
+              }
+              if (state is BlockedFriendsLoadFailed) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        color:
-                            isDark
-                                ? const Color(0xFF202020)
-                                : const Color(0xFFF5F5F5),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFFFE5E5),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(
-                                Icons.block,
-                                color: Color(0xFFFF6B6B),
-                                size: 24,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${blockedFriends.length} ${S.of(context).blocked}',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          isDark
-                                              ? const Color(0xFFFFFFFF)
-                                              : const Color(0xFF2D3142),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    S.of(context).interactWithyourPet,
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      color: Color(0xFF9FA5C0),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                      const Icon(
+                        Icons.error_outline,
+                        size: 60,
+                        color: Colors.red,
                       ),
-                      Expanded(
-                        child: ListView.builder(
-                          padding: const EdgeInsets.all(16),
-                          itemCount: blockedFriends.length,
-                          itemBuilder: (context, index) {
-                            final friendRequest = blockedFriends[index];
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              decoration: BoxDecoration(
-                                color:
-                                    isDark
-                                        ? const Color(0xFF252525)
-                                        : const Color(0xFFF5F5F5),
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.04),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+                      const SizedBox(height: 16),
+                      Text(
+                        '${S.of(context).errorColon} : ${state.message}',
+                        style: const TextStyle(fontSize: 16, color: Colors.red),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _loadBlockedFriends,
+                        child: Text(S.of(context).retry),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              final blockedFriends =
+                  state is BlockedFriendsLoaded
+                      ? state.blockedFriends
+                      : <PetFriendRequestEntity>[];
+              if (blockedFriends.isEmpty) {
+                return _buildEmptyState();
+              }
+              return Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    color:
+                        isDark
+                            ? const Color(0xFF202020)
+                            : const Color(0xFFF5F5F5),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFE5E5),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.block,
+                            color: Color(0xFFFF6B6B),
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${blockedFriends.length} ${S.of(context).blocked}',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      isDark
+                                          ? const Color(0xFFFFFFFF)
+                                          : const Color(0xFF2D3142),
+                                ),
                               ),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(16),
-                                  onTap:
-                                      () => _showUnblockDialog(friendRequest),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12),
-                                    child: Row(
-                                      children: [
-                                        Hero(
-                                          tag:
-                                              'pet_${friendRequest.friendPetId}_$index',
-                                          child: SizedBox(
-                                            width: 70,
-                                            height: 70,
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                              child: Stack(
-                                                fit: StackFit.expand,
-                                                children: [
-                                                  Image.network(
-                                                    _getImageUrl(
-                                                      friendRequest
-                                                          .friendPetImage,
-                                                    ),
-                                                    fit: BoxFit.cover,
-                                                    errorBuilder:
-                                                        (
-                                                          context,
-                                                          error,
-                                                          stackTrace,
-                                                        ) => Container(
-                                                          color: const Color(
-                                                            0xFFECEFF6,
-                                                          ),
-                                                          child: const Icon(
-                                                            Icons.pets,
-                                                            color: Color(
-                                                              0xFF9FA5C0,
-                                                            ),
-                                                            size: 36,
-                                                          ),
-                                                        ),
-                                                    loadingBuilder: (
-                                                      context,
-                                                      child,
-                                                      loadingProgress,
-                                                    ) {
-                                                      if (loadingProgress ==
-                                                          null) {
-                                                        return child;
-                                                      }
-                                                      return Container(
-                                                        color: const Color(
-                                                          0xFFF4F6FB,
-                                                        ),
-                                                        child: const Center(
-                                                          child:
-                                                              CircularProgressIndicator(
-                                                                strokeWidth: 2,
-                                                                color: Color(
-                                                                  0xFF6B4EFF,
-                                                                ),
-                                                              ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                                  Container(
-                                                    color: Colors.black
-                                                        .withOpacity(0.22),
-                                                  ),
-                                                  Center(
-                                                    child: Icon(
-                                                      Icons.block,
-                                                      color:
-                                                          isDark
-                                                              ? Colors.white
-                                                              : Colors.red,
-                                                      size: 30,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
+                              const SizedBox(height: 4),
+                              Text(
+                                S.of(context).interactWithyourPet,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: Color(0xFF9FA5C0),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: blockedFriends.length,
+                      itemBuilder: (context, index) {
+                        final friendRequest = blockedFriends[index];
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          decoration: BoxDecoration(
+                            color:
+                                isDark
+                                    ? const Color(0xFF252525)
+                                    : const Color(0xFFF5F5F5),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 10,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: () => _showUnblockDialog(friendRequest),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Row(
+                                  children: [
+                                    Hero(
+                                      tag:
+                                          'pet_${friendRequest.friendPetId}_$index',
+                                      child: SizedBox(
+                                        width: 70,
+                                        height: 70,
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            50,
                                           ),
-                                        ),
-                                        const SizedBox(width: 16),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                          child: Stack(
+                                            fit: StackFit.expand,
                                             children: [
-                                              Text(
-                                                friendRequest.friendPetName,
-                                                style: TextStyle(
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.bold,
+                                              Image.network(
+                                                _getImageUrl(
+                                                  friendRequest.friendPetImage,
+                                                ),
+                                                fit: BoxFit.cover,
+                                                errorBuilder:
+                                                    (
+                                                      context,
+                                                      error,
+                                                      stackTrace,
+                                                    ) => Container(
+                                                      color: const Color(
+                                                        0xFFECEFF6,
+                                                      ),
+                                                      child: const Icon(
+                                                        Icons.pets,
+                                                        color: Color(
+                                                          0xFF9FA5C0,
+                                                        ),
+                                                        size: 36,
+                                                      ),
+                                                    ),
+                                                loadingBuilder: (
+                                                  context,
+                                                  child,
+                                                  loadingProgress,
+                                                ) {
+                                                  if (loadingProgress == null) {
+                                                    return child;
+                                                  }
+                                                  return Container(
+                                                    color: const Color(
+                                                      0xFFF4F6FB,
+                                                    ),
+                                                    child: const Center(
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                            strokeWidth: 2,
+                                                            color: Color(
+                                                              0xFF6B4EFF,
+                                                            ),
+                                                          ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                              Container(
+                                                color: Colors.black.withOpacity(
+                                                  0.22,
+                                                ),
+                                              ),
+                                              Center(
+                                                child: Icon(
+                                                  Icons.block,
                                                   color:
                                                       isDark
                                                           ? Colors.white
-                                                          : Color(0xFF2D3142),
+                                                          : Colors.red,
+                                                  size: 30,
                                                 ),
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Row(
-                                                children: [
-                                                  const Icon(
-                                                    Icons.person_outline,
-                                                    size: 14,
-                                                    color: Color(0xFF9FA5C0),
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Expanded(
-                                                    child: Text(
-                                                      friendRequest.friendName??'',
-                                                      style: const TextStyle(
-                                                        fontSize: 13,
-                                                        color: Color(
-                                                          0xFF9FA5C0,
-                                                        ),
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Container(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 8,
-                                                          vertical: 3,
-                                                        ),
-                                                    decoration: BoxDecoration(
-                                                      color: const Color(
-                                                        0xFFE8E4FF,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            6,
-                                                          ),
-                                                    ),
-                                                    child: Text(
-                                                      '${S.of(context).age}: ${_calculateAgeShort(friendRequest.friendPetAge)}',
-                                                      style: const TextStyle(
-                                                        fontSize: 11,
-                                                        color: Color(
-                                                          0xFF6B4EFF,
-                                                        ),
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 6),
-                                              Row(
-                                                children: [
-                                                  const Icon(
-                                                    Icons.calendar_today,
-                                                    size: 11,
-                                                    color: Color(0xFF9FA5C0),
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Expanded(
-                                                    child: Text(
-                                                      "${S.of(context).blockedAt}: ${_formatDate(friendRequest.blockedAt)}",
-                                                      style: const TextStyle(
-                                                        fontSize: 11,
-                                                        color: Color(
-                                                          0xFF9FA5C0,
-                                                        ),
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                ],
                                               ),
                                             ],
                                           ),
                                         ),
-                                        IconButton(
-                                          icon: Container(
-                                            padding: const EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                              color: Color(0xFFF8D6D5),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: const Icon(
-                                              Icons.block_outlined,
-                                              color: Colors.red,
-                                              size: 40,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            friendRequest.friendPetName,
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold,
+                                              color:
+                                                  isDark
+                                                      ? Colors.white
+                                                      : Color(0xFF2D3142),
                                             ),
                                           ),
-                                          onPressed:
-                                              () => _showUnblockDialog(
-                                                friendRequest,
+                                          const SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.person_outline,
+                                                size: 14,
+                                                color: Color(0xFF9FA5C0),
                                               ),
-                                        ),
-                                      ],
+                                              const SizedBox(width: 4),
+                                              Expanded(
+                                                child: Text(
+                                                  friendRequest.friendName ??
+                                                      '',
+                                                  style: const TextStyle(
+                                                    fontSize: 13,
+                                                    color: Color(0xFF9FA5C0),
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 3,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: const Color(
+                                                    0xFFE8E4FF,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                ),
+                                                child: Text(
+                                                  '${S.of(context).age}: ${_calculateAgeShort(friendRequest.friendPetAge)}',
+                                                  style: const TextStyle(
+                                                    fontSize: 11,
+                                                    color: Color(0xFF6B4EFF),
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.calendar_today,
+                                                size: 11,
+                                                color: Color(0xFF9FA5C0),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Expanded(
+                                                child: Text(
+                                                  "${S.of(context).blockedAt}: ${_formatDate(friendRequest.blockedAt)}",
+                                                  style: const TextStyle(
+                                                    fontSize: 11,
+                                                    color: Color(0xFF9FA5C0),
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
+                                    IconButton(
+                                      icon: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFF8D6D5),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.block_outlined,
+                                          color: Colors.red,
+                                          size: 40,
+                                        ),
+                                      ),
+                                      onPressed:
+                                          () =>
+                                              _showUnblockDialog(friendRequest),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  );
-                },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               );
+            },
+          );
         },
       ),
     );

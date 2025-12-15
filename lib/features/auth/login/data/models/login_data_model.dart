@@ -12,7 +12,6 @@ class LoginData extends LoginEntity {
     required super.expiresIn,
   });
 
-
   factory LoginData.fromJson(Map<String, dynamic> json) {
     return LoginData(
       token: json['token'],

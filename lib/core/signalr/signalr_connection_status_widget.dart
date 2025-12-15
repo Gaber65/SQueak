@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/signalr/signalr_conversation_services.dart';
 
-
 class SignalRConnectionIndicator extends StatefulWidget {
   const SignalRConnectionIndicator({super.key});
 
@@ -12,7 +11,8 @@ class SignalRConnectionIndicator extends StatefulWidget {
 
 class _SignalRConnectionIndicatorState
     extends State<SignalRConnectionIndicator> {
-  final SignalRConversationHubService _signalRService = SignalRConversationHubService();
+  final SignalRConversationHubService _signalRService =
+      SignalRConversationHubService();
   bool _isConnected = false;
 
   @override
@@ -49,7 +49,9 @@ class _SignalRConnectionIndicatorState
         color: _isConnected ? Colors.green : Colors.orange,
         boxShadow: [
           BoxShadow(
-            color: (_isConnected ? Colors.green : Colors.orange).withOpacity(0.5),
+            color: (_isConnected ? Colors.green : Colors.orange).withOpacity(
+              0.5,
+            ),
             blurRadius: 4,
             spreadRadius: 1,
           ),

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class PerformanceUtils {
   /// Debounce utility for search inputs and API calls
   static Timer? _debounceTimer;
-  
+
   static void debounce({
     required VoidCallback callback,
     Duration delay = const Duration(milliseconds: 300),
@@ -23,13 +23,13 @@ class PerformanceUtils {
 
   /// Throttle utility for scroll events
   static DateTime? _lastThrottleTime;
-  
+
   static void throttle({
     required VoidCallback callback,
     Duration delay = const Duration(milliseconds: 100),
   }) {
     final now = DateTime.now();
-    if (_lastThrottleTime == null || 
+    if (_lastThrottleTime == null ||
         now.difference(_lastThrottleTime!) >= delay) {
       _lastThrottleTime = now;
       callback();
@@ -56,7 +56,7 @@ class PerformanceUtils {
   /// Configure image cache for better performance
   static void configureImageCache() {
     PaintingBinding.instance.imageCache.maximumSize = maxImageCacheCount;
-    PaintingBinding.instance.imageCache.maximumSizeBytes = 
+    PaintingBinding.instance.imageCache.maximumSizeBytes =
         maxImageCacheSize * 1024 * 1024;
   }
 }
@@ -127,7 +127,7 @@ class PerformantListView extends StatelessWidget {
   }
 }
 
-/// Performance-optimized grid view builder  
+/// Performance-optimized grid view builder
 class PerformantGridView extends StatelessWidget {
   const PerformantGridView({
     super.key,
@@ -171,22 +171,24 @@ class PerformantGridView extends StatelessWidget {
 /// Performance metrics tracker (development only)
 class PerformanceTracker {
   static final Map<String, Stopwatch> _stopwatches = {};
-  
+
   static void startTracking(String operation) {
     if (kDebugMode) {
       _stopwatches[operation] = Stopwatch()..start();
     }
   }
-  
+
   static void endTracking(String operation) {
     if (kDebugMode && _stopwatches.containsKey(operation)) {
       final stopwatch = _stopwatches[operation]!;
       stopwatch.stop();
-      debugPrint('Performance: $operation took ${stopwatch.elapsedMilliseconds}ms');
+      debugPrint(
+        'Performance: $operation took ${stopwatch.elapsedMilliseconds}ms',
+      );
       _stopwatches.remove(operation);
     }
   }
-  
+
   static void trackWidgetBuild(String widgetName, VoidCallback buildFunction) {
     if (kDebugMode) {
       startTracking('build_$widgetName');

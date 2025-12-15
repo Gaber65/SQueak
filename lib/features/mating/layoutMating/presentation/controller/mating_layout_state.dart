@@ -4,4 +4,5 @@ part of 'mating_layout_cubit.dart';
 sealed class MatingLayoutState {}
 
 final class MatingLayoutInitial extends MatingLayoutState {}
+
 final class ChangeIndexState extends MatingLayoutState {}

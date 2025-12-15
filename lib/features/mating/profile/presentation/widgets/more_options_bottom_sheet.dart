@@ -44,9 +44,10 @@ class MoreOptionsBottomSheet extends StatelessWidget {
           OptionMenuItem(
             icon: Icons.block,
             label: S.of(context).block,
-            gradientColors: isDark
-                ? [const Color(0xFF3B3F46), const Color(0xFF1F2430)]
-                : [const Color(0xFFFF6B35), const Color(0xFFFF8E53)],
+            gradientColors:
+                isDark
+                    ? [const Color(0xFF3B3F46), const Color(0xFF1F2430)]
+                    : [const Color(0xFFFF6B35), const Color(0xFFFF8E53)],
             onTap: () {
               Navigator.pop(context);
               _showBlockDialog(context);
@@ -56,9 +57,10 @@ class MoreOptionsBottomSheet extends StatelessWidget {
           OptionMenuItem(
             icon: Icons.person_remove,
             label: S.of(context).cancelFriend,
-            gradientColors: isDark
-                ? [const Color(0xFF3B3F46), const Color(0xFF1F2430)]
-                : [const Color(0xFFB91C1C), const Color(0xFFEF4444)],
+            gradientColors:
+                isDark
+                    ? [const Color(0xFF3B3F46), const Color(0xFF1F2430)]
+                    : [const Color(0xFFB91C1C), const Color(0xFFEF4444)],
             onTap: () {
               Navigator.pop(context);
               _showCancelFriendDialog(context);
@@ -87,7 +89,7 @@ class MoreOptionsBottomSheet extends StatelessWidget {
         return;
       }
     }
-    
+
     if (matingPetId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -97,13 +99,13 @@ class MoreOptionsBottomSheet extends StatelessWidget {
       );
       return;
     }
-    
+
     // Capture references before async operations
     final petFriendsCubit = context.read<PetFriendsCubit>();
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final capturedMatingPetId = matingPetId;
     final rootNavigator = Navigator.of(context, rootNavigator: true);
-    
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -112,7 +114,7 @@ class MoreOptionsBottomSheet extends StatelessWidget {
           onConfirmBlock: () async {
             // Close the block dialog first
             Navigator.of(dialogContext).pop();
-            
+
             // Show loading dialog using root navigator
             showDialog(
               context: dialogContext,
@@ -123,12 +125,12 @@ class MoreOptionsBottomSheet extends StatelessWidget {
 
             try {
               await petFriendsCubit.blockFriend(pet, capturedMatingPetId);
-              
+
               rootNavigator.pop(); // Close loading
-              
+
               // Navigate back to the layout/home screen
               rootNavigator.popUntil((route) => route.isFirst);
-              
+
               scaffoldMessenger.showSnackBar(
                 const SnackBar(
                   content: Text('Blocked successfully'),
@@ -166,7 +168,7 @@ class MoreOptionsBottomSheet extends StatelessWidget {
         return;
       }
     }
-    
+
     if (matingPetId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -176,7 +178,7 @@ class MoreOptionsBottomSheet extends StatelessWidget {
       );
       return;
     }
-    
+
     // Capture references before async operations
     final petFriendsCubit = context.read<PetFriendsCubit>();
     final navigator = Navigator.of(context);
@@ -190,17 +192,14 @@ class MoreOptionsBottomSheet extends StatelessWidget {
           pet: pet,
           onConfirmCancel: () async {
             try {
-              await petFriendsCubit.deleteFriendship(
-                pet,
-                capturedMatingPetId,
-              );
-              
+              await petFriendsCubit.deleteFriendship(pet, capturedMatingPetId);
+
               // Wait a bit for the state to update
               await Future.delayed(const Duration(milliseconds: 100));
-              
+
               // Navigate back to the layout/home screen
               navigator.popUntil((route) => route.isFirst);
-              
+
               scaffoldMessenger.showSnackBar(
                 const SnackBar(
                   content: Text('Friend removed successfully'),

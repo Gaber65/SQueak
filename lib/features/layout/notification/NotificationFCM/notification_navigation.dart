@@ -8,7 +8,6 @@ import '../NotificationAPI/presentation/screens/post_notfication.dart';
 import '../NotificationAPI/presentation/widget/get_appoiment_function.dart';
 
 class NotificationNavigation {
-
   /// Handle navigation based on notification payload
   static void handleNavigation(String payload) {
     try {
@@ -68,9 +67,6 @@ class NotificationNavigation {
 
   /// Navigate to screen helper
   static void _navigateToScreen(BuildContext context, Widget screen) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => screen),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (context) => screen));
   }
 }

@@ -26,11 +26,18 @@ abstract class BaseVetRepository {
 
   // Client operations
   Future<Either<Failure, DataVetEntity>> getClient(String invitationCode);
-  Future<Either<Failure, DataVetEntity>> getClientInApp(String code, String phone);
+  Future<Either<Failure, DataVetEntity>> getClientInApp(
+    String code,
+    String phone,
+  );
   Future<Either<Failure, dynamic>> getClinicById(String id);
 
   // Pet operations
-  Future<Either<Failure, List<VetClient>>> getClientsFromVet(String code, String phone, bool isFilter);
+  Future<Either<Failure, List<VetClient>>> getClientsFromVet(
+    String code,
+    String phone,
+    bool isFilter,
+  );
   Future<Either<Failure, String>> addInSqueakStatues({
     required String vetCarePetId,
     String? squeakPetId,
@@ -47,5 +54,4 @@ abstract class BaseVetRepository {
   // Notification operations
   Future<Either<Failure, List<dynamic>>> getNotifications(String id);
   Future<Either<Failure, void>> updateNotificationState(String id);
-
 }

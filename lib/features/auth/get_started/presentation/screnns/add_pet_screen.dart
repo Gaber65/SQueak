@@ -45,9 +45,10 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
     // If species is dog or cat, try to load cached breeds immediately
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cubit = context.read<PetCubit>();
-      final speciesId = selectedSpecies == 'dog'
-          ? PetCubit.dogSpeciesId
-          : selectedSpecies == 'cat'
+      final speciesId =
+          selectedSpecies == 'dog'
+              ? PetCubit.dogSpeciesId
+              : selectedSpecies == 'cat'
               ? PetCubit.catSpeciesId
               : null;
       if (speciesId != null) {
@@ -56,13 +57,16 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
         if (cached != null && (cached as String).isNotEmpty) {
           try {
             final List<dynamic> decoded = jsonDecode(cached);
-            final cachedBreeds = decoded
-                .map<BreedEntity>((m) => BreedEntity(
-                      enType: m['enType'] ?? '',
-                      id: m['id'] ?? '',
-                      specieId: m['specieId'] ?? '',
-                    ))
-                .toList();
+            final cachedBreeds =
+                decoded
+                    .map<BreedEntity>(
+                      (m) => BreedEntity(
+                        enType: m['enType'] ?? '',
+                        id: m['id'] ?? '',
+                        specieId: m['specieId'] ?? '',
+                      ),
+                    )
+                    .toList();
             cubit.breedData = cachedBreeds;
           } catch (_) {
             // ignore parse errors and let normal flow load from network
@@ -121,7 +125,7 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
     final sectionTextColor = isDark ? Colors.white : ColorManager.black_87;
     final progressBg = isDark ? Colors.white24 : Colors.black12;
     final progressColor = ColorManager.primaryColor;
-    
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -129,7 +133,10 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
           isArabicLang ? "أضف صغيرك الأليف" : "Add Your Pet",
           style: TextStyle(color: titleColor),
         ),
-        backgroundColor: isDark ? ColorManager.editScreenTextFieldBaseColor : ColorManager.white,
+        backgroundColor:
+            isDark
+                ? ColorManager.editScreenTextFieldBaseColor
+                : ColorManager.white,
         leading: null,
       ),
       backgroundColor: bodyBg,
@@ -158,7 +165,9 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              isArabicLang ? "أخبرنا عن صغيرك الأليف" : "Tell Us About Your Pet",
+              isArabicLang
+                  ? "أخبرنا عن صغيرك الأليف"
+                  : "Tell Us About Your Pet",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: sectionTextColor,
@@ -191,13 +200,13 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                   });
                   if (file != null) {
                     if (!context.mounted) return;
-                    MainCubit.get(
-                      context,
-                    ).getGlobalImage(file, UploadPlace.petsImages).then((value) {
-                      if (!context.mounted) return;
-                      context.read<PetCubit>().imageNameController.text =
-                          MainCubit.get(context).modelImage!.data;
-                    });
+                    MainCubit.get(context)
+                        .getGlobalImage(file, UploadPlace.petsImages)
+                        .then((value) {
+                          if (!context.mounted) return;
+                          context.read<PetCubit>().imageNameController.text =
+                              MainCubit.get(context).modelImage!.data;
+                        });
                   }
                 },
               ),
@@ -209,7 +218,10 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                 children: [
                   AddPetSection(
                     icon: Icons.info,
-                    title: isArabicLang ? "المعلومات الأساسية" : "Basic Information",
+                    title:
+                        isArabicLang
+                            ? "المعلومات الأساسية"
+                            : "Basic Information",
                     children: [
                       Text(
                         isArabicLang ? "اسم صغيرك الأليف *" : "Pet Name *",
@@ -217,7 +229,10 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                       ),
                       const SizedBox(height: 8),
                       AddPetTextField(
-                        hint: isArabicLang ? "أدخل اسم صغيرك الأليف" : "Enter your pet's name",
+                        hint:
+                            isArabicLang
+                                ? "أدخل اسم صغيرك الأليف"
+                                : "Enter your pet's name",
                         controller: _nameController,
                       ),
                       const SizedBox(height: 16),
@@ -332,7 +347,8 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
                   const SizedBox(height: 16),
                   AddPetSection(
                     icon: Icons.favorite,
-                    title: isArabicLang ? "تفاصيل إضافية" : "Additional Details",
+                    title:
+                        isArabicLang ? "تفاصيل إضافية" : "Additional Details",
                     children: [
                       Text(
                         isArabicLang ? " النوع*" : "Gender *",
@@ -532,13 +548,16 @@ class _GetStartedAddPetScreenState extends State<GetStartedAddPetScreen> {
       if (cached != null && (cached as String).isNotEmpty) {
         try {
           final List<dynamic> decoded = jsonDecode(cached);
-          final cachedBreeds = decoded
-              .map<BreedEntity>((m) => BreedEntity(
-                    enType: m['enType'] ?? '',
-                    id: m['id'] ?? '',
-                    specieId: m['specieId'] ?? '',
-                  ))
-              .toList();
+          final cachedBreeds =
+              decoded
+                  .map<BreedEntity>(
+                    (m) => BreedEntity(
+                      enType: m['enType'] ?? '',
+                      id: m['id'] ?? '',
+                      specieId: m['specieId'] ?? '',
+                    ),
+                  )
+                  .toList();
           cubit.breedData = cachedBreeds;
           // ensure UI shows no loading state
           return;

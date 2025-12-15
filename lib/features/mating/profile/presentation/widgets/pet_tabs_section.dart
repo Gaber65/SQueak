@@ -73,9 +73,9 @@ class PetTabsSection extends StatelessWidget {
                 ),
                 indicatorSize: TabBarIndicatorSize.tab,
                 dividerColor: Colors.transparent,
-                tabs:  [
+                tabs: [
                   Tab(text: S.of(context).posts),
-                  Tab(text:S.of(context).history),
+                  Tab(text: S.of(context).history),
                   Tab(text: S.of(context).ratings),
                 ],
               ),

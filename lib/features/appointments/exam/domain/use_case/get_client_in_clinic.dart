@@ -3,14 +3,16 @@ import 'package:equatable/equatable.dart';
 import '../entities/client_clinic.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 
-
-class GetClientInClinicUseCase implements BaseUseCase<List<PetClinic>, GetClientInClinicParams> {
+class GetClientInClinicUseCase
+    implements BaseUseCase<List<PetClinic>, GetClientInClinicParams> {
   final AppointmentRepository repository;
 
   GetClientInClinicUseCase(this.repository);
 
   @override
-  Future<Either<Failure, List<PetClinic>>> call(GetClientInClinicParams params) async {
+  Future<Either<Failure, List<PetClinic>>> call(
+    GetClientInClinicParams params,
+  ) async {
     return await repository.getClientInClinic(params.clinicCode, params.phone);
   }
 }

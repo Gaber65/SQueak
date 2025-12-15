@@ -41,9 +41,7 @@ class _VideoStringAppState extends State<VideoStringApp> {
 
       _videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse(videoUrl),
-        httpHeaders: {
-          'Accept': '*/*',
-        },
+        httpHeaders: {'Accept': '*/*'},
       );
 
       // Add error listener
@@ -51,8 +49,9 @@ class _VideoStringAppState extends State<VideoStringApp> {
         if (_videoPlayerController.value.hasError) {
           if (mounted) {
             setState(() {
-              _errorMessage = _videoPlayerController.value.errorDescription ?? 
-                             'Unknown video error';
+              _errorMessage =
+                  _videoPlayerController.value.errorDescription ??
+                  'Unknown video error';
               _isInitializing = false;
             });
           }
@@ -79,9 +78,7 @@ class _VideoStringAppState extends State<VideoStringApp> {
           placeholder: Container(
             color: Colors.black,
             child: const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-              ),
+              child: CircularProgressIndicator(color: Colors.white),
             ),
           ),
           errorBuilder: (context, message) {
@@ -106,7 +103,10 @@ class _VideoStringAppState extends State<VideoStringApp> {
                       padding: const EdgeInsets.all(16),
                       child: Text(
                         message,
-                        style: const TextStyle(color: Colors.grey, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -244,7 +244,6 @@ class _VideoStringAppState extends State<VideoStringApp> {
   }
 }
 
-
 /// Stateful widget to fetch and then display video content.
 class VideoFileApp extends StatefulWidget {
   const VideoFileApp({super.key, required this.video});
@@ -277,16 +276,15 @@ class _VideoFileAppState extends State<VideoFileApp> {
 
       debugPrint('Attempting to load video: $videoUrl');
 
-      _videoPlayerController = VideoPlayerController.file(
-        videoUrl,
-      );
+      _videoPlayerController = VideoPlayerController.file(videoUrl);
 
       // Add error listener
       _videoPlayerController.addListener(() {
         if (_videoPlayerController.value.hasError) {
           if (mounted) {
             setState(() {
-              _errorMessage = _videoPlayerController.value.errorDescription ??
+              _errorMessage =
+                  _videoPlayerController.value.errorDescription ??
                   'Unknown video error';
               _isInitializing = false;
             });
@@ -314,9 +312,7 @@ class _VideoFileAppState extends State<VideoFileApp> {
           placeholder: Container(
             color: Colors.black,
             child: const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-              ),
+              child: CircularProgressIndicator(color: Colors.white),
             ),
           ),
           errorBuilder: (context, message) {
@@ -341,7 +337,10 @@ class _VideoFileAppState extends State<VideoFileApp> {
                       padding: const EdgeInsets.all(16),
                       child: Text(
                         message,
-                        style: const TextStyle(color: Colors.grey, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),

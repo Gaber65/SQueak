@@ -92,7 +92,7 @@ class PetFormState extends PetState {
   final String speciesId;
   final bool spayed;
   final String passportImageName;
-  
+
   const PetFormState({
     this.gender = 1,
     this.birthdate = '',
@@ -104,7 +104,7 @@ class PetFormState extends PetState {
     this.spayed = false,
     this.passportImageName = '',
   });
-  
+
   PetFormState copyWith({
     int? gender,
     String? birthdate,

@@ -212,14 +212,12 @@ class _GeneralHubManager {
 
   Future<void> _fetchInitialOnlineFriends(String petId) async {
     try {
- 
       final result = await invoke<List<dynamic>>(
         'GetAllMyOnlinePetFriends',
         args: [petId],
       );
 
       if (result != null && result.isNotEmpty) {
-     
         _onlineFriendsDict.clear();
 
         for (var item in result) {
@@ -229,11 +227,10 @@ class _GeneralHubManager {
           _onlineFriendsDict[friend.petId] = friend.isOnline;
         }
 
-    
         _onlineStatusController.add(_onlineFriendsDict);
-    } 
-   } catch (e, stackTrace) {
-     _logger.severe('Failed to fetch initial online friends: $e\n$stackTrace');
+      }
+    } catch (e, stackTrace) {
+      _logger.severe('Failed to fetch initial online friends: $e\n$stackTrace');
     }
   }
 
@@ -275,8 +272,7 @@ class _GeneralHubManager {
     ].forEach(registerEvent);
 
     // Add catch-all handler for debugging (logs all unhandled events)
-    _connection!.onclose(({error}) {
-    });
+    _connection!.onclose(({error}) {});
 
     _logger.info('✅ Event listeners registered successfully');
   }
@@ -285,14 +281,12 @@ class _GeneralHubManager {
   /// Handler for FriendConnectionChanged event - updates dictionary in background
   void _handleFriendConnectionChanged(dynamic data) {
     try {
-
       final payload = ConnectionChangePayload.fromJson(
         data as Map<String, dynamic>,
       );
 
       _onlineFriendsDict[payload.petId] = payload.isOnline;
       _onlineStatusController.add(_onlineFriendsDict);
-
     } catch (e, stackTrace) {
       _logger.severe('Error handling FriendConnectionChanged: $e\n$stackTrace');
     }
@@ -353,8 +347,7 @@ class SignalRGeneralHubService {
 
   void _setupLogging() {
     Logger.root.level = Level.ALL;
-    Logger.root.onRecord.listen((record) {
-    });
+    Logger.root.onRecord.listen((record) {});
   }
 
   Stream<bool> get connectionStream => _hub.connectionStream;

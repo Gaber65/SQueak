@@ -12,7 +12,7 @@ class MatingTabSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration:Decorations.kDecorationBoxShadow(context: context),
+      decoration: Decorations.kDecorationBoxShadow(context: context),
       child: Column(
         children: [
           const SizedBox(height: 16),
@@ -26,9 +26,14 @@ class MatingTabSection extends StatelessWidget {
                 color: ColorManager.primaryColor.withOpacity(0.1),
               ),
               tabs: [
-                SizedBox(width: MediaQuery.sizeOf(context).width/2, child: Tab(text: S.of(context).received)),
-                SizedBox(width: MediaQuery.sizeOf(context).width/2, child: Tab(text: S.of(context).sent)),
-
+                SizedBox(
+                  width: MediaQuery.sizeOf(context).width / 2,
+                  child: Tab(text: S.of(context).received),
+                ),
+                SizedBox(
+                  width: MediaQuery.sizeOf(context).width / 2,
+                  child: Tab(text: S.of(context).sent),
+                ),
               ],
             ),
           ),

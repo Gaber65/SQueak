@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 
-
 part 'community_state.dart';
 
 class CommunityCubit extends Cubit<CommunityState> {
@@ -36,7 +35,9 @@ class CommunityCubit extends Cubit<CommunityState> {
       if (pickedFiles.isNotEmpty) {
         // Check if adding these files would exceed the limit
         if (mediaFiles.length + pickedFiles.length > maxMediaFiles) {
-          emit(MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'));
+          emit(
+            MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'),
+          );
           return;
         }
 
@@ -62,7 +63,9 @@ class CommunityCubit extends Cubit<CommunityState> {
       if (videoFile != null) {
         // Check if adding this file would exceed the limit
         if (mediaFiles.length >= maxMediaFiles) {
-          emit(MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'));
+          emit(
+            MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'),
+          );
           return;
         }
 
@@ -88,7 +91,9 @@ class CommunityCubit extends Cubit<CommunityState> {
       if (files.isNotEmpty) {
         // Check if adding these files would exceed the limit
         if (mediaFiles.length + files.length > maxMediaFiles) {
-          emit(MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'));
+          emit(
+            MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'),
+          );
           return;
         }
 
@@ -123,9 +128,6 @@ class CommunityCubit extends Cubit<CommunityState> {
     mediaTypes.clear();
     emit(NoImageSelectedState());
   }
-
-
-
 
   bool showBottom = false;
 

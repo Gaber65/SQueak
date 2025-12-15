@@ -1,5 +1,3 @@
-
-
 import 'package:squeak/features/pets/data/models/pet_model.dart';
 
 import '../../domain/entities/history_entities.dart';
@@ -30,9 +28,8 @@ class HistoryModel extends HistoryEntity {
     return HistoryModel(
       id: json['id'] ?? '',
       marriageDate: (json['marriageDate'] ?? ''),
-      separationDate: json['seperationDate'] != null
-          ? (json['seperationDate'])
-          : null,
+      separationDate:
+          json['seperationDate'] != null ? (json['seperationDate']) : null,
       isSeparated: json['isSeperated'] ?? false,
       isPregnant: json['isPregnant'] ?? false,
       pregnantDate: (json['pregnantDate'] ?? ''),
@@ -46,7 +43,7 @@ class HistoryModel extends HistoryEntity {
       partnerRateStar: json['partnerRateStar'],
       partnerRateComment: json['partnerRateComment'],
       checkPregnantNotificationStatus:
-      json['checkPregenantNotificationSatues'] ?? false,
+          json['checkPregenantNotificationSatues'] ?? false,
       isActive: json['isActive'] ?? true,
       isDeleted: json['isDeleted'] ?? false,
     );

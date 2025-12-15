@@ -30,7 +30,8 @@ class SearchTextField extends StatelessWidget {
             size: isTablet ? 24 : screen.width * 0.05,
             color: mainCubit.isDark ? Colors.grey[400] : Colors.grey[600],
           ),
-          hintText: isArabic() ? 'ابحث بالاسم او الرقم' : 'Search by name or phone',
+          hintText:
+              isArabic() ? 'ابحث بالاسم او الرقم' : 'Search by name or phone',
           contentPadding: EdgeInsets.symmetric(
             vertical: screen.height * 0.018,
             horizontal: screen.width * 0.04,
@@ -40,27 +41,33 @@ class SearchTextField extends StatelessWidget {
             context: context,
             fontSize: isTablet ? 16 : screen.width * 0.038,
             fontWeight: FontWeight.w500,
-            fontColor: mainCubit.isDark ? Colors.white54 : const Color.fromRGBO(0, 0, 0, .4),
+            fontColor:
+                mainCubit.isDark
+                    ? Colors.white54
+                    : const Color.fromRGBO(0, 0, 0, .4),
           ),
           fillColor: mainCubit.isDark ? Colors.grey[800] : Colors.grey[100],
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: mainCubit.isDark ? Colors.grey[700]! : Colors.grey.withOpacity(0.3),
+              color:
+                  mainCubit.isDark
+                      ? Colors.grey[700]!
+                      : Colors.grey.withOpacity(0.3),
               width: 1,
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: ColorManager.primaryColor,
-              width: 2,
-            ),
+            borderSide: BorderSide(color: ColorManager.primaryColor, width: 2),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: mainCubit.isDark ? Colors.grey[700]! : Colors.grey.withOpacity(0.3),
+              color:
+                  mainCubit.isDark
+                      ? Colors.grey[700]!
+                      : Colors.grey.withOpacity(0.3),
               width: 1,
             ),
           ),

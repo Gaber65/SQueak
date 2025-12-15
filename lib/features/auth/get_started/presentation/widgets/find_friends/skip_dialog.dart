@@ -43,7 +43,7 @@ class SkipDialog extends StatelessWidget {
               borderRadius: BorderRadius.circular(6),
               color: ColorManager.bTwitter,
             ),
-            child:  Text(
+            child: Text(
               "OK",
               style: TextStyle(
                 color:

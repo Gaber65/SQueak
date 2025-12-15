@@ -388,7 +388,9 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
                               SizedBox(height: width * 0.03), //  Changed
                               // Wrap the form container so it rebuilds when language changes
                               Container(
-                                padding: EdgeInsets.all(width * 0.06), //  Changed
+                                padding: EdgeInsets.all(
+                                  width * 0.06,
+                                ), //  Changed
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(20),
@@ -456,9 +458,17 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
               Icons.favorite_border,
             ),
             SizedBox(width: width * 0.08), //  Changed
-            _buildPetFeatureItem(Icons.favorite, isArabic() ? 'حب' : 'Love', Icons.favorite),
+            _buildPetFeatureItem(
+              Icons.favorite,
+              isArabic() ? 'حب' : 'Love',
+              Icons.favorite,
+            ),
             SizedBox(width: width * 0.08), //  Changed
-            _buildPetFeatureItem(Icons.shield, isArabic() ? 'حماية' : 'Safe', Icons.security),
+            _buildPetFeatureItem(
+              Icons.shield,
+              isArabic() ? 'حماية' : 'Safe',
+              Icons.security,
+            ),
           ],
         ),
         SizedBox(height: width * 0.03), //  Changed

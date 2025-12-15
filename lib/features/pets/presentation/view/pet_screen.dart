@@ -58,7 +58,7 @@ class PetScreen extends StatelessWidget {
                 cubit: cubit,
                 state: state,
                 qrCubit: qrCubit,
-              ); 
+              );
             },
           );
         },

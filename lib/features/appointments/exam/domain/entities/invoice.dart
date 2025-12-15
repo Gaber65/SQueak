@@ -193,10 +193,7 @@ class OwnerPrint extends Equatable {
   final String ownerName;
   final String phone;
 
-  const OwnerPrint({
-    required this.ownerName,
-    required this.phone,
-  });
+  const OwnerPrint({required this.ownerName, required this.phone});
 
   @override
   List<Object?> get props => [ownerName, phone];

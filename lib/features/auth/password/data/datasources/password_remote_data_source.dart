@@ -3,7 +3,6 @@
 import 'package:dio/dio.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-
 class PasswordRemoteDataSource {
   // Method to forget password
   Future<ErrorMessageModel> forgetPassword(String email) async {
@@ -21,7 +20,11 @@ class PasswordRemoteDataSource {
   }
 
   // Method to reset password
-  Future<ErrorMessageModel> resetPassword(String email, String tokenCode, String newPassword) async {
+  Future<ErrorMessageModel> resetPassword(
+    String email,
+    String tokenCode,
+    String newPassword,
+  ) async {
     try {
       final response = await DioFinalHelper.postData(
         method: resetPasswordEndPoint,
@@ -33,7 +36,7 @@ class PasswordRemoteDataSource {
         },
       );
       return ErrorMessageModel.fromJson(response.data);
-    }on DioException catch (e) {
+    } on DioException catch (e) {
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );
@@ -41,7 +44,11 @@ class PasswordRemoteDataSource {
   }
 
   // Method to verify user
-  Future<ErrorMessageModel> verifyUser(String email, String tokenCode, String clinicCode) async {
+  Future<ErrorMessageModel> verifyUser(
+    String email,
+    String tokenCode,
+    String clinicCode,
+  ) async {
     try {
       final response = await DioFinalHelper.postData(
         method: verificationCodeEndPoint,
@@ -52,7 +59,7 @@ class PasswordRemoteDataSource {
         },
       );
       return ErrorMessageModel.fromJson(response.data);
-    }on DioException catch (e) {
+    } on DioException catch (e) {
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

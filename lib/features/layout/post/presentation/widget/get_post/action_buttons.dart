@@ -40,7 +40,8 @@ class _ActionButtonsState extends State<ActionButtons> {
           ),
           ActionButton(
             icon: IconlyLight.chat,
-            label: '${widget.commentsCount} ${isArabic() ? 'تعليق' : 'Comment'}',
+            label:
+                '${widget.commentsCount} ${isArabic() ? 'تعليق' : 'Comment'}',
             color: widget.isDark ? Colors.white70 : Colors.grey[700]!,
             onTap: widget.onComment,
           ),

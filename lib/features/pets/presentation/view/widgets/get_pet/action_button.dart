@@ -19,13 +19,12 @@ class ActionButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         foregroundColor: color,
-        backgroundColor: MainCubit.get(context).isDark
-            ? ColorManager.myPetsBaseBlackColor
-            : color.withOpacity(0.1),
+        backgroundColor:
+            MainCubit.get(context).isDark
+                ? ColorManager.myPetsBaseBlackColor
+                : color.withOpacity(0.1),
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(vertical: 12),
       ),
       child: Text(

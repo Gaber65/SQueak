@@ -119,23 +119,24 @@ class AddPetImagePicker extends StatelessWidget {
               border: Border.all(color: ColorManager.primaryColor, width: 3),
             ),
             child: ClipOval(
-              child: imagefile != null
-                  ? Image.file(
-                      imagefile!,
-                      width: 96,
-                      height: 96,
-                      fit: BoxFit.cover,
-                    )
-                  : Container(
-                      width: 96,
-                      height: 96,
-                      color: ColorManager.white,
-                      child: const Icon(
-                        Icons.pets,
-                        color: ColorManager.primaryColor,
-                        size: 42,
+              child:
+                  imagefile != null
+                      ? Image.file(
+                        imagefile!,
+                        width: 96,
+                        height: 96,
+                        fit: BoxFit.cover,
+                      )
+                      : Container(
+                        width: 96,
+                        height: 96,
+                        color: ColorManager.white,
+                        child: const Icon(
+                          Icons.pets,
+                          color: ColorManager.primaryColor,
+                          size: 42,
+                        ),
                       ),
-                    ),
             ),
           ),
           Positioned(

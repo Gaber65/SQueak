@@ -53,7 +53,6 @@ class AppRepositoryImpl implements AppRepository {
       uploadPlace.value,
       "image",
       subtype,
-
     );
 
     try {
@@ -102,7 +101,7 @@ class AppRepositoryImpl implements AppRepository {
     // Detect audio subtype from file extension
     String extension = file.path.split('.').last.toLowerCase();
     String subtype;
-    
+
     switch (extension) {
       case 'mp3':
         subtype = 'mpeg';
@@ -137,7 +136,7 @@ class AppRepositoryImpl implements AppRepository {
       default:
         subtype = 'mpeg'; // fallback to mp3
     }
-    
+
     final result = await remoteDataSource.uploadFile(
       file,
       audioHelperEndPoint,
@@ -166,7 +165,7 @@ class AppRepositoryImpl implements AppRepository {
     String extension = file.path.split('.').last.toLowerCase();
     String subtype;
     String type = 'application';
-    
+
     switch (extension) {
       case 'pdf':
         subtype = 'pdf';
@@ -187,7 +186,8 @@ class AppRepositoryImpl implements AppRepository {
         subtype = 'vnd.ms-powerpoint';
         break;
       case 'pptx':
-        subtype = 'vnd.openxmlformats-officedocument.presentationml.presentation';
+        subtype =
+            'vnd.openxmlformats-officedocument.presentationml.presentation';
         break;
       case 'txt':
         type = 'text';
@@ -203,12 +203,12 @@ class AppRepositoryImpl implements AppRepository {
         subtype = 'x-7z-compressed';
         break;
       default:
-        subtype = 'octet-stream'; 
+        subtype = 'octet-stream';
     }
-    
+
     final result = await remoteDataSource.uploadFile(
       file,
-      documentHelperEndPoint, 
+      documentHelperEndPoint,
       uploadPlace.value,
       type,
       subtype,

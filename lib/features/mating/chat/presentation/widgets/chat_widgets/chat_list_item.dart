@@ -71,7 +71,7 @@ class ChatListItem extends StatelessWidget {
                 ),
               ),
 
-               if (chat.completeMarriageStatues)
+              if (chat.completeMarriageStatues)
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
@@ -134,6 +134,4 @@ class ChatListItem extends StatelessWidget {
       ),
     );
   }
-
-
 }

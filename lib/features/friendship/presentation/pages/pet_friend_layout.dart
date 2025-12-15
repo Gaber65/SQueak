@@ -240,11 +240,11 @@ class _FriendsScreenState extends State<FriendsScreen> {
 //     final arabic = isArabic();
 //     final screenHeight = MediaQuery.of(context).size.height;
 //     final screenWidth = MediaQuery.of(context).size.width;
-    
+
 //     // Responsive sizing based on screen height
 //     final isSmallScreen = screenHeight < 700;
 //     final isTinyScreen = screenHeight < 600;
-    
+
 //     // Define colors based on theme
 //     final backgroundColor = isDark ? const Color(0xFF121212) : Colors.white;
 //     final textColor = isDark ? Colors.white : Colors.grey.shade800;
@@ -252,28 +252,28 @@ class _FriendsScreenState extends State<FriendsScreen> {
 //     final primaryColor = isDark ? const Color(0xFFFFB74D) : Colors.amber.shade700;
 //     final circleBackground = isDark ? const Color(0xFF2C2C2C) : Colors.amber.shade50;
 //     final pawPrintColor = isDark ? const Color(0xFF3D3D3D) : Colors.amber.shade200;
-    
+
 //     // Responsive measurements
 //     final pawSize1 = isTinyScreen ? 20.0 : (isSmallScreen ? 25.0 : 30.0);
 //     final pawSize2 = isTinyScreen ? 28.0 : (isSmallScreen ? 35.0 : 40.0);
 //     final pawSpacing = isTinyScreen ? 12.0 : (isSmallScreen ? 16.0 : 20.0);
-    
+
 //     final circleSize = isTinyScreen ? 120.0 : (isSmallScreen ? 150.0 : 200.0);
 //     final iconSize = isTinyScreen ? 60.0 : (isSmallScreen ? 75.0 : 100.0);
-    
+
 //     final titleSize = isTinyScreen ? 24.0 : (isSmallScreen ? 28.0 : 32.0);
 //     final badgeTextSize = isTinyScreen ? 11.0 : (isSmallScreen ? 12.0 : 14.0);
 //     final descriptionSize = isTinyScreen ? 13.0 : (isSmallScreen ? 14.0 : 16.0);
 //     final featureTextSize = isTinyScreen ? 13.0 : (isSmallScreen ? 14.0 : 16.0);
 //     final buttonTextSize = isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0);
-    
+
 //     final verticalSpacing1 = isTinyScreen ? 16.0 : (isSmallScreen ? 24.0 : 40.0);
 //     final verticalSpacing2 = isTinyScreen ? 8.0 : (isSmallScreen ? 10.0 : 12.0);
 //     final verticalSpacing3 = isTinyScreen ? 12.0 : (isSmallScreen ? 16.0 : 24.0);
 //     final featureSpacing = isTinyScreen ? 8.0 : (isSmallScreen ? 12.0 : 16.0);
-    
+
 //     final horizontalPadding = screenWidth < 360 ? 16.0 : 24.0;
-    
+
 //     return Directionality(
 //       textDirection: arabic ? TextDirection.rtl : TextDirection.ltr,
 //       child: Scaffold(
@@ -482,7 +482,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
 //                             ],
 //                     ),
 //                   ),
-                  
+
 //                   SizedBox(height: isTinyScreen ? 16.0 : 24.0),
 //                 ],
 //               ),
@@ -516,7 +516,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
 //     final iconSize = isSmallScreen ? 20.0 : 24.0;
 //     final padding = isSmallScreen ? 12.0 : 16.0;
 //     final iconPadding = isSmallScreen ? 6.0 : 8.0;
-    
+
 //     return Container(
 //       padding: EdgeInsets.all(padding),
 //       decoration: BoxDecoration(

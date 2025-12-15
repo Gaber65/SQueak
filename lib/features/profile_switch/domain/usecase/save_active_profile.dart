@@ -5,8 +5,6 @@ import 'package:squeak/features/profile_switch/domain/entities/profile_type_enti
 import '../../../../core/base_usecase/base_usecase.dart';
 import '../repositories/profile_type_base_repo.dart';
 
-
-
 class SaveActiveProfileUseCase extends BaseUseCase<bool, ActiveProfile> {
   final ProfileSwitchRepository repository;
 

@@ -29,16 +29,16 @@ class DataVetEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        isRegistered,
-        isApplyInvitation,
-        vetICareId,
-        name,
-        phone,
-        countryId,
-        gender,
-        email,
-        clinicName,
-        clinicCode,
-        squeakUserId,
-      ];
+    isRegistered,
+    isApplyInvitation,
+    vetICareId,
+    name,
+    phone,
+    countryId,
+    gender,
+    email,
+    clinicName,
+    clinicCode,
+    squeakUserId,
+  ];
 }

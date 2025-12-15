@@ -1,6 +1,5 @@
 import 'package:squeak/features/appointments/exam/domain/entities/appointment_entity.dart';
 
-
 class AppointmentModel extends AppointmentEntity {
   const AppointmentModel({
     required super.id,
@@ -62,7 +61,8 @@ class AppointmentModel extends AppointmentEntity {
     final int cleanlinessRate = toInt(json['cleanlinessRate']);
     final int doctorServiceRate = toInt(json['doctorServiceRate']);
 
-    final bool isRating = json['isRating'] ?? (cleanlinessRate > 0 || doctorServiceRate > 0);
+    final bool isRating =
+        json['isRating'] ?? (cleanlinessRate > 0 || doctorServiceRate > 0);
 
     final String? feedbackComment = json['feedbackComment']?.toString();
     final dynamic status = json['status'] ?? json['statues'] ?? 0;
@@ -76,17 +76,22 @@ class AppointmentModel extends AppointmentEntity {
     final String clinicName = json['clinicName']?.toString() ?? '';
     final int source = toInt(json['source']);
 
-    final client = json['client'] != null
-        ? ClientModel.fromJson(Map<String, dynamic>.from(json['client']))
-        : const ClientModel();
+    final client =
+        json['client'] != null
+            ? ClientModel.fromJson(Map<String, dynamic>.from(json['client']))
+            : const ClientModel();
 
-    final pet = json['pet'] != null
-        ? PetModel.fromJson(Map<String, dynamic>.from(json['pet']))
-        : const PetModel();
+    final pet =
+        json['pet'] != null
+            ? PetModel.fromJson(Map<String, dynamic>.from(json['pet']))
+            : const PetModel();
 
-    final DoctorUserModel? doctorUser = json['doctorUser'] != null
-        ? DoctorUserModel.fromJson(Map<String, dynamic>.from(json['doctorUser']))
-        : null;
+    final DoctorUserModel? doctorUser =
+        json['doctorUser'] != null
+            ? DoctorUserModel.fromJson(
+              Map<String, dynamic>.from(json['doctorUser']),
+            )
+            : null;
 
     final num temperature = toNum(json['temprature'] ?? json['temperature']);
     final num weight = toNum(json['wieght'] ?? json['weight']);
@@ -143,7 +148,8 @@ class AppointmentModel extends AppointmentEntity {
       'source': source,
       'client': (client as ClientModel).toJson(),
       'pet': (pet as PetModel).toJson(),
-      'doctorUser': doctorUser != null ? (doctorUser as DoctorUserModel).toJson() : null,
+      'doctorUser':
+          doctorUser != null ? (doctorUser as DoctorUserModel).toJson() : null,
       'weight': weight,
       'temperature': temperature,
     };
@@ -151,11 +157,7 @@ class AppointmentModel extends AppointmentEntity {
 }
 
 class ClientModel extends ClientEntity {
-  const ClientModel({
-    super.name,
-    super.phone,
-    super.gender,
-  });
+  const ClientModel({super.name, super.phone, super.gender});
 
   factory ClientModel.fromJson(Map<String, dynamic> json) {
     return ClientModel(
@@ -166,20 +168,12 @@ class ClientModel extends ClientEntity {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'phone': phone,
-      'gender': gender,
-    };
+    return {'name': name, 'phone': phone, 'gender': gender};
   }
 }
 
 class PetModel extends PetEntityAppointment {
-  const PetModel({
-    super.name,
-    super.gender,
-    super.squeakPetId,
-  });
+  const PetModel({super.name, super.gender, super.squeakPetId});
 
   factory PetModel.fromJson(Map<String, dynamic> json) {
     return PetModel(
@@ -190,19 +184,12 @@ class PetModel extends PetEntityAppointment {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'squeakPetId': squeakPetId,
-      'gender': gender,
-    };
+    return {'name': name, 'squeakPetId': squeakPetId, 'gender': gender};
   }
 }
 
 class DoctorUserModel extends DoctorUserEntity {
-  const DoctorUserModel({
-    super.fullName,
-    super.imageName,
-  });
+  const DoctorUserModel({super.fullName, super.imageName});
 
   factory DoctorUserModel.fromJson(Map<String, dynamic> json) {
     return DoctorUserModel(
@@ -212,9 +199,6 @@ class DoctorUserModel extends DoctorUserEntity {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'fullName': fullName,
-      'imageName': imageName,
-    };
+    return {'fullName': fullName, 'imageName': imageName};
   }
 }

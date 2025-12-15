@@ -15,9 +15,10 @@ class BlockUserDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final headerGradient = isDark
-        ? [const Color(0xFF2B2F36), const Color(0xFF1B1D20)]
-        : [Colors.orange[300]!, Colors.orange[500]!];
+    final headerGradient =
+        isDark
+            ? [const Color(0xFF2B2F36), const Color(0xFF1B1D20)]
+            : [Colors.orange[300]!, Colors.orange[500]!];
     final infoColor = Colors.orange[400]!;
     final contentTextColor = isDark ? Colors.grey[200]! : Colors.grey[800]!;
 
@@ -32,13 +33,15 @@ class BlockUserDialog extends StatelessWidget {
           _buildContent(context, isDark, infoColor, contentTextColor),
         ],
       ),
-      actions: [
-        _buildActionButtons(context, isDark),
-      ],
+      actions: [_buildActionButtons(context, isDark)],
     );
   }
 
-  Widget _buildHeader(BuildContext context, bool isDark, List<Color> headerGradient) {
+  Widget _buildHeader(
+    BuildContext context,
+    bool isDark,
+    List<Color> headerGradient,
+  ) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
@@ -89,7 +92,12 @@ class BlockUserDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, bool isDark, Color infoColor, Color contentTextColor) {
+  Widget _buildContent(
+    BuildContext context,
+    bool isDark,
+    Color infoColor,
+    Color contentTextColor,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -166,9 +174,10 @@ class BlockUserDialog extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: isDark
-                    ? [Colors.orange[300]!, Colors.orange[500]!]
-                    : [Colors.orange[400]!, Colors.orange[600]!],
+                colors:
+                    isDark
+                        ? [Colors.orange[300]!, Colors.orange[500]!]
+                        : [Colors.orange[400]!, Colors.orange[600]!],
               ),
               borderRadius: BorderRadius.circular(12),
               boxShadow: [

@@ -1,4 +1,3 @@
-
 class NotificationMessage {
   dynamic senderId;
   dynamic category;
@@ -14,7 +13,21 @@ class NotificationMessage {
   dynamic threadId;
   int? ttl;
 
-  NotificationMessage({this.senderId, this.category, this.collapseKey, this.contentAvailable, this.data, this.from, this.messageId, this.messageType, this.mutableContent, this.notification, this.sentTime, this.threadId, this.ttl});
+  NotificationMessage({
+    this.senderId,
+    this.category,
+    this.collapseKey,
+    this.contentAvailable,
+    this.data,
+    this.from,
+    this.messageId,
+    this.messageType,
+    this.mutableContent,
+    this.notification,
+    this.sentTime,
+    this.threadId,
+    this.ttl,
+  });
 
   NotificationMessage.fromJson(Map<String, dynamic> json) {
     senderId = json["senderId"];
@@ -39,7 +52,7 @@ class NotificationMessage {
     data["collapseKey"] = collapseKey;
     data["contentAvailable"] = contentAvailable;
     data["data"] = data;
-      data["from"] = from;
+    data["from"] = from;
     data["messageId"] = messageId;
     data["messageType"] = messageType;
     data["mutableContent"] = mutableContent;
@@ -60,7 +73,15 @@ class Data {
   String? targetTypeId;
   String? body;
 
-  Data({this.contentAvailable, this.mutableContent, this.targetType, this.imageUrl, this.title, this.targetTypeId, this.body});
+  Data({
+    this.contentAvailable,
+    this.mutableContent,
+    this.targetType,
+    this.imageUrl,
+    this.title,
+    this.targetTypeId,
+    this.body,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     contentAvailable = json["content_available"];

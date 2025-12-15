@@ -29,11 +29,7 @@ class IconContainer extends StatelessWidget {
         shape: BoxShape.circle,
         color: backgroundColor ?? iconColor.withOpacity(0.1),
       ),
-      child: Icon(
-        icon,
-        color: iconColor,
-        size: iconSize,
-      ),
+      child: Icon(icon, color: iconColor, size: iconSize),
     );
   }
 }

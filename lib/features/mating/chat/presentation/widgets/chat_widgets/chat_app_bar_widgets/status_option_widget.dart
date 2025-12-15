@@ -30,15 +30,15 @@ class StatusOptionWidget<T> extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             border: Border.all(
-              color: isSelected
-                  ? ColorManager.primaryColor
-                  : Colors.grey.shade300,
+              color:
+                  isSelected ? ColorManager.primaryColor : Colors.grey.shade300,
               width: isSelected ? 2 : 1,
             ),
             borderRadius: BorderRadius.circular(12),
-            color: isSelected
-                ? ColorManager.primaryColor.withAlpha(50)
-                : Colors.white,
+            color:
+                isSelected
+                    ? ColorManager.primaryColor.withAlpha(50)
+                    : Colors.white,
           ),
           child: Row(
             children: [
@@ -50,18 +50,16 @@ class StatusOptionWidget<T> extends StatelessWidget {
                       title,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: isSelected
-                            ? ColorManager.primaryColor.withAlpha(255)
-                            : Colors.black,
+                        color:
+                            isSelected
+                                ? ColorManager.primaryColor.withAlpha(255)
+                                : Colors.black,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       description,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                      ),
+                      style: const TextStyle(color: Colors.grey, fontSize: 14),
                     ),
                   ],
                 ),

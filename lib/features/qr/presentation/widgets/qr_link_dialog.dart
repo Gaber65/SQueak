@@ -6,7 +6,7 @@ import '../../../../core/utils/theme/color_mangment/color_manager.dart';
 import '../controller/qr_cubit.dart';
 import '../../../pets/domain/entities/pet_entity.dart';
 import '../view/new_scanner.dart';
-import 'package:flutter/services.dart'; 
+import 'package:flutter/services.dart';
 
 class QrLinkDialog extends StatefulWidget {
   final PetEntities pet;

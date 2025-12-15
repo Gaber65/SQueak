@@ -123,7 +123,6 @@ class UploadPostController {
       );
     }
 
-
     if (content.length >= 1000) {
       return dialogs.showValidationDialog(
         context,

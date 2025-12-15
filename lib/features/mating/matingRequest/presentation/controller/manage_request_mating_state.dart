@@ -17,7 +17,6 @@ class GetMyMatingRequestError extends ManageRequestMatingState {
   GetMyMatingRequestError(this.message);
 }
 
-
 class UpdateMatingRequestLoading extends ManageRequestMatingState {}
 
 class UpdateMatingRequestLoaded extends ManageRequestMatingState {

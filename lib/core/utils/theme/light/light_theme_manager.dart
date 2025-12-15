@@ -25,4 +25,3 @@ ThemeData buildThemeDataLight(BuildContext context) {
     ),
   );
 }
-

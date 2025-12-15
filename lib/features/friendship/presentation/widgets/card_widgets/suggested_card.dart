@@ -46,19 +46,17 @@ class SuggestedCard extends StatelessWidget {
             : Colors.black.withOpacity(0.06);
 
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         navigateToScreen(
-                    context,
-                    ViewPetProfileScreen(
-                      petId:pet.petId!,
-                      isDarkMode: MainCubit.get(context).isDark,
-                      isFriend: false,
-                      activePetId: SwitchProfileCubit.get(context)
-                          .activeProfile!
-                          .pet!
-                          .petId!,
-                    ),
-                  );
+          context,
+          ViewPetProfileScreen(
+            petId: pet.petId!,
+            isDarkMode: MainCubit.get(context).isDark,
+            isFriend: false,
+            activePetId:
+                SwitchProfileCubit.get(context).activeProfile!.pet!.petId!,
+          ),
+        );
       },
       child: Container(
         margin: EdgeInsets.only(
@@ -112,7 +110,7 @@ class SuggestedCard extends StatelessWidget {
                   ),
                 ),
               ),
-      
+
               // Decorative background elements
               Positioned(
                 top: -40,
@@ -131,7 +129,7 @@ class SuggestedCard extends StatelessWidget {
                   ),
                 ),
               ),
-      
+
               Positioned(
                 bottom: -30,
                 left: -30,
@@ -141,7 +139,7 @@ class SuggestedCard extends StatelessWidget {
                   color: accentColor.withOpacity(0.05),
                 ),
               ),
-      
+
               // Main content
               Padding(
                 padding: EdgeInsets.all(cardPadding),
@@ -159,9 +157,9 @@ class SuggestedCard extends StatelessWidget {
                           accentColor: accentColor,
                           cardColor: cardColor,
                         ),
-      
+
                         SizedBox(width: isTablet ? 18 : 16),
-      
+
                         // Pet info
                         Expanded(
                           child: Column(
@@ -207,14 +205,15 @@ class SuggestedCard extends StatelessWidget {
                                   ),
                                 ],
                               ),
-      
+
                               SizedBox(height: 8),
-      
+
                               // Age and breed
                               _buildInfoRow(
                                 icon: Icons.cake_outlined,
                                 text:
-                                    (pet.birthdate != null && pet.birthdate != '')
+                                    (pet.birthdate != null &&
+                                            pet.birthdate != '')
                                         ? "${formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))}${pet.breed?.enBreed != null ? " • ${pet.breed!.enBreed}" : ""}"
                                         : pet.breed?.enBreed ?? "Mixed breed",
                                 color: subTextColor,
@@ -226,9 +225,9 @@ class SuggestedCard extends StatelessWidget {
                         ),
                       ],
                     ),
-      
+
                     SizedBox(height: isTablet ? 20 : 18),
-      
+
                     // Divider
                     Container(
                       height: 1,
@@ -242,7 +241,7 @@ class SuggestedCard extends StatelessWidget {
                         ),
                       ),
                     ),
-      
+
                     SizedBox(height: isTablet ? 20 : 18),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -262,7 +261,7 @@ class SuggestedCard extends StatelessWidget {
                                   : Color(0xFFFF3B30),
                           isTablet: isTablet,
                         ),
-      
+
                         SizedBox(width: 12),
                         _buildStatusChip(
                           icon: pet.gender == 1 ? Icons.male : Icons.female,
@@ -328,7 +327,7 @@ class SuggestedCard extends StatelessWidget {
                         ),
                       ),
                     ],
-      
+
                     SizedBox(height: isTablet ? 24 : 20),
                     FriendActionButton(
                       onCancel: () {
@@ -628,7 +627,7 @@ class _FriendActionButtonState extends State<FriendActionButton>
                 ),
               ),
             ),
-        
+
             // Dismiss button (only shown when not sent)
             if (!isSent) ...[
               SizedBox(width: widget.isTablet ? 14 : 12),

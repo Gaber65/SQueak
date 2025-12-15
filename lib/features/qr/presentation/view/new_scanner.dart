@@ -14,7 +14,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
   QRViewController? controller;
   bool _isScanned = false;
 
-
   @override
   void dispose() {
     controller?.dispose();
@@ -61,9 +60,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
             flex: 1,
             child: Center(
               child: Text(
-                isArabic() 
-                  ? 'ضع رمز QR في المنتصف للمسح'
-                  : 'Place QR code in the center to scan',
+                isArabic()
+                    ? 'ضع رمز QR في المنتصف للمسح'
+                    : 'Place QR code in the center to scan',
                 style: const TextStyle(fontSize: 16),
               ),
             ),

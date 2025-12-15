@@ -305,7 +305,7 @@ class _ChatListViewState extends State<_ChatListView> {
                     stream: chatAppCubit.unreadCountsStream,
                     initialData: chatAppCubit.unreadCounts,
                     builder: (context, snapshot) {
-                    final unreadCountsMap = snapshot.data ?? {};
+                      final unreadCountsMap = snapshot.data ?? {};
                       final unreadCount =
                           unreadCountsMap[chat.id] ?? chat.unreadedCount;
 

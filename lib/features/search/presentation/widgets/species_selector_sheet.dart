@@ -41,9 +41,10 @@ class _SpeciesSelectorSheetState extends State<SpeciesSelectorSheet> {
   void _filterSpecies() {
     final query = _searchController.text.toLowerCase();
     setState(() {
-      _filteredSpecies = widget.petCubit.species.where((species) {
-        return species.type.toLowerCase().contains(query);
-      }).toList();
+      _filteredSpecies =
+          widget.petCubit.species.where((species) {
+            return species.type.toLowerCase().contains(query);
+          }).toList();
     });
   }
 
@@ -86,7 +87,10 @@ class _SpeciesSelectorSheetState extends State<SpeciesSelectorSheet> {
                   decoration: InputDecoration(
                     prefixIcon: Icon(
                       Icons.search,
-                      color: mainCubit.isDark ? Colors.grey[400] : Colors.grey[600],
+                      color:
+                          mainCubit.isDark
+                              ? Colors.grey[400]
+                              : Colors.grey[600],
                     ),
                     hintText: 'Search species...',
                     contentPadding: EdgeInsets.symmetric(
@@ -94,17 +98,24 @@ class _SpeciesSelectorSheetState extends State<SpeciesSelectorSheet> {
                       horizontal: screen.width * 0.04,
                     ),
                     filled: true,
-                    fillColor: mainCubit.isDark ? Colors.grey[800] : Colors.grey[100],
+                    fillColor:
+                        mainCubit.isDark ? Colors.grey[800] : Colors.grey[100],
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: mainCubit.isDark ? Colors.grey[700]! : Colors.grey.withOpacity(0.3),
+                        color:
+                            mainCubit.isDark
+                                ? Colors.grey[700]!
+                                : Colors.grey.withOpacity(0.3),
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: mainCubit.isDark ? Colors.grey[700]! : Colors.grey.withOpacity(0.3),
+                        color:
+                            mainCubit.isDark
+                                ? Colors.grey[700]!
+                                : Colors.grey.withOpacity(0.3),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
@@ -129,7 +140,8 @@ class _SpeciesSelectorSheetState extends State<SpeciesSelectorSheet> {
                         species.type,
                         style: TextStyle(
                           fontSize: isTablet ? 16 : screen.width * 0.04,
-                          color: mainCubit.isDark ? Colors.white : Colors.black87,
+                          color:
+                              mainCubit.isDark ? Colors.white : Colors.black87,
                         ),
                       ),
                       onTap: () {
@@ -150,15 +162,15 @@ class _SpeciesSelectorSheetState extends State<SpeciesSelectorSheet> {
 
 Future<void> showSpeciesSelector(
   BuildContext context,
-  PetCubit petCubit,
-  {required Function(SpeciesEntity) onSelected}) {
+  PetCubit petCubit, {
+  required Function(SpeciesEntity) onSelected,
+}) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (context) => SpeciesSelectorSheet(
-      petCubit: petCubit,
-      onSelected: onSelected,
-    ),
+    builder:
+        (context) =>
+            SpeciesSelectorSheet(petCubit: petCubit, onSelected: onSelected),
   );
 }

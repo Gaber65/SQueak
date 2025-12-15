@@ -53,7 +53,7 @@ class PetFormSection extends StatelessWidget {
                   SizedBox(height: responsiveHeight(20, context)),
                   BreedSpeciesSection(cubit: cubit, isDark: isDark),
                   SizedBox(height: responsiveHeight(20, context)),
-                  GenderSelection(cubit: cubit), 
+                  GenderSelection(cubit: cubit),
                   SizedBox(height: responsiveHeight(20, context)),
                   BirthdatePicker(cubit: cubit, isDark: isDark),
                   SizedBox(height: responsiveHeight(20, context)),

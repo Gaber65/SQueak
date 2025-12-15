@@ -14,9 +14,9 @@ class MatingChatListTile extends StatelessWidget {
   final PetEntities petEntities;
   final Future<void> Function()? onNavigateComplete;
   final bool compact;
-  final bool isOnline; 
+  final bool isOnline;
   final bool isTyping;
-  final int unreadCount; 
+  final int unreadCount;
 
   const MatingChatListTile({
     super.key,
@@ -41,8 +41,7 @@ class MatingChatListTile extends StatelessWidget {
       builder: (context, snapshot) {
         final typingMap = snapshot.data ?? {};
         final isTypingNow = typingMap[chat.petId] ?? false;
-        if (typingMap.isNotEmpty) {
-    }
+        if (typingMap.isNotEmpty) {}
 
         return Container(
           margin: const EdgeInsets.only(bottom: 12),

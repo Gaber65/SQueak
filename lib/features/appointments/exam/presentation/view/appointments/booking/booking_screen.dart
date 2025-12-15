@@ -20,10 +20,12 @@ class BookingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<AppointmentCubit>()
-        ..getClientINClinic(clinicCode)
-        ..fetchAvailabilities(clinicCode)
-        ..fetchDoctors(clinicCode),
+      create:
+          (_) =>
+              sl<AppointmentCubit>()
+                ..getClientINClinic(clinicCode)
+                ..fetchAvailabilities(clinicCode)
+                ..fetchDoctors(clinicCode),
       child: Builder(
         builder: (context) {
           final cubit = AppointmentCubit.get(context);

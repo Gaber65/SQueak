@@ -57,11 +57,16 @@ class GenderSelection extends StatelessWidget {
     bool isSelected,
   ) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isSelected
-        ? ColorManager.primaryColor
-        : (dark ? Colors.black26 : ColorManager.white);
-    final borderColor = isSelected ? ColorManager.primaryColor : Colors.grey.withOpacity(0.3);
-    final textColor = isSelected ? Colors.white : (dark ? Colors.white70 : ColorManager.black_87);
+    final bgColor =
+        isSelected
+            ? ColorManager.primaryColor
+            : (dark ? Colors.black26 : ColorManager.white);
+    final borderColor =
+        isSelected ? ColorManager.primaryColor : Colors.grey.withOpacity(0.3);
+    final textColor =
+        isSelected
+            ? Colors.white
+            : (dark ? Colors.white70 : ColorManager.black_87);
 
     return InkWell(
       onTap: () => cubit.changeGender(id),
@@ -71,9 +76,7 @@ class GenderSelection extends StatelessWidget {
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: borderColor,
-          ),
+          border: Border.all(color: borderColor),
         ),
         child: Center(
           child: Text(

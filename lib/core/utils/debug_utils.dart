@@ -11,7 +11,7 @@ class DebugUtils {
       debugPrint(message);
     }
   }
-  
+
   /// Check if debug prints are enabled for current environment
   static bool get isDebugEnabled {
     return kDebugMode && InitFunctions.currentEnvironment != Environment.pro;

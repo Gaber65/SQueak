@@ -6,7 +6,11 @@ class PremiumSupplierAvatar extends StatelessWidget {
   final ClinicInfo clinic;
   final bool isDark;
 
-  const PremiumSupplierAvatar({super.key, required this.clinic, required this.isDark});
+  const PremiumSupplierAvatar({
+    super.key,
+    required this.clinic,
+    required this.isDark,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,26 +20,31 @@ class PremiumSupplierAvatar extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         gradient: LinearGradient(
-          colors: isDark
-              ? [Colors.blue.shade800, Colors.blue.shade600]
-              : [Colors.blue.shade100, Colors.blue.shade200],
+          colors:
+              isDark
+                  ? [Colors.blue.shade800, Colors.blue.shade600]
+                  : [Colors.blue.shade100, Colors.blue.shade200],
         ),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: clinic.data.image.isNotEmpty
-            ? Image.network(
-          imageUrl + clinic.data.image,
-          fit: BoxFit.cover,
-          errorBuilder: (context, _, __) => _placeholder(),
-        )
-            : _placeholder(),
+        child:
+            clinic.data.image.isNotEmpty
+                ? Image.network(
+                  imageUrl + clinic.data.image,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, _, __) => _placeholder(),
+                )
+                : _placeholder(),
       ),
     );
   }
 
   Widget _placeholder() {
-    return Icon(Icons.medical_services_outlined,
-        color: isDark ? Colors.white : Colors.blue.shade700, size: 28);
+    return Icon(
+      Icons.medical_services_outlined,
+      color: isDark ? Colors.white : Colors.blue.shade700,
+      size: 28,
+    );
   }
 }

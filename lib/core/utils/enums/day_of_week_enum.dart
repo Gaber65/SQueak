@@ -60,7 +60,7 @@ enum AppointmentState {
   End_Examination,
   Finished,
   Attended,
-  Cancel
+  Cancel,
 }
 
 // Class Definition
@@ -75,16 +75,28 @@ class StateAppointment {
 List<StateAppointment> generateDummyDataState(context) {
   return [
     StateAppointment(
-        AppointmentState.Reserved, S.of(context).appointmentsReserved),
+      AppointmentState.Reserved,
+      S.of(context).appointmentsReserved,
+    ),
     StateAppointment(
-        AppointmentState.Attended, S.of(context).appointmentsAttended),
-    StateAppointment(AppointmentState.Start_Examination,
-        S.of(context).appointmentsStartExamination),
-    StateAppointment(AppointmentState.End_Examination,
-        S.of(context).appointmentsEndExamination),
+      AppointmentState.Attended,
+      S.of(context).appointmentsAttended,
+    ),
     StateAppointment(
-        AppointmentState.Finished, S.of(context).appointmentsFinished),
+      AppointmentState.Start_Examination,
+      S.of(context).appointmentsStartExamination,
+    ),
     StateAppointment(
-        AppointmentState.Cancel, S.of(context).appointmentsCanceled),
+      AppointmentState.End_Examination,
+      S.of(context).appointmentsEndExamination,
+    ),
+    StateAppointment(
+      AppointmentState.Finished,
+      S.of(context).appointmentsFinished,
+    ),
+    StateAppointment(
+      AppointmentState.Cancel,
+      S.of(context).appointmentsCanceled,
+    ),
   ];
 }

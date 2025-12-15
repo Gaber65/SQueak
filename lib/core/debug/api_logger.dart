@@ -39,7 +39,8 @@ class ApiLogger extends ChangeNotifier {
 
   final List<ApiCall> _calls = [];
 
-  UnmodifiableListView<ApiCall> get calls => UnmodifiableListView(_calls.reversed);
+  UnmodifiableListView<ApiCall> get calls =>
+      UnmodifiableListView(_calls.reversed);
 
   final ValueNotifier<int> callsCount = ValueNotifier<int>(0);
 
@@ -49,7 +50,14 @@ class ApiLogger extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateCall(String id, {int? statusCode, dynamic responseBody, Map<String, dynamic>? responseHeaders, Duration? duration, String? error}) {
+  void updateCall(
+    String id, {
+    int? statusCode,
+    dynamic responseBody,
+    Map<String, dynamic>? responseHeaders,
+    Duration? duration,
+    String? error,
+  }) {
     final idx = _calls.indexWhere((c) => c.id == id);
     if (idx == -1) return;
     final old = _calls[idx];
@@ -76,7 +84,3 @@ class ApiLogger extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-
-
-

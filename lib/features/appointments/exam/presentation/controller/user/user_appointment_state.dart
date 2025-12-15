@@ -73,6 +73,7 @@ class AppointmentFiltered extends UserAppointmentState {
 }
 
 class AppointmentFilterCleared extends UserAppointmentState {}
+
 class ShowFloatButton extends UserAppointmentState {}
 
 class EditAppointment extends UserAppointmentState {

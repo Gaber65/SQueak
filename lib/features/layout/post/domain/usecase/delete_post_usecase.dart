@@ -1,5 +1,3 @@
-
-
 import 'package:dartz/dartz.dart';
 
 import '../../../../../core/base_usecase/base_usecase.dart';

@@ -38,7 +38,10 @@ class RegisterRepositoryImpl implements RegisterRepository {
   }
 
   @override
-  Future<AuthModel> registerWithQr(RegisterEntity entity, String clinicCode) async {
+  Future<AuthModel> registerWithQr(
+    RegisterEntity entity,
+    String clinicCode,
+  ) async {
     try {
       return await remoteDataSource.registerQr({
         ...entity.toMap(),

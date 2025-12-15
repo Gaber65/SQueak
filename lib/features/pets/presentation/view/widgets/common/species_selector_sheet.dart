@@ -72,9 +72,10 @@ class _SpeciesSelectorSheetState extends State<SpeciesSelectorSheet> {
       if (q.trim().isEmpty) {
         filtered = List.of(widget.cubit.species);
       } else {
-        filtered = widget.cubit.species
-            .where((s) => s.type.toLowerCase().contains(q.toLowerCase()))
-            .toList();
+        filtered =
+            widget.cubit.species
+                .where((s) => s.type.toLowerCase().contains(q.toLowerCase()))
+                .toList();
       }
     });
   }
@@ -96,9 +97,9 @@ class _SpeciesSelectorSheetState extends State<SpeciesSelectorSheet> {
       setState(() {
         isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load species: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to load species: $e')));
     }
   }
 
@@ -151,22 +152,25 @@ class _SpeciesSelectorSheetState extends State<SpeciesSelectorSheet> {
                   autofocus: false,
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.search),
-                    suffixIcon: searchCtrl.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              searchCtrl.clear();
-                              applyFilter('');
-                            },
-                          )
-                        : null,
-                    hintText: isArabic()
-                        ? 'ابحث عن الفصيلة'
-                        : 'Search for species...',
+                    suffixIcon:
+                        searchCtrl.text.isNotEmpty
+                            ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                searchCtrl.clear();
+                                applyFilter('');
+                              },
+                            )
+                            : null,
+                    hintText:
+                        isArabic()
+                            ? 'ابحث عن الفصيلة'
+                            : 'Search for species...',
                     filled: true,
-                    fillColor: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white10
-                        : Colors.grey.shade200,
+                    fillColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white10
+                            : Colors.grey.shade200,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 14,
@@ -207,114 +211,121 @@ class _SpeciesSelectorSheetState extends State<SpeciesSelectorSheet> {
                   constraints: BoxConstraints(
                     maxHeight: MediaQuery.of(context).size.height * 0.4,
                   ),
-                  child: filtered.isEmpty
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(32),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.search_off,
-                                  size: 48,
-                                  color: Colors.grey.shade400,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  isArabic()
-                                      ? 'لم يتم العثور على نتائج'
-                                      : 'No species found',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey.shade600,
-                                    fontWeight: FontWeight.w500,
+                  child:
+                      filtered.isEmpty
+                          ? Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(32),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.search_off,
+                                    size: 48,
+                                    color: Colors.grey.shade400,
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  isArabic()
-                                      ? 'جرب مصطلح بحث مختلف'
-                                      : 'Try a different search term',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey.shade500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : Scrollbar(
-                          controller: scrollController,
-                          thumbVisibility: true,
-                          child: ListView.separated(
-                            controller: scrollController,
-                            shrinkWrap: true,
-                            itemCount: filtered.length,
-                            separatorBuilder: (_, __) => Divider(
-                              height: 1,
-                              color: Colors.grey.withOpacity(0.2),
-                            ),
-                            itemBuilder: (context, index) {
-                              final item = filtered[index];
-                              final willBeMappedToCat = _shouldMapToCat(item.type);
-
-                              return ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                leading: Icon(
-                                  Icons.pets,
-                                  color: ColorManager.primaryColor,
-                                ),
-                                title: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        item.type,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    isArabic()
+                                        ? 'لم يتم العثور على نتائج'
+                                        : 'No species found',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey.shade600,
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                    if (willBeMappedToCat)
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 2,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: ColorManager.primaryColor.withOpacity(0.2),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    isArabic()
+                                        ? 'جرب مصطلح بحث مختلف'
+                                        : 'Try a different search term',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                          : Scrollbar(
+                            controller: scrollController,
+                            thumbVisibility: true,
+                            child: ListView.separated(
+                              controller: scrollController,
+                              shrinkWrap: true,
+                              itemCount: filtered.length,
+                              separatorBuilder:
+                                  (_, __) => Divider(
+                                    height: 1,
+                                    color: Colors.grey.withOpacity(0.2),
+                                  ),
+                              itemBuilder: (context, index) {
+                                final item = filtered[index];
+                                final willBeMappedToCat = _shouldMapToCat(
+                                  item.type,
+                                );
+
+                                return ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  leading: Icon(
+                                    Icons.pets,
+                                    color: ColorManager.primaryColor,
+                                  ),
+                                  title: Row(
+                                    children: [
+                                      Expanded(
                                         child: Text(
-                                          '→ Cat',
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: ColorManager.primaryColor,
-                                            fontWeight: FontWeight.w600,
+                                          item.type,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                       ),
-                                  ],
-                                ),
-                                trailing: Icon(
-                                  Icons.chevron_right,
-                                  color: Colors.grey.shade400,
-                                ),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  _handleSpeciesSelection(
-                                    item,
-                                    widget.cubit,
-                                    widget.onSelected,
-                                  );
-                                },
-                              );
-                            },
+                                      if (willBeMappedToCat)
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: ColorManager.primaryColor
+                                                .withOpacity(0.2),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            '→ Cat',
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: ColorManager.primaryColor,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                  trailing: Icon(
+                                    Icons.chevron_right,
+                                    color: Colors.grey.shade400,
+                                  ),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    _handleSpeciesSelection(
+                                      item,
+                                      widget.cubit,
+                                      widget.onSelected,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           ),
-                        ),
                 ),
               ],
             ],

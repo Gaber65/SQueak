@@ -77,13 +77,10 @@ class SearchCubit extends Cubit<SearchState> {
   Future<void> unfollowClinic(String clinicId) async {
     emit(FollowLoading());
     final result = await unfollowClinicUseCase.call(clinicId);
-    result.fold(
-      (failure) => emit(FollowError(failure)),
-      (clinic) {
-        CacheHelper.removeData('posts');
-        emit(FollowSuccess(false));
-      },
-    );
+    result.fold((failure) => emit(FollowError(failure)), (clinic) {
+      CacheHelper.removeData('posts');
+      emit(FollowSuccess(false));
+    });
   }
 
   Future<List<VetSearchClientEntity>> getClintFormVetVoid(

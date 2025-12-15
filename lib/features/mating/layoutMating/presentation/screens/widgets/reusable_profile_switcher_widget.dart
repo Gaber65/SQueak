@@ -6,11 +6,11 @@ import '../../../../../profile_switch/Presentation/cubit/switch_profile_state.da
 import '../../../../../profile_switch/Presentation/widget/screens/profile_switcher_page.dart';
 import '../../../../../settings/persentaion/controller/setting_cubit.dart';
 
-
 /// A reusable Profile Switcher Widget
 /// [onProfileSwitcher] is called when the state is ProfileSwitcherPage
 class ProfileSwitcher extends StatelessWidget {
-  final void Function(BuildContext context, SwitchProfileState state)? onProfileSwitcher;
+  final void Function(BuildContext context, SwitchProfileState state)?
+  onProfileSwitcher;
 
   const ProfileSwitcher({super.key, this.onProfileSwitcher});
 
@@ -41,14 +41,10 @@ class ProfileSwitcher extends StatelessWidget {
               }
             }
             onProfileSwitcher!(context, state);
-
           },
           builder: (context, state) {
             final cubit = SwitchProfileCubit.get(context);
-            return ProfileSwitcherButton(
-              image: cubit.image,
-              name: cubit.name,
-            );
+            return ProfileSwitcherButton(image: cubit.image, name: cubit.name);
           },
         ),
       ),

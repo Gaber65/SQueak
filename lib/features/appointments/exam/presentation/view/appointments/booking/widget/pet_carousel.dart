@@ -69,11 +69,7 @@ class PetCarousel extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
-              Icons.pets,
-              color: ColorManager.primaryColor,
-              size: 20,
-            ),
+            Icon(Icons.pets, color: ColorManager.primaryColor, size: 20),
             SizedBox(width: 8),
             Text(
               isArabic() ? 'اختر الأليف' : 'Select Your Pet',
@@ -97,14 +93,23 @@ class PetCarousel extends StatelessWidget {
                 pets[index].isSelected = true;
                 onPetSelected(pets[index]);
               },
-              child:Container(
+              child: Container(
                 padding: const EdgeInsets.all(12), // padding: var(--spacing-20)
                 decoration: BoxDecoration(
-                  color: pets[index].isSelected ? ColorManager.primaryColor.withOpacity(0.1) : Theme.of(context).colorScheme.surface, // background: var(--surface-color)
-                  borderRadius: BorderRadius.circular(12), // border-radius: var(--radius-12)
+                  color:
+                      pets[index].isSelected
+                          ? ColorManager.primaryColor.withOpacity(0.1)
+                          : Theme.of(context)
+                              .colorScheme
+                              .surface, // background: var(--surface-color)
+                  borderRadius: BorderRadius.circular(
+                    12,
+                  ), // border-radius: var(--radius-12)
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05), // rgba(0, 0, 0, 0.05)
+                      color: Colors.black.withOpacity(
+                        0.05,
+                      ), // rgba(0, 0, 0, 0.05)
                       blurRadius: 8, // 0 2px 8px
                       offset: const Offset(0, 2),
                     ),
@@ -113,13 +118,13 @@ class PetCarousel extends StatelessWidget {
                 child: Row(
                   children: [
                     // Pet Image Circle
-
-
                     CircleAvatar(
                       radius: 33,
                       backgroundImage: NetworkImage(
                         imageUrl +
-                            (pets[index].imageName?.isNotEmpty == true ? pets[index].imageName! : ""),
+                            (pets[index].imageName?.isNotEmpty == true
+                                ? pets[index].imageName!
+                                : ""),
                       ),
                       child: Text(
                         pets[index].imageName?.isNotEmpty == true
@@ -163,8 +168,9 @@ class PetCarousel extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: ColorManager.primaryColor
-                                      .withOpacity(0.1),
+                                  color: ColorManager.primaryColor.withOpacity(
+                                    0.1,
+                                  ),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
@@ -178,7 +184,7 @@ class PetCarousel extends StatelessWidget {
                               ),
                               SizedBox(width: 8),
                               Text(
-                                '• ${pets[index].birthdate!.isEmpty ? '' :formatAge(DateTime.parse(pets[index].birthdate!))}',
+                                '• ${pets[index].birthdate!.isEmpty ? '' : formatAge(DateTime.parse(pets[index].birthdate!))}',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Colors.grey.shade600,
@@ -198,11 +204,7 @@ class PetCarousel extends StatelessWidget {
                           color: Theme.of(context).primaryColor,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
-                          Icons.check,
-                          color: Colors.white,
-                          size: 20,
-                        ),
+                        child: Icon(Icons.check, color: Colors.white, size: 20),
                       ),
                   ],
                 ),
@@ -234,15 +236,16 @@ class PetCarousel extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 pets.length,
-                    (index) => Container(
+                (index) => Container(
                   width: 8,
                   height: 8,
                   margin: EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: pets[index].isSelected
-                        ? Theme.of(context).primaryColor
-                        : Colors.grey.shade300,
+                    color:
+                        pets[index].isSelected
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey.shade300,
                   ),
                 ),
               ),

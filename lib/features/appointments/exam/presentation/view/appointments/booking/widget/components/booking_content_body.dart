@@ -62,14 +62,23 @@ class _BookingContentBodyState extends State<BookingContentBody> {
           children: [
             if (widget.petSelectFromIcon == null)
               Container(
-                margin: const EdgeInsets.only(bottom: 20), // margin-bottom: var(--spacing-20)
+                margin: const EdgeInsets.only(
+                  bottom: 20,
+                ), // margin-bottom: var(--spacing-20)
                 padding: const EdgeInsets.all(20), // padding: var(--spacing-20)
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface, // background: var(--surface-color)
-                  borderRadius: BorderRadius.circular(12), // border-radius: var(--radius-12)
+                  color:
+                      Theme.of(
+                        context,
+                      ).colorScheme.surface, // background: var(--surface-color)
+                  borderRadius: BorderRadius.circular(
+                    12,
+                  ), // border-radius: var(--radius-12)
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.09), // rgba(0, 0, 0, 0.05)
+                      color: Colors.black.withOpacity(
+                        0.09,
+                      ), // rgba(0, 0, 0, 0.05)
                       blurRadius: 8, // 0 2px 8px
                       offset: const Offset(0, 2),
                     ),
@@ -85,19 +94,28 @@ class _BookingContentBodyState extends State<BookingContentBody> {
             const SizedBox(height: 15),
 
             BlocConsumer<AppointmentCubit, AppointmentState>(
-              listener: (context, state) {
-                
-              },
+              listener: (context, state) {},
               builder: (context, state) {
                 return Container(
-                  margin: const EdgeInsets.only(bottom: 20), // margin-bottom: var(--spacing-20)
-                  padding: const EdgeInsets.all(20), // padding: var(--spacing-20)
+                  margin: const EdgeInsets.only(
+                    bottom: 20,
+                  ), // margin-bottom: var(--spacing-20)
+                  padding: const EdgeInsets.all(
+                    20,
+                  ), // padding: var(--spacing-20)
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface, // background: var(--surface-color)
-                    borderRadius: BorderRadius.circular(12), // border-radius: var(--radius-12)
+                    color:
+                        Theme.of(context)
+                            .colorScheme
+                            .surface, // background: var(--surface-color)
+                    borderRadius: BorderRadius.circular(
+                      12,
+                    ), // border-radius: var(--radius-12)
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.09), // rgba(0, 0, 0, 0.05)
+                        color: Colors.black.withOpacity(
+                          0.09,
+                        ), // rgba(0, 0, 0, 0.05)
                         blurRadius: 8, // 0 2px 8px
                         offset: const Offset(0, 2),
                       ),
@@ -114,22 +132,31 @@ class _BookingContentBodyState extends State<BookingContentBody> {
             const SizedBox(height: 15),
 
             BlocConsumer<AppointmentCubit, AppointmentState>(
-              listener: (context, state) {
-                
-              },
+              listener: (context, state) {},
               builder: (context, state) {
                 if (AppointmentCubit.get(context).availabilities.isEmpty) {
                   return CalendarShimmer();
                 } else {
                   return Container(
-                    margin: const EdgeInsets.only(bottom: 20), // margin-bottom: var(--spacing-20)
-                    padding: const EdgeInsets.all(20), // padding: var(--spacing-20)
+                    margin: const EdgeInsets.only(
+                      bottom: 20,
+                    ), // margin-bottom: var(--spacing-20)
+                    padding: const EdgeInsets.all(
+                      20,
+                    ), // padding: var(--spacing-20)
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface, // background: var(--surface-color)
-                      borderRadius: BorderRadius.circular(12), // border-radius: var(--radius-12)
+                      color:
+                          Theme.of(context)
+                              .colorScheme
+                              .surface, // background: var(--surface-color)
+                      borderRadius: BorderRadius.circular(
+                        12,
+                      ), // border-radius: var(--radius-12)
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.09), // rgba(0, 0, 0, 0.05)
+                          color: Colors.black.withOpacity(
+                            0.09,
+                          ), // rgba(0, 0, 0, 0.05)
                           blurRadius: 8, // 0 2px 8px
                           offset: const Offset(0, 2),
                         ),
@@ -138,7 +165,8 @@ class _BookingContentBodyState extends State<BookingContentBody> {
                     child: CalendarScreen(
                       isShowTime: true,
                       isShowDate: true,
-                      timeSlotData: AppointmentCubit.get(context).availabilities,
+                      timeSlotData:
+                          AppointmentCubit.get(context).availabilities,
                       onDaySelected: (selectedDay, focusedDay) {
                         String formatDate = DateFormat(
                           'yyyy-MM-dd',
@@ -176,7 +204,8 @@ class _BookingContentBodyState extends State<BookingContentBody> {
                             (DateTime.now().year == selectedDateForCheck.year &&
                                 DateTime.now().month ==
                                     selectedDateForCheck.month &&
-                                DateTime.now().day == selectedDateForCheck.day)) {
+                                DateTime.now().day ==
+                                    selectedDateForCheck.day)) {
                           try {
                             final parts = p0.split(':');
                             int hours = int.parse(parts[0]);
@@ -206,13 +235,10 @@ class _BookingContentBodyState extends State<BookingContentBody> {
                                 ) ||
                                 selectedDateTime.isAfter(nowForCompare)) {
                               if (mounted) {
-                                setState(
-                                  () {
-                                    AppointmentCubit.get(context).time.text =
-                                          p0;
-                                    widget.onTimeSelected(p0);
-                                  },
-                                );
+                                setState(() {
+                                  AppointmentCubit.get(context).time.text = p0;
+                                  widget.onTimeSelected(p0);
+                                });
                               }
                             } else {
                               // print(

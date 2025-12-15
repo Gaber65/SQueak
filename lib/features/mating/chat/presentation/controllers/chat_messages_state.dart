@@ -50,8 +50,8 @@ class MessageSendError extends ChatMessagesState {
   List<Object> get props => [message];
 }
 
-
 class MatingFinish extends ChatMessagesState {}
+
 class MatingFinishSuccess extends ChatMessagesState {}
 
 class MatingFinishError extends ChatMessagesState {
@@ -64,7 +64,9 @@ class MatingFinishError extends ChatMessagesState {
 }
 
 class RenameChat extends ChatMessagesState {}
+
 class RenameChatSuccess extends ChatMessagesState {}
+
 class RenameChatError extends ChatMessagesState {
   final String message;
 
@@ -74,9 +76,10 @@ class RenameChatError extends ChatMessagesState {
   List<Object> get props => [message];
 }
 
-
 class BlockChat extends ChatMessagesState {}
+
 class BlockChatSuccess extends ChatMessagesState {}
+
 class BlockChatError extends ChatMessagesState {
   final String message;
 
@@ -86,9 +89,10 @@ class BlockChatError extends ChatMessagesState {
   List<Object> get props => [message];
 }
 
-
 class RateMating extends ChatMessagesState {}
+
 class RateMatingSuccess extends ChatMessagesState {}
+
 class RateMatingError extends ChatMessagesState {
   final String message;
 
@@ -101,8 +105,8 @@ class RateMatingError extends ChatMessagesState {
 class ClearChatLoading extends ChatMessagesState {}
 
 class ClearChatSuccess extends ChatMessagesState {}
-class ClearChatError extends ChatMessagesState {
 
+class ClearChatError extends ChatMessagesState {
   final String message;
 
   const ClearChatError(this.message);
@@ -112,9 +116,10 @@ class ClearChatError extends ChatMessagesState {
 }
 
 class DeleteMessageLoading extends ChatMessagesState {}
-class DeleteMessageSuccess extends ChatMessagesState {}
-class DeleteMessageError extends ChatMessagesState {
 
+class DeleteMessageSuccess extends ChatMessagesState {}
+
+class DeleteMessageError extends ChatMessagesState {
   final String message;
 
   const DeleteMessageError(this.message);

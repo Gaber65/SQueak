@@ -16,7 +16,8 @@ class DeleteDialogContentStory extends StatefulWidget {
   final StoryEntity storyItem;
 
   @override
-  State<DeleteDialogContentStory> createState() => _DeleteDialogContentStoryState();
+  State<DeleteDialogContentStory> createState() =>
+      _DeleteDialogContentStoryState();
 }
 
 class _DeleteDialogContentStoryState extends State<DeleteDialogContentStory>
@@ -47,7 +48,6 @@ class _DeleteDialogContentStoryState extends State<DeleteDialogContentStory>
   void _handleDelete() {
     Navigator.of(context).pop();
     widget.storyCubit.deleteStory(widget.storyItem.id, widget.storyItem.petId);
-
   }
 
   @override

@@ -23,30 +23,35 @@ class PetProfileImage extends StatelessWidget {
             children: [
               cubit.petImage == null
                   ? CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.grey.shade200,
-                      child: FaIcon(
-                        // Prefer the cubit's selected species; fallback to pathImage
-                        (() {
-                          final selected = cubit.dropdownValueSpecies.toLowerCase();
-                          if (selected.isNotEmpty) {
-                            if (selected.contains('cat') || selected == 'coww') return FontAwesomeIcons.cat;
-                            if (selected.contains('dog')) return FontAwesomeIcons.dog;
-                            return FontAwesomeIcons.paw;
-                          }
-                          final fallback = pathImage.toLowerCase();
-                          if (fallback.contains('cat')) return FontAwesomeIcons.cat;
-                          if (fallback.contains('dog')) return FontAwesomeIcons.dog;
+                    radius: 50,
+                    backgroundColor: Colors.grey.shade200,
+                    child: FaIcon(
+                      // Prefer the cubit's selected species; fallback to pathImage
+                      (() {
+                        final selected =
+                            cubit.dropdownValueSpecies.toLowerCase();
+                        if (selected.isNotEmpty) {
+                          if (selected.contains('cat') || selected == 'coww')
+                            return FontAwesomeIcons.cat;
+                          if (selected.contains('dog'))
+                            return FontAwesomeIcons.dog;
                           return FontAwesomeIcons.paw;
-                        })(),
-                        size: 48,
-                        color: Colors.grey.shade700,
-                      ),
-                    )
-                  : CircleAvatar(
-                      radius: 50,
-                      backgroundImage: FileImage(cubit.petImage!),
+                        }
+                        final fallback = pathImage.toLowerCase();
+                        if (fallback.contains('cat'))
+                          return FontAwesomeIcons.cat;
+                        if (fallback.contains('dog'))
+                          return FontAwesomeIcons.dog;
+                        return FontAwesomeIcons.paw;
+                      })(),
+                      size: 48,
+                      color: Colors.grey.shade700,
                     ),
+                  )
+                  : CircleAvatar(
+                    radius: 50,
+                    backgroundImage: FileImage(cubit.petImage!),
+                  ),
               Positioned(
                 right: 0,
                 bottom: 0,
@@ -67,10 +72,7 @@ class PetProfileImage extends StatelessWidget {
           if (cubit.petImage == null)
             const Text(
               "Add a photo of your pet",
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
         ],
       ),

@@ -46,12 +46,7 @@ class SettingCubit extends Cubit<SettingState> {
     emit(GetOwnerDataLoading());
     final result = await getOwnerDataUseCase(const NoParameters());
     result.fold(
-      (failure) => emit(
-        GetOwnerDataError(
-          extractFirstError(failure)
-,
-        ),
-      ),
+      (failure) => emit(GetOwnerDataError(extractFirstError(failure))),
       (owner) {
         profile = owner;
         var toJson = owner.toMap();
@@ -64,7 +59,8 @@ class SettingCubit extends Cubit<SettingState> {
   void init(BuildContext context) async {
     profile = await loadProfile();
     nameController.text = profile!.fullName;
-    phoneController.text = profile!.phone.startsWith('0')? profile!.phone : '0${profile!.phone}';
+    phoneController.text =
+        profile!.phone.startsWith('0') ? profile!.phone : '0${profile!.phone}';
     addressController.text = profile!.address;
     emailController.text = profile!.email;
     imageController.text = profile!.imageName;
@@ -128,12 +124,7 @@ class SettingCubit extends Cubit<SettingState> {
     isLoading = false;
 
     result.fold(
-      (failure) => emit(
-        UpdateProfileErrorState(
-          extractFirstError(failure)
-,
-        ),
-      ),
+      (failure) => emit(UpdateProfileErrorState(extractFirstError(failure))),
       (owner) {
         profile = owner;
         emit(UpdateProfileSuccessState(owner));

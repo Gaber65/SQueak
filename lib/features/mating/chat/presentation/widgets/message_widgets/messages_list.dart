@@ -52,18 +52,19 @@ class _MessagesListState extends State<MessagesList> {
 
   void _onScroll() {
     final positions = widget.itemPositionsListener.itemPositions.value;
-    
+
     if (positions.isNotEmpty) {
       final minPosition = positions
           .where((position) => position.itemTrailingEdge > 0)
-          .reduce((min, position) => 
-              position.index < min.index ? position : min);
-      
-      if (minPosition.index <= 2 && 
-          widget.hasMoreMessages && 
+          .reduce(
+            (min, position) => position.index < min.index ? position : min,
+          );
+
+      if (minPosition.index <= 2 &&
+          widget.hasMoreMessages &&
           !widget.isLoadingMore &&
           widget.onLoadMore != null) {
-       widget.onLoadMore!();
+        widget.onLoadMore!();
       }
     }
   }
@@ -80,7 +81,11 @@ class _MessagesListState extends State<MessagesList> {
     final isDark = theme.brightness == Brightness.dark;
     final typingCount = widget.isOtherUserTyping ? 1 : 0;
     final loadingCount = widget.isLoadingMore ? 1 : 0;
-    final totalItems = widget.messages.length + widget.uploadingFiles.length + typingCount + loadingCount;
+    final totalItems =
+        widget.messages.length +
+        widget.uploadingFiles.length +
+        typingCount +
+        loadingCount;
 
     return Stack(
       children: [
@@ -110,11 +115,11 @@ class _MessagesListState extends State<MessagesList> {
                 ),
               );
             }
-            
+
             final adjustedIndex = widget.isLoadingMore ? index - 1 : index;
             final messagesAndUploadsCount =
                 widget.messages.length + widget.uploadingFiles.length;
-                
+
             if (adjustedIndex >= messagesAndUploadsCount) {
               if (widget.isOtherUserTyping) {
                 return Padding(
@@ -131,7 +136,10 @@ class _MessagesListState extends State<MessagesList> {
               final message = widget.messages[adjustedIndex];
               final showDateDivider =
                   adjustedIndex == 0 ||
-                  !_isSameDay(widget.messages[adjustedIndex - 1].createdAt, message.createdAt);
+                  !_isSameDay(
+                    widget.messages[adjustedIndex - 1].createdAt,
+                    message.createdAt,
+                  );
 
               final isMe = !message.toMe;
 
@@ -148,7 +156,9 @@ class _MessagesListState extends State<MessagesList> {
               );
             } else {
               final uploadIndex = adjustedIndex - widget.messages.length;
-              return UploadingBubble(upload: widget.uploadingFiles[uploadIndex]);
+              return UploadingBubble(
+                upload: widget.uploadingFiles[uploadIndex],
+              );
             }
           },
         ),

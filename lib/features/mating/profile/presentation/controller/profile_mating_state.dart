@@ -11,7 +11,6 @@ final class ProfileChangeMatingSuccess extends ProfileMatingState {
   final String petId;
 
   ProfileChangeMatingSuccess(this.petId);
-
 }
 
 final class ProfileChangeMatingError extends ProfileMatingState {
@@ -19,7 +18,6 @@ final class ProfileChangeMatingError extends ProfileMatingState {
 
   ProfileChangeMatingError(this.message);
 }
-
 
 final class ProfileGetMatingLoading extends ProfileMatingState {}
 

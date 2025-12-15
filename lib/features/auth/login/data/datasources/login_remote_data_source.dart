@@ -12,8 +12,9 @@ class LoginRemoteDataSource {
     required String password,
   }) async {
     // Get Firebase token using the enhanced helper
-    final fbToken = await FirebaseTokenHelper.getFirebaseToken() ?? 
-                   'fallback_token_${DateTime.now().millisecondsSinceEpoch}';
+    final fbToken =
+        await FirebaseTokenHelper.getFirebaseToken() ??
+        'fallback_token_${DateTime.now().millisecondsSinceEpoch}';
 
     try {
       final response = await DioFinalHelper.postData(

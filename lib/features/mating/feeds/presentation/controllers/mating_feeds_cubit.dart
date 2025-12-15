@@ -59,18 +59,17 @@ class MatingFeedsCubit extends Cubit<MatingFeedsState> {
     );
   }
 
-
   bool isRequestSent = false;
+
   /// 🔹 Update Pet Status
   Future<void> cancelRequest(SendMatingRequestParameters params) async {
     emit(MatingFeedsLoading());
     final result = await updatePetStatusUseCase(params);
-    result.fold(
-      (failure) => emit(MatingFeedsError(failure.error.message)),
-      (_) {
-        isRequestSent = true;
-        emit(MatingStatusUpdated());
-      },
-    );
+    result.fold((failure) => emit(MatingFeedsError(failure.error.message)), (
+      _,
+    ) {
+      isRequestSent = true;
+      emit(MatingStatusUpdated());
+    });
   }
 }

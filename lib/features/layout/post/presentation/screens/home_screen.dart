@@ -17,12 +17,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => sl<PostCubit>(),
-        ),
-
-      ],
+      providers: [BlocProvider(create: (context) => sl<PostCubit>())],
       child: BlocConsumer<PostCubit, PostState>(
         listener: (context, state) {
           if (state is DeletePostErrorState) {
@@ -33,9 +28,9 @@ class HomeScreen extends StatelessWidget {
           var cubit = PostCubit.get(context);
           String imagePath = '';
           return BlocSelector<
-              SwitchProfileCubit,
-              SwitchProfileState,
-              PetEntities?
+            SwitchProfileCubit,
+            SwitchProfileState,
+            PetEntities?
           >(
             selector: (state) {
               if (state is ProfileLoaded &&
@@ -85,11 +80,13 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(PostCubit cubit,
-      PostState state,
-      String petId,
-      BuildContext context,
-      String imagePath,) {
+  Widget _buildBody(
+    PostCubit cubit,
+    PostState state,
+    String petId,
+    BuildContext context,
+    String imagePath,
+  ) {
     if (state is GetPostLoadingState && cubit.userPosts.isEmpty) {
       return buildShimmerLoading();
     }

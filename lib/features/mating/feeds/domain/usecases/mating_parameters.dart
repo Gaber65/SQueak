@@ -1,4 +1,3 @@
-
 class SendMatingRequestParameters {
   final String targetPetId;
   final String message;

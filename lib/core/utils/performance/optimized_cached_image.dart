@@ -32,23 +32,21 @@ class OptimizedCachedImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     Widget image = FastCachedImage(
       url: imageUrl,
       width: width,
       height: height,
       fit: fit,
-      loadingBuilder: (context, progress) => 
-          placeholder ?? _buildDefaultPlaceholder(theme),
-      errorBuilder: (context, exception, stacktrace) => 
-          errorWidget ?? _buildDefaultError(theme),
+      loadingBuilder:
+          (context, progress) => placeholder ?? _buildDefaultPlaceholder(theme),
+      errorBuilder:
+          (context, exception, stacktrace) =>
+              errorWidget ?? _buildDefaultError(theme),
     );
 
     if (borderRadius != null) {
-      image = ClipRRect(
-        borderRadius: borderRadius!,
-        child: image,
-      );
+      image = ClipRRect(borderRadius: borderRadius!, child: image);
     }
 
     return image;
@@ -86,9 +84,10 @@ class OptimizedCachedImage extends StatelessWidget {
       child: Icon(
         Icons.broken_image,
         color: theme.colorScheme.onErrorContainer,
-        size: (width != null && height != null) 
-            ? (width! < height! ? width! * 0.3 : height! * 0.3)
-            : 24,
+        size:
+            (width != null && height != null)
+                ? (width! < height! ? width! * 0.3 : height! * 0.3)
+                : 24,
       ),
     );
   }
@@ -112,7 +111,7 @@ class OptimizedAvatarImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     if (imageUrl != null && imageUrl!.isNotEmpty) {
       return OptimizedCachedImage(
         imageUrl: imageUrl!,

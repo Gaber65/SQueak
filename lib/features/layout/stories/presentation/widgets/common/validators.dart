@@ -19,7 +19,10 @@ class ImageValidator {
 
   static ImageValidationResult validate(File file) {
     if (!file.existsSync()) {
-      return ImageValidationResult(false, 'Please select an image to continue.');
+      return ImageValidationResult(
+        false,
+        'Please select an image to continue.',
+      );
     }
     final length = file.lengthSync();
     if (length > maxBytes) {
@@ -27,7 +30,10 @@ class ImageValidator {
     }
     final mime = lookupMimeType(file.path);
     if (mime == null || !allowedMime.contains(mime)) {
-      return ImageValidationResult(false, 'Unsupported format. Use JPG, PNG, GIF, or WebP.');
+      return ImageValidationResult(
+        false,
+        'Unsupported format. Use JPG, PNG, GIF, or WebP.',
+      );
     }
     return ImageValidationResult(true);
   }

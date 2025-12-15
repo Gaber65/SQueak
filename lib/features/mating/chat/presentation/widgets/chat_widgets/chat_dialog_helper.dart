@@ -5,6 +5,7 @@ import 'chat_app_bar_widgets/confirmation_dialog.dart';
 import 'chat_app_bar_widgets/dialog_header.dart';
 import 'chat_app_bar_widgets/dialog_action_buttons.dart';
 import 'chat_app_bar_widgets/status_option_widget.dart';
+
 class ChatDialogHelper {
   static void showBlockDialog(
     BuildContext context, {

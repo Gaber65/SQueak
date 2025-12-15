@@ -1,7 +1,8 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/service/service_locator/locatore_export_path.dart';
 
-class DeleteFriendShipUseCase extends BaseUseCase<bool, DeleteFriendShipParams> {
+class DeleteFriendShipUseCase
+    extends BaseUseCase<bool, DeleteFriendShipParams> {
   final PetFriendRepository repository;
   DeleteFriendShipUseCase(this.repository);
 

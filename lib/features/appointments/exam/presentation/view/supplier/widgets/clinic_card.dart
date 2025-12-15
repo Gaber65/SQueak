@@ -51,14 +51,15 @@ class ClinicCard extends StatelessWidget {
             const SizedBox(height: 12),
             PremiumInfoRow(
               icon: Icons.phone_outlined,
-              text: clinic.data.phone.startsWith('0') ? clinic.data.phone : '0${clinic.data.phone}',
+              text:
+                  clinic.data.phone.startsWith('0')
+                      ? clinic.data.phone
+                      : '0${clinic.data.phone}',
               isDark: isDark,
             ),
             const SizedBox(height: 20),
             BlocConsumer<PetCubit, PetState>(
-              listener: (context, state) {
-         
-              },
+              listener: (context, state) {},
               builder: (context, state) {
                 return ClinicActionsRow(
                   clinic: clinic,
@@ -199,7 +200,7 @@ class ClinicActionsRow extends StatelessWidget {
           color: Colors.red,
           isDark: isDark,
           onPressed: () {
-            final parentContext = context; 
+            final parentContext = context;
             showDialog(
               context: parentContext,
               builder:

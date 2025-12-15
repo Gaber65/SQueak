@@ -14,7 +14,7 @@ class QrStatusIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<QrCubit, QrState>(
       builder: (context, state) {
-        final isLinked = pet.qrCode!= null;
+        final isLinked = pet.qrCode != null;
 
         return Row(
           children: [

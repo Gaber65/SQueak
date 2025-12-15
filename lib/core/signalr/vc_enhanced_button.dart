@@ -62,13 +62,9 @@ class _VCEnhancedButtonState extends State<VCEnhancedButton>
       duration: widget.animationDuration,
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -83,7 +79,7 @@ class _VCEnhancedButtonState extends State<VCEnhancedButton>
         _isPressed = true;
       });
       _animationController.forward();
-      
+
       if (widget.hapticFeedback) {
         HapticFeedback.lightImpact();
       }
@@ -111,33 +107,33 @@ class _VCEnhancedButtonState extends State<VCEnhancedButton>
     if (widget.onPressed == null || widget.isLoading) return;
 
     final now = DateTime.now();
-    if (_lastPressed != null && 
+    if (_lastPressed != null &&
         now.difference(_lastPressed!) < widget.debounceTime) {
-      return; 
+      return;
     }
-    
+
     _lastPressed = now;
-    
+
     if (widget.hapticFeedback) {
       HapticFeedback.mediumImpact();
     }
-    
+
     widget.onPressed!();
   }
 
   void _handleLongPressed() {
     if (widget.onLongPress == null || widget.isLoading) return;
-    
+
     if (widget.hapticFeedback) {
       HapticFeedback.heavyImpact();
     }
-    
+
     widget.onLongPress!();
   }
 
   ButtonStyle _getEnhancedStyle() {
     final baseStyle = widget.style ?? ElevatedButton.styleFrom();
-    
+
     return baseStyle.copyWith(
       elevation: MaterialStateProperty.resolveWith<double?>((states) {
         if (widget.elevation != null) {
@@ -174,9 +170,7 @@ class _VCEnhancedButtonState extends State<VCEnhancedButton>
           const SizedBox(width: 8),
           Text(
             widget.loadingText!,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
+            style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
           ),
         ],
       ],
@@ -195,10 +189,7 @@ class _VCEnhancedButtonState extends State<VCEnhancedButton>
     Widget button = AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _scaleAnimation.value, child: child);
       },
       child: GestureDetector(
         onTapDown: _handleTapDown,
@@ -229,10 +220,7 @@ class _VCEnhancedButtonState extends State<VCEnhancedButton>
     }
 
     if (widget.tooltip != null) {
-      button = Tooltip(
-        message: widget.tooltip!,
-        child: button,
-      );
+      button = Tooltip(message: widget.tooltip!, child: button);
     }
 
     return button;
@@ -315,13 +303,9 @@ class _VCEnhancedIconButtonState extends State<VCEnhancedIconButton>
       duration: widget.animationDuration,
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.9,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -334,22 +318,22 @@ class _VCEnhancedIconButtonState extends State<VCEnhancedIconButton>
     if (widget.onPressed == null) return;
 
     final now = DateTime.now();
-    if (_lastPressed != null && 
+    if (_lastPressed != null &&
         now.difference(_lastPressed!) < widget.debounceTime) {
       return;
     }
-    
+
     _lastPressed = now;
-    
+
     // Animate press
     _animationController.forward().then((_) {
       _animationController.reverse();
     });
-    
+
     if (widget.hapticFeedback) {
       HapticFeedback.lightImpact();
     }
-    
+
     widget.onPressed!();
   }
 
@@ -358,16 +342,14 @@ class _VCEnhancedIconButtonState extends State<VCEnhancedIconButton>
     Widget iconButton = AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _scaleAnimation.value, child: child);
       },
       child: IconButton(
         onPressed: _handlePressed,
-        icon: widget.isSelected && widget.selectedIcon != null 
-            ? widget.selectedIcon! 
-            : widget.icon,
+        icon:
+            widget.isSelected && widget.selectedIcon != null
+                ? widget.selectedIcon!
+                : widget.icon,
         iconSize: widget.iconSize,
         visualDensity: widget.visualDensity,
         padding: widget.padding,

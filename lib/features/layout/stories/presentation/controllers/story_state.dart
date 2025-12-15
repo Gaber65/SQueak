@@ -1,7 +1,16 @@
 import '../../domain/entities/story.dart';
 import '../../domain/entities/paginated_reactions_entity.dart';
 
-enum StoryStatus { initial, loading, loaded, creating, deleting, sendingReply, success, error }
+enum StoryStatus {
+  initial,
+  loading,
+  loaded,
+  creating,
+  deleting,
+  sendingReply,
+  success,
+  error,
+}
 
 class StoryState {
   final StoryStatus status;

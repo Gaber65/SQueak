@@ -1,6 +1,5 @@
 import 'package:intl/intl.dart';
 
-
 String normalizePhoneNumber(String phoneNumber) {
   if (phoneNumber.startsWith('0')) {
     return phoneNumber.substring(1);

@@ -51,10 +51,11 @@ class PetTipsRepository {
     try {
       final jsonStr = await rootBundle.loadString(assetPath);
       final data = json.decode(jsonStr) as Map<String, dynamic>;
-      final tips = (data['tips'] as List<dynamic>? ?? [])
-          .whereType<Map<String, dynamic>>()
-          .map(PetTip.fromMap)
-          .toList();
+      final tips =
+          (data['tips'] as List<dynamic>? ?? [])
+              .whereType<Map<String, dynamic>>()
+              .map(PetTip.fromMap)
+              .toList();
       return tips;
     } catch (_) {
       return const <PetTip>[];

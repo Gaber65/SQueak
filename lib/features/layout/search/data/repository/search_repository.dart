@@ -13,7 +13,9 @@ class SearchRepository extends BaseSearchRepository {
   SearchRepository(this.baseSearchRemoteDataSource);
 
   @override
-  Future<Either<Failure, List<ClinicEntitySearch>>> getSearchList(String clinicCode) async {
+  Future<Either<Failure, List<ClinicEntitySearch>>> getSearchList(
+    String clinicCode,
+  ) async {
     try {
       final result = await baseSearchRemoteDataSource.getSearchList(clinicCode);
       return Right(result);
@@ -23,9 +25,13 @@ class SearchRepository extends BaseSearchRepository {
   }
 
   @override
-  Future<Either<Failure, List<VetSearchClientEntity>>> getClintFormVetVoid(String clinicCode) async {
+  Future<Either<Failure, List<VetSearchClientEntity>>> getClintFormVetVoid(
+    String clinicCode,
+  ) async {
     try {
-      final result = await baseSearchRemoteDataSource.getClientFormVet(clinicCode);
+      final result = await baseSearchRemoteDataSource.getClientFormVet(
+        clinicCode,
+      );
       return Right(result);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));
@@ -33,7 +39,9 @@ class SearchRepository extends BaseSearchRepository {
   }
 
   @override
-  Future<Either<Failure, ClinicEntitySearch>> followClinic(String clinicId) async {
+  Future<Either<Failure, ClinicEntitySearch>> followClinic(
+    String clinicId,
+  ) async {
     try {
       final result = await baseSearchRemoteDataSource.followClinic(clinicId);
       return Right(result);
@@ -43,7 +51,9 @@ class SearchRepository extends BaseSearchRepository {
   }
 
   @override
-  Future<Either<Failure, ClinicEntitySearch>> unfollowClinic(String clinicId) async {
+  Future<Either<Failure, ClinicEntitySearch>> unfollowClinic(
+    String clinicId,
+  ) async {
     try {
       final result = await baseSearchRemoteDataSource.unfollowClinic(clinicId);
       return Right(result);

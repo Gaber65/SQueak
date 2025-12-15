@@ -1,4 +1,3 @@
-
 import '../../domain/entities/owner_entite.dart';
 
 class OwnerModel extends Owner {

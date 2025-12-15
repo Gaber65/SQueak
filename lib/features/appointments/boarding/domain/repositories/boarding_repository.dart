@@ -16,7 +16,9 @@ abstract class BoardingRepository {
   );
   Future<Either<Failure, void>> rateBoarding(RateBoardingParams params);
 
-  Future<Either<Failure, void>> shareImage(ShareImageBoardingEntriesParams params);
+  Future<Either<Failure, void>> shareImage(
+    ShareImageBoardingEntriesParams params,
+  );
 }
 
 class CreateBoardingParams {

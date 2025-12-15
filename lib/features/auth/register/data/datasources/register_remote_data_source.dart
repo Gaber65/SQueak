@@ -56,7 +56,8 @@ class RegisterRemoteDataSource {
   Future<AuthModel> register(Map<String, dynamic> data) async {
     try {
       // Attach Firebase token and platform flags to registration payload
-      final fbToken = await FirebaseTokenHelper.getFirebaseToken() ??
+      final fbToken =
+          await FirebaseTokenHelper.getFirebaseToken() ??
           'fallback_token_${DateTime.now().millisecondsSinceEpoch}';
 
       final enhancedData = {
@@ -66,9 +67,12 @@ class RegisterRemoteDataSource {
         'Androidevice': Platform.isAndroid,
       };
 
-  // print('[RegisterRemote] Sending register payload with FbToken and device flags: FbToken=${fbToken.substring(0, 8)}... IOSDevice=${Platform.isIOS} Androidevice=${Platform.isAndroid}');
+      // print('[RegisterRemote] Sending register payload with FbToken and device flags: FbToken=${fbToken.substring(0, 8)}... IOSDevice=${Platform.isIOS} Androidevice=${Platform.isAndroid}');
 
-      final response = await DioFinalHelper.postData(method: registerEndPoint, data: enhancedData);
+      final response = await DioFinalHelper.postData(
+        method: registerEndPoint,
+        data: enhancedData,
+      );
 
       // The register endpoint returns the same shape as login (AuthModel-like).
       // Parse and return it so callers can handle tokens/user info similarly to login.
@@ -85,7 +89,8 @@ class RegisterRemoteDataSource {
   Future<AuthModel> registerQr(Map<String, dynamic> data) async {
     try {
       // Attach Firebase token and platform flags to QR registration payload
-      final fbToken = await FirebaseTokenHelper.getFirebaseToken() ??
+      final fbToken =
+          await FirebaseTokenHelper.getFirebaseToken() ??
           'fallback_token_${DateTime.now().millisecondsSinceEpoch}';
 
       final enhancedData = {
@@ -95,9 +100,12 @@ class RegisterRemoteDataSource {
         'Androidevice': Platform.isAndroid,
       };
 
-  // print('[RegisterRemote][QR] Sending registerQr payload with FbToken and device flags: FbToken=${fbToken.substring(0, 8)}... IOSDevice=${Platform.isIOS} Androidevice=${Platform.isAndroid}');
+      // print('[RegisterRemote][QR] Sending registerQr payload with FbToken and device flags: FbToken=${fbToken.substring(0, 8)}... IOSDevice=${Platform.isIOS} Androidevice=${Platform.isAndroid}');
 
-      final response = await DioFinalHelper.putData(method: registerQrEndPoint, data: enhancedData);
+      final response = await DioFinalHelper.putData(
+        method: registerQrEndPoint,
+        data: enhancedData,
+      );
 
       final authModel = AuthModel.fromJson(response.data);
       // print('[RegisterRemote][QR] Received auth-like response from registerQr: token=${authModel.data?.token ?? 'null'} id=${authModel.data?.id}');

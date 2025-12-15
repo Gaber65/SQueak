@@ -2,7 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 
-class RateAppointmentUseCase implements BaseUseCase<Unit, RateAppointmentParams> {
+class RateAppointmentUseCase
+    implements BaseUseCase<Unit, RateAppointmentParams> {
   final AppointmentRepository repository;
 
   RateAppointmentUseCase(this.repository);
@@ -33,9 +34,9 @@ class RateAppointmentParams extends Equatable {
 
   @override
   List<Object?> get props => [
-        appointmentId,
-        cleanlinessRate,
-        doctorServiceRate,
-        feedbackComment,
-      ];
+    appointmentId,
+    cleanlinessRate,
+    doctorServiceRate,
+    feedbackComment,
+  ];
 }

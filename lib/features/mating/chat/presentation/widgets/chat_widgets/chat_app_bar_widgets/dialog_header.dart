@@ -23,17 +23,11 @@ class DialogHeader extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const Spacer(),
         if (onClose != null)
-          IconButton(
-            onPressed: onClose,
-            icon: const Icon(Icons.close),
-          ),
+          IconButton(onPressed: onClose, icon: const Icon(Icons.close)),
       ],
     );
   }

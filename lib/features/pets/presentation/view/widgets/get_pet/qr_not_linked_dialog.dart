@@ -43,7 +43,11 @@ class QrNotLinkedDialog extends StatelessWidget {
                 color: Colors.orange.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.qr_code_2_rounded, color: Colors.orange, size: 60),
+              child: Icon(
+                Icons.qr_code_2_rounded,
+                color: Colors.orange,
+                size: 60,
+              ),
             ),
             const SizedBox(height: 20),
             Text(
@@ -72,19 +76,30 @@ class QrNotLinkedDialog extends StatelessWidget {
                       Navigator.pop(context);
                       final url = Uri.parse('https://veticareapp.com/qr/');
                       if (await canLaunchUrl(url)) {
-                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                        await launchUrl(
+                          url,
+                          mode: LaunchMode.externalApplication,
+                        );
                       }
                     },
                     icon: Icon(Icons.info_outline, size: 18),
                     label: Text(
                       S.of(context).learnHow,
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: ColorManager.primaryColor,
-                      side: BorderSide(color: ColorManager.primaryColor, width: 1.5),
+                      side: BorderSide(
+                        color: ColorManager.primaryColor,
+                        width: 1.5,
+                      ),
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ),
@@ -95,23 +110,29 @@ class QrNotLinkedDialog extends StatelessWidget {
                       Navigator.pop(context);
                       showDialog(
                         context: context,
-                        builder: (ctx) => QrLinkDialog(
-                          pet: pet,
-                          cubit: qrCubit,
-                          isDarkMode: isDark,
-                        ),
+                        builder:
+                            (ctx) => QrLinkDialog(
+                              pet: pet,
+                              cubit: qrCubit,
+                              isDarkMode: isDark,
+                            ),
                       );
                     },
                     icon: Icon(Icons.link, size: 18),
                     label: Text(
                       S.of(context).linkQrCode,
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorManager.primaryColor,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ),

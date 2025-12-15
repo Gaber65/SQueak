@@ -6,7 +6,7 @@ import '../../../../profile_switch/Presentation/cubit/switch_profile_cubit.dart'
 import '../screens/upload_post.dart';
 import 'get_posts_when_user_follow.dart';
 
-Widget buildWhatsonyourmindSanjay(BuildContext context ,String petId) {
+Widget buildWhatsonyourmindSanjay(BuildContext context, String petId) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Row(
@@ -63,8 +63,7 @@ Widget buildWhatsonyourmindSanjay(BuildContext context ,String petId) {
             ),
             child: IconButton(
               onPressed: () {
-
-                if(petId.isEmpty){
+                if (petId.isEmpty) {
                   showGuideOverlay(context);
                 } else {
                   var image = SwitchProfileCubit.get(context).image;
@@ -84,7 +83,6 @@ Widget buildWhatsonyourmindSanjay(BuildContext context ,String petId) {
                     ),
                   );
                 }
-
               },
               icon: Icon(Icons.near_me, size: 16),
             ),

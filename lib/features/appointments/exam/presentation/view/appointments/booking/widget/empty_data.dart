@@ -3,7 +3,6 @@ import 'package:lottie/lottie.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-
 Center emptyAppointment(BuildContext context) {
   return Center(
     child: Padding(
@@ -78,7 +77,6 @@ Center emptyBoarding(BuildContext context) {
               fontColor: ColorManager.secondColor,
             ),
           ),
-
         ],
       ),
     ),

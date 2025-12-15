@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-void navigateToScreen(
-    BuildContext context,
-    Widget widget,
-    ) {
+void navigateToScreen(BuildContext context, Widget widget) {
   Navigator.push(
     context,
     PageRouteBuilder(
@@ -15,26 +12,19 @@ void navigateToScreen(
         var end = Offset.zero;
         var curve = Curves.ease;
 
-        var tween =
-        Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
         var offsetAnimation = animation.drive(tween);
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
+        return SlideTransition(position: offsetAnimation, child: child);
       },
     ),
   );
 }
 
-void navigateToScreenName(
-    BuildContext context,
-    String widget,
-    ) {
-  Navigator.pushNamed(
-    context,
-    widget,
-  );
+void navigateToScreenName(BuildContext context, String widget) {
+  Navigator.pushNamed(context, widget);
 }
 
 void navigateAndFinish(context, widget) {
@@ -48,18 +38,18 @@ void navigateAndFinish(context, widget) {
         var end = Offset.zero;
         var curve = Curves.ease;
 
-        var tween =
-        Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var tween = Tween(
+          begin: begin,
+          end: end,
+        ).chain(CurveTween(curve: curve));
         var offsetAnimation = animation.drive(tween);
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
+        return SlideTransition(position: offsetAnimation, child: child);
       },
     ),
-        (route) => false,
+    (route) => false,
   );
 }
+
 Future<void> navigateToReference({required url}) async {
   final Uri urla = Uri.parse(url);
   if (!await launchUrl(urla)) {

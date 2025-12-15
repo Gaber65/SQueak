@@ -224,12 +224,17 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
         backgroundColor: const Color(0xFF1E1E1E),
         leading: IconButton(
           icon: Icon(
-            widget.cameraOption == true ? Icons.close : Icons.arrow_back_ios_new,
+            widget.cameraOption == true
+                ? Icons.close
+                : Icons.arrow_back_ios_new,
             color: Colors.white,
           ),
           onPressed: _handleBack,
         ),
-        title:  Text(S.of(context).preview, style: TextStyle(color: Colors.white)),
+        title: Text(
+          S.of(context).preview,
+          style: TextStyle(color: Colors.white),
+        ),
         actions: [
           if (_isImage)
             IconButton(
@@ -321,7 +326,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                               ),
                             ),
                             const SizedBox(height: 24),
-                             Text(
+                            Text(
                               S.of(context).audioFile,
                               style: TextStyle(
                                 color: Colors.white,

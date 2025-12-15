@@ -30,15 +30,25 @@ class AddPetBreedDropdownModal extends StatelessWidget {
             List<BreedEntity> filtered = breeds;
             return StatefulBuilder(
               builder: (context, setModalState) {
-                filtered = breeds
-                    .where((b) => b.enType.toLowerCase().contains(filter.toLowerCase()))
-                    .toList();
+                filtered =
+                    breeds
+                        .where(
+                          (b) => b.enType.toLowerCase().contains(
+                            filter.toLowerCase(),
+                          ),
+                        )
+                        .toList();
                 return Container(
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   child: Column(
                     children: [
                       Padding(
@@ -57,24 +67,26 @@ class AddPetBreedDropdownModal extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Expanded(
-                        child: filtered.isEmpty
-                            ? const Center(child: Text('No breeds found'))
-                            : ListView.separated(
-                                controller: scrollController,
-                                itemCount: filtered.length,
-                                separatorBuilder: (_, __) => const Divider(height: 1),
-                                itemBuilder: (context, index) {
-                                  final b = filtered[index];
-                                  return ListTile(
-                                    title: Text(b.enType),
-                                    onTap: () {
-                                      controller.text = b.enType;
-                                      onBreedSelected(b.id, b.enType);
-                                      Navigator.of(context).pop();
-                                    },
-                                  );
-                                },
-                              ),
+                        child:
+                            filtered.isEmpty
+                                ? const Center(child: Text('No breeds found'))
+                                : ListView.separated(
+                                  controller: scrollController,
+                                  itemCount: filtered.length,
+                                  separatorBuilder:
+                                      (_, __) => const Divider(height: 1),
+                                  itemBuilder: (context, index) {
+                                    final b = filtered[index];
+                                    return ListTile(
+                                      title: Text(b.enType),
+                                      onTap: () {
+                                        controller.text = b.enType;
+                                        onBreedSelected(b.id, b.enType);
+                                        Navigator.of(context).pop();
+                                      },
+                                    );
+                                  },
+                                ),
                       ),
                     ],
                   ),
@@ -95,7 +107,9 @@ class AddPetBreedDropdownModal extends StatelessWidget {
         child: TextField(
           controller: controller,
           // show black text when a breed is selected (controller has text), otherwise show hint color
-          style: TextStyle(color: controller.text.isNotEmpty ? Colors.black : Colors.grey[700]),
+          style: TextStyle(
+            color: controller.text.isNotEmpty ? Colors.black : Colors.grey[700],
+          ),
           decoration: InputDecoration(
             fillColor: ColorManager.white,
             filled: true,

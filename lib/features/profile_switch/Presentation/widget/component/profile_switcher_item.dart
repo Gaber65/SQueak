@@ -21,35 +21,38 @@ class ProfileSwitcherItem extends StatelessWidget {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: Colors.blue,
-        child: image.isNotEmpty
-            ? ClipOval(
-                child: Image.network(
-                  image,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                  errorBuilder: (context, error, stackTrace) => Center(
-                    child: Text(
-                      title[0].toUpperCase(),
-                      style: const TextStyle(color: Colors.white),
-                    ),
+        child:
+            image.isNotEmpty
+                ? ClipOval(
+                  child: Image.network(
+                    image,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                    errorBuilder:
+                        (context, error, stackTrace) => Center(
+                          child: Text(
+                            title[0].toUpperCase(),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
                   ),
+                )
+                : Text(
+                  title[0].toUpperCase(),
+                  style: const TextStyle(color: Colors.white),
                 ),
-              )
-            : Text(
-                title[0].toUpperCase(),
-                style: const TextStyle(color: Colors.white),
-              ),
       ),
       title: Text(title),
-      subtitle: subtitle.isNotEmpty
-          ? Text(
-              subtitle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
-            )
-          : null,
+      subtitle:
+          subtitle.isNotEmpty
+              ? Text(
+                subtitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              )
+              : null,
       trailing: selected ? const Icon(Icons.check, color: Colors.blue) : null,
       onTap: onTap,
     );

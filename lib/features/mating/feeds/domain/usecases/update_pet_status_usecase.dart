@@ -10,7 +10,7 @@ class UpdateSentRequestStatusUseCase
 
   @override
   Future<Either<Failure, void>> call(
-      SendMatingRequestParameters parameters,
+    SendMatingRequestParameters parameters,
   ) async {
     return await repository.updateSentRequestStatus(parameters);
   }

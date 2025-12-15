@@ -142,7 +142,7 @@ extension CommunityCubitExtensions on CommunityCubit {
   int get videoCount => mediaTypes.where((type) => type == 'video').length;
 
   bool canAddMoreMedia() {
-    return mediaFiles.length <= 10; 
+    return mediaFiles.length <= 10;
   }
 
   String get mediaSummary {

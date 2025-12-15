@@ -53,16 +53,16 @@ class RegisterParams extends Equatable {
 
   @override
   List<Object> get props => [
-        fullName,
-        email,
-        password,
-        phone,
-        clientId,
-        birthDate,
-        gender,
-        clinicCode,
-        countryId,
-      ];
+    fullName,
+    email,
+    password,
+    phone,
+    clientId,
+    birthDate,
+    gender,
+    clinicCode,
+    countryId,
+  ];
 }
 
 class LoginUseCase extends BaseUseCase<LoginEntity, LoginParams> {
@@ -83,10 +83,7 @@ class LoginParams extends Equatable {
   final String emailOrPhone;
   final String password;
 
-  const LoginParams({
-    required this.emailOrPhone,
-    required this.password,
-  });
+  const LoginParams({required this.emailOrPhone, required this.password});
 
   @override
   List<Object> get props => [emailOrPhone, password];

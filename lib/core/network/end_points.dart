@@ -87,8 +87,6 @@ const String deletePostEndPoint = '$version/posts';
 const String updatePostEndPoint = '$version/posts/';
 const String createPostEndPointText = '$version/posts/';
 
-
-
 /// React
 const String getReactEndPoint = '$version/react/';
 const String reactEndPoint = '$version/react';
@@ -224,19 +222,18 @@ String getMSGChatsEndPoint(conversationId) =>
     '$version/messages?ConversationId=$conversationId';
 String getMessagePagination(conversationId, pageNumber) =>
     '$version/messages/paggination?ConversationId=$conversationId&PageNumber=$pageNumber&PageSize=30';
-    
+
 String sendMSGEndPoint = '$version/messages';
 String renameChatEndPoint = '$version/conversations/rename';
 String blockChatEndPoint = '$version/conversations/update/blocking';
 String rateMatingEndPoint = '$version/matingrequest/rate';
- 
 
 const String createStoryEndPoint = '$version/pet/stories/';
 const String deleteStoryEndPoint = '$version/pet/stories/'; // + /{id}
 const String myActiveStoriesEndPoint = '$version/mypet/stories/';
 const String friendsStoriesEndPoint = '$version/pet/friend/stories/';
- String allFriendStoriesEndPoint(id)=> '$version/pet/$id/stories';
- const String sendReplyMsgToStoryPetEndPoint = '$version/pet/reply/stories';
+String allFriendStoriesEndPoint(id) => '$version/pet/$id/stories';
+const String sendReplyMsgToStoryPetEndPoint = '$version/pet/reply/stories';
 // Reactions
 
 const String getStoryReactionsEndPoint = '$version/mypet/react/stories/';

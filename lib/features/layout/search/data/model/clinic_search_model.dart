@@ -3,15 +3,15 @@
 import '../../domain/entities/clinic_search_entity.dart';
 
 class SupplierModelSearch extends SupplierEntitySearch {
-  SupplierModelSearch({
-    required List<ClinicInfoModelSearch> clinics,
-  }) : super(clinics: clinics);
+  SupplierModelSearch({required List<ClinicInfoModelSearch> clinics})
+    : super(clinics: clinics);
 
   factory SupplierModelSearch.fromJson(Map<String, dynamic> json) {
     return SupplierModelSearch(
-      clinics: (json['clinics'] as List)
-          .map((e) => ClinicInfoModelSearch.fromJson(e))
-          .toList(),
+      clinics:
+          (json['clinics'] as List)
+              .map((e) => ClinicInfoModelSearch.fromJson(e))
+              .toList(),
     );
   }
 }
@@ -54,10 +54,16 @@ class ClinicModelSearch extends ClinicEntitySearch {
       phone: json['phone'] ?? '',
       image: json['image'] ?? '',
       code: json['code'] ?? '',
-      admin: json['admin'] == null ? null : AdminModelSearch.fromJson(json['admin']),
-      specialities:json['specialities'] == null ? [] : (json['specialities'] as List)
-          .map((e) => SpecialityModelSearch.fromJson(e))
-          .toList(),
+      admin:
+          json['admin'] == null
+              ? null
+              : AdminModelSearch.fromJson(json['admin']),
+      specialities:
+          json['specialities'] == null
+              ? []
+              : (json['specialities'] as List)
+                  .map((e) => SpecialityModelSearch.fromJson(e))
+                  .toList(),
     );
   }
 }
@@ -85,10 +91,7 @@ class AdminModelSearch extends AdminEntitySearch {
 }
 
 class SpecialityModelSearch extends SpecialityEntitySearch {
-  SpecialityModelSearch({
-    required super.id,
-    required super.name,
-  });
+  SpecialityModelSearch({required super.id, required super.name});
 
   factory SpecialityModelSearch.fromJson(Map<String, dynamic> json) {
     return SpecialityModelSearch(

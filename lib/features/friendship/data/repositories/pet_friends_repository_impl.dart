@@ -8,17 +8,13 @@ import '../../domain/entities/pet_friend_request_entity.dart';
 import '../../domain/entities/send_friend_message_parameters.dart';
 import '../../domain/usecases/update_pet_request.dart';
 
-
-
 class PetFriendRepositoryImpl implements PetFriendRepository {
   final PetFriendRemoteDataSource remoteDataSource;
 
   PetFriendRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<Either<Failure, bool>> sendRequest(
-    SendPetRequestParams params,
-  ) async {
+  Future<Either<Failure, bool>> sendRequest(SendPetRequestParams params) async {
     try {
       final result = await remoteDataSource.sendRequest(params);
       return Right(result);
@@ -52,9 +48,7 @@ class PetFriendRepositoryImpl implements PetFriendRepository {
   }
 
   @override
-  Future<Either<Failure, List<PetEntities>>> getMyFriends(
-    String petId,
-  ) async {
+  Future<Either<Failure, List<PetEntities>>> getMyFriends(String petId) async {
     try {
       final result = await remoteDataSource.getMyFriends(petId);
       return Right(result);
@@ -154,7 +148,9 @@ class PetFriendRepositoryImpl implements PetFriendRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> deleteFriendShip(DeleteFriendShipParams params) async {
+  Future<Either<Failure, bool>> deleteFriendShip(
+    DeleteFriendShipParams params,
+  ) async {
     try {
       final result = await remoteDataSource.deleteFriendship(params);
       return Right(result);

@@ -15,7 +15,6 @@ class AddPetTextField extends StatelessWidget {
     this.readOnly = false,
     this.suffix,
     this.onTap,
-   
   });
 
   @override

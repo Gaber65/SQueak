@@ -19,7 +19,7 @@ class VcCard extends StatelessWidget {
   });
 
   final Widget child;
-  final  EdgeInsets? margin;
+  final EdgeInsets? margin;
   final EdgeInsets? padding;
   final double? elevation;
   final Color? color;
@@ -31,18 +31,19 @@ class VcCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     Widget content = Container(
       padding: padding ?? const EdgeInsets.all(AppTheme.spacing16),
       decoration: BoxDecoration(
         color: color ?? theme.colorScheme.surface,
         borderRadius: borderRadius ?? BorderRadius.circular(AppTheme.radius12),
-        border: showBorder
-            ? Border.all(
-                color: borderColor ?? theme.colorScheme.outline,
-                width: 1,
-              )
-            : null,
+        border:
+            showBorder
+                ? Border.all(
+                  color: borderColor ?? theme.colorScheme.outline,
+                  width: 1,
+                )
+                : null,
         boxShadow: [
           BoxShadow(
             color: theme.colorScheme.shadow.withOpacity(0.05),
@@ -91,7 +92,7 @@ class VcPetCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return VcCard(
       onTap: onTap,
       showBorder: healthStatus != null,
@@ -123,8 +124,10 @@ class VcPetCard extends StatelessWidget {
                       vertical: AppTheme.spacing4,
                     ),
                     decoration: BoxDecoration(
-                      color: _getHealthStatusColor(healthStatus, theme)
-                          .withOpacity(0.1),
+                      color: _getHealthStatusColor(
+                        healthStatus,
+                        theme,
+                      ).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(AppTheme.radius8),
                     ),
                     child: Text(
@@ -180,10 +183,4 @@ class VcPetCard extends StatelessWidget {
 }
 
 /// Pet health status enum
-enum PetHealthStatus {
-  healthy,
-  warning,
-  emergency,
-  vaccination,
-  treatment,
-}
+enum PetHealthStatus { healthy, warning, emergency, vaccination, treatment }

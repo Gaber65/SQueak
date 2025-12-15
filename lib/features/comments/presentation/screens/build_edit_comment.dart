@@ -9,7 +9,7 @@ import '../controller/comment_cubit.dart';
 import '../screens/comment.dart';
 
 class EditComment extends StatefulWidget {
-  const EditComment({super.key, required this.comment , required this.petId});
+  const EditComment({super.key, required this.comment, required this.petId});
   final CommentEntity comment;
   final String petId;
 
@@ -61,7 +61,7 @@ class _EditCommentState extends State<EditComment>
             commentController.clear();
             navigateAndFinish(
               context,
-              CommentScreen(postId: widget.comment.postId,petID: widget.petId),
+              CommentScreen(postId: widget.comment.postId, petID: widget.petId),
             );
           }
         },
@@ -71,7 +71,11 @@ class _EditCommentState extends State<EditComment>
           return Scaffold(
             appBar: AppBar(
               centerTitle: true,
-              title: Text(widget.comment.parentId == null ? S.of(context).editCommentPost : S.of(context).editReplyCommentPost),
+              title: Text(
+                widget.comment.parentId == null
+                    ? S.of(context).editCommentPost
+                    : S.of(context).editReplyCommentPost,
+              ),
             ),
             body: Padding(
               padding: const EdgeInsets.all(16.0),

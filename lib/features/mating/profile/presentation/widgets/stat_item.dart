@@ -28,24 +28,14 @@ class StatItem extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                color.withOpacity(0.2),
-                color.withOpacity(0.1),
-              ],
+              colors: [color.withOpacity(0.2), color.withOpacity(0.1)],
             ),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: color.withOpacity(0.3),
-            ),
+            border: Border.all(color: color.withOpacity(0.3)),
           ),
           child: Column(
             children: [
-
-              Icon(
-                icon,
-                color: color,
-                size: 24,
-              ),
+              Icon(icon, color: color, size: 24),
               const SizedBox(height: 8),
               Text(
                 value,
@@ -62,7 +52,8 @@ class StatItem extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                  color:
+                      isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),

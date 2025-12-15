@@ -33,10 +33,7 @@ class DialogActionButtons extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
               ),
-              padding: const EdgeInsets.symmetric(
-                vertical: 14,
-                horizontal: 20,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
             ),
             child: Text(
               cancelText,
@@ -50,15 +47,14 @@ class DialogActionButtons extends StatelessWidget {
           child: ElevatedButton(
             onPressed: isConfirmEnabled ? onConfirm : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: isConfirmEnabled ? confirmColor : Colors.grey[300],
-              foregroundColor: isConfirmEnabled ? Colors.white : Colors.grey[500],
+              backgroundColor:
+                  isConfirmEnabled ? confirmColor : Colors.grey[300],
+              foregroundColor:
+                  isConfirmEnabled ? Colors.white : Colors.grey[500],
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
               ),
-              padding: const EdgeInsets.symmetric(
-                vertical: 14,
-                horizontal: 20,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
               elevation: isConfirmEnabled ? 2 : 0,
             ),
             child: Text(

@@ -10,8 +10,8 @@ class AccessibilityHelper {
 
   /// Announce with custom text direction
   static void announceWithDirection(
-    BuildContext context, 
-    String message, 
+    BuildContext context,
+    String message,
     TextDirection direction,
   ) {
     SemanticsService.announce(message, direction);
@@ -136,9 +136,8 @@ class AccessibilityHelper {
       canRequestFocus: canRequestFocus,
       skipTraversal: skipTraversal,
       descendantsAreFocusable: descendantsAreFocusable,
-      onFocusChange: onFocusChange != null 
-        ? (focused) => onFocusChange() 
-        : null,
+      onFocusChange:
+          onFocusChange != null ? (focused) => onFocusChange() : null,
       child: child,
     );
   }
@@ -146,27 +145,34 @@ class AccessibilityHelper {
   /// Create high contrast color scheme
   static ColorScheme createHighContrastColorScheme(ColorScheme baseScheme) {
     return baseScheme.copyWith(
-      primary: baseScheme.brightness == Brightness.light 
-        ? Colors.black 
-        : Colors.white,
-      onPrimary: baseScheme.brightness == Brightness.light 
-        ? Colors.white 
-        : Colors.black,
-      secondary: baseScheme.brightness == Brightness.light 
-        ? Colors.black87 
-        : Colors.white70,
-      onSecondary: baseScheme.brightness == Brightness.light 
-        ? Colors.white 
-        : Colors.black,
-      surface: baseScheme.brightness == Brightness.light 
-        ? Colors.white 
-        : Colors.black,
-      onSurface: baseScheme.brightness == Brightness.light 
-        ? Colors.black 
-        : Colors.white,
-      outline: baseScheme.brightness == Brightness.light 
-        ? Colors.black54 
-        : Colors.white54,
+      primary:
+          baseScheme.brightness == Brightness.light
+              ? Colors.black
+              : Colors.white,
+      onPrimary:
+          baseScheme.brightness == Brightness.light
+              ? Colors.white
+              : Colors.black,
+      secondary:
+          baseScheme.brightness == Brightness.light
+              ? Colors.black87
+              : Colors.white70,
+      onSecondary:
+          baseScheme.brightness == Brightness.light
+              ? Colors.white
+              : Colors.black,
+      surface:
+          baseScheme.brightness == Brightness.light
+              ? Colors.white
+              : Colors.black,
+      onSurface:
+          baseScheme.brightness == Brightness.light
+              ? Colors.black
+              : Colors.white,
+      outline:
+          baseScheme.brightness == Brightness.light
+              ? Colors.black54
+              : Colors.white54,
     );
   }
 
@@ -182,10 +188,7 @@ class AccessibilityHelper {
   }) {
     final size = minimumSize ?? getMinimumTouchTarget();
     return ConstrainedBox(
-      constraints: BoxConstraints(
-        minWidth: size.width,
-        minHeight: size.height,
-      ),
+      constraints: BoxConstraints(minWidth: size.width, minHeight: size.height),
       child: child,
     );
   }
@@ -226,11 +229,7 @@ class AccessibilityHelper {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null)
-            Icon(
-              icon,
-              color: color ?? Colors.red,
-              semanticLabel: 'Error icon',
-            ),
+            Icon(icon, color: color ?? Colors.red, semanticLabel: 'Error icon'),
           const SizedBox(height: 8),
           Text(
             message,
@@ -310,13 +309,7 @@ class AccessibilityHelper {
           child,
           if (hint != null) ...[
             const SizedBox(height: 4),
-            Text(
-              hint,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
-            ),
+            Text(hint, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
           ],
           if (errorText != null) ...[
             const SizedBox(height: 4),
@@ -324,10 +317,7 @@ class AccessibilityHelper {
               liveRegion: true,
               child: Text(
                 errorText,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.red,
-                ),
+                style: const TextStyle(fontSize: 12, color: Colors.red),
               ),
             ),
           ],
@@ -342,28 +332,25 @@ class AccessibilityConfig {
   static const Duration defaultAnimationDuration = Duration(milliseconds: 300);
   static const Duration reducedAnimationDuration = Duration(milliseconds: 100);
   static const Duration noAnimationDuration = Duration.zero;
-  
+
   static const Size minimumTouchTarget = Size(48.0, 48.0);
   static const double minimumFontSize = 14.0;
   static const double largeFontSize = 18.0;
 
-  static const EdgeInsets minimumPadding =  EdgeInsets.all(8.0);
-  static const EdgeInsets largePadding =  EdgeInsets.all(16.0);
+  static const EdgeInsets minimumPadding = EdgeInsets.all(8.0);
+  static const EdgeInsets largePadding = EdgeInsets.all(16.0);
 }
 
 /// Mixin for widgets that need accessibility support
 mixin AccessibilityMixin<T extends StatefulWidget> on State<T> {
   /// Check if reduce motion is enabled
-  bool get isReduceMotionEnabled => 
-      MediaQuery.of(context).disableAnimations;
+  bool get isReduceMotionEnabled => MediaQuery.of(context).disableAnimations;
 
   /// Check if screen reader is enabled
-  bool get isScreenReaderEnabled => 
-      MediaQuery.of(context).accessibleNavigation;
+  bool get isScreenReaderEnabled => MediaQuery.of(context).accessibleNavigation;
 
   /// Check if high contrast is enabled
-  bool get isHighContrastEnabled => 
-      MediaQuery.of(context).highContrast;
+  bool get isHighContrastEnabled => MediaQuery.of(context).highContrast;
 
   /// Get appropriate animation duration
   Duration getAnimationDuration({

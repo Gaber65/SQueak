@@ -43,8 +43,6 @@ class NotificationRemoteDataSource extends BaseNotificationRemoteDataSource {
     }
   }
 
-
-
   @override
   Future<List<PostDataModel>> getPostNotification(String postId) async {
     try {

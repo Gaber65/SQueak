@@ -24,11 +24,6 @@ class ActiveProfile {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'type': type,
-      'user': user?.toMap(),
-      'pet': pet?.toJson(),
-    };
+    return {'type': type, 'user': user?.toMap(), 'pet': pet?.toJson()};
   }
-
 }

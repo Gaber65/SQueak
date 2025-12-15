@@ -1,19 +1,14 @@
-
-
-
-
-
-
-
 // To parse this JSON data, do
 //
 //     final prescriptionAndFiles = prescriptionAndFilesFromJson(jsonString);
 
 import 'dart:convert';
 
-PrescriptionAndFiles prescriptionAndFilesFromJson(String str) => PrescriptionAndFiles.fromJson(json.decode(str));
+PrescriptionAndFiles prescriptionAndFilesFromJson(String str) =>
+    PrescriptionAndFiles.fromJson(json.decode(str));
 
-String prescriptionAndFilesToJson(PrescriptionAndFiles data) => json.encode(data.toJson());
+String prescriptionAndFilesToJson(PrescriptionAndFiles data) =>
+    json.encode(data.toJson());
 
 class PrescriptionAndFiles {
   bool? success;
@@ -30,13 +25,14 @@ class PrescriptionAndFiles {
     this.statusCode,
   });
 
-  factory PrescriptionAndFiles.fromJson(Map<String, dynamic> json) => PrescriptionAndFiles(
-    success: json["success"],
-    errors: json["errors"] == null ? null : Errors.fromJson(json["errors"]),
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
-    message: json["message"],
-    statusCode: json["statusCode"],
-  );
+  factory PrescriptionAndFiles.fromJson(Map<String, dynamic> json) =>
+      PrescriptionAndFiles(
+        success: json["success"],
+        errors: json["errors"] == null ? null : Errors.fromJson(json["errors"]),
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
+        message: json["message"],
+        statusCode: json["statusCode"],
+      );
 
   Map<String, dynamic> toJson() => {
     "success": success,
@@ -51,18 +47,24 @@ class Data {
   List<FileElement>? files;
   Prescription? prescription;
 
-  Data({
-    this.files,
-    this.prescription,
-  });
+  Data({this.files, this.prescription});
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    files: json["files"] == null ? [] : List<FileElement>.from(json["files"]!.map((x) => FileElement.fromJson(x))),
-    prescription: json["prescription"] == null ? null : Prescription.fromJson(json["prescription"]),
+    files:
+        json["files"] == null
+            ? []
+            : List<FileElement>.from(
+              json["files"]!.map((x) => FileElement.fromJson(x)),
+            ),
+    prescription:
+        json["prescription"] == null
+            ? null
+            : Prescription.fromJson(json["prescription"]),
   );
 
   Map<String, dynamic> toJson() => {
-    "files": files == null ? [] : List<dynamic>.from(files!.map((x) => x.toJson())),
+    "files":
+        files == null ? [] : List<dynamic>.from(files!.map((x) => x.toJson())),
     "prescription": prescription?.toJson(),
   };
 }
@@ -73,18 +75,14 @@ class FileElement {
   String? description;
   DateTime? issueDate;
 
-  FileElement({
-    this.name,
-    this.fileLink,
-    this.description,
-    this.issueDate,
-  });
+  FileElement({this.name, this.fileLink, this.description, this.issueDate});
 
   factory FileElement.fromJson(Map<String, dynamic> json) => FileElement(
     name: json["name"],
     fileLink: json["fileLink"],
     description: json["description"],
-    issueDate: json["issueDate"] == null ? null : DateTime.parse(json["issueDate"]),
+    issueDate:
+        json["issueDate"] == null ? null : DateTime.parse(json["issueDate"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -100,22 +98,28 @@ class Prescription {
   DateTime? date;
   List<PrescriptionDrug>? prescriptionDrugs;
 
-  Prescription({
-    this.comment,
-    this.date,
-    this.prescriptionDrugs,
-  });
+  Prescription({this.comment, this.date, this.prescriptionDrugs});
 
   factory Prescription.fromJson(Map<String, dynamic> json) => Prescription(
     comment: json["comment"],
     date: json["data"] == null ? null : DateTime.parse(json["data"]),
-    prescriptionDrugs: json["prescriptionDrugs"] == null ? [] : List<PrescriptionDrug>.from(json["prescriptionDrugs"]!.map((x) => PrescriptionDrug.fromJson(x))),
+    prescriptionDrugs:
+        json["prescriptionDrugs"] == null
+            ? []
+            : List<PrescriptionDrug>.from(
+              json["prescriptionDrugs"]!.map(
+                (x) => PrescriptionDrug.fromJson(x),
+              ),
+            ),
   );
 
   Map<String, dynamic> toJson() => {
     "comment": comment,
     "data": date?.toIso8601String(),
-    "prescriptionDrugs": prescriptionDrugs == null ? [] : List<dynamic>.from(prescriptionDrugs!.map((x) => x.toJson())),
+    "prescriptionDrugs":
+        prescriptionDrugs == null
+            ? []
+            : List<dynamic>.from(prescriptionDrugs!.map((x) => x.toJson())),
   };
 }
 
@@ -132,12 +136,13 @@ class PrescriptionDrug {
     this.drug,
   });
 
-  factory PrescriptionDrug.fromJson(Map<String, dynamic> json) => PrescriptionDrug(
-    numberOfUnit: json["numberOfUnit"],
-    numberOfTime: json["numberOfTime"],
-    numberOfDay: json["numberOfDay"],
-    drug: json["drug"] == null ? null : Drug.fromJson(json["drug"]),
-  );
+  factory PrescriptionDrug.fromJson(Map<String, dynamic> json) =>
+      PrescriptionDrug(
+        numberOfUnit: json["numberOfUnit"],
+        numberOfTime: json["numberOfTime"],
+        numberOfDay: json["numberOfDay"],
+        drug: json["drug"] == null ? null : Drug.fromJson(json["drug"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "numberOfUnit": numberOfUnit,
@@ -151,59 +156,21 @@ class Drug {
   String? name;
   String? description;
 
-  Drug({
-    this.name,
-    this.description,
-  });
+  Drug({this.name, this.description});
 
-  factory Drug.fromJson(Map<String, dynamic> json) => Drug(
-    name: json["name"],
-    description: json["description"],
-  );
+  factory Drug.fromJson(Map<String, dynamic> json) =>
+      Drug(name: json["name"], description: json["description"]);
 
-  Map<String, dynamic> toJson() => {
-    "name": name,
-    "description": description,
-  };
+  Map<String, dynamic> toJson() => {"name": name, "description": description};
 }
 
 class Errors {
   Errors();
 
-  factory Errors.fromJson(Map<String, dynamic> json) => Errors(
-  );
+  factory Errors.fromJson(Map<String, dynamic> json) => Errors();
 
-  Map<String, dynamic> toJson() => {
-  };
+  Map<String, dynamic> toJson() => {};
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import 'dart:convert';
 //

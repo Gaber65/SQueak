@@ -1,5 +1,3 @@
-
-
 /// Enhanced authentication input validator with real-time feedback
 class EnhancedAuthValidator {
   /// Validates email with detailed feedback
@@ -78,7 +76,7 @@ class EnhancedAuthValidator {
   }
 
   /// Enhanced password validation with strength indicator
-  
+
   static ValidationResult validatePassword(String password) {
     if (password.isEmpty) {
       return ValidationResult(

@@ -413,9 +413,7 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
     );
   }
 
-  void _downloadMedia() {
-
-  }
+  void _downloadMedia() {}
 
   void _openInApp() {
     final fileName = widget.mediaUrl.split('/').last.split('?').first;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/utils/theme/color_mangment/color_manager.dart' show ColorManager;
+import '../../../../../../core/utils/theme/color_mangment/color_manager.dart'
+    show ColorManager;
 import '../../../../../../generated/l10n.dart';
 import '../../controller/manage_request_mating_cubit.dart';
 
@@ -35,34 +36,44 @@ class MatingStatsHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(S.of(context).matingActivity,
-                    style: const TextStyle(color: Colors.white, fontSize: 16)),
+                Text(
+                  S.of(context).matingActivity,
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   S.of(context).manageIncomingOutgoing,
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.8), fontSize: 12),
+                    color: Colors.white.withOpacity(0.8),
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),
           ),
           Container(
-            padding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
               children: [
-                Text('${cubit.dummyMatingRequests.length}',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold)),
-                Text(S.of(context).total,
-                    style: TextStyle(
-                        color: Colors.white.withOpacity(0.8), fontSize: 12)),
+                Text(
+                  '${cubit.dummyMatingRequests.length}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  S.of(context).total,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.8),
+                    fontSize: 12,
+                  ),
+                ),
               ],
             ),
           ),

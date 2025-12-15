@@ -31,7 +31,8 @@ class LocalDatabaseHelper {
   }
 
   static Future<void> _createTable(Database db) async {
-    await db.execute('''
+    await db
+        .execute('''
       CREATE TABLE $tableName (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         reminderType TEXT,
@@ -46,12 +47,14 @@ class LocalDatabaseHelper {
         subTypeFeed TEXT,
         petName TEXT
       )
-    ''').then((value) {
-      log("created succeefully");
-    }).catchError((err) {
-      log("error create");
-      log(err.toString());
-    });
+    ''')
+        .then((value) {
+          log("created succeefully");
+        })
+        .catchError((err) {
+          log("error create");
+          log(err.toString());
+        });
   }
 
   static Future<int> insertReminder(ReminderModel reminder) async {
@@ -61,8 +64,11 @@ class LocalDatabaseHelper {
 
   static Future<List<ReminderModel>> getAllReminders({required petId}) async {
     final db = await LocalDatabaseHelper().database;
-    List<Map<String, dynamic>> result =
-        await db.query(tableName, where: 'petId = ?', whereArgs: [petId]);
+    List<Map<String, dynamic>> result = await db.query(
+      tableName,
+      where: 'petId = ?',
+      whereArgs: [petId],
+    );
     return result.map((e) => ReminderModel.fromMap(e)).toList();
   }
 
@@ -73,8 +79,12 @@ class LocalDatabaseHelper {
 
   static Future<int> updateReminder(ReminderModel reminder) async {
     final db = LocalDatabaseHelper._database;
-    return await db!.update(tableName, reminder.toMap(),
-        where: 'id = ?', whereArgs: [reminder.id]);
+    return await db!.update(
+      tableName,
+      reminder.toMap(),
+      where: 'id = ?',
+      whereArgs: [reminder.id],
+    );
   }
 
   static Future<void> resetDatabase() async {

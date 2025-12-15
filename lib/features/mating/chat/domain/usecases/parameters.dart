@@ -2,10 +2,7 @@ class GetMessagesParameters {
   final String chatId;
   final int pageNumber;
 
-  const GetMessagesParameters({
-    required this.chatId,
-    this.pageNumber = 1,
-  });
+  const GetMessagesParameters({required this.chatId, this.pageNumber = 1});
 }
 
 class SendMessageParameters {
@@ -131,7 +128,7 @@ class DeleteMessageParameters {
     return {
       'conversationId': conversationId,
       'deleteForMeOnly': onlyFromMe,
-      'messageId': messageId
-      };
+      'messageId': messageId,
+    };
   }
 }

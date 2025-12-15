@@ -73,7 +73,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
 
     messageStatuses[messageId] = status;
     _statusStreamController.add(Map.from(messageStatuses));
-  
   }
 
   // Legacy field - keeping for backwards compatibility
@@ -91,7 +90,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
         if (event.hub != 'ConversationHub') return;
 
         final method = event.method;
-     
+
         switch (method) {
           case 'MessageSentAndPetIsNotOnline':
           case 'MessageSentAndNotReadYet':
@@ -121,33 +120,26 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
                   if (matchIndex >= 0) {
                     // Replace local optimistic message with server message
                     messagesList[matchIndex] = serverMsg;
-                   
                   } else {
                     // Append server message
                     messagesList.add(serverMsg);
-                  
                   }
-                } else {
-               }
+                } else {}
 
-             
                 if (method == 'MessageSentAndPetIsNotOnline') {
                   deliveryStatuses[id] = 'one';
                   _updateMessageStatus(id, MessageStatus.sent);
-                 
                 } else {
                   deliveryStatuses[id] = 'two_grey';
                   _updateMessageStatus(id, MessageStatus.delivered);
-                 
                 }
 
                 emit(ChatMessagesLoaded(List.from(messagesList)));
-              } 
-            } 
+              }
+            }
             break;
 
           case 'MessageRead':
-
             if (event.data != null && event.data!.isNotEmpty) {
               final data = Map<String, dynamic>.from(event.data![0] as Map);
               final messageId =
@@ -155,7 +147,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
                   data['messageId']?.toString();
 
               if (messageId != null) {
-              
                 deliveryStatuses[messageId] = 'two_colored';
                 _updateMessageStatus(messageId, MessageStatus.seen);
                 final index = messagesList.indexWhere((m) => m.id == messageId);
@@ -183,7 +174,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
                         messagesList[i].id!,
                         MessageStatus.delivered,
                       );
-                    
                     }
                   }
                 }
@@ -252,7 +242,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
                   messagesList[i] = messagesList[i].copyWith(
                     status: MessageStatus.seen,
                   );
-              }
+                }
               }
             }
             emit(ChatMessagesLoaded(List.from(messagesList)));
@@ -262,9 +252,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
             // Handle other events
             break;
         }
-      } catch (e) {
-      
-      }
+      } catch (e) {}
     });
   }
 
@@ -296,9 +284,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     emit(ChatMessagesLoaded(List.from(messagesList)));
   }
 
-
   void markSentMessagesAsDelivered() {
-  
     bool hasChanges = false;
 
     for (var i = 0; i < messagesList.length; i++) {
@@ -327,30 +313,25 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     }
 
     await signalRService.connect(conversationId: chatId, petId: petId);
- _subscribeConversationEvents();
+    _subscribeConversationEvents();
 
     emit(ChatMessagesLoading());
     currentPage = 1;
     hasMoreMessages = true;
     messagesList.clear();
-  final result = await getMessagesUseCase(
+    final result = await getMessagesUseCase(
       GetMessagesParameters(chatId: chatId, pageNumber: currentPage),
     );
 
     result.fold(
       (failure) {
-       emit(ChatMessagesError(failure.toString()));
+        emit(ChatMessagesError(failure.toString()));
       },
       (messages) async {
         messagesList = messages.reversed.toList();
 
-        hasMoreMessages = messages.length >= 30; 
-        try {
- 
-         
-        } catch (e) {
-  
-        }
+        hasMoreMessages = messages.length >= 30;
+        try {} catch (e) {}
 
         emit(ChatMessagesLoaded(messages));
       },
@@ -359,29 +340,28 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
 
   Future<void> loadMoreMessages(String chatId) async {
     if (!hasMoreMessages || isLoadingMore) {
-    return;
+      return;
     }
 
     isLoadingMore = true;
     currentPage++;
-   final result = await getMessagesUseCase(
+    final result = await getMessagesUseCase(
       GetMessagesParameters(chatId: chatId, pageNumber: currentPage),
     );
 
     result.fold(
       (failure) {
-       currentPage--; 
+        currentPage--;
         isLoadingMore = false;
       },
       (messages) {
         if (messages.isEmpty) {
           hasMoreMessages = false;
-      
         } else {
           messagesList.insertAll(0, messages.reversed.toList());
-          hasMoreMessages = messages.length >= 30; 
+          hasMoreMessages = messages.length >= 30;
         }
-        
+
         isLoadingMore = false;
         emit(ChatMessagesLoaded(List.from(messagesList)));
       },

@@ -124,15 +124,13 @@ class PetRemoteDataSourceImpl implements PetRemoteDataSource {
       );
     }
   }
-  
+
   @override
-  Future<PetData> mergePets(List<String> ids)async {
-    try{
+  Future<PetData> mergePets(List<String> ids) async {
+    try {
       final response = await DioFinalHelper.postData(
         method: mergePetsEndPoint,
-        data: {
-          "petsId": ids,
-        },
+        data: {"petsId": ids},
       );
       return PetData.fromJson(response.data['data']);
     } on DioException catch (e) {

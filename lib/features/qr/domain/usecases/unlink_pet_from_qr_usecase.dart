@@ -9,8 +9,9 @@ class UnlinkPetFromQrUseCase extends BaseUseCase<bool, LinkPetToQrParams> {
 
   @override
   Future<Either<Failure, bool>> call(LinkPetToQrParams parameters) async {
-    return await repository.unlinkPetFromQr(parameters.petId, parameters.qrCodeId);
+    return await repository.unlinkPetFromQr(
+      parameters.petId,
+      parameters.qrCodeId,
+    );
   }
-
-
 }

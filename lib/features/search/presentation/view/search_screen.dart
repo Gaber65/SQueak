@@ -1,4 +1,3 @@
-
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'package:flutter/material.dart';
@@ -13,7 +12,6 @@ import '../../../pets/domain/entities/pet_entity.dart';
 import '../widgets/pet_box.dart';
 import '../widgets/search_text_field.dart';
 import '../widgets/species_selector_sheet.dart';
-
 
 class FriendsScreen extends StatefulWidget {
   const FriendsScreen({super.key});
@@ -51,7 +49,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
           ),
           centerTitle: true,
         ),
-        backgroundColor: mainCubit.isDark ? Colors.grey[900] : ColorManager.white,
+        backgroundColor:
+            mainCubit.isDark ? Colors.grey[900] : ColorManager.white,
         body: CustomScrollView(
           slivers: [
             // Search Section
@@ -68,7 +67,9 @@ class _FriendsScreenState extends State<FriendsScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(mainCubit.isDark ? 0.2 : 0.05),
+                      color: Colors.black.withOpacity(
+                        mainCubit.isDark ? 0.2 : 0.05,
+                      ),
                       blurRadius: 10,
                       offset: Offset(0, 2),
                     ),
@@ -84,7 +85,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
                         style: TextStyle(
                           fontSize: isTablet ? 18 : screen.width * 0.042,
                           fontWeight: FontWeight.w600,
-                          color: mainCubit.isDark ? Colors.white : Colors.black87,
+                          color:
+                              mainCubit.isDark ? Colors.white : Colors.black87,
                         ),
                       ),
                       SizedBox(height: screen.height * 0.015),
@@ -113,7 +115,9 @@ class _FriendsScreenState extends State<FriendsScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(mainCubit.isDark ? 0.2 : 0.05),
+                      color: Colors.black.withOpacity(
+                        mainCubit.isDark ? 0.2 : 0.05,
+                      ),
                       blurRadius: 10,
                       offset: Offset(0, 2),
                     ),
@@ -129,52 +133,58 @@ class _FriendsScreenState extends State<FriendsScreen> {
                         style: TextStyle(
                           fontSize: isTablet ? 18 : screen.width * 0.042,
                           fontWeight: FontWeight.w600,
-                          color: mainCubit.isDark ? Colors.white : Colors.black87,
+                          color:
+                              mainCubit.isDark ? Colors.white : Colors.black87,
                         ),
                       ),
                       SizedBox(height: screen.height * 0.02),
                       Builder(
-                        builder: (blocContext) => Row(
-                          children: [
-                            Expanded(
-                              child: PetBox(
-                                label: "Cat",
-                                icon: FontAwesomeIcons.cat,
-                                index: 0,
-                                selectedIndex: selectedIndex,
-                                isTablet: isTablet,
-                                screen: screen,
-                                onTap: () => setState(() => selectedIndex = 0),
-                              ),
+                        builder:
+                            (blocContext) => Row(
+                              children: [
+                                Expanded(
+                                  child: PetBox(
+                                    label: "Cat",
+                                    icon: FontAwesomeIcons.cat,
+                                    index: 0,
+                                    selectedIndex: selectedIndex,
+                                    isTablet: isTablet,
+                                    screen: screen,
+                                    onTap:
+                                        () => setState(() => selectedIndex = 0),
+                                  ),
+                                ),
+                                SizedBox(width: screen.width * 0.03),
+                                Expanded(
+                                  child: PetBox(
+                                    label: "Dog",
+                                    icon: FontAwesomeIcons.dog,
+                                    index: 1,
+                                    selectedIndex: selectedIndex,
+                                    isTablet: isTablet,
+                                    screen: screen,
+                                    onTap:
+                                        () => setState(() => selectedIndex = 1),
+                                  ),
+                                ),
+                                SizedBox(width: screen.width * 0.03),
+                                Expanded(
+                                  child: PetBox(
+                                    label: "Others",
+                                    icon: Icons.pets,
+                                    index: 2,
+                                    selectedIndex: selectedIndex,
+                                    isTablet: isTablet,
+                                    screen: screen,
+                                    isLoading: _isLoadingOtherSpecies,
+                                    selectedSpeciesName: selectedSpeciesName,
+                                    onTap:
+                                        () =>
+                                            _handleOthersSelection(blocContext),
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(width: screen.width * 0.03),
-                            Expanded(
-                              child: PetBox(
-                                label: "Dog",
-                                icon: FontAwesomeIcons.dog,
-                                index: 1,
-                                selectedIndex: selectedIndex,
-                                isTablet: isTablet,
-                                screen: screen,
-                                onTap: () => setState(() => selectedIndex = 1),
-                              ),
-                            ),
-                            SizedBox(width: screen.width * 0.03),
-                            Expanded(
-                              child: PetBox(
-                                label: "Others",
-                                icon: Icons.pets,
-                                index: 2,
-                                selectedIndex: selectedIndex,
-                                isTablet: isTablet,
-                                screen: screen,
-                                isLoading: _isLoadingOtherSpecies,
-                                selectedSpeciesName: selectedSpeciesName,
-                                onTap: () => _handleOthersSelection(blocContext),
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
                     ],
                   ),
@@ -227,7 +237,9 @@ class _FriendsScreenState extends State<FriendsScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(mainCubit.isDark ? 0.2 : 0.05),
+                        color: Colors.black.withOpacity(
+                          mainCubit.isDark ? 0.2 : 0.05,
+                        ),
                         blurRadius: 8,
                         offset: Offset(0, 2),
                       ),
@@ -242,10 +254,16 @@ class _FriendsScreenState extends State<FriendsScreen> {
                           contentPadding: EdgeInsets.zero,
                           leading: CircleAvatar(
                             radius: isTablet ? 30 : screen.width * 0.07,
-                            backgroundColor: mainCubit.isDark ? Colors.grey[700] : Colors.grey[300],
+                            backgroundColor:
+                                mainCubit.isDark
+                                    ? Colors.grey[700]
+                                    : Colors.grey[300],
                             child: Icon(
                               Icons.pets,
-                              color: mainCubit.isDark ? Colors.grey[400] : Colors.grey[600],
+                              color:
+                                  mainCubit.isDark
+                                      ? Colors.grey[400]
+                                      : Colors.grey[600],
                               size: isTablet ? 24 : screen.width * 0.05,
                             ),
                           ),
@@ -254,16 +272,24 @@ class _FriendsScreenState extends State<FriendsScreen> {
                             style: TextStyle(
                               fontSize: isTablet ? 18 : screen.width * 0.045,
                               fontWeight: FontWeight.w600,
-                              color: mainCubit.isDark ? Colors.white : Colors.black87,
+                              color:
+                                  mainCubit.isDark
+                                      ? Colors.white
+                                      : Colors.black87,
                             ),
                           ),
                           subtitle: Padding(
-                            padding: EdgeInsets.only(top: screen.height * 0.005),
+                            padding: EdgeInsets.only(
+                              top: screen.height * 0.005,
+                            ),
                             child: Text(
                               'Golden Retriever • 3 years old',
                               style: TextStyle(
                                 fontSize: isTablet ? 14 : screen.width * 0.035,
-                                color: mainCubit.isDark ? Colors.grey[400] : Colors.grey[600],
+                                color:
+                                    mainCubit.isDark
+                                        ? Colors.grey[400]
+                                        : Colors.grey[600],
                               ),
                             ),
                           ),
@@ -289,7 +315,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
                                   "Adopt",
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: isTablet ? 12 : screen.width * 0.03,
+                                    fontSize:
+                                        isTablet ? 12 : screen.width * 0.03,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -301,7 +328,10 @@ class _FriendsScreenState extends State<FriendsScreen> {
                         Container(
                           padding: EdgeInsets.all(screen.width * 0.03),
                           decoration: BoxDecoration(
-                            color: mainCubit.isDark ? Colors.grey[800] : Colors.grey[50],
+                            color:
+                                mainCubit.isDark
+                                    ? Colors.grey[800]
+                                    : Colors.grey[50],
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Wrap(
@@ -320,9 +350,13 @@ class _FriendsScreenState extends State<FriendsScreen> {
                                   Text(
                                     'Egypt',
                                     style: TextStyle(
-                                      fontSize: isTablet ? 14 : screen.width * 0.035,
+                                      fontSize:
+                                          isTablet ? 14 : screen.width * 0.035,
                                       fontWeight: FontWeight.w500,
-                                      color: mainCubit.isDark ? Colors.white : Colors.black87,
+                                      color:
+                                          mainCubit.isDark
+                                              ? Colors.white
+                                              : Colors.black87,
                                     ),
                                   ),
                                 ],
@@ -339,9 +373,13 @@ class _FriendsScreenState extends State<FriendsScreen> {
                                   Text(
                                     '15 Friends',
                                     style: TextStyle(
-                                      fontSize: isTablet ? 14 : screen.width * 0.035,
+                                      fontSize:
+                                          isTablet ? 14 : screen.width * 0.035,
                                       fontWeight: FontWeight.w500,
-                                      color: mainCubit.isDark ? Colors.white : Colors.black87,
+                                      color:
+                                          mainCubit.isDark
+                                              ? Colors.white
+                                              : Colors.black87,
                                     ),
                                   ),
                                 ],
@@ -366,7 +404,10 @@ class _FriendsScreenState extends State<FriendsScreen> {
                               '2 Mutual Friends',
                               style: TextStyle(
                                 fontSize: isTablet ? 14 : screen.width * 0.035,
-                                color: mainCubit.isDark ? Colors.grey[400] : Colors.grey[600],
+                                color:
+                                    mainCubit.isDark
+                                        ? Colors.grey[400]
+                                        : Colors.grey[600],
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -394,14 +435,18 @@ class _FriendsScreenState extends State<FriendsScreen> {
                                       Icon(
                                         Icons.check,
                                         color: Colors.white,
-                                        size: isTablet ? 18 : screen.width * 0.04,
+                                        size:
+                                            isTablet ? 18 : screen.width * 0.04,
                                       ),
                                       SizedBox(width: screen.width * 0.02),
                                       Text(
                                         'Send Request',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: isTablet ? 14 : screen.width * 0.035,
+                                          fontSize:
+                                              isTablet
+                                                  ? 14
+                                                  : screen.width * 0.035,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
@@ -432,7 +477,10 @@ class _FriendsScreenState extends State<FriendsScreen> {
                                     Text(
                                       'View Profile',
                                       style: TextStyle(
-                                        fontSize: isTablet ? 14 : screen.width * 0.035,
+                                        fontSize:
+                                            isTablet
+                                                ? 14
+                                                : screen.width * 0.035,
                                         color: Colors.blueAccent,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -449,9 +497,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                 );
               }, childCount: 10),
             ),
-            SliverToBoxAdapter(
-              child: SizedBox(height: screen.height * 0.02),
-            ),
+            SliverToBoxAdapter(child: SizedBox(height: screen.height * 0.02)),
           ],
         ),
       ),

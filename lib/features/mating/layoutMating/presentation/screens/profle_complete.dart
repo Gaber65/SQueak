@@ -43,7 +43,8 @@ class ProfileComplete extends StatelessWidget {
               return Scaffold(
                 appBar: AppBar(
                   centerTitle: true,
-                  title: Text(S.of(context).switchTitle)),
+                  title: Text(S.of(context).switchTitle),
+                ),
                 body: ProfileSwitchNotificationScreen(),
               );
             } else if (cubit.activeProfile!.pet!.isValid) {

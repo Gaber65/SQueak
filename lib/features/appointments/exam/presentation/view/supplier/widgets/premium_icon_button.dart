@@ -6,7 +6,13 @@ class PremiumIconButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isDark;
 
-  const PremiumIconButton({super.key, required this.icon, required this.color, required this.onPressed, required this.isDark});
+  const PremiumIconButton({
+    super.key,
+    required this.icon,
+    required this.color,
+    required this.onPressed,
+    required this.isDark,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +27,11 @@ class PremiumIconButton extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(10),
         onTap: onPressed,
-        child: Icon(icon, size: 20, color: isDark ? color.withOpacity(0.3) : color),
+        child: Icon(
+          icon,
+          size: 20,
+          color: isDark ? color.withOpacity(0.3) : color,
+        ),
       ),
     );
   }

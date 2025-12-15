@@ -137,8 +137,6 @@ class ChatListCubit extends Cubit<ChatListState> {
               ) {
         if (existingChat.lastMessage!.status == MessageStatus.delivered &&
             newChat.lastMessage!.status == MessageStatus.sent) {
-         
-
           final preservedMessage = newChat.lastMessage!.copyWith(
             status: MessageStatus.delivered,
           );

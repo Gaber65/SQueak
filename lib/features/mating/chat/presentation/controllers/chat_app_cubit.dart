@@ -435,7 +435,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     _pollingTimer?.cancel();
     await _generalEventSubscription?.cancel();
     await _conversationEventSubscription?.cancel();
-    await _onlineStatusSubscription?.cancel(); 
+    await _onlineStatusSubscription?.cancel();
     await _typingIndicatorsController.close();
     await _unreadCountsController.close();
     await generalHub.disconnect();

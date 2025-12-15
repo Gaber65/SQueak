@@ -25,20 +25,14 @@ class EmptyChatsWidget extends StatelessWidget {
                 duration: const Duration(milliseconds: 800),
                 curve: Curves.elasticOut,
                 builder: (context, value, child) {
-                  return Transform.scale(
-                    scale: value,
-                    child: child,
-                  );
+                  return Transform.scale(scale: value, child: child);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(32),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
-                      colors: [
-                        primaryColor.withOpacity(0.8),
-                        primaryColor,
-                      ],
+                      colors: [primaryColor.withOpacity(0.8), primaryColor],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -50,15 +44,11 @@ class EmptyChatsWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Icon(
-                    IconlyBold.chat,
-                    size: 80,
-                    color: Colors.white,
-                  ),
+                  child: Icon(IconlyBold.chat, size: 80, color: Colors.white),
                 ),
               ),
               const SizedBox(height: 32),
-              
+
               // Title
               Text(
                 isArabic() ? 'لا توجد محادثات بعد' : 'No Chats Yet',
@@ -69,9 +59,9 @@ class EmptyChatsWidget extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Description
               Text(
                 isArabic()
@@ -88,21 +78,23 @@ class EmptyChatsWidget extends StatelessWidget {
               _buildFeatureItem(
                 icon: IconlyBold.send,
                 title: isArabic() ? 'رسائل فورية' : 'Instant Messaging',
-                description: isArabic()
-                    ? 'أرسل رسائل نصية وصور'
-                    : 'Send text messages and photos',
+                description:
+                    isArabic()
+                        ? 'أرسل رسائل نصية وصور'
+                        : 'Send text messages and photos',
                 isDark: isDark,
                 primaryColor: primaryColor,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               _buildFeatureItem(
                 icon: IconlyBold.notification,
                 title: isArabic() ? 'إشعارات فورية' : 'Real-time Notifications',
-                description: isArabic()
-                    ? 'احصل على تنبيهات للرسائل الجديدة'
-                    : 'Get notified of new messages',
+                description:
+                    isArabic()
+                        ? 'احصل على تنبيهات للرسائل الجديدة'
+                        : 'Get notified of new messages',
                 isDark: isDark,
                 primaryColor: primaryColor,
               ),
@@ -123,14 +115,10 @@ class EmptyChatsWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.grey[900]?.withOpacity(0.5)
-            : Colors.grey[100],
+        color: isDark ? Colors.grey[900]?.withOpacity(0.5) : Colors.grey[100],
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.grey[800]!
-              : Colors.grey[300]!,
+          color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
           width: 1,
         ),
       ),
@@ -142,11 +130,7 @@ class EmptyChatsWidget extends StatelessWidget {
               color: primaryColor.withOpacity(0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              icon,
-              color: primaryColor,
-              size: 24,
-            ),
+            child: Icon(icon, color: primaryColor, size: 24),
           ),
           const SizedBox(width: 16),
           Expanded(

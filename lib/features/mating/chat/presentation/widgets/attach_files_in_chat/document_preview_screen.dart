@@ -281,9 +281,9 @@ class _DocumentPreviewScreenState extends State<DocumentPreviewScreen> {
                 ],
               ),
             ),
-          ),  
+          ),
         ],
       ),
     );
-  } 
+  }
 }

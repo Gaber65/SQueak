@@ -10,7 +10,6 @@ import 'dart:io';
 import '../controller/about_cubit.dart';
 import '../controller/about_state.dart';
 
-
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
 
@@ -18,9 +17,9 @@ class AboutPage extends StatelessWidget {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.of(context).couldNotOpenLink)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(S.of(context).couldNotOpenLink)));
     }
   }
 
@@ -79,19 +78,17 @@ class AboutPage extends StatelessWidget {
                   } else if (state is AboutLoaded) {
                     return Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
-                        color: isDarkMode
-                            ? Colors.grey[800]
-                            : Colors.grey[200],
+                        color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         "${S.of(context).version} ${state.version} (${Platform.isAndroid ? "Android" : "iOS"})",
                         style: textTheme.bodyMedium?.copyWith(
-                          color: isDarkMode
-                              ? Colors.white
-                              : Colors.grey[700],
+                          color: isDarkMode ? Colors.white : Colors.grey[700],
                         ),
                       ),
                     );
@@ -126,7 +123,7 @@ class AboutPage extends StatelessWidget {
                     _buildLinkTile(
                       context,
                       icon: Icons.privacy_tip,
-                      title: S.of(context).privacyPolicy ,
+                      title: S.of(context).privacyPolicy,
                       url: "https://quadinsight.com/privacy",
                     ),
                   ],
@@ -137,9 +134,7 @@ class AboutPage extends StatelessWidget {
               // Footer Text
               Text(
                 S.of(context).copyright,
-                style: textTheme.bodySmall?.copyWith(
-                  color: Colors.grey,
-                ),
+                style: textTheme.bodySmall?.copyWith(color: Colors.grey),
               ),
             ],
           ),
@@ -148,7 +143,8 @@ class AboutPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLinkTile(BuildContext context, {
+  Widget _buildLinkTile(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String url,
@@ -159,9 +155,7 @@ class AboutPage extends StatelessWidget {
       trailing: const Icon(Icons.chevron_right, color: Colors.grey),
       onTap: () => _launchURL(url, context),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     );
   }
 }

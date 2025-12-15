@@ -31,40 +31,46 @@ class VaccinationLoading extends StatelessWidget {
                         children: [
                           Container(
                             decoration: const BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(40))),
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(40),
+                              ),
+                            ),
                             width: 40,
                             height: 14,
                           ),
                           Container(
                             decoration: const BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(40))),
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(40),
+                              ),
+                            ),
                             width: 120,
                             height: 14,
                           ),
                           Container(
                             decoration: const BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(40))),
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(40),
+                              ),
+                            ),
                             width: 40,
                             height: 14,
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
                       Row(
                         children: [
                           Container(
                             decoration: const BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(40))),
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(40),
+                              ),
+                            ),
                             width: 40,
                             height: 14,
                           ),
@@ -72,10 +78,7 @@ class VaccinationLoading extends StatelessWidget {
                           CircleAvatar(
                             child: IconButton(
                               onPressed: () {},
-                              icon: const Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                              ),
+                              icon: const Icon(Icons.edit, color: Colors.white),
                             ),
                           ),
                         ],

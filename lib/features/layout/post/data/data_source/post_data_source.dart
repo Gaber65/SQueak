@@ -59,7 +59,7 @@ class PostRemoteDataSource extends BasePostRemoteDataSource {
       final re = await DioFinalHelper.deleteData(
         method: '$createPostEndPointText$id',
       );
-      return re.data['success'] ;
+      return re.data['success'];
     } on DioException catch (e) {
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),

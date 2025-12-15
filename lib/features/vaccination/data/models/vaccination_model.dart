@@ -38,10 +38,7 @@ class VaccinationModel extends VaccinationEntity {
 }
 
 class VaccinationNameModel extends VaccinationNameEntity {
-  const VaccinationNameModel({
-    required super.vacName,
-    required super.vacID,
-  });
+  const VaccinationNameModel({required super.vacName, required super.vacID});
 
   factory VaccinationNameModel.fromJson(Map<String, dynamic> json) {
     return VaccinationNameModel(
@@ -51,9 +48,6 @@ class VaccinationNameModel extends VaccinationNameEntity {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'vacName': vacName,
-      'id': vacID,
-    };
+    return {'vacName': vacName, 'id': vacID};
   }
 }

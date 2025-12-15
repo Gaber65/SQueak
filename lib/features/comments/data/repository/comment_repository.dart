@@ -12,7 +12,6 @@ class CommentRepository extends BaseCommentRepository {
 
   CommentRepository(this.baseCommentRemoteDataSource);
 
-
   @override
   Future<Either<Failure, CommentEntity>> createComment(
     CreateCommentParameters parameters,

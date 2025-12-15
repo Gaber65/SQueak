@@ -14,9 +14,11 @@ class PaginatedReactionsModel extends PaginatedReactionsEntity {
 
   factory PaginatedReactionsModel.fromJson(Map<String, dynamic> json) {
     return PaginatedReactionsModel(
-      reactions: (json['result'] as List?)
-          ?.map((e) => StoryReactionModel.fromJson(e))
-          .toList() ?? [],
+      reactions:
+          (json['result'] as List?)
+              ?.map((e) => StoryReactionModel.fromJson(e))
+              .toList() ??
+          [],
       pageNumber: json['pageNumber'] ?? 1,
       pageSize: json['pageSize'] ?? 10,
       totalPages: json['totalPages'] ?? 0,

@@ -167,14 +167,11 @@ class PostCubit extends Cubit<PostState> {
 
     final result = await getAllReactOnPostUseCase.call(postId);
     result.fold(
-          (failure) =>
+      (failure) =>
           emit(GetReactionsFailure(extractFirstErrorAuth(failure.error))),
-          (reactList) => emit(GetReactionsSuccess(reactions: reactList)),
+      (reactList) => emit(GetReactionsSuccess(reactions: reactList)),
     );
   }
-
-
-
 
   Future<void> reactOnPost(ReactParams reactParams, int? reactionIndex) async {
     reactParams.reactType = getReactionType(reactionIndex);
@@ -183,12 +180,11 @@ class PostCubit extends Cubit<PostState> {
 
     final result = await reactOnPostUseCase.call(reactParams);
     result.fold(
-          (failure) =>
+      (failure) =>
           emit(CreateReactionFailure(extractFirstErrorAuth(failure.error))),
-          (actionResult) {
+      (actionResult) {
         emit(CreateReactionSuccess(actionResult: actionResult));
       },
     );
   }
-
 }

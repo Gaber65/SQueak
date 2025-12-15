@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 class PawPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
-      ..style = PaintingStyle.fill;
+    final paint =
+        Paint()
+          ..color = Colors.white.withOpacity(0.1)
+          ..style = PaintingStyle.fill;
 
     // Draw scattered paw prints
     for (int i = 0; i < 15; i++) {

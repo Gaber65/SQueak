@@ -53,10 +53,7 @@ class _UploadPostState extends State<UploadPost>
       ],
       child: BlocListener<PostCubit, PostState>(
         listener: controller.handlePostStateChanges,
-        child: UploadPostUI(
-          controller: controller,
-          widget: widget,
-        ),
+        child: UploadPostUI(controller: controller, widget: widget),
       ),
     );
   }

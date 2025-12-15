@@ -16,7 +16,14 @@ String formatTimeToAmPm(String time) {
     final secondsPart = parts[2].split('.')[0];
     final seconds = int.parse(secondsPart);
 
-    final utcDate = DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day, hours, minutes, seconds);
+    final utcDate = DateTime.utc(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+      hours,
+      minutes,
+      seconds,
+    );
     final localDate = utcDate.toLocal();
 
     int hour = localDate.hour % 12;
@@ -31,7 +38,6 @@ String formatTimeToAmPm(String time) {
     return '';
   }
 }
-
 
 String formatDateString(String dateString) {
   try {
@@ -213,9 +219,10 @@ String formatAge(dynamic birthDate, {bool isUser = false}) {
   // print('---------------');
   try {
     // تأكد إنه DateTime
-    final date = (birthDate is DateTime)
-        ? birthDate
-        : DateTime.tryParse(birthDate.toString());
+    final date =
+        (birthDate is DateTime)
+            ? birthDate
+            : DateTime.tryParse(birthDate.toString());
 
     if (date == null) {
       return isArabic() ? "تاريخ غير صالح" : "Invalid data";
@@ -241,7 +248,12 @@ String formatAge(dynamic birthDate, {bool isUser = false}) {
     final arabic = isArabic();
     final parts = <String>[];
 
-    String pluralizeArabic(int value, String singular, String dual, String plural) {
+    String pluralizeArabic(
+      int value,
+      String singular,
+      String dual,
+      String plural,
+    ) {
       if (value == 1) return "$value $singular";
       if (value == 2) return dual;
       return "$value $plural";

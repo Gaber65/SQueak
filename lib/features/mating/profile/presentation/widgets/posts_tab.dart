@@ -11,11 +11,7 @@ class PostsTab extends StatefulWidget {
   final PetEntities pet;
   final bool isDarkMode;
 
-  const PostsTab({
-    super.key,
-    required this.pet,
-    required this.isDarkMode,
-  });
+  const PostsTab({super.key, required this.pet, required this.isDarkMode});
 
   @override
   State<PostsTab> createState() => _PostsTabState();
@@ -46,17 +42,20 @@ class _PostsTabState extends State<PostsTab> {
           onViewChanged: _toggleView,
         ),
         Expanded(
-          child: _isGridView 
-            ? _PostsGridView(
-                pet: widget.pet,
-                posts: _posts,
-                onPostTap: (index) => setState(() => _selectedPostIndex = index),
-              )
-            : _PostsListView(
-                pet: widget.pet,
-                posts: _posts,
-                onPostTap: (index) => setState(() => _selectedPostIndex = index),
-              ),
+          child:
+              _isGridView
+                  ? _PostsGridView(
+                    pet: widget.pet,
+                    posts: _posts,
+                    onPostTap:
+                        (index) => setState(() => _selectedPostIndex = index),
+                  )
+                  : _PostsListView(
+                    pet: widget.pet,
+                    posts: _posts,
+                    onPostTap:
+                        (index) => setState(() => _selectedPostIndex = index),
+                  ),
         ),
       ],
     );
@@ -67,7 +66,7 @@ class _PostsTabState extends State<PostsTab> {
   }
 }
 
-//  Single Post View 
+//  Single Post View
 class _SinglePostView extends StatelessWidget {
   final PetEntities pet;
   final dynamic post;
@@ -111,10 +110,7 @@ class _SinglePostView extends StatelessWidget {
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
-            child: BuildPostItem(
-              postItem: post,
-              petId: pet.petId,
-            ),
+            child: BuildPostItem(postItem: post, petId: pet.petId),
           ),
         ),
       ],
@@ -122,7 +118,7 @@ class _SinglePostView extends StatelessWidget {
   }
 }
 
-//Header Widget 
+//Header Widget
 class _PostsHeader extends StatelessWidget {
   final int postsCount;
   final bool isGridView;
@@ -150,9 +146,9 @@ class _PostsHeader extends StatelessWidget {
         children: [
           Text(
             '$postsCount ${postsCount == 1 ? 'post' : 'posts'}',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
           ),
           const Spacer(),
           _ViewToggleButton(
@@ -165,7 +161,7 @@ class _PostsHeader extends StatelessWidget {
   }
 }
 
-// View Toggle Button 
+// View Toggle Button
 class _ViewToggleButton extends StatelessWidget {
   final bool isGridView;
   final ValueChanged<bool> onViewChanged;
@@ -178,14 +174,12 @@ class _ViewToggleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: theme.dividerColor.withOpacity(0.2),
-        ),
+        border: Border.all(color: theme.dividerColor.withOpacity(0.2)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -236,11 +230,9 @@ class _ToggleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Material(
-      color: isSelected 
-        ? Colors.blue.withOpacity(0.1)
-        : Colors.transparent,
+      color: isSelected ? Colors.blue.withOpacity(0.1) : Colors.transparent,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         onTap: onPressed,
@@ -250,9 +242,7 @@ class _ToggleIconButton extends StatelessWidget {
           child: Icon(
             icon,
             size: 20,
-            color: isSelected 
-              ? Colors.blue 
-              : theme.textTheme.bodySmall?.color,
+            color: isSelected ? Colors.blue : theme.textTheme.bodySmall?.color,
           ),
         ),
       ),
@@ -260,7 +250,7 @@ class _ToggleIconButton extends StatelessWidget {
   }
 }
 
-// List View 
+// List View
 class _PostsListView extends StatelessWidget {
   final PetEntities pet;
   final List posts;
@@ -280,17 +270,14 @@ class _PostsListView extends StatelessWidget {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () => onPostTap(index),
-          child: BuildPostItem(
-            postItem: posts[index],
-            petId: pet.petId,
-          ),
+          child: BuildPostItem(postItem: posts[index], petId: pet.petId),
         );
       },
     );
   }
 }
 
-//  Grid View 
+//  Grid View
 class _PostsGridView extends StatelessWidget {
   final PetEntities pet;
   final List posts;
@@ -328,7 +315,7 @@ class _PostsGridView extends StatelessWidget {
   }
 }
 
-//  Grid Item 
+//  Grid Item
 // Grid Item
 class _PostGridItem extends StatelessWidget {
   final PetEntities pet;
@@ -358,21 +345,20 @@ class _PostGridItem extends StatelessWidget {
   }
 
   Widget _buildPostContent(BuildContext context) {
-    final images = post.postSocialMedia
-        ?.where((e) => e.imagePath != null && e.imagePath!.isNotEmpty)
-        .toList() ??
+    final images =
+        post.postSocialMedia
+            ?.where((e) => e.imagePath != null && e.imagePath!.isNotEmpty)
+            .toList() ??
         [];
 
-    final videos = post.postSocialMedia
-        ?.where((e) => e.videoPath != null && e.videoPath!.isNotEmpty)
-        .toList() ??
+    final videos =
+        post.postSocialMedia
+            ?.where((e) => e.videoPath != null && e.videoPath!.isNotEmpty)
+            .toList() ??
         [];
 
     if (images.isEmpty && videos.isEmpty) {
-      return _PostPlaceholder(
-        index: index,
-        title: post.title,
-      );
+      return _PostPlaceholder(index: index, title: post.title);
     }
 
     // لو في صورة واحدة فقط
@@ -429,15 +415,12 @@ class _PostImage extends StatelessWidget {
   }
 }
 
-//  Post Placeholder 
+//  Post Placeholder
 class _PostPlaceholder extends StatelessWidget {
   final int index;
   final String? title;
 
-  const _PostPlaceholder({
-    required this.index,
-    this.title,
-  });
+  const _PostPlaceholder({required this.index, this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -452,8 +435,7 @@ class _PostPlaceholder extends StatelessWidget {
       child: Stack(
         children: [
           _buildCenterIcon(),
-          if (title != null && title!.isNotEmpty) 
-            _buildTitleOverlay(),
+          if (title != null && title!.isNotEmpty) _buildTitleOverlay(),
         ],
       ),
     );
@@ -468,11 +450,7 @@ class _PostPlaceholder extends StatelessWidget {
 
   Widget _buildCenterIcon() {
     return Center(
-      child: Icon(
-        Icons.pets,
-        size: 40,
-        color: Colors.white.withOpacity(0.95),
-      ),
+      child: Icon(Icons.pets, size: 40, color: Colors.white.withOpacity(0.95)),
     );
   }
 

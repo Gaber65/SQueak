@@ -6,14 +6,12 @@ import '../../domain/entities/boarding_type_entity.dart';
 class BoardingRepositoryImpl implements BoardingRepository {
   final BoardingRemoteDataSource remoteDataSource;
 
-  BoardingRepositoryImpl({
-    required this.remoteDataSource,
-  });
+  BoardingRepositoryImpl({required this.remoteDataSource});
 
   @override
   Future<Either<Failure, List<BoardingTypeEntity>>> getBoardingTypes(
-      String clinicCode,
-      ) async {
+    String clinicCode,
+  ) async {
     try {
       final result = await remoteDataSource.getBoardingTypes(clinicCode);
       return Right(result.map((model) => model.toEntity()).toList());
@@ -24,8 +22,8 @@ class BoardingRepositoryImpl implements BoardingRepository {
 
   @override
   Future<Either<Failure, void>> createBoarding(
-      CreateBoardingParams params,
-      ) async {
+    CreateBoardingParams params,
+  ) async {
     try {
       await remoteDataSource.createBoarding(params);
       return const Right(null);
@@ -46,9 +44,9 @@ class BoardingRepositoryImpl implements BoardingRepository {
 
   @override
   Future<Either<Failure, List<BoardingEntryEntity>>> getBoardingEntries(
-      String phone,
-      bool applyFilter,
-      ) async {
+    String phone,
+    bool applyFilter,
+  ) async {
     try {
       final remoteEntries = await remoteDataSource.getBoardingEntries(
         phone,
@@ -73,8 +71,8 @@ class BoardingRepositoryImpl implements BoardingRepository {
 
   @override
   Future<Either<Failure, void>> shareImage(
-      ShareImageBoardingEntriesParams params,
-      ) async {
+    ShareImageBoardingEntriesParams params,
+  ) async {
     try {
       await remoteDataSource.shareImage(params);
       return const Right(null);

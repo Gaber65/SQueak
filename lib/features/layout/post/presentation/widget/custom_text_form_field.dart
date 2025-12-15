@@ -2,8 +2,6 @@
 
 import 'package:flutter/material.dart';
 
-
-
 class MyTextForm extends StatefulWidget {
   MyTextForm({
     super.key,
@@ -47,20 +45,21 @@ class _MyTextFormState extends State<MyTextForm> {
         decoration: InputDecoration(
           hintText: widget.hintText,
           prefixIcon: widget.prefixIcon,
-          suffixIcon: widget.enable!
-              ? IconButton(
-                  onPressed: () {
-                    widget.obscureText = !widget.obscureText!;
-                    setState(() {});
-                  },
-                  icon: Icon(
-                    widget.obscureText!
-                        ? Icons.visibility
-                        : Icons.visibility_off,
-                    size: 14,
-                  ),
-                )
-              : null,
+          suffixIcon:
+              widget.enable!
+                  ? IconButton(
+                    onPressed: () {
+                      widget.obscureText = !widget.obscureText!;
+                      setState(() {});
+                    },
+                    icon: Icon(
+                      widget.obscureText!
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      size: 14,
+                    ),
+                  )
+                  : null,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
           disabledBorder: InputBorder.none,
@@ -81,8 +80,6 @@ Widget myBottom(Widget widget) {
       color: Colors.black,
       borderRadius: BorderRadiusDirectional.circular(12),
     ),
-    child: Center(
-      child: widget,
-    ),
+    child: Center(child: widget),
   );
 }

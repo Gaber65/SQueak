@@ -70,7 +70,8 @@ class _EditReminderDialogState extends State<EditReminderDialog> {
       contentPadding: const EdgeInsets.all(16.0),
       insetPadding: const EdgeInsets.all(16.0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      backgroundColor: MainCubit.get(context).isDark ? Colors.grey[900] : Colors.white,
+      backgroundColor:
+          MainCubit.get(context).isDark ? Colors.grey[900] : Colors.white,
       content: SizedBox(
         width: double.maxFinite,
         child: Column(
@@ -131,7 +132,6 @@ class _EditReminderDialogState extends State<EditReminderDialog> {
                               "${widget.cubit.pickedFromEdit!.hour}:${widget.cubit.pickedFromEdit!.minute}",
                             ),
                           )
-
                           : Text(
                             formatTimeToAmPmReminder(
                               widget.reminder.time.toString(),
@@ -180,7 +180,6 @@ class _EditReminderDialogState extends State<EditReminderDialog> {
               reminderFreq: widget.cubit.currentFreqInEdit,
               date:
                   widget.cubit.newValueForDateInEdit == null ||
-                          
                           widget.cubit.newValueForDateInEdit == ""
                       ? dateController.text
                       : widget.cubit.newValueForDateInEdit.toString().substring(
@@ -195,8 +194,7 @@ class _EditReminderDialogState extends State<EditReminderDialog> {
                       : isArabic()
                       ? "${widget.cubit.pickedFromEdit!.minute} : ${widget.cubit.pickedFromEdit!.hour}"
                       : "${widget.cubit.pickedFromEdit!.hour} : ${widget.cubit.pickedFromEdit!.minute}",
-              notes:
-              notesController.text,
+              notes: notesController.text,
               notificationID: widget.reminder.notificationID,
               subTypeFeed:
                   widget.reminder.subTypeFeed?.isEmpty ?? true

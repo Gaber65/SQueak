@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class SectionHeader extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -17,7 +16,7 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark =  Theme.of(context).brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final titleColor = isDark ? Colors.white70 : Colors.black87;
     final backgroundCountColor = color;

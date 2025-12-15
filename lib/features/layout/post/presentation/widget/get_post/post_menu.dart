@@ -42,10 +42,7 @@ class PostMenuSheet extends StatelessWidget {
   }
 
   void _navigateToEditPost(BuildContext context) {
-    navigateToScreen(
-      context,
-      EditPostScreen(postEntity: postItem),
-    );
+    navigateToScreen(context, EditPostScreen(postEntity: postItem));
   }
 
   void _showDeleteDialog(BuildContext context, PostCubit postCubit) {
@@ -60,10 +57,7 @@ class PostMenuSheet extends StatelessWidget {
             parent: animation,
             curve: Curves.easeInOutBack,
           ),
-          child: FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+          child: FadeTransition(opacity: animation, child: child),
         );
       },
       pageBuilder: (ctx, animation, secondaryAnimation) {

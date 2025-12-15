@@ -4,11 +4,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import '../../../controller/pet_cubit.dart';
 
 class PetNameField extends StatefulWidget {
-  const PetNameField({
-    super.key,
-    required this.cubit,
-    required this.isDark,
-  });
+  const PetNameField({super.key, required this.cubit, required this.isDark});
 
   final PetCubit cubit;
   final bool isDark;
@@ -25,9 +21,9 @@ class _PetNameFieldState extends State<PetNameField> {
       isArabic() ? "من فضلك ادخل الاسم الاليف" : "Please enter a pet name";
 
   OutlineInputBorder _border(Color color) => OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: color, width: 1.5),
-      );
+    borderRadius: BorderRadius.circular(12),
+    borderSide: BorderSide(color: color, width: 1.5),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +48,10 @@ class _PetNameFieldState extends State<PetNameField> {
           controller: controller,
           decoration: InputDecoration(
             hintText: isArabic() ? 'ادخل الاسم الاليف' : 'Enter pet name',
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 14,
+              horizontal: 12,
+            ),
             enabledBorder: _border(
               _isFilled
                   ? Colors.blue

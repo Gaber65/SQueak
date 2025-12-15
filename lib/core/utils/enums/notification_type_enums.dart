@@ -85,7 +85,6 @@ extension NotificationTypeExtension on NotificationType {
   }
 }
 
-
 NotificationType getNotificationType(String typeName) {
   for (var type in NotificationType.values) {
     if (type.typeName == typeName) {

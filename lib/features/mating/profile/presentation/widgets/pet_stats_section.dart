@@ -42,17 +42,18 @@ class PetStatsSection extends StatelessWidget {
           StatItem(
             icon: Icons.calendar_today_rounded,
             label: S.of(context).age,
-            value: (() {
-              final raw = pet.birthdate;
-              if (raw == null || raw.trim().isEmpty) return 'Unknown';
-              final part = raw.length >= 10 ? raw.substring(0, 10) : raw;
-              try {
-                final dt = DateTime.parse(part);
-                return formatAge(dt);
-              } catch (_) {
-                return S.of(context).unknown;
-              }
-            })(),
+            value:
+                (() {
+                  final raw = pet.birthdate;
+                  if (raw == null || raw.trim().isEmpty) return 'Unknown';
+                  final part = raw.length >= 10 ? raw.substring(0, 10) : raw;
+                  try {
+                    final dt = DateTime.parse(part);
+                    return formatAge(dt);
+                  } catch (_) {
+                    return S.of(context).unknown;
+                  }
+                })(),
             color: Colors.blue,
             isDarkMode: isDarkMode,
             flex: 6,

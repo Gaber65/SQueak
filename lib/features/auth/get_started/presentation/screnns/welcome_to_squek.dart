@@ -137,8 +137,7 @@ class WelcomeToSquek extends StatelessWidget {
                         navigateAndFinish(context, QuickTourScreen());
                       },
                       child: Text(
-                        isArabic()? 'هيا بنا نبدأ': 
-                        "Let's Get Started!",
+                        isArabic() ? 'هيا بنا نبدأ' : "Let's Get Started!",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: width * 0.045,
@@ -151,8 +150,7 @@ class WelcomeToSquek extends StatelessWidget {
                   Column(
                     children: [
                       Text(
-                        isArabic() ?"الخطوة 1 من 4" :
-                        "Step 1 of 4",
+                        isArabic() ? "الخطوة 1 من 4" : "Step 1 of 4",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: width * 0.035,

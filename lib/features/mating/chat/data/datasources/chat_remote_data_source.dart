@@ -37,7 +37,10 @@ class ChatRemoteDataSource implements BaseChatRemoteDataSource {
   }
 
   @override
-  Future<List<MessageModel>> getMessages(String chatId, {int pageNumber = 1}) async {
+  Future<List<MessageModel>> getMessages(
+    String chatId, {
+    int pageNumber = 1,
+  }) async {
     try {
       final response = await DioFinalHelper.getData(
         method: getMessagePagination(chatId, pageNumber),
@@ -126,29 +129,15 @@ class ChatRemoteDataSource implements BaseChatRemoteDataSource {
       );
     }
   }
-  
+
   @override
-  Future<bool> clearChat(ClearChatParameters param)async {
+  Future<bool> clearChat(ClearChatParameters param) async {
     try {
-      final url = clearChatEndPoint(param.conversationId, deleteForMeOnly: param.onlyFromMe);
-      final response = await DioFinalHelper.deleteData(
-        method: url,
+      final url = clearChatEndPoint(
+        param.conversationId,
+        deleteForMeOnly: param.onlyFromMe,
       );
-      return response.data['success'];
-    } on DioException catch (e) {
-      throw ServerException(
-        errorMessageModel: ErrorMessageModel.fromJson(e.response?.data),
-      );
-    }
-  }
-  
-  @override
-  Future<bool> deleteMessage(DeleteMessageParameters param)async {
-    try {
-      final url = endpoints.deleteMessage(param.conversationId, param.messageId, param.onlyFromMe);
-      final response = await DioFinalHelper.deleteData(
-        method: url,
-      );
+      final response = await DioFinalHelper.deleteData(method: url);
       return response.data['success'];
     } on DioException catch (e) {
       throw ServerException(
@@ -157,5 +146,20 @@ class ChatRemoteDataSource implements BaseChatRemoteDataSource {
     }
   }
 
-
+  @override
+  Future<bool> deleteMessage(DeleteMessageParameters param) async {
+    try {
+      final url = endpoints.deleteMessage(
+        param.conversationId,
+        param.messageId,
+        param.onlyFromMe,
+      );
+      final response = await DioFinalHelper.deleteData(method: url);
+      return response.data['success'];
+    } on DioException catch (e) {
+      throw ServerException(
+        errorMessageModel: ErrorMessageModel.fromJson(e.response?.data),
+      );
+    }
+  }
 }

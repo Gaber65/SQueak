@@ -1,20 +1,9 @@
-
-
-
-enum PetFriendStatus {
-  none,
-  friend,
-  suggested,
-  pendingReceived,
-  pendingSent,
-}
-
+enum PetFriendStatus { none, friend, suggested, pendingReceived, pendingSent }
 
 enum FriendshipStatus {
   none,
   accepted,
   rejected;
-
 
   static String toApiValue(FriendshipStatus status) {
     switch (status) {

@@ -1,4 +1,3 @@
-
 class PostEntity {
   final String? postId;
   final String? title;

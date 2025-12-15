@@ -1,5 +1,5 @@
 // core
-export  'package:squeak/core/base_usecase/base_usecase.dart';
+export 'package:squeak/core/base_usecase/base_usecase.dart';
 export 'package:squeak/core/error/exception.dart';
 export 'package:squeak/core/service/main_service/presentation/screens/navigator_key.dart';
 export 'package:squeak/core/error/failure.dart';
@@ -55,10 +55,10 @@ export 'package:squeak/core/service/main_service/presentation/widgets/route_gene
 export 'package:squeak/core/service/observer/observer.dart';
 
 // refresh_token_manger
-export  'package:squeak/core/service/refresh_token_manger/token_manager.dart';
+export 'package:squeak/core/service/refresh_token_manger/token_manager.dart';
 
 // service_locator
-export  'package:squeak/core/service/service_locator/service_locator.dart';
+export 'package:squeak/core/service/service_locator/service_locator.dart';
 
 // utils
 export 'package:squeak/core/utils/enums/env_enums.dart';
@@ -81,9 +81,7 @@ export 'package:squeak/core/utils/theme/light/light_theme_manager.dart';
 // navigation_helper
 export 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
 
-
 //lang
 export 'package:squeak/generated/l10n.dart';
 export 'package:squeak/features/layout/layout/presentation/cubit/layout_cubit.dart';
 export 'package:squeak/features/layout/layout/presentation/screens/layout_screen.dart';
-

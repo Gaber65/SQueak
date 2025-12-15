@@ -25,10 +25,7 @@ class StoryEntity {
     required this.petImage,
   });
 
-  StoryEntity copyWith({
-    bool? isViewed,
-    int? myReactType,
-  }) {
+  StoryEntity copyWith({bool? isViewed, int? myReactType}) {
     return StoryEntity(
       id: id,
       petId: petId,
@@ -45,7 +42,6 @@ class StoryEntity {
   }
 }
 
-
 class FrindStoryEntity {
   final String petId;
   final String petName;
@@ -59,9 +55,7 @@ class FrindStoryEntity {
     required this.userStories,
   });
 
-  FrindStoryEntity copyWith({
-    List<StoryEntity>? userStories,
-  }) {
+  FrindStoryEntity copyWith({List<StoryEntity>? userStories}) {
     return FrindStoryEntity(
       petId: petId,
       petName: petName,

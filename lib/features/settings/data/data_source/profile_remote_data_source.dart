@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 
-
 import '../../../../core/utils/export_path/export_files.dart';
 import '../models/owner_model.dart';
 

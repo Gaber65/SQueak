@@ -16,37 +16,47 @@ class OfflineAppointmentRepository {
   OfflineAppointmentRepository({
     required AppointmentRemoteDataSource remoteDataSource,
     OfflineManager? offlineManager,
-  })  : _remoteDataSource = remoteDataSource,
-        _offlineManager = offlineManager ?? OfflineManager();
+  }) : _remoteDataSource = remoteDataSource,
+       _offlineManager = offlineManager ?? OfflineManager();
 
   /// Get availabilities with offline support
   Future<List<AvailabilityModel>> getAvailabilities(String clinicCode) async {
     return await _offlineManager.getData<List<AvailabilityModel>>(
-      key: 'availabilities_$clinicCode',
-      onlineDataFetcher: () async {
-        final availabilities = await _remoteDataSource.getAvailabilities(clinicCode);
-        if (kDebugMode) {
-          debugPrint('Fetched ${availabilities.length} availabilities for clinic $clinicCode');
-        }
-        return availabilities;
-      },
-      cacheTTL: const Duration(hours: 1), // Availabilities change frequently
-    ) ?? [];
+          key: 'availabilities_$clinicCode',
+          onlineDataFetcher: () async {
+            final availabilities = await _remoteDataSource.getAvailabilities(
+              clinicCode,
+            );
+            if (kDebugMode) {
+              debugPrint(
+                'Fetched ${availabilities.length} availabilities for clinic $clinicCode',
+              );
+            }
+            return availabilities;
+          },
+          cacheTTL: const Duration(
+            hours: 1,
+          ), // Availabilities change frequently
+        ) ??
+        [];
   }
 
   /// Get doctors with offline support
   Future<List<DoctorModel>> getDoctors(String clinicCode) async {
     return await _offlineManager.getData<List<DoctorModel>>(
-      key: 'doctors_$clinicCode',
-      onlineDataFetcher: () async {
-        final doctors = await _remoteDataSource.getDoctors(clinicCode);
-        if (kDebugMode) {
-          debugPrint('Fetched ${doctors.length} doctors for clinic $clinicCode');
-        }
-        return doctors;
-      },
-      cacheTTL: const Duration(hours: 24), // Doctors change less frequently
-    ) ?? [];
+          key: 'doctors_$clinicCode',
+          onlineDataFetcher: () async {
+            final doctors = await _remoteDataSource.getDoctors(clinicCode);
+            if (kDebugMode) {
+              debugPrint(
+                'Fetched ${doctors.length} doctors for clinic $clinicCode',
+              );
+            }
+            return doctors;
+          },
+          cacheTTL: const Duration(hours: 24), // Doctors change less frequently
+        ) ??
+        [];
   }
 
   /// Get user appointments with offline support
@@ -55,16 +65,24 @@ class OfflineAppointmentRepository {
     bool applyFilter,
   ) async {
     return await _offlineManager.getData<List<AppointmentModel>>(
-      key: 'user_appointments_${phone}_$applyFilter',
-      onlineDataFetcher: () async {
-        final appointments = await _remoteDataSource.getUserAppointments(phone, applyFilter);
-        if (kDebugMode) {
-          debugPrint('Fetched ${appointments.length} appointments for user $phone');
-        }
-        return appointments;
-      },
-      cacheTTL: const Duration(minutes: 30), // Appointments change frequently
-    ) ?? [];
+          key: 'user_appointments_${phone}_$applyFilter',
+          onlineDataFetcher: () async {
+            final appointments = await _remoteDataSource.getUserAppointments(
+              phone,
+              applyFilter,
+            );
+            if (kDebugMode) {
+              debugPrint(
+                'Fetched ${appointments.length} appointments for user $phone',
+              );
+            }
+            return appointments;
+          },
+          cacheTTL: const Duration(
+            minutes: 30,
+          ), // Appointments change frequently
+        ) ??
+        [];
   }
 
   /// Create appointment with offline queuing
@@ -174,16 +192,22 @@ class OfflineAppointmentRepository {
     String phone,
   ) async {
     return await _offlineManager.getData<List<PetClinicModel>>(
-      key: 'client_clinic_${clinicCode}_$phone',
-      onlineDataFetcher: () async {
-        final clinics = await _remoteDataSource.getClientInClinic(clinicCode, phone);
-        if (kDebugMode) {
-          debugPrint('Fetched ${clinics.length} client clinics');
-        }
-        return clinics;
-      },
-      cacheTTL: const Duration(hours: 6), // Client clinic data changes moderately
-    ) ?? [];
+          key: 'client_clinic_${clinicCode}_$phone',
+          onlineDataFetcher: () async {
+            final clinics = await _remoteDataSource.getClientInClinic(
+              clinicCode,
+              phone,
+            );
+            if (kDebugMode) {
+              debugPrint('Fetched ${clinics.length} client clinics');
+            }
+            return clinics;
+          },
+          cacheTTL: const Duration(
+            hours: 6,
+          ), // Client clinic data changes moderately
+        ) ??
+        [];
   }
 
   /// Queue appointment creation for offline sync
@@ -210,7 +234,7 @@ class OfflineAppointmentRepository {
         'isExistedNoPet': params.isExistedNoPet,
       },
     );
-    
+
     await _offlineManager.queueOperation(operation);
   }
 
@@ -219,11 +243,9 @@ class OfflineAppointmentRepository {
     final operation = OfflineOperation(
       id: 'delete_appointment_${DateTime.now().millisecondsSinceEpoch}',
       type: 'delete_appointment',
-      data: {
-        'appointmentId': appointmentId,
-      },
+      data: {'appointmentId': appointmentId},
     );
-    
+
     await _offlineManager.queueOperation(operation);
   }
 
@@ -244,7 +266,7 @@ class OfflineAppointmentRepository {
         'feedbackComment': feedbackComment,
       },
     );
-    
+
     await _offlineManager.queueOperation(operation);
   }
 

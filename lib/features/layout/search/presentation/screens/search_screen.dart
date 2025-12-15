@@ -17,10 +17,7 @@ class SearchScreen extends StatelessWidget {
         listener: (context, state) {
           if (state is FollowError) {
             if (context.mounted) {
-              errorToast(
-                context,
-                extractFirstError(state.error),
-              );
+              errorToast(context, extractFirstError(state.error));
             }
           }
 

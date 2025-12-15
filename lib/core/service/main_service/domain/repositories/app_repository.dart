@@ -16,11 +16,24 @@ abstract class AppRepository {
   Future<void> requestNotificationPermissions();
 
   // File upload methods
-  Future<Either<Failure, ImageEntity>>uploadImage(File file ,UploadPlace uploadPlace);
-  Future<Either<Failure, ImageEntity>> uploadVideo(File file ,UploadPlace uploadPlace);
-  Future<Either<Failure, ImageEntity>> uploadSound(File file,UploadPlace uploadPlace);
-  Future<Either<Failure, ImageEntity>> uploadDocument(File file,UploadPlace uploadPlace);
+  Future<Either<Failure, ImageEntity>> uploadImage(
+    File file,
+    UploadPlace uploadPlace,
+  );
+  Future<Either<Failure, ImageEntity>> uploadVideo(
+    File file,
+    UploadPlace uploadPlace,
+  );
+  Future<Either<Failure, ImageEntity>> uploadSound(
+    File file,
+    UploadPlace uploadPlace,
+  );
+  Future<Either<Failure, ImageEntity>> uploadDocument(
+    File file,
+    UploadPlace uploadPlace,
+  );
 }
+
 class UploadImageParams {
   final File file;
   final UploadPlace uploadPlace;

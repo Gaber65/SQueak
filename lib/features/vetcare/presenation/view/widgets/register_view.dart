@@ -33,15 +33,9 @@ class RegisterView extends StatelessWidget {
             const SizedBox(height: 24),
             RegisterFormFields(cubit: cubit),
             const SizedBox(height: 20),
-            ConsentCheckbox(
-              cubit: cubit,
-              clinicName: clinicName,
-            ),
+            ConsentCheckbox(cubit: cubit, clinicName: clinicName),
             const SizedBox(height: 24),
-            RegisterButton(
-              cubit: cubit,
-              clinicCode: clinicCode,
-            ),
+            RegisterButton(cubit: cubit, clinicCode: clinicCode),
           ],
         ),
       ),

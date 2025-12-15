@@ -13,11 +13,11 @@ abstract class BaseCommentRepository {
   );
 
   Future<Either<Failure, List<CommentEntity>>> getComment(
-      CreateCommentParameters parameters,
+    CreateCommentParameters parameters,
   );
 
   Future<Either<Failure, CommentEntity>> deleteComment(
-      CreateCommentParameters parameters,
+    CreateCommentParameters parameters,
   );
 }
 
@@ -29,7 +29,7 @@ class CreateCommentParameters extends Equatable {
   final String? postId;
   final String? commentId;
   final String? parentId;
-  final List<CommentEntity>? replies; 
+  final List<CommentEntity>? replies;
 
   const CreateCommentParameters({
     this.content,
@@ -43,5 +43,14 @@ class CreateCommentParameters extends Equatable {
   });
 
   @override
-  List<Object?> get props => [content, image, user, petId, postId, commentId, parentId, replies];
+  List<Object?> get props => [
+    content,
+    image,
+    user,
+    petId,
+    postId,
+    commentId,
+    parentId,
+    replies,
+  ];
 }

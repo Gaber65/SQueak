@@ -24,8 +24,8 @@ class GetStoryReactionsUseCase
 
   @override
   Future<Either<Failure, PaginatedReactionsEntity>> call(
-      GetStoryReactionsParams params,
-      ) async {
+    GetStoryReactionsParams params,
+  ) async {
     return await repository.getStoryReactions(
       userStoryId: params.userStoryId,
       pageNumber: params.pageNumber,

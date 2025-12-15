@@ -25,9 +25,10 @@ class ClinicModel extends Clinic {
       image: json['image'] ?? '120240808070538549.png',
       code: json['code'],
       admin: json['admin'] == null ? null : AdminModel.fromJson(json['admin']),
-      specialities: (json['specialities'] as List)
-          .map((e) => SpecialityModel.fromJson(e))
-          .toList(),
+      specialities:
+          (json['specialities'] as List)
+              .map((e) => SpecialityModel.fromJson(e))
+              .toList(),
     );
   }
 
@@ -42,9 +43,10 @@ class ClinicModel extends Clinic {
       'image': image,
       'code': code,
       'admin': admin != null ? (admin as AdminModel).toJson() : null,
-      'specialities': (specialities as List<SpecialityModel>)
-          .map((e) => e.toJson())
-          .toList(),
+      'specialities':
+          (specialities as List<SpecialityModel>)
+              .map((e) => e.toJson())
+              .toList(),
     };
   }
 }
@@ -83,31 +85,19 @@ class AdminModel extends AdminEntity {
 }
 
 class SpecialityModel extends SpecialityEntity {
-  const SpecialityModel({
-    required super.id,
-    required super.name,
-  });
+  const SpecialityModel({required super.id, required super.name});
 
   factory SpecialityModel.fromJson(Map<String, dynamic> json) {
-    return SpecialityModel(
-      id: json['id'],
-      name: json['name'] ?? '',
-    );
+    return SpecialityModel(id: json['id'], name: json['name'] ?? '');
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-    };
+    return {'id': id, 'name': name};
   }
 }
 
 class ClinicInfoModel extends ClinicInfo {
-  const ClinicInfoModel({
-    required super.data,
-    required super.id,
-  });
+  const ClinicInfoModel({required super.data, required super.id});
 
   factory ClinicInfoModel.fromJson(Map<String, dynamic> json) {
     return ClinicInfoModel(
@@ -117,28 +107,26 @@ class ClinicInfoModel extends ClinicInfo {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'clinic': (data as ClinicModel).toJson(),
-      'id': id,
-    };
+    return {'clinic': (data as ClinicModel).toJson(), 'id': id};
   }
 }
 
 class MySupplierModel extends MySupplier {
-  const MySupplierModel({
-    required super.data,
-  });
+  const MySupplierModel({required super.data});
 
   factory MySupplierModel.fromJson(Map<String, dynamic> json) {
     return MySupplierModel(
       data:
-          (json['clinics'] as List).map((e) => ClinicInfoModel.fromJson(e)).toList(),
+          (json['clinics'] as List)
+              .map((e) => ClinicInfoModel.fromJson(e))
+              .toList(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'clinics': (data as List<ClinicInfoModel>).map((e) => e.toJson()).toList(),
+      'clinics':
+          (data as List<ClinicInfoModel>).map((e) => e.toJson()).toList(),
     };
   }
 }

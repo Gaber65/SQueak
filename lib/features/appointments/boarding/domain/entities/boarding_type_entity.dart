@@ -22,5 +22,13 @@ class BoardingTypeEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props => [id, code, name, price, unit, isActive, isSqueakVisible];
+  List<Object?> get props => [
+    id,
+    code,
+    name,
+    price,
+    unit,
+    isActive,
+    isSqueakVisible,
+  ];
 }

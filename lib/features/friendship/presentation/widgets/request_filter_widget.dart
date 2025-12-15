@@ -34,7 +34,10 @@ class RequestFilterWidget extends StatelessWidget {
               label: isArabic() ? 'الطلبات المعلقة' : 'Received',
               count: receivedCount,
               isSelected: selectedFilter == 'received',
-              onTap: () => context.read<PetFriendsCubit>().changeRequestFilter('received'),
+              onTap:
+                  () => context.read<PetFriendsCubit>().changeRequestFilter(
+                    'received',
+                  ),
               selectedColor: selectedColor,
               isDark: isDark,
             ),
@@ -45,7 +48,10 @@ class RequestFilterWidget extends StatelessWidget {
               label: isArabic() ? 'الطلبات المرسلة' : 'Sent',
               count: sentCount,
               isSelected: selectedFilter == 'sent',
-              onTap: () => context.read<PetFriendsCubit>().changeRequestFilter('sent'),
+              onTap:
+                  () => context.read<PetFriendsCubit>().changeRequestFilter(
+                    'sent',
+                  ),
               selectedColor: selectedColor,
               isDark: isDark,
             ),
@@ -82,19 +88,21 @@ class _FilterButton extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
-          color: isSelected
-              ? selectedColor
-              : (isDark ? Colors.grey[850] : Colors.white),
+          color:
+              isSelected
+                  ? selectedColor
+                  : (isDark ? Colors.grey[850] : Colors.white),
           borderRadius: BorderRadius.circular(10),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: selectedColor.withOpacity(0.3),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  )
-                ]
-              : [],
+          boxShadow:
+              isSelected
+                  ? [
+                    BoxShadow(
+                      color: selectedColor.withOpacity(0.3),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                  : [],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -104,9 +112,10 @@ class _FilterButton extends StatelessWidget {
                 label,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: isSelected
-                      ? Colors.white
-                      : (isDark ? Colors.white70 : Colors.grey[700]),
+                  color:
+                      isSelected
+                          ? Colors.white
+                          : (isDark ? Colors.white70 : Colors.grey[700]),
                   fontSize: 14,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                 ),
@@ -117,17 +126,19 @@ class _FilterButton extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? Colors.white.withOpacity(0.25)
-                    : Colors.grey.withOpacity(0.2),
+                color:
+                    isSelected
+                        ? Colors.white.withOpacity(0.25)
+                        : Colors.grey.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 count.toString(),
                 style: TextStyle(
-                  color: isSelected
-                      ? Colors.white
-                      : (isDark ? Colors.white70 : Colors.grey[700]),
+                  color:
+                      isSelected
+                          ? Colors.white
+                          : (isDark ? Colors.white70 : Colors.grey[700]),
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),

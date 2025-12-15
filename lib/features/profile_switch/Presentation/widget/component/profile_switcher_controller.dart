@@ -19,8 +19,10 @@ class ProfileSwitcherController {
       duration: const Duration(milliseconds: 200),
     );
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
-    _scale = Tween<double>(begin: 0.9, end: 1.0)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _scale = Tween<double>(
+      begin: 0.9,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
   }
 
   bool get isOpen => _isOpen;
@@ -34,24 +36,25 @@ class ProfileSwitcherController {
     final overlay = Overlay.of(context);
 
     _overlayEntry = OverlayEntry(
-      builder: (_) => Stack(
-        children: [
-          Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: _removeOverlay,
-              child: Container(color: Colors.transparent),
-            ),
+      builder:
+          (_) => Stack(
+            children: [
+              Positioned.fill(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: _removeOverlay,
+                  child: Container(color: Colors.transparent),
+                ),
+              ),
+              buildProfileSwitcherOverlay(
+                context: context,
+                layerLink: layerLink,
+                fade: _fade,
+                scale: _scale,
+                onClose: _removeOverlay,
+              ),
+            ],
           ),
-          buildProfileSwitcherOverlay(
-            context: context,
-            layerLink: layerLink,
-            fade: _fade,
-            scale: _scale,
-            onClose: _removeOverlay,
-          ),
-        ],
-      ),
     );
 
     overlay.insert(_overlayEntry!);
@@ -87,5 +90,6 @@ class ProfileSwitcherController {
 
   void closeDropdown() => _removeOverlay();
 
-  bool get mounted => context.mounted; // Use extension for safety in Flutter >=3.7
+  bool get mounted =>
+      context.mounted; // Use extension for safety in Flutter >=3.7
 }

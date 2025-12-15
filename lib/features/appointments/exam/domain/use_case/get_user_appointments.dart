@@ -3,15 +3,20 @@ import 'package:equatable/equatable.dart';
 import 'package:squeak/features/appointments/exam/domain/entities/appointment_entity.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 
-
-class GetUserAppointmentsUseCase implements BaseUseCase<List<AppointmentEntity>, GetUserAppointmentsParams> {
+class GetUserAppointmentsUseCase
+    implements BaseUseCase<List<AppointmentEntity>, GetUserAppointmentsParams> {
   final AppointmentRepository repository;
 
   GetUserAppointmentsUseCase(this.repository);
 
   @override
-  Future<Either<Failure, List<AppointmentEntity>>> call(GetUserAppointmentsParams params) async {
-    final result = await repository.getUserAppointments(params.phone, params.applyFilter);
+  Future<Either<Failure, List<AppointmentEntity>>> call(
+    GetUserAppointmentsParams params,
+  ) async {
+    final result = await repository.getUserAppointments(
+      params.phone,
+      params.applyFilter,
+    );
     return result;
   }
 }

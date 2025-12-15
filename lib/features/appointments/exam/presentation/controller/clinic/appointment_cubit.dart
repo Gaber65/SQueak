@@ -97,7 +97,7 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     });
   }
 
-  Future<void> unfollowClinicById(String clinicId , {ClinicInfo? clinic}) async {
+  Future<void> unfollowClinicById(String clinicId, {ClinicInfo? clinic}) async {
     emit(UnFollowLoading());
     final result = await unfollowClinicUseCase(clinicId);
     result.fold(
@@ -172,16 +172,19 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     if (suppliers != null) {
       if (query.isEmpty) {
         // If query is empty, show all suppliers
-        filteredSuppliers = List.from(suppliers!.data); // Create a new list instance
+        filteredSuppliers = List.from(
+          suppliers!.data,
+        ); // Create a new list instance
       } else {
         // Filter by name OR code (case insensitive)
-        filteredSuppliers = suppliers!.data.where((supplier) {
-          final name = supplier.data.name.toLowerCase();
-          final code = supplier.data.code.toLowerCase();
-          final lowerQuery = query.toLowerCase();
+        filteredSuppliers =
+            suppliers!.data.where((supplier) {
+              final name = supplier.data.name.toLowerCase();
+              final code = supplier.data.code.toLowerCase();
+              final lowerQuery = query.toLowerCase();
 
-          return name.contains(lowerQuery) || code.contains(lowerQuery);
-        }).toList();
+              return name.contains(lowerQuery) || code.contains(lowerQuery);
+            }).toList();
       }
       emit(SuppliersFilteredScreen()); // Only emit once
     }

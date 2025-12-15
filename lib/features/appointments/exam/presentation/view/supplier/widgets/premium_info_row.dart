@@ -5,7 +5,12 @@ class PremiumInfoRow extends StatelessWidget {
   final String text;
   final bool isDark;
 
-  const PremiumInfoRow({super.key, required this.icon, required this.text, required this.isDark});
+  const PremiumInfoRow({
+    super.key,
+    required this.icon,
+    required this.text,
+    required this.isDark,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,13 +23,21 @@ class PremiumInfoRow extends StatelessWidget {
             color: isDark ? Colors.grey[800] : Colors.white,
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, size: 16, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+          child: Icon(
+            icon,
+            size: 16,
+            color: isDark ? Colors.grey[400] : Colors.grey[600],
+          ),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             text,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: isDark ? Colors.grey[300] : Colors.grey[700]),
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.grey[300] : Colors.grey[700],
+            ),
             overflow: TextOverflow.ellipsis,
           ),
         ),

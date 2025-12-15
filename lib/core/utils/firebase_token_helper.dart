@@ -23,7 +23,9 @@ class FirebaseTokenHelper {
         }
       } catch (cacheError) {
         if (kDebugMode) {
-          debugPrint('Cache not available yet, proceeding with fresh token: $cacheError');
+          debugPrint(
+            'Cache not available yet, proceeding with fresh token: $cacheError',
+          );
         }
       }
 
@@ -39,14 +41,16 @@ class FirebaseTokenHelper {
 
       // Get FCM token
       final token = await _messaging.getToken();
-      
+
       if (token != null) {
         // Try to cache the token (ignore errors if cache not ready)
         try {
           await CacheHelper.saveData(_tokenCacheKey, token);
         } catch (cacheError) {
           if (kDebugMode) {
-            debugPrint('WARNING: Could not cache token (cache not ready): $cacheError');
+            debugPrint(
+              'WARNING: Could not cache token (cache not ready): $cacheError',
+            );
           }
         }
         if (kDebugMode) {
@@ -89,9 +93,11 @@ class FirebaseTokenHelper {
       } else {
         // Request permissions if APNS token is not available
         if (kDebugMode) {
-          debugPrint('WARNING: APNS token not available, requesting permissions...');
+          debugPrint(
+            'WARNING: APNS token not available, requesting permissions...',
+          );
         }
-        
+
         await _messaging.requestPermission(
           alert: true,
           badge: true,
@@ -108,7 +114,9 @@ class FirebaseTokenHelper {
           }
         } else {
           if (kDebugMode) {
-            debugPrint('WARNING: APNS token still not available, continuing with FCM token only');
+            debugPrint(
+              'WARNING: APNS token still not available, continuing with FCM token only',
+            );
           }
         }
       }
@@ -122,7 +130,8 @@ class FirebaseTokenHelper {
 
   /// Generate a fallback token when Firebase is not available
   static String _generateFallbackToken() {
-    final fallbackToken = 'fallback_token_${DateTime.now().millisecondsSinceEpoch}';
+    final fallbackToken =
+        'fallback_token_${DateTime.now().millisecondsSinceEpoch}';
     if (kDebugMode) {
       debugPrint('Using fallback token: $fallbackToken');
     }
@@ -137,11 +146,11 @@ class FirebaseTokenHelper {
       if (Platform.isIOS) {
         await CacheHelper.removeData(_apnsTokenCacheKey);
       }
-      
+
       if (kDebugMode) {
         debugPrint('Refreshing Firebase token...');
       }
-      
+
       // Get fresh token
       return await getFirebaseToken();
     } catch (e) {

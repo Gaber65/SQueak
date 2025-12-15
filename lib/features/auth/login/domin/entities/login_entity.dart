@@ -8,7 +8,6 @@ class LoginEntity {
   final int role;
   final DateTime expiresIn;
   final bool? loggedInBefore;
- 
 
   const LoginEntity({
     required this.token,

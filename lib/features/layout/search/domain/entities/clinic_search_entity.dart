@@ -1,19 +1,14 @@
 class SupplierEntitySearch {
   final List<ClinicInfoEntitySearch> clinics;
 
-  SupplierEntitySearch({
-    required this.clinics,
-  });
+  SupplierEntitySearch({required this.clinics});
 }
 
 class ClinicInfoEntitySearch {
   final ClinicEntitySearch clinic;
   final String id;
 
-  ClinicInfoEntitySearch({
-    required this.clinic,
-    required this.id,
-  });
+  ClinicInfoEntitySearch({required this.clinic, required this.id});
 }
 
 class ClinicEntitySearch {
@@ -64,8 +59,5 @@ class SpecialityEntitySearch {
   final String id;
   final String name;
 
-  SpecialityEntitySearch({
-    required this.id,
-    required this.name,
-  });
+  SpecialityEntitySearch({required this.id, required this.name});
 }

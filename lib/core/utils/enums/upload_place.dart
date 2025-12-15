@@ -14,7 +14,6 @@ enum UploadPlace {
   storyVideo(13),
   messageFiles(14);
 
-
   final int value;
 
   const UploadPlace(this.value);

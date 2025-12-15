@@ -29,11 +29,12 @@ class DateTimeFormatter {
   static String formattedChatTime(DateTime dt, {BuildContext? context}) {
     final now = DateTime.now();
     final messageDate = dt;
-    
+
     // Get locale
-    final locale = context != null 
-        ? Localizations.localeOf(context).toString() 
-        : Intl.getCurrentLocale();
+    final locale =
+        context != null
+            ? Localizations.localeOf(context).toString()
+            : Intl.getCurrentLocale();
 
     // Check if it's today
     if (now.year == messageDate.year &&
@@ -66,14 +67,18 @@ class DateTimeFormatter {
   /// Returns a relative time string. If [context] is provided, localized
   /// labels from `S.of(context)` are used (e.g. localized "just now").
   /// [reference] can be provided for deterministic testing.
-  static String formattedRelativeTime(DateTime dt,
-      {BuildContext? context, DateTime? reference}) {
+  static String formattedRelativeTime(
+    DateTime dt, {
+    BuildContext? context,
+    DateTime? reference,
+  }) {
     final now = (reference ?? DateTime.now()).toUtc();
     final then = dt.toUtc();
     final diff = now.difference(then);
 
     final justNowLabel = context != null ? S.of(context).justNow : 'just now';
-    final yesterdayLabel = context != null ? S.of(context).yesterday : 'yesterday';
+    final yesterdayLabel =
+        context != null ? S.of(context).yesterday : 'yesterday';
 
     if (diff.inSeconds < 5) return justNowLabel;
     if (diff.inSeconds < 60) return '${diff.inSeconds}s';
@@ -87,7 +92,11 @@ class DateTimeFormatter {
     // Fallback to a short date (localized if possible)
     // Note: dt is already in local time from entity
     try {
-      return DateFormat.yMd(context != null ? Localizations.localeOf(context).toString() : Intl.getCurrentLocale()).format(dt);
+      return DateFormat.yMd(
+        context != null
+            ? Localizations.localeOf(context).toString()
+            : Intl.getCurrentLocale(),
+      ).format(dt);
     } catch (_) {
       return DateFormat('yyyy-MM-dd').format(dt);
     }

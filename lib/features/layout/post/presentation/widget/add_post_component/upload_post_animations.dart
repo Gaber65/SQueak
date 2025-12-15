@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 class UploadPostAnimations {
   final dynamic controller;
 
-
   UploadPostAnimations(this.controller);
 
   void initializeAnimations() {

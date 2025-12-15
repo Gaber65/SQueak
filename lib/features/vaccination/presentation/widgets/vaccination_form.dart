@@ -147,9 +147,7 @@ class VaccinationForm extends StatelessWidget {
       return;
     }
 
-    cubit.currentDateItem.add(
-      const Duration(days: 1),
-    );
+    cubit.currentDateItem.add(const Duration(days: 1));
     cubit
         .createReminder(
           petId: petModel.petId ?? '',

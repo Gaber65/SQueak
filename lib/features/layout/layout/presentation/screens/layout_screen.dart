@@ -62,11 +62,10 @@ class _LayoutScreenState extends State<LayoutScreen>
         BlocProvider(
           create:
               (context) =>
-          sl<LayoutCubit>()
-            ..getAppVersion()
-            ..getVersion(),
+                  sl<LayoutCubit>()
+                    ..getAppVersion()
+                    ..getVersion(),
         ),
-
       ],
       child: BlocConsumer<LayoutCubit, LayoutState>(
         listener: (context, state) async {
@@ -152,7 +151,9 @@ class _LayoutScreenState extends State<LayoutScreen>
                           icon,
                           size: isActive ? 30 : 26,
                           color:
-                          isActive ? ColorManager.primaryColor : Colors.grey,
+                              isActive
+                                  ? ColorManager.primaryColor
+                                  : Colors.grey,
                         ),
                         const SizedBox(height: 2),
                         Flexible(
@@ -161,9 +162,9 @@ class _LayoutScreenState extends State<LayoutScreen>
                             style: TextStyle(
                               fontSize: 12,
                               color:
-                              isActive
-                                  ? ColorManager.primaryColor
-                                  : Colors.grey,
+                                  isActive
+                                      ? ColorManager.primaryColor
+                                      : Colors.grey,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),

@@ -54,15 +54,17 @@ Widget buildEditCommentInputCard(
             style: TextStyle(
               fontSize: 14,
               height: 1.4, // line height to improve multi-line spacing
-              color: MainCubit.get(context).isDark ? Colors.white : Colors.black87,
+              color:
+                  MainCubit.get(context).isDark ? Colors.white : Colors.black87,
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             decoration: InputDecoration(
-              hintText: comment.parentId == null
-                  ? isArabic()
-                      ? 'تعديل تعليقك'
-                      : "Edit your comment"
-                  : isArabic()
+              hintText:
+                  comment.parentId == null
+                      ? isArabic()
+                          ? 'تعديل تعليقك'
+                          : "Edit your comment"
+                      : isArabic()
                       ? 'تعديل ردك'
                       : "Edit your reply",
               border: InputBorder.none,

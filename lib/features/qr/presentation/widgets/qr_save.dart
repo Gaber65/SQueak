@@ -8,14 +8,15 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 class QrSave extends StatelessWidget {
-   QrSave({super.key, required this.qrData, required this.isDarkMode});
+  QrSave({super.key, required this.qrData, required this.isDarkMode});
   final String qrData;
   final bool isDarkMode;
   final GlobalKey _qrKey = GlobalKey();
 
   Future<Uint8List> _capturePng() async {
     try {
-      RenderRepaintBoundary boundary = _qrKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
+      RenderRepaintBoundary boundary =
+          _qrKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 3.0);
       ByteData? byteData = await image.toByteData(
         format: ui.ImageByteFormat.png,
@@ -48,6 +49,7 @@ class QrSave extends StatelessWidget {
     // Save PDF or share it using the `Printing` package
     await Printing.sharePdf(bytes: await pdf.save(), filename: 'qr.pdf');
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -59,16 +61,8 @@ class QrSave extends StatelessWidget {
           end: Alignment.bottomRight,
           colors:
               isDarkMode
-                  ? [
-                    Colors.grey.shade900,
-                    Colors.grey.shade800,
-                    Colors.black87,
-                  ]
-                  : [
-                    Colors.blue.shade50,
-                    Colors.white,
-                    Colors.purple.shade50,
-                  ],
+                  ? [Colors.grey.shade900, Colors.grey.shade800, Colors.black87]
+                  : [Colors.blue.shade50, Colors.white, Colors.purple.shade50],
         ),
         border:
             isDarkMode
@@ -197,7 +191,10 @@ class QrSave extends StatelessWidget {
                       : "Scan this code for quick access",
                   style: TextStyle(
                     fontSize: 14,
-                    color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                    color:
+                        isDarkMode
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
                     fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,

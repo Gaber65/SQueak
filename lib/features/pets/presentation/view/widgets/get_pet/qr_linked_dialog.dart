@@ -7,11 +7,7 @@ class QrLinkedDialog extends StatelessWidget {
   final PetEntities pet;
   final QrCubit qrCubit;
 
-  const QrLinkedDialog({
-    super.key,
-    required this.pet,
-    required this.qrCubit,
-  });
+  const QrLinkedDialog({super.key, required this.pet, required this.qrCubit});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +32,11 @@ class QrLinkedDialog extends StatelessWidget {
                 color: Colors.green.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.check_circle_rounded, color: Colors.green, size: 60),
+              child: Icon(
+                Icons.check_circle_rounded,
+                color: Colors.green,
+                size: 60,
+              ),
             ),
             const SizedBox(height: 20),
             Text(
@@ -63,11 +63,16 @@ class QrLinkedDialog extends StatelessWidget {
                       backgroundColor: Colors.green,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: Text(
                       S.of(context).ok,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),

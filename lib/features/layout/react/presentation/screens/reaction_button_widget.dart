@@ -6,7 +6,6 @@ import 'package:squeak/features/layout/react/presentation/animated_reaction/flut
 import 'package:squeak/features/layout/react/presentation/screens/reaction_details_sheet.dart';
 import '../animated_reaction/reaction_data.dart';
 
-
 class ReactionButton extends StatefulWidget {
   final String postId;
   final String? petID;
@@ -34,13 +33,16 @@ class _ReactionButtonState extends State<ReactionButton> {
     super.initState();
 
     // Initialize reaction index based on post data
-    bool reacted = (widget.postItm.userArereactedWithThisPost ?? false) ||
+    bool reacted =
+        (widget.postItm.userArereactedWithThisPost ?? false) ||
         (widget.postItm.petArereactedWithThisPost ?? false);
 
-    reactionIndex = reacted
-        ? getReactionTypeInvers(
-        widget.postItm.userReactType ?? widget.postItm.petReactType)
-        : null;
+    reactionIndex =
+        reacted
+            ? getReactionTypeInvers(
+              widget.postItm.userReactType ?? widget.postItm.petReactType,
+            )
+            : null;
 
     totalReact = [
       widget.postItm.reactAngryCount,
@@ -106,7 +108,9 @@ class _ReactionButtonState extends State<ReactionButton> {
                   child: CircleAvatar(
                     radius: 15.0,
                     backgroundColor:
-                    MainCubit.get(context).isDark ? Colors.black : Colors.white,
+                        MainCubit.get(context).isDark
+                            ? Colors.black
+                            : Colors.white,
                     backgroundImage: AssetImage(
                       reactionIndex == null
                           ? ReactionData.unActiveReactionImage
@@ -123,9 +127,8 @@ class _ReactionButtonState extends State<ReactionButton> {
                       context: context,
                       isScrollControlled: true,
                       backgroundColor: Colors.transparent,
-                      builder: (_) => ReactionDetailsSheet(
-                        postId: widget.postId,
-                      ),
+                      builder:
+                          (_) => ReactionDetailsSheet(postId: widget.postId),
                     );
                   },
                   child: Text('$totalReact'),

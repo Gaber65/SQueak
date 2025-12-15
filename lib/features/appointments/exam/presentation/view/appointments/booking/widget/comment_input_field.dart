@@ -48,23 +48,24 @@ class CommentInputField extends StatelessWidget {
                 disabledBorder: InputBorder.none,
                 fillColor: Colors.transparent,
                 contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                suffixIcon: isLoading
-                    ? const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                )
-                    : null,
+                suffixIcon:
+                    isLoading
+                        ? const Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        )
+                        : null,
               ),
               onSubmitted: (_) => onSubmit(),
             ),
           ),
           if (!isLoading)
             IconButton(
-              icon:  Icon(IconlyLight.send, color: Colors.blue),
+              icon: Icon(IconlyLight.send, color: Colors.blue),
               onPressed: onSubmit,
             ),
         ],

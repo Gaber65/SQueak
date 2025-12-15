@@ -18,10 +18,11 @@ class MatingProfileDataSourceImpl implements MatingProfileDataSource {
     try {
       String endpoint;
       final statusValue = params.status.toApiValue;
-      
+
       switch (params.status) {
         case HistoryStatus.separated:
-          endpoint = '${getPetHistoryProfileSeperate(params.historyId)}?status=$statusValue';
+          endpoint =
+              '${getPetHistoryProfileSeperate(params.historyId)}?status=$statusValue';
           break;
         // case HistoryStatus.pregnant:
         //   endpoint = '${getPetHistoryProfilePregnant(params.historyId)}?status=$statusValue';
@@ -39,16 +40,18 @@ class MatingProfileDataSourceImpl implements MatingProfileDataSource {
         // case HistoryStatus.discovered:
         case HistoryStatus.mating:
         case HistoryStatus.inMatingProcess:
-          endpoint = '$updatePetStatusEndPoint${params.petId}?newStatus=$statusValue';
+          endpoint =
+              '$updatePetStatusEndPoint${params.petId}?newStatus=$statusValue';
           break;
       }
 
       // debug: print final endpoint and request body
       final requestData = <String, dynamic>{};
-      
- 
 
-      final result = await DioFinalHelper.putData(method: endpoint, data: requestData);
+      final result = await DioFinalHelper.putData(
+        method: endpoint,
+        data: requestData,
+      );
       return result.data;
     } on DioException catch (e) {
       throw ServerException(

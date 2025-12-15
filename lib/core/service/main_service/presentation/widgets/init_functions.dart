@@ -10,6 +10,7 @@ import 'package:squeak/features/layout/notification/NotificationFCM/notification
 import '../../../../../firebase_options.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+
 @pragma('vm:entry-point')
 class InitFunctions {
   // Exposed current environment so other utilities can read it
@@ -86,10 +87,9 @@ class InitFunctions {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
-      
+
       // Initialize Firebase messaging with proper permissions
       await _initializeFirebaseMessaging();
-      
     } catch (e) {
       if (kDebugMode) {
         debugPrint('ERROR: Firebase initialization error: $e');
@@ -100,7 +100,7 @@ class InitFunctions {
   static Future<void> _initializeFirebaseMessaging() async {
     try {
       final messaging = FirebaseMessaging.instance;
-      
+
       // Request permissions for notifications
       final settings = await messaging.requestPermission(
         alert: true,
@@ -108,17 +108,21 @@ class InitFunctions {
         sound: true,
         provisional: false,
       );
-      
+
       if (kDebugMode) {
-        debugPrint('Notification permission status: ${settings.authorizationStatus}');
+        debugPrint(
+          'Notification permission status: ${settings.authorizationStatus}',
+        );
       }
-      
+
       // Use FirebaseTokenHelper for robust token management
       try {
         final token = await FirebaseTokenHelper.getFirebaseToken();
         if (token != null) {
           if (kDebugMode) {
-            debugPrint('SUCCESS: Firebase token obtained via helper: ${token.substring(0, 10)}...');
+            debugPrint(
+              'SUCCESS: Firebase token obtained via helper: ${token.substring(0, 10)}...',
+            );
           }
         }
       } catch (tokenError) {
@@ -126,7 +130,6 @@ class InitFunctions {
           debugPrint('WARNING: Firebase token helper error: $tokenError');
         }
       }
-      
     } catch (e) {
       if (kDebugMode) {
         debugPrint('ERROR: Firebase messaging initialization error: $e');
@@ -151,7 +154,5 @@ class InitFunctions {
     await DioFinalHelper.init();
   }
 
-  static Future<void> _configureChucker() async {
-
-  }
+  static Future<void> _configureChucker() async {}
 }
