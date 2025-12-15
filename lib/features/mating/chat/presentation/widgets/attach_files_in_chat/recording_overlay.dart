@@ -67,11 +67,6 @@ class RecordingOverlay extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 16),
-            const Text(
-              '< Recording Now',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
           ],
         ),
       ),
