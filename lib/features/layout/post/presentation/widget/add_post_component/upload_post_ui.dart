@@ -41,17 +41,13 @@ class UploadPostUI extends StatelessWidget {
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context, CommunityCubit cubit) {
-    final bool hasContent =
-        controller.textContentEditingController.text.trim().isNotEmpty ||
-        cubit.mediaFiles.isNotEmpty;
-
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 0,
       leading: _buildLeadingButton(context, cubit),
       title: _buildAppBarTitle( context),
       centerTitle: true,
-      actions: [_buildPostButton(hasContent, context, cubit)],
+      actions: [_buildPostButton(context, cubit)],
       bottom: _buildAppBarDivider(),
     );
   }
@@ -102,60 +98,69 @@ class UploadPostUI extends StatelessWidget {
     );
   }
 
-  Widget _buildPostButton(
-    bool hasContent,
-    BuildContext context,
-    CommunityCubit cubit,
-  ) {
+  Widget _buildPostButton(BuildContext context, CommunityCubit cubit) {
     return Padding(
       padding: const EdgeInsets.only(right: 12),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        child: TextButton(
-          onPressed:
-              hasContent && !controller.isLoading
-                  ? () => controller.handlePostSubmit(context, cubit)
-                  : null,
-          style: TextButton.styleFrom(
-            backgroundColor:
-                hasContent && !controller.isLoading
-                    ? ColorManager.primaryColor
-                    : Colors.grey[300],
-            foregroundColor: Colors.white,
-            disabledForegroundColor: Colors.grey[500],
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
-            ),
-            elevation: hasContent && !controller.isLoading ? 2 : 0,
-            shadowColor: ColorManager.primaryColor.withOpacity(0.3),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (controller.isLoading) ...[
-                SizedBox(
-                  width: 14,
-                  height: 14,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      child: ValueListenableBuilder<bool>(
+        valueListenable: controller.isLoadingNotifier,
+        builder: (context, isLoading, __) {
+          return ValueListenableBuilder<TextEditingValue>(
+            valueListenable: controller.textContentEditingController,
+            builder: (context, value, _) {
+              final bool hasContent =
+                  value.text.trim().isNotEmpty || cubit.mediaFiles.isNotEmpty;
+
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                child: TextButton(
+                  onPressed: hasContent && !isLoading
+                      ? () => controller.handlePostSubmit(context, cubit)
+                      : null,
+                  style: TextButton.styleFrom(
+                    backgroundColor: hasContent && !isLoading
+                        ? ColorManager.primaryColor
+                        : Colors.grey[300],
+                    foregroundColor: Colors.white,
+                    disabledForegroundColor: Colors.grey[500],
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    elevation: hasContent && !isLoading ? 2 : 0,
+                    shadowColor: ColorManager.primaryColor.withOpacity(0.3),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (isLoading) ...[
+                        SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                      Text(
+                        isLoading ? 'Posting...' : 'Post',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 8),
-              ],
-              Text(
-                controller.isLoading ? 'Posting...' : 'Post',
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ],
-          ),
-        ),
+              );
+            },
+          );
+        },
       ),
     );
   }

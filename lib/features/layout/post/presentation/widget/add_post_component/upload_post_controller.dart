@@ -21,8 +21,9 @@ class UploadPostController {
   final FocusNode textFocusNode = FocusNode();
   final TextEditingController textContentEditingController =
       TextEditingController();
-
+  
   bool isLoading = false;
+  final ValueNotifier<bool> isLoadingNotifier = ValueNotifier<bool>(false);
   late UploadPostAnimations animations;
   late UploadPostDialogs dialogs;
   late UploadPostSnackbars snackbars;
@@ -47,6 +48,7 @@ class UploadPostController {
     animationController.dispose();
     textFocusNode.dispose();
     textContentEditingController.dispose();
+    isLoadingNotifier.dispose();
   }
 
   void _autoFocusTextField() {
@@ -59,9 +61,9 @@ class UploadPostController {
 
   void handlePostStateChanges(BuildContext context, PostState state) {
     if (state is CreatePostLoadingState) {
-      setState(() => isLoading = true);
+      setLoading(true);
     } else {
-      setState(() => isLoading = false);
+      setLoading(false);
     }
 
     if (state is CreatePostErrorState) {
@@ -177,7 +179,7 @@ class UploadPostController {
     required String text,
     required String content,
   }) async {
-    setState(() => isLoading = true);
+    setLoading(true);
 
     try {
       List<Map<String, String?>> postSocialMedias = [];
@@ -215,8 +217,15 @@ class UploadPostController {
       );
     } catch (e) {
       snackbars.showErrorSnackBar(context, 'Failed to upload media: $e');
-      setState(() => isLoading = false);
+      setLoading(false);
     }
+  }
+
+  void setLoading(bool value) {
+    isLoading = value;
+    try {
+      isLoadingNotifier.value = value;
+    } catch (_) {}
   }
 
   void handleClose(BuildContext context, CommunityCubit cubit) {

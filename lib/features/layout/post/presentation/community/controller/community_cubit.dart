@@ -16,11 +16,9 @@ class CommunityCubit extends Cubit<CommunityState> {
   var textController = TextEditingController();
   var picker = ImagePicker();
 
-  // Multi-media support
   List<File> mediaFiles = [];
-  List<String> mediaTypes = []; // 'image' or 'video'
+  List<String> mediaTypes = []; 
 
-  // Maximum media files allowed
   static const int maxMediaFiles = 10;
 
   // Pick multiple images
