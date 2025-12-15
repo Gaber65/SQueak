@@ -31,17 +31,21 @@ class PetProfileImage extends StatelessWidget {
                         final selected =
                             cubit.dropdownValueSpecies.toLowerCase();
                         if (selected.isNotEmpty) {
-                          if (selected.contains('cat') || selected == 'coww')
+                          if (selected.contains('cat') || selected == 'coww') {
                             return FontAwesomeIcons.cat;
-                          if (selected.contains('dog'))
+                          }
+                          if (selected.contains('dog')) {
                             return FontAwesomeIcons.dog;
+                          }
                           return FontAwesomeIcons.paw;
                         }
                         final fallback = pathImage.toLowerCase();
-                        if (fallback.contains('cat'))
+                        if (fallback.contains('cat')) {
                           return FontAwesomeIcons.cat;
-                        if (fallback.contains('dog'))
+                        }
+                        if (fallback.contains('dog')) {
                           return FontAwesomeIcons.dog;
+                        }
                         return FontAwesomeIcons.paw;
                       })(),
                       size: 48,

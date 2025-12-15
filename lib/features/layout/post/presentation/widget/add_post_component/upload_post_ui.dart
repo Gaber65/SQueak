@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
+import 'package:squeak/generated/l10n.dart';
 import '../../../../../../core/utils/theme/color_mangment/color_manager.dart'
     show ColorManager;
 import '../../community/controller/community_cubit.dart';
@@ -48,7 +49,7 @@ class UploadPostUI extends StatelessWidget {
       backgroundColor: Colors.white,
       elevation: 0,
       leading: _buildLeadingButton(context, cubit),
-      title: _buildAppBarTitle(),
+      title: _buildAppBarTitle( context),
       centerTitle: true,
       actions: [_buildPostButton(hasContent, context, cubit)],
       bottom: _buildAppBarDivider(),
@@ -89,9 +90,9 @@ class UploadPostUI extends StatelessWidget {
     );
   }
 
-  Widget _buildAppBarTitle() {
+  Widget _buildAppBarTitle(BuildContext context) {
     return Text(
-      'Create Post',
+      S.of(context).createPost,
       style: TextStyle(
         color: Colors.grey[900],
         fontSize: 19,
