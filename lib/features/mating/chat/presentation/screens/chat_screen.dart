@@ -666,8 +666,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           content: caption ?? '',
           imageMessage: type == AttachmentType.image,
           videoMessage: type == AttachmentType.video,
-          fileMessage:
-              type == AttachmentType.file || type == AttachmentType.audio,
+          fileMessage: type == AttachmentType.file,
+          audioMessage: type == AttachmentType.audio,
         );
 
         debugPrint('✅ Media message sent successfully');
@@ -800,6 +800,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       imageMessage: false,
       videoMessage: false,
       fileMessage: false,
+      audioMessage: false,
     );
 
     _messageController.clear();

@@ -512,6 +512,7 @@ class SignalRGeneralHubService {
     bool? imageMessage,
     bool? videoMessage,
     bool? fileMessage,
+    bool? audioMessage,
   }) async => await _hub.invoke<void>(
     "IncreaseUnReadCountMessageForConversation",
     args: [
@@ -522,6 +523,7 @@ class SignalRGeneralHubService {
       imageMessage,
       videoMessage,
       fileMessage,
+      audioMessage,
     ],
   );
 

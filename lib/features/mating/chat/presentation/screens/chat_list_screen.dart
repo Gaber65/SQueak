@@ -157,6 +157,7 @@ class _ChatListViewState extends State<_ChatListView> {
                 print('   🖼️ Image: ${state.imageMessage}');
                 print('   🎥 Video: ${state.videoMessage}');
                 print('   📎 File: ${state.fileMessage}');
+                print('   🎵 Audio: ${state.audioMessage}');
                 if (activePet?.petId != null) {
                   context.read<ChatListCubit>().refreshChatsWithoutLoading(
                     activePet!.petId!,

@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
@@ -76,12 +78,7 @@ class _ChatsTabState extends State<ChatsTab> {
                     final oldChat = chats[chatIndex] as ChatModel;
                     print('✅ [ChatsTab] Found matching chat: ${oldChat.name}');
 
-                    // Determine if it's audio (when not image, video, or file)
-                    final isAudio =
-                        !chatAppState.imageMessage &&
-                        !chatAppState.videoMessage &&
-                        !chatAppState.fileMessage &&
-                        chatAppState.contentMessage.isEmpty;
+                   
 
                     // Create new message model for the last message
                     final newLastMessage = MessageModel(
@@ -89,7 +86,7 @@ class _ChatsTabState extends State<ChatsTab> {
                       description: chatAppState.contentMessage,
                       image: chatAppState.imageMessage ? 'temp_image' : null,
                       video: chatAppState.videoMessage ? 'temp_video' : null,
-                      audio: isAudio ? 'temp_audio' : null,
+                      audio: chatAppState.audioMessage ? 'temp_audio' : null,
                       file: chatAppState.fileMessage ? 'temp_file' : null,
                       status: MessageStatus.sent,
                       fromUserId: chatAppState.fromPetId,

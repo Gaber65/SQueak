@@ -127,6 +127,7 @@ class NewMessageDetected extends ChatAppState {
   final bool imageMessage;
   final bool videoMessage;
   final bool fileMessage;
+  final bool audioMessage;
   final DateTime timestamp;
 
   NewMessageDetected({
@@ -136,5 +137,6 @@ class NewMessageDetected extends ChatAppState {
     this.imageMessage = false,
     this.videoMessage = false,
     this.fileMessage = false,
+    this.audioMessage = false,
   }) : timestamp = DateTime.now();
 }

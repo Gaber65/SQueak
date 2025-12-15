@@ -194,7 +194,8 @@ class ChatAppCubit extends Cubit<ChatAppState> {
           (data['VideoMessage'] ?? data['videoMessage']) as bool? ?? false;
       final fileMessage =
           (data['FileMessage'] ?? data['fileMessage']) as bool? ?? false;
-
+      final audioMessage =
+          (data['AudioMessage'] ?? data['audioMessage']) as bool? ?? false;
       if (conversationId != null && conversationId.isNotEmpty) {
         print('📬 [GeneralHub] Processing unread count update');
         print('   Conversation ID: $conversationId');
@@ -205,6 +206,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         print('   🖼️ Image Message: $imageMessage');
         print('   🎥 Video Message: $videoMessage');
         print('   📎 File Message: $fileMessage');
+        print('   🎵 Audio Message: $audioMessage');
 
         // Use unread count directly from event (don't increment)
         unreadCounts[conversationId] = unreadCount;
@@ -234,6 +236,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
             imageMessage: imageMessage,
             videoMessage: videoMessage,
             fileMessage: fileMessage,
+            audioMessage: audioMessage,
           ),
         );
 
@@ -700,6 +703,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     bool imageMessage = false,
     bool videoMessage = false,
     bool fileMessage = false,
+    bool audioMessage = false,
   }) async {
     try {
       print('🔔 [ChatAppCubit] ══════════════════════════════════════════════');
@@ -718,6 +722,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         imageMessage: imageMessage,
         videoMessage: videoMessage,
         fileMessage: fileMessage,
+        audioMessage: audioMessage,
       );
 
       print('✅ [ChatAppCubit] Successfully increased unread message count');
