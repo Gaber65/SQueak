@@ -76,10 +76,6 @@ class ChatListCubit extends Cubit<ChatListState> {
 
   /// Update unread count locally without server fetch (background update)
   void updateUnreadCountLocally(String conversationId, int newCount) {
-    print(
-      '📊 [ChatListCubit] Updating unread count locally for conversation $conversationId: $newCount',
-    );
-
     final index = allChats.indexWhere((c) => c.id == conversationId);
     if (index != -1) {
       final chat = allChats[index];
@@ -111,32 +107,18 @@ class ChatListCubit extends Cubit<ChatListState> {
       allChats = newChats;
 
       emit(ChatListLoaded(allChats));
-      print('✅ [ChatListCubit] Updated chat list with new unread count');
-    } else {
-      print(
-        '⚠️ [ChatListCubit] Conversation $conversationId not found in chat list',
-      );
     }
   }
 
-  /// Refresh chats without showing loading indicator (for real-time updates)
   Future<void> refreshChatsWithoutLoading(String petId) async {
     final result = await getChatsUseCase(petId);
 
-    result.fold(
-      (failure) {
-        // Silently fail, keep existing data
-        print('⚠️ [ChatListCubit] Silent refresh failed: $failure');
-      },
-      (chats) {
-        allChats = _mergeWithPersistence(chats);
-        emit(ChatListLoaded(allChats));
-      },
-    );
+    result.fold((failure) {}, (chats) {
+      allChats = _mergeWithPersistence(chats);
+      emit(ChatListLoaded(allChats));
+    });
   }
 
-  /// Merges new chats with existing chats to preserve 'delivered' status
-  /// if the server returns 'sent' but we locally know it's 'delivered'.
   List<ChatEntity> _mergeWithPersistence(List<ChatEntity> newChats) {
     if (allChats.isEmpty) return newChats;
 
@@ -146,21 +128,16 @@ class ChatListCubit extends Cubit<ChatListState> {
 
       final existingChat = allChats[existingIndex];
 
-      // Check if we should preserve existing 'delivered' status
       if (existingChat.lastMessage != null &&
           newChat.lastMessage != null &&
-          existingChat.lastMessage!.id ==
-              newChat.lastMessage!.id && // Same message
+          existingChat.lastMessage!.id == newChat.lastMessage!.id &&
           !existingChat
               .lastMessage!
               .toMe // Sent by me
               ) {
-        // If local is DELIVERED and server is SENT, keep local DELIVERED
         if (existingChat.lastMessage!.status == MessageStatus.delivered &&
             newChat.lastMessage!.status == MessageStatus.sent) {
-          print(
-            '🛡️ [ChatListCubit] Preserving DELIVERED status for chat ${newChat.id} against server SENT',
-          );
+         
 
           final preservedMessage = newChat.lastMessage!.copyWith(
             status: MessageStatus.delivered,

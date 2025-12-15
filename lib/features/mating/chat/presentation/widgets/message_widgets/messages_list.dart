@@ -63,8 +63,7 @@ class _MessagesListState extends State<MessagesList> {
           widget.hasMoreMessages && 
           !widget.isLoadingMore &&
           widget.onLoadMore != null) {
-        print('Reached top, loading more messages...');
-        widget.onLoadMore!();
+       widget.onLoadMore!();
       }
     }
   }

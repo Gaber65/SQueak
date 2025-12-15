@@ -67,18 +67,13 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       final newWeight = _getStatusWeight(status);
 
       if (newWeight < oldWeight) {
-        print(
-          '⚠️ [تجاهل تحديث الحالة] محاولة تراجع الحالة للرسالة ${messageId.substring(0, 8)}... : ${oldStatus.name} ($oldWeight) -> ${status.name} ($newWeight)',
-        );
         return;
       }
     }
 
     messageStatuses[messageId] = status;
     _statusStreamController.add(Map.from(messageStatuses));
-    print(
-      '📊 [تحديث الحالة] الرسالة ${messageId.substring(0, 8)}... : ${oldStatus?.name ?? 'جديدة'} → ${status.name}',
-    );
+  
   }
 
   // Legacy field - keeping for backwards compatibility
@@ -96,8 +91,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
         if (event.hub != 'ConversationHub') return;
 
         final method = event.method;
-        print('📡 [ConversationEvent] Received: $method → ${event.data}');
-
+     
         switch (method) {
           case 'MessageSentAndPetIsNotOnline':
           case 'MessageSentAndNotReadYet':
@@ -127,47 +121,33 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
                   if (matchIndex >= 0) {
                     // Replace local optimistic message with server message
                     messagesList[matchIndex] = serverMsg;
-                    print(
-                      '🔁 [Messages] Replaced local message at index $matchIndex with server message $id',
-                    );
+                   
                   } else {
                     // Append server message
                     messagesList.add(serverMsg);
-                    print(
-                      '➕ [Messages] Added server message $id to messagesList',
-                    );
+                  
                   }
                 } else {
-                  print('ℹ️ [Messages] Server message $id already present');
-                }
+               }
 
-                // Set delivery status based on event type
-                // تحديد حالة التسليم بناءً على نوع الحدث
+             
                 if (method == 'MessageSentAndPetIsNotOnline') {
                   deliveryStatuses[id] = 'one';
                   _updateMessageStatus(id, MessageStatus.sent);
-                  print(
-                    '✅ [التسليم] الرسالة ${id.substring(0, 8)}... → تم الإرسال (علامة واحدة) - المستلم غير متصل',
-                  );
+                 
                 } else {
                   deliveryStatuses[id] = 'two_grey';
                   _updateMessageStatus(id, MessageStatus.delivered);
-                  print(
-                    '✅✅ [التسليم] الرسالة ${id.substring(0, 8)}... → تم التسليم (علامتين رماديتين) - لم تُقرأ بعد',
-                  );
+                 
                 }
 
                 emit(ChatMessagesLoaded(List.from(messagesList)));
-              } else {
-                print('⚠️ [Delivery] Payload is not a Map: $payload');
-              }
-            } else {
-              print('⚠️ [Delivery] Event data missing or empty for $method');
-            }
+              } 
+            } 
             break;
 
           case 'MessageRead':
-            // Single message was read by recipient
+
             if (event.data != null && event.data!.isNotEmpty) {
               final data = Map<String, dynamic>.from(event.data![0] as Map);
               final messageId =
@@ -175,16 +155,9 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
                   data['messageId']?.toString();
 
               if (messageId != null) {
-                print(
-                  '👀 [قراءة الرسالة] الرسالة ${messageId.substring(0, 8)}... تمت قراءتها من المستلم',
-                );
-
-                // Update delivery status to 'two_colored' (read)
-                // تحديث حالة التسليم إلى "مقروءة" (علامتين ملونتين)
+              
                 deliveryStatuses[messageId] = 'two_colored';
                 _updateMessageStatus(messageId, MessageStatus.seen);
-
-                // Update message in list
                 final index = messagesList.indexWhere((m) => m.id == messageId);
                 if (index != -1) {
                   messagesList[index] = messagesList[index].copyWith(
@@ -197,23 +170,9 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
             break;
 
           case 'MessagesDelivered':
-            // Messages were delivered when recipient connected to GeneralHub
-            // المستقبِل اتصل بـ GeneralHub - الرسائل تم توصيلها
             if (event.data != null && event.data!.isNotEmpty) {
-              final data = Map<String, dynamic>.from(event.data![0] as Map);
-              final conversationId =
-                  data['ConversationId']?.toString() ??
-                  data['conversationId']?.toString();
-
-              print(
-                '📬 [تم التوصيل] تم توصيل الرسائل - المستقبِل اتصل بالتطبيق - المحادثة: $conversationId',
-              );
-
-              // Update all sent messages to delivered status
-              // تحديث جميع الرسائل المرسلة إلى حالة "تم التوصيل"
               for (var i = 0; i < messagesList.length; i++) {
                 if (!messagesList[i].toMe) {
-                  // Only update if current status is 'sent'
                   if (messagesList[i].status == MessageStatus.sent) {
                     messagesList[i] = messagesList[i].copyWith(
                       status: MessageStatus.delivered,
@@ -224,9 +183,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
                         messagesList[i].id!,
                         MessageStatus.delivered,
                       );
-                      print(
-                        '✅ [تم التوصيل] الرسالة ${messagesList[i].id!.substring(0, 8)}... → delivered (✓✓ رمادي)',
-                      );
+                    
                     }
                   }
                 }
@@ -236,18 +193,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
             break;
 
           case 'AllMessagesRead':
-            // All messages in conversation were read by recipient
             if (event.data != null && event.data!.isNotEmpty) {
-              final data = Map<String, dynamic>.from(event.data![0] as Map);
-              final conversationId =
-                  data['ConversationId']?.toString() ??
-                  data['conversationId']?.toString();
-
-              print(
-                '👀👀 [قراءة جميع الرسائل] تمت قراءة جميع الرسائل في المحادثة $conversationId',
-              );
-
-              // Mark all outgoing messages as read
               for (var i = 0; i < messagesList.length; i++) {
                 if (!messagesList[i].toMe) {
                   messagesList[i] = messagesList[i].copyWith(
@@ -267,7 +213,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
             break;
 
           case 'MessageStatusChanged':
-            // Message status was changed
             if (event.data != null && event.data!.isNotEmpty) {
               final data = Map<String, dynamic>.from(event.data![0] as Map);
               final messageId =
@@ -276,10 +221,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
               final isRead = data['IsRead'] ?? data['isRead'] ?? false;
 
               if (messageId != null) {
-                print(
-                  '🔄 [تغيير حالة الرسالة] الرسالة ${messageId.substring(0, 8)}... : isRead=$isRead → ${isRead ? 'مقروءة ✅✅' : 'تم التسليم ✅'}',
-                );
-
                 deliveryStatuses[messageId] =
                     isRead ? 'two_colored' : 'two_grey';
                 _updateMessageStatus(
@@ -301,10 +242,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
 
           case 'MessageIsRead':
           case 'ReadMessage':
-            // Server signals read - mark all outgoing messages as read for simplicity
-            print(
-              '📖 [قراءة] استلام حدث $method — تحديث جميع الرسائل الصادرة كمقروءة (علامتين ملونتين)',
-            );
             for (var i = 0; i < messagesList.length; i++) {
               final m = messagesList[i];
               if (!m.toMe) {
@@ -315,8 +252,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
                   messagesList[i] = messagesList[i].copyWith(
                     status: MessageStatus.seen,
                   );
-                  print('✅✅ [Read] Message ${m.id} marked as read');
-                }
+              }
               }
             }
             emit(ChatMessagesLoaded(List.from(messagesList)));
@@ -327,9 +263,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
             break;
         }
       } catch (e) {
-        print(
-          '⚠️ [ChatMessagesCubit] Error processing event ${event.method}: $e',
-        );
+      
       }
     });
   }
@@ -348,8 +282,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     emit(ChatMessagesLoaded(List.from(messagesList)));
   }
 
-  /// Mark all outgoing messages (messages sent by me) as read locally
-  /// This sets the `isRead` flag and updates deliveryStatuses to 'two_colored'.
   void markOutgoingMessagesAsRead() {
     for (var i = 0; i < messagesList.length; i++) {
       final m = messagesList[i];
@@ -364,11 +296,9 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     emit(ChatMessagesLoaded(List.from(messagesList)));
   }
 
-  /// Mark all SENT messages as DELIVERED (optimistic update when user comes online)
+
   void markSentMessagesAsDelivered() {
-    print(
-      '🚀 [ChatMessagesCubit] Optimistically marking SENT messages as DELIVERED',
-    );
+  
     bool hasChanges = false;
 
     for (var i = 0; i < messagesList.length; i++) {
@@ -396,50 +326,30 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       return;
     }
 
-    print('🔌 Connecting to SignalR conversation hub...');
     await signalRService.connect(conversationId: chatId, petId: petId);
-    print('✅ Connected to conversation hub');
-
-    // Subscribe to conversation events so we can update delivery statuses
-    _subscribeConversationEvents();
+ _subscribeConversationEvents();
 
     emit(ChatMessagesLoading());
-
-    // Reset pagination state
     currentPage = 1;
     hasMoreMessages = true;
     messagesList.clear();
-
-    print('📥 Loading messages for chat: $chatId (page: $currentPage)');
-    final result = await getMessagesUseCase(
+  final result = await getMessagesUseCase(
       GetMessagesParameters(chatId: chatId, pageNumber: currentPage),
     );
 
     result.fold(
       (failure) {
-        print('❌ Failed to load messages: $failure');
-        emit(ChatMessagesError(failure.toString()));
+       emit(ChatMessagesError(failure.toString()));
       },
       (messages) async {
         messagesList = messages.reversed.toList();
-        print('✅ Loaded ${messagesList.length} messages');
 
-        // Check if there are more messages to load
-        hasMoreMessages = messages.length >= 30; // Assuming page size is 30
-
-        // Mark all messages as read when opening the chat
-        print('📖 Marking all unread messages as read...');
+        hasMoreMessages = messages.length >= 30; 
         try {
-          // await signalRService.markAllUnreadedMessagesInConversationAsRead(
-          //   conversationId: chatId,
-          //   petId: petId,
-          // );
-          print(
-            '================================================================================',
-          );
-          print('✅ All messages marked as read');
+ 
+         
         } catch (e) {
-          print('❌ Error marking messages as read: $e');
+  
         }
 
         emit(ChatMessagesLoaded(messages));
@@ -449,35 +359,27 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
 
   Future<void> loadMoreMessages(String chatId) async {
     if (!hasMoreMessages || isLoadingMore) {
-      print('⚠️ No more messages to load or already loading');
-      return;
+    return;
     }
 
     isLoadingMore = true;
     currentPage++;
-
-    print('📥 Loading more messages for chat: $chatId (page: $currentPage)');
-    final result = await getMessagesUseCase(
+   final result = await getMessagesUseCase(
       GetMessagesParameters(chatId: chatId, pageNumber: currentPage),
     );
 
     result.fold(
       (failure) {
-        print('❌ Failed to load more messages: $failure');
-        currentPage--; // Revert page increment on failure
+       currentPage--; 
         isLoadingMore = false;
       },
       (messages) {
         if (messages.isEmpty) {
           hasMoreMessages = false;
-          print('✅ No more messages available');
+      
         } else {
-          // Add new messages at the beginning (older messages)
           messagesList.insertAll(0, messages.reversed.toList());
-          print('✅ Loaded ${messages.length} more messages (total: ${messagesList.length})');
-
-          // Check if there are more messages to load
-          hasMoreMessages = messages.length >= 30; // Assuming page size is 30
+          hasMoreMessages = messages.length >= 30; 
         }
         
         isLoadingMore = false;

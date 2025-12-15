@@ -192,22 +192,6 @@ class _GeneralHubManager {
       _registerEvents();
 
       _connectionStateController.add(true);
-      _logger.info(
-        'Connected to GeneralHub successfully. Connection ID: ${_connection!.connectionId}',
-      );
-
-      print(
-        '🌍 [GeneralHub] ═══════════════════════════════════════════════════',
-      );
-      print('🌍 [GeneralHub] تم الاتصال بنجاح بـ GeneralHub');
-      print('🌍 [GeneralHub] Successfully connected to GeneralHub');
-      print('🌍 [GeneralHub] Connection ID: ${_connection!.connectionId}');
-      print(
-        '🌍 [GeneralHub] ═══════════════════════════════════════════════════',
-      );
-
-      // الخطوة الأولى: جلب قائمة الأصدقاء المتصلين
-      // STEP 1: Fetch initial online friends list
       await _fetchInitialOnlineFriends(petId);
     } catch (e, stackTrace) {
       _logger.severe('Failed to connect to GeneralHub: $e\n$stackTrace');
@@ -226,24 +210,16 @@ class _GeneralHubManager {
     _logger.info('Disconnected from GeneralHub');
   }
 
-  /// جلب قائمة الأصدقاء المتصلين الأولية وملء القاموس
-  /// Fetch initial online friends and populate the dictionary
   Future<void> _fetchInitialOnlineFriends(String petId) async {
     try {
-      print('📡 [GeneralHub] ══════════════════════════════════════════');
-      print('📡 [GeneralHub] جاري جلب قائمة الأصدقاء المتصلين الأولية...');
-      print('📡 [GeneralHub] Fetching initial online friends list...');
-      print('📡 [GeneralHub] Pet ID: $petId');
-
+ 
       final result = await invoke<List<dynamic>>(
         'GetAllMyOnlinePetFriends',
         args: [petId],
       );
 
       if (result != null && result.isNotEmpty) {
-        print('✅ [GeneralHub] تم استلام ${result.length} صديق من الخادم');
-        print('✅ [GeneralHub] Received ${result.length} friends from server');
-
+     
         _onlineFriendsDict.clear();
 
         for (var item in result) {
@@ -251,37 +227,13 @@ class _GeneralHubManager {
             item as Map<String, dynamic>,
           );
           _onlineFriendsDict[friend.petId] = friend.isOnline;
-
-          final statusAr = friend.isOnline ? 'متصل' : 'غير متصل';
-          final statusEn = friend.isOnline ? 'Online' : 'Offline';
-          print(
-            '   👤 ${friend.fullName} (${friend.petId}): $statusAr / $statusEn',
-          );
         }
 
-        print(
-          '📊 [GeneralHub] إجمالي الأصدقاء في القاموس: ${_onlineFriendsDict.length}',
-        );
-        print(
-          '📊 [GeneralHub] Total friends in dictionary: ${_onlineFriendsDict.length}',
-        );
-        print('📊 [GeneralHub] Dictionary content: $_onlineFriendsDict');
-
-        // بث التحديث للواجهة
-        // Broadcast update to UI
+    
         _onlineStatusController.add(_onlineFriendsDict);
-        print('📢 [GeneralHub] تم بث حالة الاتصال الأولية للواجهة');
-        print('📢 [GeneralHub] Initial status broadcasted to UI');
-      } else {
-        print('⚠️ [GeneralHub] لم يتم العثور على أصدقاء متصلين');
-        print('⚠️ [GeneralHub] No online friends found');
-      }
-
-      print('📡 [GeneralHub] ══════════════════════════════════════════');
-    } catch (e, stackTrace) {
-      print('❌ [GeneralHub] خطأ في جلب الأصدقاء المتصلين: $e');
-      print('❌ [GeneralHub] Error fetching online friends: $e');
-      _logger.severe('Failed to fetch initial online friends: $e\n$stackTrace');
+    } 
+   } catch (e, stackTrace) {
+     _logger.severe('Failed to fetch initial online friends: $e\n$stackTrace');
     }
   }
 
@@ -299,7 +251,6 @@ class _GeneralHubManager {
 
     void registerEvent(String eventName) {
       _connection!.on(eventName, (args) {
-        print('📩 [GeneralHub] Event: $eventName -> $args');
         _logger.fine('Event received: $eventName - $args');
 
         // معالجة خاصة لحدث تغيير الاتصال
@@ -325,61 +276,24 @@ class _GeneralHubManager {
 
     // Add catch-all handler for debugging (logs all unhandled events)
     _connection!.onclose(({error}) {
-      print('🔴 [GeneralHub] الاتصال مغلق | Connection closed: $error');
     });
 
     _logger.info('✅ Event listeners registered successfully');
-    print('🎧 [GeneralHub] تم تسجيل مستمعي الأحداث بنجاح');
-    print('🎧 [GeneralHub] Event listeners registered successfully');
   }
 
   /// معالج حدث تغيير اتصال الصديق - يحدث القاموس في الخلفية
   /// Handler for FriendConnectionChanged event - updates dictionary in background
   void _handleFriendConnectionChanged(dynamic data) {
     try {
-      print('🔄 [GeneralHub] ══════════════════════════════════════════');
-      print('🔄 [GeneralHub] تلقي حدث تغيير اتصال الصديق');
-      print('🔄 [GeneralHub] Received FriendConnectionChanged event');
 
       final payload = ConnectionChangePayload.fromJson(
         data as Map<String, dynamic>,
       );
 
-      final oldStatus = _onlineFriendsDict[payload.petId];
-      final statusChangedAr =
-          oldStatus == null ? 'جديد' : (oldStatus ? 'متصل' : 'غير متصل');
-      final statusChangedEn =
-          oldStatus == null ? 'new' : (oldStatus ? 'online' : 'offline');
-      final newStatusAr = payload.isOnline ? 'متصل' : 'غير متصل';
-      final newStatusEn = payload.isOnline ? 'online' : 'offline';
-
-      print('   📝 Pet ID: ${payload.petId}');
-      print(
-        '   📝 الحالة السابقة / Previous: $statusChangedAr / $statusChangedEn',
-      );
-      print('   📝 الحالة الجديدة / New: $newStatusAr / $newStatusEn');
-
-      // تحديث القاموس
-      // Update the dictionary
       _onlineFriendsDict[payload.petId] = payload.isOnline;
-
-      print('✅ [GeneralHub] تم تحديث القاموس بنجاح');
-      print('✅ [GeneralHub] Dictionary updated successfully');
-      print('📊 [GeneralHub] حجم القاموس الحالي: ${_onlineFriendsDict.length}');
-      print(
-        '📊 [GeneralHub] Current dictionary size: ${_onlineFriendsDict.length}',
-      );
-
-      // بث التحديث للواجهة (عمل في الخلفية)
-      // Broadcast update to UI (background job)
       _onlineStatusController.add(_onlineFriendsDict);
 
-      print('📢 [GeneralHub] تم بث التحديث للواجهة في الخلفية');
-      print('📢 [GeneralHub] Update broadcasted to UI in background');
-      print('🔄 [GeneralHub] ══════════════════════════════════════════');
     } catch (e, stackTrace) {
-      print('❌ [GeneralHub] خطأ في معالجة تغيير الاتصال: $e');
-      print('❌ [GeneralHub] Error handling connection change: $e');
       _logger.severe('Error handling FriendConnectionChanged: $e\n$stackTrace');
     }
   }
@@ -393,7 +307,6 @@ class _GeneralHubManager {
     if (_connection == null) return null;
 
     try {
-      print('🟥 INVOKE: $methodName -> $args');
       _logger.info('Invoking method: $methodName with args: $args');
       final result = await _connection!.invoke(
         methodName,
@@ -422,12 +335,6 @@ class _GeneralHubManager {
   /// Check if a specific friend is online from dictionary
   bool isPetOnlineFromDict(String petId) {
     final isOnline = _onlineFriendsDict[petId] ?? false;
-    print(
-      '🔍 [GeneralHub] فحص حالة $petId من القاموس: ${isOnline ? "متصل" : "غير متصل"}',
-    );
-    print(
-      '🔍 [GeneralHub] Checking $petId status from dictionary: ${isOnline ? "online" : "offline"}',
-    );
     return isOnline;
   }
 }
@@ -447,9 +354,6 @@ class SignalRGeneralHubService {
   void _setupLogging() {
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
-      print(
-        '[${record.level.name}] [${record.loggerName}] ${record.time} => ${record.message}',
-      );
     });
   }
 
@@ -533,11 +437,9 @@ class SignalRGeneralHubService {
       args: [petId],
     );
     if (result == null) {
-      print('⚠️ GetUnreadMessageCounts returned null for petId: $petId');
       return null;
     }
     final counts = result.map((k, v) => MapEntry(k.toString(), v as int));
-    print('📊 GetUnreadMessageCounts result for petId $petId: $counts');
     return counts;
   }
 

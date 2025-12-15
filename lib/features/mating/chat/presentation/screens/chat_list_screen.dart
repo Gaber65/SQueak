@@ -56,9 +56,6 @@ class _ChatListViewState extends State<_ChatListView> {
       isConnected,
     ) {
       if (isConnected && _currentPetId != null && mounted) {
-        print(
-          '🌐 [ChatListScreen] Connection restored, refreshing chats silently',
-        );
         context.read<ChatListCubit>().refreshChatsWithoutLoading(
           _currentPetId!,
         );
@@ -72,29 +69,15 @@ class _ChatListViewState extends State<_ChatListView> {
     super.dispose();
   }
 
-  // -------------------------------------------------------------
-  //  UI
-  // -------------------------------------------------------------
-  // Note: ChatAppCubit is created here and connects to GeneralHub.
-  // GeneralHub remains connected even when navigating to individual chats.
-  // ConversationHub is connected/disconnected in the chat detail screen.
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<ChatListCubit>();
-
-    print('📋 [ChatListScreen] Building ChatListScreen');
-    print(
-      '📡 [ChatListScreen] This screen uses GeneralHub only (no ConversationHub)',
-    );
 
     return BlocSelector<SwitchProfileCubit, SwitchProfileState, PetEntities?>(
       selector: (state) {
         if (state is ProfileLoaded && state.profile.pet != null) {
           final pet = state.profile.pet!;
           if (_currentPetId != pet.petId) {
-            print(
-              '🔄 [ChatListScreen] Pet changed to: ${pet.petId}, loading chats...',
-            );
             cubit.loadChats(pet.petId ?? '');
             _currentPetId = pet.petId;
           }
@@ -106,11 +89,6 @@ class _ChatListViewState extends State<_ChatListView> {
         if (pet == null) {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         }
-
-        print(
-          '🚀 [ChatListScreen] Creating ChatAppCubit for petId: ${pet.petId}',
-        );
-        print('🔌 [ChatListScreen] ChatAppCubit will connect to GeneralHub');
         return BlocProvider(
           create:
               (context) => ChatAppCubit(
@@ -138,39 +116,21 @@ class _ChatListViewState extends State<_ChatListView> {
             listener: (context, state) {
               // Handle UnreadCountUpdated - Update counter in background without server fetch
               if (state is UnreadCountUpdated) {
-                print(
-                  '🔔 [ChatListScreen] Received UnreadCountUpdated for conversation ${state.conversationId}: ${state.count}',
-                );
                 context.read<ChatListCubit>().updateUnreadCountLocally(
                   state.conversationId,
                   state.count,
                 );
               }
 
-              // Handle NewMessageDetected - Refresh to get new message details
               if (state is NewMessageDetected) {
-                print(
-                  '🔄 [ChatListScreen] Received NewMessageDetected for conversation: ${state.conversationId}',
-                );
-                print('   📨 From: ${state.fromPetId}');
-                print('   📝 Content: ${state.contentMessage}');
-                print('   🖼️ Image: ${state.imageMessage}');
-                print('   🎥 Video: ${state.videoMessage}');
-                print('   📎 File: ${state.fileMessage}');
-                print('   🎵 Audio: ${state.audioMessage}');
                 if (activePet?.petId != null) {
                   context.read<ChatListCubit>().refreshChatsWithoutLoading(
                     activePet!.petId!,
                   );
                 }
               }
-
-              // Handle FriendOnlineStatusChanged - Persist delivered status
               if (state is FriendOnlineStatusChanged) {
                 if (state.isOnline) {
-                  print(
-                    '🔄 [ChatListScreen] Friend ${state.petId} came online - updating local chat status',
-                  );
                   context.read<ChatListCubit>().updateChatOnlineStatus(
                     state.petId,
                     true,
@@ -180,9 +140,6 @@ class _ChatListViewState extends State<_ChatListView> {
 
               // Full refresh only on leaving conversation (to update last message)
               if (state is ConversationLeft) {
-                print(
-                  '🔄 [ChatListScreen] Left conversation, doing full refresh',
-                );
                 if (activePet?.petId != null) {
                   context.read<ChatListCubit>().loadChats(activePet!.petId!);
                 }
@@ -198,8 +155,6 @@ class _ChatListViewState extends State<_ChatListView> {
           BlocListener<ChatListCubit, ChatListState>(
             listener: (context, state) {
               if (state is ChatListLoaded) {
-                // When list loads, check if any friends are online and update status locally
-                // This handles the case where users are ALREADY online when the list loads
                 final chatAppCubit = context.read<ChatAppCubit>();
                 for (final chat in state.chats) {
                   if (chatAppCubit.generalHub.isPetOnlineFromDict(chat.petId)) {
@@ -238,9 +193,6 @@ class _ChatListViewState extends State<_ChatListView> {
     );
   }
 
-  // -------------------------------------------------------------
-  //  APP BAR
-  // -------------------------------------------------------------
   SliverAppBar _buildAppBar(
     BuildContext context,
     ThemeData theme,
@@ -261,9 +213,6 @@ class _ChatListViewState extends State<_ChatListView> {
     );
   }
 
-  // -------------------------------------------------------------
-  //  CHAT LIST LOGIC
-  // -------------------------------------------------------------
   Widget _buildChatListContent(ChatListState state, PetEntities? pet) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -341,14 +290,6 @@ class _ChatListViewState extends State<_ChatListView> {
       },
       builder: (context, chatAppState) {
         final chatAppCubit = context.read<ChatAppCubit>();
-
-        // Debug logging to see typing indicators
-        if (chatAppState is FriendTypingInGeneral) {
-          print(
-            '🔥 UI REBUILDING for typing: ${chatAppState.toPetId} -> ${chatAppCubit.typingIndicators[chatAppState.toPetId]}',
-          );
-        }
-
         return Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -360,21 +301,11 @@ class _ChatListViewState extends State<_ChatListView> {
                     chat.petId,
                   );
 
-                  if (isTyping) {
-                    print(
-                      '✍️ [ChatListScreen] عرض ${chat.name} (${chat.petId}) مع isTyping=true',
-                    );
-                    print(
-                      '✍️ [ChatListScreen] Rendering ${chat.name} (${chat.petId}) with isTyping=true',
-                    );
-                  }
-
                   return StreamBuilder<Map<String, int>>(
                     stream: chatAppCubit.unreadCountsStream,
                     initialData: chatAppCubit.unreadCounts,
                     builder: (context, snapshot) {
-                      // Get unread count from stream (real-time), fallback to chat entity
-                      final unreadCountsMap = snapshot.data ?? {};
+                    final unreadCountsMap = snapshot.data ?? {};
                       final unreadCount =
                           unreadCountsMap[chat.id] ?? chat.unreadedCount;
 

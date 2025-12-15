@@ -65,10 +65,6 @@ class MessageModel extends MessageEntity {
       }
     }
 
-    print(
-      '📩 [MessageModel] حالة الرسالة: status=$parsedStatus (القيمة من الـ API: ${json['messageStatus']}) - ${json['id']?.toString().substring(0, 8) ?? 'new'}...',
-    );
-
     return MessageModel(
       id: json['id'] ?? '',
       description: json['description'] ?? '',

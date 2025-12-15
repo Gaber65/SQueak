@@ -118,10 +118,7 @@ class _ConversationHubManager {
     }
 
     _logger.info('🔧 Registering ConversationHub event listeners...');
-
-    // Event 1: ConversationJoined - Initial connection confirmation with participants
     _connection!.on("ConversationJoined", (arguments) {
-      print('🎉 [ConversationHub] ConversationJoined event received: $arguments');
       _logger.info('Event received: ConversationJoined - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent(
@@ -132,9 +129,7 @@ class _ConversationHubManager {
       );
     });
 
-    // Event 2: PetIsJoinedToConversation - Pet joined the conversation
     _connection!.on("PetIsJoinedToConversation", (arguments) {
-      print('👋 [ConversationHub] PetIsJoinedToConversation event received: $arguments');
       _logger.fine('Event received: PetIsJoinedToConversation - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent(
@@ -147,7 +142,6 @@ class _ConversationHubManager {
 
     // Event 3: PetLeftConversation - Pet left the conversation
     _connection!.on("PetLeftConversation", (arguments) {
-      print('👋 [ConversationHub] PetLeftConversation event received: $arguments');
       _logger.fine('Event received: PetLeftConversation - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent(
@@ -160,8 +154,7 @@ class _ConversationHubManager {
 
     // Event 4: FriendIsTyping - Typing indicator in conversation
     _connection!.on("FriendIsTyping", (arguments) {
-      print('⌨️ [ConversationHub] FriendIsTyping event received: $arguments');
-      _logger.info('Event received: FriendIsTyping - $arguments');
+     _logger.info('Event received: FriendIsTyping - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent("ConversationHub", "FriendIsTyping", arguments),
       );
@@ -169,8 +162,7 @@ class _ConversationHubManager {
 
     // Event 5: MessageReceived - New message received
     _connection!.on("MessageReceived", (arguments) {
-      print('💬 [ConversationHub] MessageReceived event received: $arguments');
-      _logger.fine('Event received: MessageReceived - $arguments');
+     _logger.fine('Event received: MessageReceived - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent(
           "ConversationHub",
@@ -182,8 +174,7 @@ class _ConversationHubManager {
 
     // Event 6: MessageIsRead - Confirmation that message is read
     _connection!.on("MessageIsRead", (arguments) {
-      print('✓✓ [ConversationHub] MessageIsRead event received: $arguments');
-      _logger.fine('Event received: MessageIsRead - $arguments');
+     _logger.fine('Event received: MessageIsRead - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent("ConversationHub", "MessageIsRead", arguments),
       );
@@ -191,8 +182,7 @@ class _ConversationHubManager {
 
     // Event 7: MessageSentAndPetIsNotOnline - Message sent but recipient offline
     _connection!.on("MessageSentAndPetIsNotOnline", (arguments) {
-      print('📴 [ConversationHub] MessageSentAndPetIsNotOnline event received: $arguments');
-      _logger.fine('Event received: MessageSentAndPetIsNotOnline - $arguments');
+     _logger.fine('Event received: MessageSentAndPetIsNotOnline - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent(
           "ConversationHub",
@@ -204,8 +194,7 @@ class _ConversationHubManager {
 
     // Event 8: MessageSentAndNotReadYet - Message sent but not read yet
     _connection!.on("MessageSentAndNotReadYet", (arguments) {
-      print('✓ [ConversationHub] MessageSentAndNotReadYet event received: $arguments');
-      _logger.fine('Event received: MessageSentAndNotReadYet - $arguments');
+     _logger.fine('Event received: MessageSentAndNotReadYet - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent(
           "ConversationHub",
@@ -217,8 +206,7 @@ class _ConversationHubManager {
 
     // Event 9: UnreadedMessagesCountPetConversation - Unread message count update
     _connection!.on("UnreadedMessagesCountPetConversation", (arguments) {
-      print('🔔 [ConversationHub] UnreadedMessagesCountPetConversation event received: $arguments');
-      _logger.fine(
+     _logger.fine(
         'Event received: UnreadedMessagesCountPetConversation - $arguments',
       );
       conversationSignalEventStream.add(
@@ -232,8 +220,7 @@ class _ConversationHubManager {
 
     // Event 10: MessageRead - Single message was read by recipient
     _connection!.on("MessageRead", (arguments) {
-      print('📖 [ConversationHub] MessageRead event received: $arguments');
-      _logger.info('Event received: MessageRead - $arguments');
+     _logger.info('Event received: MessageRead - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent("ConversationHub", "MessageRead", arguments),
       );
@@ -241,8 +228,7 @@ class _ConversationHubManager {
 
     // Event 11: AllMessagesRead - All messages in conversation were read
     _connection!.on("AllMessagesRead", (arguments) {
-      print('📖📖 [ConversationHub] AllMessagesRead event received: $arguments');
-      _logger.info('Event received: AllMessagesRead - $arguments');
+    _logger.info('Event received: AllMessagesRead - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent(
           "ConversationHub",
@@ -254,8 +240,7 @@ class _ConversationHubManager {
 
     // Event 12: MessagesDelivered - Messages were delivered to recipient
     _connection!.on("MessagesDelivered", (arguments) {
-      print('✓ [ConversationHub] MessagesDelivered event received: $arguments');
-      _logger.info('Event received: MessagesDelivered - $arguments');
+     _logger.info('Event received: MessagesDelivered - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent(
           "ConversationHub",
@@ -267,8 +252,7 @@ class _ConversationHubManager {
 
     // Event 13: MessagesUnread - Messages became unread (pet left conversation)
     _connection!.on("MessagesUnread", (arguments) {
-      print('📭 [ConversationHub] MessagesUnread event received: $arguments');
-      _logger.info('Event received: MessagesUnread - $arguments');
+    _logger.info('Event received: MessagesUnread - $arguments');
       conversationSignalEventStream.add(
         ConversationSignalEvent(
           "ConversationHub",
@@ -279,7 +263,6 @@ class _ConversationHubManager {
     });
 
     _eventsRegistered = true;
-    print('✅ [ConversationHub] All 13 event listeners registered successfully');
     _logger.info('✅ Event listeners registered successfully');
   }
 
@@ -332,9 +315,7 @@ class SignalRConversationHubService {
   void _setupLogging() {
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
-      print(
-        '${record.level.name}: ${record.time}: ${record.loggerName}: ${record.message}',
-      );
+     
     });
   }
 

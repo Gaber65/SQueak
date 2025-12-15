@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches
+
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -70,18 +72,11 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   void initState() {
     super.initState();
 
-    print('════════════════════════════════════════');
-    print('💬 [MatingChatDetailScreen] Opening chat with: ${widget.chat.name}');
-    print('💬 [MatingChatDetailScreen] Conversation ID: ${widget.chat.id}');
-    print('💬 [MatingChatDetailScreen] Friend Pet ID: ${widget.chat.petId}');
-
     _messageController.addListener(() {
       final hasText = _messageController.text.trim().isNotEmpty;
       setState(() {
         _hasText = hasText;
       });
-
-      // Send typing indicator
       _handleTypingIndicator(hasText);
     });
 
@@ -101,47 +96,24 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
   @override
   void dispose() {
-    // Clear typing indicator and stop timer before leaving
     _typingTimer?.cancel();
     _incomingTypingResetTimer?.cancel();
     _incomingTypingHideTimer?.cancel();
 
-    print('════════════════════════════════════════');
-    print('👋 [MatingChatDetailScreen] Leaving chat with: ${widget.chat.name}');
-    print('🔌 [MatingChatDetailScreen] Will disconnect from ConversationHub');
-    print('📡 [MatingChatDetailScreen] GeneralHub will remain connected');
-
-    // Use stored reference instead of context
     if (_chatAppCubit != null) {
       try {
-        print('⌨️ [MatingChatDetailScreen] Clearing typing indicator...');
         _chatAppCubit!.setTyping(
           conversationId: widget.chat.id,
           isTyping: false,
-        );
-
-        // Fire local PetLeftConversation event before leaving
-        print(
-          '🔴 [MatingChatDetailScreen] مغادرة المحادثة - إطلاق حدث PetLeftConversation: ${widget.chat.id}',
         );
         conversationSignalEventStream.add(
           ConversationSignalEvent('ConversationHub', 'PetLeftConversation', [
             {'ConversationId': widget.chat.id, 'PetId': widget.pet?.petId},
           ]),
         );
-
-        // Leave the conversation (disconnects ConversationHub, keeps GeneralHub connected)
-        print('🔌 [MatingChatDetailScreen] Calling leaveConversation...');
         _chatAppCubit!.leaveConversation();
-        print('✅ [MatingChatDetailScreen] Successfully left conversation');
-      } catch (e) {
-        print('❌ [MatingChatDetailScreen] Error leaving conversation: $e');
-      }
-    } else {
-      print('⚠️ [MatingChatDetailScreen] ChatAppCubit reference is null');
+      } catch (e) {}
     }
-
-    print('════════════════════════════════════════');
     _messageController.dispose();
     _animationController.dispose();
     _recordTimer?.cancel();
@@ -226,34 +198,17 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         listeners: [
           BlocListener<ChatAppCubit, ChatAppState>(
             listener: (context, state) {
-              if (state is ConversationJoined) {
-                print(
-                  '👁️ [ChatScreen] المستخدم فتح المحادثة - calling markMessagesAsSeen',
-                );
-                print(
-                  '👁️ [ChatScreen] حالة الرسالة ستتغير إلى: MessageStatus.seen',
-                );
-                // ChatAppCubit.get(context).markMessagesAsSeen(widget.chat.id);
-              }
+              if (state is ConversationJoined) {}
 
               if (state is MessageReceived &&
                   state.conversationId == widget.chat.id) {
                 final cubit = ChatMessagesCubit.get(context);
-
-                // Check if message already exists to prevent duplicates
-                // التحقق من عدم وجود الرسالة لمنع التكرار
                 final messageId = state.message.id;
                 final alreadyExists =
                     messageId != null &&
                     cubit.messagesList.any((m) => m.id == messageId);
-
                 if (!alreadyExists) {
-                  print(
-                    '📥 [ChatScreen] Adding new incoming message $messageId',
-                  );
                   cubit.addReceivedMessage(state.message, widget.pet!.ownerId);
-
-                  // Scroll to bottom
                   Future.delayed(const Duration(milliseconds: 100), () {
                     final lastIndex =
                         ChatMessagesCubit.get(context).messagesList.length - 1;
@@ -263,10 +218,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                       } catch (_) {}
                     }
                   });
-                } else {
-                  print(
-                    '⚠️ [ChatScreen] Message $messageId already exists, skipping',
-                  );
                 }
               }
               if (state is FriendTypingInConversation &&
@@ -312,23 +263,14 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 }
               }
 
-              // When a pet joins the conversation (e.g., the other participant opened the chat)
               if (state is PetJoinedConversation) {
                 final data = state.data;
                 final joinedPetId =
                     data['petId']?.toString() ?? data['PetId']?.toString();
                 if (joinedPetId != null && joinedPetId == widget.chat.petId) {
-                  // The friend joined this conversation — mark our outgoing messages as read
                   try {
                     ChatMessagesCubit.get(context).markOutgoingMessagesAsRead();
-                    print(
-                      '📖 [MatingChatDetailScreen] Friend $joinedPetId joined — marked outgoing messages as read',
-                    );
-                  } catch (e) {
-                    print(
-                      '⚠️ [MatingChatDetailScreen] Error marking outgoing messages as read: $e',
-                    );
-                  }
+                  } catch (e) {}
                 }
               }
 
@@ -358,9 +300,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               // Handle FriendOnlineStatusChanged for optimistic UI updates
               if (state is FriendOnlineStatusChanged) {
                 if (state.petId == widget.chat.petId && state.isOnline) {
-                  print(
-                    '🌟 [ChatScreen] Friend came online - Mark messages as delivered optimistically',
-                  );
                   ChatMessagesCubit.get(context).markSentMessagesAsDelivered();
                 }
               }
@@ -535,20 +474,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     if (!mounted) return;
 
     try {
-      print('🔌 [MatingChatDetailScreen] Messages loaded successfully');
-      print('🔌 [MatingChatDetailScreen] Now joining conversation...');
-
       _chatAppCubit = context.read<ChatAppCubit>();
       await _chatAppCubit?.joinConversation(widget.chat.id);
 
-      print(
-        '✅ [MatingChatDetailScreen] Joined conversation: ${widget.chat.id}',
-      );
-
-      // Fire local PetIsJoinedToConversation event
-      print(
-        '✅ [MatingChatDetailScreen] انضم الحيوان الأليف للمحادثة: ${widget.chat.id}',
-      );
       conversationSignalEventStream.add(
         ConversationSignalEvent(
           'ConversationHub',
@@ -559,18 +487,15 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         ),
       );
 
-      // Mark all messages as read after joining
+
       if (widget.pet?.petId != null && mounted) {
-        print('📖 [MatingChatDetailScreen] Marking all messages as read...');
-        await _chatAppCubit?.conversationHub.markMessagesAsSeen(
+      await _chatAppCubit?.conversationHub.markMessagesAsSeen(
           conversationId: widget.chat.id,
           petId: widget.pet!.petId!,
         );
-        print('✅ [MatingChatDetailScreen] All messages marked as read');
-      }
-    } catch (e) {
-      print('❌ [MatingChatDetailScreen] Error in join/mark flow: $e');
     }
+    } catch (e) {
+   }
   }
 
   Widget _buildMessages(ChatMessagesState state, ChatMessagesCubit cubit) {
@@ -789,9 +714,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       description: text,
     );
 
-    print('📤 [ChatScreen] Sending message to server');
-
-    // Increase unread count for recipient with message content
     chatAppCubit.increaseUnreadMessageCount(
       conversationId: widget.chat.id,
       toPetId: widget.chat.petId,

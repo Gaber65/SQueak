@@ -41,8 +41,10 @@ class _ChatsTabState extends State<ChatsTab> {
       return Center(child: CircularProgressIndicator());
     }
 
-    print('📋 [ChatsTab] Building ChatsTab for petId: ${activePet!.petId}');
-    print(
+    debugPrint(
+      '📋 [ChatsTab] Building ChatsTab for petId: ${activePet!.petId}',
+    );
+    debugPrint(
       '📡 [ChatsTab] This screen uses GeneralHub only (no ConversationHub)',
     );
 
@@ -52,35 +54,19 @@ class _ChatsTabState extends State<ChatsTab> {
         List<ChatEntity> chats = [];
         if (state is ChatsLoaded) {
           chats = state.chats;
-          print('✅ [ChatsTab] Loaded ${chats.length} chats');
         }
 
         return MultiBlocListener(
           listeners: [
             BlocListener<ChatAppCubit, ChatAppState>(
               listener: (context, chatAppState) {
-                // Handle new message detection from SignalR
                 if (chatAppState is NewMessageDetected) {
-                  print(
-                    '📩 [ChatsTab] NewMessageDetected for conversation: ${chatAppState.conversationId}',
-                  );
-                  print('   Content: ${chatAppState.contentMessage}');
-                  print('   Has image: ${chatAppState.imageMessage}');
-                  print('   Has video: ${chatAppState.videoMessage}');
-                  print('   Has file: ${chatAppState.fileMessage}');
-
-                  // Find the chat that matches this conversation
                   final chatIndex = chats.indexWhere(
                     (chat) => chat.id == chatAppState.conversationId,
                   );
 
                   if (chatIndex != -1) {
                     final oldChat = chats[chatIndex] as ChatModel;
-                    print('✅ [ChatsTab] Found matching chat: ${oldChat.name}');
-
-                   
-
-                    // Create new message model for the last message
                     final newLastMessage = MessageModel(
                       id: '',
                       description: chatAppState.contentMessage,
@@ -125,14 +111,8 @@ class _ChatsTabState extends State<ChatsTab> {
                       context,
                     ).emit(ChatsLoaded(chats: updatedChats));
 
-                    print(
-                      '✅ [ChatsTab] Updated last message for ${oldChat.name}',
-                    );
-                  } else {
-                    print(
-                      '⚠️ [ChatsTab] No matching chat found for conversation: ${chatAppState.conversationId}',
-                    );
-                  }
+                   
+                  } 
                 }
               },
             ),
@@ -165,19 +145,12 @@ class _ChatsTabState extends State<ChatsTab> {
               current is NewMessageDetected ||
               current is ChatAppConnected;
 
-          if (shouldRebuild) {
-            print(
-              '🔄 [ChatsTab] Rebuilding chat list due to: ${current.runtimeType}',
-            );
-          }
-
           return shouldRebuild;
         },
         builder: (context, chatAppState) {
           final chatAppCubit = context.read<ChatAppCubit>();
 
-          print('🏗️ [ChatsTab] Building chat list with ${chats.length} chats');
-
+        
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [

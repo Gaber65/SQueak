@@ -42,10 +42,7 @@ class MatingChatListTile extends StatelessWidget {
         final typingMap = snapshot.data ?? {};
         final isTypingNow = typingMap[chat.petId] ?? false;
         if (typingMap.isNotEmpty) {
-          print('🎯 [MatingChatListTile] Chat: ${chat.name} (${chat.petId})');
-          print('🎯 [MatingChatListTile] Typing map: $typingMap');
-          print('🎯 [MatingChatListTile] Is typing now: $isTypingNow');
-        }
+    }
 
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
