@@ -694,17 +694,48 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     }
   }
 
+  
+
   void _sendMessage(ChatMessagesCubit cubit, ChatAppCubit chatAppCubit) {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
-    // Stop typing indicator before sending
+    // Prevent sending messages longer than allowed
+    if (text.length > MessageInputWidget.maxCharacters) {
+      showDialog(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: const Text('Character Limit Reached'),
+          content: Text(
+            'Message cannot exceed ${MessageInputWidget.maxCharacters} characters. Current: ${text.length}',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(c).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     chatAppCubit.setTyping(conversationId: widget.chat.id, isTyping: false);
     chatAppCubit.setTypingInGeneral(
       petId: widget.chat.petId,
       isTyping: false,
       fromPetId: widget.pet?.petId ?? '',
     );
+
+    // Scroll to show the new message
+    Future.delayed(const Duration(milliseconds: 100), () {
+      final lastIndex = cubit.messagesList.length - 1;
+      if (lastIndex >= 0) {
+        try {
+          _itemScrollController.jumpTo(index: lastIndex);
+        } catch (_) {}
+      }
+    });
 
     chatAppCubit.sendMessage(
       conversationId: widget.chat.id,

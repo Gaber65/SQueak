@@ -600,7 +600,7 @@
   "editVideo":"Edit Video",
   "preview":"Preview",
   "audioFile":"Audio File",
-  "offline":"Offline",
+  "offline":"Last seen recently",
   "openInBrowser":"Open in Browser",
   "openInApp":"Open in App",
   "downloadStarted":"Download started",
@@ -608,7 +608,9 @@
   "documentLoadingFailed":"Failed to load document",
   "error":"Error",
   "refresh":"Refresh",
-  "loading":"Loading"
+  "loading":"Loading",
+  "characterLimitReached":"Character limit reached",
+  "MessageCannotExceed4000Characters":"Message cannot exceed 4000 characters"
 
   
  

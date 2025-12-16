@@ -175,7 +175,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                           color: ColorManager.primaryColor,
                         ),
               ),
-              if (widget.isOnline && !_isBlockedByMe && !_isBlockedByOther)
+              if (!_isBlockedByMe && !_isBlockedByOther)
                 Positioned(
                   right: 0,
                   bottom: 0,
@@ -183,7 +183,7 @@ class _ChatAppBarState extends State<ChatAppBar> {
                     width: 14,
                     height: 14,
                     decoration: BoxDecoration(
-                      color: Colors.green,
+                      color: _getStatusColor(),
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white, width: 2),
                     ),

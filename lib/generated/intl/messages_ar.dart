@@ -59,6 +59,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "HomePageSearchText2": MessageLookupByLibrary.simpleMessage(
       "ابحث عن طبيبك",
     ),
+    "MessageCannotExceed4000Characters": MessageLookupByLibrary.simpleMessage(
+      "لا يمكن أن تتجاوز الرسالة 4000 حرف",
+    ),
     "NameOfRecord": MessageLookupByLibrary.simpleMessage("اسم السجل"),
     "NoMessagesYet": MessageLookupByLibrary.simpleMessage("لا توجد رسائل بعد"),
     "Orloginasadoctor": MessageLookupByLibrary.simpleMessage(
@@ -227,6 +230,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "changePassword": MessageLookupByLibrary.simpleMessage("تغيير كلمة المرور"),
     "changePhoto": MessageLookupByLibrary.simpleMessage("تغيير الصورة"),
     "change_pet_status_for": m0,
+    "characterLimitReached": MessageLookupByLibrary.simpleMessage(
+      "تم الوصول إلى الحد الأقصى للأحرف",
+    ),
     "chatArchivedReadOnly": MessageLookupByLibrary.simpleMessage(
       "تمت أرشفة هذه الدردشة وهي للقراءة فقط",
     ),
@@ -734,7 +740,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "not_completed": MessageLookupByLibrary.simpleMessage("غير مكتمل"),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
-    "offline": MessageLookupByLibrary.simpleMessage("غير متصل"),
+    "offline": MessageLookupByLibrary.simpleMessage("آخر ظهور مؤخرًا"),
     "offlineMessagesContent": MessageLookupByLibrary.simpleMessage(
       "أنت حاليا غير متصل بالإنترنت.  التحقق من اتصالك بالإنترنت.",
     ),

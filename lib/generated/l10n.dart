@@ -5004,9 +5004,14 @@ class S {
     return Intl.message('Audio File', name: 'audioFile', desc: '', args: []);
   }
 
-  /// `Offline`
+  /// `Last seen recently`
   String get offline {
-    return Intl.message('Offline', name: 'offline', desc: '', args: []);
+    return Intl.message(
+      'Last seen recently',
+      name: 'offline',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Open in Browser`
@@ -5067,6 +5072,26 @@ class S {
   /// `Loading`
   String get loading {
     return Intl.message('Loading', name: 'loading', desc: '', args: []);
+  }
+
+  /// `Character limit reached`
+  String get characterLimitReached {
+    return Intl.message(
+      'Character limit reached',
+      name: 'characterLimitReached',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Message cannot exceed 4000 characters`
+  String get MessageCannotExceed4000Characters {
+    return Intl.message(
+      'Message cannot exceed 4000 characters',
+      name: 'MessageCannotExceed4000Characters',
+      desc: '',
+      args: [],
+    );
   }
 }
 

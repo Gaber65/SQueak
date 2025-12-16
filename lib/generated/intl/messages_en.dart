@@ -59,6 +59,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "HomePageSearchText2": MessageLookupByLibrary.simpleMessage(
       "Search For Your Doctor",
     ),
+    "MessageCannotExceed4000Characters": MessageLookupByLibrary.simpleMessage(
+      "Message cannot exceed 4000 characters",
+    ),
     "NameOfRecord": MessageLookupByLibrary.simpleMessage("Name Of Record"),
     "NoMessagesYet": MessageLookupByLibrary.simpleMessage("No messages yet"),
     "Orloginasadoctor": MessageLookupByLibrary.simpleMessage(
@@ -235,6 +238,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
     "changePhoto": MessageLookupByLibrary.simpleMessage("Change Photo"),
     "change_pet_status_for": m0,
+    "characterLimitReached": MessageLookupByLibrary.simpleMessage(
+      "Character limit reached",
+    ),
     "chatArchivedReadOnly": MessageLookupByLibrary.simpleMessage(
       "This chat has been archived and is read-only",
     ),
@@ -742,7 +748,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "notificationsAlert": MessageLookupByLibrary.simpleMessage(
       "Notifications Alert",
     ),
-    "offline": MessageLookupByLibrary.simpleMessage("Offline"),
+    "offline": MessageLookupByLibrary.simpleMessage("Last seen recently"),
     "offlineMessagesContent": MessageLookupByLibrary.simpleMessage(
       " check your internet connection and try again",
     ),
