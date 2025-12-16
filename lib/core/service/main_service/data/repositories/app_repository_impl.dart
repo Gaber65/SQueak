@@ -73,12 +73,13 @@ class AppRepositoryImpl implements AppRepository {
     File file,
     UploadPlace uploadPlace,
   ) async {
+    final subtype = remoteDataSource.getVideoSubtype(file.path);
     final result = await remoteDataSource.uploadFile(
       file,
       videoHelperEndPoint,
       uploadPlace.value,
       "video",
-      "mp4",
+      subtype,
     );
     try {
       return Right(result);
@@ -134,7 +135,7 @@ class AppRepositoryImpl implements AppRepository {
         subtype = 'webm';
         break;
       default:
-        subtype = 'mpeg'; // fallback to mp3
+        subtype = 'mpeg'; 
     }
 
     final result = await remoteDataSource.uploadFile(

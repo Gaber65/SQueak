@@ -180,9 +180,22 @@ class MainRemoteDataSource {
       );
       return ImageModel.fromJson(response.data);
     } on DioException catch (e) {
-      throw ServerException(
-        errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
-      );
+      // Handle cases where response might be null (network errors, timeouts, etc.)
+      if (e.response != null && e.response!.data != null) {
+        throw ServerException(
+          errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
+        );
+      } else {
+        // Create a fallback error model for network/connection errors
+        throw ServerException(
+          errorMessageModel: ErrorMessageModel(
+            errors: {},
+            message: e.message ?? 'Network error occurred',
+            success: false,
+            statusCode: e.response?.statusCode ?? 0,
+          ),
+        );
+      }
     }
   }
 
@@ -214,6 +227,32 @@ class MainRemoteDataSource {
         return 'webp';
       default:
         return 'jpeg';
+    }
+  }
+
+  String getVideoSubtype(String filePath) {
+    String extension = filePath.split('.').last.toLowerCase();
+    switch (extension) {
+      case 'mp4':
+        return 'mp4';
+      case 'mov':
+        return 'quicktime';
+      case 'avi':
+        return 'x-msvideo';
+      case 'mkv':
+        return 'x-matroska';
+      case 'flv':
+        return 'x-flv';
+      case 'wmv':
+        return 'x-ms-wmv';
+      case '3gp':
+        return '3gpp';
+      case 'm4v':
+        return 'x-m4v';
+      case 'webm':
+        return 'webm';
+      default:
+        return 'mp4';
     }
   }
 }

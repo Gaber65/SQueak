@@ -426,11 +426,14 @@ class UploadPostUI extends StatelessWidget {
           child:
               cubit.mediaTypes[index] == 'image'
                   ? Image.file(
-                    cubit.mediaFiles[index],
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
-                  )
+                      cubit.mediaFiles[index],
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return _buildVideoThumbnail(cubit.mediaFiles[index]);
+                      },
+                    )
                   : _buildVideoThumbnail(cubit.mediaFiles[index]),
         ),
 

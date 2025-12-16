@@ -17,14 +17,15 @@ class CommunityCubit extends Cubit<CommunityState> {
   var picker = ImagePicker();
 
   List<File> mediaFiles = [];
-  List<String> mediaTypes = []; 
+  List<String> mediaTypes = [];
 
   static const int maxMediaFiles = 10;
 
-  // Pick multiple images
+  // Pick multiple images - now supports both images and videos
   Future<void> pickMultipleImages({required ImageSource source}) async {
     try {
-      final List<XFile> pickedFiles = await picker.pickMultiImage(
+      // Use pickMultipleMedia to allow selecting both images and videos
+      final List<XFile> pickedFiles = await picker.pickMultipleMedia(
         maxWidth: 1920,
         maxHeight: 1080,
         imageQuality: 85,
@@ -40,7 +41,9 @@ class CommunityCubit extends Cubit<CommunityState> {
 
         for (var file in pickedFiles) {
           mediaFiles.add(File(file.path));
-          mediaTypes.add('image');
+          // Detect actual file type based on MIME type or extension
+          final fileType = _detectMediaType(file);
+          mediaTypes.add(fileType);
         }
         emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
       }
@@ -96,18 +99,58 @@ class CommunityCubit extends Cubit<CommunityState> {
 
         for (var file in files) {
           mediaFiles.add(File(file.path));
-          // Determine if it's image or video based on MIME type or extension
-          if (file.mimeType?.startsWith('video/') ?? false) {
-            mediaTypes.add('video');
-          } else {
-            mediaTypes.add('image');
-          }
+          // Detect actual file type
+          final fileType = _detectMediaType(file);
+          mediaTypes.add(fileType);
         }
         emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
       }
     } catch (e) {
       emit(MediaSelectionErrorState('Failed to pick media: $e'));
     }
+  }
+
+  // Helper method to detect if a file is an image or video
+  String _detectMediaType(XFile file) {
+    // First check MIME type if available
+    if (file.mimeType != null) {
+      if (file.mimeType!.startsWith('video/')) {
+        return 'video';
+      } else if (file.mimeType!.startsWith('image/')) {
+        return 'image';
+      }
+    }
+
+    // Fallback to file extension
+    final extension = file.path.split('.').last.toLowerCase();
+    final videoExtensions = [
+      'mp4',
+      'mov',
+      'avi',
+      'mkv',
+      'flv',
+      'wmv',
+      '3gp',
+      'm4v',
+      'webm',
+    ];
+    final imageExtensions = [
+      'jpg',
+      'jpeg',
+      'png',
+      'gif',
+      'bmp',
+      'webp',
+      'heic',
+      'heif',
+    ];
+
+    if (videoExtensions.contains(extension)) {
+      return 'video';
+    } else if (imageExtensions.contains(extension)) {
+      return 'image';
+    }
+    return 'image';
   }
 
   // Remove a specific media file

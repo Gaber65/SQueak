@@ -278,8 +278,8 @@ class UploadPostController {
   }) {
     final sizeMB = file.lengthSync() / (1024 * 1024);
 
-    if (type == 'image') return sizeMB <= 10; // Image ≤ 10MB
-    if (type == 'video') return sizeMB <= 100; // Video ≤ 100MB
+    if (type == 'image') return sizeMB <= 10; 
+    if (type == 'video') return sizeMB <= 100; 
 
     return false;
   }
