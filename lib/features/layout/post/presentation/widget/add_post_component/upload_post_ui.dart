@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/generated/l10n.dart';
@@ -267,6 +268,23 @@ class UploadPostUI extends StatelessWidget {
             ],
           ),
         ),
+        ValueListenableBuilder<TextEditingValue>(
+          valueListenable: controller.textContentEditingController,
+          builder: (context, value, _) {
+            final used = value.text.length;
+            return Padding(
+              padding: const EdgeInsets.only(left: 25),
+              child: Text(
+                '1000/$used',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.grey[600],
+                ),
+              ),
+            );
+          },
+        ),
       ],
     );
   }
@@ -343,6 +361,7 @@ class UploadPostUI extends StatelessWidget {
       maxLines: null,
       minLines: 5,
       maxLength: 1000,
+      inputFormatters: [LengthLimitingTextInputFormatter(1000)],
       textDirection: controller.getTextDirection(
         controller.textContentEditingController.text,
       ),
