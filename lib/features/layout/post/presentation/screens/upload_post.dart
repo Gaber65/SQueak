@@ -49,13 +49,14 @@ class _UploadPostState extends State<UploadPost>
   @override
   Widget build(BuildContext context) {
     CommunityCubit? cubitValue;
+    // Try to get value of CommunityCubit from context instead of creating a new one
     try {
       cubitValue = context.read<CommunityCubit>();
-    } catch (e) {
-    }
-    
+    } catch (e) {}
+
     return MultiBlocProvider(
       providers: [
+//check if cubitValue is not null then provide it using BlocProvider.value else create a new one        
         if (cubitValue != null)
           BlocProvider<CommunityCubit>.value(value: cubitValue)
         else

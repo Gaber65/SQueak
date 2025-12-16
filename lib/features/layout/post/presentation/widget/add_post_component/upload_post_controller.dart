@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart'
@@ -134,18 +136,31 @@ class UploadPostController {
       );
     }
 
-    for (final file in cubit.mediaFiles) {
-      final sizeMB = file.lengthSync() / (1024 * 1024);
-      if (sizeMB >= 10) {
+    // for (final file in cubit.mediaFiles) {
+    //   final sizeMB = file.lengthSync() / (1024 * 1024);
+    //   if (sizeMB >= 10) {
+    //     return dialogs.showValidationDialog(
+    //       context,
+    //       'File Too Large',
+    //       'File size cannot exceed 10MB.',
+    //       'لا يمكن أن يتجاوز حجم الملف 10 ميجابايت.',
+    //     );
+    //   }
+    // }
+
+    for (int i=0; i < cubit.mediaFiles.length; i++) {
+      final file =cubit.mediaFiles[i];
+      final type = cubit.mediaTypes[i];
+
+      if(!isFileSizeValid(file:file,type:type)){
         return dialogs.showValidationDialog(
           context,
-          'File Too Large',
-          'File size cannot exceed 10MB.',
-          'لا يمكن أن يتجاوز حجم الملف 10 ميجابايت.',
+          type=='image' ? 'Image Too Large' : 'Video Too Large',
+          type=='image' ? 'Image size must be 10MB or less.' : 'Video size must be 100MB or less.',
+          type=='image' ? 'لا يمكن أن يتجاوز حجم الصورة 10 ميجابايت.' : 'لا يمكن أن يتجاوز حجم الفيديو 100 ميجابايت.',
         );
       }
     }
-
     // Submit logic
     final postCubit = PostCubit.get(context);
     final mainCubit = MainCubit.get(context);
@@ -257,4 +272,16 @@ class UploadPostController {
     final arabicRegex = RegExp(r'[\u0600-\u06FF]');
     return arabicRegex.hasMatch(text) ? TextDirection.rtl : TextDirection.ltr;
   }
+  bool isFileSizeValid({
+    required File file,
+    required String type,
+  }) {
+    final sizeMB = file.lengthSync() / (1024 * 1024);
+
+    if (type == 'image') return sizeMB <= 10; // Image ≤ 10MB
+    if (type == 'video') return sizeMB <= 100; // Video ≤ 100MB
+
+    return false;
+  }
 }
+
