@@ -48,27 +48,36 @@ Widget buildPaddingFormComment(
                 isDark
                     ? ColorManager.myPetsBaseBlackColor
                     : Colors.grey.shade200,
-            suffixIcon: IconButton(
-              onPressed:
-                  cubit.isLoading
+            suffixIcon: AnimatedBuilder(
+              animation: commentController,
+              builder: (context, _) {
+                final hasText = commentController.text.isNotEmpty;
+                final iconColor = hasText
+                    ? Theme.of(context).primaryColor
+                    : (isDark ? Colors.white54 : Colors.black54);
+                return IconButton(
+                  onPressed: cubit.isLoading
                       ? null
                       : () {
-                        if (commentController.text.isNotEmpty) {
-                          cubit.createComment(
-                            postId: postId,
-                            content: commentController.text,
-                            petId: petID,
-                            parentId:
-                                isReplayCommentOpen
-                                    ? CacheHelper.getData('replayCommentID')
-                                    : null,
-                          );
-                        }
-                      },
-              icon:
-                  cubit.isLoading
-                      ? const CircularProgressIndicator()
-                      : const Icon(IconlyLight.send),
+                          if (commentController.text.isNotEmpty) {
+                            cubit.createComment(
+                              postId: postId,
+                              content: commentController.text,
+                              petId: petID,
+                              parentId: isReplayCommentOpen
+                                  ? CacheHelper.getData('replayCommentID')
+                                  : null,
+                            );
+                          }
+                        },
+                  icon: cubit.isLoading
+                      ? CircularProgressIndicator(
+                          strokeWidth: 2.0,
+                          valueColor: AlwaysStoppedAnimation<Color?>(iconColor),
+                        )
+                      : Icon(IconlyLight.send, color: iconColor),
+                );
+              },
             ),
             border: _noBorder(),
             enabledBorder: _noBorder(),
