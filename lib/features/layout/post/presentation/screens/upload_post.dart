@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/layout/post/presentation/community/controller/community_cubit.dart';
@@ -46,9 +48,18 @@ class _UploadPostState extends State<UploadPost>
 
   @override
   Widget build(BuildContext context) {
+    CommunityCubit? cubitValue;
+    try {
+      cubitValue = context.read<CommunityCubit>();
+    } catch (e) {
+    }
+    
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => CommunityCubit()),
+        if (cubitValue != null)
+          BlocProvider<CommunityCubit>.value(value: cubitValue)
+        else
+          BlocProvider(create: (context) => CommunityCubit()),
         BlocProvider(create: (context) => sl<PostCubit>()),
       ],
       child: BlocListener<PostCubit, PostState>(
