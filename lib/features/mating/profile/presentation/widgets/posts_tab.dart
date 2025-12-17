@@ -4,7 +4,6 @@ import 'package:squeak/features/layout/post/presentation/widget/post_item.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 import '../../../../../core/network/end_points.dart';
-import '../../../../../core/service/global_widget/video_detail.dart';
 import '../../../../layout/post/domain/entities/post_entity.dart';
 
 class PostsTab extends StatefulWidget {
@@ -316,7 +315,6 @@ class _PostsGridView extends StatelessWidget {
 }
 
 //  Grid Item
-// Grid Item
 class _PostGridItem extends StatelessWidget {
   final PetEntities pet;
   final PostEntity post;
@@ -366,9 +364,9 @@ class _PostGridItem extends StatelessWidget {
       return _PostImage(imagePath: images.first.imagePath!);
     }
 
-    // لو في فيديو واحد فقط وبدون صور
+    // لو في فيديو واحد فقط وبدون صور - نعرض thumbnail مع أيقونة play
     if (videos.length == 1 && images.isEmpty) {
-      return VideoStringApp(video: imageUrl + videos.first.videoPath!);
+      return _VideoThumbnail(videoPath: videos.first.videoPath!);
     }
 
     // لو في عدة صور أو فيديوهات أو خليط
@@ -387,9 +385,43 @@ class _PostGridItem extends StatelessWidget {
           return _PostImage(imagePath: images[i].imagePath!);
         } else {
           final vidIndex = i - images.length;
-          return VideoStringApp(video: imageUrl + videos[vidIndex].videoPath!);
+          return _VideoThumbnail(videoPath: videos[vidIndex].videoPath!);
         }
       },
+    );
+  }
+}
+
+//Video Thumbnail for Grid
+class _VideoThumbnail extends StatelessWidget {
+  final String videoPath;
+
+  const _VideoThumbnail({required this.videoPath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.black,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // يمكنك إضافة صورة thumbnail هنا إذا كانت متاحة
+          Center(
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.play_arrow,
+                color: Colors.white,
+                size: 32,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
