@@ -62,18 +62,14 @@ class _StoryViewerPageState extends State<StoryViewerPage>
       );
     } else {
       if (widget.stories[controller.currentIndex].isViewed == false) {
-        reactionsIndex = getReactionTypeInvers(
-          widget.stories[controller.currentIndex].myReactType,
-        );
+        reactionsIndex =  widget.stories[controller.currentIndex].myReactType;
         widget.storyCubit.reactToStory(
           userStoryId: widget.stories[controller.currentIndex].id,
           reactType: null,
           petId: widget.petID,
         );
       } else {
-        reactionsIndex = getReactionTypeInvers(
-          widget.stories[controller.currentIndex].myReactType,
-        );
+        reactionsIndex =  widget.stories[controller.currentIndex].myReactType;
       }
     }
   }
@@ -164,9 +160,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
 
   void _handleStoryView(int index) {
     final story = widget.stories[index];
-    reactionsIndex = getReactionTypeInvers(
-      widget.stories[controller.currentIndex].myReactType,
-    );
+
 
     // صاحب الستوري → حمل قائمة الريأكشنز فقط
     if (widget.petID == story.petId) {

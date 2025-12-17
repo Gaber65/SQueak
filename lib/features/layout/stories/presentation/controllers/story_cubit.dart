@@ -153,13 +153,12 @@ class StoryCubit extends Cubit<StoryState> {
     required int? reactType,
     required String petId,
   }) async {
-    reactType = getReactionType(reactType);
     emit(state.copyWith(isReacting: true));
 
     final result = await reactToStoryUseCase(
       ReactToStoryParams(
         userStoryId: userStoryId,
-        reactType: reactType,
+        reactType: reactType ?? 0,
         petId: petId,
       ),
     );

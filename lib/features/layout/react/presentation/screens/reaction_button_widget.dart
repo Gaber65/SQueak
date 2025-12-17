@@ -39,9 +39,7 @@ class _ReactionButtonState extends State<ReactionButton> {
 
     reactionIndex =
         reacted
-            ? getReactionTypeInvers(
-              widget.postItm.userReactType ?? widget.postItm.petReactType,
-            )
+            ? widget.postItm.userReactType ?? widget.postItm.petReactType
             : null;
 
     totalReact = [
