@@ -1,32 +1,29 @@
 class ReactionData {
+  // Indexes correspond to ReactType enum order
   static List<String> facebookReactionIcon = [
-    unActiveReactionImage,
-    "assets/react/cat/like.gif",
-    "assets/react/cat/love.gif",
-    "assets/react/cat/haha.gif",
-    // "assets/react/cat/wow.gif",
-    "assets/react/cat/sad.gif",
-    "assets/react/cat/angry.gif",
+    "assets/react/cat/haha.gif",         // ReactType.happy
+    "assets/react/cat/sad.gif",          // ReactType.sad
+    "assets/react/cat/love.gif",         // ReactType.love
+    "assets/react/cat/angry.gif",        // ReactType.angry
+    "assets/react/cat/like.gif",         // ReactType.like
+  ];
+
+  static List<String> facebookReactionImage = [
+    "assets/react/cat/haha.jpg",         // ReactType.happy
+    "assets/react/cat/sad.jpg",          // ReactType.sad
+    "assets/react/cat/love.jpg",         // ReactType.love
+    "assets/react/cat/angry.jpg",        // ReactType.angry
+    "assets/react/cat/like_fill_cat.jpg",// ReactType.like
+  ];
+
+  static List<String> facebookReactionText = [
+    "Haha",
+    "Sad",
+    "Love",
+    "Angry",
+    "Like",
   ];
 
   static String activeReactionImage = "assets/react/cat/like_fill_cat.jpg";
   static String unActiveReactionImage = "assets/react/cat/like_gap_cat.jpg";
-
-  static List<String> facebookReactionImage = [
-    "assets/react/cat/like_fill_cat.jpg",
-    "assets/react/cat/love.jpg",
-    "assets/react/cat/haha.jpg",
-    // "assets/react/cat/wow.jpg",
-    "assets/react/cat/sad.jpg",
-    "assets/react/cat/angry.jpg",
-  ];
-
-  static List<String> facebookReactionText = [
-    "Like",
-    "Love",
-    "Haha",
-    // "Wow",
-    "Sad",
-    "Angry",
-  ];
 }

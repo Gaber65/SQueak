@@ -42,13 +42,15 @@ enum ReactType {
   final int value;
   const ReactType(this.value);
 
-  static ReactType fromInt(int value) {
+  /// Convert int (from API or DB) to ReactType
+  static ReactType fromInt(int? value) {
     return ReactType.values.firstWhere(
-      (type) => type.value == value,
+          (type) => type.value == value,
       orElse: () => ReactType.none,
     );
   }
 
+  /// Display text for UI
   String get displayName {
     switch (this) {
       case ReactType.none:
@@ -66,23 +68,25 @@ enum ReactType {
     }
   }
 
+  /// Color associated with reaction
   Color get color {
     switch (this) {
       case ReactType.none:
         return Colors.grey;
       case ReactType.happy:
-        return const Color(0xFFF7B928);
+        return const Color(0xFFF7B928); // Yellow
       case ReactType.sad:
-        return const Color(0xFF1877F2);
+        return const Color(0xFF1877F2); // Blue
       case ReactType.love:
-        return const Color(0xFFF33E58);
+        return const Color(0xFFF33E58); // Red
       case ReactType.angry:
-        return const Color(0xFFE9710F);
+        return const Color(0xFFE9710F); // Orange
       case ReactType.like:
-        return const Color(0xFF1877F2);
+        return const Color(0xFF1877F2); // Blue
     }
   }
 
+  /// Icon path for UI
   String get iconPath {
     switch (this) {
       case ReactType.none:

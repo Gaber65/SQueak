@@ -196,9 +196,6 @@ class _MediaItemState extends State<_MediaItem> {
     return FutureBuilder<File?>(
       future: _thumbnailFuture,
       builder: (context, snapshot) {
-        print(snapshot.data);
-        print(snapshot.connectionState);
-print('---------------');
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _videoPlaceholder();
         }
