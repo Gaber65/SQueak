@@ -106,6 +106,13 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           conversationId: widget.chat.id,
           isTyping: false,
         );
+        try {
+          _chatAppCubit!.setTypingInGeneral(
+            petId: widget.chat.petId,
+            isTyping: false,
+            fromPetId: widget.pet?.petId ?? '',
+          );
+        } catch (_) {}
         conversationSignalEventStream.add(
           ConversationSignalEvent('ConversationHub', 'PetLeftConversation', [
             {'ConversationId': widget.chat.id, 'PetId': widget.pet?.petId},
@@ -172,6 +179,14 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             conversationId: widget.chat.id,
             isTyping: false,
           );
+          // Also clear the general typing indicator so list tiles update correctly
+          try {
+            context.read<ChatAppCubit>().setTypingInGeneral(
+              petId: widget.chat.petId,
+              isTyping: false,
+              fromPetId: widget.pet?.petId ?? '',
+            );
+          } catch (_) {}
         } catch (_) {
           // Provider not available yet
         }

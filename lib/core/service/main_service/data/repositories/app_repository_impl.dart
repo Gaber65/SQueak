@@ -135,7 +135,7 @@ class AppRepositoryImpl implements AppRepository {
         subtype = 'webm';
         break;
       default:
-        subtype = 'mpeg'; 
+        subtype = 'mpeg';
     }
 
     final result = await remoteDataSource.uploadFile(

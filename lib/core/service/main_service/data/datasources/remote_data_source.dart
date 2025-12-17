@@ -160,9 +160,12 @@ class MainRemoteDataSource {
     String fileName = file.path.split('/').last;
     try {
       File fileToUpload = file;
-      if (type == 'image') {
+      
+
+      if (type == 'image' && subtype != 'gif') {
         fileToUpload = await compressImage(file);
       }
+      
       String filePath = fileToUpload.path;
       debugPrint('📤 Uploading $type file: $fileName to endpoint: $endpoint');
       debugPrint('📦 Upload place: $uploadPlace, Content-Type: $type/$subtype');
