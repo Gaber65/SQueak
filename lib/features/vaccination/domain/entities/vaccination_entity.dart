@@ -21,13 +21,13 @@ class VaccinationEntity extends Equatable {
 
   @override
   List<Object> get props => [
-    id, 
-    petId, 
-    vaccinationId, 
-    vacDate, 
-    status, 
-    comment, 
-    vaccination
+    id,
+    petId,
+    vaccinationId,
+    vacDate,
+    status,
+    comment,
+    vaccination,
   ];
 }
 
@@ -35,10 +35,7 @@ class VaccinationNameEntity extends Equatable {
   final String vacName;
   final String vacID;
 
-  const VaccinationNameEntity({
-    required this.vacName,
-    required this.vacID,
-  });
+  const VaccinationNameEntity({required this.vacName, required this.vacID});
 
   @override
   List<Object> get props => [vacName, vacID];

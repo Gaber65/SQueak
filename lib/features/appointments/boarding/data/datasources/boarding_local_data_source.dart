@@ -11,7 +11,6 @@ abstract class BoardingLocalDataSource {
 }
 
 class BoardingLocalDataSourceImpl implements BoardingLocalDataSource {
-
   BoardingLocalDataSourceImpl();
 
   @override
@@ -20,11 +19,15 @@ class BoardingLocalDataSourceImpl implements BoardingLocalDataSource {
       final cachedData = CacheHelper.getData('boardingEntry');
       if (cachedData != null) {
         final List<dynamic> jsonList = json.decode(cachedData);
-        return jsonList.map((json) => BoardingEntryModel.fromJson(json)).toList();
+        return jsonList
+            .map((json) => BoardingEntryModel.fromJson(json))
+            .toList();
       }
       return [];
     } catch (e) {
-      throw LocalDatabaseException(errorMessage: 'Failed to get cached boarding entries: $e');
+      throw LocalDatabaseException(
+        errorMessage: 'Failed to get cached boarding entries: $e',
+      );
     }
   }
 
@@ -34,7 +37,9 @@ class BoardingLocalDataSourceImpl implements BoardingLocalDataSource {
       final jsonString = json.encode(entries.map((e) => e.toJson()).toList());
       await CacheHelper.saveData('boardingEntry', jsonString);
     } catch (e) {
-      throw LocalDatabaseException(errorMessage: 'Failed to cache boarding entries: $e');
+      throw LocalDatabaseException(
+        errorMessage: 'Failed to cache boarding entries: $e',
+      );
     }
   }
 

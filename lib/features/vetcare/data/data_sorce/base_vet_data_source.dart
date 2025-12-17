@@ -1,4 +1,3 @@
-
 import 'package:squeak/features/auth/login/data/models/login_data_model.dart';
 
 import '../models/data_vet_model.dart';
@@ -29,7 +28,11 @@ abstract class BaseVetRemoteDataSource {
   Future<dynamic> getClinicById(String id);
 
   // Pet operations
-  Future<List<VetClientModel>> getClientsFromVet(String code, String phone, bool isFilter);
+  Future<List<VetClientModel>> getClientsFromVet(
+    String code,
+    String phone,
+    bool isFilter,
+  );
   Future<String> addInSqueakStatues({
     required String vetCarePetId,
     String? squeakPetId,
@@ -46,5 +49,4 @@ abstract class BaseVetRemoteDataSource {
   // Notification operations
   Future<List<dynamic>> getNotifications(String id);
   Future<void> updateNotificationState(String id);
-
 }

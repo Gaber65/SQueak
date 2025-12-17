@@ -132,14 +132,19 @@ class RegisterCubit extends Cubit<RegisterState> {
           position.latitude,
           position.longitude,
         );
-        final countryNameFromLocation = placemarks.isNotEmpty
-            ? (placemarks.first.country ?? '').trim()
-            : '';
+        final countryNameFromLocation =
+            placemarks.isNotEmpty
+                ? (placemarks.first.country ?? '').trim()
+                : '';
 
         if (countryNameFromLocation.isNotEmpty) {
           final country = countries.firstWhere(
             (c) => _normalize(c.name) == _normalize(countryNameFromLocation),
-            orElse: () => countries.isNotEmpty ? countries.first : CountryEntity(id: 1, name: "", phoneCode: ""),
+            orElse:
+                () =>
+                    countries.isNotEmpty
+                        ? countries.first
+                        : CountryEntity(id: 1, name: "", phoneCode: ""),
           );
 
           _applyCountrySelection(country);
@@ -214,56 +219,66 @@ class RegisterCubit extends Cubit<RegisterState> {
       followCode: followCodeController.text.trim(),
       shareData: isAccept,
     );
+    try {
+      final authResult = await registerUseCase.execute(entity);
+      isRegister = false;
+      debugPrint('[Register] Registration successful - saving followCode');
+      await CacheHelper.saveData(
+        "followCode",
+        followCodeController.text.trim(),
+      );
+
+      // Persist auth data returned from register so subsequent requests (e.g., add pet)
+      // will use the new token automatically via DioFinalHelper.
       try {
-        final authResult = await registerUseCase.execute(entity);
-        isRegister = false;
-        debugPrint('[Register] Registration successful - saving followCode');
-        await CacheHelper.saveData("followCode", followCodeController.text.trim());
+        await CacheHelper.clearData();
+        await Future.wait([
+          CacheHelper.saveData('token', authResult.data?.token ?? ''),
+          CacheHelper.saveData('role', authResult.data?.role ?? 0),
+          CacheHelper.saveData('clintId', authResult.data?.id ?? ''),
+          CacheHelper.saveData('phone', authResult.data?.phone ?? ''),
+          CacheHelper.saveData('name', authResult.data?.fullName ?? ''),
+          CacheHelper.saveData('clientName', authResult.data?.fullName ?? ''),
+          CacheHelper.saveData('username', authResult.data?.fullName ?? ''),
+          CacheHelper.saveData('email', authResult.data?.email ?? ''),
+        ]);
 
-        // Persist auth data returned from register so subsequent requests (e.g., add pet)
-        // will use the new token automatically via DioFinalHelper.
-        try {
-          await CacheHelper.clearData();
-          await Future.wait([
-            CacheHelper.saveData('token', authResult.data?.token ?? ''),
-            CacheHelper.saveData('role', authResult.data?.role ?? 0),
-            CacheHelper.saveData('clintId', authResult.data?.id ?? ''),
-            CacheHelper.saveData('phone', authResult.data?.phone ?? ''),
-            CacheHelper.saveData('name', authResult.data?.fullName ?? ''),
-            CacheHelper.saveData('clientName', authResult.data?.fullName ?? ''),
-            CacheHelper.saveData('username', authResult.data?.fullName ?? ''),
-            CacheHelper.saveData('email', authResult.data?.email ?? ''),
-          ]);
-
-      if (authResult.data?.token != null && authResult.data!.token.isNotEmpty) {
-            await TokenManager.saveToken(
-              authResult.data!.token,
-              authResult.data!.expiresIn,
-              authResult.data!.refreshToken,
-            );
-            debugPrint('[Register] Saved token and token metadata from register.');
-          } else {
-            debugPrint('[Register] Auth response missing token or metadata; skipping TokenManager.saveToken.');
-          }
-        } catch (e) {
-          debugPrint('[Register] Failed to persist auth data: $e');
+        if (authResult.data?.token != null &&
+            authResult.data!.token.isNotEmpty) {
+          await TokenManager.saveToken(
+            authResult.data!.token,
+            authResult.data!.expiresIn,
+            authResult.data!.refreshToken,
+          );
+          debugPrint(
+            '[Register] Saved token and token metadata from register.',
+          );
+        } else {
+          debugPrint(
+            '[Register] Auth response missing token or metadata; skipping TokenManager.saveToken.',
+          );
         }
-
-        // The register flow now returns the same shape as login (AuthModel).
-        debugPrint('[Register] Received auth-like response after register: token=${authResult.data?.token ?? 'null'} id=${authResult.data?.id}');
-
-        emit(RegistrationSuccessState());
-      } on ServerException catch (failure) {
-        isRegister = false;
-        emit(
-          RegistrationErrorState(
-            extractFirstErrorAuth(failure.errorMessageModel),
-          ),
-        );
       } catch (e) {
-        isRegister = false;
-        emit(RegistrationErrorState(e.toString()));
+        debugPrint('[Register] Failed to persist auth data: $e');
       }
+
+      // The register flow now returns the same shape as login (AuthModel).
+      debugPrint(
+        '[Register] Received auth-like response after register: token=${authResult.data?.token ?? 'null'} id=${authResult.data?.id}',
+      );
+
+      emit(RegistrationSuccessState());
+    } on ServerException catch (failure) {
+      isRegister = false;
+      emit(
+        RegistrationErrorState(
+          extractFirstErrorAuth(failure.errorMessageModel),
+        ),
+      );
+    } catch (e) {
+      isRegister = false;
+      emit(RegistrationErrorState(e.toString()));
+    }
   }
 
   // QR-based registration
@@ -295,52 +310,59 @@ class RegisterCubit extends Cubit<RegisterState> {
 
     // print(entity.toMap());
 
+    try {
+      final authResult = await registerQrUseCase.execute(entity, clinicCode);
+      // Persist auth data returned from register via QR so subsequent requests will use it.
       try {
-        final authResult = await registerQrUseCase.execute(entity, clinicCode);
-        // Persist auth data returned from register via QR so subsequent requests will use it.
-        try {
-          await CacheHelper.clearData();
-          await Future.wait([
-            CacheHelper.saveData('token', authResult.data?.token ?? ''),
-            CacheHelper.saveData('role', authResult.data?.role ?? 0),
-            CacheHelper.saveData('clintId', authResult.data?.id ?? ''),
-            CacheHelper.saveData('phone', authResult.data?.phone ?? ''),
-            CacheHelper.saveData('name', authResult.data?.fullName ?? ''),
-            CacheHelper.saveData('clientName', authResult.data?.fullName ?? ''),
-            CacheHelper.saveData('username', authResult.data?.fullName ?? ''),
-            CacheHelper.saveData('email', authResult.data?.email ?? ''),
-          ]);
+        await CacheHelper.clearData();
+        await Future.wait([
+          CacheHelper.saveData('token', authResult.data?.token ?? ''),
+          CacheHelper.saveData('role', authResult.data?.role ?? 0),
+          CacheHelper.saveData('clintId', authResult.data?.id ?? ''),
+          CacheHelper.saveData('phone', authResult.data?.phone ?? ''),
+          CacheHelper.saveData('name', authResult.data?.fullName ?? ''),
+          CacheHelper.saveData('clientName', authResult.data?.fullName ?? ''),
+          CacheHelper.saveData('username', authResult.data?.fullName ?? ''),
+          CacheHelper.saveData('email', authResult.data?.email ?? ''),
+        ]);
 
-      if (authResult.data?.token != null && authResult.data!.token.isNotEmpty) {
-            await TokenManager.saveToken(
-              authResult.data!.token,
-              authResult.data!.expiresIn,
-              authResult.data!.refreshToken,
-            );
-            debugPrint('[Register][QR] Saved token and token metadata from registerQr.');
-          } else {
-            debugPrint('[Register][QR] Auth response missing token or metadata; skipping TokenManager.saveToken.');
-          }
-        } catch (e) {
-          debugPrint('[Register][QR] Failed to persist auth data: $e');
+        if (authResult.data?.token != null &&
+            authResult.data!.token.isNotEmpty) {
+          await TokenManager.saveToken(
+            authResult.data!.token,
+            authResult.data!.expiresIn,
+            authResult.data!.refreshToken,
+          );
+          debugPrint(
+            '[Register][QR] Saved token and token metadata from registerQr.',
+          );
+        } else {
+          debugPrint(
+            '[Register][QR] Auth response missing token or metadata; skipping TokenManager.saveToken.',
+          );
         }
-
-        emit(RegistrationSuccessState());
-        emit(RegistrationSuccessState());
-        debugPrint('[Register][QR] Registration success. Received auth-like response: token=${authResult.data?.token ?? 'null'} id=${authResult.data?.id}');
-      } on ServerException catch (failure) {
-        isRegister = false;
-        LoginCubit.get(context).isLoggedIn = false;
-        emit(
-          RegistrationErrorState(
-            extractFirstErrorAuth(failure.errorMessageModel),
-          ),
-        );
       } catch (e) {
-        isRegister = false;
-        LoginCubit.get(context).isLoggedIn = false;
-        emit(RegistrationErrorState(e.toString()));
+        debugPrint('[Register][QR] Failed to persist auth data: $e');
       }
+
+      emit(RegistrationSuccessState());
+      emit(RegistrationSuccessState());
+      debugPrint(
+        '[Register][QR] Registration success. Received auth-like response: token=${authResult.data?.token ?? 'null'} id=${authResult.data?.id}',
+      );
+    } on ServerException catch (failure) {
+      isRegister = false;
+      LoginCubit.get(context).isLoggedIn = false;
+      emit(
+        RegistrationErrorState(
+          extractFirstErrorAuth(failure.errorMessageModel),
+        ),
+      );
+    } catch (e) {
+      isRegister = false;
+      LoginCubit.get(context).isLoggedIn = false;
+      emit(RegistrationErrorState(e.toString()));
+    }
   }
 
   @override

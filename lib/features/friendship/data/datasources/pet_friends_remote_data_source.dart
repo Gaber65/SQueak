@@ -60,35 +60,29 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
 
   @override
   Future<bool> sendRequest(SendPetRequestParams params) async {
-    return _handleRequest(
-      () {
-        // Debug: show the request endpoint and body for sendRequest
-        // print('POST $sendRequestEndPoint -> body: ${{"petId": params.petId, "friendPetId": params.friendPetId}}');
-        return DioFinalHelper.postData(
-          method: sendRequestEndPoint,
-          data: {"petId": params.petId, "friendPetId": params.friendPetId},
-        );
-      },
-      (json) => true,
-    );
+    return _handleRequest(() {
+      // Debug: show the request endpoint and body for sendRequest
+      // print('POST $sendRequestEndPoint -> body: ${{"petId": params.petId, "friendPetId": params.friendPetId}}');
+      return DioFinalHelper.postData(
+        method: sendRequestEndPoint,
+        data: {"petId": params.petId, "friendPetId": params.friendPetId},
+      );
+    }, (json) => true);
   }
 
   @override
   Future<bool> updateRequest(UpdatePetRequestParams params) async {
-    return _handleRequest(
-      () {
-        // Debug: show the request endpoint and body for updateRequest
-        // print('PUT $updateRequestEndPoint -> body: ${{"statues": params.status, '"petFriendShipRequestId"': params.requestId}}');
-        return DioFinalHelper.putData(
-          method: updateRequestEndPoint,
-          data: {
-            "statues": params.status,
-            'petFriendShipRequestId': params.requestId,
-          },
-        );
-      },
-      (json) => true,
-    );
+    return _handleRequest(() {
+      // Debug: show the request endpoint and body for updateRequest
+      // print('PUT $updateRequestEndPoint -> body: ${{"statues": params.status, '"petFriendShipRequestId"': params.requestId}}');
+      return DioFinalHelper.putData(
+        method: updateRequestEndPoint,
+        data: {
+          "statues": params.status,
+          'petFriendShipRequestId': params.requestId,
+        },
+      );
+    }, (json) => true);
   }
 
   @override
@@ -119,9 +113,7 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
       final endpoint = "$getBlockedFriendsEndPoint$petId";
       // Debug: show GET endpoint for getBlockedFriends
       // print('GET $endpoint');
-      final result = await DioFinalHelper.getData(
-        method: endpoint,
-      );
+      final result = await DioFinalHelper.getData(method: endpoint);
       final data = result.data['data'];
       if (data is Map && data.containsKey('petFriendShipDTOs')) {
         final List<dynamic> friendsList = data['petFriendShipDTOs'] as List;
@@ -139,47 +131,38 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
 
   @override
   Future<bool> blockFriend(UnblockFriendParams params) async {
-    return _handleRequest(
-      () {
-        // Debug: show POST endpoint and body for blockFriend
-        // print('POST $blockFriendEndPoint -> body: ${{"myPetId": params.myPetId, "petFriendId": params.friendId}}');
-        return DioFinalHelper.postData(
-          method: blockFriendEndPoint,
-          data: {"myPetId": params.myPetId, "petFrienId": params.friendId},
-        );
-      },
-      (json) => true,
-    );
+    return _handleRequest(() {
+      // Debug: show POST endpoint and body for blockFriend
+      // print('POST $blockFriendEndPoint -> body: ${{"myPetId": params.myPetId, "petFriendId": params.friendId}}');
+      return DioFinalHelper.postData(
+        method: blockFriendEndPoint,
+        data: {"myPetId": params.myPetId, "petFrienId": params.friendId},
+      );
+    }, (json) => true);
   }
 
   @override
   Future<bool> unblockFriend(UnblockFriendParams params) async {
-    return _handleRequest(
-      () {
-        // Debug: show POST endpoint and body for unblockFriend
-        // print('POST $unblockFriendEndPoint -> body: ${{"myPetId": params.myPetId, "myFrienPetId": params.friendId}}');
-        return DioFinalHelper.postData(
-          method: unblockFriendEndPoint,
-          data: {"myPetId": params.myPetId, "petFriendId": params.friendId},
-        );
-      },
-      (json) => true,
-    );
+    return _handleRequest(() {
+      // Debug: show POST endpoint and body for unblockFriend
+      // print('POST $unblockFriendEndPoint -> body: ${{"myPetId": params.myPetId, "myFrienPetId": params.friendId}}');
+      return DioFinalHelper.postData(
+        method: unblockFriendEndPoint,
+        data: {"myPetId": params.myPetId, "petFriendId": params.friendId},
+      );
+    }, (json) => true);
   }
 
   @override
   Future<bool> cancelFriendship(CancelFriendshipParams params) async {
-    return _handleRequest(
-      () {
-        // Debug: show POST endpoint and body for cancelFriendship
-        // print('POST $cancelFriendshipEndPoint -> body: ${{"myPetId": params.myPetId, "peFriendId": params.friendId}}');
-        return DioFinalHelper.postData(
-          method: cancelFriendshipEndPoint,
-          data: {"myPetId": params.myPetId, "peFriendId": params.friendId},
-        );
-      },
-      (json) => true,
-    );
+    return _handleRequest(() {
+      // Debug: show POST endpoint and body for cancelFriendship
+      // print('POST $cancelFriendshipEndPoint -> body: ${{"myPetId": params.myPetId, "peFriendId": params.friendId}}');
+      return DioFinalHelper.postData(
+        method: cancelFriendshipEndPoint,
+        data: {"myPetId": params.myPetId, "peFriendId": params.friendId},
+      );
+    }, (json) => true);
   }
 
   // {
@@ -243,22 +226,16 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
       );
     }
   }
-  
+
   @override
   Future<bool> deleteFriendship(DeleteFriendShipParams params) {
-     return _handleRequest(
-      () {
-        // Debug: show POST endpoint and body for deleteFriendShip
-        //  print('POST $deleteFriendShipEndPoint -> body: ${{"myPetId": params.myPetId, "myFrienPetId": params.myFrienPetId}}');
-        return DioFinalHelper.postData(
-          method: deleteFriendShipEndPoint,
-          data: {"myPetId": params.myPetId, "myFrienPetId": params.myFrienPetId},
-        );
-      },
-      (json) => true,
-    );
+    return _handleRequest(() {
+      // Debug: show POST endpoint and body for deleteFriendShip
+      //  print('POST $deleteFriendShipEndPoint -> body: ${{"myPetId": params.myPetId, "myFrienPetId": params.myFrienPetId}}');
+      return DioFinalHelper.postData(
+        method: deleteFriendShipEndPoint,
+        data: {"myPetId": params.myPetId, "myFrienPetId": params.myFrienPetId},
+      );
+    }, (json) => true);
   }
-
-
-
 }

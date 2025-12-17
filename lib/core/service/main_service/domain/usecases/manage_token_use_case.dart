@@ -1,4 +1,3 @@
-
 import '../repositories/app_repository.dart';
 
 class ManageTokenUseCase {

@@ -39,24 +39,31 @@ class PetBox extends StatelessWidget {
       child: Container(
         height: isTablet ? 80 : screen.height * 0.08,
         decoration: BoxDecoration(
-          color: isSelected
-              ? ColorManager.primaryColor
-              : (mainCubit.isDark ? Colors.grey[800] : Colors.grey[100]),
+          color:
+              isSelected
+                  ? ColorManager.primaryColor
+                  : (mainCubit.isDark ? Colors.grey[800] : Colors.grey[100]),
           borderRadius: BorderRadius.circular(12),
-          border: isSelected
-              ? Border.all(color: ColorManager.primaryColor, width: 2)
-              : Border.all(
-                  color: mainCubit.isDark ? Colors.grey[700]! : Colors.grey.withOpacity(0.3),
-                  width: 1),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: ColorManager.primaryColor.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
+          border:
+              isSelected
+                  ? Border.all(color: ColorManager.primaryColor, width: 2)
+                  : Border.all(
+                    color:
+                        mainCubit.isDark
+                            ? Colors.grey[700]!
+                            : Colors.grey.withOpacity(0.3),
+                    width: 1,
                   ),
-                ]
-              : null,
+          boxShadow:
+              isSelected
+                  ? [
+                    BoxShadow(
+                      color: ColorManager.primaryColor.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
+                    ),
+                  ]
+                  : null,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -72,7 +79,9 @@ class PetBox extends StatelessWidget {
                   ),
                 ),
               )
-            else if (label == "Others" && isSelected && selectedSpeciesName.isNotEmpty)
+            else if (label == "Others" &&
+                isSelected &&
+                selectedSpeciesName.isNotEmpty)
               Icon(
                 Icons.check_circle,
                 size: isTablet ? 28 : 24,
@@ -81,21 +90,30 @@ class PetBox extends StatelessWidget {
             else
               Icon(
                 icon,
-                size: label == "Others" ? (isTablet ? 28 : 24) : (isTablet ? 26 : 22),
-                color: isSelected
-                    ? Colors.white
-                    : (mainCubit.isDark ? Colors.white70 : Colors.black87),
+                size:
+                    label == "Others"
+                        ? (isTablet ? 28 : 24)
+                        : (isTablet ? 26 : 22),
+                color:
+                    isSelected
+                        ? Colors.white
+                        : (mainCubit.isDark ? Colors.white70 : Colors.black87),
               ),
             SizedBox(height: screen.height * 0.008),
             Flexible(
               child: Text(
-                label == "Others" && isSelected && selectedSpeciesName.isNotEmpty
+                label == "Others" &&
+                        isSelected &&
+                        selectedSpeciesName.isNotEmpty
                     ? selectedSpeciesName
                     : label,
                 style: TextStyle(
-                  color: isSelected
-                      ? Colors.white
-                      : (mainCubit.isDark ? Colors.white70 : Colors.black87),
+                  color:
+                      isSelected
+                          ? Colors.white
+                          : (mainCubit.isDark
+                              ? Colors.white70
+                              : Colors.black87),
                   fontWeight: FontWeight.w600,
                   fontSize: isTablet ? 14 : screen.width * 0.032,
                 ),

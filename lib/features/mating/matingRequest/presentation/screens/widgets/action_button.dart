@@ -22,7 +22,12 @@ class ActionButton extends StatelessWidget {
     required Color color,
     VoidCallback? onTap,
   }) {
-    return ActionButton._(icon: icon, color: color, onTap: onTap, isSmall: true);
+    return ActionButton._(
+      icon: icon,
+      color: color,
+      onTap: onTap,
+      isSmall: true,
+    );
   }
 
   /// larger button with optional label
@@ -32,7 +37,13 @@ class ActionButton extends StatelessWidget {
     VoidCallback? onTap,
     String? label,
   }) {
-    return ActionButton._(icon: icon, color: color, onTap: onTap, isSmall: false, label: label);
+    return ActionButton._(
+      icon: icon,
+      color: color,
+      onTap: onTap,
+      isSmall: false,
+      label: label,
+    );
   }
 
   @override
@@ -67,7 +78,11 @@ class ActionButton extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 label!,
-                style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  color: color,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ],

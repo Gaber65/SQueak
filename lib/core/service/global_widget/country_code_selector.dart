@@ -48,27 +48,24 @@ class _CountryCodeSelectorState extends State<CountryCodeSelector> {
       id: widget.registerCubit.countryIdToServer,
       phoneCode: widget.registerCubit.countryPhoneCode,
     );
-    
+
     // If no country is selected, set a default empty state
     if (_selectedCountry.phoneCode.isEmpty) {
-      _selectedCountry = CountryEntity(
-        name: '',
-        id: 0,
-        phoneCode: '',
-      );
+      _selectedCountry = CountryEntity(name: '', id: 0, phoneCode: '');
     }
   }
 
   void _showCountryPicker() {
     HapticFeedback.selectionClick();
-    
+
     showDialog(
       context: context,
-      builder: (context) => _CountryPickerDialog(
-        countries: widget.countries,
-        selectedCountry: _selectedCountry,
-        onSelectCountry: _handleCountrySelection,
-      ),
+      builder:
+          (context) => _CountryPickerDialog(
+            countries: widget.countries,
+            selectedCountry: _selectedCountry,
+            onSelectCountry: _handleCountrySelection,
+          ),
     );
   }
 
@@ -88,7 +85,7 @@ class _CountryCodeSelectorState extends State<CountryCodeSelector> {
 
     // Notify parent widget
     widget.onCountryChanged?.call();
-    
+
     // Stop animation when country is selected
     widget.onAnimationStop?.call();
   }
@@ -102,9 +99,10 @@ class _CountryCodeSelectorState extends State<CountryCodeSelector> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: widget.isValid
-                ? ColorManager.green.withValues(alpha: 0.7)
-                : Theme.of(context).colorScheme.outlineVariant,
+            color:
+                widget.isValid
+                    ? ColorManager.green.withValues(alpha: 0.7)
+                    : Theme.of(context).colorScheme.outlineVariant,
             width: 1.5,
           ),
         ),
@@ -132,9 +130,10 @@ class _CountryCodeSelectorState extends State<CountryCodeSelector> {
                         context: context,
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        fontColor: _selectedCountry.phoneCode.isNotEmpty
-                            ? Theme.of(context).colorScheme.onSurface
-                            : Theme.of(context).colorScheme.outline,
+                        fontColor:
+                            _selectedCountry.phoneCode.isNotEmpty
+                                ? Theme.of(context).colorScheme.onSurface
+                                : Theme.of(context).colorScheme.outline,
                       ),
                       textAlign: TextAlign.left,
                     ),
@@ -182,11 +181,14 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
 
   void _filterCountries(String query) {
     setState(() {
-      _filteredCountries = widget.countries
-          .where((country) =>
-              country.name.toLowerCase().contains(query.toLowerCase()) ||
-              country.phoneCode.contains(query))
-          .toList();
+      _filteredCountries =
+          widget.countries
+              .where(
+                (country) =>
+                    country.name.toLowerCase().contains(query.toLowerCase()) ||
+                    country.phoneCode.contains(query),
+              )
+              .toList();
     });
   }
 
@@ -199,9 +201,7 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         height: MediaQuery.of(context).size.height * 0.7,
         width: MediaQuery.of(context).size.width * 0.9,
@@ -234,7 +234,7 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Search field
             TextField(
               controller: _searchController,
@@ -252,7 +252,7 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
               onChanged: _filterCountries,
             ),
             const SizedBox(height: 16),
-            
+
             // Countries list
             Expanded(
               child: ListView.builder(
@@ -260,13 +260,14 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
                 itemBuilder: (context, index) {
                   final country = _filteredCountries[index];
                   final isSelected = country.id == widget.selectedCountry.id;
-                  
+
                   return Container(
                     margin: const EdgeInsets.only(bottom: 4),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? ColorManager.primaryColor.withValues(alpha: 0.1)
-                          : null,
+                      color:
+                          isSelected
+                              ? ColorManager.primaryColor.withValues(alpha: 0.1)
+                              : null,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: ListTile(
@@ -274,7 +275,9 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
                         width: 40,
                         height: 30,
                         decoration: BoxDecoration(
-                          color: ColorManager.primaryColor.withValues(alpha: 0.1),
+                          color: ColorManager.primaryColor.withValues(
+                            alpha: 0.1,
+                          ),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Center(
@@ -294,17 +297,19 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
                         style: FontStyleThame.textStyle(
                           context: context,
                           fontSize: 16,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.normal,
                           fontColor: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
-                      trailing: isSelected
-                          ? Icon(
-                              Icons.check_circle,
-                              color: ColorManager.primaryColor,
-                              size: 20,
-                            )
-                          : null,
+                      trailing:
+                          isSelected
+                              ? Icon(
+                                Icons.check_circle,
+                                color: ColorManager.primaryColor,
+                                size: 20,
+                              )
+                              : null,
                       onTap: () {
                         widget.onSelectCountry(country);
                         Navigator.pop(context);

@@ -153,9 +153,7 @@ class StoryCubit extends Cubit<StoryState> {
     required int? reactType,
     required String petId,
   }) async {
-    print(reactType);
     reactType = getReactionType(reactType);
-    print(reactType);
     emit(state.copyWith(isReacting: true));
 
     final result = await reactToStoryUseCase(

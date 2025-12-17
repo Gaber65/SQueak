@@ -36,30 +36,34 @@ class LoginHandler {
     CacheHelper.saveData('phone', userData.phone);
     CacheHelper.saveData('name', userData.fullName);
     CacheHelper.saveData('clientName', userData.fullName);
-    TokenManager.saveToken(userData.token, userData.expiresIn, userData.refreshToken);
+    TokenManager.saveToken(
+      userData.token,
+      userData.expiresIn,
+      userData.refreshToken,
+    );
   }
 
   static void _handleDataSharingAccepted(
-      BuildContext context,
-      QRCubit qrCubit,
-      String clinicCode,
-      ) {
+    BuildContext context,
+    QRCubit qrCubit,
+    String clinicCode,
+  ) {
     qrCubit
         .getVetClients(clinicCode, false)
         .then((_) {
-      final clients = qrCubit.vetClientModel;
-      if (clients.isNotEmpty && !clients.first.id.contains('0000')) {
-        navigateAndFinish(
-          context,
-          PetMergeScreen(code: clinicCode, isNavigation: false),
-        );
-      } else {
-        _navigateToLayout(context);
-      }
-    })
+          final clients = qrCubit.vetClientModel;
+          if (clients.isNotEmpty && !clients.first.id.contains('0000')) {
+            navigateAndFinish(
+              context,
+              PetMergeScreen(code: clinicCode, isNavigation: false),
+            );
+          } else {
+            _navigateToLayout(context);
+          }
+        })
         .catchError((_) {
-      _navigateToLayout(context);
-    });
+          _navigateToLayout(context);
+        });
   }
 
   static void _navigateToLayout(BuildContext context) {

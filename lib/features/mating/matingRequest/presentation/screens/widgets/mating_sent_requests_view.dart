@@ -37,7 +37,6 @@ class MatingSentRequestsView extends StatelessWidget {
     );
   }
 
-
   void _handleCancel(BuildContext context, dynamic request) {
     ManageRequestMatingCubit.get(context).updateRequestStatus(
       UpdateRequestStatusParams(

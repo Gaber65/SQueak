@@ -13,7 +13,6 @@ abstract class QRRemoteDataSource {
 
 // Data Layer - Data Source Implementation
 class QRRemoteDataSourceImpl implements QRRemoteDataSource {
-
   @override
   Future<bool> checkClinicInSupplier(CheckClinicParams params) async {
     // print('checkClinicInSupplier');
@@ -24,11 +23,9 @@ class QRRemoteDataSourceImpl implements QRRemoteDataSource {
 
     try {
       if (params.suppliers.data.isNotEmpty) {
-        return params.suppliers.data.any(
-          (element) {
-            return element.data.code == params.clinicCode;
-          },
-        );
+        return params.suppliers.data.any((element) {
+          return element.data.code == params.clinicCode;
+        });
       }
       return false;
     } catch (e) {

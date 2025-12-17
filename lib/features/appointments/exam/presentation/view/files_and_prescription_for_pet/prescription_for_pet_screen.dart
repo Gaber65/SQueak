@@ -7,24 +7,24 @@ import '../../../data/models/files_and_prescription_for_pet_model.dart';
 import '../../controller/files_and_prescription_for_pet/files_and_prescription_for_pet_cubit.dart';
 
 class PrescriptionForPetScreen extends StatelessWidget {
-  const PrescriptionForPetScreen({
-    super.key,
-    required this.reservationid,
-  });
+  const PrescriptionForPetScreen({super.key, required this.reservationid});
 
   final String reservationid;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FilesAndPrescriptionForPetCubit()
-        ..getTheFilesAndPrescriptionForPet(
-          reservationid: reservationid,
-        ),
-      child: BlocConsumer<FilesAndPrescriptionForPetCubit,
-          FilesAndPrescriptionForPetState>(
-        listener: (context, state) {
-        },
+      create:
+          (context) =>
+              FilesAndPrescriptionForPetCubit()
+                ..getTheFilesAndPrescriptionForPet(
+                  reservationid: reservationid,
+                ),
+      child: BlocConsumer<
+        FilesAndPrescriptionForPetCubit,
+        FilesAndPrescriptionForPetState
+      >(
+        listener: (context, state) {},
         builder: (context, state) {
           var filesAndPrescriptionForPetCubit =
               BlocProvider.of<FilesAndPrescriptionForPetCubit>(context);
@@ -33,33 +33,33 @@ class PrescriptionForPetScreen extends StatelessWidget {
               title: isArabic() ? Text("الروشته") : Text("Prescription"),
               automaticallyImplyLeading: false,
               leading: IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: Icon(Icons.arrow_back)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: Icon(Icons.arrow_back),
+              ),
             ),
             body: Padding(
               padding: const EdgeInsets.all(12.0),
-              child: filesAndPrescriptionForPetCubit
-                      .getTheFilesAndPrescriptionForPetLoading
-                  ?  CareLoadingWidget(
+              child:
+                  filesAndPrescriptionForPetCubit
+                          .getTheFilesAndPrescriptionForPetLoading
+                      ? CareLoadingWidget(
                         theme: Theme.of(context),
                         isDark: Theme.of(context).brightness == Brightness.dark,
                         text: S.of(context).loadingInfo,
                       )
-                  : ListView(
-                      physics: BouncingScrollPhysics(),
-                      children: [
-                        SizedBox(
-                          height: 24,
-                        ),
+                      : ListView(
+                        physics: BouncingScrollPhysics(),
+                        children: [
+                          SizedBox(height: 24),
 
-                        filesAndPrescriptionForPetCubit
-                                    .getPrescriptionAndFilesModel
-                                    .data!
-                                    .prescription ==
-                                null
-                            ? Column(
+                          filesAndPrescriptionForPetCubit
+                                      .getPrescriptionAndFilesModel
+                                      .data!
+                                      .prescription ==
+                                  null
+                              ? Column(
                                 children: [
                                   SizedBox(
                                     height:
@@ -77,7 +77,7 @@ class PrescriptionForPetScreen extends StatelessWidget {
                                   ),
                                 ],
                               )
-                            : Column(
+                              : Column(
                                 children: [
                                   Table(
                                     border: TableBorder.all(),
@@ -85,27 +85,32 @@ class PrescriptionForPetScreen extends StatelessWidget {
                                       // Header Row
                                       TableRow(
                                         decoration: BoxDecoration(
-                                            color: Colors.grey[300]),
+                                          color: Colors.grey[300],
+                                        ),
                                         children: [
                                           TableHeader(
-                                            tableHeaderName: isArabic()
-                                                ? "اسم العقار"
-                                                : 'Drug Name',
+                                            tableHeaderName:
+                                                isArabic()
+                                                    ? "اسم العقار"
+                                                    : 'Drug Name',
                                           ),
                                           TableHeader(
-                                            tableHeaderName: isArabic()
-                                                ? "عدد الجرعات"
-                                                : 'Number of unites',
+                                            tableHeaderName:
+                                                isArabic()
+                                                    ? "عدد الجرعات"
+                                                    : 'Number of unites',
                                           ),
                                           TableHeader(
-                                            tableHeaderName: isArabic()
-                                                ? "عدد المرات"
-                                                : 'Number of times',
+                                            tableHeaderName:
+                                                isArabic()
+                                                    ? "عدد المرات"
+                                                    : 'Number of times',
                                           ),
                                           TableHeader(
-                                            tableHeaderName: isArabic()
-                                                ? "عدد الايام"
-                                                : 'Number of days',
+                                            tableHeaderName:
+                                                isArabic()
+                                                    ? "عدد الايام"
+                                                    : 'Number of days',
                                           ),
                                         ],
                                       ),
@@ -119,7 +124,8 @@ class PrescriptionForPetScreen extends StatelessWidget {
                                               [])
                                         TableRow(
                                           decoration: BoxDecoration(
-                                              color: Colors.white),
+                                            color: Colors.white,
+                                          ),
                                           children: [
                                             TableSingleRecord(
                                               tableRecordName:
@@ -130,26 +136,21 @@ class PrescriptionForPetScreen extends StatelessWidget {
                                                   record.numberOfUnit!,
                                             ),
                                             TableSingleRecord(
-                                              tableRecordName: record
-                                                      .numberOfTime
+                                              tableRecordName:
+                                                  record.numberOfTime
                                                       .toString(),
                                             ),
                                             TableSingleRecord(
-                                              tableRecordName: record
-                                                      .numberOfDay
-                                                      .toString(),
+                                              tableRecordName:
+                                                  record.numberOfDay.toString(),
                                             ),
                                           ],
                                         ),
                                     ],
                                   ),
-                                  SizedBox(
-                                    height: 8,
-                                  ),
+                                  SizedBox(height: 8),
                                   BlocConsumer<MainCubit, MainState>(
-                                    listener: (context, state) {
-                               
-                                    },
+                                    listener: (context, state) {},
                                     builder: (context, state) {
                                       return Center(
                                         child: Text(
@@ -164,8 +165,8 @@ class PrescriptionForPetScreen extends StatelessWidget {
                                             fontSize: 18,
                                             fontColor:
                                                 BlocProvider.of<MainCubit>(
-                                                            context)
-                                                        .isDark
+                                                      context,
+                                                    ).isDark
                                                     ? Colors.white
                                                     : Colors.black,
                                           ),
@@ -173,16 +174,14 @@ class PrescriptionForPetScreen extends StatelessWidget {
                                         ),
                                       );
                                     },
-                                  )
+                                  ),
                                 ],
                               ),
 
-                        /// Contact Us
-                        SizedBox(
-                          height: 12,
-                        ),
-                      ],
-                    ),
+                          /// Contact Us
+                          SizedBox(height: 12),
+                        ],
+                      ),
             ),
           );
         },
@@ -192,18 +191,14 @@ class PrescriptionForPetScreen extends StatelessWidget {
 }
 
 class TableHeader extends StatelessWidget {
-  const TableHeader({
-    super.key,
-    required this.tableHeaderName,
-  });
+  const TableHeader({super.key, required this.tableHeaderName});
 
   final String tableHeaderName;
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<MainCubit, MainState>(
-      listener: (context, state) {
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         var mainCubit = BlocProvider.of<MainCubit>(context);
         return Padding(
@@ -212,8 +207,9 @@ class TableHeader extends StatelessWidget {
             child: Text(
               tableHeaderName,
               style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: mainCubit.isDark ? Colors.black : Colors.black),
+                fontWeight: FontWeight.bold,
+                color: mainCubit.isDark ? Colors.black : Colors.black,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -224,18 +220,14 @@ class TableHeader extends StatelessWidget {
 }
 
 class TableSingleRecord extends StatelessWidget {
-  const TableSingleRecord({
-    super.key,
-    required this.tableRecordName,
-  });
+  const TableSingleRecord({super.key, required this.tableRecordName});
 
   final String tableRecordName;
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<MainCubit, MainState>(
-      listener: (context, state) {
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         var mainCubit = BlocProvider.of<MainCubit>(context);
 
@@ -246,7 +238,8 @@ class TableSingleRecord extends StatelessWidget {
               tableRecordName,
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: mainCubit.isDark ? Colors.black : Colors.black),
+                color: mainCubit.isDark ? Colors.black : Colors.black,
+              ),
             ),
           ),
         );

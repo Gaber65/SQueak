@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
@@ -13,22 +12,21 @@ class QrActionButtons extends StatelessWidget {
   final PetEntities pet;
   final PetCubit petCubit;
   final QrCubit c;
-  final bool ? isLinked;
+  final bool? isLinked;
   const QrActionButtons({
     super.key,
     required this.pet,
     required this.petCubit,
-    required this.c, this.isLinked,
+    required this.c,
+    this.isLinked,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<QrCubit, QrState>(
-      listener: (context, state) {
-
-      },
+      listener: (context, state) {},
       builder: (context, state) {
-       final linked = isLinked ?? false;
+        final linked = isLinked ?? false;
 
         if (linked) {
           return Row(
@@ -47,7 +45,13 @@ class QrActionButtons extends StatelessWidget {
                     ),
                   ),
                   onPressed:
-                      () => navigateToScreen(context, QrSave(qrData: pet.qrCode!, isDarkMode: MainCubit.get(context).isDark,)),
+                      () => navigateToScreen(
+                        context,
+                        QrSave(
+                          qrData: pet.qrCode!,
+                          isDarkMode: MainCubit.get(context).isDark,
+                        ),
+                      ),
                   icon: Icon(
                     Icons.qr_code_sharp,
                     size: 16,
@@ -119,6 +123,7 @@ class QrActionButtons extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
+
               // Expanded(
               //   child: OutlinedButton(
               //     style: OutlinedButton.styleFrom(
@@ -139,7 +144,6 @@ class QrActionButtons extends StatelessWidget {
               //     ),
               //   ),
               // ),
-           
             ],
           );
         } else {
@@ -231,8 +235,16 @@ class QrActionButtons extends StatelessWidget {
     );
   }
 
-  void _showLinkDialog(BuildContext context,QrCubit c) {
-    showDialog(context: context, builder: (context) => QrLinkDialog(pet: pet,cubit: c,isDarkMode: MainCubit.get(context).isDark,));
+  void _showLinkDialog(BuildContext context, QrCubit c) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => QrLinkDialog(
+            pet: pet,
+            cubit: c,
+            isDarkMode: MainCubit.get(context).isDark,
+          ),
+    );
   }
 
   // void _showDeleteConfirmation(BuildContext context) {
@@ -277,16 +289,14 @@ class QrActionButtons extends StatelessWidget {
     showDialog(
       context: context,
       barrierDismissible: true,
-      barrierColor: MainCubit.get(context).isDark ? Colors.black87 : Colors.black54,
-      builder: (context) => QrUnlinkDialog(
-        pet: pet,
-        cubit: c,
-        isDarkMode: MainCubit.get(context).isDark,
-      ),
+      barrierColor:
+          MainCubit.get(context).isDark ? Colors.black87 : Colors.black54,
+      builder:
+          (context) => QrUnlinkDialog(
+            pet: pet,
+            cubit: c,
+            isDarkMode: MainCubit.get(context).isDark,
+          ),
     );
   }
-
-
-
-
 }

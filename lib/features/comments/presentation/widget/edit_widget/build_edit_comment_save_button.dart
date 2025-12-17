@@ -8,12 +8,12 @@ import '../../../domain/entities/comment_entity.dart';
 import '../../controller/comment_cubit.dart';
 
 Widget buildEditCommentSaveButton(
-    BuildContext context,
-    CommentCubit cubit,
-    GlobalKey<FormState> formKey,
-    TextEditingController commentController,
-    CommentEntity comment,
-    ) {
+  BuildContext context,
+  CommentCubit cubit,
+  GlobalKey<FormState> formKey,
+  TextEditingController commentController,
+  CommentEntity comment,
+) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.end,
     children: [
@@ -31,20 +31,24 @@ Widget buildEditCommentSaveButton(
                 postId: comment.postId,
                 commentId: comment.id,
                 content: commentController.text,
-                petId: CacheHelper.getData('isPet') == true
-                    ? CacheHelper.getData('activeId')
-                    : null,
+                petId:
+                    CacheHelper.getData('isPet') == true
+                        ? CacheHelper.getData('activeId')
+                        : null,
                 image: comment.image,
-                parentId: CacheHelper.getData('isReplayCommentOpen') == true
-                    ? CacheHelper.getData('replayCommentID')
-                    : null,
+                parentId:
+                    CacheHelper.getData('isReplayCommentOpen') == true
+                        ? CacheHelper.getData('replayCommentID')
+                        : null,
               );
             }
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.transparent,
             shadowColor: Colors.transparent,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
           ),
           child: BlocBuilder<CommentCubit, CommentState>(
             builder: (context, state) {

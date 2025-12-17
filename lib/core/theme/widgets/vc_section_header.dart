@@ -65,12 +65,14 @@ class VcSectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
-      padding: padding ?? const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacing16,
-        vertical: AppTheme.spacing12,
-      ),
+      padding:
+          padding ??
+          const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacing16,
+            vertical: AppTheme.spacing12,
+          ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -143,37 +145,34 @@ class VcPetSectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return VcSectionHeader(
       title: title,
       subtitle: _buildSubtitle(theme),
       action: action,
-      icon: Icon(
-        Icons.pets,
-        color: theme.colorScheme.primary,
-      ),
+      icon: Icon(Icons.pets, color: theme.colorScheme.primary),
     );
   }
 
   String? _buildSubtitle(ThemeData theme) {
     if (!showHealthSummary || petCount == null) return subtitle;
-    
+
     final parts = <String>[];
-    
+
     if (petCount! > 0) {
       parts.add('$petCount ${petCount == 1 ? 'pet' : 'pets'}');
     }
-    
+
     if (healthyCount != null && healthyCount! > 0) {
       parts.add('$healthyCount healthy');
     }
-    
+
     if (alertCount != null && alertCount! > 0) {
       parts.add('$alertCount need attention');
     }
-    
+
     if (parts.isEmpty) return subtitle;
-    
+
     final summary = parts.join(' • ');
     return subtitle != null ? '$subtitle\n$summary' : summary;
   }

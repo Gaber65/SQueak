@@ -489,10 +489,10 @@ class S {
     return Intl.message('Create Post ', name: 'createPost', desc: '', args: []);
   }
 
-  /// `What\'s on your mind ?`
+  /// `What's on your mind ?`
   String get labelPost {
     return Intl.message(
-      'What\\\'s on your mind ?',
+      'What\'s on your mind ?',
       name: 'labelPost',
       desc: '',
       args: [],
@@ -5002,6 +5002,96 @@ class S {
   /// `Audio File`
   String get audioFile {
     return Intl.message('Audio File', name: 'audioFile', desc: '', args: []);
+  }
+
+  /// `Last seen recently`
+  String get offline {
+    return Intl.message(
+      'Last seen recently',
+      name: 'offline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open in Browser`
+  String get openInBrowser {
+    return Intl.message(
+      'Open in Browser',
+      name: 'openInBrowser',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open in App`
+  String get openInApp {
+    return Intl.message('Open in App', name: 'openInApp', desc: '', args: []);
+  }
+
+  /// `Download started`
+  String get downloadStarted {
+    return Intl.message(
+      'Download started',
+      name: 'downloadStarted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cannot open document`
+  String get cannotOpenDocument {
+    return Intl.message(
+      'Cannot open document',
+      name: 'cannotOpenDocument',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to load document`
+  String get documentLoadingFailed {
+    return Intl.message(
+      'Failed to load document',
+      name: 'documentLoadingFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error`
+  String get error {
+    return Intl.message('Error', name: 'error', desc: '', args: []);
+  }
+
+  /// `Refresh`
+  String get refresh {
+    return Intl.message('Refresh', name: 'refresh', desc: '', args: []);
+  }
+
+  /// `Loading`
+  String get loading {
+    return Intl.message('Loading', name: 'loading', desc: '', args: []);
+  }
+
+  /// `Character limit reached`
+  String get characterLimitReached {
+    return Intl.message(
+      'Character limit reached',
+      name: 'characterLimitReached',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Message cannot exceed 4000 characters`
+  String get MessageCannotExceed4000Characters {
+    return Intl.message(
+      'Message cannot exceed 4000 characters',
+      name: 'MessageCannotExceed4000Characters',
+      desc: '',
+      args: [],
+    );
   }
 }
 

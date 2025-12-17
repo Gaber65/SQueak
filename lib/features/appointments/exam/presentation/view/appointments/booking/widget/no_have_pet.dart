@@ -56,10 +56,9 @@ class NoHavePetAlert extends StatelessWidget {
                         color: ColorManager.primaryLight,
                         shape: BoxShape.circle,
                       ),
-                      child:  SvgPicture.asset(
+                      child: SvgPicture.asset(
                         'assets/no_hav_pet.svg',
                         semanticsLabel: 'Dart Logo',
-
                       ),
                     ),
                     SizedBox(width: 12),

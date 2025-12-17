@@ -52,7 +52,6 @@ class UploadImageToStateSuccess extends CommunityState {}
 
 class UploadImageToStateError extends CommunityState {}
 
-
 class SocialSuccessRemovePostState extends CommunityState {}
 
 class SocialErrorRemovePostState extends CommunityState {}
@@ -62,6 +61,7 @@ class SocialLikePostStateSuccess extends CommunityState {}
 class SocialLikePostStateError extends CommunityState {}
 
 class CreateCommentLoadingState extends CommunityState {}
-class CreateCommentSuccessState extends CommunityState {}
-class CreateCommentErrorState extends CommunityState {}
 
+class CreateCommentSuccessState extends CommunityState {}
+
+class CreateCommentErrorState extends CommunityState {}

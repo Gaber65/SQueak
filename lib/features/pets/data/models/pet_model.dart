@@ -90,6 +90,7 @@ class PetData extends PetEntities {
       'conversationId': conversationId,
     };
   }
+
   factory PetData.empty() {
     return PetData(
       petId: '',

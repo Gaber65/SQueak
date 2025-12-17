@@ -1,4 +1,3 @@
-
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:squeak/features/auth/login/domin/entities/login_entity.dart';

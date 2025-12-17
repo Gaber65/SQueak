@@ -42,9 +42,12 @@ class ReactionItemModel extends ReactionItem {
   factory ReactionItemModel.fromJson(Map<String, dynamic> json) {
     return ReactionItemModel(
       reactType: json['reactType'],
-      postId: json['postId']?? '',
-      ownerId: json['ownerId']?? '',
-      owner: json['owner'] != null ? ReactionOwnerModel.fromJson(json['owner']) : null,
+      postId: json['postId'] ?? '',
+      ownerId: json['ownerId'] ?? '',
+      owner:
+          json['owner'] != null
+              ? ReactionOwnerModel.fromJson(json['owner'])
+              : null,
       petId: json['petId'] ?? '',
       pet: json['pet'] != null ? ReactionPetModel.fromJson(json['pet']) : null,
     );
@@ -125,7 +128,6 @@ class ReactionSummaryModel extends ReactionSummary {
     "totalReactCount": totalReactCount,
   };
 }
-
 
 class ReactionActionResultModel extends ReactionActionResult {
   const ReactionActionResultModel({

@@ -22,8 +22,8 @@ class MatingRequestRepositoryImpl implements MatingRequestRepository {
 
   @override
   Future<Either<Failure, List<MatingRequestEntity>>> getMatingSent(
-      String petId,
-      ) async {
+    String petId,
+  ) async {
     try {
       final result = await remoteDataSource.getMatingSent(petId);
       return Right(result);
@@ -33,7 +33,9 @@ class MatingRequestRepositoryImpl implements MatingRequestRepository {
   }
 
   @override
-  Future<Either<Failure, String>> updateRequestStatus(UpdateRequestStatusParams params) async {
+  Future<Either<Failure, String>> updateRequestStatus(
+    UpdateRequestStatusParams params,
+  ) async {
     try {
       final result = await remoteDataSource.updateRequestStatus(params);
       return Right(result);

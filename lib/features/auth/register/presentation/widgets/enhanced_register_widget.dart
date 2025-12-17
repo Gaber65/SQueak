@@ -595,7 +595,9 @@ class _EnhancedRegisterViewState extends State<EnhancedRegisterView>
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  isArabic() ? 'هل أنت بالفعل جزء من المجتمع؟' : 'Already part of the pack?',
+                  isArabic()
+                      ? 'هل أنت بالفعل جزء من المجتمع؟'
+                      : 'Already part of the pack?',
                   style: FontStyleThame.textStyle(
                     context: context,
                     fontSize: 14,

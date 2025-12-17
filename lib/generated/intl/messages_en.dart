@@ -59,6 +59,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "HomePageSearchText2": MessageLookupByLibrary.simpleMessage(
       "Search For Your Doctor",
     ),
+    "MessageCannotExceed4000Characters": MessageLookupByLibrary.simpleMessage(
+      "Message cannot exceed 4000 characters",
+    ),
     "NameOfRecord": MessageLookupByLibrary.simpleMessage("Name Of Record"),
     "NoMessagesYet": MessageLookupByLibrary.simpleMessage("No messages yet"),
     "Orloginasadoctor": MessageLookupByLibrary.simpleMessage(
@@ -229,9 +232,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancelFollow": MessageLookupByLibrary.simpleMessage("Cancel"),
     "cancelFriend": MessageLookupByLibrary.simpleMessage("Cancel Friend"),
     "cancelRequest": MessageLookupByLibrary.simpleMessage("Cancel Request"),
+    "cannotOpenDocument": MessageLookupByLibrary.simpleMessage(
+      "Cannot open document",
+    ),
     "changePassword": MessageLookupByLibrary.simpleMessage("Change Password"),
     "changePhoto": MessageLookupByLibrary.simpleMessage("Change Photo"),
     "change_pet_status_for": m0,
+    "characterLimitReached": MessageLookupByLibrary.simpleMessage(
+      "Character limit reached",
+    ),
     "chatArchivedReadOnly": MessageLookupByLibrary.simpleMessage(
       "This chat has been archived and is read-only",
     ),
@@ -383,7 +392,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "doctorName": MessageLookupByLibrary.simpleMessage("Doctor Name"),
     "document": MessageLookupByLibrary.simpleMessage("Document"),
+    "documentLoadingFailed": MessageLookupByLibrary.simpleMessage(
+      "Failed to load document",
+    ),
     "download": MessageLookupByLibrary.simpleMessage("Download"),
+    "downloadStarted": MessageLookupByLibrary.simpleMessage("Download started"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editComment": MessageLookupByLibrary.simpleMessage("Edit Comment . . . ."),
     "editCommentPost": MessageLookupByLibrary.simpleMessage("Edit Comment"),
@@ -460,6 +473,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "What are you thinking .... ?",
     ),
     "entryDate": MessageLookupByLibrary.simpleMessage("Entry Date"),
+    "error": MessageLookupByLibrary.simpleMessage("Error"),
     "errorColon": MessageLookupByLibrary.simpleMessage("Error:"),
     "excellentExperience": MessageLookupByLibrary.simpleMessage("Excellent!"),
     "exitDate": MessageLookupByLibrary.simpleMessage("Exit Date"),
@@ -578,9 +592,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "invoiceNo": MessageLookupByLibrary.simpleMessage("Invoice No"),
     "itemName": MessageLookupByLibrary.simpleMessage("Item Name"),
     "justNow": MessageLookupByLibrary.simpleMessage("just now"),
-    "labelPost": MessageLookupByLibrary.simpleMessage(
-      "What\\\'s on your mind ?",
-    ),
+    "labelPost": MessageLookupByLibrary.simpleMessage("What\'s on your mind ?"),
     "langMode": MessageLookupByLibrary.simpleMessage("language Mode"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "lastUpdated": MessageLookupByLibrary.simpleMessage("Last updated"),
@@ -591,6 +603,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "This pet is already linked to a QR code",
     ),
     "littleFriend": MessageLookupByLibrary.simpleMessage("Little Friend"),
+    "loading": MessageLookupByLibrary.simpleMessage("Loading"),
     "loadingAppointments": MessageLookupByLibrary.simpleMessage(
       "Loading Appointments...",
     ),
@@ -735,6 +748,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "notificationsAlert": MessageLookupByLibrary.simpleMessage(
       "Notifications Alert",
     ),
+    "offline": MessageLookupByLibrary.simpleMessage("Last seen recently"),
     "offlineMessagesContent": MessageLookupByLibrary.simpleMessage(
       " check your internet connection and try again",
     ),
@@ -750,6 +764,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "openAt": MessageLookupByLibrary.simpleMessage("Open At"),
     "openChat": MessageLookupByLibrary.simpleMessage("Open Chat"),
+    "openInApp": MessageLookupByLibrary.simpleMessage("Open in App"),
+    "openInBrowser": MessageLookupByLibrary.simpleMessage("Open in Browser"),
     "openingChat": MessageLookupByLibrary.simpleMessage("Opening chat..."),
     "other": MessageLookupByLibrary.simpleMessage("Other"),
     "other_valid": MessageLookupByLibrary.simpleMessage(
@@ -871,6 +887,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "received": MessageLookupByLibrary.simpleMessage("Received"),
     "recentActivity": MessageLookupByLibrary.simpleMessage("النشاط الحديث"),
+    "refresh": MessageLookupByLibrary.simpleMessage("Refresh"),
     "register": MessageLookupByLibrary.simpleMessage("Register"),
     "reject": MessageLookupByLibrary.simpleMessage("Reject"),
     "rejected": MessageLookupByLibrary.simpleMessage("Rejected"),

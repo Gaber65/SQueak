@@ -19,13 +19,19 @@ Map<String, WidgetBuilder> routes = {
   '/login': (context) => const LoginScreen(),
   '/register': (context) => const RegisterScreen(),
   '/forgotPassword': (context) => ForgotPasswordScreen(),
-  '/layout': (context) =>  LayoutScreen(),
+  '/layout': (context) => LayoutScreen(),
   '/PetVacs': (context) => const PetScreen(),
-  '/Rate': (context) => RateAppointment(model: ModalRoute.of(context)!.settings.arguments as AppointmentEntity, isNav: true,),
-  '/followedClinic': (context) => FollowRequestScreen(
+  '/Rate':
+      (context) => RateAppointment(
+        model: ModalRoute.of(context)!.settings.arguments as AppointmentEntity,
+        isNav: true,
+      ),
+  '/followedClinic':
+      (context) => FollowRequestScreen(
         clinicID: ModalRoute.of(context)!.settings.arguments as String,
       ),
-  '/postNotification': (context) => PostNotification(
+  '/postNotification':
+      (context) => PostNotification(
         id: ModalRoute.of(context)!.settings.arguments as String,
       ),
 };

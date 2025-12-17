@@ -31,6 +31,7 @@ class RegisterEntity {
       'allToShareDataWithVetICare': shareData,
     };
   }
+
   Map<String, dynamic> toMapRegister() {
     return {
       'fullName': fullName,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-
 class FileCardWidget extends StatelessWidget {
   const FileCardWidget({
     super.key,
@@ -18,27 +17,22 @@ class FileCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<MainCubit, MainState>(
-      listener: (context, state) {
-       
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         var mainCubit = BlocProvider.of<MainCubit>(context);
         return Container(
           // height: MediaQuery.of(context).size.height * 0.11,
           width: double.infinity,
-          decoration:
-              Decorations.kDecorationBoxShadow(context: context, radius: 64),
+          decoration: Decorations.kDecorationBoxShadow(
+            context: context,
+            radius: 64,
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
-              
               children: [
-                Icon(
-                  Icons.attach_file_rounded,
-                ),
-                SizedBox(
-                  width: 16,
-                ),
+                Icon(Icons.attach_file_rounded),
+                SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -63,9 +57,10 @@ class FileCardWidget extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w300,
-                          color: mainCubit.isDark
-                              ? Colors.white
-                              : Colors.grey[600],
+                          color:
+                              mainCubit.isDark
+                                  ? Colors.white
+                                  : Colors.grey[600],
                         ),
                         overflow: TextOverflow.ellipsis,
                         // Handle long descriptions
@@ -75,15 +70,10 @@ class FileCardWidget extends StatelessWidget {
                   ),
                 ),
                 // Spacer(),
-                SizedBox(
-                  width: 16,
-                ),
+                SizedBox(width: 16),
                 Text(
                   formatDateString(fileDate ?? ""),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
                   overflow: TextOverflow.ellipsis, // Handle long dates
                   maxLines: 1,
                 ),

@@ -143,7 +143,11 @@ class _CalendarScreenState extends State<CalendarScreen>
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
             titleCentered: true,
-            titleTextStyle: TextStyle(color: Colors.white ,fontSize: 16,fontWeight: FontWeight.bold),
+            titleTextStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
             decoration: BoxDecoration(
               color: ColorManager.primaryColor,
               borderRadius: BorderRadius.only(

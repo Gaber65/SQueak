@@ -11,7 +11,7 @@
 // class User {
 //   final String id;
 //   final String name;
-//   final String type; 
+//   final String type;
 //   final String breed;
 //   final String bio;
 //   final String profileImage;
@@ -453,7 +453,7 @@
 //                           child: _buildActionButton(),
 //                         ),
 //                       const SizedBox(height: 20),
-//                       if (user.mutualFriends.isNotEmpty && 
+//                       if (user.mutualFriends.isNotEmpty &&
 //                           user.friendshipStatus != FriendshipStatus.blocked)
 //                         _buildMutualFriends(),
 //                     ],

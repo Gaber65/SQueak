@@ -74,7 +74,10 @@ class PetTooltip extends StatefulWidget {
       key: key,
       message: message,
       title: title,
-      icon: const Icon(Icons.notification_important, color: AppTheme.petWarningColor),
+      icon: const Icon(
+        Icons.notification_important,
+        color: AppTheme.petWarningColor,
+      ),
       onDismiss: onDismiss,
       child: child,
     );
@@ -98,13 +101,9 @@ class _PetTooltipState extends State<PetTooltip>
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -123,20 +122,21 @@ class _PetTooltipState extends State<PetTooltip>
     final offset = renderBox.localToGlobal(Offset.zero);
 
     _overlayEntry = OverlayEntry(
-      builder: (context) => _TooltipOverlay(
-        message: widget.message,
-        title: widget.title,
-        icon: widget.icon,
-        isDismissible: widget.isDismissible,
-        onDismiss: () {
-          _hideTooltip();
-          widget.onDismiss?.call();
-        },
-        targetOffset: offset,
-        targetSize: size,
-        placement: widget.placement,
-        animation: _fadeAnimation,
-      ),
+      builder:
+          (context) => _TooltipOverlay(
+            message: widget.message,
+            title: widget.title,
+            icon: widget.icon,
+            isDismissible: widget.isDismissible,
+            onDismiss: () {
+              _hideTooltip();
+              widget.onDismiss?.call();
+            },
+            targetOffset: offset,
+            targetSize: size,
+            placement: widget.placement,
+            animation: _fadeAnimation,
+          ),
     );
 
     overlay.insert(_overlayEntry!);
@@ -192,7 +192,7 @@ class _TooltipOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final screenSize = MediaQuery.of(context).size;
-    
+
     return AnimatedBuilder(
       animation: animation,
       builder: (context, child) {
@@ -259,10 +259,7 @@ class _TooltipOverlay extends StatelessWidget {
                           ),
                         if (title != null || icon != null)
                           const SizedBox(height: AppTheme.spacing8),
-                        Text(
-                          message,
-                          style: theme.textTheme.bodyMedium,
-                        ),
+                        Text(message, style: theme.textTheme.bodyMedium),
                       ],
                     ),
                   ),
@@ -278,45 +275,66 @@ class _TooltipOverlay extends StatelessWidget {
   double _calculateLeft(Size screenSize) {
     const padding = AppTheme.spacing16;
     const tooltipWidth = 280.0;
-    
+
     switch (placement) {
       case TooltipPlacement.auto:
       case TooltipPlacement.top:
       case TooltipPlacement.bottom:
-        final centered = targetOffset.dx + (targetSize.width / 2) - (tooltipWidth / 2);
-        return centered.clamp(padding, screenSize.width - tooltipWidth - padding);
+        final centered =
+            targetOffset.dx + (targetSize.width / 2) - (tooltipWidth / 2);
+        return centered.clamp(
+          padding,
+          screenSize.width - tooltipWidth - padding,
+        );
       case TooltipPlacement.left:
-        return (targetOffset.dx - tooltipWidth - AppTheme.spacing8)
-            .clamp(padding, screenSize.width - tooltipWidth - padding);
+        return (targetOffset.dx - tooltipWidth - AppTheme.spacing8).clamp(
+          padding,
+          screenSize.width - tooltipWidth - padding,
+        );
       case TooltipPlacement.right:
-        return (targetOffset.dx + targetSize.width + AppTheme.spacing8)
-            .clamp(padding, screenSize.width - tooltipWidth - padding);
+        return (targetOffset.dx + targetSize.width + AppTheme.spacing8).clamp(
+          padding,
+          screenSize.width - tooltipWidth - padding,
+        );
     }
   }
 
   double _calculateTop(Size screenSize) {
     const padding = AppTheme.spacing16;
     const estimatedTooltipHeight = 100.0;
-    
+
     switch (placement) {
       case TooltipPlacement.auto:
-        final spaceBelow = screenSize.height - targetOffset.dy - targetSize.height;
-        
+        final spaceBelow =
+            screenSize.height - targetOffset.dy - targetSize.height;
+
         if (spaceBelow >= estimatedTooltipHeight + padding) {
           return targetOffset.dy + targetSize.height + AppTheme.spacing8;
         } else {
           return (targetOffset.dy - estimatedTooltipHeight - AppTheme.spacing8)
-              .clamp(padding, screenSize.height - estimatedTooltipHeight - padding);
+              .clamp(
+                padding,
+                screenSize.height - estimatedTooltipHeight - padding,
+              );
         }
       case TooltipPlacement.top:
         return (targetOffset.dy - estimatedTooltipHeight - AppTheme.spacing8)
-            .clamp(padding, screenSize.height - estimatedTooltipHeight - padding);
+            .clamp(
+              padding,
+              screenSize.height - estimatedTooltipHeight - padding,
+            );
       case TooltipPlacement.bottom:
         return targetOffset.dy + targetSize.height + AppTheme.spacing8;
       case TooltipPlacement.left:
       case TooltipPlacement.right:
-        final centered = targetOffset.dy + (targetSize.height / 2) - (estimatedTooltipHeight / 2);
-        return centered.clamp(padding, screenSize.height - estimatedTooltipHeight - padding);
+        final centered =
+            targetOffset.dy +
+            (targetSize.height / 2) -
+            (estimatedTooltipHeight / 2);
+        return centered.clamp(
+          padding,
+          screenSize.height - estimatedTooltipHeight - padding,
+        );
     }
   }
 }

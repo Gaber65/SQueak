@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:squeak/features/auth/login/domin/entities/login_entity.dart';
 import 'package:squeak/features/auth/login/domin/usecses/login_use_case.dart';
 
-
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 part 'login_state.dart';
@@ -29,10 +28,10 @@ class LoginCubit extends Cubit<LoginState> {
   }) async {
     // TEMPORARILY DISABLED - Performance monitoring causing potential crashes
     // _performanceMonitor.startOperation('login_process');
-    
+
     isLoggedIn = true;
     emit(LoginLoading());
-    
+
     String emailOrPhone = (email ?? emailController.text).trim();
     // If we trimmed the controller's text, update the controller so the UI reflects
     // the trimmed value while preserving the cursor at the end.
@@ -67,12 +66,12 @@ class LoginCubit extends Cubit<LoginState> {
           //   'user_role': value.role,
           //   'input_type': isEmail(emailOrPhone) ? 'email' : 'phone',
           // });
-          
+
           try {
             // حفظ بيانات المستخدم في التخزين المحلي
             // Clear any existing data first
             await CacheHelper.clearData();
-            
+
             // Save new user data
             await Future.wait([
               CacheHelper.saveData('token', value.token),
@@ -99,7 +98,7 @@ class LoginCubit extends Cubit<LoginState> {
             // Reset MainCubit state first
             // ignore: use_build_context_synchronously
             MainCubit.get(context).resetState();
-            
+
             // Set up notifications after state reset
             // ignore: use_build_context_synchronously
             await MainCubit.get(context).requestNotificationPermissions();
@@ -111,7 +110,7 @@ class LoginCubit extends Cubit<LoginState> {
             await CacheHelper.clearData();
             throw Exception('Failed to save login data');
           }
-          
+
           clearFields();
           isLoggedIn = false;
           emit(LoginSuccess(value));
@@ -124,21 +123,21 @@ class LoginCubit extends Cubit<LoginState> {
           //   'error_type': error.runtimeType.toString(),
           //   'input_type': isEmail(emailOrPhone) ? 'email' : 'phone',
           // });
-          
+
           isLoggedIn = false;
           if (error is ServerException) {
             emit(LoginError(error.errorMessageModel));
           } else {
             // Handle any other type of exception (including FirebaseException)
             String errorMessage = 'An unexpected error occurred';
-            
+
             // Try to extract message from different exception types
             if (error.toString().contains('Firebase')) {
               errorMessage = 'Firebase authentication failed';
             } else if (error.toString().contains('network')) {
               errorMessage = 'Network connection failed';
             }
-            
+
             // Check if error has a message property
             try {
               if (error.message != null) {
@@ -147,13 +146,17 @@ class LoginCubit extends Cubit<LoginState> {
             } catch (_) {
               // If no message property, use default
             }
-            
-            emit(LoginError(ErrorMessageModel(
-              message: errorMessage,
-              statusCode: 0,
-              errors: {},
-              success: false,
-            )));
+
+            emit(
+              LoginError(
+                ErrorMessageModel(
+                  message: errorMessage,
+                  statusCode: 0,
+                  errors: {},
+                  success: false,
+                ),
+              ),
+            );
           }
         });
   }

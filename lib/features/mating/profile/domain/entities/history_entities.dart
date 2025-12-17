@@ -20,7 +20,8 @@ class HistoryEntity extends Equatable {
   final PetEntities? pet;
   final int? partnerRateStar;
   final String? partnerRateComment;
-  final bool checkPregnantNotificationStatus; // Fixed typo: checkPregenantNotificationStatus
+  final bool
+  checkPregnantNotificationStatus; // Fixed typo: checkPregenantNotificationStatus
   final bool isActive;
   final bool isDeleted;
 
@@ -98,7 +99,7 @@ enum HistoryStatus {
   single,
   availableForMating,
   married,
-  mating, 
+  mating,
   pregnant,
   hasBaby,
   separated, // Added missing value
@@ -163,7 +164,7 @@ extension HistoryStatusExtension on HistoryStatus {
   Color get color {
     switch (this) {
       case HistoryStatus.availableForMating:
-      // case HistoryStatus.divorced:
+        // case HistoryStatus.divorced:
         return Colors.green;
       case HistoryStatus.mating:
       case HistoryStatus.inMatingProcess:

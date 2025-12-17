@@ -24,10 +24,8 @@ class SentCard extends StatelessWidget {
             petId: pet.petId!,
             isDarkMode: MainCubit.get(context).isDark,
             isSent: true,
-            activePetId: SwitchProfileCubit.get(context)
-                .activeProfile!
-                .pet!
-                .petId!,
+            activePetId:
+                SwitchProfileCubit.get(context).activeProfile!.pet!.petId!,
           ),
         );
       },
@@ -52,9 +50,9 @@ class SentCard extends StatelessWidget {
           colorType: PetCardActionColor.danger,
           onPressed: () {
             context.read<PetFriendsCubit>().cancelRequest(
-                  pet,
-                  SwitchProfileCubit.get(context).activeProfile!.pet!.petId!,
-                );
+              pet,
+              SwitchProfileCubit.get(context).activeProfile!.pet!.petId!,
+            );
           },
         ),
       ],
@@ -112,18 +110,20 @@ class PetProfileCard extends StatelessWidget {
   BoxDecoration _buildCardDecoration(bool isDark) {
     return BoxDecoration(
       gradient: LinearGradient(
-        colors: isDark
-            ? [const Color(0xFF1E1E1E), const Color(0xFF2A2A2A)]
-            : [Colors.white, const Color(0xFFF9F9F9)],
+        colors:
+            isDark
+                ? [const Color(0xFF1E1E1E), const Color(0xFF2A2A2A)]
+                : [Colors.white, const Color(0xFFF9F9F9)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
-          color: isDark
-              ? Colors.black.withOpacity(0.4)
-              : Colors.grey.withOpacity(0.2),
+          color:
+              isDark
+                  ? Colors.black.withOpacity(0.4)
+                  : Colors.grey.withOpacity(0.2),
           blurRadius: 10,
           spreadRadius: 1,
           offset: const Offset(0, 4),
@@ -149,11 +149,7 @@ class _PetHeader extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _PetAvatar(
-          pet: pet,
-          radius: size.width * 0.08,
-          isDark: isDark,
-        ),
+        _PetAvatar(pet: pet, radius: size.width * 0.08, isDark: isDark),
         const SizedBox(width: 14),
         Expanded(
           child: Column(
@@ -185,9 +181,10 @@ class _PetHeader extends StatelessWidget {
   }
 
   String _buildSubtitle() {
-    final age = (pet.birthdate != null && pet.birthdate != '')
-        ? formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))
-        : null;
+    final age =
+        (pet.birthdate != null && pet.birthdate != '')
+            ? formatAge(DateTime.parse(pet.birthdate!.substring(0, 10)))
+            : null;
     final breed = pet.breed?.enBreed;
 
     if (age != null && breed != null) {
@@ -218,28 +215,31 @@ class _PetAvatar extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
-          colors: isDark
-              ? [Colors.blueGrey[800]!, Colors.blueGrey[600]!]
-              : [Colors.blue[500]!, Colors.blue[300]!],
+          colors:
+              isDark
+                  ? [Colors.blueGrey[800]!, Colors.blueGrey[600]!]
+                  : [Colors.blue[500]!, Colors.blue[300]!],
         ),
       ),
       padding: const EdgeInsets.all(3),
       child: CircleAvatar(
         radius: radius,
-        backgroundImage: (pet.imageName?.isNotEmpty ?? false)
-            ? NetworkImage(imageUrl + pet.imageName!)
-            : null,
+        backgroundImage:
+            (pet.imageName?.isNotEmpty ?? false)
+                ? NetworkImage(imageUrl + pet.imageName!)
+                : null,
         backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
-        child: (pet.imageName?.isNotEmpty ?? false)
-            ? null
-            : Text(
-                pet.petName!.substring(0, 1).toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+        child:
+            (pet.imageName?.isNotEmpty ?? false)
+                ? null
+                : Text(
+                  pet.petName!.substring(0, 1).toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
       ),
     );
   }
@@ -322,10 +322,7 @@ class _MutualFriendsInfo extends StatelessWidget {
   final int count;
   final bool isDark;
 
-  const _MutualFriendsInfo({
-    required this.count,
-    required this.isDark,
-  });
+  const _MutualFriendsInfo({required this.count, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -358,10 +355,7 @@ class _ActionsRow extends StatelessWidget {
   final List<PetCardAction> actions;
   final bool isDark;
 
-  const _ActionsRow({
-    required this.actions,
-    required this.isDark,
-  });
+  const _ActionsRow({required this.actions, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -374,10 +368,7 @@ class _ActionsRow extends StatelessWidget {
               left: index > 0 ? 6 : 0,
               right: index < actions.length - 1 ? 6 : 0,
             ),
-            child: _ActionButton(
-              action: actions[index],
-              isDark: isDark,
-            ),
+            child: _ActionButton(action: actions[index], isDark: isDark),
           ),
         ),
       ),
@@ -389,10 +380,7 @@ class _ActionButton extends StatelessWidget {
   final PetCardAction action;
   final bool isDark;
 
-  const _ActionButton({
-    required this.action,
-    required this.isDark,
-  });
+  const _ActionButton({required this.action, required this.isDark});
 
   Color _getColor() {
     switch (action.colorType) {
@@ -413,11 +401,7 @@ class _ActionButton extends StatelessWidget {
 
     return OutlinedButton.icon(
       onPressed: action.onPressed,
-      icon: Icon(
-        action.icon,
-        size: 18,
-        color: color,
-      ),
+      icon: Icon(action.icon, size: 18, color: color),
       label: Text(
         action.label,
         style: TextStyle(
@@ -428,15 +412,10 @@ class _ActionButton extends StatelessWidget {
         ),
       ),
       style: OutlinedButton.styleFrom(
-        side: BorderSide(
-          color: color,
-          width: 1.3,
-        ),
+        side: BorderSide(color: color, width: 1.3),
         backgroundColor:
             isDark ? color.withOpacity(0.07) : color.withOpacity(0.05),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
         elevation: 0,
       ),
@@ -458,9 +437,4 @@ class PetCardAction {
   });
 }
 
-enum PetCardActionColor {
-  primary,
-  danger,
-  success,
-  warning,
-}
+enum PetCardActionColor { primary, danger, success, warning }

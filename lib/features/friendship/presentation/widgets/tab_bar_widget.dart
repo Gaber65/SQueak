@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
@@ -50,7 +49,7 @@ class TabBarPetFriend extends StatelessWidget {
                   final cubit = context.read<PetFriendsCubit>();
                   final switchProfileCubit = context.read<SwitchProfileCubit>();
                   final activePet = switchProfileCubit.activeProfile?.pet;
-                  
+
                   cubit.changeTab(
                     0,
                     petId: activePet?.petId,
@@ -70,7 +69,7 @@ class TabBarPetFriend extends StatelessWidget {
                   final cubit = context.read<PetFriendsCubit>();
                   final switchProfileCubit = context.read<SwitchProfileCubit>();
                   final activePet = switchProfileCubit.activeProfile?.pet;
-                  
+
                   cubit.changeTab(
                     1,
                     petId: activePet?.petId,
@@ -90,7 +89,7 @@ class TabBarPetFriend extends StatelessWidget {
                   final cubit = context.read<PetFriendsCubit>();
                   final switchProfileCubit = context.read<SwitchProfileCubit>();
                   final activePet = switchProfileCubit.activeProfile?.pet;
-                  
+
                   cubit.changeTab(
                     2,
                     petId: activePet?.petId,
@@ -110,7 +109,7 @@ class TabBarPetFriend extends StatelessWidget {
                   final cubit = context.read<PetFriendsCubit>();
                   final switchProfileCubit = context.read<SwitchProfileCubit>();
                   final activePet = switchProfileCubit.activeProfile?.pet;
-                  
+
                   cubit.changeTab(
                     3,
                     petId: activePet?.petId,
@@ -166,28 +165,31 @@ class _TabItem extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 4),
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
           decoration: BoxDecoration(
-            color: isSelected
-                ? selectedColor
-                : (isDark ? Colors.grey[900] : Colors.grey[100]),
+            color:
+                isSelected
+                    ? selectedColor
+                    : (isDark ? Colors.grey[900] : Colors.grey[100]),
             borderRadius: BorderRadius.circular(12),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: selectedColor.withOpacity(0.4),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    )
-                  ]
-                : [],
+            boxShadow:
+                isSelected
+                    ? [
+                      BoxShadow(
+                        color: selectedColor.withOpacity(0.4),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ]
+                    : [],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 icon,
-                color: isSelected
-                    ? Colors.white
-                    : (isDark ? Colors.white70 : Colors.grey[700]),
+                color:
+                    isSelected
+                        ? Colors.white
+                        : (isDark ? Colors.white70 : Colors.grey[700]),
                 size: iconSize,
               ),
               const SizedBox(height: 6),
@@ -195,29 +197,31 @@ class _TabItem extends StatelessWidget {
                 label,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: isSelected
-                      ? Colors.white
-                      : (isDark ? Colors.white70 : Colors.grey[800]),
+                  color:
+                      isSelected
+                          ? Colors.white
+                          : (isDark ? Colors.white70 : Colors.grey[800]),
                   fontSize: fontSize,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 3),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? Colors.white.withOpacity(0.2)
-                      : Colors.grey.withOpacity(0.15),
+                  color:
+                      isSelected
+                          ? Colors.white.withOpacity(0.2)
+                          : Colors.grey.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   count.toString(),
                   style: TextStyle(
-                    color: isSelected
-                        ? Colors.white
-                        : (isDark ? Colors.white70 : Colors.grey[700]),
+                    color:
+                        isSelected
+                            ? Colors.white
+                            : (isDark ? Colors.white70 : Colors.grey[700]),
                     fontSize: countSize,
                     fontWeight: FontWeight.bold,
                   ),

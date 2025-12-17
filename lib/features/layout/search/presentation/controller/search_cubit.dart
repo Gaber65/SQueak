@@ -5,6 +5,7 @@ import 'package:squeak/core/error/failure.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import 'package:squeak/features/layout/search/domain/entities/clinic_search_entity.dart';
 import 'package:squeak/features/layout/search/domain/entities/vet_client_search_entity.dart';
+
 import '../../domain/usecase/follow_clinic_use_case.dart';
 import '../../domain/usecase/get_client_form_vet_use_case.dart';
 import '../../domain/usecase/get_search_list_use_case.dart';
@@ -14,11 +15,11 @@ import '../../domain/usecase/unfollow_clinic_use_case.dart';
 part 'search_state.dart';
 
 class SearchCubit extends Cubit<SearchState> {
-  GetSearchListUseCase getSearchListUseCase;
-  FollowClinicUseCase followClinicUseCase;
-  UnfollowClinicUseCase unfollowClinicUseCase;
-  GetClientFormVetUseCase getClintFormVetUseCase;
-  GetSupplierUseCase getSupplierUseCase;
+  final GetSearchListUseCase getSearchListUseCase;
+  final FollowClinicUseCase followClinicUseCase;
+  final UnfollowClinicUseCase unfollowClinicUseCase;
+  final GetClientFormVetUseCase getClintFormVetUseCase;
+  final GetSupplierUseCase getSupplierUseCase;
 
   SearchCubit(
     this.getSearchListUseCase,
@@ -33,100 +34,130 @@ class SearchCubit extends Cubit<SearchState> {
   final TextEditingController searchController = TextEditingController();
 
   List<ClinicEntitySearch> searchList = [];
-  bool isFollowBefore = false;
   SupplierEntitySearch? suppliers;
   List<VetSearchClientEntity> vetClientModel = [];
-  bool isGetVet = false;
+  bool isFollowBefore = false;
 
   Future<void> getSearchList() async {
     emit(SearchLoading());
-    final result = await getSearchListUseCase.call(searchController.text);
-    result.fold((failure) => emit(SearchError()), (clinics) {
-      searchList = clinics;
-      if (suppliers != null && searchList.isNotEmpty) {
-        ClinicInfoEntitySearch? clinic = findClinic(
-          suppliers!.clinics,
-          searchList[0].code,
-        );
-        if (clinic != null) {
-          isFollowBefore = true;
+
+    final result =
+        await getSearchListUseCase.call(searchController.text);
+
+    result.fold(
+      (failure) {
+        if (isClosed) return;
+        emit(SearchError());
+      },
+      (clinics) {
+        searchList = clinics;
+
+        if (suppliers != null && searchList.isNotEmpty) {
+          final clinic = findClinic(
+            suppliers!.clinics,
+            searchList.first.code,
+          );
+          isFollowBefore = clinic != null;
         }
-      }
-      emit(SearchSuccess());
-    });
+
+        if (isClosed) return;
+        emit(SearchSuccess());
+      },
+    );
   }
 
   Future<void> followClinic(String clinicId) async {
     emit(FollowLoading());
+
     final result = await followClinicUseCase.call(clinicId);
-    result.fold((failure) => emit(FollowError(failure)), (clinic) {
-      getClintFormVetVoid(searchController.text, false).then((value) {
-        if (value.isNotEmpty) {
-          if (value.first.id.contains('0000')) {
-            emit(FollowSuccess(false));
-          } else {
-            emit(FollowSuccess(true));
-          }
+
+    await result.fold(
+      (failure) async {
+        if (isClosed) return;
+        emit(FollowError(failure));
+      },
+      (clinic) async {
+        final clients = await _getClients(
+          searchController.text,
+          false,
+        );
+
+        if (isClosed) return;
+
+        if (clients.isNotEmpty &&
+            !clients.first.id.contains('0000')) {
+          emit(FollowSuccess(true));
         } else {
           emit(FollowSuccess(false));
         }
-      });
-    });
+      },
+    );
   }
 
   Future<void> unfollowClinic(String clinicId) async {
     emit(FollowLoading());
+
     final result = await unfollowClinicUseCase.call(clinicId);
+
     result.fold(
-      (failure) => emit(FollowError(failure)),
+      (failure) {
+        if (isClosed) return;
+        emit(FollowError(failure));
+      },
       (clinic) {
         CacheHelper.removeData('posts');
+        if (isClosed) return;
         emit(FollowSuccess(false));
       },
     );
   }
 
-  Future<List<VetSearchClientEntity>> getClintFormVetVoid(
+  Future<List<VetSearchClientEntity>> _getClients(
     String clinicCode,
     bool isFilter,
   ) async {
-    emit(FollowLoading());
-    final result = await getClintFormVetUseCase.call(clinicCode);
+    final result =
+        await getClintFormVetUseCase.call(clinicCode);
 
-    result.fold((failure) {}, (clients) {
-      if (clients.isNotEmpty) {
+    return result.fold(
+      (failure) => [],
+      (clients) {
         if (isFilter) {
-          vetClientModel =
-              clients
-                  .where((element) => element.addedInSqueakStatues == false)
-                  .toList();
-        } else {
-          vetClientModel = clients;
+          return clients
+              .where(
+                (e) => e.addedInSqueakStatues == false,
+              )
+              .toList();
         }
-        emit(FollowSuccess(true));
-      } else {
-        vetClientModel.clear();
-        emit(FollowSuccess(false));
-      }
-    });
-
-    return vetClientModel;
+        return clients;
+      },
+    );
   }
 
   Future<void> getSupplier() async {
     emit(GetSupplierLoading());
-    final result = await getSupplierUseCase.call(NoParameters());
-    result.fold((failure) => emit(GetSupplierError()), (supplier) {
-      suppliers = supplier;
-      emit(GetSupplierSuccess());
-    });
+
+    final result =
+        await getSupplierUseCase.call(NoParameters());
+
+    result.fold(
+      (failure) {
+        if (isClosed) return;
+        emit(GetSupplierError());
+      },
+      (supplier) {
+        suppliers = supplier;
+        if (isClosed) return;
+        emit(GetSupplierSuccess());
+      },
+    );
   }
 
   ClinicInfoEntitySearch? findClinic(
     List<ClinicInfoEntitySearch> data,
     String clinicId,
   ) {
-    for (var element in data) {
+    for (final element in data) {
       if (element.clinic.code == clinicId) {
         return element;
       }
@@ -136,7 +167,6 @@ class SearchCubit extends Cubit<SearchState> {
 
   @override
   Future<void> close() {
-    // Dispose controller to free resources
     searchController.dispose();
     return super.close();
   }

@@ -64,7 +64,7 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
         isLoadingAppointment = false;
         appointments = appointmentsList;
         filteredList = List.from(appointments);
-        emit(GetAppointmentSuccess());     
+        emit(GetAppointmentSuccess());
       },
     );
   }

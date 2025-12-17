@@ -128,10 +128,10 @@ class VcButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isEnabled = onPressed != null && !isLoading;
-    
+
     final buttonSize = _getButtonSize(size);
     final buttonStyle = _getButtonStyle(variant, theme, buttonSize);
-    
+
     Widget content = _buildContent(theme);
 
     Widget button;
@@ -177,9 +177,11 @@ class VcButton extends StatelessWidget {
             height: 16,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              color: variant == VcButtonVariant.elevated || variant == VcButtonVariant.destructive
-                  ? theme.colorScheme.onPrimary
-                  : theme.colorScheme.primary,
+              color:
+                  variant == VcButtonVariant.elevated ||
+                          variant == VcButtonVariant.destructive
+                      ? theme.colorScheme.onPrimary
+                      : theme.colorScheme.primary,
             ),
           ),
           const SizedBox(width: AppTheme.spacing8),
@@ -208,9 +210,15 @@ class VcButton extends StatelessWidget {
     return child;
   }
 
-  ButtonStyle _getButtonStyle(VcButtonVariant variant, ThemeData theme, _ButtonSize buttonSize) {
+  ButtonStyle _getButtonStyle(
+    VcButtonVariant variant,
+    ThemeData theme,
+    _ButtonSize buttonSize,
+  ) {
     final baseStyle = ButtonStyle(
-      minimumSize: WidgetStateProperty.all(Size(buttonSize.minWidth, buttonSize.height)),
+      minimumSize: WidgetStateProperty.all(
+        Size(buttonSize.minWidth, buttonSize.height),
+      ),
       padding: WidgetStateProperty.all(buttonSize.padding),
       shape: WidgetStateProperty.all(
         RoundedRectangleBorder(
@@ -242,7 +250,7 @@ class VcButton extends StatelessWidget {
             return 1;
           }),
         );
-        
+
       case VcButtonVariant.outlined:
         return baseStyle.copyWith(
           backgroundColor: WidgetStateProperty.all(Colors.transparent),
@@ -255,12 +263,14 @@ class VcButton extends StatelessWidget {
           }),
           side: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.disabled)) {
-              return BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.12));
+              return BorderSide(
+                color: theme.colorScheme.onSurface.withOpacity(0.12),
+              );
             }
             return BorderSide(color: color ?? theme.colorScheme.primary);
           }),
         );
-        
+
       case VcButtonVariant.text:
         return baseStyle.copyWith(
           backgroundColor: WidgetStateProperty.all(Colors.transparent),
@@ -275,7 +285,7 @@ class VcButton extends StatelessWidget {
             (color ?? theme.colorScheme.primary).withOpacity(0.08),
           ),
         );
-        
+
       case VcButtonVariant.destructive:
         return baseStyle.copyWith(
           backgroundColor: WidgetStateProperty.resolveWith((states) {

@@ -122,26 +122,28 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final progressValue = _duration.inMilliseconds > 0
-        ? _position.inMilliseconds / _duration.inMilliseconds
-        : 0.0;
+    final progressValue =
+        _duration.inMilliseconds > 0
+            ? _position.inMilliseconds / _duration.inMilliseconds
+            : 0.0;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: widget.isMe
-              ? [
-                  Colors.white.withOpacity(0.2),
-                  Colors.white.withOpacity(0.1),
-                ]
-              : [
-                  (widget.primaryColor ?? theme.colorScheme.primary)
-                      .withOpacity(0.15),
-                  (widget.primaryColor ?? theme.colorScheme.primary)
-                      .withOpacity(0.05),
-                ],
+          colors:
+              widget.isMe
+                  ? [
+                    Colors.white.withOpacity(0.2),
+                    Colors.white.withOpacity(0.1),
+                  ]
+                  : [
+                    (widget.primaryColor ?? theme.colorScheme.primary)
+                        .withOpacity(0.15),
+                    (widget.primaryColor ?? theme.colorScheme.primary)
+                        .withOpacity(0.05),
+                  ],
         ),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -153,30 +155,38 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: widget.isMe
-                    ? Colors.white.withOpacity(0.3)
-                    : (widget.primaryColor ?? theme.colorScheme.primary)
-                        .withOpacity(0.2),
+                color:
+                    widget.isMe
+                        ? Colors.white.withOpacity(0.3)
+                        : (widget.primaryColor ?? theme.colorScheme.primary)
+                            .withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
-              child: _isLoading
-                  ? SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: widget.isMe
-                            ? Colors.white
-                            : (widget.primaryColor ?? theme.colorScheme.primary),
+              child:
+                  _isLoading
+                      ? SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color:
+                              widget.isMe
+                                  ? Colors.white
+                                  : (widget.primaryColor ??
+                                      theme.colorScheme.primary),
+                        ),
+                      )
+                      : Icon(
+                        _isPlaying
+                            ? Icons.pause_rounded
+                            : Icons.play_arrow_rounded,
+                        color:
+                            widget.isMe
+                                ? Colors.white
+                                : (widget.primaryColor ??
+                                    theme.colorScheme.primary),
+                        size: 20,
                       ),
-                    )
-                  : Icon(
-                      _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                      color: widget.isMe
-                          ? Colors.white
-                          : (widget.primaryColor ?? theme.colorScheme.primary),
-                      size: 20,
-                    ),
             ),
           ),
           const SizedBox(width: 12),
@@ -192,13 +202,15 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                         borderRadius: BorderRadius.circular(4),
                         child: LinearProgressIndicator(
                           value: progressValue,
-                          backgroundColor: widget.isMe
-                              ? Colors.white.withOpacity(0.2)
-                              : Colors.grey.withOpacity(0.2),
+                          backgroundColor:
+                              widget.isMe
+                                  ? Colors.white.withOpacity(0.2)
+                                  : Colors.grey.withOpacity(0.2),
                           valueColor: AlwaysStoppedAnimation<Color>(
                             widget.isMe
                                 ? Colors.white
-                                : (widget.primaryColor ?? theme.colorScheme.primary),
+                                : (widget.primaryColor ??
+                                    theme.colorScheme.primary),
                           ),
                           minHeight: 3,
                         ),
@@ -210,9 +222,10 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                           ? _formatDuration(_position)
                           : '00:00',
                       style: TextStyle(
-                        color: widget.isMe
-                            ? Colors.white.withOpacity(0.8)
-                            : theme.colorScheme.onSurface.withOpacity(0.7),
+                        color:
+                            widget.isMe
+                                ? Colors.white.withOpacity(0.8)
+                                : theme.colorScheme.onSurface.withOpacity(0.7),
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
@@ -224,18 +237,20 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                   children: [
                     Icon(
                       Icons.audiotrack_rounded,
-                      color: widget.isMe
-                          ? Colors.white.withOpacity(0.7)
-                          : theme.colorScheme.onSurface.withOpacity(0.5),
+                      color:
+                          widget.isMe
+                              ? Colors.white.withOpacity(0.7)
+                              : theme.colorScheme.onSurface.withOpacity(0.5),
                       size: 12,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       'Audio message',
                       style: TextStyle(
-                        color: widget.isMe
-                            ? Colors.white.withOpacity(0.7)
-                            : theme.colorScheme.onSurface.withOpacity(0.6),
+                        color:
+                            widget.isMe
+                                ? Colors.white.withOpacity(0.7)
+                                : theme.colorScheme.onSurface.withOpacity(0.6),
                         fontSize: 11,
                       ),
                     ),
@@ -243,9 +258,12 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                       Text(
                         ' • ${_formatDuration(_duration)}',
                         style: TextStyle(
-                          color: widget.isMe
-                              ? Colors.white.withOpacity(0.7)
-                              : theme.colorScheme.onSurface.withOpacity(0.6),
+                          color:
+                              widget.isMe
+                                  ? Colors.white.withOpacity(0.7)
+                                  : theme.colorScheme.onSurface.withOpacity(
+                                    0.6,
+                                  ),
                           fontSize: 11,
                         ),
                       ),

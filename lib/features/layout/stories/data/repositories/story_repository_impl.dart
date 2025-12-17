@@ -12,9 +12,7 @@ class StoryRepositoryImpl implements StoryRepository {
   StoryRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<Either<Failure, String>> createStory(
-      CreateStoryParams params,
-      ) async {
+  Future<Either<Failure, String>> createStory(CreateStoryParams params) async {
     try {
       final result = await remoteDataSource.createStory(params);
       return Right(result);
@@ -35,8 +33,8 @@ class StoryRepositoryImpl implements StoryRepository {
 
   @override
   Future<Either<Failure, List<StoryEntity>>> getMyActiveStories(
-      String petId,
-      ) async {
+    String petId,
+  ) async {
     try {
       final result = await remoteDataSource.getMyActiveStories(petId);
       return Right(result);
@@ -47,8 +45,8 @@ class StoryRepositoryImpl implements StoryRepository {
 
   @override
   Future<Either<Failure, List<FrindStoryEntity>>> getFriendsStories(
-      String petId,
-      ) async {
+    String petId,
+  ) async {
     try {
       final result = await remoteDataSource.getFriendsStories(petId);
       return Right(result);
@@ -86,7 +84,9 @@ class StoryRepositoryImpl implements StoryRepository {
   }
 
   @override
-  Future<Either<Failure, List<StoryEntity>>> getAllFriendStories(String petId) async {
+  Future<Either<Failure, List<StoryEntity>>> getAllFriendStories(
+    String petId,
+  ) async {
     try {
       final result = await remoteDataSource.getAllFriendStories(petId);
       return Right(result);
@@ -96,7 +96,9 @@ class StoryRepositoryImpl implements StoryRepository {
   }
 
   @override
-  Future<Either<Failure, String>> sendReplyMsgToStoryPet(SendReplyMsgToStoryPetParams params) async {
+  Future<Either<Failure, String>> sendReplyMsgToStoryPet(
+    SendReplyMsgToStoryPetParams params,
+  ) async {
     try {
       final result = await remoteDataSource.sendReplyMsgToStoryPet(params);
       return Right(result);

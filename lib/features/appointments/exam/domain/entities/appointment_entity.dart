@@ -117,11 +117,7 @@ class ClientEntity extends Equatable {
   final String? phone;
   final int? gender;
 
-  const ClientEntity({
-    this.name,
-    this.phone,
-    this.gender,
-  });
+  const ClientEntity({this.name, this.phone, this.gender});
 
   @override
   List<Object?> get props => [name, phone, gender];
@@ -138,11 +134,7 @@ class PetEntityAppointment extends Equatable {
   final String? squeakPetId;
   final int? gender;
 
-  const PetEntityAppointment({
-    this.name,
-    this.gender,
-    this.squeakPetId,
-  });
+  const PetEntityAppointment({this.name, this.gender, this.squeakPetId});
 
   @override
   List<Object?> get props => [name, gender, squeakPetId];
@@ -157,10 +149,7 @@ class DoctorUserEntity extends Equatable {
   final String? fullName;
   final String? imageName;
 
-  const DoctorUserEntity({
-    this.fullName,
-    this.imageName,
-  });
+  const DoctorUserEntity({this.fullName, this.imageName});
 
   @override
   List<Object?> get props => [fullName, imageName];

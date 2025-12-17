@@ -46,7 +46,7 @@ class PostHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  formatFacebookTimePost(postItem.createdAt!),
+                  formatFacebookTimePost(postItem.createdAt ??''),
                   style: TextStyle(
                     color: isDark ? Colors.white54 : Colors.grey[500],
                     fontSize: 11,
@@ -62,7 +62,9 @@ class PostHeader extends StatelessWidget {
                 Icons.more_horiz,
                 color: isDark ? Colors.white70 : Colors.grey[700],
               ),
-              onPressed: onMenuTap ?? () => _showPostMenu(context, PostCubit.get(context)),
+              onPressed:
+                  onMenuTap ??
+                  () => _showPostMenu(context, PostCubit.get(context)),
               splashRadius: 20,
             ),
         ],
@@ -100,16 +102,18 @@ class _ClinicAvatar extends StatelessWidget {
       child: CircleAvatar(
         radius: 22,
         backgroundColor: isDark ? Colors.grey[850] : Colors.grey[200],
-        backgroundImage: imagePath != null && imagePath!.isNotEmpty
-            ? FastCachedImageProvider(imageUrl + imagePath!)
-            : null,
-        child: imagePath == null || imagePath!.isEmpty
-            ? Icon(
-          Icons.business,
-          color: isDark ? Colors.white54 : Colors.grey[600],
-          size: 22,
-        )
-            : null,
+        backgroundImage:
+            imagePath != null && imagePath!.isNotEmpty
+                ? FastCachedImageProvider(imageUrl + imagePath!)
+                : null,
+        child:
+            imagePath == null || imagePath!.isEmpty
+                ? Icon(
+                  Icons.business,
+                  color: isDark ? Colors.white54 : Colors.grey[600],
+                  size: 22,
+                )
+                : null,
       ),
     );
   }

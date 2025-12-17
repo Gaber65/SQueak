@@ -32,7 +32,6 @@ class ReminderModel extends ReminderEntity {
       otherTitle: entity.otherTitle,
       subTypeFeed: entity.subTypeFeed,
       vaccinationId: entity.vaccinationId,
-
     );
   }
 

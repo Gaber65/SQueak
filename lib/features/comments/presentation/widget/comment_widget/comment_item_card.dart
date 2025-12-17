@@ -40,9 +40,9 @@ class CommentItemCard extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color:
-              MainCubit.get(context).isDark
-                  ? Colors.white10
-                  : Colors.grey[100],
+                  MainCubit.get(context).isDark
+                      ? Colors.white10
+                      : Colors.grey[100],
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -100,15 +100,15 @@ class CommentItemCard extends StatelessWidget {
       cubit.emit(IsBottomSheetOpen());
       scaffoldKey.currentState!
           .showBottomSheet(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-            (context) => CommentActionSheet(comment: data , petID: petID),
-      )
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            (context) => CommentActionSheet(comment: data, petID: petID),
+          )
           .closed
           .then((value) {
-        CacheHelper.saveData('isBottomSheetOpen', false);
-        cubit.emit(IsBottomSheetOpen());
-      });
+            CacheHelper.saveData('isBottomSheetOpen', false);
+            cubit.emit(IsBottomSheetOpen());
+          });
     }
   }
 
@@ -138,16 +138,13 @@ class CommentItemCard extends StatelessWidget {
                   const Icon(Icons.reply_all_rounded),
                 const SizedBox(width: 8),
 
-
-
                 Text(
                   data.replies.isEmpty
                       ? S.of(context).reply
                       : data.replies.length == 1
                       ? S.of(context).view1Reply
                       : S.of(context).viewReplies(data.replies.length),
-                )
-
+                ),
               ],
             ),
           ),
@@ -156,7 +153,7 @@ class CommentItemCard extends StatelessWidget {
           formatFacebookTimePost(data.createdAt),
           style: Theme.of(context).textTheme.bodySmall!.copyWith(
             color:
-            MainCubit.get(context).isDark ? Colors.white : Colors.grey[700],
+                MainCubit.get(context).isDark ? Colors.white : Colors.grey[700],
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -164,4 +161,3 @@ class CommentItemCard extends StatelessWidget {
     );
   }
 }
-

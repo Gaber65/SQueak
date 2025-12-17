@@ -56,11 +56,12 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginCubit(
-        LoginUseCase(
-          LoginRepositoryImpl(remoteDataSource: LoginRemoteDataSource()),
-        ),
-      ),
+      create:
+          (context) => LoginCubit(
+            LoginUseCase(
+              LoginRepositoryImpl(remoteDataSource: LoginRemoteDataSource()),
+            ),
+          ),
       child: BlocConsumer<LoginCubit, LoginState>(
         listener: (context, state) {
           _handleStateChanges(context, state);
@@ -117,7 +118,9 @@ class _LoginScreenState extends State<LoginScreen>
           ),
         );
       } else {
-        debugPrint('[Login] No ScaffoldMessenger available to show error SnackBar');
+        debugPrint(
+          '[Login] No ScaffoldMessenger available to show error SnackBar',
+        );
       }
     }
 
@@ -140,7 +143,9 @@ class _LoginScreenState extends State<LoginScreen>
             CacheHelper.saveData('token', state.userEntity.token),
           ]);
 
-          debugPrint('[Login] Saved user fields to CacheHelper. Saving tokens...');
+          debugPrint(
+            '[Login] Saved user fields to CacheHelper. Saving tokens...',
+          );
           await TokenManager.saveToken(
             state.userEntity.token,
             state.userEntity.expiresIn,
@@ -156,7 +161,9 @@ class _LoginScreenState extends State<LoginScreen>
       // Ensure persistence completes before UI navigation
       persistLogin().whenComplete(() async {
         // Reset MainCubit state safely and navigate. Avoid showing SnackBar from possibly-deactivated context.
-        debugPrint('[Login] Persistence complete, resetting MainCubit and navigating');
+        debugPrint(
+          '[Login] Persistence complete, resetting MainCubit and navigating',
+        );
         try {
           BlocProvider.of<MainCubit>(context).resetState();
         } catch (e) {

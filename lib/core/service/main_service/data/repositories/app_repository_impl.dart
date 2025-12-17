@@ -46,12 +46,13 @@ class AppRepositoryImpl implements AppRepository {
     File file,
     UploadPlace uploadPlace,
   ) async {
+    final subtype = remoteDataSource.getImageSubtype(file.path);
     final result = await remoteDataSource.uploadFile(
       file,
       imageHelperEndPoint,
       uploadPlace.value,
       "image",
-      "jpeg",
+      subtype,
     );
 
     try {
@@ -72,12 +73,13 @@ class AppRepositoryImpl implements AppRepository {
     File file,
     UploadPlace uploadPlace,
   ) async {
+    final subtype = remoteDataSource.getVideoSubtype(file.path);
     final result = await remoteDataSource.uploadFile(
       file,
       videoHelperEndPoint,
       uploadPlace.value,
       "video",
-      "mp4",
+      subtype,
     );
     try {
       return Right(result);
@@ -100,7 +102,7 @@ class AppRepositoryImpl implements AppRepository {
     // Detect audio subtype from file extension
     String extension = file.path.split('.').last.toLowerCase();
     String subtype;
-    
+
     switch (extension) {
       case 'mp3':
         subtype = 'mpeg';
@@ -133,14 +135,83 @@ class AppRepositoryImpl implements AppRepository {
         subtype = 'webm';
         break;
       default:
-        subtype = 'mpeg'; // fallback to mp3
+        subtype = 'mpeg';
     }
-    
+
     final result = await remoteDataSource.uploadFile(
       file,
       audioHelperEndPoint,
       uploadPlace.value,
       "audio",
+      subtype,
+    );
+    try {
+      return Right(result);
+    } on ServerException catch (failure) {
+      return Left(
+        ServerFailure(
+          failure.errorMessageModel.errors.isNotEmpty
+              ? failure.errorMessageModel.errors.values.first.first
+              : failure.errorMessageModel.message,
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, ImageEntity>> uploadDocument(
+    File file,
+    UploadPlace uploadPlace,
+  ) async {
+    String extension = file.path.split('.').last.toLowerCase();
+    String subtype;
+    String type = 'application';
+
+    switch (extension) {
+      case 'pdf':
+        subtype = 'pdf';
+        break;
+      case 'doc':
+        subtype = 'msword';
+        break;
+      case 'docx':
+        subtype = 'vnd.openxmlformats-officedocument.wordprocessingml.document';
+        break;
+      case 'xls':
+        subtype = 'vnd.ms-excel';
+        break;
+      case 'xlsx':
+        subtype = 'vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        break;
+      case 'ppt':
+        subtype = 'vnd.ms-powerpoint';
+        break;
+      case 'pptx':
+        subtype =
+            'vnd.openxmlformats-officedocument.presentationml.presentation';
+        break;
+      case 'txt':
+        type = 'text';
+        subtype = 'plain';
+        break;
+      case 'zip':
+        subtype = 'zip';
+        break;
+      case 'rar':
+        subtype = 'x-rar-compressed';
+        break;
+      case '7z':
+        subtype = 'x-7z-compressed';
+        break;
+      default:
+        subtype = 'octet-stream';
+    }
+
+    final result = await remoteDataSource.uploadFile(
+      file,
+      documentHelperEndPoint,
+      uploadPlace.value,
+      type,
       subtype,
     );
     try {

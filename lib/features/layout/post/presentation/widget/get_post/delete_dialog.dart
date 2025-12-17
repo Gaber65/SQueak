@@ -31,9 +31,10 @@ class _DeleteDialogContentState extends State<DeleteDialogContent>
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.95,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
   }
 
@@ -55,7 +56,9 @@ class _DeleteDialogContentState extends State<DeleteDialogContent>
             SizedBox(width: 12),
             Expanded(
               child: Text(
-                isArabic() ? 'تم حذف المنشور بنجاح' : 'Post deleted successfully',
+                isArabic()
+                    ? 'تم حذف المنشور بنجاح'
+                    : 'Post deleted successfully',
                 style: TextStyle(fontSize: 14),
               ),
             ),
@@ -63,9 +66,7 @@ class _DeleteDialogContentState extends State<DeleteDialogContent>
         ),
         backgroundColor: Colors.red[700],
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: EdgeInsets.all(16),
         duration: const Duration(seconds: 2),
         animation: CurvedAnimation(
@@ -81,10 +82,7 @@ class _DeleteDialogContentState extends State<DeleteDialogContent>
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _scaleAnimation.value, child: child);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -166,7 +164,9 @@ class _DeleteDialogContentState extends State<DeleteDialogContent>
                     style: TextStyle(
                       fontSize: 16,
                       height: 1.5,
-                      color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.8),
+                      color: Theme.of(
+                        context,
+                      ).textTheme.bodyLarge?.color?.withOpacity(0.8),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -176,12 +176,18 @@ class _DeleteDialogContentState extends State<DeleteDialogContent>
                     decoration: BoxDecoration(
                       color: Colors.orange.shade50,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.orange.shade200, width: 1),
+                      border: Border.all(
+                        color: Colors.orange.shade200,
+                        width: 1,
+                      ),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.info_outline_rounded,
-                            size: 20, color: Colors.orange.shade700),
+                        Icon(
+                          Icons.info_outline_rounded,
+                          size: 20,
+                          color: Colors.orange.shade700,
+                        ),
                         SizedBox(width: 12),
                         Expanded(
                           child: Text(
@@ -218,7 +224,11 @@ class _DeleteDialogContentState extends State<DeleteDialogContent>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.close, size: 20, color: Colors.grey.shade600),
+                          Icon(
+                            Icons.close,
+                            size: 20,
+                            color: Colors.grey.shade600,
+                          ),
                           SizedBox(width: 8),
                           Text(
                             isArabic() ? 'إلغاء' : 'Cancel',

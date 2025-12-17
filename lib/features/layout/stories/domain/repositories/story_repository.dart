@@ -8,7 +8,9 @@ abstract class StoryRepository {
   Future<Either<Failure, String>> createStory(CreateStoryParams params);
   Future<Either<Failure, bool>> deleteStory(String storyId);
   Future<Either<Failure, List<StoryEntity>>> getMyActiveStories(String petId);
-  Future<Either<Failure, List<FrindStoryEntity>>> getFriendsStories(String petId);
+  Future<Either<Failure, List<FrindStoryEntity>>> getFriendsStories(
+    String petId,
+  );
   Future<Either<Failure, PaginatedReactionsEntity>> getStoryReactions({
     required String userStoryId,
     required int pageNumber,
@@ -17,8 +19,9 @@ abstract class StoryRepository {
   Future<Either<Failure, bool>> reactToStory(ReactToStoryParams params);
   Future<Either<Failure, List<StoryEntity>>> getAllFriendStories(String petId);
 
-  Future<Either<Failure, String>> sendReplyMsgToStoryPet(SendReplyMsgToStoryPetParams params);
-
+  Future<Either<Failure, String>> sendReplyMsgToStoryPet(
+    SendReplyMsgToStoryPetParams params,
+  );
 }
 
 // Repository Parameters
@@ -48,7 +51,6 @@ class ReactToStoryParams {
     'petId': petId,
   };
 }
-
 
 class SendReplyMsgToStoryPetParams {
   final String storyId;

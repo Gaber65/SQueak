@@ -13,7 +13,9 @@ class UpdateProfileUseCase extends BaseUseCase<Owner, UpdateProfileParameters> {
   UpdateProfileUseCase(this.repository);
 
   @override
-  Future<Either<Failure, Owner>> call(UpdateProfileParameters parameters) async {
+  Future<Either<Failure, Owner>> call(
+    UpdateProfileParameters parameters,
+  ) async {
     return await repository.updateProfile(
       fullName: parameters.fullName,
       address: parameters.address,

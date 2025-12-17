@@ -8,7 +8,9 @@ class DioFinalHelper {
 
   static void setEnvironment(Environment environment) {
     _currentEnvironment = environment;
-    DebugUtils.debugPrintEnv('DioFinalHelper: Environment set to ${environment.name}');
+    DebugUtils.debugPrintEnv(
+      'DioFinalHelper: Environment set to ${environment.name}',
+    );
   }
 
   static Map<String, String> _buildHeaders({String? token}) {
@@ -27,13 +29,17 @@ class DioFinalHelper {
         headers: _buildHeaders(),
       ),
     );
-    
+
     // Add our ApiInterceptor in test environment so API calls are captured
     if (_currentEnvironment == Environment.test) {
       dio.interceptors.add(ApiLoggerInterceptor());
-      DebugUtils.debugPrintEnv('DioFinalHelper: ApiInterceptor added for test environment');
+      DebugUtils.debugPrintEnv(
+        'DioFinalHelper: ApiInterceptor added for test environment',
+      );
     } else {
-      DebugUtils.debugPrintEnv('DioFinalHelper: ApiInterceptor skipped for ${_currentEnvironment?.name ?? 'unknown'} environment');
+      DebugUtils.debugPrintEnv(
+        'DioFinalHelper: ApiInterceptor skipped for ${_currentEnvironment?.name ?? 'unknown'} environment',
+      );
     }
   }
 
@@ -65,7 +71,7 @@ class DioFinalHelper {
       dio.options.queryParameters = query;
     }
 
-    return await dio.get(method ,);
+    return await dio.get(method);
   }
 
   static Future<Response> postData({

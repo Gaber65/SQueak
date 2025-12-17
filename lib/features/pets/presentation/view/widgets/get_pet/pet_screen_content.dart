@@ -115,7 +115,10 @@ class _PetScreenContentState extends State<PetScreenContent> {
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [ColorManager.primaryColor, ColorManager.secondColor],
+                          colors: [
+                            ColorManager.primaryColor,
+                            ColorManager.secondColor,
+                          ],
                         ),
                         boxShadow: [
                           BoxShadow(
@@ -125,7 +128,10 @@ class _PetScreenContentState extends State<PetScreenContent> {
                           ),
                         ],
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 6,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -724,7 +730,7 @@ class _PetScreenContentState extends State<PetScreenContent> {
     final totalPets = widget.pets.length;
     final linkedPets =
         widget.pets.where((pet) => pet.qrCode?.isNotEmpty == true).length;
-    // final petsWithPassport = widget.pets.where((pet) => 
+    // final petsWithPassport = widget.pets.where((pet) =>
     //     pet.passportNumber?.isNotEmpty == true).length;
 
     return Container(
@@ -768,11 +774,7 @@ class _PetScreenContentState extends State<PetScreenContent> {
                     ],
                   ),
                 ),
-                child: const Icon(
-                  Icons.pets,
-                  color: Colors.white,
-                  size: 20,
-                ),
+                child: const Icon(Icons.pets, color: Colors.white, size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -780,9 +782,7 @@ class _PetScreenContentState extends State<PetScreenContent> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isArabic()
-                          ? "لوحة الأصدقاء الأليفة"
-                          : "Pet Dashboard",
+                      isArabic() ? "لوحة الأصدقاء الأليفة" : "Pet Dashboard",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -793,9 +793,7 @@ class _PetScreenContentState extends State<PetScreenContent> {
                       ),
                     ),
                     Text(
-                      isArabic()
-                          ? "نظرة سريعة على أصدقائك"
-                          : "Quick overview",
+                      isArabic() ? "نظرة سريعة على أصدقائك" : "Quick overview",
                       style: TextStyle(
                         fontSize: 12,
                         color:
@@ -855,13 +853,11 @@ class _PetScreenContentState extends State<PetScreenContent> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        color: MainCubit.get(context).isDark
-            ? Colors.grey[800]!.withOpacity(0.6)
-            : Colors.white.withOpacity(0.8),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 1,
-        ),
+        color:
+            MainCubit.get(context).isDark
+                ? Colors.grey[800]!.withOpacity(0.6)
+                : Colors.white.withOpacity(0.8),
+        border: Border.all(color: color.withOpacity(0.3), width: 1),
         boxShadow: [
           BoxShadow(
             color: color.withOpacity(0.1),
@@ -878,11 +874,7 @@ class _PetScreenContentState extends State<PetScreenContent> {
               borderRadius: BorderRadius.circular(10),
               color: color.withOpacity(0.15),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 16,
-            ),
+            child: Icon(icon, color: color, size: 16),
           ),
           const SizedBox(height: 6),
           Text(
@@ -890,9 +882,8 @@ class _PetScreenContentState extends State<PetScreenContent> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: MainCubit.get(context).isDark 
-                  ? Colors.white 
-                  : Colors.black87,
+              color:
+                  MainCubit.get(context).isDark ? Colors.white : Colors.black87,
             ),
           ),
           const SizedBox(height: 2),
@@ -900,9 +891,10 @@ class _PetScreenContentState extends State<PetScreenContent> {
             label,
             style: TextStyle(
               fontSize: 10,
-              color: MainCubit.get(context).isDark
-                  ? Colors.grey[400]
-                  : Colors.grey[600],
+              color:
+                  MainCubit.get(context).isDark
+                      ? Colors.grey[400]
+                      : Colors.grey[600],
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
@@ -969,7 +961,9 @@ class _PetScreenContentState extends State<PetScreenContent> {
                     onSelected: (selected) {
                       setState(() {
                         if (selected) {
-                          _selectedPets.add(widget.pets.elementAt(index).petId!);
+                          _selectedPets.add(
+                            widget.pets.elementAt(index).petId!,
+                          );
                         } else {
                           _selectedPets.remove(
                             widget.pets.elementAt(index).petId,

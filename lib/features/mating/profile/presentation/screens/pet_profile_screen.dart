@@ -23,6 +23,7 @@ class PetProfileScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => sl<ProfileMatingCubit>()),
+        BlocProvider(create: (context) => sl<PostCubit>()),
         BlocProvider(create: (_) => sl<PetCubit>()..getOwnerPets()),
         BlocProvider(create: (_) => sl<SettingCubit>()..getOwnerData()),
         BlocProvider(create: (_) => sl<SwitchProfileCubit>()..loadProfile()),

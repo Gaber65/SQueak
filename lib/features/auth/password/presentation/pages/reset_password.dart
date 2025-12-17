@@ -24,14 +24,7 @@ class ResetPasswordScreen extends StatefulWidget {
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen>
     with SingleTickerProviderStateMixin {
-  final List<String> petEmojis = [
-    '🐶',
-    '🐱',
-    '🐰',
-    '🐭',
-    '🐦',
-    '🦁',
-  ];
+  final List<String> petEmojis = ['🐶', '🐱', '🐰', '🐭', '🐦', '🦁'];
 
   // Motivational messages with both English and Arabic
   final List<Map<String, String>> motivationalMessages = const [
@@ -55,10 +48,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       'en': '"Chirp! Reset passwords are easy!" 🐦',
       'ar': '"زقزقة! إعادة تعيين كلمة المرور سهلة!" 🐦',
     },
-    {
-      'en': '"Roar! Stay pawsitive!" 🦁',
-      'ar': '"زئير! ابقَ متفائلاً!" 🦁',
-    },
+    {'en': '"Roar! Stay pawsitive!" 🦁', 'ar': '"زئير! ابقَ متفائلاً!" 🦁'},
   ];
 
   int currentIndex = 0;
@@ -90,8 +80,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
   }
 
   String _getMessage() {
-    return isArabic() 
-        ? motivationalMessages[currentIndex]['ar']! 
+    return isArabic()
+        ? motivationalMessages[currentIndex]['ar']!
         : motivationalMessages[currentIndex]['en']!;
   }
 
@@ -103,17 +93,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
     final scaleFactor = isTablet ? 1.2 : 1.0;
 
     return BlocProvider(
-      create: (context) => PasswordCubit(
-        forgetPasswordUseCase: ForgetPasswordUseCase(
-          PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
-        ),
-        resetPasswordUseCase: ResetPasswordUseCase(
-          PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
-        ),
-        verifyUserUseCase: VerifyUserUseCase(
-          PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
-        ),
-      ),
+      create:
+          (context) => PasswordCubit(
+            forgetPasswordUseCase: ForgetPasswordUseCase(
+              PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
+            ),
+            resetPasswordUseCase: ResetPasswordUseCase(
+              PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
+            ),
+            verifyUserUseCase: VerifyUserUseCase(
+              PasswordRepoImpl(remoteDataSource: PasswordRemoteDataSource()),
+            ),
+          ),
       child: BlocConsumer<PasswordCubit, PasswordState>(
         listener: (context, state) {
           if (state is RestPasswordErrorState) {
@@ -154,7 +145,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                         color: Colors.white.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.help_outline, color: Colors.white),
+                      child: const Icon(
+                        Icons.help_outline,
+                        color: Colors.white,
+                      ),
                     ),
                     onPressed: () {
                       navigateToScreen(context, ContactScreen());
@@ -244,7 +238,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                       ),
                       SizedBox(height: 8 * scaleFactor),
                       Text(
-                        isArabic() ? 'إنشاء كلمة مرور جديدة' : "Create New Password",
+                        isArabic()
+                            ? 'إنشاء كلمة مرور جديدة'
+                            : "Create New Password",
                         style: TextStyle(
                           fontSize: 20 * scaleFactor,
                           fontWeight: FontWeight.bold,
@@ -255,7 +251,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          isArabic() 
+                          isArabic()
                               ? "أوشكت على الانتهاء! فقط قم بإعداد كلمة المرور\nالجديدة وأنت جاهز للانطلاق 🎉"
                               : "Almost there! Just set up your new\npassword and you're good to go 🎉",
                           style: TextStyle(
@@ -280,7 +276,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
     );
   }
 
-  Widget _buildResetCard(BuildContext context, PasswordCubit cubit, double scaleFactor) {
+  Widget _buildResetCard(
+    BuildContext context,
+    PasswordCubit cubit,
+    double scaleFactor,
+  ) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -302,219 +302,245 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
         physics: const BouncingScrollPhysics(),
         child: Form(
           key: cubit.formKey,
-          child: Builder(builder: (ctx) {
-            final screenW = MediaQuery.of(ctx).size.width;
-            final contentWidth = math.min(screenW * 0.92, 520.0);
-            return Center(
-              child: SizedBox(
-                width: contentWidth,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      isArabic() ? 'إعادة تعيين كلمة المرور' : 'Reset Your Password',
-                      style: TextStyle(
-                        fontSize: 22 * scaleFactor,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF2A2A3E),
-                      ),
-                    ),
-                    SizedBox(height: 8 * scaleFactor),
-                    Text(
-                      isArabic()
-                          ? 'الرجاء إدخال الرمز المرسل إلى بريدك الإلكتروني ${widget.emailController.text}'
-                          : 'Please enter the digit code sent to your email ${widget.emailController.text}',
-                      style: TextStyle(
-                        fontSize: 13 * scaleFactor,
-                        color: Colors.grey[700],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 18 * scaleFactor),
-
-                    // Center the motivational widget with synchronized emoji and message
-                    Center(
-                      child: MotivationalPetWidget(
-                        petEmoji: petEmojis[currentIndex],
-                        message: _getMessage(),
-                        messageKey: ValueKey(currentIndex),
-                        scaleFactor: scaleFactor,
-                      ),
-                    ),
-
-                    SizedBox(height: 18 * scaleFactor),
-
-                    // Code Field
-                    Align(
-                      alignment: isArabic() ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Text(
-                        isArabic() ? 'رمز التحقق' : 'Verification Code',
+          child: Builder(
+            builder: (ctx) {
+              final screenW = MediaQuery.of(ctx).size.width;
+              final contentWidth = math.min(screenW * 0.92, 520.0);
+              return Center(
+                child: SizedBox(
+                  width: contentWidth,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        isArabic()
+                            ? 'إعادة تعيين كلمة المرور'
+                            : 'Reset Your Password',
                         style: TextStyle(
-                          fontSize: 14 * scaleFactor,
-                          color: Colors.grey[800],
-                          fontWeight: FontWeight.w600,
+                          fontSize: 22 * scaleFactor,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF2A2A3E),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 8 * scaleFactor),
-                    TextFormField(
-                      controller: cubit.codeController,
-                      style: const TextStyle(color: Colors.black87),
-                      keyboardType: TextInputType.number,
-                      textDirection: isArabic() ? TextDirection.ltr : TextDirection.ltr,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        prefixIcon: const Icon(
-                          Icons.numbers,
-                          color: Colors.grey,
-                        ),
-                        hintText: isArabic() ? 'أدخل رمز التحقق' : 'Enter verification code',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: 16 * scaleFactor,
-                          horizontal: 12,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF7B5CE6),
-                            width: 2,
-                          ),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: Colors.red,
-                            width: 1,
-                          ),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return isArabic() ? 'من فضلك أدخل الرمز' : 'Please enter the code';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    SizedBox(height: 16 * scaleFactor),
-
-                    // Password Field
-                    Align(
-                      alignment: isArabic() ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Text(
-                        isArabic() ? 'كلمة المرور الجديدة' : 'New Password',
+                      SizedBox(height: 8 * scaleFactor),
+                      Text(
+                        isArabic()
+                            ? 'الرجاء إدخال الرمز المرسل إلى بريدك الإلكتروني ${widget.emailController.text}'
+                            : 'Please enter the digit code sent to your email ${widget.emailController.text}',
                         style: TextStyle(
-                          fontSize: 14 * scaleFactor,
-                          color: Colors.grey[800],
-                          fontWeight: FontWeight.w600,
+                          fontSize: 13 * scaleFactor,
+                          color: Colors.grey[700],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 18 * scaleFactor),
+
+                      // Center the motivational widget with synchronized emoji and message
+                      Center(
+                        child: MotivationalPetWidget(
+                          petEmoji: petEmojis[currentIndex],
+                          message: _getMessage(),
+                          messageKey: ValueKey(currentIndex),
+                          scaleFactor: scaleFactor,
                         ),
                       ),
-                    ),
-                    SizedBox(height: 8 * scaleFactor),
-                    TextFormField(
-                      controller: cubit.passwordController,
-                      style: const TextStyle(color: Colors.black87),
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        prefixIcon: const Icon(
-                          Icons.lock_outline,
-                          color: Colors.grey,
-                        ),
-                        hintText: isArabic() ? 'أدخل كلمة المرور الجديدة' : 'Enter new password',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: 16 * scaleFactor,
-                          horizontal: 12,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF7B5CE6),
-                            width: 2,
-                          ),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: Colors.red,
-                            width: 1,
+
+                      SizedBox(height: 18 * scaleFactor),
+
+                      // Code Field
+                      Align(
+                        alignment:
+                            isArabic()
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                        child: Text(
+                          isArabic() ? 'رمز التحقق' : 'Verification Code',
+                          style: TextStyle(
+                            fontSize: 14 * scaleFactor,
+                            color: Colors.grey[800],
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return isArabic() ? 'من فضلك أدخل كلمة المرور' : 'Please enter password';
-                        }
-                        if (value.length < 6) {
-                          return isArabic() ? 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' : 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    SizedBox(height: 22 * scaleFactor),
-
-                    SizedBox(
-                      width: double.infinity,
-                      child: VcLoadingButton(
-                        onPressed: () {
-                          if (cubit.formKey.currentState?.validate() ?? false) {
-                            FocusScope.of(context).unfocus();
-                            cubit.resetPassword(widget.emailController.text);
+                      SizedBox(height: 8 * scaleFactor),
+                      TextFormField(
+                        controller: cubit.codeController,
+                        style: const TextStyle(color: Colors.black87),
+                        keyboardType: TextInputType.number,
+                        textDirection:
+                            isArabic() ? TextDirection.ltr : TextDirection.ltr,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                          prefixIcon: const Icon(
+                            Icons.numbers,
+                            color: Colors.grey,
+                          ),
+                          hintText:
+                              isArabic()
+                                  ? 'أدخل رمز التحقق'
+                                  : 'Enter verification code',
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 16 * scaleFactor,
+                            horizontal: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF7B5CE6),
+                              width: 2,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: Colors.red,
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return isArabic()
+                                ? 'من فضلك أدخل الرمز'
+                                : 'Please enter the code';
                           }
+                          return null;
                         },
-                        isLoading: cubit.isRestPassword,
-                        backgroundColor: const Color(0xFF7B5CE6),
-                        borderRadius: 12,
-                        height: 52 * scaleFactor,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              isArabic() ? 'حفظ كلمة المرور' : 'Save Password',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16 * scaleFactor,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            const Icon(
-                              Icons.check_circle_outline,
-                              color: Colors.white,
-                              size: 18,
-                            ),
-                          ],
+                      ),
+
+                      SizedBox(height: 16 * scaleFactor),
+
+                      // Password Field
+                      Align(
+                        alignment:
+                            isArabic()
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                        child: Text(
+                          isArabic() ? 'كلمة المرور الجديدة' : 'New Password',
+                          style: TextStyle(
+                            fontSize: 14 * scaleFactor,
+                            color: Colors.grey[800],
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 16 * scaleFactor),
-                  ],
+                      SizedBox(height: 8 * scaleFactor),
+                      TextFormField(
+                        controller: cubit.passwordController,
+                        style: const TextStyle(color: Colors.black87),
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.grey[200],
+                          prefixIcon: const Icon(
+                            Icons.lock_outline,
+                            color: Colors.grey,
+                          ),
+                          hintText:
+                              isArabic()
+                                  ? 'أدخل كلمة المرور الجديدة'
+                                  : 'Enter new password',
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 16 * scaleFactor,
+                            horizontal: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF7B5CE6),
+                              width: 2,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: Colors.red,
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return isArabic()
+                                ? 'من فضلك أدخل كلمة المرور'
+                                : 'Please enter password';
+                          }
+                          if (value.length < 6) {
+                            return isArabic()
+                                ? 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'
+                                : 'Password must be at least 6 characters';
+                          }
+                          return null;
+                        },
+                      ),
+
+                      SizedBox(height: 22 * scaleFactor),
+
+                      SizedBox(
+                        width: double.infinity,
+                        child: VcLoadingButton(
+                          onPressed: () {
+                            if (cubit.formKey.currentState?.validate() ??
+                                false) {
+                              FocusScope.of(context).unfocus();
+                              cubit.resetPassword(widget.emailController.text);
+                            }
+                          },
+                          isLoading: cubit.isRestPassword,
+                          backgroundColor: const Color(0xFF7B5CE6),
+                          borderRadius: 12,
+                          height: 52 * scaleFactor,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                isArabic()
+                                    ? 'حفظ كلمة المرور'
+                                    : 'Save Password',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16 * scaleFactor,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Icon(
+                                Icons.check_circle_outline,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16 * scaleFactor),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -545,10 +571,7 @@ class MotivationalPetWidget extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          petEmoji,
-          style: TextStyle(fontSize: 48 * scaleFactor),
-        ),
+        Text(petEmoji, style: TextStyle(fontSize: 48 * scaleFactor)),
         SizedBox(height: 12 * scaleFactor),
         Container(
           padding: EdgeInsets.symmetric(

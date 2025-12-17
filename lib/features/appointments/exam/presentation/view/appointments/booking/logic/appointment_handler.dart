@@ -27,8 +27,6 @@ class AppointmentHandler {
       return;
     }
 
-
-
     // Format data and time
     String formatDate = DateFormat('yyyy-MM-dd', 'en_US').format(selectedDate);
     final appointmentTime = '$time:00';
@@ -109,7 +107,7 @@ class AppointmentHandler {
           }
         }
         CreateAppointmentParams params = CreateAppointmentParams(
-          breedId:breedId,
+          breedId: breedId,
           specieId: specieId,
           notes: note,
           petId: selectedPet?.petId ?? '', // Use the petSqueakId as petId
@@ -121,7 +119,8 @@ class AppointmentHandler {
           appointmentDate: appointmentDate,
           petGender: selectedPet?.petGender ?? petGender,
           petName: selectedPet?.petName ?? petName,
-          clientId: appointmentCubit.clientInClinic
+          clientId:
+              appointmentCubit.clientInClinic
                   ? appointmentCubit.petListInVet.first.clientId
                   : selectedPet?.clientId ?? '',
           doctorId: doctorId,

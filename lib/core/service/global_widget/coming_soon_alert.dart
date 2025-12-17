@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 
 class AnimatedComingSoonAlert {
-  static void show(BuildContext context,) {
+  static void show(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showGeneralDialog(
@@ -11,15 +11,12 @@ class AnimatedComingSoonAlert {
         return Directionality(
           textDirection: isArabic() ? TextDirection.rtl : TextDirection.ltr,
           child: ScaleTransition(
-            scale: CurvedAnimation(
-              parent: animation,
-              curve: Curves.elasticOut,
-            ),
+            scale: CurvedAnimation(parent: animation, curve: Curves.elasticOut),
             child: FadeTransition(
               opacity: animation,
               child: AlertDialog(
                 backgroundColor:
-                isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                    isDark ? const Color(0xFF1E1E1E) : Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25.0),
                 ),
@@ -31,19 +28,13 @@ class AnimatedComingSoonAlert {
                       duration: const Duration(milliseconds: 400),
                       tween: Tween<double>(begin: 0, end: 1),
                       builder: (context, value, child) {
-                        return Transform.scale(
-                          scale: value,
-                          child: child,
-                        );
+                        return Transform.scale(scale: value, child: child);
                       },
                       child: Container(
                         padding: const EdgeInsets.all(20),
                         decoration: const BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [
-                              ColorManager.primaryColor,
-                              Colors.pink
-                            ],
+                            colors: [ColorManager.primaryColor, Colors.pink],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
@@ -60,13 +51,16 @@ class AnimatedComingSoonAlert {
                     const SizedBox(height: 20),
 
                     Text(
-                      isArabic() ? "الميزة قادمة قريبًا!" : "Feature Coming Soon!",
+                      isArabic()
+                          ? "الميزة قادمة قريبًا!"
+                          : "Feature Coming Soon!",
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: isDark
-                            ? ColorManager.primaryColor
-                            : ColorManager.primaryColor,
+                        color:
+                            isDark
+                                ? ColorManager.primaryColor
+                                : ColorManager.primaryColor,
                       ),
                     ),
 
@@ -79,14 +73,11 @@ class AnimatedComingSoonAlert {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
-                        color:
-                        isDark ? Colors.grey[300] : Colors.grey[600],
+                        color: isDark ? Colors.grey[300] : Colors.grey[600],
                       ),
                     ),
 
                     const SizedBox(height: 20),
-
-         
                   ],
                 ),
                 actions: [

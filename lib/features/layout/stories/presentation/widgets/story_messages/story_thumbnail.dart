@@ -25,9 +25,10 @@ class StoryThumbnail extends StatelessWidget {
           child: GradientRing(
             size: 72,
             active: hasActiveStory,
-            child: avatarUrl.isNotEmpty
-                ? Image.network(avatarUrl, fit: BoxFit.cover)
-                : Icon(Icons.pets, size: 36, color: Colors.grey.shade600),
+            child:
+                avatarUrl.isNotEmpty
+                    ? Image.network(avatarUrl, fit: BoxFit.cover)
+                    : Icon(Icons.pets, size: 36, color: Colors.grey.shade600),
           ),
         ),
         const SizedBox(height: 6),
@@ -40,9 +41,10 @@ class StoryThumbnail extends StatelessWidget {
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 12),
           ),
-        )
+        ),
       ],
     );
   }
 }
+
 // TODO: Implement story_thumbnail.dart

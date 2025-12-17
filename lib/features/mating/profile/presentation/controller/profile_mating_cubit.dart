@@ -63,7 +63,9 @@ class ProfileMatingCubit extends Cubit<ProfileMatingState> {
     final result = await getPetHistoryMatingUseCase(petId);
     result.fold(
       (failure) {
-        emit(ProfileGetMatingHistoryError(extractFirstErrorAuth(failure.error)));
+        emit(
+          ProfileGetMatingHistoryError(extractFirstErrorAuth(failure.error)),
+        );
       },
       (r) {
         petProfileMatingHistory = r;

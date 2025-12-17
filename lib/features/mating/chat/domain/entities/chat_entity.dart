@@ -13,8 +13,8 @@ class ChatEntity {
   final String createdAt;
   final String lastMessageSendDateTime;
   final bool isBlock;
-  final bool isBlockedByMe; 
-  final bool isBlockedByOther; 
+  final bool isBlockedByMe;
+  final bool isBlockedByOther;
   final bool isReadOnly;
   final int unreadedCount;
   final MessageEntity? lastMessage;
@@ -32,10 +32,10 @@ class ChatEntity {
     required this.createdAt,
     required this.lastMessageSendDateTime,
     required this.isBlock,
-    required  this.isBlockedByMe,
+    required this.isBlockedByMe,
     required this.isBlockedByOther,
     required this.isReadOnly,
     required this.unreadedCount,
-     this.lastMessage,
+    this.lastMessage,
   });
 }

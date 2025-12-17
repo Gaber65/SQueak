@@ -18,10 +18,6 @@ class UnblockFriendParams {
   UnblockFriendParams({required this.myPetId, required this.friendId});
 
   Map<String, dynamic> toJson() {
-    return {
-      "myPetId": myPetId,
-      "myFrienPetId": friendId,
-    };
+    return {"myPetId": myPetId, "myFrienPetId": friendId};
   }
-
 }

@@ -4,16 +4,14 @@ import 'package:iconly/iconly.dart';
 import '../../../../../core/utils/export_path/export_files.dart';
 import '../../controller/comment_cubit.dart';
 
-
-
 Widget buildPaddingFormComment(
-    CommentCubit cubit,
-    BuildContext context,
-    bool isReplayCommentOpen,
-    TextEditingController commentController,
-    String postId,
-    String petID,
-    ) {
+  CommentCubit cubit,
+  BuildContext context,
+  bool isReplayCommentOpen,
+  TextEditingController commentController,
+  String postId,
+  String petID,
+) {
   final isDark = MainCubit.get(context).isDark;
 
   return Padding(
@@ -30,9 +28,10 @@ Widget buildPaddingFormComment(
           style: FontStyleThame.textStyle(context: context, fontSize: 15),
           maxLines: 1,
           decoration: InputDecoration(
-            hintText: isReplayCommentOpen
-                ? S.of(context).addReplayComment
-                : S.of(context).addComment,
+            hintText:
+                isReplayCommentOpen
+                    ? S.of(context).addReplayComment
+                    : S.of(context).addComment,
             hintStyle: FontStyleThame.textStyle(
               context: context,
               fontSize: 14,
@@ -45,27 +44,40 @@ Widget buildPaddingFormComment(
             ),
             contentPadding: const EdgeInsetsDirectional.only(start: 10),
             filled: true,
-            fillColor: isDark
-                ? ColorManager.myPetsBaseBlackColor
-                : Colors.grey.shade200,
-            suffixIcon: IconButton(
-              onPressed: cubit.isLoading
-                  ? null
-                  : () {
-                if (commentController.text.isNotEmpty) {
-                  cubit.createComment(
-                    postId: postId,
-                    content: commentController.text,
-                    petId: petID,
-                    parentId: isReplayCommentOpen
-                        ? CacheHelper.getData('replayCommentID')
-                        : null,
-                  );
-                }
+            fillColor:
+                isDark
+                    ? ColorManager.myPetsBaseBlackColor
+                    : Colors.grey.shade200,
+            suffixIcon: AnimatedBuilder(
+              animation: commentController,
+              builder: (context, _) {
+                final hasText = commentController.text.isNotEmpty;
+                final iconColor = hasText
+                    ? Theme.of(context).primaryColor
+                    : (isDark ? Colors.white54 : Colors.black54);
+                return IconButton(
+                  onPressed: cubit.isLoading
+                      ? null
+                      : () {
+                          if (commentController.text.isNotEmpty) {
+                            cubit.createComment(
+                              postId: postId,
+                              content: commentController.text,
+                              petId: petID,
+                              parentId: isReplayCommentOpen
+                                  ? CacheHelper.getData('replayCommentID')
+                                  : null,
+                            );
+                          }
+                        },
+                  icon: cubit.isLoading
+                      ? CircularProgressIndicator(
+                          strokeWidth: 2.0,
+                          valueColor: AlwaysStoppedAnimation<Color?>(iconColor),
+                        )
+                      : Icon(IconlyLight.send, color: iconColor),
+                );
               },
-              icon: cubit.isLoading
-                  ? const CircularProgressIndicator()
-                  : const Icon(IconlyLight.send),
             ),
             border: _noBorder(),
             enabledBorder: _noBorder(),
@@ -79,6 +91,7 @@ Widget buildPaddingFormComment(
     ),
   );
 }
+
 OutlineInputBorder _noBorder() {
   return OutlineInputBorder(
     borderRadius: BorderRadius.circular(8),

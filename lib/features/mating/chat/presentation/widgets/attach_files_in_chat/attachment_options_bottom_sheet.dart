@@ -4,9 +4,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/image_preview_screen.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/camera_screen.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/document_preview_screen.dart';
 import 'package:squeak/generated/l10n.dart';
 
-enum AttachmentType { image, video, audio }
+enum AttachmentType { image, video, audio, file }
 
 class AttachmentOptionsBottomSheet extends StatelessWidget {
   final Function(File file, AttachmentType type, {String? caption})
@@ -156,11 +157,51 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
 
     await navigator.push(
       MaterialPageRoute(
-        builder: (context) => CameraScreen(
-          onAttachmentSelected: onAttachmentSelected,
-        ),
+        builder:
+            (context) =>
+                CameraScreen(onAttachmentSelected: onAttachmentSelected),
       ),
     );
+  }
+
+  Future<void> _handleDocument(BuildContext context) async {
+    final navigator = Navigator.of(context);
+    navigator.pop();
+
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.any,
+        allowMultiple: false,
+      );
+
+      if (result != null &&
+          result.files.isNotEmpty &&
+          result.files.single.path != null) {
+        final file = File(result.files.single.path!);
+        debugPrint('📄 AttachmentSheet: Document file selected: ${file.path}');
+
+        await navigator.push(
+          MaterialPageRoute(
+            builder:
+                (context) => DocumentPreviewScreen(
+                  documentFile: file,
+                  onSend: (file, caption) {
+                    debugPrint(
+                      '✅ AttachmentSheet: Document confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
+                    );
+                    onAttachmentSelected(
+                      file,
+                      AttachmentType.file,
+                      caption: caption,
+                    );
+                  },
+                ),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ AttachmentSheet: Error picking document file: $e');
+    }
   }
 
   @override
@@ -236,7 +277,9 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
                   icon: Icons.file_copy_rounded,
                   label: S.of(context).document,
                   color: const Color(0xFF00D560),
-                  onTap: () {},
+                  onTap: () {
+                    _handleDocument(context);
+                  },
                 ),
                 _buildOption(
                   context,

@@ -10,7 +10,8 @@ const String version = '/v1/api';
 /// Media URLs
 String imageUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
 String videoUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
-String audioUrl = '${ConfigModel.baseApiUrlSqueak}/messageRecods/';
+String audioUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
+String documentUrl = '${ConfigModel.baseApiUrlSqueak}/files/';
 String imageUrlWithVetICare = ConfigModel.serverFirstHalfOfImageUrl;
 
 // chatHubs
@@ -73,6 +74,7 @@ const String allSpecialityPetEndPoint = '$version/specailiteis';
 const String imageHelperEndPoint = '$version/images';
 const String videoHelperEndPoint = '$version/videos';
 const String audioHelperEndPoint = '$version/audio';
+const String documentHelperEndPoint = '$version/file';
 
 /// Posts
 String createPostEndPoint(String postId) => '$version/posts?Id=$postId';
@@ -84,8 +86,6 @@ String getDoctorPostEndPoint(int pageNumber) =>
 const String deletePostEndPoint = '$version/posts';
 const String updatePostEndPoint = '$version/posts/';
 const String createPostEndPointText = '$version/posts/';
-
-
 
 /// React
 const String getReactEndPoint = '$version/react/';
@@ -135,7 +135,7 @@ const String baseUrlMessageKey = 'https://fcm.googleapis.com/fcm/send';
 /// Chat
 String sendMassageEndPoint = '$version/messages';
 String getMassageUserEndPoint(String clinicId, int pageNumber) =>
-    '$version/messages/paggination?pageSize=50&pageNumber=$pageNumber&ClinicId=$clinicId';
+    '$version/messages/paggination?pageSize=30&pageNumber=$pageNumber&ClinicId=$clinicId';
 String getMassageAdminEndPoint({
   required String clinicId,
   required String userId,
@@ -220,19 +220,22 @@ String getChatsEndPoint(petId) =>
     '$version/conversations?ConversationType=1&PetId=$petId';
 String getMSGChatsEndPoint(conversationId) =>
     '$version/messages?ConversationId=$conversationId';
+String getMessagePagination(conversationId, pageNumber) =>
+    '$version/messages/paggination?ConversationId=$conversationId&PageNumber=$pageNumber&PageSize=30';
+
 String sendMSGEndPoint = '$version/messages';
 String renameChatEndPoint = '$version/conversations/rename';
 String blockChatEndPoint = '$version/conversations/update/blocking';
 String rateMatingEndPoint = '$version/matingrequest/rate';
- 
 
 const String createStoryEndPoint = '$version/pet/stories/';
 const String deleteStoryEndPoint = '$version/pet/stories/'; // + /{id}
 const String myActiveStoriesEndPoint = '$version/mypet/stories/';
 const String friendsStoriesEndPoint = '$version/pet/friend/stories/';
- String allFriendStoriesEndPoint(id)=> '$version/pet/$id/stories';
- const String sendReplyMsgToStoryPetEndPoint = '$version/pet/reply/stories';
+String allFriendStoriesEndPoint(id) => '$version/pet/$id/stories';
+const String sendReplyMsgToStoryPetEndPoint = '$version/pet/reply/stories';
 // Reactions
+
 const String getStoryReactionsEndPoint = '$version/mypet/react/stories/';
 const String reactToStoryEndPoint = '$version/pet/stories/react/';
 

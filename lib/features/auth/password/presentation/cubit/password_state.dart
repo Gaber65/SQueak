@@ -12,7 +12,9 @@ abstract class PasswordState extends Equatable {
 class PasswordInitial extends PasswordState {}
 
 class ForgetPasswordLoadingState extends PasswordState {}
+
 class ForgetPasswordSuccessState extends PasswordState {}
+
 class ForgetPasswordErrorState extends PasswordState {
   final String error;
   const ForgetPasswordErrorState(this.error);
@@ -21,7 +23,9 @@ class ForgetPasswordErrorState extends PasswordState {
 }
 
 class RestPasswordLoadingState extends PasswordState {}
+
 class RestPasswordSuccessState extends PasswordState {}
+
 class RestPasswordErrorState extends PasswordState {
   final String error;
   const RestPasswordErrorState(this.error);
@@ -30,7 +34,9 @@ class RestPasswordErrorState extends PasswordState {
 }
 
 class VerifyUserLoadingState extends PasswordState {}
+
 class VerifyUserSuccessState extends PasswordState {}
+
 class VerifyUserErrorState extends PasswordState {
   final String error;
   const VerifyUserErrorState(this.error);

@@ -27,9 +27,10 @@ class FriendOnlineStatusChanged extends ChatAppState {
 }
 
 class FriendTypingInGeneral extends ChatAppState {
-  final String petId;
+  final String toPetId;
   final bool isTyping;
-  FriendTypingInGeneral(this.petId, this.isTyping);
+  final String fromPetId;
+  FriendTypingInGeneral(this.toPetId, this.isTyping, this.fromPetId);
 }
 
 // Unread count events
@@ -92,4 +93,50 @@ class MessageSentUnread extends ChatAppState {
 class MessagesMarkedAsRead extends ChatAppState {
   final String conversationId;
   MessagesMarkedAsRead(this.conversationId);
+}
+
+// Read status events
+class SingleMessageRead extends ChatAppState {
+  final String conversationId;
+  final String messageId;
+  SingleMessageRead(this.conversationId, this.messageId);
+}
+
+class AllMessagesRead extends ChatAppState {
+  final String conversationId;
+  AllMessagesRead(this.conversationId);
+}
+
+class MessageStatusChanged extends ChatAppState {
+  final String messageId;
+  final bool isRead;
+  MessageStatusChanged(this.messageId, this.isRead);
+}
+
+// Periodic polling events
+class UnreadCountsPolled extends ChatAppState {
+  final Map<String, int> counts;
+  final DateTime timestamp;
+  UnreadCountsPolled(this.counts) : timestamp = DateTime.now();
+}
+
+class NewMessageDetected extends ChatAppState {
+  final String conversationId;
+  final String fromPetId;
+  final String contentMessage;
+  final bool imageMessage;
+  final bool videoMessage;
+  final bool fileMessage;
+  final bool audioMessage;
+  final DateTime timestamp;
+
+  NewMessageDetected({
+    required this.conversationId,
+    required this.fromPetId,
+    required this.contentMessage,
+    this.imageMessage = false,
+    this.videoMessage = false,
+    this.fileMessage = false,
+    this.audioMessage = false,
+  }) : timestamp = DateTime.now();
 }

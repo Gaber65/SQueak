@@ -5,12 +5,8 @@ import 'package:squeak/features/mating/profile/domain/usecases/mating_profile_pr
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 abstract class BaseMatingPetProfileRepo {
-
-
   Future<Either<Failure, PetEntities>> getPetProfile(String petId);
   Future<Either<Failure, List<HistoryEntity>>> getPetHistory(String petId);
 
-
   Future<Either<Failure, void>> updatePetStatus(MatingProfileParams params);
-
 }

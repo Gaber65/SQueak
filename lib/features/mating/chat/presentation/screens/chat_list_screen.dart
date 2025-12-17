@@ -1,23 +1,20 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import 'package:squeak/core/service/signalr/signalr_general_service.dart';
+import 'package:squeak/core/service/connectivity/conectivity_services.dart';
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_list_cubit.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
-import '../../../../../core/utils/enums/profile_type.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
 import '../../../../settings/persentaion/controller/setting_cubit.dart';
 import '../../../layoutMating/presentation/screens/widgets/profile_switcher_builder.dart';
 import '../../domain/entities/chat_entity.dart';
 import '../widgets/chat_widgets/mating_chat_list_tile.dart';
 import '../controllers/chat_list_state.dart';
-import '../view/chat_app_cubit.dart';
-import '../view/chat_app_state.dart';
+import '../controllers/chat_app_cubit.dart';
+import '../controllers/chat_app_state.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
@@ -44,123 +41,34 @@ class _ChatListView extends StatefulWidget {
 }
 
 class _ChatListViewState extends State<_ChatListView> {
-  final SignalRGeneralHubService _generalHub = SignalRGeneralHubService();
-
-  StreamSubscription<SignalEvent>? _eventSubscription;
-  StreamSubscription<SwitchProfileState>? _profileSubscription;
-
   String? _currentPetId;
-  bool _hubConnected = false;
+
+  StreamSubscription<bool>? _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
+    _setupConnectivityListener();
+  }
 
-    // Listen for profile loaded ONCE → connect hub
-    _profileSubscription = context.read<SwitchProfileCubit>().stream.listen((
-      state,
+  void _setupConnectivityListener() {
+    _connectivitySubscription = ConnectivityService().connectionStatus.listen((
+      isConnected,
     ) {
-      if (state is ProfileLoaded &&
-          state.profile.type == ProfileType.pet &&
-          !_hubConnected) {
-        _connectHub(state.profile.pet!);
+      if (isConnected && _currentPetId != null && mounted) {
+        context.read<ChatListCubit>().refreshChatsWithoutLoading(
+          _currentPetId!,
+        );
       }
     });
   }
-
-  // -------------------------------------------------------------
-  //  CONNECT HUB EXACTLY ONCE
-  // -------------------------------------------------------------
-  Future<void> _connectHub(PetEntities pet) async {
-    try {
-      _currentPetId = pet.petId;
-      debugPrint("🔄 Connecting to GeneralHub for pet: $_currentPetId)");
-
-      // Note: ChatAppCubit will handle the GeneralHub connection
-      // We just set up our local event listeners here
-      await _generalHub.connect(
-        petId: pet.petId!,
-        fullName: pet.petName,
-        image: pet.imageName,
-      );
-
-      _hubConnected = true;
-      debugPrint("✅ GeneralHub connected!");
-
-      _setupHubEvents();
-      _requestInitialData();
-    } catch (e) {
-      debugPrint("❌ Hub connection error: $e");
-    }
-  }
-
-  // -------------------------------------------------------------
-  //  SIGNALR EVENT HANDLERS (REAL-TIME)
-  // -------------------------------------------------------------
-  void _setupHubEvents() {
-    debugPrint("🎧 Listening for SignalR events...");
-
-    // Listen to all hub events
-    _eventSubscription = signalEventStream.stream.listen((event) {
-      if (event.hub == "GeneralHub") {
-        debugPrint("📥 GeneralHub Event → ${event.method}");
-      }
-    });
-
-    // Friend online/offline
-    _generalHub.onFriendConnectionChanged((data) {
-      debugPrint("🔥 FriendConnectionChanged → $data");
-      if (_currentPetId != null) {
-        context.read<ChatListCubit>().loadChats(_currentPetId!);
-      }
-    });
-
-    // Unread messages count
-    _generalHub.onUnreadedMessagesCount((data) {
-      debugPrint("🔥 UnreadMessagesCount → $data");
-      if (_currentPetId != null) {
-        context.read<ChatListCubit>().loadChats(_currentPetId!);
-      }
-    });
-
-    // Connection confirmation
-    _generalHub.onConnectionRegistered((data) {
-      debugPrint("🔥 ConnectionRegistered → $data");
-    });
-
-    debugPrint("🎧 SignalR event listeners registered");
-  }
-
-
-  Future<void> _requestInitialData() async {
-    if (_currentPetId == null) return;
-
-    try {
-      final onlineFriends = await _generalHub.getAllMyOnlinePetFriends(
-        _currentPetId!,
-      );
-      debugPrint("👥 Online friends count: ${onlineFriends?.length}");
-
-      final unread = await _generalHub.getUnreadMessageCounts(_currentPetId!);
-      debugPrint("📨 Unread messages: $unread");
-    } catch (e) {
-      debugPrint("⚠ Initial data error: $e");
-    }
-  }
-
 
   @override
   void dispose() {
-    debugPrint("🔌 DISCONNECTING HUB...");
-    _profileSubscription?.cancel();
-    _eventSubscription?.cancel();
-    _generalHub.disconnect();
+    _connectivitySubscription?.cancel();
     super.dispose();
   }
 
-  // -------------------------------------------------------------
-  //  UI
-  // -------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<ChatListCubit>();
@@ -169,7 +77,10 @@ class _ChatListViewState extends State<_ChatListView> {
       selector: (state) {
         if (state is ProfileLoaded && state.profile.pet != null) {
           final pet = state.profile.pet!;
-          cubit.loadChats(pet.petId!);
+          if (_currentPetId != pet.petId) {
+            cubit.loadChats(pet.petId ?? '');
+            _currentPetId = pet.petId;
+          }
           return pet;
         }
         return null;
@@ -178,7 +89,6 @@ class _ChatListViewState extends State<_ChatListView> {
         if (pet == null) {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         }
-
         return BlocProvider(
           create:
               (context) => ChatAppCubit(
@@ -204,9 +114,32 @@ class _ChatListViewState extends State<_ChatListView> {
         listeners: [
           BlocListener<ChatAppCubit, ChatAppState>(
             listener: (context, state) {
-              // Refresh chat list on relevant SignalR events
-              if (state is UnreadCountUpdated ||
-                  state is MessageReceived || state is FriendOnlineStatusChanged) {
+              // Handle UnreadCountUpdated - Update counter in background without server fetch
+              if (state is UnreadCountUpdated) {
+                context.read<ChatListCubit>().updateUnreadCountLocally(
+                  state.conversationId,
+                  state.count,
+                );
+              }
+
+              if (state is NewMessageDetected) {
+                if (activePet?.petId != null) {
+                  context.read<ChatListCubit>().refreshChatsWithoutLoading(
+                    activePet!.petId!,
+                  );
+                }
+              }
+              if (state is FriendOnlineStatusChanged) {
+                if (state.isOnline) {
+                  context.read<ChatListCubit>().updateChatOnlineStatus(
+                    state.petId,
+                    true,
+                  );
+                }
+              }
+
+              // Full refresh only on leaving conversation (to update last message)
+              if (state is ConversationLeft) {
                 if (activePet?.petId != null) {
                   context.read<ChatListCubit>().loadChats(activePet!.petId!);
                 }
@@ -219,14 +152,33 @@ class _ChatListViewState extends State<_ChatListView> {
               }
             },
           ),
+          BlocListener<ChatListCubit, ChatListState>(
+            listener: (context, state) {
+              if (state is ChatListLoaded) {
+                final chatAppCubit = context.read<ChatAppCubit>();
+                for (final chat in state.chats) {
+                  if (chatAppCubit.generalHub.isPetOnlineFromDict(chat.petId)) {
+                    context.read<ChatListCubit>().updateChatOnlineStatus(
+                      chat.petId,
+                      true,
+                    );
+                  }
+                }
+              }
+            },
+          ),
         ],
         child: BlocBuilder<ChatListCubit, ChatListState>(
           builder: (context, state) {
             // Debug logging
             final chatAppCubit = context.read<ChatAppCubit>();
-            debugPrint('📊 Typing indicators: ${chatAppCubit.typingIndicators}');
-            debugPrint('📊 Online friends: ${chatAppCubit.onlineFriends}');
-            
+            debugPrint(
+              '📊 Typing indicators: ${chatAppCubit.typingIndicators}',
+            );
+            debugPrint(
+              '📊 Online friends: ${chatAppCubit.generalHub.onlineFriendsDict}',
+            );
+
             return CustomScrollView(
               slivers: [
                 _buildAppBar(context, theme, isDark),
@@ -241,9 +193,6 @@ class _ChatListViewState extends State<_ChatListView> {
     );
   }
 
-  // -------------------------------------------------------------
-  //  APP BAR
-  // -------------------------------------------------------------
   SliverAppBar _buildAppBar(
     BuildContext context,
     ThemeData theme,
@@ -264,9 +213,6 @@ class _ChatListViewState extends State<_ChatListView> {
     );
   }
 
-  // -------------------------------------------------------------
-  //  CHAT LIST LOGIC
-  // -------------------------------------------------------------
   Widget _buildChatListContent(ChatListState state, PetEntities? pet) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -338,33 +284,45 @@ class _ChatListViewState extends State<_ChatListView> {
         return current is FriendOnlineStatusChanged ||
             current is FriendTypingInGeneral ||
             current is UnreadCountUpdated ||
+            current is UnreadCountsPolled ||
+            current is NewMessageDetected ||
             current is ChatAppConnected;
       },
       builder: (context, chatAppState) {
         final chatAppCubit = context.read<ChatAppCubit>();
-
         return Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             children:
-                chats
-                    .map(
-                      (chat) => MatingChatListTile(
+                chats.map((chat) {
+                  final isTyping =
+                      chatAppCubit.typingIndicators[chat.petId] ?? false;
+                  final isOnline = chatAppCubit.generalHub.isPetOnlineFromDict(
+                    chat.petId,
+                  );
+
+                  return StreamBuilder<Map<String, int>>(
+                    stream: chatAppCubit.unreadCountsStream,
+                    initialData: chatAppCubit.unreadCounts,
+                    builder: (context, snapshot) {
+                      final unreadCountsMap = snapshot.data ?? {};
+                      final unreadCount =
+                          unreadCountsMap[chat.id] ?? chat.unreadedCount;
+
+                      return MatingChatListTile(
                         chat: chat,
                         petEntities: pet,
-                        isOnline:
-                            chatAppCubit.onlineFriends[chat.petId] ?? false,
-                        isTyping:
-                            chatAppCubit.typingIndicators[chat.petId] ?? false,
-                        unreadCount:
-                            chatAppCubit.unreadCounts[chat.id] ??
-                            chat.unreadedCount,
+                        isOnline: isOnline,
+                        isTyping: isTyping,
+                        unreadCount: unreadCount,
                         onNavigateComplete:
-                            () =>
-                                context.read<ChatListCubit>().loadChats(pet.petId!),
-                      ),
-                    )
-                    .toList(),
+                            () => context.read<ChatListCubit>().loadChats(
+                              pet.petId!,
+                            ),
+                      );
+                    },
+                  );
+                }).toList(),
           ),
         );
       },

@@ -61,7 +61,7 @@ class LocalNotificationHandler {
           const NotificationDetails(android: androidDetails),
           androidAllowWhileIdle: true,
           uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
+              UILocalNotificationDateInterpretation.absoluteTime,
           payload: 'reminder_$id|$originalTitle|$originalBody',
         );
 

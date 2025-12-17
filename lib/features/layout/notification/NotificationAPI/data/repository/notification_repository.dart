@@ -2,7 +2,8 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../../../core/utils/export_path/export_files.dart';
 import '../../../../post/data/model/post_model.dart';
-import '../../domain/entities/notification_entities.dart' show NotificationEntities;
+import '../../domain/entities/notification_entities.dart'
+    show NotificationEntities;
 import '../../domain/repository/base_repository_notification.dart';
 import '../data_source/notification_data_source.dart';
 

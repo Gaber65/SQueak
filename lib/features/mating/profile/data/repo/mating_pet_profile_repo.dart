@@ -35,7 +35,9 @@ class MatingPetProfileRepoImpl implements BaseMatingPetProfileRepo {
   }
 
   @override
-  Future<Either<Failure, List<HistoryEntity>>> getPetHistory(String petId) async {
+  Future<Either<Failure, List<HistoryEntity>>> getPetHistory(
+    String petId,
+  ) async {
     try {
       final result = await matingProfileDataSource.getPetDateHistory(petId);
       return Right(result);

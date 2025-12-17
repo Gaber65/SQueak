@@ -12,14 +12,25 @@ import '../usecases/delete_friendship.dart';
 abstract class PetFriendRepository {
   Future<Either<Failure, bool>> sendRequest(SendPetRequestParams params);
   Future<Either<Failure, bool>> updateRequest(UpdatePetRequestParams params);
-  Future<Either<Failure, List<PetFriendRequestEntity>>> getMyRequests(String myPetId);
+  Future<Either<Failure, List<PetFriendRequestEntity>>> getMyRequests(
+    String myPetId,
+  );
   Future<Either<Failure, List<PetEntities>>> getMyFriends(String myPetId);
-  Future<Either<Failure, List<PetFriendRequestEntity>>> getBlockedFriends(String myPetId);
+  Future<Either<Failure, List<PetFriendRequestEntity>>> getBlockedFriends(
+    String myPetId,
+  );
   Future<Either<Failure, bool>> blockFriend(UnblockFriendParams params);
   Future<Either<Failure, bool>> unblockFriend(UnblockFriendParams params);
   Future<Either<Failure, bool>> cancelFriendship(CancelFriendshipParams params);
   Future<Either<Failure, bool>> deleteFriendShip(DeleteFriendShipParams params);
-  Future<Either<Failure, List<PetEntities>>> searchFriends(String speciesId, {String? name, int? page, int? pageSize});
+  Future<Either<Failure, List<PetEntities>>> searchFriends(
+    String speciesId, {
+    String? name,
+    int? page,
+    int? pageSize,
+  });
   Future<Either<Failure, List<PetEntities>>> getSentRequests(String myPetId);
-  Future<Either<Failure, Map<String, dynamic>>> sendFriendMessage(SendFriendPetMessageParameters params);
+  Future<Either<Failure, Map<String, dynamic>>> sendFriendMessage(
+    SendFriendPetMessageParameters params,
+  );
 }

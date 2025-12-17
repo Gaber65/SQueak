@@ -5,7 +5,8 @@ import '../../../../core/base_usecase/base_usecase.dart';
 import '../../../../core/error/failure.dart';
 import '../base_repo/base_vet_repository.dart';
 
-class AcceptInvitationUseCase extends BaseUseCase<bool, AcceptInvitationParams> {
+class AcceptInvitationUseCase
+    extends BaseUseCase<bool, AcceptInvitationParams> {
   final BaseVetRepository repository;
 
   AcceptInvitationUseCase(this.repository);

@@ -63,16 +63,25 @@ class InvoiceModel extends Invoice {
       sex: json['sex'] ?? '-',
       doB: json['doB'] ?? '-',
       ownerName: json['ownerName'] ?? '-',
-      items: (json['items'] as List<dynamic>? ?? [])
-          .map((item) => ItemModel.fromJson(item as Map<String, dynamic>))
-          .toList(),
-      packageOffers: (json['packageOffer'] as List<dynamic>? ?? [])
-          .map((offer) => PackageOfferModel.fromJson(offer as Map<String, dynamic>))
-          .toList(),
-      paymentHistories: (json['paymentHistories'] as List<dynamic>? ?? [])
-          .map((history) =>
-          PaymentHistoryModel.fromJson(history as Map<String, dynamic>))
-          .toList(),
+      items:
+          (json['items'] as List<dynamic>? ?? [])
+              .map((item) => ItemModel.fromJson(item as Map<String, dynamic>))
+              .toList(),
+      packageOffers:
+          (json['packageOffer'] as List<dynamic>? ?? [])
+              .map(
+                (offer) =>
+                    PackageOfferModel.fromJson(offer as Map<String, dynamic>),
+              )
+              .toList(),
+      paymentHistories:
+          (json['paymentHistories'] as List<dynamic>? ?? [])
+              .map(
+                (history) => PaymentHistoryModel.fromJson(
+                  history as Map<String, dynamic>,
+                ),
+              )
+              .toList(),
       receiptTotal: json['receiptTotal'] ?? 0.0,
       totalAfterVatAndDiscount: json['totalAfterVatAndDiscount'] ?? 0.0,
       discount: json['discount'] ?? 0.0,
@@ -111,12 +120,14 @@ class InvoiceModel extends Invoice {
       'doB': doB,
       'ownerName': ownerName,
       'items': (items as List<ItemModel>).map((item) => item.toJson()).toList(),
-      'packageOffer': (packageOffers as List<PackageOfferModel>)
-          .map((offer) => offer.toJson())
-          .toList(),
-      'paymentHistories': (paymentHistories as List<PaymentHistoryModel>)
-          .map((history) => history.toJson())
-          .toList(),
+      'packageOffer':
+          (packageOffers as List<PackageOfferModel>)
+              .map((offer) => offer.toJson())
+              .toList(),
+      'paymentHistories':
+          (paymentHistories as List<PaymentHistoryModel>)
+              .map((history) => history.toJson())
+              .toList(),
       'receiptTotal': receiptTotal,
       'totalAfterVatAndDiscount': totalAfterVatAndDiscount,
       'discount': discount,
@@ -205,9 +216,14 @@ class PackageOfferModel extends PackageOfferEntity {
     return PackageOfferModel(
       packageName: json['packageName'] ?? '-',
       packageQuantity: json['packageQuantity'] ?? 0,
-      packageItems: (json['packageItem'] as List<dynamic>? ?? [])
-          .map((item) => PackageOfferItemModel.fromJson(item as Map<String, dynamic>))
-          .toList(),
+      packageItems:
+          (json['packageItem'] as List<dynamic>? ?? [])
+              .map(
+                (item) => PackageOfferItemModel.fromJson(
+                  item as Map<String, dynamic>,
+                ),
+              )
+              .toList(),
     );
   }
 
@@ -215,9 +231,10 @@ class PackageOfferModel extends PackageOfferEntity {
     return {
       'packageName': packageName,
       'packageQuantity': packageQuantity,
-      'packageItem': (packageItems as List<PackageOfferItemModel>)
-          .map((item) => item.toJson())
-          .toList(),
+      'packageItem':
+          (packageItems as List<PackageOfferItemModel>)
+              .map((item) => item.toJson())
+              .toList(),
     };
   }
 }
@@ -265,19 +282,12 @@ class PetPrintModel extends PetPrint {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'petName': petName,
-      'species': species,
-      'sex': sex,
-    };
+    return {'petName': petName, 'species': species, 'sex': sex};
   }
 }
 
 class OwnerPrintModel extends OwnerPrint {
-  const OwnerPrintModel({
-    required super.ownerName,
-    required super.phone,
-  });
+  const OwnerPrintModel({required super.ownerName, required super.phone});
 
   factory OwnerPrintModel.fromJson(Map<String, dynamic> json) {
     return OwnerPrintModel(
@@ -287,9 +297,6 @@ class OwnerPrintModel extends OwnerPrint {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'ownerName': ownerName,
-      'phone': phone,
-    };
+    return {'ownerName': ownerName, 'phone': phone};
   }
 }

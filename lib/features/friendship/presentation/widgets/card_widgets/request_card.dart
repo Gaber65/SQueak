@@ -20,10 +20,10 @@ class RequestCard extends StatelessWidget {
 
     final cardColor = isDark ? Color(0xFF1E1E1E) : Colors.white;
     final shadowColor =
-    isDark ? Colors.black26 : Colors.black.withOpacity(0.05);
+        isDark ? Colors.black26 : Colors.black.withOpacity(0.05);
 
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         navigateToScreen(
           context,
           ViewPetProfileScreen(
@@ -56,16 +56,17 @@ class RequestCard extends StatelessWidget {
                   backgroundImage: NetworkImage(
                     imageUrl + (pet.friendPetImage),
                   ),
-                  child: (pet.friendPetImage.isEmpty)
-                      ? Text(
-                    pet.friendPetName.substring(0, 1).toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  )
-                      : null,
+                  child:
+                      (pet.friendPetImage.isEmpty)
+                          ? Text(
+                            pet.friendPetName.substring(0, 1).toUpperCase(),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          )
+                          : null,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -81,31 +82,29 @@ class RequestCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        formatAge(DateTime.parse(
-                          pet.friendPetAge.substring(0, 10),
-                        )),
+                        formatAge(
+                          DateTime.parse(pet.friendPetAge.substring(0, 10)),
+                        ),
                         style: TextStyle(
                           fontSize: 14,
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
                         ),
                       ),
                       SizedBox(height: 4),
-                   
                     ],
                   ),
                 ),
-      
               ],
             ),
-      
+
             const SizedBox(height: 16),
-      
+
             /// 🎯 Action Buttons
             Row(
               children: [
                 Expanded(
                   child: FriendActionButton(
-                    label:isArabic() ? "دعنا نلعب!" : "Let's Pawty!",
+                    label: isArabic() ? "دعنا نلعب!" : "Let's Pawty!",
                     icon: Icons.pets,
                     backgroundColor: Colors.green,
                     textColor: Colors.white,
@@ -122,9 +121,10 @@ class RequestCard extends StatelessWidget {
                   child: FriendActionButton(
                     label: isArabic() ? "ليس الآن" : "Not Now",
                     icon: Icons.close,
-                    textColor: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.grey[300]!
-                        : Colors.grey[700]!,
+                    textColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[300]!
+                            : Colors.grey[700]!,
                     outlined: true,
                     onPressed: () {
                       context.read<PetFriendsCubit>().updateFriendRequest(
@@ -135,7 +135,7 @@ class RequestCard extends StatelessWidget {
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -165,16 +165,15 @@ class FriendActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final rejectGradient =
-    isDark
-        ? [Colors.grey[800]!, Colors.grey[700]!]
-        : [Color(0xFFF5F5F5), Color(0xFFE8E8E8)];
+        isDark
+            ? [Colors.grey[800]!, Colors.grey[700]!]
+            : [Color(0xFFF5F5F5), Color(0xFFE8E8E8)];
     if (outlined) {
       return AnimatedContainer(
         duration: Duration(milliseconds: 200),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors:
-            rejectGradient,
+            colors: rejectGradient,
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -196,7 +195,9 @@ class FriendActionButton extends StatelessWidget {
             ),
           ),
           style: OutlinedButton.styleFrom(
-            side: BorderSide(color: isDark ? Colors.grey[700]! : Colors.grey[300]!),
+            side: BorderSide(
+              color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+            ),
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
@@ -221,9 +222,7 @@ class FriendActionButton extends StatelessWidget {
         backgroundColor: backgroundColor,
         foregroundColor: textColor,
         padding: const EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         elevation: 2,
         shadowColor: backgroundColor.withOpacity(0.3),
       ),

@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
-import '../../../../../../core/utils/theme/color_mangment/color_manager.dart' show ColorManager;
+import 'package:squeak/generated/l10n.dart';
+import '../../../../../../core/utils/theme/color_mangment/color_manager.dart'
+    show ColorManager;
 import '../../community/controller/community_cubit.dart';
 import '../../screens/upload_post.dart';
 import 'upload_post_controller.dart';
@@ -20,7 +23,8 @@ class UploadPostUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => controller.onWillPop(context, CommunityCubit.get(context)),
+      onWillPop:
+          () => controller.onWillPop(context, CommunityCubit.get(context)),
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: BlocBuilder<CommunityCubit, CommunityState>(
@@ -38,16 +42,13 @@ class UploadPostUI extends StatelessWidget {
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context, CommunityCubit cubit) {
-    final bool hasContent = controller.textContentEditingController.text.trim().isNotEmpty ||
-        cubit.mediaFiles.isNotEmpty;
-
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 0,
       leading: _buildLeadingButton(context, cubit),
-      title: _buildAppBarTitle(),
+      title: _buildAppBarTitle( context),
       centerTitle: true,
-      actions: [_buildPostButton(hasContent, context, cubit)],
+      actions: [_buildPostButton(context, cubit)],
       bottom: _buildAppBarDivider(),
     );
   }
@@ -86,9 +87,9 @@ class UploadPostUI extends StatelessWidget {
     );
   }
 
-  Widget _buildAppBarTitle() {
+  Widget _buildAppBarTitle(BuildContext context) {
     return Text(
-      'Create Post',
+      S.of(context).createPost,
       style: TextStyle(
         color: Colors.grey[900],
         fontSize: 19,
@@ -98,58 +99,69 @@ class UploadPostUI extends StatelessWidget {
     );
   }
 
-  Widget _buildPostButton(
-      bool hasContent,
-      BuildContext context,
-      CommunityCubit cubit,
-      ) {
+  Widget _buildPostButton(BuildContext context, CommunityCubit cubit) {
     return Padding(
       padding: const EdgeInsets.only(right: 12),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        child: TextButton(
-          onPressed: hasContent && !controller.isLoading
-              ? () => controller.handlePostSubmit(context, cubit)
-              : null,
-          style: TextButton.styleFrom(
-            backgroundColor: hasContent && !controller.isLoading
-                ? ColorManager.primaryColor
-                : Colors.grey[300],
-            foregroundColor: Colors.white,
-            disabledForegroundColor: Colors.grey[500],
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
-            ),
-            elevation: hasContent && !controller.isLoading ? 2 : 0,
-            shadowColor: ColorManager.primaryColor.withOpacity(0.3),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (controller.isLoading) ...[
-                SizedBox(
-                  width: 14,
-                  height: 14,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      child: ValueListenableBuilder<bool>(
+        valueListenable: controller.isLoadingNotifier,
+        builder: (context, isLoading, __) {
+          return ValueListenableBuilder<TextEditingValue>(
+            valueListenable: controller.textContentEditingController,
+            builder: (context, value, _) {
+              final bool hasContent =
+                  value.text.trim().isNotEmpty || cubit.mediaFiles.isNotEmpty;
+
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                child: TextButton(
+                  onPressed: hasContent && !isLoading
+                      ? () => controller.handlePostSubmit(context, cubit)
+                      : null,
+                  style: TextButton.styleFrom(
+                    backgroundColor: hasContent && !isLoading
+                        ? ColorManager.primaryColor
+                        : Colors.grey[300],
+                    foregroundColor: Colors.white,
+                    disabledForegroundColor: Colors.grey[500],
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    elevation: hasContent && !isLoading ? 2 : 0,
+                    shadowColor: ColorManager.primaryColor.withOpacity(0.3),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (isLoading) ...[
+                        SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                      Text(
+                        isLoading ? 'Posting...' : 'Post',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 8),
-              ],
-              Text(
-                controller.isLoading ? 'Posting...' : 'Post',
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ],
-          ),
-        ),
+              );
+            },
+          );
+        },
       ),
     );
   }
@@ -256,6 +268,23 @@ class UploadPostUI extends StatelessWidget {
             ],
           ),
         ),
+        ValueListenableBuilder<TextEditingValue>(
+          valueListenable: controller.textContentEditingController,
+          builder: (context, value, _) {
+            final used = value.text.length;
+            return Padding(
+              padding: const EdgeInsets.only(left: 25),
+              child: Text(
+                '1000/$used',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.grey[600],
+                ),
+              ),
+            );
+          },
+        ),
       ],
     );
   }
@@ -326,14 +355,16 @@ class UploadPostUI extends StatelessWidget {
     );
   }
 
-
   Widget _buildTextFieldContent() {
     return TextField(
       controller: controller.textContentEditingController,
       maxLines: null,
       minLines: 5,
       maxLength: 1000,
-      textDirection: controller.getTextDirection(controller.textContentEditingController.text),
+      inputFormatters: [LengthLimitingTextInputFormatter(1000)],
+      textDirection: controller.getTextDirection(
+        controller.textContentEditingController.text,
+      ),
       style: TextStyle(
         fontSize: 16,
         color: Colors.grey[900],
@@ -411,14 +442,18 @@ class UploadPostUI extends StatelessWidget {
       children: [
         Container(
           color: Colors.grey[200],
-          child: cubit.mediaTypes[index] == 'image'
-              ? Image.file(
-            cubit.mediaFiles[index],
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.cover,
-          )
-              : _buildVideoThumbnail(cubit.mediaFiles[index]),
+          child:
+              cubit.mediaTypes[index] == 'image'
+                  ? Image.file(
+                      cubit.mediaFiles[index],
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return _buildVideoThumbnail(cubit.mediaFiles[index]);
+                      },
+                    )
+                  : _buildVideoThumbnail(cubit.mediaFiles[index]),
         ),
 
         // Upload overlay
@@ -473,10 +508,10 @@ class UploadPostUI extends StatelessWidget {
   }
 
   Widget _buildMoreItemsOverlay(
-      int remainingCount,
-      CommunityCubit cubit,
-      int index,
-      ) {
+    int remainingCount,
+    CommunityCubit cubit,
+    int index,
+  ) {
     return Stack(
       children: [
         _buildMediaItem(cubit, index),
@@ -537,9 +572,9 @@ class UploadPostUI extends StatelessWidget {
   }
 
   Widget _buildActionButtonsSection(
-      BuildContext context,
-      CommunityCubit cubit,
-      ) {
+    BuildContext context,
+    CommunityCubit cubit,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -571,7 +606,7 @@ class UploadPostUI extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  _buildMediaActionButtons(cubit ,context),
+                  _buildMediaActionButtons(cubit, context),
                 ],
               ),
               if (cubit.mediaFiles.isNotEmpty) ...[
@@ -614,7 +649,7 @@ class UploadPostUI extends StatelessWidget {
     );
   }
 
-  Widget _buildMediaActionButtons(CommunityCubit cubit ,BuildContext context) {
+  Widget _buildMediaActionButtons(CommunityCubit cubit, BuildContext context) {
     return Row(
       children: [
         _buildMediaActionButton(

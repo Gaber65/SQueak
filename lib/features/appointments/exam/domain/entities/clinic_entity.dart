@@ -27,17 +27,17 @@ class Clinic extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        location,
-        city,
-        address,
-        phone,
-        image,
-        code,
-        admin,
-        specialities,
-      ];
+    id,
+    name,
+    location,
+    city,
+    address,
+    phone,
+    image,
+    code,
+    admin,
+    specialities,
+  ];
 }
 
 class AdminEntity extends Equatable {
@@ -59,23 +59,20 @@ class AdminEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        fullName,
-        image,
-        gender,
-        doctorCode,
-        specialization,
-      ];
+    id,
+    fullName,
+    image,
+    gender,
+    doctorCode,
+    specialization,
+  ];
 }
 
 class SpecialityEntity extends Equatable {
   final String id;
   final String name;
 
-  const SpecialityEntity({
-    required this.id,
-    required this.name,
-  });
+  const SpecialityEntity({required this.id, required this.name});
 
   @override
   List<Object?> get props => [id, name];
@@ -85,10 +82,7 @@ class ClinicInfo extends Equatable {
   final Clinic data;
   final String id;
 
-  const ClinicInfo({
-    required this.data,
-    required this.id,
-  });
+  const ClinicInfo({required this.data, required this.id});
 
   @override
   List<Object?> get props => [data, id];
@@ -97,9 +91,7 @@ class ClinicInfo extends Equatable {
 class MySupplier extends Equatable {
   final List<ClinicInfo> data;
 
-  const MySupplier({
-    required this.data,
-  });
+  const MySupplier({required this.data});
 
   @override
   List<Object?> get props => [data];

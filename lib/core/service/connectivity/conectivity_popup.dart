@@ -7,7 +7,7 @@ import 'dart:async';
 // Global connectivity wrapper that wraps the entire app
 class ConnectivityWrapper extends StatefulWidget {
   final Widget child;
-  
+
   const ConnectivityWrapper({super.key, required this.child});
 
   @override
@@ -33,56 +33,45 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper>
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
     );
-    
+
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ));
-
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
-
-    _pulseAnimation = Tween<double>(
-      begin: 0.95,
-      end: 1.05,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen(
-      (List<ConnectivityResult> results) {
-        _updateConnectionStatus(results);
-      },
+    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
     );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
+
+    _pulseAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
+      List<ConnectivityResult> results,
+    ) {
+      _updateConnectionStatus(results);
+    });
     _checkInitialConnectivity();
   }
 
   Future<void> _checkInitialConnectivity() async {
-    final List<ConnectivityResult> results = await Connectivity().checkConnectivity();
+    final List<ConnectivityResult> results =
+        await Connectivity().checkConnectivity();
     _updateConnectionStatus(results);
   }
 
   void _updateConnectionStatus(List<ConnectivityResult> results) {
     final bool connected = !results.contains(ConnectivityResult.none);
-    
+
     if (connected != isConnected) {
       setState(() {
         isConnected = connected;
@@ -98,7 +87,7 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper>
       } else {
         _pulseController.stop();
         _pulseController.reset();
-        
+
         setState(() {
           showConnectionRestored = true;
         });
@@ -134,7 +123,7 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper>
           if (!isConnected || showConnectionRestored)
             Positioned.fill(
               child: Container(
-                color: Colors.black.withOpacity(0.5), 
+                color: Colors.black.withOpacity(0.5),
                 child: Center(
                   child: ScaleTransition(
                     scale: _scaleAnimation,
@@ -154,9 +143,10 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper>
                             ),
                           ],
                         ),
-                        child: showConnectionRestored 
-                            ? _buildConnectionRestoredAlert()
-                            : _buildNoConnectionAlert(),
+                        child:
+                            showConnectionRestored
+                                ? _buildConnectionRestoredAlert()
+                                : _buildNoConnectionAlert(),
                       ),
                     ),
                   ),
@@ -180,11 +170,7 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper>
               color: Colors.red.shade50,
               borderRadius: BorderRadius.circular(50),
             ),
-            child: const Icon(
-              Icons.wifi_off,
-              color: Colors.red,
-              size: 50,
-            ),
+            child: const Icon(Icons.wifi_off, color: Colors.red, size: 50),
           ),
           const SizedBox(height: 20),
           const Text(
@@ -199,10 +185,7 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper>
           const SizedBox(height: 12),
           const Text(
             'Please check your connection and try again',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
@@ -216,11 +199,7 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.circle,
-                  size: 8,
-                  color: Colors.red.shade400,
-                ),
+                Icon(Icons.circle, size: 8, color: Colors.red.shade400),
                 const SizedBox(width: 8),
                 const Text(
                   'Offline',
@@ -248,11 +227,7 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper>
             color: Colors.green.shade50,
             borderRadius: BorderRadius.circular(50),
           ),
-          child: const Icon(
-            Icons.wifi,
-            color: Colors.green,
-            size: 50,
-          ),
+          child: const Icon(Icons.wifi, color: Colors.green, size: 50),
         ),
         const SizedBox(height: 20),
         const Text(
@@ -267,10 +242,7 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper>
         const SizedBox(height: 12),
         const Text(
           'You are back online',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey,
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 20),
@@ -284,11 +256,7 @@ class _ConnectivityWrapperState extends State<ConnectivityWrapper>
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.circle,
-                size: 8,
-                color: Colors.green.shade400,
-              ),
+              Icon(Icons.circle, size: 8, color: Colors.green.shade400),
               const SizedBox(width: 8),
               const Text(
                 'Online',

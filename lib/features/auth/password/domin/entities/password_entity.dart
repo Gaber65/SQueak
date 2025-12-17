@@ -5,9 +5,5 @@ class PasswordEntity {
   final String? token;
   final String? newPassword;
 
-  const PasswordEntity({
-    this.email,
-    this.token,
-    this.newPassword,
-  });
+  const PasswordEntity({this.email, this.token, this.newPassword});
 }

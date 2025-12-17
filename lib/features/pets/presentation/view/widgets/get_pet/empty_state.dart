@@ -5,10 +5,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 class EmptyState extends StatelessWidget {
   final VoidCallback onAddPetPressed;
 
-  const EmptyState({
-    super.key,
-    required this.onAddPetPressed,
-  });
+  const EmptyState({super.key, required this.onAddPetPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +15,10 @@ class EmptyState extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            MainCubit.get(context).isDark 
-                ? const Color(0xFF121212) 
+            MainCubit.get(context).isDark
+                ? const Color(0xFF121212)
                 : const Color(0xFFF8FAFC),
-            MainCubit.get(context).isDark 
+            MainCubit.get(context).isDark
                 ? Colors.grey[900]!.withOpacity(0.8)
                 : Colors.grey[50]!.withOpacity(0.8),
           ],
@@ -61,7 +58,8 @@ class EmptyState extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(77),
                   child: FastCachedImage(
-                    url: 'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/happy-pets-animal-ai-art-388_720x.webp?alt=media&token=eee507ff-48c5-450d-88d9-4203537ed79b',
+                    url:
+                        'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/happy-pets-animal-ai-art-388_720x.webp?alt=media&token=eee507ff-48c5-450d-88d9-4203537ed79b',
                     fit: BoxFit.cover,
                     errorBuilder: (context, exception, stackTrace) {
                       return Container(
@@ -109,7 +107,10 @@ class EmptyState extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
-                  color: MainCubit.get(context).isDark ? Colors.white : Colors.black87,
+                  color:
+                      MainCubit.get(context).isDark
+                          ? Colors.white
+                          : Colors.black87,
                   letterSpacing: 0.5,
                 ),
                 textAlign: TextAlign.center,
@@ -121,9 +122,10 @@ class EmptyState extends StatelessWidget {
                     : "Start your pet care journey",
                 style: TextStyle(
                   fontSize: 16,
-                  color: MainCubit.get(context).isDark 
-                      ? Colors.grey[400] 
-                      : Colors.grey[600],
+                  color:
+                      MainCubit.get(context).isDark
+                          ? Colors.grey[400]
+                          : Colors.grey[600],
                   fontWeight: FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,
@@ -154,7 +156,10 @@ class EmptyState extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     onTap: onAddPetPressed,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
+                      ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [

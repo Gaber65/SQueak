@@ -168,7 +168,8 @@ class PassportSection extends StatelessWidget {
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
-                                         crossAxisAlignment: CrossAxisAlignment.center,   
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           Flexible(
                                             child: Text(
@@ -176,7 +177,8 @@ class PassportSection extends StatelessWidget {
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 12, // Reduced font size to fit better
+                                                fontSize:
+                                                    12, // Reduced font size to fit better
                                               ),
                                               overflow: TextOverflow.ellipsis,
                                             ),

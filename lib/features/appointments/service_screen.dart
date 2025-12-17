@@ -172,8 +172,9 @@ class _CareHubScreenState extends State<CareHubScreen>
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: ColorManager.primaryColor
-                                    .withOpacity(0.1),
+                                color: ColorManager.primaryColor.withOpacity(
+                                  0.1,
+                                ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Icon(
@@ -185,16 +186,11 @@ class _CareHubScreenState extends State<CareHubScreen>
                             SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                isArabic
-                                    ? "مركز رعاية صديقك"
-                                    : "Care Hub",
+                                isArabic ? "مركز رعاية صديقك" : "Care Hub",
                                 style: TextStyle(
                                   fontSize: 18 * textScale.clamp(0.9, 1.2),
                                   fontWeight: FontWeight.w700,
-                                  color:
-                                      isDark
-                                          ? Colors.white
-                                          : Colors.black87,
+                                  color: isDark ? Colors.white : Colors.black87,
                                   letterSpacing: 0.3,
                                 ),
                               ),
@@ -227,9 +223,10 @@ class _CareHubScreenState extends State<CareHubScreen>
                           width: width,
                           title: isArabic ? "العيادات" : "Clinics",
                           subtitle: isArabic ? "ابحث واحجز" : "Find & Book",
-                          description: isArabic
-                              ? "اعثر بسهولة واحجز مواعيد في العيادات البيطرية الموثوقة عبر VetICare لصديقك"
-                              : "Easily find and book appointments at trusted veterinary clinics through VetICare for your friend",
+                          description:
+                              isArabic
+                                  ? "اعثر بسهولة واحجز مواعيد في العيادات البيطرية الموثوقة عبر VetICare لصديقك"
+                                  : "Easily find and book appointments at trusted veterinary clinics through VetICare for your friend",
                           icon: Icons.health_and_safety_rounded,
                           gradientColors: [
                             const Color(0xFF667EEA),
@@ -257,9 +254,10 @@ class _CareHubScreenState extends State<CareHubScreen>
                           title: isArabic ? "المواعيد" : "Appointments",
                           subtitle:
                               isArabic ? "إدارة المواعيد" : "Manage Schedule",
-                          description: isArabic
-                              ? "عرض وإدارة مواعيد صديقك القادمة."
-                              : "View and manage your friend's upcoming appointments.",
+                          description:
+                              isArabic
+                                  ? "عرض وإدارة مواعيد صديقك القادمة."
+                                  : "View and manage your friend's upcoming appointments.",
                           icon: IconlyBold.calendar,
                           gradientColors: [
                             const Color(0xFFF093FB),
@@ -303,9 +301,10 @@ class _CareHubScreenState extends State<CareHubScreen>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: isDark
-                ? Colors.black.withOpacity(0.4)
-                : Colors.grey.withOpacity(0.15),
+            color:
+                isDark
+                    ? Colors.black.withOpacity(0.4)
+                    : Colors.grey.withOpacity(0.15),
             blurRadius: 25,
             offset: const Offset(0, 10),
             spreadRadius: -5,

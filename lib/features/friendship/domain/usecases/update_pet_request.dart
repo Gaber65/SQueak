@@ -2,7 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/friendship/domain/repositories/pet_friends_repository.dart';
 
-class UpdatePetRequestUseCase extends BaseUseCase<bool, UpdatePetRequestParams> {
+class UpdatePetRequestUseCase
+    extends BaseUseCase<bool, UpdatePetRequestParams> {
   final PetFriendRepository repository;
   UpdatePetRequestUseCase(this.repository);
 
@@ -18,8 +19,5 @@ class UpdatePetRequestParams {
 
   UpdatePetRequestParams({required this.requestId, required this.status});
 
-  Map<String, dynamic> toJson() => {
-    "requestId": requestId,
-    "status": status,
-  };
+  Map<String, dynamic> toJson() => {"requestId": requestId, "status": status};
 }

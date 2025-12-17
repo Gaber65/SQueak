@@ -21,7 +21,6 @@ class BoardingCubit extends Cubit<BoardingState> {
   final RateBoardingUseCase rateBoardingUseCase;
   final ShareImageEntriesUseCase shareImageEntriesUseCase;
   // final ShareImageEntriesUseCase shareVideoEntriesUseCase;
-  
 
   BoardingCubit({
     required this.getBoardingTypesUseCase,
@@ -95,7 +94,7 @@ class BoardingCubit extends Cubit<BoardingState> {
   }
 
   bool isLoadingEntries = false;
-  Future<void> getBoardingEntries( bool applyFilter) async {
+  Future<void> getBoardingEntries(bool applyFilter) async {
     isLoadingEntries = true;
     emit(GetBoardingEntriesLoading());
 
@@ -175,7 +174,7 @@ class BoardingCubit extends Cubit<BoardingState> {
   @override
   Future<void> close() {
     rateController.dispose();
-    
+
     return super.close();
   }
 }

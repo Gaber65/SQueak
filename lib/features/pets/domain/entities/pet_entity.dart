@@ -1,4 +1,3 @@
-import 'package:squeak/features/layout/post/data/model/post_model.dart';
 import 'package:squeak/features/settings/domain/entities/owner_entite.dart';
 
 import '../../../layout/post/domain/entities/post_entity.dart';

@@ -24,6 +24,4 @@ class StoryReactionEntity {
     required this.reactedAt,
     this.viewAt,
   });
-
 }
-

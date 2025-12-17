@@ -4,14 +4,21 @@ import 'package:flutter/material.dart';
 import '../../../../../core/utils/export_path/export_files.dart';
 import '../../../domain/entities/comment_entity.dart';
 
-Widget buildEditCommentAvatar(CommentEntity comment,avatarAnimation, animationController) {
-  final imageUrlString = comment.pet == null
-      ? (comment.user!.imageName != null && comment.user!.imageName!.isNotEmpty)
-      ? "$imageUrl${comment.user!.imageName}"
-      : AssetImageModel.defaultUserImage
-      : (comment.pet!.imageName != null && comment.pet!.imageName!.isNotEmpty)
-      ? "$imageUrl${comment.pet!.imageName}"
-      : AssetImageModel.defaultPetImage;
+Widget buildEditCommentAvatar(
+  CommentEntity comment,
+  avatarAnimation,
+  animationController,
+) {
+  final imageUrlString =
+      comment.pet == null
+          ? (comment.user!.imageName != null &&
+                  comment.user!.imageName!.isNotEmpty)
+              ? "$imageUrl${comment.user!.imageName}"
+              : AssetImageModel.defaultUserImage
+          : (comment.pet!.imageName != null &&
+              comment.pet!.imageName!.isNotEmpty)
+          ? "$imageUrl${comment.pet!.imageName}"
+          : AssetImageModel.defaultPetImage;
 
   return FadeTransition(
     opacity: avatarAnimation,

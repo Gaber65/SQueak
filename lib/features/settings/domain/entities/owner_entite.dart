@@ -28,20 +28,19 @@ class Owner extends Equatable {
   });
 
   @override
-  List<Object?> get props =>
-      [
-        userName,
-        fullName,
-        email,
-        phone,
-        address,
-        imageName,
-        birthdate,
-        gender,
-        role,
-        id,
-        countryId,
-      ];
+  List<Object?> get props => [
+    userName,
+    fullName,
+    email,
+    phone,
+    address,
+    imageName,
+    birthdate,
+    gender,
+    role,
+    id,
+    countryId,
+  ];
 
   Map<String, dynamic> toMap() {
     return {

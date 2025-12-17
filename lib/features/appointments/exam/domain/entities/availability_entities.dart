@@ -22,12 +22,12 @@ class Availability extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        dayOfWeek,
-        startTime,
-        endTime,
-        note,
-        isActive,
-        isDisabled,
-      ];
+    id,
+    dayOfWeek,
+    startTime,
+    endTime,
+    note,
+    isActive,
+    isDisabled,
+  ];
 }

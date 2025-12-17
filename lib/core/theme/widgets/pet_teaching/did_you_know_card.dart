@@ -93,13 +93,9 @@ class _DidYouKnowCardState extends State<DidYouKnowCard>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _slideAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _slideAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -123,7 +119,7 @@ class _DidYouKnowCardState extends State<DidYouKnowCard>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final categoryInfo = _getCategoryInfo(widget.category, theme);
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(
         horizontal: AppTheme.spacing16,
@@ -165,11 +161,7 @@ class _DidYouKnowCardState extends State<DidYouKnowCard>
               ),
               child: Row(
                 children: [
-                  Icon(
-                    categoryInfo.icon,
-                    color: categoryInfo.color,
-                    size: 24,
-                  ),
+                  Icon(categoryInfo.icon, color: categoryInfo.color, size: 24),
                   const SizedBox(width: AppTheme.spacing12),
                   Expanded(
                     child: Column(
@@ -206,7 +198,7 @@ class _DidYouKnowCardState extends State<DidYouKnowCard>
               ),
             ),
           ),
-          
+
           // Expandable content
           AnimatedBuilder(
             animation: _slideAnimation,
@@ -224,10 +216,7 @@ class _DidYouKnowCardState extends State<DidYouKnowCard>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.content,
-                    style: theme.textTheme.bodyMedium,
-                  ),
+                  Text(widget.content, style: theme.textTheme.bodyMedium),
                   if (widget.imageUrl != null) ...[
                     const SizedBox(height: AppTheme.spacing16),
                     ClipRRect(
@@ -258,7 +247,10 @@ class _DidYouKnowCardState extends State<DidYouKnowCard>
     );
   }
 
-  _CategoryInfo _getCategoryInfo(DidYouKnowCategory? category, ThemeData theme) {
+  _CategoryInfo _getCategoryInfo(
+    DidYouKnowCategory? category,
+    ThemeData theme,
+  ) {
     switch (category) {
       case DidYouKnowCategory.health:
         return _CategoryInfo(
@@ -281,10 +273,7 @@ class _DidYouKnowCardState extends State<DidYouKnowCard>
           icon: Icons.security,
         );
       case DidYouKnowCategory.grooming:
-        return _CategoryInfo(
-          color: const Color(0xFF00BCD4),
-          icon: Icons.spa,
-        );
+        return _CategoryInfo(color: const Color(0xFF00BCD4), icon: Icons.spa);
       case null:
         return _CategoryInfo(
           color: theme.colorScheme.primary,
@@ -295,20 +284,11 @@ class _DidYouKnowCardState extends State<DidYouKnowCard>
 }
 
 /// Categories for Did You Know cards
-enum DidYouKnowCategory {
-  health,
-  nutrition,
-  behavior,
-  safety,
-  grooming,
-}
+enum DidYouKnowCategory { health, nutrition, behavior, safety, grooming }
 
 /// Internal category information
 class _CategoryInfo {
-  const _CategoryInfo({
-    required this.color,
-    required this.icon,
-  });
+  const _CategoryInfo({required this.color, required this.icon});
 
   final Color color;
   final IconData icon;

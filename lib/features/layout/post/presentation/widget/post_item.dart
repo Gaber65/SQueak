@@ -46,6 +46,7 @@ class _BuildPostItemState extends State<BuildPostItem> {
     final allMedia = _combineMedia();
     final hasMedia = allMedia.isNotEmpty;
 
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       decoration: Decorations.kDecorationBoxShadow(context: context),

@@ -45,11 +45,7 @@ class PetTypeOption extends StatelessWidget {
                     width: 2,
                   ),
                 ),
-                child: Icon(
-                  icon, 
-                  size: 32, 
-                  color: Colors.blue,
-                ),
+                child: Icon(icon, size: 32, color: Colors.blue),
               ),
               const SizedBox(height: 12),
               Text(
@@ -57,7 +53,10 @@ class PetTypeOption extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: MainCubit.get(context).isDark ? Colors.white : Colors.black87,
+                  color:
+                      MainCubit.get(context).isDark
+                          ? Colors.white
+                          : Colors.black87,
                   letterSpacing: 0.5,
                 ),
               ),

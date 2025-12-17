@@ -2,13 +2,16 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 
-class ShareImageEntriesUseCase implements BaseUseCase<void, ShareImageBoardingEntriesParams> {
+class ShareImageEntriesUseCase
+    implements BaseUseCase<void, ShareImageBoardingEntriesParams> {
   final BoardingRepository repository;
 
   ShareImageEntriesUseCase(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(ShareImageBoardingEntriesParams params) async {
+  Future<Either<Failure, void>> call(
+    ShareImageBoardingEntriesParams params,
+  ) async {
     return await repository.shareImage(params);
   }
 }

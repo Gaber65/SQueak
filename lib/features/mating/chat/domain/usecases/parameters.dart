@@ -1,7 +1,8 @@
 class GetMessagesParameters {
   final String chatId;
+  final int pageNumber;
 
-  const GetMessagesParameters({required this.chatId});
+  const GetMessagesParameters({required this.chatId, this.pageNumber = 1});
 }
 
 class SendMessageParameters {
@@ -9,6 +10,7 @@ class SendMessageParameters {
   final String? image;
   final String? video;
   final String? audio;
+  final String? file;
   final bool isRead;
   final String? conversationId;
   final String? fromPetId;
@@ -19,6 +21,7 @@ class SendMessageParameters {
     this.image,
     this.video,
     this.audio,
+    this.file,
     this.isRead = true,
     this.conversationId,
     this.fromPetId,
@@ -31,6 +34,7 @@ class SendMessageParameters {
       'image': image,
       'video': video,
       'audio': audio,
+      'file': file,
       'isRead': isRead,
       'ConversationId': conversationId,
       if (fromPetId != null) 'fromPetId': fromPetId,
@@ -124,7 +128,7 @@ class DeleteMessageParameters {
     return {
       'conversationId': conversationId,
       'deleteForMeOnly': onlyFromMe,
-      'messageId': messageId
-      };
+      'messageId': messageId,
+    };
   }
 }

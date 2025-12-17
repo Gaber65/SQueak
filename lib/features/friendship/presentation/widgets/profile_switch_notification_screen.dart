@@ -170,7 +170,7 @@ class _ProfileSwitchNotificationScreenState
                                     offset: Offset(
                                       0,
                                       -5 * (_scaleAnimation.value - 1),
-                                    ), 
+                                    ),
                                     child: Container(
                                       decoration: BoxDecoration(
                                         gradient: const LinearGradient(

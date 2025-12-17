@@ -12,7 +12,6 @@ import 'package:squeak/features/auth/register/presentation/widgets/enhanced_auth
 
 import '../../../get_started/presentation/screnns/welcome_to_squek.dart';
 
-
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
 
@@ -38,19 +37,20 @@ class RegisterScreen extends StatelessWidget {
           }
           if (state is RegistrationSuccessState) {
             // After successful registration and automatic login, navigate to layout screen
-            navigateAndFinish(
-              context,
-             WelcomeToSquek(),
-            );
+            navigateAndFinish(context, WelcomeToSquek());
           }
         },
         builder: (context, state) {
           final cubit = RegisterCubit.get(context);
           return EnhancedAuthHeader(
-            title: isArabic() ? 'انضم الى مجتمع الصغار الأليفة🐾' : 'Join the Pack! 🐾',
-            subtitle: isArabic()
-                ? 'أنشئ حسابك للتواصل مع رعاية الصغار الأليفة'
-                : 'Create your account to connect with pet care',
+            title:
+                isArabic()
+                    ? 'انضم الى مجتمع الصغار الأليفة🐾'
+                    : 'Join the Pack! 🐾',
+            subtitle:
+                isArabic()
+                    ? 'أنشئ حسابك للتواصل مع رعاية الصغار الأليفة'
+                    : 'Create your account to connect with pet care',
             child: EnhancedRegisterView(cubit: cubit),
           );
         },

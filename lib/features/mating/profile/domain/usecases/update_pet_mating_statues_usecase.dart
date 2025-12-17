@@ -5,7 +5,8 @@ import 'package:squeak/features/mating/profile/domain/usecases/mating_profile_pr
 import '../../../../../core/error/failure.dart';
 import '../repo/base_mating_pet_profile_repo.dart';
 
-class UpdatePetMatingStatuesUseCase implements BaseUseCase<void, MatingProfileParams> {
+class UpdatePetMatingStatuesUseCase
+    implements BaseUseCase<void, MatingProfileParams> {
   final BaseMatingPetProfileRepo baseMatingPetProfileRepo;
 
   UpdatePetMatingStatuesUseCase(this.baseMatingPetProfileRepo);

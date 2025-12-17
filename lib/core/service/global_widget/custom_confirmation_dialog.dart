@@ -7,16 +7,11 @@ import '../../utils/theme/color_mangment/color_manager.dart';
 import '../../utils/theme/fonts/font_styles.dart';
 import '../global_function/format_utils.dart';
 
-
-
-
 void showCustomConfirmationDialog({
   required BuildContext context,
   required dynamic description,
   required String imageUrl,
   required VoidCallback onConfirm,
-
- 
 
   String titleOfAlertAR = 'تأكيد الحذف',
   String titleOfAlertEN = 'Delete Confirmation',
@@ -33,7 +28,7 @@ void showCustomConfirmationDialog({
             context: context,
             fontSize: 14,
             fontColor:
-            MainCubit.get(context).isDark ? Colors.white : Colors.black,
+                MainCubit.get(context).isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -46,18 +41,16 @@ void showCustomConfirmationDialog({
                 style: FontStyleThame.textStyle(
                   context: context,
                   fontSize: 14,
-                  fontColor: MainCubit.get(context).isDark
-                      ? Colors.white
-                      : Colors.black,
+                  fontColor:
+                      MainCubit.get(context).isDark
+                          ? Colors.white
+                          : Colors.black,
                 ),
               )
             else
               description,
             const SizedBox(height: 20),
-            CircleAvatar(
-              backgroundImage: NetworkImage(imageUrl),
-              radius: 60,
-            ),
+            CircleAvatar(backgroundImage: NetworkImage(imageUrl), radius: 60),
           ],
         ),
         actions: <Widget>[
@@ -69,9 +62,10 @@ void showCustomConfirmationDialog({
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: noButtonColor,
-                backgroundColor: MainCubit.get(context).isDark
-                    ? ColorManager.myPetsBaseBlackColor
-                    : noButtonColor.withOpacity(.4),
+                backgroundColor:
+                    MainCubit.get(context).isDark
+                        ? ColorManager.myPetsBaseBlackColor
+                        : noButtonColor.withOpacity(.4),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -82,9 +76,10 @@ void showCustomConfirmationDialog({
                 style: FontStyleThame.textStyle(
                   context: context,
                   fontSize: 14,
-                  fontColor: MainCubit.get(context).isDark
-                      ? noButtonColor
-                      : Colors.black,
+                  fontColor:
+                      MainCubit.get(context).isDark
+                          ? noButtonColor
+                          : Colors.black,
                 ),
               ),
             ),
@@ -95,9 +90,10 @@ void showCustomConfirmationDialog({
               onPressed: onConfirm,
               style: ElevatedButton.styleFrom(
                 foregroundColor: yesButtonColor,
-                backgroundColor: MainCubit.get(context).isDark
-                    ? ColorManager.myPetsBaseBlackColor
-                    : yesButtonColor.withOpacity(.4),
+                backgroundColor:
+                    MainCubit.get(context).isDark
+                        ? ColorManager.myPetsBaseBlackColor
+                        : yesButtonColor.withOpacity(.4),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -108,9 +104,10 @@ void showCustomConfirmationDialog({
                 style: FontStyleThame.textStyle(
                   context: context,
                   fontSize: 14,
-                  fontColor: MainCubit.get(context).isDark
-                      ? yesButtonColor
-                      : Colors.black,
+                  fontColor:
+                      MainCubit.get(context).isDark
+                          ? yesButtonColor
+                          : Colors.black,
                 ),
               ),
             ),

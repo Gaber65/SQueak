@@ -1,13 +1,7 @@
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:flutter/material.dart';
 
-enum RequestStatus {
-  pending,
-  accepted,
-  rejected,
-  onMating,
-  canceled,
-}
+enum RequestStatus { pending, accepted, rejected, onMating, canceled }
 
 extension RequestStatusExtension on RequestStatus {
   String get displayName {

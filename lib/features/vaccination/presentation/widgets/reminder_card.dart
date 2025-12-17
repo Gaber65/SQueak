@@ -12,11 +12,7 @@ class ReminderCard extends StatefulWidget {
   final ReminderEntity reminder;
   final String petId;
 
-  const ReminderCard({
-    super.key,
-    required this.reminder,
-    required this.petId,
-  });
+  const ReminderCard({super.key, required this.reminder, required this.petId});
 
   @override
   State<ReminderCard> createState() => _ReminderCardState();
@@ -41,24 +37,15 @@ class _ReminderCardState extends State<ReminderCard>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.05,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
 
     // Start pulse animation for upcoming reminders
-
   }
 
   @override
@@ -75,7 +62,15 @@ class _ReminderCardState extends State<ReminderCard>
       animation: _scaleAnimation,
       child: AnimatedBuilder(
         animation: _pulseAnimation,
-        child: _buildCard(context, cubit, size, isDarkMode, reminderInfo, isUpcoming, daysUntil),
+        child: _buildCard(
+          context,
+          cubit,
+          size,
+          isDarkMode,
+          reminderInfo,
+          isUpcoming,
+          daysUntil,
+        ),
         builder: (context, child) {
           return Transform.scale(
             scale: isUpcoming ? _pulseAnimation.value : 1.0,
@@ -84,23 +79,20 @@ class _ReminderCardState extends State<ReminderCard>
         },
       ),
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _scaleAnimation.value, child: child);
       },
     );
   }
 
   Widget _buildCard(
-      BuildContext context,
-      VaccinationUiCubit cubit,
-      Size size,
-      bool isDarkMode,
-      ReminderTypeInfo reminderInfo,
-      bool isUpcoming,
-      int daysUntil,
-      ) {
+    BuildContext context,
+    VaccinationUiCubit cubit,
+    Size size,
+    bool isDarkMode,
+    ReminderTypeInfo reminderInfo,
+    bool isUpcoming,
+    int daysUntil,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       child: Dismissible(
@@ -108,7 +100,8 @@ class _ReminderCardState extends State<ReminderCard>
         direction: DismissDirection.horizontal,
         background: _buildDismissBackground(true, isDarkMode),
         secondaryBackground: _buildDismissBackground(false, isDarkMode),
-        confirmDismiss: (direction) => _handleDismiss(direction, context, cubit),
+        confirmDismiss:
+            (direction) => _handleDismiss(direction, context, cubit),
         child: GestureDetector(
           onTapDown: (_) {
             _animationController.forward();
@@ -132,9 +125,10 @@ class _ReminderCardState extends State<ReminderCard>
                   spreadRadius: 0,
                 ),
                 BoxShadow(
-                  color: isDarkMode
-                      ? Colors.black.withOpacity(0.3)
-                      : Colors.white.withOpacity(0.8),
+                  color:
+                      isDarkMode
+                          ? Colors.black.withOpacity(0.3)
+                          : Colors.white.withOpacity(0.8),
                   blurRadius: 20,
                   offset: const Offset(0, -2),
                   spreadRadius: 0,
@@ -145,12 +139,22 @@ class _ReminderCardState extends State<ReminderCard>
               borderRadius: BorderRadius.circular(24),
               child: Container(
                 decoration: BoxDecoration(
-                  gradient: _buildCardGradient(reminderInfo.color, isDarkMode, isUpcoming),
+                  gradient: _buildCardGradient(
+                    reminderInfo.color,
+                    isDarkMode,
+                    isUpcoming,
+                  ),
                 ),
                 child: Stack(
                   children: [
                     _buildBackgroundPattern(reminderInfo.color),
-                    _buildCardContent(context, reminderInfo, isUpcoming, daysUntil, isDarkMode),
+                    _buildCardContent(
+                      context,
+                      reminderInfo,
+                      isUpcoming,
+                      daysUntil,
+                      isDarkMode,
+                    ),
                     if (isUpcoming) _buildUrgencyIndicator(daysUntil),
                   ],
                 ),
@@ -168,9 +172,10 @@ class _ReminderCardState extends State<ReminderCard>
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         gradient: LinearGradient(
-          colors: isEdit
-              ? [Colors.blue.shade400, Colors.blue.shade600]
-              : [Colors.red.shade400, Colors.red.shade600],
+          colors:
+              isEdit
+                  ? [Colors.blue.shade400, Colors.blue.shade600]
+                  : [Colors.red.shade400, Colors.red.shade600],
           begin: isEdit ? Alignment.centerLeft : Alignment.centerRight,
           end: isEdit ? Alignment.centerRight : Alignment.centerLeft,
         ),
@@ -215,7 +220,11 @@ class _ReminderCardState extends State<ReminderCard>
     );
   }
 
-  LinearGradient _buildCardGradient(Color baseColor, bool isDarkMode, bool isUpcoming) {
+  LinearGradient _buildCardGradient(
+    Color baseColor,
+    bool isDarkMode,
+    bool isUpcoming,
+  ) {
     if (isDarkMode) {
       return LinearGradient(
         begin: Alignment.topLeft,
@@ -252,12 +261,12 @@ class _ReminderCardState extends State<ReminderCard>
   }
 
   Widget _buildCardContent(
-      BuildContext context,
-      ReminderTypeInfo reminderInfo,
-      bool isUpcoming,
-      int daysUntil,
-      bool isDarkMode,
-      ) {
+    BuildContext context,
+    ReminderTypeInfo reminderInfo,
+    bool isUpcoming,
+    int daysUntil,
+    bool isDarkMode,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Row(
@@ -265,7 +274,12 @@ class _ReminderCardState extends State<ReminderCard>
           _buildIconSection(reminderInfo, isUpcoming),
           const SizedBox(width: 20),
           Expanded(
-            child: _buildInfoSection(context, isUpcoming, daysUntil, isDarkMode),
+            child: _buildInfoSection(
+              context,
+              isUpcoming,
+              daysUntil,
+              isDarkMode,
+            ),
           ),
           _buildActionSection(context, isDarkMode),
         ],
@@ -293,11 +307,7 @@ class _ReminderCardState extends State<ReminderCard>
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Icon(
-              reminderInfo.icon,
-              color: reminderInfo.color,
-              size: 32,
-            ),
+            Icon(reminderInfo.icon, color: reminderInfo.color, size: 32),
             if (isUpcoming)
               Positioned(
                 top: 4,
@@ -324,7 +334,12 @@ class _ReminderCardState extends State<ReminderCard>
     );
   }
 
-  Widget _buildInfoSection(BuildContext context, bool isUpcoming, int daysUntil, bool isDarkMode) {
+  Widget _buildInfoSection(
+    BuildContext context,
+    bool isUpcoming,
+    int daysUntil,
+    bool isDarkMode,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -334,7 +349,7 @@ class _ReminderCardState extends State<ReminderCard>
             Expanded(
               child: Text(
                 widget.reminder.reminderType == "other" ||
-                    widget.reminder.reminderType == "أخرى"
+                        widget.reminder.reminderType == "أخرى"
                     ? widget.reminder.otherTitle.toString()
                     : widget.reminder.reminderType,
                 style: TextStyle(
@@ -486,11 +501,7 @@ class _ReminderCardState extends State<ReminderCard>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.repeat_rounded,
-            size: 14,
-            color: Colors.white70,
-          ),
+          const Icon(Icons.repeat_rounded, size: 14, color: Colors.white70),
           const SizedBox(width: 4),
           Text(
             widget.reminder.reminderFreq,
@@ -517,7 +528,12 @@ class _ReminderCardState extends State<ReminderCard>
           color: Colors.white,
           size: 24,
         ),
-        onPressed: () => _showReminderOptions(context, widget.reminder, context.read<VaccinationUiCubit>()),
+        onPressed:
+            () => _showReminderOptions(
+              context,
+              widget.reminder,
+              context.read<VaccinationUiCubit>(),
+            ),
         splashRadius: 20,
       ),
     );
@@ -536,7 +552,9 @@ class _ReminderCardState extends State<ReminderCard>
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: (daysUntil == 0 ? Colors.red : Colors.orange).withOpacity(0.5),
+              color: (daysUntil == 0 ? Colors.red : Colors.orange).withOpacity(
+                0.5,
+              ),
               blurRadius: 8,
               spreadRadius: 2,
             ),
@@ -551,7 +569,11 @@ class _ReminderCardState extends State<ReminderCard>
     );
   }
 
-  Future<bool?> _handleDismiss(DismissDirection direction, BuildContext context, VaccinationUiCubit cubit) async {
+  Future<bool?> _handleDismiss(
+    DismissDirection direction,
+    BuildContext context,
+    VaccinationUiCubit cubit,
+  ) async {
     if (direction == DismissDirection.startToEnd) {
       showEditReminderDialog(
         context: context,
@@ -563,10 +585,12 @@ class _ReminderCardState extends State<ReminderCard>
     } else if (direction == DismissDirection.endToStart) {
       showCustomConfirmationDialog(
         context: context,
-        description: isArabic()
-            ? 'هل أنت متأكد أنك تريد حذف هذا الخدمة؟'
-            : 'Are you sure you want to delete this service?',
-        imageUrl: 'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?t=st=1729767092~exp=1729770692~hmac=fe206337cc285fa3e223ab4e0326cd478bbb1497ff9a0b37543f9a46f4f23325&w=826',
+        description:
+            isArabic()
+                ? 'هل أنت متأكد أنك تريد حذف هذا الخدمة؟'
+                : 'Are you sure you want to delete this service?',
+        imageUrl:
+            'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?t=st=1729767092~exp=1729770692~hmac=fe206337cc285fa3e223ab4e0326cd478bbb1497ff9a0b37543f9a46f4f23325&w=826',
         onConfirm: () {
           cubit.deleteReminder(reminder: widget.reminder, petId: widget.petId);
           Navigator.of(context).pop();
@@ -577,7 +601,11 @@ class _ReminderCardState extends State<ReminderCard>
     return false;
   }
 
-  void _showReminderDetails(BuildContext contextAll, ReminderEntity reminder, cubit) {
+  void _showReminderDetails(
+    BuildContext contextAll,
+    ReminderEntity reminder,
+    cubit,
+  ) {
     final isDarkMode = MainCubit.get(contextAll).isDark;
     final reminderInfo = getReminderTypeInfo(reminder.reminderType);
 
@@ -585,53 +613,60 @@ class _ReminderCardState extends State<ReminderCard>
       context: contextAll,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: isDarkMode
-                ? [Colors.grey.shade900, Colors.grey.shade800]
-                : [Colors.white, Colors.grey.shade50],
-          ),
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(32),
-            topRight: Radius.circular(32),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 20,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 60,
-              height: 6,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade400,
-                borderRadius: BorderRadius.circular(3),
+      builder:
+          (context) => Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors:
+                    isDarkMode
+                        ? [Colors.grey.shade900, Colors.grey.shade800]
+                        : [Colors.white, Colors.grey.shade50],
               ),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(32),
+                topRight: Radius.circular(32),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 20,
+                  offset: const Offset(0, -5),
+                ),
+              ],
             ),
-            const SizedBox(height: 24),
-            _buildDetailHeader(context, reminder, reminderInfo, isDarkMode),
-            const SizedBox(height: 24),
-            _buildDetailsList(context, reminder, isDarkMode),
-            const SizedBox(height: 32),
-            _buildDetailActions(context, reminder, cubit, contextAll),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 60,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade400,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildDetailHeader(context, reminder, reminderInfo, isDarkMode),
+                const SizedBox(height: 24),
+                _buildDetailsList(context, reminder, isDarkMode),
+                const SizedBox(height: 32),
+                _buildDetailActions(context, reminder, cubit, contextAll),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
     );
   }
 
-  Widget _buildDetailHeader(BuildContext context, ReminderEntity reminder, ReminderTypeInfo reminderInfo, bool isDarkMode) {
+  Widget _buildDetailHeader(
+    BuildContext context,
+    ReminderEntity reminder,
+    ReminderTypeInfo reminderInfo,
+    bool isDarkMode,
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -670,7 +705,8 @@ class _ReminderCardState extends State<ReminderCard>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  reminder.reminderType == "other" || reminder.reminderType == "أخرى"
+                  reminder.reminderType == "other" ||
+                          reminder.reminderType == "أخرى"
                       ? reminder.otherTitle.toString()
                       : reminder.reminderType,
                   style: TextStyle(
@@ -681,9 +717,14 @@ class _ReminderCardState extends State<ReminderCard>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  isArabic() ? "لـ ${reminder.petName}" : "For ${reminder.petName}",
+                  isArabic()
+                      ? "لـ ${reminder.petName}"
+                      : "For ${reminder.petName}",
                   style: TextStyle(
-                    color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                    color:
+                        isDarkMode
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
@@ -696,7 +737,11 @@ class _ReminderCardState extends State<ReminderCard>
     );
   }
 
-  Widget _buildDetailsList(BuildContext context, ReminderEntity reminder, bool isDarkMode) {
+  Widget _buildDetailsList(
+    BuildContext context,
+    ReminderEntity reminder,
+    bool isDarkMode,
+  ) {
     return Column(
       children: [
         _buildDetailItem(
@@ -740,7 +785,13 @@ class _ReminderCardState extends State<ReminderCard>
     );
   }
 
-  Widget _buildDetailItem(BuildContext context, IconData icon, String label, String value, bool isDarkMode) {
+  Widget _buildDetailItem(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+    bool isDarkMode,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -778,7 +829,10 @@ class _ReminderCardState extends State<ReminderCard>
                   label,
                   style: TextStyle(
                     fontSize: 12,
-                    color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                    color:
+                        isDarkMode
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -799,7 +853,12 @@ class _ReminderCardState extends State<ReminderCard>
     );
   }
 
-  Widget _buildDetailActions(BuildContext context, ReminderEntity reminder, cubit, BuildContext contextAll) {
+  Widget _buildDetailActions(
+    BuildContext context,
+    ReminderEntity reminder,
+    cubit,
+    BuildContext contextAll,
+  ) {
     return Row(
       children: [
         Expanded(
@@ -808,7 +867,7 @@ class _ReminderCardState extends State<ReminderCard>
             Icons.edit_rounded,
             isArabic() ? "تعديل" : "Edit",
             Colors.blue,
-                () {
+            () {
               Navigator.pop(context);
               showEditReminderDialog(
                 context: context,
@@ -826,16 +885,21 @@ class _ReminderCardState extends State<ReminderCard>
             Icons.delete_rounded,
             isArabic() ? "حذف" : "Delete",
             Colors.red,
-                () {
+            () {
               Navigator.pop(context);
               showCustomConfirmationDialog(
                 context: context,
-                description: isArabic()
-                    ? 'هل أنت متأكد أنك تريد حذف هذا الخدمة؟'
-                    : 'Are you sure you want to delete this service?',
-                imageUrl: 'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?t=st=1729767092~exp=1729770692~hmac=fe206337cc285fa3e223ab4e0326cd478bbb1497ff9a0b37543f9a46f4f23325&w=826',
+                description:
+                    isArabic()
+                        ? 'هل أنت متأكد أنك تريد حذف هذا الخدمة؟'
+                        : 'Are you sure you want to delete this service?',
+                imageUrl:
+                    'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?t=st=1729767092~exp=1729770692~hmac=fe206337cc285fa3e223ab4e0326cd478bbb1497ff9a0b37543f9a46f4f23325&w=826',
                 onConfirm: () {
-                  cubit.deleteReminder(reminder: reminder, matingRequestId: widget.petId);
+                  cubit.deleteReminder(
+                    reminder: reminder,
+                    matingRequestId: widget.petId,
+                  );
                   Navigator.of(contextAll).pop();
                 },
               );
@@ -846,12 +910,16 @@ class _ReminderCardState extends State<ReminderCard>
     );
   }
 
-  Widget _buildActionButton(BuildContext context, IconData icon, String label, Color color, VoidCallback onTap) {
+  Widget _buildActionButton(
+    BuildContext context,
+    IconData icon,
+    String label,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [color, color.withOpacity(0.8)],
-        ),
+        gradient: LinearGradient(colors: [color, color.withOpacity(0.8)]),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -889,95 +957,113 @@ class _ReminderCardState extends State<ReminderCard>
     );
   }
 
-  void _showReminderOptions(BuildContext contextAll, ReminderEntity reminder, cubit) {
+  void _showReminderOptions(
+    BuildContext contextAll,
+    ReminderEntity reminder,
+    cubit,
+  ) {
     final isDarkMode = MainCubit.get(contextAll).isDark;
 
     showModalBottomSheet(
       context: contextAll,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: isDarkMode
-                ? [Colors.grey.shade900, Colors.grey.shade800]
-                : [Colors.white, Colors.grey.shade50],
-          ),
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(32),
-            topRight: Radius.circular(32),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 60,
-              height: 6,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade400,
-                borderRadius: BorderRadius.circular(3),
+      builder:
+          (context) => Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors:
+                    isDarkMode
+                        ? [Colors.grey.shade900, Colors.grey.shade800]
+                        : [Colors.white, Colors.grey.shade50],
+              ),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(32),
+                topRight: Radius.circular(32),
               ),
             ),
-            const SizedBox(height: 24),
-            _buildOptionItem(
-              context,
-              Icons.visibility_rounded,
-              isArabic() ? "عرض التفاصيل" : "View Details",
-              Colors.blue,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 60,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade400,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildOptionItem(
+                  context,
+                  Icons.visibility_rounded,
+                  isArabic() ? "عرض التفاصيل" : "View Details",
+                  Colors.blue,
                   () {
-                Navigator.pop(context);
-                _showReminderDetails(context, reminder, cubit);
-              },
-              isDarkMode,
-            ),
-            _buildOptionItem(
-              context,
-              Icons.edit_rounded,
-              isArabic() ? "تعديل" : "Edit",
-              Colors.green,
-                  () {
-                Navigator.pop(context);
-                showEditReminderDialog(
-                  context: context,
-                  reminder: reminder,
-                  petId: widget.petId,
-                  cubit: cubit,
-                );
-              },
-              isDarkMode,
-            ),
-            _buildOptionItem(
-              context,
-              Icons.delete_rounded,
-              isArabic() ? "حذف" : "Delete",
-              Colors.red,
-                  () {
-                Navigator.pop(context);
-                showCustomConfirmationDialog(
-                  context: context,
-                  description: isArabic()
-                      ? 'هل أنت متأكد أنك تريد حذف هذا الخدمة؟'
-                      : 'Are you sure you want to delete this service?',
-                  imageUrl: 'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?t=st=1729767092~exp=1729770692~hmac=fe206337cc285fa3e223ab4e0326cd478bbb1497ff9a0b37543f9a46f4f23325&w=826',
-                  onConfirm: () {
-                    cubit.deleteReminder(reminder: reminder, matingRequestId: widget.petId);
-                    Navigator.pop(contextAll);
+                    Navigator.pop(context);
+                    _showReminderDetails(context, reminder, cubit);
                   },
-                );
-              },
-              isDarkMode,
+                  isDarkMode,
+                ),
+                _buildOptionItem(
+                  context,
+                  Icons.edit_rounded,
+                  isArabic() ? "تعديل" : "Edit",
+                  Colors.green,
+                  () {
+                    Navigator.pop(context);
+                    showEditReminderDialog(
+                      context: context,
+                      reminder: reminder,
+                      petId: widget.petId,
+                      cubit: cubit,
+                    );
+                  },
+                  isDarkMode,
+                ),
+                _buildOptionItem(
+                  context,
+                  Icons.delete_rounded,
+                  isArabic() ? "حذف" : "Delete",
+                  Colors.red,
+                  () {
+                    Navigator.pop(context);
+                    showCustomConfirmationDialog(
+                      context: context,
+                      description:
+                          isArabic()
+                              ? 'هل أنت متأكد أنك تريد حذف هذا الخدمة؟'
+                              : 'Are you sure you want to delete this service?',
+                      imageUrl:
+                          'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?t=st=1729767092~exp=1729770692~hmac=fe206337cc285fa3e223ab4e0326cd478bbb1497ff9a0b37543f9a46f4f23325&w=826',
+                      onConfirm: () {
+                        cubit.deleteReminder(
+                          reminder: reminder,
+                          matingRequestId: widget.petId,
+                        );
+                        Navigator.pop(contextAll);
+                      },
+                    );
+                  },
+                  isDarkMode,
+                ),
+                const SizedBox(height: 16),
+              ],
             ),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
+          ),
     );
   }
 
-  Widget _buildOptionItem(BuildContext context, IconData icon, String label, Color color, VoidCallback onTap, bool isDarkMode) {
+  Widget _buildOptionItem(
+    BuildContext context,
+    IconData icon,
+    String label,
+    Color color,
+    VoidCallback onTap,
+    bool isDarkMode,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -1021,7 +1107,8 @@ class _ReminderCardState extends State<ReminderCard>
                 ),
                 Icon(
                   Icons.arrow_forward_ios_rounded,
-                  color: isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
+                  color:
+                      isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600,
                   size: 16,
                 ),
               ],
@@ -1058,7 +1145,11 @@ class _ReminderCardState extends State<ReminderCard>
     if (reminderDateTime == null) return 0;
 
     final now = DateTime.now();
-    final reminderDateOnly = DateTime(reminderDateTime.year, reminderDateTime.month, reminderDateTime.day);
+    final reminderDateOnly = DateTime(
+      reminderDateTime.year,
+      reminderDateTime.month,
+      reminderDateTime.day,
+    );
     final nowOnly = DateTime(now.year, now.month, now.day);
 
     final difference = reminderDateOnly.difference(nowOnly).inDays;
@@ -1081,9 +1172,10 @@ class PatternPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
+    final paint =
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.fill;
 
     const double spacing = 20;
     const double dotSize = 2;
@@ -1120,7 +1212,10 @@ ReminderTypeInfo getReminderTypeInfo(String reminderType) {
   switch (reminderType) {
     case 'Flea & Tick treatment':
     case 'علاج البراغيث والقراد':
-      return ReminderTypeInfo(icon: Icons.bug_report_rounded, color: Colors.green);
+      return ReminderTypeInfo(
+        icon: Icons.bug_report_rounded,
+        color: Colors.green,
+      );
 
     case 'Rabies':
     case 'داء الكلب':
@@ -1128,11 +1223,17 @@ ReminderTypeInfo getReminderTypeInfo(String reminderType) {
 
     case 'examination':
     case 'فحص':
-      return ReminderTypeInfo(icon: Icons.medical_services_rounded, color: Colors.blue);
+      return ReminderTypeInfo(
+        icon: Icons.medical_services_rounded,
+        color: Colors.blue,
+      );
 
     case 'Vaccination':
     case 'التطعيم':
-      return ReminderTypeInfo(icon: Icons.vaccines_rounded, color: Colors.purple);
+      return ReminderTypeInfo(
+        icon: Icons.vaccines_rounded,
+        color: Colors.purple,
+      );
 
     case 'other':
     case 'اخرى':
@@ -1140,15 +1241,24 @@ ReminderTypeInfo getReminderTypeInfo(String reminderType) {
 
     case 'Buy Food':
     case 'شراء الطعام':
-      return ReminderTypeInfo(icon: Icons.shopping_cart_rounded, color: Colors.amber);
+      return ReminderTypeInfo(
+        icon: Icons.shopping_cart_rounded,
+        color: Colors.amber,
+      );
 
     case 'Feed':
     case 'إطعام':
-      return ReminderTypeInfo(icon: Icons.restaurant_rounded, color: Colors.deepOrange);
+      return ReminderTypeInfo(
+        icon: Icons.restaurant_rounded,
+        color: Colors.deepOrange,
+      );
 
     case 'Clean Potty':
     case 'تنظيف الرمل':
-      return ReminderTypeInfo(icon: Icons.cleaning_services_rounded, color: Colors.teal);
+      return ReminderTypeInfo(
+        icon: Icons.cleaning_services_rounded,
+        color: Colors.teal,
+      );
 
     case 'Grooming':
     case 'تهذيب أو عناية':
@@ -1156,11 +1266,17 @@ ReminderTypeInfo getReminderTypeInfo(String reminderType) {
 
     case 'Outdoor Walk':
     case 'المشي في الخارج':
-      return ReminderTypeInfo(icon: Icons.directions_walk_rounded, color: Colors.indigo);
+      return ReminderTypeInfo(
+        icon: Icons.directions_walk_rounded,
+        color: Colors.indigo,
+      );
 
     case 'Deworming':
     case 'التخلص من الديدان':
-      return ReminderTypeInfo(icon: Icons.local_hospital_rounded, color: Colors.red);
+      return ReminderTypeInfo(
+        icon: Icons.local_hospital_rounded,
+        color: Colors.red,
+      );
 
     default:
       return ReminderTypeInfo(icon: Icons.info_rounded, color: Colors.grey);

@@ -59,6 +59,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "HomePageSearchText2": MessageLookupByLibrary.simpleMessage(
       "ابحث عن طبيبك",
     ),
+    "MessageCannotExceed4000Characters": MessageLookupByLibrary.simpleMessage(
+      "لا يمكن أن تتجاوز الرسالة 4000 حرف",
+    ),
     "NameOfRecord": MessageLookupByLibrary.simpleMessage("اسم السجل"),
     "NoMessagesYet": MessageLookupByLibrary.simpleMessage("لا توجد رسائل بعد"),
     "Orloginasadoctor": MessageLookupByLibrary.simpleMessage(
@@ -221,9 +224,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancelFollow": MessageLookupByLibrary.simpleMessage("إلغاء المتابعة"),
     "cancelFriend": MessageLookupByLibrary.simpleMessage("إلغاء الصداقة"),
     "cancelRequest": MessageLookupByLibrary.simpleMessage("إلغاء الطلب"),
+    "cannotOpenDocument": MessageLookupByLibrary.simpleMessage(
+      "لا يمكن فتح المستند",
+    ),
     "changePassword": MessageLookupByLibrary.simpleMessage("تغيير كلمة المرور"),
     "changePhoto": MessageLookupByLibrary.simpleMessage("تغيير الصورة"),
     "change_pet_status_for": m0,
+    "characterLimitReached": MessageLookupByLibrary.simpleMessage(
+      "تم الوصول إلى الحد الأقصى للأحرف",
+    ),
     "chatArchivedReadOnly": MessageLookupByLibrary.simpleMessage(
       "تمت أرشفة هذه الدردشة وهي للقراءة فقط",
     ),
@@ -369,7 +378,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "doctorName": MessageLookupByLibrary.simpleMessage("اسم الطبيب"),
     "document": MessageLookupByLibrary.simpleMessage("مستند"),
+    "documentLoadingFailed": MessageLookupByLibrary.simpleMessage(
+      "فشل تحميل المستند",
+    ),
     "download": MessageLookupByLibrary.simpleMessage("تحميل"),
+    "downloadStarted": MessageLookupByLibrary.simpleMessage("بدأ التحميل"),
     "edit": MessageLookupByLibrary.simpleMessage("تحرير"),
     "editComment": MessageLookupByLibrary.simpleMessage("تعديل التعليق ..."),
     "editCommentPost": MessageLookupByLibrary.simpleMessage("تعديل تعليق"),
@@ -444,6 +457,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "enterYourText": MessageLookupByLibrary.simpleMessage("بماذا تفكر ....؟"),
     "entryDate": MessageLookupByLibrary.simpleMessage("تاريخ الدخول"),
+    "error": MessageLookupByLibrary.simpleMessage("خطأ"),
     "errorColon": MessageLookupByLibrary.simpleMessage("الخطأ:"),
     "excellentExperience": MessageLookupByLibrary.simpleMessage("ممتاز!"),
     "exitDate": MessageLookupByLibrary.simpleMessage("تاريخ الخروج"),
@@ -564,6 +578,7 @@ class MessageLookup extends MessageLookupByLibrary {
       " أليفك مرتبط بالفعل برمز QR",
     ),
     "littleFriend": MessageLookupByLibrary.simpleMessage("الصديق الصغير"),
+    "loading": MessageLookupByLibrary.simpleMessage("تحميل"),
     "loadingAppointments": MessageLookupByLibrary.simpleMessage(
       "جاري تحميل المواعيد...",
     ),
@@ -725,6 +740,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "not_completed": MessageLookupByLibrary.simpleMessage("غير مكتمل"),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
+    "offline": MessageLookupByLibrary.simpleMessage("آخر ظهور مؤخرًا"),
     "offlineMessagesContent": MessageLookupByLibrary.simpleMessage(
       "أنت حاليا غير متصل بالإنترنت.  التحقق من اتصالك بالإنترنت.",
     ),
@@ -740,6 +756,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "openAt": MessageLookupByLibrary.simpleMessage("يفتح في"),
     "openChat": MessageLookupByLibrary.simpleMessage("فتح المحادثة"),
+    "openInApp": MessageLookupByLibrary.simpleMessage("فتح في التطبيق"),
+    "openInBrowser": MessageLookupByLibrary.simpleMessage("فتح في المتصفح"),
     "openingChat": MessageLookupByLibrary.simpleMessage("جاري فتح المحادثة..."),
     "other": MessageLookupByLibrary.simpleMessage("اخري"),
     "other_valid": MessageLookupByLibrary.simpleMessage(
@@ -854,6 +872,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "أدخل بريدك الإلكتروني\nلتلقي التعليمات لإعادة تعيين كلمة المرور الخاصة بك",
     ),
     "received": MessageLookupByLibrary.simpleMessage("الواردة"),
+    "refresh": MessageLookupByLibrary.simpleMessage("تحديث"),
     "register": MessageLookupByLibrary.simpleMessage("تسجيل"),
     "reject": MessageLookupByLibrary.simpleMessage("رفض"),
     "rejected": MessageLookupByLibrary.simpleMessage("مرفوضة"),

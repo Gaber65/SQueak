@@ -47,6 +47,7 @@ class SuggestedFriendsLoaded extends PetFriendsState {
   final List<PetEntities> friends;
   SuggestedFriendsLoaded({required this.friends});
 }
+
 class ReceivedFriendsLoaded extends PetFriendsState {
   final List<PetFriendRequestEntity> friends;
   ReceivedFriendsLoaded({required this.friends});
@@ -95,12 +96,13 @@ class FriendsLoadSuccess extends PetFriendsState {
   final List<PetEntities> friends;
   FriendsLoadSuccess({required this.friends});
 }
+
 class FriendsLoadEmpty extends PetFriendsState {}
+
 class FriendsLoadFailed extends PetFriendsState {
   final String message;
   FriendsLoadFailed({required this.message});
 }
-
 
 class ChangeTab extends PetFriendsState {
   final int tabIndex;
@@ -139,24 +141,33 @@ class BlockedFriendsLoadFailed extends PetFriendsState {
   final String message;
   BlockedFriendsLoadFailed({required this.message});
 }
-// Cancel friendship 
+
+// Cancel friendship
 class DeleteFriendShipLoading extends PetFriendsState {}
+
 class DeleteFriendShipFailed extends PetFriendsState {
   final String message;
   DeleteFriendShipFailed({required this.message});
 }
+
 class DeleteFriendShipSuccess extends PetFriendsState {}
+
 // Block friendship
 class BlockFriendshipLoading extends PetFriendsState {}
+
 class BlockFriendshipFailed extends PetFriendsState {
   final String message;
   BlockFriendshipFailed({required this.message});
 }
+
 class BlockFriendshipSuccess extends PetFriendsState {}
+
 // UnBlock friendship
 class UnBlockFriendshipLoading extends PetFriendsState {}
+
 class UnBlockFriendshipFailed extends PetFriendsState {
   final String message;
   UnBlockFriendshipFailed({required this.message});
 }
+
 class UnBlockFriendshipSuccess extends PetFriendsState {}

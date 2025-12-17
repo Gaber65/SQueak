@@ -24,8 +24,11 @@ class MatingRequestsScreen extends StatelessWidget {
       ],
       child: BlocConsumer<ManageRequestMatingCubit, ManageRequestMatingState>(
         listener: (context, state) {
-          if(state is UpdateMatingRequestLoaded && state.message.contains('0000')){
-            ManageRequestMatingCubit.get(context).getChatItem(ChatListCubit.get(context).allChats);
+          if (state is UpdateMatingRequestLoaded &&
+              state.message.contains('0000')) {
+            ManageRequestMatingCubit.get(
+              context,
+            ).getChatItem(ChatListCubit.get(context).allChats);
           }
         },
         builder: (context, state) {
@@ -45,10 +48,9 @@ class MatingRequestsScreen extends StatelessWidget {
                       state.profile.type == ProfileType.pet) {
                     cubit.fetchMatingRequests(state.profile.pet!.petId!);
                     cubit.fetchSentRequests(state.profile.pet!.petId!);
-                    cubitList.loadChats(state.profile.pet!.petId!).then(
-                      (value) {
-                      },
-                    );
+                    cubitList
+                        .loadChats(state.profile.pet!.petId!)
+                        .then((value) {});
                     return state.profile.pet;
                   }
                   return null;
@@ -80,10 +82,7 @@ class MatingRequestsScreen extends StatelessWidget {
       centerTitle: true,
       elevation: 0,
       backgroundColor: Colors.transparent,
-      actions: [
-        buildProfileSwitcher(context),
-
-      ],
+      actions: [buildProfileSwitcher(context)],
     );
   }
 }

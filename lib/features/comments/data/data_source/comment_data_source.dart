@@ -22,7 +22,6 @@ abstract class BaseCommentRemoteDataSource {
 }
 
 class CommentRemoteDataSource extends BaseCommentRemoteDataSource {
-
   @override
   Future<CommentModel> createCommentDataSource(
     CreateCommentParameters parameters,

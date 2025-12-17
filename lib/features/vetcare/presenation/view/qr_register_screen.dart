@@ -45,7 +45,6 @@ class RegisterQrScreen extends StatelessWidget {
 
             cubit.loadCountries().then((value) => cubit.detectCountryCode());
 
-
             return cubit;
           },
         ),

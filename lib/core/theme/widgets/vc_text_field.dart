@@ -74,15 +74,16 @@ class VcTextField extends StatefulWidget {
       onChanged: onChanged,
       onSubmitted: onSubmitted,
       prefixIcon: const Icon(Icons.search),
-      suffixIcon: controller?.text.isNotEmpty == true
-          ? IconButton(
-              icon: const Icon(Icons.clear),
-              onPressed: () {
-                controller?.clear();
-                onClear?.call();
-              },
-            )
-          : null,
+      suffixIcon:
+          controller?.text.isNotEmpty == true
+              ? IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  controller?.clear();
+                  onClear?.call();
+                },
+              )
+              : null,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.search,
       autofocus: autofocus,
@@ -177,7 +178,7 @@ class _VcTextFieldState extends State<VcTextField> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -297,12 +298,13 @@ class VcPetTextField extends StatelessWidget {
       onChanged: onChanged,
       validator: validator,
       prefixIcon: petType != null ? Icon(_getPetIcon(petType!)) : null,
-      suffixIcon: helpTooltip != null
-          ? Tooltip(
-              message: helpTooltip!,
-              child: const Icon(Icons.help_outline, size: 20),
-            )
-          : null,
+      suffixIcon:
+          helpTooltip != null
+              ? Tooltip(
+                message: helpTooltip!,
+                child: const Icon(Icons.help_outline, size: 20),
+              )
+              : null,
     );
   }
 

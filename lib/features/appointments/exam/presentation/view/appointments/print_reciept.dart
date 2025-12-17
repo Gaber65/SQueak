@@ -32,8 +32,7 @@ class PrintScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => sl<UserAppointmentCubit>()..fetchInvoice(id),
       child: BlocConsumer<UserAppointmentCubit, UserAppointmentState>(
-        listener: (context, state) {
-        },
+        listener: (context, state) {},
         builder: (context, state) {
           var cubit = UserAppointmentCubit.get(context);
           return Scaffold(
@@ -512,7 +511,9 @@ class PrintScreen extends StatelessWidget {
 
   Future<Uint8List> _capturePng() async {
     try {
-      RenderRepaintBoundary boundary = _globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
+      RenderRepaintBoundary boundary =
+          _globalKey.currentContext?.findRenderObject()
+              as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 3.0);
       ByteData? byteData = await image.toByteData(
         format: ui.ImageByteFormat.png,

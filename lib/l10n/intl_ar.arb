@@ -593,7 +593,17 @@
   "editImage":"تعديل الصورة",
   "editVideo":"تعديل الفيديو",
   "preview":"معاينة",
-  "audioFile":"ملف صوتي"
+  "audioFile":"ملف صوتي",
+  "offline":"آخر ظهور مؤخرًا",
+  "openInBrowser":"فتح في المتصفح",
+  "openInApp":"فتح في التطبيق",
+  "downloadStarted":"بدأ التحميل",
+  "cannotOpenDocument":"لا يمكن فتح المستند",
+  "error":"خطأ",
+  "refresh":"تحديث",
+  "loading":"تحميل",
+  "characterLimitReached":"تم الوصول إلى الحد الأقصى للأحرف",
+  "MessageCannotExceed4000Characters":"لا يمكن أن تتجاوز الرسالة 4000 حرف"
 
 
 

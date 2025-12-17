@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-
 Widget buildShimmerLoading() {
   return ListView.builder(
     padding: const EdgeInsets.all(8.0),

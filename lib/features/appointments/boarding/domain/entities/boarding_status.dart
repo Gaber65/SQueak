@@ -1,7 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:squeak/core/service/global_function/format_utils.dart' show isArabic;
+import 'package:squeak/core/service/global_function/format_utils.dart'
+    show isArabic;
 
 enum BoardingStatusEnums {
   inProgress, // 0
@@ -89,7 +90,6 @@ extension BoardingStatusExtension on BoardingStatusEnums {
   }
 }
 
-
 class StateBoardingEnums {
   final BoardingStatusEnums state;
   final String key;
@@ -97,9 +97,9 @@ class StateBoardingEnums {
   StateBoardingEnums(this.state, this.key);
 }
 
-
-
-List<StateBoardingEnums> generateDummyDataStateForBoarding(BuildContext context) {
+List<StateBoardingEnums> generateDummyDataStateForBoarding(
+  BuildContext context,
+) {
   bool arabicLanguage = isArabic();
 
   return [

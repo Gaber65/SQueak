@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/mating/layoutMating/presentation/controller/mating_layout_cubit.dart';
 import 'package:squeak/features/mating/layoutMating/presentation/screens/widgets/bottom_navigation.dart';
 
-
 class MatingLayoutScreen extends StatelessWidget {
   const MatingLayoutScreen({super.key});
 
@@ -12,8 +11,7 @@ class MatingLayoutScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => MatingLayoutCubit(),
       child: BlocConsumer<MatingLayoutCubit, MatingLayoutState>(
-        listener: (context, state) {
-        },
+        listener: (context, state) {},
         builder: (context, state) {
           var cubit = MatingLayoutCubit.get(context);
           return Scaffold(

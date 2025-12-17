@@ -14,7 +14,9 @@ class GlobalApiButton extends StatelessWidget {
         heroTag: 'api_tester_fab',
         mini: true,
         onPressed: () {
-          navigatorKey.currentState?.push(MaterialPageRoute(builder: (_) => const ApiTesterScreen()));
+          navigatorKey.currentState?.push(
+            MaterialPageRoute(builder: (_) => const ApiTesterScreen()),
+          );
         },
         backgroundColor: Colors.deepPurple,
         child: const Icon(Icons.cloud, size: 20),

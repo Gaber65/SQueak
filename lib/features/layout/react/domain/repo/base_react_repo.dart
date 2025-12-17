@@ -6,9 +6,7 @@ import '../../../../../core/error/failure.dart';
 import '../../presentation/animated_reaction/reaction_data.dart';
 
 abstract class BaseReactRepo {
-  Future<Either<Failure, ReactionSummary>> getAllReactOnPost(
-    String postId,
-  );
+  Future<Either<Failure, ReactionSummary>> getAllReactOnPost(String postId);
 
   Future<Either<Failure, ReactionActionResult>> reactOnPost(ReactParams params);
 }
@@ -46,7 +44,7 @@ enum ReactType {
 
   static ReactType fromInt(int value) {
     return ReactType.values.firstWhere(
-          (type) => type.value == value,
+      (type) => type.value == value,
       orElse: () => ReactType.none,
     );
   }

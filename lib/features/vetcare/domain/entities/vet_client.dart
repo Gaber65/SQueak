@@ -37,32 +37,29 @@ class VetClient extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        gender,
-        breedId,
-        specieId,
-        imageName,
-        colorId,
-        birthdate,
-        clientId,
-        client,
-        color,
-        breed,
-        specie,
-        addedInSqueakStatues,
-        squeakPetId,
-      ];
+    id,
+    name,
+    gender,
+    breedId,
+    specieId,
+    imageName,
+    colorId,
+    birthdate,
+    clientId,
+    client,
+    color,
+    breed,
+    specie,
+    addedInSqueakStatues,
+    squeakPetId,
+  ];
 }
 
 class ClientEntity extends Equatable {
   final String name;
   final dynamic description;
 
-  const ClientEntity({
-    required this.name,
-    required this.description,
-  });
+  const ClientEntity({required this.name, required this.description});
 
   @override
   List<Object?> get props => [name, description];
@@ -72,10 +69,7 @@ class SpecieEntity extends Equatable {
   final String arType;
   final String enType;
 
-  const SpecieEntity({
-    required this.arType,
-    required this.enType,
-  });
+  const SpecieEntity({required this.arType, required this.enType});
 
   @override
   List<Object> get props => [arType, enType];

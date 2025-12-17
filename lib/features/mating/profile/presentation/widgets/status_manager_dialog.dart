@@ -29,9 +29,7 @@ class _StatusManagerDialogState extends State<StatusManagerDialog> {
     final s = S.of(context);
 
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       elevation: 8,
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
@@ -43,10 +41,7 @@ class _StatusManagerDialogState extends State<StatusManagerDialog> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              Colors.purple.shade50,
-            ],
+            colors: [Colors.white, Colors.purple.shade50],
           ),
         ),
         child: Form(
@@ -61,10 +56,7 @@ class _StatusManagerDialogState extends State<StatusManagerDialog> {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      Colors.purple.shade400,
-                      Colors.pink.shade300,
-                    ],
+                    colors: [Colors.purple.shade400, Colors.pink.shade300],
                   ),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24),
@@ -173,37 +165,40 @@ class _StatusManagerDialogState extends State<StatusManagerDialog> {
                           child: Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              gradient: isSelected
-                                  ? LinearGradient(
-                                      colors: [
-                                        Colors.blue.shade400,
-                                        Colors.cyan.shade300,
-                                      ],
-                                    )
-                                  : null,
+                              gradient:
+                                  isSelected
+                                      ? LinearGradient(
+                                        colors: [
+                                          Colors.blue.shade400,
+                                          Colors.cyan.shade300,
+                                        ],
+                                      )
+                                      : null,
                               color: isSelected ? null : Colors.white,
                               border: Border.all(
-                                color: isSelected
-                                    ? Colors.blue.shade400
-                                    : Colors.grey.shade300,
+                                color:
+                                    isSelected
+                                        ? Colors.blue.shade400
+                                        : Colors.grey.shade300,
                                 width: isSelected ? 2.5 : 1,
                               ),
                               borderRadius: BorderRadius.circular(16),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: Colors.blue.withAlpha(80),
-                                        blurRadius: 12,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ]
-                                  : [
-                                      BoxShadow(
-                                        color: Colors.grey.withAlpha(30),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
+                              boxShadow:
+                                  isSelected
+                                      ? [
+                                        BoxShadow(
+                                          color: Colors.blue.withAlpha(80),
+                                          blurRadius: 12,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ]
+                                      : [
+                                        BoxShadow(
+                                          color: Colors.grey.withAlpha(30),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
                             ),
                             child: Row(
                               children: [
@@ -211,16 +206,18 @@ class _StatusManagerDialogState extends State<StatusManagerDialog> {
                                 Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? Colors.teal.shade400
-                                        : Colors.grey.shade200,
+                                    color:
+                                        isSelected
+                                            ? Colors.teal.shade400
+                                            : Colors.grey.shade200,
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Icon(
                                     Icons.pets,
-                                    color: isSelected
-                                        ? Colors.white
-                                        : Colors.grey.shade600,
+                                    color:
+                                        isSelected
+                                            ? Colors.white
+                                            : Colors.grey.shade600,
                                     size: 24,
                                   ),
                                 ),
@@ -235,18 +232,22 @@ class _StatusManagerDialogState extends State<StatusManagerDialog> {
                                         style: TextStyle(
                                           fontWeight: FontWeight.w700,
                                           fontSize: 16,
-                                          color: isSelected
-                                              ? Colors.white
-                                              : Colors.black87,
+                                          color:
+                                              isSelected
+                                                  ? Colors.white
+                                                  : Colors.black87,
                                         ),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
                                         statusData['description'],
                                         style: TextStyle(
-                                          color: isSelected
-                                              ? Colors.white.withOpacity(0.9)
-                                              : Colors.grey.shade600,
+                                          color:
+                                              isSelected
+                                                  ? Colors.white.withOpacity(
+                                                    0.9,
+                                                  )
+                                                  : Colors.grey.shade600,
                                           fontSize: 13,
                                           height: 1.3,
                                         ),

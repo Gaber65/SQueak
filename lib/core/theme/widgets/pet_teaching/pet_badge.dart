@@ -23,17 +23,14 @@ class PetBadge extends StatelessWidget {
     final theme = Theme.of(context);
     final badgeInfo = _getBadgeInfo(type);
     final badgeSize = _getBadgeSize(size);
-    
+
     Widget badge = Container(
       width: badgeSize.diameter,
       height: badgeSize.diameter,
       decoration: BoxDecoration(
         color: badgeInfo.color,
         shape: BoxShape.circle,
-        border: Border.all(
-          color: Colors.white,
-          width: 2,
-        ),
+        border: Border.all(color: Colors.white, width: 2),
         boxShadow: [
           BoxShadow(
             color: badgeInfo.color.withOpacity(0.3),
@@ -156,19 +153,23 @@ class PetBadgeRow extends StatelessWidget {
     final theme = Theme.of(context);
     final visibleBadges = badges.take(maxVisible).toList();
     final remainingCount = badges.length - maxVisible;
-    
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        ...visibleBadges.map((badge) => [
-          PetBadge(
-            type: badge,
-            size: PetBadgeSize.small,
-            showLabel: showLabels,
-          ),
-          if (badge != visibleBadges.last) SizedBox(width: spacing),
-        ]).expand((element) => element),
-        
+        ...visibleBadges
+            .map(
+              (badge) => [
+                PetBadge(
+                  type: badge,
+                  size: PetBadgeSize.small,
+                  showLabel: showLabels,
+                ),
+                if (badge != visibleBadges.last) SizedBox(width: spacing),
+              ],
+            )
+            .expand((element) => element),
+
         if (remainingCount > 0) ...[
           SizedBox(width: spacing),
           Container(
@@ -177,10 +178,7 @@ class PetBadgeRow extends StatelessWidget {
             decoration: BoxDecoration(
               color: theme.colorScheme.surfaceVariant,
               shape: BoxShape.circle,
-              border: Border.all(
-                color: theme.colorScheme.outline,
-                width: 1,
-              ),
+              border: Border.all(color: theme.colorScheme.outline, width: 1),
             ),
             child: Center(
               child: Text(
@@ -228,10 +226,7 @@ class _BadgeInfo {
 
 /// Internal badge size configuration
 class _BadgeSize {
-  const _BadgeSize({
-    required this.diameter,
-    required this.iconSize,
-  });
+  const _BadgeSize({required this.diameter, required this.iconSize});
 
   final double diameter;
   final double iconSize;

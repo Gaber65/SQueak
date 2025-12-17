@@ -5,11 +5,7 @@ class Doctor extends Equatable {
   final String name;
   final String image;
 
-  const Doctor({
-    required this.id,
-    required this.name,
-    required this.image,
-  });
+  const Doctor({required this.id, required this.name, required this.image});
 
   @override
   List<Object?> get props => [id, name, image];

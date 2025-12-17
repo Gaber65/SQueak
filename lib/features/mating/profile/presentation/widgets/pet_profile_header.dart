@@ -20,17 +20,16 @@ class PetProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      decoration: Decorations.kDecorationBoxShadow(context: context, radius: 20),
+      decoration: Decorations.kDecorationBoxShadow(
+        context: context,
+        radius: 20,
+      ),
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: Padding(
         padding: const EdgeInsets.all(10),
-            child: Column(
+        child: Column(
           children: [
-            PetProfileInfo(
-              pet: pet,
-              cubit: cubit,
-              isDarkMode: isDarkMode,
-            ),
+            PetProfileInfo(pet: pet, cubit: cubit, isDarkMode: isDarkMode),
             const SizedBox(height: 16),
           ],
         ),

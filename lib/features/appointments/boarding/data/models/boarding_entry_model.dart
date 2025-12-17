@@ -113,14 +113,12 @@ class BoardingEntryModel extends BoardingEntryEntity {
     );
   }
 }
+
 class VideoEntity {
   final String url;
   final String? description;
 
-  VideoEntity({
-    required this.url,
-    this.description,
-  });
+  VideoEntity({required this.url, this.description});
 
   factory VideoEntity.fromJson(Map<String, dynamic> json) {
     return VideoEntity(
@@ -130,9 +128,6 @@ class VideoEntity {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'url': url,
-      'description': description,
-    };
+    return {'url': url, 'description': description};
   }
 }

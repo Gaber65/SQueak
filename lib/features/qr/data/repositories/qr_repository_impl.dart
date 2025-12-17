@@ -19,7 +19,10 @@ class QrRepositoryImpl implements QrRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> unlinkPetFromQr(String petId, String qrCodeId) async {
+  Future<Either<Failure, bool>> unlinkPetFromQr(
+    String petId,
+    String qrCodeId,
+  ) async {
     try {
       return Right(await remoteDataSource.unlinkPetFromQr(petId, qrCodeId));
     } on ServerException catch (e) {

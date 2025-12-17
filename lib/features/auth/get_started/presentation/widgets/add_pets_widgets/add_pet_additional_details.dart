@@ -45,7 +45,8 @@ class AddPetAdditionalDetails extends StatelessWidget {
                 padding: EdgeInsets.all(screenWidth * 0.02),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(26),
-                  color:isSelected ? Colors.white : Colors.grey.withOpacity(.5),
+                  color:
+                      isSelected ? Colors.white : Colors.grey.withOpacity(.5),
                 ),
                 child: Icon(
                   icon,

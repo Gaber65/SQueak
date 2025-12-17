@@ -140,7 +140,6 @@ Widget buildDropDownFreq(List<String> freq, BuildContext context) {
   );
 }
 
-
 Widget buildSelectDateVac(BuildContext context, VaccinationUiCubit cubit) {
   return InkWell(
     onTap: () {
@@ -205,6 +204,7 @@ Widget buildDropDownFreqForEdit(
         }).toList(),
   );
 }
+
 InputDecoration buildInputDecoration(BuildContext context) {
   final isDark = MainCubit.get(context).isDark;
 

@@ -33,7 +33,6 @@ class DogLoadingStateWidget extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             _buildGlassCard(
-              
               theme,
               isDark,
               child: Padding(
@@ -58,11 +57,7 @@ class DogLoadingStateWidget extends StatelessWidget {
   }
 }
 
-Widget _buildGlassCard(
-  ThemeData theme,
-  bool isDark, {
-  required Widget child,
-}) {
+Widget _buildGlassCard(ThemeData theme, bool isDark, {required Widget child}) {
   return ClipRRect(
     borderRadius: BorderRadius.circular(24),
     child: BackdropFilter(

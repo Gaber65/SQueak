@@ -85,10 +85,10 @@ class PetGenderChip extends StatelessWidget {
                   color: isDarkMode ? Colors.white : Colors.black87,
                 ),
               ),
- ],
+            ],
           ),
         ),
-       const Spacer(),
+        const Spacer(),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
@@ -119,7 +119,7 @@ class PetGenderChip extends StatelessWidget {
             ],
           ),
         ),
-      const Spacer()
+        const Spacer(),
       ],
     );
   }

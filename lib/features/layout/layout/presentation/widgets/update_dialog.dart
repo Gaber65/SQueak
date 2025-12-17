@@ -16,10 +16,8 @@ bool isVersionGreater(String v1, String v2) {
 
   return false; // يعني النسختين متساويتين أو الحالية أحدث أو مساوية
 }
-Future<dynamic> showUpdateDialog(
-  BuildContext context,
-  VersionEntity version,
-) {
+
+Future<dynamic> showUpdateDialog(BuildContext context, VersionEntity version) {
   return showModalBottomSheet(
     context: context,
     shape: RoundedRectangleBorder(
@@ -73,9 +71,7 @@ Future<dynamic> showUpdateDialog(
                     ),
                   ),
                   onPressed: () => launchUrl(Uri.parse(version.link)),
-                  child: Text(
-                    S.of(context).updateVersionModuleButtonUpdateNow,
-                  ),
+                  child: Text(S.of(context).updateVersionModuleButtonUpdateNow),
                 ),
               ),
             if (!version.forceUpdate)

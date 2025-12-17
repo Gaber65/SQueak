@@ -299,7 +299,10 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                         controller: widget.cubit.passwordController,
                         obscureText: _obscurePassword,
                         decoration: InputDecoration(
-                          hintText: isArabic() ? 'ادخل كلمة المرور الخاصة بك' : 'Enter your secure password',
+                          hintText:
+                              isArabic()
+                                  ? 'ادخل كلمة المرور الخاصة بك'
+                                  : 'Enter your secure password',
                           prefixIcon: const Icon(Icons.lock_outlined, size: 18),
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -395,8 +398,10 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                     children: [
                       const Icon(Icons.pets, size: 18, color: Colors.white),
                       const SizedBox(width: 8),
-                       Text(
-                        isArabic() ? 'سجّل الدخول إلى مجتمع الصغار  ' : 'Sign in to Pet Paradise',
+                      Text(
+                        isArabic()
+                            ? 'سجّل الدخول إلى مجتمع الصغار  '
+                            : 'Sign in to Pet Paradise',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,

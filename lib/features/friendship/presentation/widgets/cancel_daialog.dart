@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/generated/l10n.dart';
- 
+
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
- 
 
 class CancelFriendDialog extends StatefulWidget {
   final PetEntities pet;
   final Future<bool> Function()? onConfirmCancel;
 
-  const CancelFriendDialog({super.key, required this.pet, required this.onConfirmCancel});
+  const CancelFriendDialog({
+    super.key,
+    required this.pet,
+    required this.onConfirmCancel,
+  });
 
   @override
   State<CancelFriendDialog> createState() => _CancelFriendDialogState();
@@ -20,9 +23,10 @@ class _CancelFriendDialogState extends State<CancelFriendDialog> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final headerGradient = isDark
-        ? [Color(0xFF2B2F36), Color(0xFF1B1D20)]
-        : [Color(0xFFB91C1C), Color(0xFFEF4444)];
+    final headerGradient =
+        isDark
+            ? [Color(0xFF2B2F36), Color(0xFF1B1D20)]
+            : [Color(0xFFB91C1C), Color(0xFFEF4444)];
     final infoColor = Colors.redAccent;
     final contentTextColor = isDark ? Colors.grey[200]! : Colors.grey[800]!;
 
@@ -70,7 +74,7 @@ class _CancelFriendDialogState extends State<CancelFriendDialog> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                 S.of(context).cancelFriend,
+                  S.of(context).cancelFriend,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 22,
@@ -143,9 +147,10 @@ class _CancelFriendDialogState extends State<CancelFriendDialog> {
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: isDark
-                        ? [Colors.red[300]!, Colors.red[500]!]
-                        : [Colors.red[400]!, Colors.red[600]!],
+                    colors:
+                        isDark
+                            ? [Colors.red[300]!, Colors.red[500]!]
+                            : [Colors.red[400]!, Colors.red[600]!],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
@@ -167,22 +172,25 @@ class _CancelFriendDialogState extends State<CancelFriendDialog> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: isLoading
-                      ? const SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  child:
+                      isLoading
+                          ? const SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                          : Text(
+                            S.of(context).cancelFriend,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        )
-                      : Text(
-                          S.of(context).cancelFriend,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
                 ),
               ),
             ),
@@ -228,7 +236,10 @@ class _CancelFriendDialogState extends State<CancelFriendDialog> {
             Expanded(
               child: Text(
                 message,
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ],

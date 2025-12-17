@@ -14,15 +14,15 @@ class AppTheme {
   static const _backgroundColor = Color(0xFFF7F8FA);
   static const _surfaceColor = Color(0xFFFFFFFF);
   static const _errorColor = Color(0xFFD32F2F);
-  
+
   // Supporting colors (reserved for future use)
-  
+
   // Dark theme colors (blue → purple accents with good contrast)
   static const _darkPrimaryColor = Color(0xFF7186FF);
   static const _darkSecondaryColor = Color(0xFF9A7AE8);
   static const _darkBackgroundColor = Color(0xFF121212);
   static const _darkSurfaceColor = Color(0xFF1E1E1E);
-  
+
   // Spacing tokens
   static const spacing4 = 4.0;
   static const spacing8 = 8.0;
@@ -31,13 +31,13 @@ class AppTheme {
   static const spacing20 = 20.0;
   static const spacing24 = 24.0;
   static const spacing32 = 32.0;
-  
+
   // Radius tokens
   static const radius8 = 8.0;
   static const radius12 = 12.0;
   static const radius16 = 16.0;
   static const radius20 = 20.0;
-  
+
   // Elevation tokens
   static const elevation0 = 0.0;
   static const elevation1 = 1.0;
@@ -62,7 +62,7 @@ class AppTheme {
       outline: Color(0xFF79747E),
       outlineVariant: Color(0xFFCAC4D0),
     ),
-    
+
     // Typography with Noto Sans semantic scales
     textTheme: GoogleFonts.notoSansTextTheme().copyWith(
       displayLarge: GoogleFonts.inter(
@@ -107,63 +107,63 @@ class AppTheme {
         letterSpacing: 0,
         height: 1.27,
       ),
-  titleMedium: GoogleFonts.notoSans(
+      titleMedium: GoogleFonts.notoSans(
         fontSize: 16,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.15,
         height: 1.50,
       ),
-  titleSmall: GoogleFonts.notoSans(
+      titleSmall: GoogleFonts.notoSans(
         fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.10,
         height: 1.43,
       ),
-  bodyLarge: GoogleFonts.notoSans(
+      bodyLarge: GoogleFonts.notoSans(
         fontSize: 16,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.15,
         height: 1.50,
       ),
-  bodyMedium: GoogleFonts.notoSans(
+      bodyMedium: GoogleFonts.notoSans(
         fontSize: 14,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.25,
         height: 1.43,
       ),
-  bodySmall: GoogleFonts.notoSans(
+      bodySmall: GoogleFonts.notoSans(
         fontSize: 12,
         fontWeight: FontWeight.w400,
         letterSpacing: 0.40,
         height: 1.33,
       ),
-  labelLarge: GoogleFonts.notoSans(
+      labelLarge: GoogleFonts.notoSans(
         fontSize: 14,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.10,
         height: 1.43,
       ),
-  labelMedium: GoogleFonts.notoSans(
+      labelMedium: GoogleFonts.notoSans(
         fontSize: 12,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.50,
         height: 1.33,
       ),
-  labelSmall: GoogleFonts.notoSans(
+      labelSmall: GoogleFonts.notoSans(
         fontSize: 11,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.50,
         height: 1.45,
       ),
     ),
-    
+
     // AppBar theme
     appBarTheme: AppBarTheme(
       backgroundColor: _surfaceColor,
       foregroundColor: const Color(0xFF1C1B1F),
       elevation: elevation0,
       centerTitle: false,
-  titleTextStyle: GoogleFonts.notoSans(
+      titleTextStyle: GoogleFonts.notoSans(
         fontSize: 22,
         fontWeight: FontWeight.w600,
         color: const Color(0xFF1C1B1F),
@@ -174,7 +174,7 @@ class AppTheme {
         statusBarBrightness: Brightness.light,
       ),
     ),
-    
+
     // Card theme
     cardTheme: CardThemeData(
       color: _surfaceColor,
@@ -184,7 +184,7 @@ class AppTheme {
       ),
       margin: const EdgeInsets.all(spacing8),
     ),
-    
+
     // Elevated button theme
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -199,14 +199,14 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radius20),
         ),
         elevation: elevation1,
-  textStyle: GoogleFonts.notoSans(
+        textStyle: GoogleFonts.notoSans(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           letterSpacing: 0.10,
         ),
       ),
     ),
-    
+
     // Outlined button theme
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
@@ -220,14 +220,14 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radius20),
         ),
         side: const BorderSide(color: _primaryColor),
-  textStyle: GoogleFonts.notoSans(
+        textStyle: GoogleFonts.notoSans(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           letterSpacing: 0.10,
         ),
       ),
     ),
-    
+
     // Text button theme
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
@@ -247,7 +247,7 @@ class AppTheme {
         ),
       ),
     ),
-    
+
     // Input decoration theme
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -269,7 +269,10 @@ class AppTheme {
         borderRadius: BorderRadius.circular(radius12),
         borderSide: const BorderSide(color: _errorColor),
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: spacing16, vertical: spacing16),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: spacing16,
+        vertical: spacing16,
+      ),
       labelStyle: GoogleFonts.notoSans(
         fontSize: 16,
         fontWeight: FontWeight.w400,
@@ -281,7 +284,7 @@ class AppTheme {
         color: const Color(0xFF79747E),
       ),
     ),
-    
+
     // Bottom navigation bar theme
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: _surfaceColor,
@@ -292,14 +295,14 @@ class AppTheme {
       selectedIconTheme: IconThemeData(size: 24),
       unselectedIconTheme: IconThemeData(size: 24),
     ),
-    
+
     // FloatingActionButton theme
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: _primaryColor,
       foregroundColor: Colors.white,
       elevation: elevation6,
     ),
-    
+
     // SnackBar theme
     snackBarTheme: SnackBarThemeData(
       backgroundColor: const Color(0xFF313033),
@@ -313,11 +316,11 @@ class AppTheme {
       ),
       behavior: SnackBarBehavior.floating,
     ),
-    
+
     // Chip theme
     chipTheme: ChipThemeData(
       backgroundColor: _backgroundColor,
-  labelStyle: GoogleFonts.notoSans(
+      labelStyle: GoogleFonts.notoSans(
         fontSize: 14,
         fontWeight: FontWeight.w400,
       ),
@@ -349,8 +352,10 @@ class AppTheme {
       outline: Color(0xFF938F99),
       outlineVariant: Color(0xFF49454F),
     ),
-  // Typography (same family as light theme)
-  textTheme: GoogleFonts.notoSansTextTheme(ThemeData.dark().textTheme).copyWith(
+    // Typography (same family as light theme)
+    textTheme: GoogleFonts.notoSansTextTheme(
+      ThemeData.dark().textTheme,
+    ).copyWith(
       displayLarge: GoogleFonts.inter(
         fontSize: 57,
         fontWeight: FontWeight.w400,
@@ -393,7 +398,7 @@ class AppTheme {
         height: 1.33,
         color: const Color(0xFFE6E1E5),
       ),
-  titleLarge: GoogleFonts.notoSans(
+      titleLarge: GoogleFonts.notoSans(
         fontSize: 22,
         fontWeight: FontWeight.w600,
         letterSpacing: 0,
@@ -457,7 +462,7 @@ class AppTheme {
         color: const Color(0xFFCAC4D0),
       ),
     ),
-    
+
     // AppBar theme for dark
     appBarTheme: AppBarTheme(
       backgroundColor: _darkSurfaceColor,
@@ -475,7 +480,7 @@ class AppTheme {
         statusBarBrightness: Brightness.dark,
       ),
     ),
-    
+
     // Card theme for dark
     cardTheme: CardThemeData(
       color: _darkSurfaceColor,
@@ -485,7 +490,7 @@ class AppTheme {
       ),
       margin: const EdgeInsets.all(spacing8),
     ),
-    
+
     // Elevated button theme for dark
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -507,7 +512,7 @@ class AppTheme {
         ),
       ),
     ),
-    
+
     // Outlined button theme for dark
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
@@ -528,7 +533,7 @@ class AppTheme {
         ),
       ),
     ),
-    
+
     // Text button theme for dark
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
@@ -548,7 +553,7 @@ class AppTheme {
         ),
       ),
     ),
-    
+
     // Input decoration theme for dark
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -581,7 +586,7 @@ class AppTheme {
         color: const Color(0xFF938F99),
       ),
     ),
-    
+
     // Bottom navigation bar theme for dark
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: _darkSurfaceColor,
@@ -592,14 +597,14 @@ class AppTheme {
       selectedIconTheme: IconThemeData(size: 24),
       unselectedIconTheme: IconThemeData(size: 24),
     ),
-    
+
     // FloatingActionButton theme for dark
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: _darkPrimaryColor,
       foregroundColor: Color(0xFF000000),
       elevation: elevation6,
     ),
-    
+
     // SnackBar theme for dark
     snackBarTheme: SnackBarThemeData(
       backgroundColor: const Color(0xFF49454F),
@@ -613,7 +618,7 @@ class AppTheme {
       ),
       behavior: SnackBarBehavior.floating,
     ),
-    
+
     // Chip theme for dark
     chipTheme: ChipThemeData(
       backgroundColor: _darkBackgroundColor,
@@ -638,12 +643,12 @@ class AppTheme {
   static const petEmergencyColor = Color(0xFFD32F2F);
   static const petVaccinationColor = Color(0xFF1976D2);
   static const petTreatmentColor = Color(0xFF7B1FA2);
-  
+
   // Achievement badge colors
   static const badgeGoldColor = Color(0xFFFFD700);
   static const badgeSilverColor = Color(0xFFC0C0C0);
   static const badgeBronzeColor = Color(0xFFCD7F32);
-  
+
   // Pet breed color palette for avatars
   static const List<Color> petAvatarColors = [
     Color(0xFFE3F2FD), // Light blue

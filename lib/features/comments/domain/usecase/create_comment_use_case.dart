@@ -5,7 +5,8 @@ import '../../../../core/base_usecase/base_usecase.dart';
 import '../entities/comment_entity.dart';
 import '../repository/base_comment_repository.dart';
 
-class CreateCommentUseCase extends BaseUseCase<CommentEntity, CreateCommentParameters> {
+class CreateCommentUseCase
+    extends BaseUseCase<CommentEntity, CreateCommentParameters> {
   final BaseCommentRepository baseCommentRepository;
 
   CreateCommentUseCase(this.baseCommentRepository);

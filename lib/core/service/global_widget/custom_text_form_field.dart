@@ -5,12 +5,11 @@ import '../global_function/format_utils.dart';
 import '../main_service/presentation/controller/main_cubit/main_cubit.dart';
 
 class MyTextForm extends StatefulWidget {
-
   const MyTextForm({
     super.key,
     required this.controller,
     required this.hintText,
-     this.prefixIcon,
+    this.prefixIcon,
     this.obscureText,
     this.enable = false,
     this.enabled = true,
@@ -81,7 +80,8 @@ class _MyTextFormState extends State<MyTextForm> {
         onTap: widget.onTap,
         onFieldSubmitted: widget.onFieldSubmitted,
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        keyboardAppearance: MainCubit.get(context).isDark ? Brightness.dark : Brightness.light,
+        keyboardAppearance:
+            MainCubit.get(context).isDark ? Brightness.dark : Brightness.light,
         style: FontStyleThame.textStyle(context: context, fontSize: 15),
         onChanged: (value) {
           widget.onChanged?.call(value);
@@ -103,16 +103,17 @@ class _MyTextFormState extends State<MyTextForm> {
     return InputDecoration(
       hintText: widget.hintText,
       prefixIcon: widget.prefixIcon,
-      suffixIcon: widget.enable
-          ? IconButton(
-        icon: Icon(
-          _obscureText ? Icons.visibility : Icons.visibility_off,
-          size: 14,
-        ),
-        onPressed: () => setState(() => _obscureText = !_obscureText),
-      )
-          : null,
-      contentPadding:  EdgeInsets.all(widget.maxLines != 1 ? 10 : 0),
+      suffixIcon:
+          widget.enable
+              ? IconButton(
+                icon: Icon(
+                  _obscureText ? Icons.visibility : Icons.visibility_off,
+                  size: 14,
+                ),
+                onPressed: () => setState(() => _obscureText = !_obscureText),
+              )
+              : null,
+      contentPadding: EdgeInsets.all(widget.maxLines != 1 ? 10 : 0),
       filled: true,
       fillColor: isDark ? Colors.black26 : Colors.grey.shade200,
       hintStyle: FontStyleThame.textStyle(
@@ -141,12 +142,16 @@ class _MyTextFormState extends State<MyTextForm> {
     switch (widget.hintText) {
       case var hint when hint == s.enterUrEmail:
         return _validatorText ?? _validateEmail(value, s);
-      case var hint when hint == s.comparePassword || hint == s.enterUrPassword || hint == s.password_hint:
+      case var hint
+          when hint == s.comparePassword ||
+              hint == s.enterUrPassword ||
+              hint == s.password_hint:
         return _validatorText ?? _validatePassword(value, s);
       case var hint when hint == s.reminderOtherHintText:
         return _validatorText ?? _validateOther(value, s);
       default:
-        return _validatorText ?? (value?.isEmpty == true ? widget.validatorText : null);
+        return _validatorText ??
+            (value?.isEmpty == true ? widget.validatorText : null);
     }
   }
 

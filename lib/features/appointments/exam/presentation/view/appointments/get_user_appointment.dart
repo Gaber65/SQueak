@@ -35,14 +35,8 @@ class GetUserAppointment extends StatelessWidget {
           create:
               (context) => sl<UserAppointmentCubit>()..getAppointment(false),
         ),
-        BlocProvider(
-          lazy: true,
-          create: (context) => sl<BoardingCubit>(),
-        ),
-        BlocProvider(
-          lazy: true,
-          create: (context) => sl<PetCubit>(),
-        ),
+        BlocProvider(lazy: true, create: (context) => sl<BoardingCubit>()),
+        BlocProvider(lazy: true, create: (context) => sl<PetCubit>()),
       ],
       child: _AllAppointmentContent(services: _getServiceNames(context)),
     );
@@ -139,13 +133,9 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
           },
         ),
         BlocListener<BoardingCubit, BoardingState>(
-          listener: (context, state) {
-          },
+          listener: (context, state) {},
         ),
-        BlocListener<PetCubit, PetState>(
-          listener: (context, state) {
-          },
-        ),
+        BlocListener<PetCubit, PetState>(listener: (context, state) {}),
       ],
       child: Builder(
         builder: (context) {
@@ -245,22 +235,24 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
     UserAppointmentState state,
   ) {
     return Row(
-        children: [
+      children: [
         Expanded(
           child: BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
-            buildWhen: (previous, current) =>
-                current is AppointmentFiltered ||
-                current is GetAppointmentSuccess ||
-                current is AppointmentFilterCleared,
+            buildWhen:
+                (previous, current) =>
+                    current is AppointmentFiltered ||
+                    current is GetAppointmentSuccess ||
+                    current is AppointmentFilterCleared,
             builder: (context, state) => buildStateFilter(context),
           ),
         ),
         Expanded(
           child: BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
-            buildWhen: (previous, current) =>
-                current is AppointmentFiltered ||
-                current is AppointmentFilterCleared ||
-                current is GetAppointmentSuccess,
+            buildWhen:
+                (previous, current) =>
+                    current is AppointmentFiltered ||
+                    current is AppointmentFilterCleared ||
+                    current is GetAppointmentSuccess,
             builder: (context, state) {
               final pets = PetCubit.get(context).pets;
               return buildPetFilter(context, pets);
@@ -268,16 +260,18 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
           ),
         ),
         BlocBuilder<UserAppointmentCubit, UserAppointmentState>(
-          buildWhen: (previous, current) =>
-              current is AppointmentFiltered ||
-              current is GetAppointmentSuccess ||
-              current is AppointmentFilterCleared,
+          buildWhen:
+              (previous, current) =>
+                  current is AppointmentFiltered ||
+                  current is GetAppointmentSuccess ||
+                  current is AppointmentFilterCleared,
           builder: (context, state) {
             return Visibility(
               visible: state is AppointmentFiltered,
               child: IconButton(
                 icon: const Icon(Icons.clear),
-                onPressed: () => UserAppointmentCubit.get(context).clearFilters(),
+                onPressed:
+                    () => UserAppointmentCubit.get(context).clearFilters(),
               ),
             );
           },
@@ -343,10 +337,11 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
       children: [
         Expanded(
           child: BlocBuilder<BoardingCubit, BoardingState>(
-            buildWhen: (previous, current) =>
-                current is BoardingFiltered ||
-                current is BoardingFilteredClear ||
-                current is GetBoardingEntriesSuccess,
+            buildWhen:
+                (previous, current) =>
+                    current is BoardingFiltered ||
+                    current is BoardingFilteredClear ||
+                    current is GetBoardingEntriesSuccess,
             builder: (context, state) {
               final pets = PetCubit.get(context).pets;
               return buildPetFilterBoarding(context, pets);
@@ -355,18 +350,20 @@ class _AllAppointmentContentState extends State<_AllAppointmentContent>
         ),
         Expanded(
           child: BlocBuilder<BoardingCubit, BoardingState>(
-            buildWhen: (previous, current) =>
-                current is BoardingFiltered ||
-                current is GetBoardingEntriesSuccess ||
-                current is BoardingFilteredClear,
+            buildWhen:
+                (previous, current) =>
+                    current is BoardingFiltered ||
+                    current is GetBoardingEntriesSuccess ||
+                    current is BoardingFilteredClear,
             builder: (context, state) => buildStateFilterBoarding(context),
           ),
         ),
         BlocBuilder<BoardingCubit, BoardingState>(
-          buildWhen: (previous, current) =>
-              current is BoardingFiltered ||
-              current is GetBoardingEntriesSuccess ||
-              current is BoardingFilteredClear,
+          buildWhen:
+              (previous, current) =>
+                  current is BoardingFiltered ||
+                  current is GetBoardingEntriesSuccess ||
+                  current is BoardingFilteredClear,
           builder: (context, state) {
             return Visibility(
               visible: state is BoardingFiltered,

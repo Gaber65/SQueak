@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
@@ -78,10 +76,7 @@ class QuickTourScreen extends StatelessWidget {
                   ? "إليك ما يمكنك فعله باستخدام Squeak للحفاظ على سعادة وصحة صغيرك الأليف!"
                   : "Here's what you can do with Squeak to keep your pet happy and healthy!",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: width * 0.035,
-              ),
+              style: TextStyle(color: Colors.white70, fontSize: width * 0.035),
             ),
           ),
           SizedBox(height: height * 0.03),
@@ -92,8 +87,9 @@ class QuickTourScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: width * 0.04),
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  final crossAxisCount = width < 600 ? 2 : (width < 900 ? 3 : 4);
-                  
+                  final crossAxisCount =
+                      width < 600 ? 2 : (width < 900 ? 3 : 4);
+
                   return GridView.builder(
                     itemCount: 4,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -105,7 +101,7 @@ class QuickTourScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final features = _getFeatures(isArabicLang);
                       final f = features[index];
-                      
+
                       return _buildFeatureCard(
                         icon: f["icon"] as IconData,
                         color: f["color"] as Color,
@@ -135,9 +131,10 @@ class QuickTourScreen extends StatelessWidget {
                 width: isActive ? width * 0.025 : width * 0.02,
                 height: isActive ? width * 0.025 : width * 0.02,
                 decoration: BoxDecoration(
-                  color: isActive
-                      ? ColorManager.primaryColor
-                      : Colors.white.withOpacity(0.4),
+                  color:
+                      isActive
+                          ? ColorManager.primaryColor
+                          : Colors.white.withOpacity(0.4),
                   shape: BoxShape.circle,
                 ),
               );
@@ -162,19 +159,24 @@ class QuickTourScreen extends StatelessWidget {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => BlocProvider(
-                        create: (_) => sl<PetCubit>()
-                          ..getAllSpecies()
-                          ..getBreedsBySpecies(
-                            "bca48207-f05d-4e9f-a631-06f34eb5af39",
+                      builder:
+                          (_) => BlocProvider(
+                            create:
+                                (_) =>
+                                    sl<PetCubit>()
+                                      ..getAllSpecies()
+                                      ..getBreedsBySpecies(
+                                        "bca48207-f05d-4e9f-a631-06f34eb5af39",
+                                      ),
+                            child: const GetStartedAddPetScreen(),
                           ),
-                        child: const GetStartedAddPetScreen(),
-                      ),
                     ),
                   );
                 },
                 child: Text(
-                  isArabicLang ? "متابعة لإضافة صغيرأليف" : "Continue to Add Pet",
+                  isArabicLang
+                      ? "متابعة لإضافة صغيرأليف"
+                      : "Continue to Add Pet",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: width * 0.045,
@@ -194,45 +196,53 @@ class QuickTourScreen extends StatelessWidget {
         "icon": Icons.pets,
         "color": Colors.redAccent,
         "title": isArabic ? "صغاري الأليفة" : "My Pets",
-        "description": isArabic
-            ? "إدارة عدة صغار أليفة، وتتبع سجلاتها الصحية، ومشاركة لحظاتها الجميلة"
-            : "Manage multiple pets, track their health records, and share their adorable moments.",
-        "tryIt": isArabic
-            ? "أضف صورًا، واضبط التذكيرات، وتابع الوزن والمزاج"
-            : "Add photos, set reminders, track weight & mood",
+        "description":
+            isArabic
+                ? "إدارة عدة صغار أليفة، وتتبع سجلاتها الصحية، ومشاركة لحظاتها الجميلة"
+                : "Manage multiple pets, track their health records, and share their adorable moments.",
+        "tryIt":
+            isArabic
+                ? "أضف صورًا، واضبط التذكيرات، وتابع الوزن والمزاج"
+                : "Add photos, set reminders, track weight & mood",
       },
       {
         "icon": Icons.chat,
         "color": Colors.teal,
         "title": isArabic ? "محادثة الصغار" : "Pet Chat",
-        "description": isArabic
-            ? "تواصل مع أصحاب الحيوانات الأليفة الآخرين، وشارك التجارب، واحصل على نصائح من المجتمع"
-            : "Connect with other pet parents, share experiences, and get advice from the community.",
-        "tryIt": isArabic
-            ? "انضم لمجموعات السلالات، اطرح أسئلة، شارك نصائح"
-            : "Join breed groups, ask questions, share tips",
+        "description":
+            isArabic
+                ? "تواصل مع أصحاب الحيوانات الأليفة الآخرين، وشارك التجارب، واحصل على نصائح من المجتمع"
+                : "Connect with other pet parents, share experiences, and get advice from the community.",
+        "tryIt":
+            isArabic
+                ? "انضم لمجموعات السلالات، اطرح أسئلة، شارك نصائح"
+                : "Join breed groups, ask questions, share tips",
       },
       {
         "icon": Icons.calendar_today,
         "color": Colors.green,
         "title": isArabic ? "المواعيد" : "Appointments",
-        "description": isArabic
-            ? "جدولة زيارات الطبيب البيطري والعناية والتدريب. لا تفوت أي موعد مهم!"
-            : "Schedule vet visits, grooming, and training sessions. Never miss important dates!",
-        "tryIt": isArabic
-            ? "احجز عند أطباء بيطريين قريبين، اضبط التذكيرات، تابع السجل"
-            : "Book nearby vets, set reminders, track history",
+        "description":
+            isArabic
+                ? "جدولة زيارات الطبيب البيطري والعناية والتدريب. لا تفوت أي موعد مهم!"
+                : "Schedule vet visits, grooming, and training sessions. Never miss important dates!",
+        "tryIt":
+            isArabic
+                ? "احجز عند أطباء بيطريين قريبين، اضبط التذكيرات، تابع السجل"
+                : "Book nearby vets, set reminders, track history",
       },
       {
         "icon": Icons.favorite,
         "color": Colors.pinkAccent,
         "title": isArabic ? "تتبع الصحة" : "Health Tracking",
-        "description": isArabic
-            ? "راقب التطعيمات والأدوية والصحة العامة باستخدام أدوات تتبع سهلة"
-            : "Monitor vaccinations, medications, and overall wellness with easy tracking tools.",
-        "tryIt": isArabic
-            ? "سجل الأعراض، تابع الأدوية، تنبيهات التطعيم"
-            : "Log symptoms, track medications, vaccination alerts",
+        "description":
+            isArabic
+                ? "راقب التطعيمات والأدوية والصحة العامة باستخدام أدوات تتبع سهلة"
+                : "Monitor vaccinations, medications, and overall wellness with easy tracking tools.",
+        "tryIt":
+            isArabic
+                ? "سجل الأعراض، تابع الأدوية، تنبيهات التطعيم"
+                : "Log symptoms, track medications, vaccination alerts",
       },
     ];
   }
@@ -306,10 +316,7 @@ class QuickTourScreen extends StatelessWidget {
             ),
             child: Text(
               "${isArabic ? 'جربها: ' : 'Try It: '}$tryIt",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: tryItFontSize,
-              ),
+              style: TextStyle(color: Colors.white, fontSize: tryItFontSize),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),

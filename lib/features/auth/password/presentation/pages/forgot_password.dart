@@ -23,7 +23,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     with SingleTickerProviderStateMixin {
   final List<String> petEmojis = ['🐶', '🐱', '🐰', '🐭', '🐦', '🦁'];
-  
+
   // Motivational messages with both English and Arabic
   final List<Map<String, String>> motivationalMessages = const [
     {
@@ -46,10 +46,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       'en': '"Chirp! Reset passwords are easy!" 🐦',
       'ar': '"زقزقة! إعادة تعيين كلمة المرور سهلة!" 🐦',
     },
-    {
-      'en': '"Roar! Stay pawsitive!" 🦁',
-      'ar': '"زئير! ابقَ متفائلاً!" 🦁',
-    },
+    {'en': '"Roar! Stay pawsitive!" 🦁', 'ar': '"زئير! ابقَ متفائلاً!" 🦁'},
   ];
 
   int currentIndex = 0;
@@ -81,8 +78,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   }
 
   String _getMessage() {
-    return isArabic() 
-        ? motivationalMessages[currentIndex]['ar']! 
+    return isArabic()
+        ? motivationalMessages[currentIndex]['ar']!
         : motivationalMessages[currentIndex]['en']!;
   }
 
@@ -316,7 +313,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Align(
-                    alignment: isArabic() ? Alignment.centerRight : Alignment.centerLeft,
+                    alignment:
+                        isArabic()
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
                     child: Text(
                       isArabic() ? 'عنوان البريد الإلكتروني' : 'Email Address',
                       style: TextStyle(
@@ -338,9 +338,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                         Icons.email_outlined,
                         color: Colors.grey,
                       ),
-                      hintText: isArabic()
-                          ? 'أدخل عنوان بريدك الإلكتروني'
-                          : 'Enter your email address',
+                      hintText:
+                          isArabic()
+                              ? 'أدخل عنوان بريدك الإلكتروني'
+                              : 'Enter your email address',
                       hintStyle: const TextStyle(color: Colors.grey),
                       contentPadding: EdgeInsets.symmetric(
                         vertical: 16 * scaleFactor,
@@ -371,12 +372,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return isArabic() ? 'أدخل عنوان بريدك الإلكتروني' : 'Please enter your email';
+                        return isArabic()
+                            ? 'أدخل عنوان بريدك الإلكتروني'
+                            : 'Please enter your email';
                       }
                       if (!RegExp(
                         r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                       ).hasMatch(value)) {
-                        return isArabic() ? 'أدخل بريداً إلكترونياً صالحاً' : 'Please enter a valid email';
+                        return isArabic()
+                            ? 'أدخل بريداً إلكترونياً صالحاً'
+                            : 'Please enter a valid email';
                       }
                       return null;
                     },
@@ -423,7 +428,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             TextButton(
               onPressed: () => navigateToScreen(context, const LoginScreen()),
               child: Text(
-                isArabic() ? 'تذكرت كلمة المرور؟ سجل الدخول' : 'Remember your password? Sign In',
+                isArabic()
+                    ? 'تذكرت كلمة المرور؟ سجل الدخول'
+                    : 'Remember your password? Sign In',
                 style: TextStyle(
                   color: const Color(0xFF7B5CE6),
                   fontSize: 14 * scaleFactor,

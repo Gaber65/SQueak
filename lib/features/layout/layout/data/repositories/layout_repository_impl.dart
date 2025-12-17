@@ -1,4 +1,3 @@
-
 import 'package:dartz/dartz.dart';
 
 import '../../domain/entities/version_entity.dart';

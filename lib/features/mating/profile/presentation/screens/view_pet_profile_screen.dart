@@ -345,8 +345,10 @@ class ViewPetProfileScreen extends StatelessWidget {
           isDarkMode: isDarkMode,
           child: PetInfoButton(
             showLabel: true,
-            pet: pet, isDarkMode: isDarkMode),
-      ),
+            pet: pet,
+            isDarkMode: isDarkMode,
+          ),
+        ),
       ),
     );
   }
@@ -412,7 +414,12 @@ class PetInfoButton extends StatelessWidget {
   final bool isDarkMode;
   final bool? showLabel;
 
-  const PetInfoButton({super.key, required this.pet, required this.isDarkMode, this.showLabel});
+  const PetInfoButton({
+    super.key,
+    required this.pet,
+    required this.isDarkMode,
+    this.showLabel,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -445,7 +452,10 @@ class PetInfoButton extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 S.of(context).petDetails,
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ],

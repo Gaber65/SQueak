@@ -158,15 +158,14 @@ class MainRemoteDataSource {
     String subtype,
   ) async {
     String fileName = file.path.split('/').last;
-
     try {
       File fileToUpload = file;
+      
 
-      // Only compress if it's an image
-      if (type == 'image') {
+      if (type == 'image' && subtype != 'gif') {
         fileToUpload = await compressImage(file);
       }
-
+      
       String filePath = fileToUpload.path;
       debugPrint('📤 Uploading $type file: $fileName to endpoint: $endpoint');
       debugPrint('📦 Upload place: $uploadPlace, Content-Type: $type/$subtype');
@@ -182,15 +181,24 @@ class MainRemoteDataSource {
           'UploadPlace': '$uploadPlace',
         }),
       );
-      debugPrint('✅ Upload successful: ${response.data}');
       return ImageModel.fromJson(response.data);
     } on DioException catch (e) {
-      debugPrint('❌ Upload failed - Status: ${e.response?.statusCode}');
-      debugPrint('❌ Error data: ${e.response?.data}');
-      debugPrint('❌ Error message: ${e.message}');
-      throw ServerException(
-        errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
-      );
+      // Handle cases where response might be null (network errors, timeouts, etc.)
+      if (e.response != null && e.response!.data != null) {
+        throw ServerException(
+          errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
+        );
+      } else {
+        // Create a fallback error model for network/connection errors
+        throw ServerException(
+          errorMessageModel: ErrorMessageModel(
+            errors: {},
+            message: e.message ?? 'Network error occurred',
+            success: false,
+            statusCode: e.response?.statusCode ?? 0,
+          ),
+        );
+      }
     }
   }
 
@@ -204,5 +212,50 @@ class MainRemoteDataSource {
 
     final compressedFile = File(file.path)..writeAsBytesSync(result!);
     return compressedFile;
+  }
+
+  String getImageSubtype(String filePath) {
+    String extension = filePath.split('.').last.toLowerCase();
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+        return 'jpeg';
+      case 'png':
+        return 'png';
+      case 'gif':
+        return 'gif';
+      case 'bmp':
+        return 'bmp';
+      case 'webp':
+        return 'webp';
+      default:
+        return 'jpeg';
+    }
+  }
+
+  String getVideoSubtype(String filePath) {
+    String extension = filePath.split('.').last.toLowerCase();
+    switch (extension) {
+      case 'mp4':
+        return 'mp4';
+      case 'mov':
+        return 'quicktime';
+      case 'avi':
+        return 'x-msvideo';
+      case 'mkv':
+        return 'x-matroska';
+      case 'flv':
+        return 'x-flv';
+      case 'wmv':
+        return 'x-ms-wmv';
+      case '3gp':
+        return '3gpp';
+      case 'm4v':
+        return 'x-m4v';
+      case 'webm':
+        return 'webm';
+      default:
+        return 'mp4';
+    }
   }
 }

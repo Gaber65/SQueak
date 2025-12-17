@@ -4,7 +4,8 @@ import '../../../../../core/error/failure.dart';
 import '../entities/story.dart';
 import '../repositories/story_repository.dart';
 
-class GetAllFriendStoriesUseCase extends BaseUseCase<List<StoryEntity>, String> {
+class GetAllFriendStoriesUseCase
+    extends BaseUseCase<List<StoryEntity>, String> {
   final StoryRepository repository;
 
   GetAllFriendStoriesUseCase(this.repository);

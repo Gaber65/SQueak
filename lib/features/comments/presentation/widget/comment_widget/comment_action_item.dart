@@ -8,7 +8,11 @@ import '../../screens/build_edit_comment.dart';
 class CommentActionSheet extends StatelessWidget {
   final CommentEntity comment;
   final String petID;
-  const CommentActionSheet({super.key, required this.comment , required this.petID});
+  const CommentActionSheet({
+    super.key,
+    required this.comment,
+    required this.petID,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +39,10 @@ class CommentActionSheet extends StatelessWidget {
               icon: Icons.edit,
               onPressed: () {
                 Navigator.of(context).pop();
-                navigateToScreen(context, EditComment(comment: comment , petId: petID));
+                navigateToScreen(
+                  context,
+                  EditComment(comment: comment, petId: petID),
+                );
               },
             ),
             const SizedBox(height: 30),

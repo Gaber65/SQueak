@@ -8,7 +8,6 @@ import 'package:path/path.dart';
 import 'notification_initializer.dart';
 
 class NotificationScheduler {
-
   /// Schedule instant notification (for Firebase messages)
   static Future<void> scheduleInstantNotification({
     required String title,
@@ -26,19 +25,21 @@ class NotificationScheduler {
         'Instant Notifications',
         importance: Importance.max,
         priority: Priority.high,
-        styleInformation: imagePath != null
-            ? BigPictureStyleInformation(
-          FilePathAndroidBitmap(imagePath),
-          largeIcon: FilePathAndroidBitmap(imagePath),
-          contentTitle: title,
-          summaryText: body,
-        )
-            : null,
+        styleInformation:
+            imagePath != null
+                ? BigPictureStyleInformation(
+                  FilePathAndroidBitmap(imagePath),
+                  largeIcon: FilePathAndroidBitmap(imagePath),
+                  contentTitle: title,
+                  summaryText: body,
+                )
+                : null,
         playSound: true,
         sound: const RawResourceAndroidNotificationSound('notification'),
       ),
       iOS: DarwinNotificationDetails(
-        attachments: imagePath != null ? [DarwinNotificationAttachment(imagePath)] : [],
+        attachments:
+            imagePath != null ? [DarwinNotificationAttachment(imagePath)] : [],
         sound: 'notification.mp3',
         presentAlert: true,
         presentBadge: true,
@@ -66,7 +67,8 @@ class NotificationScheduler {
     required String body,
     required DateTime startDate,
     required TimeOfDay startTime,
-    required String frequency, // "Once", "Daily", "Weekly", "Monthly", "Annually"
+    required String
+    frequency, // "Once", "Daily", "Weekly", "Monthly", "Annually"
   }) async {
     tz.TZDateTime scheduledDate = tz.TZDateTime(
       tz.getLocation('Africa/Cairo'),
@@ -86,26 +88,25 @@ class NotificationScheduler {
 
     // Create notification with action buttons
     const AndroidNotificationDetails androidDetails =
-    AndroidNotificationDetails(
-      'reminder_channel',
-      'Reminders',
-      importance: Importance.high,
-      priority: Priority.high,
-      sound: RawResourceAndroidNotificationSound('notification'),
-      actions: <AndroidNotificationAction>[
-        AndroidNotificationAction(
-          'snooze_action',
-          'Snooze',
-          showsUserInterface: true,
-        ),
-        AndroidNotificationAction(
-          'ignore_action',
-          'Ignore',
-          showsUserInterface: true,
-        ),
-      ],
-    );
-
+        AndroidNotificationDetails(
+          'reminder_channel',
+          'Reminders',
+          importance: Importance.high,
+          priority: Priority.high,
+          sound: RawResourceAndroidNotificationSound('notification'),
+          actions: <AndroidNotificationAction>[
+            AndroidNotificationAction(
+              'snooze_action',
+              'Snooze',
+              showsUserInterface: true,
+            ),
+            AndroidNotificationAction(
+              'ignore_action',
+              'Ignore',
+              showsUserInterface: true,
+            ),
+          ],
+        );
 
     // Define repetition pattern
     _getMatchComponents(frequency);
@@ -118,7 +119,7 @@ class NotificationScheduler {
       const NotificationDetails(android: androidDetails),
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
+          UILocalNotificationDateInterpretation.absoluteTime,
       payload: 'reminder_$id|$title|$body',
     );
 
@@ -155,7 +156,10 @@ class NotificationScheduler {
     if (url == null || url.isEmpty) return null;
 
     try {
-      final path = join(Directory.systemTemp.path, 'notification_image_${DateTime.now().millisecondsSinceEpoch}.jpg');
+      final path = join(
+        Directory.systemTemp.path,
+        'notification_image_${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
       final response = await Dio().get<List<int>>(
         url,
         options: Options(responseType: ResponseType.bytes),
@@ -170,7 +174,10 @@ class NotificationScheduler {
   }
 
   /// Adjust scheduled data if it's in the past
-  static tz.TZDateTime _adjustScheduledDate(tz.TZDateTime scheduledDate, String frequency) {
+  static tz.TZDateTime _adjustScheduledDate(
+    tz.TZDateTime scheduledDate,
+    String frequency,
+  ) {
     switch (frequency) {
       case "Daily":
         return scheduledDate.add(Duration(days: 1));

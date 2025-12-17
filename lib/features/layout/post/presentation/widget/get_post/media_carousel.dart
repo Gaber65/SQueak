@@ -150,13 +150,13 @@ class _MediaItem extends StatelessWidget {
       children: [
         (mediaItem.thumbnail?.isNotEmpty ?? false)
             ? FastCachedImage(
-          url: imageUrl + mediaItem.thumbnail!,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          errorBuilder: (context, error, stackTrace) {
-            return _buildVideoPlaceholder();
-          },
-        )
+              url: imageUrl + mediaItem.thumbnail!,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              errorBuilder: (context, error, stackTrace) {
+                return _buildVideoPlaceholder();
+              },
+            )
             : _buildVideoPlaceholder(),
         Positioned.fill(
           child: GestureDetector(

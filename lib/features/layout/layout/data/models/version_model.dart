@@ -3,7 +3,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 
 class VersionModel extends ErrorMessageModel {
   final DataVersion data;
-  
+
   const VersionModel({
     required super.errors,
     required super.message,
@@ -28,7 +28,7 @@ class VersionModel extends ErrorMessageModel {
     "statusCode": statusCode,
     "data": data.toJson(),
   };
-  
+
   VersionEntity toEntity() => VersionEntity(
     version: data.version,
     link: data.link,
@@ -40,7 +40,7 @@ class DataVersion {
   final String version;
   final String link;
   final bool forceUpdate;
-  
+
   DataVersion({
     required this.version,
     required this.link,

@@ -6,10 +6,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import '../../../controller/pet_cubit.dart';
 
 class SpayedToggle extends StatelessWidget {
-  const SpayedToggle({
-    super.key,
-    required this.cubit,
-  });
+  const SpayedToggle({super.key, required this.cubit});
 
   final PetCubit cubit;
 

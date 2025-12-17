@@ -6,7 +6,8 @@ import '../../../../core/error/failure.dart';
 import '../base_repo/base_vet_repository.dart';
 import '../entities/vet_client.dart';
 
-class GetClientsFromVetUseCase extends BaseUseCase<List<VetClient>, GetClientsParams> {
+class GetClientsFromVetUseCase
+    extends BaseUseCase<List<VetClient>, GetClientsParams> {
   final BaseVetRepository repository;
 
   GetClientsFromVetUseCase(this.repository);
@@ -63,5 +64,9 @@ class AddInSqueakParams extends Equatable {
   });
 
   @override
-  List<Object?> get props => [vetCarePetId, squeakPetId, statuesOfAddingPetToSqueak];
+  List<Object?> get props => [
+    vetCarePetId,
+    squeakPetId,
+    statuesOfAddingPetToSqueak,
+  ];
 }

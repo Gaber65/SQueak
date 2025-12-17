@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dart';
+import 'package:squeak/features/mating/chat/presentation/controllers/chat_app_cubit.dart';
 import 'package:squeak/features/mating/matingRequest/domain/entities/mating_request_entity.dart';
 import 'package:squeak/features/mating/matingRequest/presentation/screens/widgets/action_button.dart';
 import 'package:squeak/features/mating/profile/presentation/screens/view_pet_profile_screen.dart';
@@ -163,10 +165,28 @@ class RequestCardCompact extends StatelessWidget {
                     color: ColorManager.primaryColor,
                     onTap: () {
                       final cubit = ManageRequestMatingCubit.get(context);
+                      final activePet =
+                          SwitchProfileCubit.get(context).activeProfile?.pet;
+
+                      Widget buildChatScreen(ChatEntity chat) {
+                        return BlocProvider(
+                          create:
+                              (context) => ChatAppCubit(
+                                petId: activePet?.petId ?? '',
+                                fullName: activePet?.petName ?? '',
+                                image: activePet?.imageName ?? '',
+                              )..initialize(),
+                          child: MatingChatDetailScreen(
+                            chat: chat,
+                            pet: activePet,
+                          ),
+                        );
+                      }
+
                       if (cubit.chatEntity != null) {
                         navigateToScreen(
                           context,
-                          MatingChatDetailScreen(chat: cubit.chatEntity!),
+                          buildChatScreen(cubit.chatEntity!),
                         );
                       } else if (cubit.conversationId.isNotEmpty) {
                         final newChat = ChatEntity(
@@ -184,13 +204,11 @@ class RequestCardCompact extends StatelessWidget {
                           image: pet.imageName,
                           groupImage: null,
                           createdAt: DateTime.now().toIso8601String(),
-                          lastMessageSendDateTime: DateTime.now().toIso8601String(),
+                          lastMessageSendDateTime:
+                              DateTime.now().toIso8601String(),
                           unreadedCount: 0,
                         );
-                        navigateToScreen(
-                          context,
-                          MatingChatDetailScreen(chat: newChat),
-                        );
+                        navigateToScreen(context, buildChatScreen(newChat));
                       } else {
                         final chatCubit = ChatListCubit.get(context);
                         final petId =
@@ -203,7 +221,7 @@ class RequestCardCompact extends StatelessWidget {
                           if (cubit.chatEntity != null) {
                             navigateToScreen(
                               context,
-                              MatingChatDetailScreen(chat: cubit.chatEntity!),
+                              buildChatScreen(cubit.chatEntity!),
                             );
                           } else {
                             errorToast(

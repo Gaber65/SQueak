@@ -20,10 +20,7 @@ class BoardingTypeDropdown extends StatelessWidget {
       children: [
         const Text(
           'Boarding Type',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
         Container(
@@ -38,12 +35,13 @@ class BoardingTypeDropdown extends StatelessWidget {
               value: selectedBoardingType,
               hint: const Text('Select Boarding Type'),
               isExpanded: true,
-              items: boardingTypes.map((BoardingTypeEntity type) {
-                return DropdownMenuItem<BoardingTypeEntity>(
-                  value: type,
-                  child: Text(type.name),
-                );
-              }).toList(),
+              items:
+                  boardingTypes.map((BoardingTypeEntity type) {
+                    return DropdownMenuItem<BoardingTypeEntity>(
+                      value: type,
+                      child: Text(type.name),
+                    );
+                  }).toList(),
               onChanged: (BoardingTypeEntity? newValue) {
                 if (newValue != null) {
                   onChanged(newValue);

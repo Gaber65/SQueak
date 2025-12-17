@@ -39,18 +39,20 @@ class AddPetChoice extends StatelessWidget {
             children: [
               isLoading && value == "other"
                   ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Icon(icon, color:isSelected ? Colors.white : Colors.black),
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                  : Icon(icon, color: isSelected ? Colors.white : Colors.black),
               const SizedBox(height: 4),
               Text(
                 isLoading && value == "other" ? "Loading..." : label,
-                style: TextStyle(color: isSelected ? Colors.white : Colors.black),
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.black,
+                ),
               ),
             ],
           ),

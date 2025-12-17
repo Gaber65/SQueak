@@ -12,6 +12,7 @@ import '../../../domain/usecases/manage_token_use_case.dart';
 import '../../../domain/usecases/mange_upload_image_use_case.dart';
 import '../../../domain/usecases/mange_upload_sound_use_case.dart';
 import '../../../domain/usecases/mange_upload_video_use_case.dart';
+import '../../../domain/usecases/mange_upload_document_use_case.dart';
 import 'main_state.dart';
 
 class MainCubit extends Cubit<MainState> {
@@ -20,6 +21,7 @@ class MainCubit extends Cubit<MainState> {
   final ManageUploadImageUseCase manageUploadUseCase;
   final ManageUploadVideoUseCase manageUploadVideoUseCase;
   final ManageUploadSoundUseCase manageUploadSoundUseCase;
+  final ManageUploadDocumentUseCase manageUploadDocumentUseCase;
 
   MainCubit(
     this.changeLanguageUseCase,
@@ -27,6 +29,7 @@ class MainCubit extends Cubit<MainState> {
     this.manageUploadUseCase,
     this.manageUploadVideoUseCase,
     this.manageUploadSoundUseCase,
+    this.manageUploadDocumentUseCase,
   ) : super(MainInitial());
 
   static MainCubit get(context) => BlocProvider.of(context);
@@ -83,11 +86,11 @@ class MainCubit extends Cubit<MainState> {
       emit(SaveTokenError());
     }
   }
-void resetState() {
-  isNotificationEnabled = false;
-  emit(MainInitial());
-}
 
+  void resetState() {
+    isNotificationEnabled = false;
+    emit(MainInitial());
+  }
 
   bool isNotificationEnabled = false;
   Future<void> requestNotificationPermissions() async {
@@ -123,19 +126,17 @@ void resetState() {
       emit(SaveTokenError());
     }
   }
+
   ImageEntity? modelImage;
   Future<void> getGlobalImage(File file, UploadPlace uploadPlace) async {
     emit(ImageHelperLoading());
     final result = await manageUploadUseCase(
       UploadImageParams(file: file, uploadPlace: uploadPlace),
     );
-    result.fold(
-      (l) => emit(ImageHelperError()),
-      (r) {
-        emit(ImageHelperSuccess());
-        modelImage = r;
-      },
-    );
+    result.fold((l) => emit(ImageHelperError()), (r) {
+      emit(ImageHelperSuccess());
+      modelImage = r;
+    });
   }
 
   Future<void> getGlobalVideo(File file, UploadPlace uploadPlace) async {
@@ -143,13 +144,10 @@ void resetState() {
     final result = await manageUploadVideoUseCase(
       UploadImageParams(file: file, uploadPlace: uploadPlace),
     );
-    result.fold(
-      (l) => emit(VideoHelperError()),
-      (r) {
-        emit(VideoHelperSuccess());
-        modelImage = r;
-      },
-    );
+    result.fold((l) => emit(VideoHelperError()), (r) {
+      emit(VideoHelperSuccess());
+      modelImage = r;
+    });
   }
 
   Future<void> getGlobalSound(File file, UploadPlace uploadPlace) async {
@@ -157,12 +155,20 @@ void resetState() {
     final result = await manageUploadSoundUseCase(
       UploadImageParams(file: file, uploadPlace: uploadPlace),
     );
-    result.fold(
-      (l) => emit(SoundHelperError()),
-      (r) {
-        emit(SoundHelperSuccess());
-        modelImage = r;
-      },
+    result.fold((l) => emit(SoundHelperError()), (r) {
+      emit(SoundHelperSuccess());
+      modelImage = r;
+    });
+  }
+
+  Future<void> getGlobalDocument(File file, UploadPlace uploadPlace) async {
+    emit(DocumentHelperLoading());
+    final result = await manageUploadDocumentUseCase(
+      UploadImageParams(file: file, uploadPlace: uploadPlace),
     );
+    result.fold((l) => emit(DocumentHelperError()), (r) {
+      emit(DocumentHelperSuccess());
+      modelImage = r;
+    });
   }
 }

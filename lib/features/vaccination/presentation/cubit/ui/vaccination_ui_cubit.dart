@@ -153,7 +153,7 @@ class VaccinationUiCubit extends Cubit<VaccinationUiState> {
       notes: comments,
       petId: petId,
       notificationID: notificationId.toString(),
-      vaccinationId:valueIdItem,
+      vaccinationId: valueIdItem,
       subTypeFeed:
           feedSubTypeValue.isEmpty ||
                   feedSubTypeValue.toString() == "نوع معين الطعام" ||
@@ -177,7 +177,6 @@ class VaccinationUiCubit extends Cubit<VaccinationUiState> {
       loadPetReminders(petId);
     }
   }
-
 
   void changeSelect({required String vacName, required String vacId}) {
     valueVacItem = vacName;
@@ -227,7 +226,6 @@ class VaccinationUiCubit extends Cubit<VaccinationUiState> {
 
     return input;
   }
-
 
   Future<void> selectTime(BuildContext context) async {
     emit(TimePickerLoading());
@@ -280,7 +278,6 @@ class VaccinationUiCubit extends Cubit<VaccinationUiState> {
     );
 
     await dataCubit.updateReminder(updatedReminder);
-
   }
 
   Future<void> deleteReminder({

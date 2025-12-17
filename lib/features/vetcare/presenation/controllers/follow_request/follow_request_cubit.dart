@@ -54,7 +54,6 @@ class FollowRequestCubit extends Cubit<FollowRequestState> {
     );
   }
 
-
   ClinicModel? entities;
   Future getClinicInfo(id) async {
     try {
@@ -119,17 +118,16 @@ class FollowRequestCubit extends Cubit<FollowRequestState> {
     }
   }
 
-
   Future<void> getNotifications(String id) async {
     emit(NotificationsLoadingState());
 
     final result = await getNotificationsUseCase(id);
 
     result.fold(
-          (failure) {
+      (failure) {
         emit(NotificationsErrorState());
       },
-          (notificationsList) {
+      (notificationsList) {
         notifications.clear();
         notifications.addAll(notificationsList);
 
@@ -154,10 +152,10 @@ class FollowRequestCubit extends Cubit<FollowRequestState> {
     final result = await updateNotificationStateUseCase(id);
 
     result.fold(
-          (failure) {
+      (failure) {
         emit(NotificationsErrorState());
       },
-          (_) {
+      (_) {
         emit(NotificationsSuccessState());
       },
     );

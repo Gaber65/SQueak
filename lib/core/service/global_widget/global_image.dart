@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../../network/end_points.dart';
 
 class GlobalImage extends StatelessWidget {
-
   const GlobalImage({super.key, required this.imagePath});
   final String imagePath;
 

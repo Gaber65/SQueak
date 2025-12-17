@@ -73,7 +73,7 @@ class PetAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final avatarSize = _getAvatarSize(size);
-    
+
     Widget avatar = Container(
       width: avatarSize.diameter,
       height: avatarSize.diameter,
@@ -86,14 +86,19 @@ class PetAvatar extends StatelessWidget {
         ),
       ),
       child: ClipOval(
-        child: imageUrl != null && imageUrl!.isNotEmpty
-            ? FastCachedImage(
-                url: imageUrl!,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, progress) => _buildPlaceholder(theme, avatarSize),
-                errorBuilder: (context, exception, stacktrace) => _buildPlaceholder(theme, avatarSize),
-              )
-            : _buildPlaceholder(theme, avatarSize),
+        child:
+            imageUrl != null && imageUrl!.isNotEmpty
+                ? FastCachedImage(
+                  url: imageUrl!,
+                  fit: BoxFit.cover,
+                  loadingBuilder:
+                      (context, progress) =>
+                          _buildPlaceholder(theme, avatarSize),
+                  errorBuilder:
+                      (context, exception, stacktrace) =>
+                          _buildPlaceholder(theme, avatarSize),
+                )
+                : _buildPlaceholder(theme, avatarSize),
       ),
     );
 
@@ -111,10 +116,7 @@ class PetAvatar extends StatelessWidget {
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary,
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: theme.colorScheme.surface,
-                  width: 2,
-                ),
+                border: Border.all(color: theme.colorScheme.surface, width: 2),
               ),
               child: Center(
                 child: IconTheme(
@@ -133,10 +135,7 @@ class PetAvatar extends StatelessWidget {
 
     // Add tap functionality
     if (onTap != null) {
-      avatar = GestureDetector(
-        onTap: onTap,
-        child: avatar,
-      );
+      avatar = GestureDetector(onTap: onTap, child: avatar);
     }
 
     return avatar;
@@ -156,8 +155,6 @@ class PetAvatar extends StatelessWidget {
       ),
     );
   }
-
-
 
   Color _getBreedColor() {
     if (petBreed != null) {

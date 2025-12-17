@@ -30,7 +30,8 @@ class VetRegisterCubit extends Cubit<VetRegisterState> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController birthDateController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   // State variables
@@ -113,8 +114,6 @@ class VetRegisterCubit extends Cubit<VetRegisterState> {
       },
     );
   }
-
-
 
   @override
   Future<void> close() {

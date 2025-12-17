@@ -34,7 +34,6 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     // Let the body extend behind the status bar so the gradient reaches the top
@@ -52,7 +51,9 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
               // Increase header visual height so it becomes more prominent
               height: 220 + MediaQuery.of(context).padding.top,
               // smaller top padding while still accounting for status bar
-              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top * 0.8),
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top * 0.8,
+              ),
               width: double.infinity,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -69,7 +70,9 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
                 children: [
                   // Background Pattern
                   Positioned.fill(
-                    child: RepaintBoundary(child: CustomPaint(painter: PawPatternPainter())),
+                    child: RepaintBoundary(
+                      child: CustomPaint(painter: PawPatternPainter()),
+                    ),
                   ),
 
                   // Help Button
@@ -120,7 +123,8 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
                         logoSize: 64,
                         iconSize: 36,
                         showHelpButton: widget.showHelpButton,
-                        onHelpTap: () => navigateToScreen(context, ContactScreen()),
+                        onHelpTap:
+                            () => navigateToScreen(context, ContactScreen()),
                       ),
                     ),
                   ),
@@ -128,31 +132,40 @@ class _EnhancedAuthHeaderState extends State<EnhancedAuthHeader>
               ),
             ),
 
-            Builder(builder: (context) {
-              final media = MediaQuery.of(context);
-              final headerHeight = 225.0 + media.padding.top;
-              const double transformOffset = 20.0;
-              final remaining = media.size.height - headerHeight;
-              final minCardHeight = math.max(300.0, remaining * 0.65);
+            Builder(
+              builder: (context) {
+                final media = MediaQuery.of(context);
+                final headerHeight = 225.0 + media.padding.top;
+                const double transformOffset = 20.0;
+                final remaining = media.size.height - headerHeight;
+                final minCardHeight = math.max(300.0, remaining * 0.65);
 
-              return ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: minCardHeight,
-                ),
-                child: Container(
-                  transform: Matrix4.translationValues(0, -transformOffset, 0),
-                  padding: const EdgeInsets.only(top: 12, left: 16, right: 16, bottom: 24),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
+                return ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: minCardHeight),
+                  child: Container(
+                    transform: Matrix4.translationValues(
+                      0,
+                      -transformOffset,
+                      0,
                     ),
+                    padding: const EdgeInsets.only(
+                      top: 12,
+                      left: 16,
+                      right: 16,
+                      bottom: 24,
+                    ),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      ),
+                    ),
+                    child: widget.child,
                   ),
-                  child: widget.child,
-                ),
-              );
-            }),
+                );
+              },
+            ),
           ],
         ),
       ),

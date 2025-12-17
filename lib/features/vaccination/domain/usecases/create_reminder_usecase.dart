@@ -14,4 +14,3 @@ class CreateReminderUseCase extends BaseUseCase<void, ReminderParams> {
     return repository.createReminder(params.reminder);
   }
 }
-

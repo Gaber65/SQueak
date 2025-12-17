@@ -139,8 +139,7 @@ class VaccinationDataCubit extends Cubit<VaccinationDataState> {
     bool isArabicLang = isArabic();
 
     Map<String, String> messagesEn = {
-      "Feed":
-          "Hungry alert! $petName is giving you the \"feed me now\" look!",
+      "Feed": "Hungry alert! $petName is giving you the \"feed me now\" look!",
       "Grooming":
           "Spa day! $petName is ready for some pampering. Time for grooming!",
       "Clean Potty":
@@ -158,8 +157,7 @@ class VaccinationDataCubit extends Cubit<VaccinationDataState> {
     };
 
     Map<String, String> messagesAr = {
-      "Feed":
-          "جوعان Alert! $petName ينظر إليك بنظرة \"أطْعِمْني حالًا\"!",
+      "Feed": "جوعان Alert! $petName ينظر إليك بنظرة \"أطْعِمْني حالًا\"!",
       "Grooming":
           "يوم الدلال! $petName مستعد لجلسة عناية وتجميل. حان وقت التهذيب!",
       "Clean Potty":

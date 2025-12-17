@@ -23,7 +23,8 @@ class StoriesBar extends StatelessWidget {
         height: 110,
         child: BlocConsumer<StoryCubit, StoryState>(
           listener: (context, state) {
-            if (state.status == StoryStatus.error && state.errorMessage != null) {
+            if (state.status == StoryStatus.error &&
+                state.errorMessage != null) {
               errorToast(context, state.errorMessage!);
             }
             if (state.status == StoryStatus.deleting) {
@@ -49,10 +50,11 @@ class StoriesBar extends StatelessWidget {
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
-                        builder: (_) => BlocProvider.value(
-                          value: storyCubit,
-                          child: CreateStoryModal(petId: petID),
-                        ),
+                        builder:
+                            (_) => BlocProvider.value(
+                              value: storyCubit,
+                              child: CreateStoryModal(petId: petID),
+                            ),
                       );
                     }
                   },
@@ -72,15 +74,16 @@ class StoriesBar extends StatelessWidget {
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
-                          builder: (_) => BlocProvider.value(
-                            value: storyCubit,
-                            child: StoryViewerPage(
-                              storyCubit: storyCubit,
-                              stories: state.myStories,
-                              petID: petID,
-                              initialIndex: 0,
-                            ),
-                          ),
+                          builder:
+                              (_) => BlocProvider.value(
+                                value: storyCubit,
+                                child: StoryViewerPage(
+                                  storyCubit: storyCubit,
+                                  stories: state.myStories,
+                                  petID: petID,
+                                  initialIndex: 0,
+                                ),
+                              ),
                         );
                       }
                     },
@@ -100,16 +103,17 @@ class StoriesBar extends StatelessWidget {
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
-                          builder: (_) => BlocProvider.value(
-                            value: storyCubit,
-                            child: StoryViewerPage(
-                              storyCubit: storyCubit,
-                              friendsStories: story,
-                              stories: story.userStories,
-                              petID: petID,
-                              initialIndex: 0,
-                            ),
-                          ),
+                          builder:
+                              (_) => BlocProvider.value(
+                                value: storyCubit,
+                                child: StoryViewerPage(
+                                  storyCubit: storyCubit,
+                                  friendsStories: story,
+                                  stories: story.userStories,
+                                  petID: petID,
+                                  initialIndex: 0,
+                                ),
+                              ),
                         );
                       }
                     },

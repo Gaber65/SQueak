@@ -10,4 +10,5 @@ final class NotificationsLoadingState extends NotificationsState {}
 final class NotificationsSuccessState extends NotificationsState {}
 
 final class NotificationsErrorState extends NotificationsState {}
+
 final class GetPostError extends NotificationsState {}

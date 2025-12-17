@@ -150,10 +150,8 @@ class _ProfileSwitcherButtonState extends State<ProfileSwitcherButton>
       ),
     );
   }
+
   void _handleButtonTap() {
-  _controller.toggleDropdown();
-  
+    _controller.toggleDropdown();
+  }
 }
-}
-
-

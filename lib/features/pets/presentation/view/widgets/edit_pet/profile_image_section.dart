@@ -18,13 +18,14 @@ class ProfileImageSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  // Prefer the cubit's currently selected species id (updated when user
-  // taps species cards). Fall back to the pet model's specieId if cubit's
-  // value is empty. This prevents mismatch where the UI selection and the
-  // pet model disagree.
-  final speciesId = (cubit.dropdownValueSpeciesId.isNotEmpty)
-    ? cubit.dropdownValueSpeciesId
-    : (pets.specieId ?? '');
+    // Prefer the cubit's currently selected species id (updated when user
+    // taps species cards). Fall back to the pet model's specieId if cubit's
+    // value is empty. This prevents mismatch where the UI selection and the
+    // pet model disagree.
+    final speciesId =
+        (cubit.dropdownValueSpeciesId.isNotEmpty)
+            ? cubit.dropdownValueSpeciesId
+            : (pets.specieId ?? '');
     final isCat = speciesId == PetCubit.catSpeciesId;
     final isDog = speciesId == PetCubit.dogSpeciesId;
     final FaIcon speciesIcon = FaIcon(
@@ -34,9 +35,12 @@ class ProfileImageSection extends StatelessWidget {
       size: 40,
       color: ColorManager.primaryColor,
     );
-    final String speciesLabel = isCat
-        ? (isArabic() ? 'قطة' : 'Cat')
-        : (isDog ? (isArabic() ? 'كلب' : 'Dog') : (isArabic() ? 'حيوان' : 'Pet'));
+    final String speciesLabel =
+        isCat
+            ? (isArabic() ? 'قطة' : 'Cat')
+            : (isDog
+                ? (isArabic() ? 'كلب' : 'Dog')
+                : (isArabic() ? 'حيوان' : 'Pet'));
 
     return Center(
       child: Stack(
@@ -53,51 +57,58 @@ class ProfileImageSection extends StatelessWidget {
               ),
             ),
             child: ClipOval(
-              child: cubit.petImage == null
-                  ? (cubit.imageNameController.text.isEmpty
-                      // No image name -> show species icon + label inside the circle
-                      ? Container(
-                          color: MainCubit.get(context).isDark
-                              ? Colors.grey[850]
-                              : Colors.grey[200],
-                          child: Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                speciesIcon,
-                                const SizedBox(height: 6),
-                                Text(
-                                  speciesLabel,
-                                  style: TextStyle(
-                                    color: MainCubit.get(context).isDark
-                                        ? Colors.white
-                                        : Colors.black87,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : Image.network(
-                          imageUrl + (pets.imageName ?? ''),
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
-                            color: MainCubit.get(context).isDark
-                                ? Colors.grey[850]
-                                : Colors.grey[200],
+              child:
+                  cubit.petImage == null
+                      ? (cubit.imageNameController.text.isEmpty
+                          // No image name -> show species icon + label inside the circle
+                          ? Container(
+                            color:
+                                MainCubit.get(context).isDark
+                                    ? Colors.grey[850]
+                                    : Colors.grey[200],
                             child: Center(
-                              child: FaIcon(
-                                isCat
-                                    ? FontAwesomeIcons.cat
-                                    : (isDog ? FontAwesomeIcons.dog : FontAwesomeIcons.paw),
-                                size: 40,
-                                color: ColorManager.primaryColor,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  speciesIcon,
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    speciesLabel,
+                                    style: TextStyle(
+                                      color:
+                                          MainCubit.get(context).isDark
+                                              ? Colors.white
+                                              : Colors.black87,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                        ))
-                  : Image.file(cubit.petImage!, fit: BoxFit.cover),
+                          )
+                          : Image.network(
+                            imageUrl + (pets.imageName ?? ''),
+                            fit: BoxFit.cover,
+                            errorBuilder:
+                                (_, __, ___) => Container(
+                                  color:
+                                      MainCubit.get(context).isDark
+                                          ? Colors.grey[850]
+                                          : Colors.grey[200],
+                                  child: Center(
+                                    child: FaIcon(
+                                      isCat
+                                          ? FontAwesomeIcons.cat
+                                          : (isDog
+                                              ? FontAwesomeIcons.dog
+                                              : FontAwesomeIcons.paw),
+                                      size: 40,
+                                      color: ColorManager.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                          ))
+                      : Image.file(cubit.petImage!, fit: BoxFit.cover),
             ),
           ),
           Container(

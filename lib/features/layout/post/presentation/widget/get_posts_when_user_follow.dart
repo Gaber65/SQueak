@@ -22,80 +22,80 @@ void showGuideOverlay(BuildContext context) {
   late OverlayEntry overlayEntry;
 
   overlayEntry = OverlayEntry(
-    builder: (context) => Stack(
-      children: [
-        // Background with blur + tap-to-dismiss
-        GestureDetector(
-          onTap: () => overlayEntry.remove(),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.4),
-            ),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-              child: Container(color: Colors.black.withOpacity(0.2)),
-            ),
-          ),
-        ),
-
-        // Centered message card
-        Positioned(
-          top: 120,
-          left: 24,
-          right: 24,
-          child: AnimatedScale(
-            scale: 1,
-            duration: const Duration(milliseconds: 300),
-            child: Material(
-              elevation: 8,
-              borderRadius: BorderRadius.circular(16),
+    builder:
+        (context) => Stack(
+          children: [
+            // Background with blur + tap-to-dismiss
+            GestureDetector(
+              onTap: () => overlayEntry.remove(),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.white, Colors.grey.shade100],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
+                decoration: BoxDecoration(color: Colors.black.withOpacity(0.4)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                  child: Container(color: Colors.black.withOpacity(0.2)),
                 ),
-                child: Text(
-                  isArabic()
-                      ? "✨ قبل ما تستخدم الميزة لازم تبدّل للبروفايل ✨"
-                      : "✨ Before using the feature, you must switch to the profile ✨",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.black87,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+              ),
+            ),
+
+            // Centered message card
+            Positioned(
+              top: 120,
+              left: 24,
+              right: 24,
+              child: AnimatedScale(
+                scale: 1,
+                duration: const Duration(milliseconds: 300),
+                child: Material(
+                  elevation: 8,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.white, Colors.grey.shade100],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      isArabic()
+                          ? "✨ قبل ما تستخدم الميزة لازم تبدّل للبروفايل ✨"
+                          : "✨ Before using the feature, you must switch to the profile ✨",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.black87,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
 
-        // Highlight around the target button with glow
-        Positioned(
-          left: offset.dx,
-          top: offset.dy,
-          width: size.width,
-          height: size.height,
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.redAccent, width: 3),
-              borderRadius: BorderRadius.circular(12),
-
+            // Highlight around the target button with glow
+            Positioned(
+              left: offset.dx,
+              top: offset.dy,
+              width: size.width,
+              height: size.height,
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.redAccent, width: 3),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
-      ],
-    ),
   );
 
-  Overlay.of(context)?.insert(overlayEntry);
+  Overlay.of(context).insert(overlayEntry);
 }
-
 
 NotificationListener<ScrollNotification> buildNotificationListenerUserPosts(
   PostCubit cubit,
@@ -125,7 +125,7 @@ NotificationListener<ScrollNotification> buildNotificationListenerUserPosts(
           children: [
             buildWhatsonyourmindSanjay(context, petId),
 
-            StoryPage(imagePath: imagePath ,petID: petId),
+            StoryPage(imagePath: imagePath, petID: petId),
 
             ListView.separated(
               padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 7),

@@ -15,18 +15,19 @@ class GradientRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gradient = active
-        ? SweepGradient(
-      colors: const [
-        Color(0xFFFF5F6D),
-        Color(0xFFFFC371),
-        Color(0xFF42E695),
-        Color(0xFF4776E6),
-        Color(0xFFFF5F6D),
-      ],
-      stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
-    )
-        : const LinearGradient(colors: [Colors.grey, Colors.grey]);
+    final gradient =
+        active
+            ? SweepGradient(
+              colors: const [
+                Color(0xFFFF5F6D),
+                Color(0xFFFFC371),
+                Color(0xFF42E695),
+                Color(0xFF4776E6),
+                Color(0xFFFF5F6D),
+              ],
+              stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
+            )
+            : const LinearGradient(colors: [Colors.grey, Colors.grey]);
 
     return Container(
       width: size,
@@ -35,11 +36,15 @@ class GradientRing extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(3.0),
         child: Container(
-          decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+          ),
           child: ClipOval(child: child),
         ),
       ),
     );
   }
 }
-// TODO: Implement gradient_ring.dart
+
+

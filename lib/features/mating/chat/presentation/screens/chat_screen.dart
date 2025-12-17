@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches
+
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -5,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:squeak/core/signalr/signalr_connection_status_widget.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_status.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/chat_widgets/chat_app_bar.dart';
@@ -18,11 +19,12 @@ import 'package:squeak/features/mating/chat/presentation/widgets/message_widgets
 import 'package:squeak/features/mating/chat/presentation/widgets/message_widgets/message_input_widget.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/recording_overlay.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/message_widgets/uploading_bubble.dart';
+import 'package:squeak/core/service/signalr/signalr_conversation_services.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../../pets/domain/entities/pet_entity.dart';
 import '../controllers/chat_messages_state.dart';
-import '../view/chat_app_cubit.dart';
-import '../view/chat_app_state.dart';
+import '../controllers/chat_app_cubit.dart';
+import '../controllers/chat_app_state.dart';
 
 class MatingChatDetailScreen extends StatefulWidget {
   final PetEntities? pet;
@@ -48,14 +50,12 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   bool _isBlocked = false;
   bool _isBlockedByMe = false;
   bool _isBlockedByOther = false;
-
-  // Track uploading files to show in chat
   final List<UploadingMedia> _uploadingFiles = [];
-
-  // Typing indicator
   bool _isOtherUserTyping = false;
-  bool _isMyTyping = false;
   Timer? _typingTimer;
+  int _incomingTypingEventCount = 0;
+  Timer? _incomingTypingResetTimer;
+  Timer? _incomingTypingHideTimer;
 
   // Recording variables
   final AudioRecorder _audioRecorder = AudioRecorder();
@@ -66,17 +66,17 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   static const int _maxRecordDuration = 120;
   ChatMessagesCubit? _recordingCubit;
   ChatAppCubit? _recordingChatAppCubit;
+  ChatAppCubit? _chatAppCubit;
 
   @override
   void initState() {
     super.initState();
+
     _messageController.addListener(() {
       final hasText = _messageController.text.trim().isNotEmpty;
       setState(() {
         _hasText = hasText;
       });
-
-      // Send typing indicator
       _handleTypingIndicator(hasText);
     });
 
@@ -96,21 +96,34 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
   @override
   void dispose() {
-    // Stop typing indicator before leaving
-    if (mounted) {
+    _typingTimer?.cancel();
+    _incomingTypingResetTimer?.cancel();
+    _incomingTypingHideTimer?.cancel();
+
+    if (_chatAppCubit != null) {
       try {
-        context.read<ChatAppCubit>().setTyping(
+        _chatAppCubit!.setTyping(
           conversationId: widget.chat.id,
           isTyping: false,
         );
-        context.read<ChatAppCubit>().leaveConversation();
-      } catch (_) {}
+        try {
+          _chatAppCubit!.setTypingInGeneral(
+            petId: widget.chat.petId,
+            isTyping: false,
+            fromPetId: widget.pet?.petId ?? '',
+          );
+        } catch (_) {}
+        conversationSignalEventStream.add(
+          ConversationSignalEvent('ConversationHub', 'PetLeftConversation', [
+            {'ConversationId': widget.chat.id, 'PetId': widget.pet?.petId},
+          ]),
+        );
+        _chatAppCubit!.leaveConversation();
+      } catch (e) {}
     }
-
     _messageController.dispose();
     _animationController.dispose();
     _recordTimer?.cancel();
-    _typingTimer?.cancel();
     _audioRecorder.dispose();
     super.dispose();
   }
@@ -126,34 +139,32 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     _typingTimer?.cancel();
 
     if (isTyping) {
-      // Update local state and send typing=true
       if (mounted) {
-        setState(() {
-          _isOtherUserTyping = true;
-        });
-
-        // Safely access ChatAppCubit if available
         try {
           context.read<ChatAppCubit>().setTyping(
             conversationId: widget.chat.id,
             isTyping: true,
           );
-        } catch (_) {
-          // Provider not available yet
-        }
+          context.read<ChatAppCubit>().setTypingInGeneral(
+            petId: widget.chat.petId,
+            isTyping: true,
+            fromPetId: widget.pet?.petId ?? '',
+          );
+        } catch (_) {}
       }
 
       // Set timer to send typing=false after 2 seconds of inactivity
       _typingTimer = Timer(const Duration(seconds: 2), () {
         if (mounted) {
-          setState(() {
-            _isMyTyping = false;
-          });
-
           try {
             context.read<ChatAppCubit>().setTyping(
               conversationId: widget.chat.id,
               isTyping: false,
+            );
+            context.read<ChatAppCubit>().setTypingInGeneral(
+              petId: widget.chat.petId,
+              isTyping: false,
+              fromPetId: widget.pet?.petId ?? '',
             );
           } catch (_) {
             // Provider not available yet
@@ -161,17 +172,21 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         }
       });
     } else {
-      // Update local state and send typing=false immediately when text is cleared
+      // Send typing=false immediately when text is cleared
       if (mounted) {
-        setState(() {
-          _isMyTyping = false;
-        });
-
         try {
           context.read<ChatAppCubit>().setTyping(
             conversationId: widget.chat.id,
             isTyping: false,
           );
+          // Also clear the general typing indicator so list tiles update correctly
+          try {
+            context.read<ChatAppCubit>().setTypingInGeneral(
+              petId: widget.chat.petId,
+              isTyping: false,
+              fromPetId: widget.pet?.petId ?? '',
+            );
+          } catch (_) {}
         } catch (_) {
           // Provider not available yet
         }
@@ -189,14 +204,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       providers: [
         BlocProvider(
           create:
-              (_) => ChatAppCubit(
-                petId: widget.pet!.petId!,
-                fullName: widget.pet!.petName ?? '',
-                image: widget.pet!.imageName ?? '',
-              )..joinConversation(widget.chat.id),
-        ),
-        BlocProvider(
-          create:
               (_) =>
                   sl<ChatMessagesCubit>()
                     ..loadMessages(widget.chat.id, widget.pet!.petId!),
@@ -206,40 +213,94 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         listeners: [
           BlocListener<ChatAppCubit, ChatAppState>(
             listener: (context, state) {
-              if (state is ConversationJoined) {
-                ChatAppCubit.get(context).markMessagesAsRead(widget.chat.id);
+              if (state is ConversationJoined) {}
+
+              if (state is MessageReceived &&
+                  state.conversationId == widget.chat.id) {
+                final cubit = ChatMessagesCubit.get(context);
+                final messageId = state.message.id;
+                final alreadyExists =
+                    messageId != null &&
+                    cubit.messagesList.any((m) => m.id == messageId);
+                if (!alreadyExists) {
+                  cubit.addReceivedMessage(state.message, widget.pet!.ownerId);
+                  Future.delayed(const Duration(milliseconds: 100), () {
+                    final lastIndex =
+                        ChatMessagesCubit.get(context).messagesList.length - 1;
+                    if (lastIndex >= 0) {
+                      try {
+                        _itemScrollController.jumpTo(index: lastIndex);
+                      } catch (_) {}
+                    }
+                  });
+                }
               }
-
-              if (state is MessageReceived && state.conversationId == widget.chat.id) {
-                // Add new message to list
-                ChatMessagesCubit.get(
-                  context,
-                ).addReceivedMessage(state.message , widget.pet!.ownerId);
-
-                // Mark as read
-                ChatMessagesCubit.get(
-                  context,
-                ).markMessagesAsRead(widget.chat.id);
-
-                // Scroll to bottom
-                Future.delayed(const Duration(milliseconds: 100), () {
-                  final lastIndex =
-                      ChatMessagesCubit.get(context).messagesList.length - 1;
-                  if (lastIndex >= 0) {
-                    try {
-                      _itemScrollController.jumpTo(index: lastIndex);
-                    } catch (_) {}
-                  }
-                });
-              }
-
-              // Handle typing indicator from friend
               if (state is FriendTypingInConversation &&
                   state.conversationId == widget.chat.id) {
-                if (mounted) {
-                  setState(() {
-                    _isOtherUserTyping = state.isTyping;
-                  });
+                if (state.isTyping) {
+                  _incomingTypingEventCount++;
+                  _incomingTypingResetTimer?.cancel();
+                  _incomingTypingResetTimer = Timer(
+                    const Duration(milliseconds: 800),
+                    () {
+                      _incomingTypingEventCount = 0;
+                    },
+                  );
+                  if (_incomingTypingEventCount >= 2) {
+                    _incomingTypingHideTimer?.cancel();
+                    _incomingTypingHideTimer = Timer(
+                      const Duration(seconds: 2),
+                      () {
+                        if (mounted) {
+                          setState(() {
+                            _isOtherUserTyping = false;
+                          });
+                        }
+                      },
+                    );
+
+                    if (mounted && !_isOtherUserTyping) {
+                      setState(() {
+                        _isOtherUserTyping = true;
+                      });
+                    }
+                  }
+                } else {
+                  // Other user stopped typing -> clear immediately
+                  _incomingTypingResetTimer?.cancel();
+                  _incomingTypingEventCount = 0;
+                  _incomingTypingHideTimer?.cancel();
+                  if (mounted && _isOtherUserTyping) {
+                    setState(() {
+                      _isOtherUserTyping = false;
+                    });
+                  }
+                }
+              }
+
+              if (state is PetJoinedConversation) {
+                final data = state.data;
+                final joinedPetId =
+                    data['petId']?.toString() ?? data['PetId']?.toString();
+                if (joinedPetId != null && joinedPetId == widget.chat.petId) {
+                  try {
+                    ChatMessagesCubit.get(context).markOutgoingMessagesAsRead();
+                  } catch (e) {}
+                }
+              }
+
+              // Clear typing indicator when friend leaves conversation
+              if (state is PetLeftConversation) {
+                final data = state.data;
+                final leftPetId = data['petId']?.toString();
+                final leftConversationId = data['conversationId']?.toString();
+                if (leftPetId == widget.chat.petId ||
+                    leftConversationId == widget.chat.id) {
+                  if (mounted) {
+                    setState(() {
+                      _isOtherUserTyping = false;
+                    });
+                  }
                 }
               }
 
@@ -248,6 +309,13 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 debugPrint('❌ ChatAppCubit Error: ${state.message}');
                 if (mounted) {
                   errorToast(context, state.message);
+                }
+              }
+
+              // Handle FriendOnlineStatusChanged for optimistic UI updates
+              if (state is FriendOnlineStatusChanged) {
+                if (state.petId == widget.chat.petId && state.isOnline) {
+                  ChatMessagesCubit.get(context).markSentMessagesAsDelivered();
                 }
               }
             },
@@ -269,6 +337,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               } else if (state is MessageSendError) {
                 errorToast(context, state.message);
               }
+
+              // NEW: Handle messages loaded successfully
               if (state is ChatMessagesLoaded) {
                 final messages = cubit.messagesList.toList();
                 if (messages.isNotEmpty) {
@@ -280,7 +350,11 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                     } catch (_) {}
                   });
                 }
+
+                // NOW join conversation and mark messages as read after successful load
+                _joinConversationAfterLoad();
               }
+
               if (state is MatingFinishSuccess) {
                 setState(() {
                   isCompleted = true;
@@ -337,8 +411,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                   appBar: ChatAppBar(
                     chat: widget.chat,
                     cubit: cubit,
-                    isOnline:
-                        chatAppCubit.onlineFriends[widget.chat.petId] ?? false,
+                    isOnline: chatAppCubit.generalHub.isPetOnlineFromDict(
+                      widget.chat.petId,
+                    ),
                     isTyping:
                         chatAppCubit.typingIndicators[widget.chat.petId] ??
                         false,
@@ -347,7 +422,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                     children: [
                       Column(
                         children: [
-                          const SignalRConnectionStatusWidget(),
                           if (isCompleted)
                             StatusBanner(
                               icon: Icons.lock_rounded,
@@ -410,8 +484,35 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     );
   }
 
+  // NEW METHOD: Join conversation and mark messages as read after successful load
+  Future<void> _joinConversationAfterLoad() async {
+    if (!mounted) return;
+
+    try {
+      _chatAppCubit = context.read<ChatAppCubit>();
+      await _chatAppCubit?.joinConversation(widget.chat.id);
+
+      conversationSignalEventStream.add(
+        ConversationSignalEvent(
+          'ConversationHub',
+          'PetIsJoinedToConversation',
+          [
+            {'ConversationId': widget.chat.id, 'PetId': widget.pet?.petId},
+          ],
+        ),
+      );
+
+      if (widget.pet?.petId != null && mounted) {
+        await _chatAppCubit?.conversationHub.markMessagesAsSeen(
+          conversationId: widget.chat.id,
+          petId: widget.pet!.petId!,
+        );
+      }
+    } catch (e) {}
+  }
+
   Widget _buildMessages(ChatMessagesState state, ChatMessagesCubit cubit) {
-    if (state is ChatMessagesLoading) {
+    if (state is ChatMessagesLoading || state is ChatMessagesInitial) {
       return const ChatLoadingState();
     }
     if (state is ChatMessagesError) {
@@ -427,8 +528,11 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         itemScrollController: _itemScrollController,
         itemPositionsListener: _itemPositionsListener,
         conversationId: widget.chat.id,
+        chatImage: widget.chat.image,
         isOtherUserTyping: _isOtherUserTyping,
-        isMyTyping: _isMyTyping,
+        hasMoreMessages: cubit.hasMoreMessages,
+        isLoadingMore: cubit.isLoadingMore,
+        onLoadMore: () => cubit.loadMoreMessages(widget.chat.id),
       );
     }
     return const ChatEmptyState();
@@ -469,6 +573,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       } else if (type == AttachmentType.audio) {
         await mainCubit.getGlobalSound(file, UploadPlace.messageRecord);
         mediaUrl = mainCubit.modelImage?.data;
+      } else if (type == AttachmentType.file) {
+        await mainCubit.getGlobalDocument(file, UploadPlace.messageFiles);
+        mediaUrl = mainCubit.modelImage?.data;
       }
 
       if (mounted) {
@@ -486,7 +593,21 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           image: type == AttachmentType.image ? mediaUrl : null,
           video: type == AttachmentType.video ? mediaUrl : null,
           audio: type == AttachmentType.audio ? mediaUrl : null,
+          file: type == AttachmentType.file ? mediaUrl : null,
         );
+
+        // Increase unread count with media type flags
+        await chatAppCubit.increaseUnreadMessageCount(
+          conversationId: widget.chat.id,
+          toPetId: widget.chat.petId,
+          fromPetId: widget.pet?.petId ?? '',
+          content: caption ?? '',
+          imageMessage: type == AttachmentType.image,
+          videoMessage: type == AttachmentType.video,
+          fileMessage: type == AttachmentType.file,
+          audioMessage: type == AttachmentType.audio,
+        );
+
         debugPrint('✅ Media message sent successfully');
       } else {
         debugPrint('❌ Upload failed: mediaUrl is null or empty');
@@ -588,14 +709,64 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     }
   }
 
+  
+
   void _sendMessage(ChatMessagesCubit cubit, ChatAppCubit chatAppCubit) {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
+
+    // Prevent sending messages longer than allowed
+    if (text.length > MessageInputWidget.maxCharacters) {
+      showDialog(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: const Text('Character Limit Reached'),
+          content: Text(
+            'Message cannot exceed ${MessageInputWidget.maxCharacters} characters. Current: ${text.length}',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(c).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    chatAppCubit.setTyping(conversationId: widget.chat.id, isTyping: false);
+    chatAppCubit.setTypingInGeneral(
+      petId: widget.chat.petId,
+      isTyping: false,
+      fromPetId: widget.pet?.petId ?? '',
+    );
+
+    // Scroll to show the new message
+    Future.delayed(const Duration(milliseconds: 100), () {
+      final lastIndex = cubit.messagesList.length - 1;
+      if (lastIndex >= 0) {
+        try {
+          _itemScrollController.jumpTo(index: lastIndex);
+        } catch (_) {}
+      }
+    });
 
     chatAppCubit.sendMessage(
       conversationId: widget.chat.id,
       toPetId: widget.chat.petId,
       description: text,
+    );
+
+    chatAppCubit.increaseUnreadMessageCount(
+      conversationId: widget.chat.id,
+      toPetId: widget.chat.petId,
+      fromPetId: widget.pet?.petId ?? '',
+      content: text,
+      imageMessage: false,
+      videoMessage: false,
+      fileMessage: false,
+      audioMessage: false,
     );
 
     _messageController.clear();

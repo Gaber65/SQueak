@@ -9,17 +9,15 @@ import 'package:squeak/features/profile_switch/domain/usecase/save_active_profil
 import '../../../../core/network/end_points.dart';
 import '../../../../core/utils/enums/profile_type.dart';
 
-
-
 class SwitchProfileCubit extends Cubit<SwitchProfileState> {
   final GetActiveProfileUseCase getActiveProfile;
   final SaveActiveProfileUseCase saveActiveProfile;
 
-  SwitchProfileCubit(this.getActiveProfile, this.saveActiveProfile) : super(ProfileInitial());
+  SwitchProfileCubit(this.getActiveProfile, this.saveActiveProfile)
+    : super(ProfileInitial());
 
   static SwitchProfileCubit get(BuildContext context) =>
       BlocProvider.of<SwitchProfileCubit>(context);
-
 
   ActiveProfile? activeProfile;
   String image = imageUrl;
@@ -30,42 +28,37 @@ class SwitchProfileCubit extends Cubit<SwitchProfileState> {
     emit(ProfileLoading());
     final result = await getActiveProfile(const NoParameters());
     result.fold(
-          (failure) {
-            emit(ProfileError(failure.error.message));
-          },
-          (profile) {
-            activeProfile = profile;
-            if (activeProfile!.type == ProfileType.pet) {
-              image = imageUrl +activeProfile!.pet!.imageName!;
-              name = activeProfile!.pet!.petName!;
-              specieId = activeProfile!.pet!.specieId!;
-              petID = activeProfile!.pet!.petId!;
-            } else {
-              name = activeProfile!.user!.fullName;
-              image = imageUrl + activeProfile!.user!.imageName;
-            }
-            emit(ProfileLoaded(profile));
-          },
+      (failure) {
+        emit(ProfileError(failure.error.message));
+      },
+      (profile) {
+        activeProfile = profile;
+        if (activeProfile!.type == ProfileType.pet) {
+          image = imageUrl + activeProfile!.pet!.imageName!;
+          name = activeProfile!.pet!.petName!;
+          specieId = activeProfile!.pet!.specieId!;
+          petID = activeProfile!.pet!.petId!;
+        } else {
+          name = activeProfile!.user!.fullName;
+          image = imageUrl + activeProfile!.user!.imageName;
+        }
+        emit(ProfileLoaded(profile));
+      },
     );
   }
 
   Future<void> switchProfile(ActiveProfile profile) async {
     emit(ProfileLoading());
     final result = await saveActiveProfile(profile);
-    result.fold(
-          (failure) => emit(ProfileError(failure.error.message)),
-          (_) {
-            loadProfile();
-            emit(ProfileLoaded(profile));
-            emit(ProfileSwitcherPage(profile));
-
-          },
-    );
+    result.fold((failure) => emit(ProfileError(failure.error.message)), (_) {
+      loadProfile();
+      emit(ProfileLoaded(profile));
+      emit(ProfileSwitcherPage(profile));
+    });
   }
 
   bool get isPet {
-    if(activeProfile == null) return false;
+    if (activeProfile == null) return false;
     return activeProfile?.type == ProfileType.pet;
   }
-
 }

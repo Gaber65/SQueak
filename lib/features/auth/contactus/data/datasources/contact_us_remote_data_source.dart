@@ -24,7 +24,7 @@ class ContactUsRemoteDataSource {
           "statues": false,
         },
       );
-    }  on DioException catch (e) {
+    } on DioException catch (e) {
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

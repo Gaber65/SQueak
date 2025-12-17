@@ -5,10 +5,7 @@ import '../../../../../generated/l10n.dart';
 class PetStatusChip extends StatelessWidget {
   final PetEntities pet;
 
-  const PetStatusChip({
-    super.key,
-    required this.pet,
-  });
+  const PetStatusChip({super.key, required this.pet});
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +14,20 @@ class PetStatusChip extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            pet.availableForMating ?  Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.2),
-            pet.availableForMating ?  Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+            pet.availableForMating
+                ? Colors.green.withOpacity(0.2)
+                : Colors.red.withOpacity(0.2),
+            pet.availableForMating
+                ? Colors.green.withOpacity(0.1)
+                : Colors.red.withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color:   pet.availableForMating ?   Colors.green.withOpacity(0.3) : Colors.red.withOpacity(0.3),
+          color:
+              pet.availableForMating
+                  ? Colors.green.withOpacity(0.3)
+                  : Colors.red.withOpacity(0.3),
           width: 1.5,
         ),
       ),
@@ -40,9 +44,11 @@ class PetStatusChip extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            pet.availableForMating ? S.of(context).availableForMating : S.of(context).notAvailableForMating ,
+            pet.availableForMating
+                ? S.of(context).availableForMating
+                : S.of(context).notAvailableForMating,
             style: TextStyle(
-              color: pet.availableForMating ? Colors.green : Colors.red ,
+              color: pet.availableForMating ? Colors.green : Colors.red,
               fontWeight: FontWeight.bold,
               fontSize: 13,
             ),

@@ -21,56 +21,67 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
   });
 
   @override
-  Future<Either<Failure, List<VaccinationNameEntity>>> getVaccinationNames() async {
+  Future<Either<Failure, List<VaccinationNameEntity>>>
+  getVaccinationNames() async {
     try {
       final result = await remoteDataSource.getVaccinationNames();
       return Right(result);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.errorMessageModel));
     } on DioException catch (e) {
-      return Left(ServerFailure(
-        ErrorMessageModel.fromJson({
-          'errors': {},
-          'message': e.message ?? 'Network error occurred',
-          'success': false,
-          'statusCode': e.response?.statusCode ?? 500,
-        }),
-      ));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel.fromJson({
+            'errors': {},
+            'message': e.message ?? 'Network error occurred',
+            'success': false,
+            'statusCode': e.response?.statusCode ?? 500,
+          }),
+        ),
+      );
     } catch (e) {
-      return Left(ServerFailure(
-        ErrorMessageModel.fromJson({
-          'errors': {},
-          'message': e.toString(),
-          'success': false,
-          'statusCode': 500,
-        }),
-      ));
+      return Left(
+        ServerFailure(
+          ErrorMessageModel.fromJson({
+            'errors': {},
+            'message': e.toString(),
+            'success': false,
+            'statusCode': 500,
+          }),
+        ),
+      );
     }
   }
 
   @override
-  Future<Either<Failure, List<ReminderEntity>>> getPetReminders(String petId) async {
+  Future<Either<Failure, List<ReminderEntity>>> getPetReminders(
+    String petId,
+  ) async {
     try {
       final result = await localDataSource.getPetReminders(petId);
       return Right(result);
     } on LocalDatabaseException catch (e) {
-      return Left(LocalDatabaseFailure(
-        ErrorMessageModel.fromJson({
-          'errors': {},
-          'message': e.errorMessage,
-          'success': false,
-          'statusCode': 500,
-        }),
-      ));
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel.fromJson({
+            'errors': {},
+            'message': e.errorMessage,
+            'success': false,
+            'statusCode': 500,
+          }),
+        ),
+      );
     } catch (e) {
-      return Left(LocalDatabaseFailure(
-        ErrorMessageModel.fromJson({
-          'errors': {},
-          'message': e.toString(),
-          'success': false,
-          'statusCode': 500,
-        }),
-      ));
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel.fromJson({
+            'errors': {},
+            'message': e.toString(),
+            'success': false,
+            'statusCode': 500,
+          }),
+        ),
+      );
     }
   }
 
@@ -81,23 +92,27 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
       await localDataSource.createReminder(reminderModel);
       return const Right(null);
     } on LocalDatabaseException catch (e) {
-      return Left(LocalDatabaseFailure(
-        ErrorMessageModel.fromJson({
-          'errors': {},
-          'message': e.errorMessage,
-          'success': false,
-          'statusCode': 500,
-        }),
-      ));
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel.fromJson({
+            'errors': {},
+            'message': e.errorMessage,
+            'success': false,
+            'statusCode': 500,
+          }),
+        ),
+      );
     } catch (e) {
-      return Left(LocalDatabaseFailure(
-        ErrorMessageModel.fromJson({
-          'errors': {},
-          'message': e.toString(),
-          'success': false,
-          'statusCode': 500,
-        }),
-      ));
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel.fromJson({
+            'errors': {},
+            'message': e.toString(),
+            'success': false,
+            'statusCode': 500,
+          }),
+        ),
+      );
     }
   }
 
@@ -108,23 +123,27 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
       await localDataSource.updateReminder(reminderModel);
       return const Right(null);
     } on LocalDatabaseException catch (e) {
-      return Left(LocalDatabaseFailure(
-        ErrorMessageModel.fromJson({
-          'errors': {},
-          'message': e.errorMessage,
-          'success': false,
-          'statusCode': 500,
-        }),
-      ));
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel.fromJson({
+            'errors': {},
+            'message': e.errorMessage,
+            'success': false,
+            'statusCode': 500,
+          }),
+        ),
+      );
     } catch (e) {
-      return Left(LocalDatabaseFailure(
-        ErrorMessageModel.fromJson({
-          'errors': {},
-          'message': e.toString(),
-          'success': false,
-          'statusCode': 500,
-        }),
-      ));
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel.fromJson({
+            'errors': {},
+            'message': e.toString(),
+            'success': false,
+            'statusCode': 500,
+          }),
+        ),
+      );
     }
   }
 
@@ -134,23 +153,27 @@ class VaccinationRepositoryImpl implements VaccinationRepository {
       await localDataSource.deleteReminder(id);
       return const Right(null);
     } on LocalDatabaseException catch (e) {
-      return Left(LocalDatabaseFailure(
-        ErrorMessageModel.fromJson({
-          'errors': {},
-          'message': e.errorMessage,
-          'success': false,
-          'statusCode': 500,
-        }),
-      ));
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel.fromJson({
+            'errors': {},
+            'message': e.errorMessage,
+            'success': false,
+            'statusCode': 500,
+          }),
+        ),
+      );
     } catch (e) {
-      return Left(LocalDatabaseFailure(
-        ErrorMessageModel.fromJson({
-          'errors': {},
-          'message': e.toString(),
-          'success': false,
-          'statusCode': 500,
-        }),
-      ));
+      return Left(
+        LocalDatabaseFailure(
+          ErrorMessageModel.fromJson({
+            'errors': {},
+            'message': e.toString(),
+            'success': false,
+            'statusCode': 500,
+          }),
+        ),
+      );
     }
   }
 }

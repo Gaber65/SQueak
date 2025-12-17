@@ -91,8 +91,7 @@ class VetRemoteDataSource implements BaseVetRemoteDataSource {
 
     try {
       final basicAuth = _createBasicAuth();
-      final dioWithInterceptor =
-          Dio();
+      final dioWithInterceptor = Dio();
 
       final response = await dioWithInterceptor.get(
         '${ConfigModel.baseApiUrlSqueak}$version/vetcare/client/$invitationCode',
@@ -111,8 +110,7 @@ class VetRemoteDataSource implements BaseVetRemoteDataSource {
 
     try {
       final basicAuth = _createBasicAuth();
-      final dioWithInterceptor =
-          Dio();
+      final dioWithInterceptor = Dio();
 
       final response = await dioWithInterceptor.get(
         '${ConfigModel.baseApiUrlSqueak}$version/vetcare/client/$phone/$code',

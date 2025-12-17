@@ -599,7 +599,20 @@
   "editImage":"Edit Image",
   "editVideo":"Edit Video",
   "preview":"Preview",
-  "audioFile":"Audio File"
+  "audioFile":"Audio File",
+  "offline":"Last seen recently",
+  "openInBrowser":"Open in Browser",
+  "openInApp":"Open in App",
+  "downloadStarted":"Download started",
+  "cannotOpenDocument":"Cannot open document",
+  "documentLoadingFailed":"Failed to load document",
+  "error":"Error",
+  "refresh":"Refresh",
+  "loading":"Loading",
+  "characterLimitReached":"Character limit reached",
+  "MessageCannotExceed4000Characters":"Message cannot exceed 4000 characters"
+
+  
  
 
 

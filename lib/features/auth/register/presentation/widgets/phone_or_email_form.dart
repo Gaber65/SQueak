@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
-
-
 class EmailOrPhoneField extends StatelessWidget {
   final TextEditingController controller;
 
-  const EmailOrPhoneField({
-    super.key,
-    required this.controller,
-  });
+  const EmailOrPhoneField({super.key, required this.controller});
 
   String? _validateInput(String? value, context) {
     // Trim leading/trailing whitespace before validation
@@ -38,30 +33,27 @@ class EmailOrPhoneField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      style: FontStyleThame.textStyle(
-        context: context,
-        fontSize: 15,
-      ),
+      style: FontStyleThame.textStyle(context: context, fontSize: 15),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
         hintText: S.of(context).enterUrEmailORPhone,
 
         contentPadding: EdgeInsets.all(0),
         hintStyle: FontStyleThame.textStyle(
-            context: context,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            fontColor: MainCubit.get(context).isDark
-                ? Colors.white54
-                : Color.fromRGBO(0, 0, 0, .3)),
-        prefixIcon: const Icon(
-          Icons.alternate_email_sharp,
-          size: 14,
+          context: context,
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          fontColor:
+              MainCubit.get(context).isDark
+                  ? Colors.white54
+                  : Color.fromRGBO(0, 0, 0, .3),
         ),
+        prefixIcon: const Icon(Icons.alternate_email_sharp, size: 14),
         filled: true,
-        fillColor: MainCubit.get(context).isDark
-            ? Colors.black26
-            : Colors.grey.shade200,
+        fillColor:
+            MainCubit.get(context).isDark
+                ? Colors.black26
+                : Colors.grey.shade200,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide.none,

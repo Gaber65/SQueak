@@ -143,7 +143,7 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
       final remoteAppointments = await remoteDataSource.getUserAppointments(
         phone,
         applyFilter,
-      );     
+      );
       return Right(remoteAppointments);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));

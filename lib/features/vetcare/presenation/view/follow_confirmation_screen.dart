@@ -81,7 +81,6 @@ class ConfirmationScreen extends StatelessWidget {
                 }
               },
               builder: (context, state) {
-
                 final cubit = QRCubit.get(context);
 
                 if (cubit.isLoading) {
@@ -192,7 +191,6 @@ class ConfirmationScreen extends StatelessWidget {
     );
   }
 
-
   Widget _buildAlreadyFollowWidget(BuildContext context, QRCubit cubit) {
     cubit.getVetClients(clinicCode, false);
     return Center(
@@ -240,42 +238,46 @@ class ConfirmationScreen extends StatelessWidget {
               SizedBox(height: 24),
               if (cubit.vetClientModel.isNotEmpty) ...[
                 if (!cubit.vetClientModel.first.id.contains('0000'))
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (cubit.vetClientModel.isNotEmpty) {
-                        navigateAndFinish(
-                          context,
-                          PetMergeScreen(code: clinicCode, isNavigation: false),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      backgroundColor: ColorManager.primaryColor,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.pets, color: Colors.white, size: 20),
-                        SizedBox(width: 8),
-                        Text(
-                          isArabic() ? 'إظهار حيواناتي الأليفة' : 'Show My Pets',
-                          style: FontStyleThame.textStyle(
-                            fontSize: 16,
-                            context: context,
-                            fontColor: Colors.white,
-                          ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (cubit.vetClientModel.isNotEmpty) {
+                          navigateAndFinish(
+                            context,
+                            PetMergeScreen(
+                              code: clinicCode,
+                              isNavigation: false,
+                            ),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      ],
+                        backgroundColor: ColorManager.primaryColor,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.pets, color: Colors.white, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            isArabic()
+                                ? 'إظهار حيواناتي الأليفة'
+                                : 'Show My Pets',
+                            style: FontStyleThame.textStyle(
+                              fontSize: 16,
+                              context: context,
+                              fontColor: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-
               ],
             ],
           ),
@@ -283,7 +285,6 @@ class ConfirmationScreen extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildShimmerPlaceholder() {
     return Center(

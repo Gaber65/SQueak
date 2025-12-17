@@ -86,7 +86,7 @@
 //                               index: index,
 //                               child: PetsSuggetionRequestCard(
 //                                 pet: suggested[index],
-//                                 activePetId: activePetId, 
+//                                 activePetId: activePetId,
 //                               ),
 //                             );
 //                           }, childCount: suggested.length),

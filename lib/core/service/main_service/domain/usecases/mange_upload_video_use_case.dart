@@ -4,7 +4,8 @@ import 'package:squeak/core/service/main_service/domain/entities/image_entity.da
 import '../../../../base_usecase/base_usecase.dart';
 import '../repositories/app_repository.dart';
 
-class ManageUploadVideoUseCase extends BaseUseCase<ImageEntity, UploadImageParams> {
+class ManageUploadVideoUseCase
+    extends BaseUseCase<ImageEntity, UploadImageParams> {
   final AppRepository repository;
 
   ManageUploadVideoUseCase(this.repository);

@@ -56,26 +56,26 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     selectedTab = tabIndex;
     if (petId != null) _currentPetId = petId;
     if (specieId != null) _currentSpecieId = specieId;
-    
+
     emit(ChangeTab(tabIndex: tabIndex));
     switch (tabIndex) {
-      case 0: 
+      case 0:
         if (_currentPetId != null) {
           getFriends(petId: _currentPetId!);
         }
         break;
-      case 1: 
+      case 1:
         if (_currentSpecieId != null) {
           loadSuggestedFriends(specieId: _currentSpecieId!);
         }
         break;
-      case 2: 
+      case 2:
         if (_currentPetId != null) {
           loadReceivedFriends(petId: _currentPetId!);
           loadSentFriends(petId: _currentPetId!);
         }
         break;
-      case 3: 
+      case 3:
         if (_currentPetId != null) {
           loadChats(petId: _currentPetId!);
         }
@@ -172,7 +172,7 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     });
   }
 
-///delete friendship
+  ///delete friendship
   Future<void> deleteFriendship(PetEntities pet, String activeID) async {
     emit(DeleteFriendShipLoading());
     try {
@@ -181,7 +181,8 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
       );
 
       result.fold(
-        (failure) => emit(DeleteFriendShipFailed(message: failure.error.message)),
+        (failure) =>
+            emit(DeleteFriendShipFailed(message: failure.error.message)),
         (_) {
           friends.remove(pet);
           emit(DeleteFriendShipSuccess());
@@ -190,7 +191,8 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     } catch (e) {
       emit(DeleteFriendShipFailed(message: 'Failed to delete friendship: $e'));
     }
-  } 
+  }
+
   /// Accept or decline friend request
   Future<void> updateFriendRequest(
     PetFriendRequestEntity pet,
@@ -262,7 +264,7 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
   // Future<void> _fetchUnreadCounts(String petId) async {
   //   // final signalRService = SignalRService();
   //   final unreadCounts = await signalRService.getUnreadMessageCounts(petId);
-    
+
   //   if (unreadCounts != null && chats.isNotEmpty) {
   //     final updatedChats = chats.map((chat) {
   //       final count = unreadCounts.length;
@@ -286,7 +288,7 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
   //         lastMessage: chat.lastMessage,
   //       );
   //     }).toList();
-      
+
   //     chats = updatedChats;
   //     emit(ChatsLoaded(chats: updatedChats));
   //   }
@@ -305,6 +307,4 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
       },
     );
   }
-
-
 }

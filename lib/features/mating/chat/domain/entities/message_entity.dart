@@ -1,22 +1,26 @@
+import 'message_status.dart';
+
 class MessageEntity {
   final String? id;
   final String description;
   final String? image;
   final String? video;
   final String? audio;
-  final bool isRead;
+  final String? file;
+  final MessageStatus status;
   final String fromUserId;
   final String toUserId;
   final DateTime createdAt;
   final bool toMe;
 
   const MessageEntity({
-     this.id,
+    this.id,
     required this.description,
     this.image,
     this.video,
     this.audio,
-    required this.isRead,
+    this.file,
+    this.status = MessageStatus.sent,
     required this.fromUserId,
     required this.toUserId,
     required this.createdAt,
@@ -29,7 +33,8 @@ class MessageEntity {
     String? image,
     String? video,
     String? audio,
-    bool? isRead,
+    String? file,
+    MessageStatus? status,
     String? fromUserId,
     String? toUserId,
     DateTime? createdAt,
@@ -41,7 +46,8 @@ class MessageEntity {
       image: image ?? this.image,
       video: video ?? this.video,
       audio: audio ?? this.audio,
-      isRead: isRead ?? this.isRead,
+      file: file ?? this.file,
+      status: status ?? this.status,
       fromUserId: fromUserId ?? this.fromUserId,
       toUserId: toUserId ?? this.toUserId,
       createdAt: createdAt ?? this.createdAt,

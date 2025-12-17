@@ -36,17 +36,18 @@ class BookingAppBar extends StatelessWidget implements PreferredSizeWidget {
                 backgroundColor: ColorManager.primaryColor.withOpacity(.2),
               ),
               onPressed: isLoading ? null : onBookingPressed,
-              child: isLoading
-                  ? const CircularProgressIndicator()
-                  : Text(
-                S.of(context).booking,
-                style: FontStyleThame.textStyle(
-                  context: context,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  fontColor: ColorManager.primaryColor,
-                ),
-              ),
+              child:
+                  isLoading
+                      ? const CircularProgressIndicator()
+                      : Text(
+                        S.of(context).booking,
+                        style: FontStyleThame.textStyle(
+                          context: context,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          fontColor: ColorManager.primaryColor,
+                        ),
+                      ),
             ),
           ),
         ),

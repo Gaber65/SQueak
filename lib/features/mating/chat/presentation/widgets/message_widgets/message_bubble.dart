@@ -4,21 +4,27 @@ import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/utils/date_time_formatter.dart';
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_messages_cubit.dart';
 import 'package:squeak/features/mating/chat/domain/usecases/parameters.dart';
+import 'package:squeak/features/mating/chat/domain/entities/message_status.dart';
 import 'package:squeak/generated/l10n.dart';
 import '../../../domain/entities/message_entity.dart';
 import '../attach_files_in_chat/full_screen_media_viewer.dart';
 import '../attach_files_in_chat/audio_player_widget.dart';
+import 'package:squeak/features/mating/chat/presentation/controllers/chat_app_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../attach_files_in_chat/in_app_document_viewer.dart';
 
 class ChatMessageBubble extends StatefulWidget {
   final MessageEntity message;
   final bool isMe;
   final String conversationId;
+  final String? chatImage;
 
   const ChatMessageBubble({
     super.key,
     required this.message,
     required this.isMe,
     required this.conversationId,
+    this.chatImage,
   });
 
   @override
@@ -203,6 +209,8 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                         if (widget.message.image != null) _buildImageContent(),
                         if (widget.message.video != null) _buildVideoContent(),
                         if (widget.message.audio != null) _buildAudioContent(),
+                        if (widget.message.file != null)
+                          _buildDocumentContent(),
 
                         // Text message
                         if (widget.message.description.isNotEmpty)
@@ -243,15 +251,41 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                             ),
                             if (widget.isMe) ...[
                               const SizedBox(width: 6),
-                              Icon(
-                                widget.message.isRead
-                                    ? Icons.done_all_rounded
-                                    : Icons.done_rounded,
-                                size: 16,
-                                color:
-                                    widget.message.isRead
-                                        ? const Color(0xFF25D366) // WhatsApp green for read
-                                        : Colors.white.withOpacity(0.7),
+                              StreamBuilder<Map<String, MessageStatus>>(
+                                stream:
+                                    ChatMessagesCubit.get(
+                                      context,
+                                    ).messageStatusStream,
+                                initialData:
+                                    ChatMessagesCubit.get(
+                                      context,
+                                    ).messageStatuses,
+                                builder: (context, snapshot) {
+                                  final msgId = widget.message.id;
+                                  final statusFromStream =
+                                      (msgId != null && msgId.isNotEmpty)
+                                          ? snapshot.data != null
+                                              ? snapshot.data![msgId]
+                                              : null
+                                          : null;
+                                  var status =
+                                      statusFromStream ?? widget.message.status;
+                                  try {
+                                    final chatAppCubit =
+                                        context.read<ChatAppCubit>();
+                                    final otherUserId = widget.message.toUserId;
+                                    if (!widget.message.toMe &&
+                                        status == MessageStatus.sent) {
+                                      final isOnline = chatAppCubit.generalHub
+                                          .isPetOnlineFromDict(otherUserId);
+                                      if (isOnline) {
+                                        status = MessageStatus.delivered;
+                                      }
+                                    }
+                                  } catch (_) {}
+
+                                  return _buildStatusIcon(status);
+                                },
                               ),
                             ],
                           ],
@@ -267,6 +301,32 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
         ),
       ),
     );
+  }
+
+  /// Build WhatsApp-like status icon based on MessageStatus
+  Widget _buildStatusIcon(MessageStatus status) {
+    IconData iconData;
+    Color iconColor;
+
+    switch (status) {
+      case MessageStatus.sent:
+        // Single grey/white check - message reached server
+        iconData = Icons.done_rounded;
+        iconColor = Colors.white.withOpacity(0.8);
+        break;
+      case MessageStatus.delivered:
+        // Double grey checks - message delivered to recipient
+        iconData = Icons.done_all_rounded;
+        iconColor = Colors.white.withOpacity(0.7);
+        break;
+      case MessageStatus.seen:
+        // Double blue checks - message read by recipient
+        iconData = Icons.done_all_rounded;
+        iconColor = const Color(0xFF25D366); // WhatsApp green
+        break;
+    }
+
+    return Icon(iconData, size: 16, color: iconColor);
   }
 
   List<Widget> _buildSenderInfo(BuildContext context) {
@@ -288,11 +348,44 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
             width: 2,
           ),
         ),
-        child: Icon(
-          Icons.pets,
-          size: 16,
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        child:
+            (widget.chatImage != null && widget.chatImage!.isNotEmpty)
+                ? ClipOval(
+                  child: Image.network(
+                    imageUrl + widget.chatImage!,
+                    width: 32,
+                    height: 32,
+                    fit: BoxFit.cover,
+                    errorBuilder:
+                        (context, error, stackTrace) => Icon(
+                          Icons.pets,
+                          size: 16,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: SizedBox(
+                          width: 12,
+                          height: 12,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            value:
+                                loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                )
+                : Icon(
+                  Icons.pets,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
       ),
     ];
   }
@@ -451,6 +544,170 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
       audioUrl: audioUrl + widget.message.audio!,
       isMe: widget.isMe,
       primaryColor: theme.colorScheme.primary,
+    );
+  }
+
+  Widget _buildDocumentContent() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Extract file name from URL
+    final docUrl = widget.message.file!;
+    final fileName = docUrl.split('/').last.split('?').first;
+
+    // Determine file extension and icon
+    final extension = fileName.split('.').last.toUpperCase();
+    IconData icon;
+    Color iconColor;
+
+    switch (extension) {
+      case 'PDF':
+        icon = Icons.picture_as_pdf;
+        iconColor = Colors.red;
+        break;
+      case 'DOC':
+      case 'DOCX':
+        icon = Icons.description;
+        iconColor = Colors.blue;
+        break;
+      case 'XLS':
+      case 'XLSX':
+        icon = Icons.table_chart;
+        iconColor = Colors.green;
+        break;
+      case 'PPT':
+      case 'PPTX':
+        icon = Icons.slideshow;
+        iconColor = Colors.orange;
+        break;
+      case 'TXT':
+        icon = Icons.text_snippet;
+        iconColor = Colors.grey;
+        break;
+      case 'ZIP':
+      case 'RAR':
+      case '7Z':
+        icon = Icons.folder_zip;
+        iconColor = Colors.amber;
+        break;
+      default:
+        icon = Icons.insert_drive_file;
+        iconColor = Colors.blueGrey;
+    }
+
+    return InkWell(
+      onTap: () {
+        final fullUrl = documentUrl + docUrl;
+        final extension = fileName.split('.').last.toLowerCase();
+
+        // Check if it's an image file
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].contains(extension)) {
+          // Open as image
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder:
+                  (context) => FullScreenMediaViewer(
+                    mediaUrl: fullUrl,
+                    mediaType: MediaType.image,
+                  ),
+            ),
+          );
+        } else if (extension == 'pdf') {
+          // Open PDF directly in app viewer
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder:
+                  (context) => InAppDocumentViewer(
+                    documentUrl: fullUrl,
+                    fileName: fileName,
+                  ),
+            ),
+          );
+        } else {
+          // For other documents, show options screen
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder:
+                  (context) => FullScreenMediaViewer(
+                    mediaUrl: fullUrl,
+                    mediaType: MediaType.document,
+                  ),
+            ),
+          );
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: (widget.isMe
+                  ? Colors.white.withOpacity(0.2)
+                  : (isDark ? Colors.grey[900] : Colors.grey[300]))
+              ?.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color:
+                widget.isMe
+                    ? Colors.white.withOpacity(0.3)
+                    : (isDark ? Colors.grey[700]! : Colors.grey[400]!),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: iconColor, size: 32),
+            ),
+            const SizedBox(width: 12),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    fileName,
+                    style: TextStyle(
+                      color:
+                          widget.isMe
+                              ? Colors.white
+                              : (isDark ? Colors.white : Colors.black87),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: iconColor,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      extension,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Download icon removed per design request
+          ],
+        ),
+      ),
     );
   }
 }

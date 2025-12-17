@@ -60,17 +60,15 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
       style: const TextStyle(height: 1.0), // Ensure consistent height
       decoration: InputDecoration(
         hintText: widget.hintText,
-        prefixIcon: const Icon(
-          Icons.phone_outlined,
-          size: 18,
-        ),
-        suffixIcon: _hasValidInput && widget.isValid
-            ? const Icon(
-                Icons.check_circle,
-                color: ColorManager.green,
-                size: 16,
-              )
-            : null,
+        prefixIcon: const Icon(Icons.phone_outlined, size: 18),
+        suffixIcon:
+            _hasValidInput && widget.isValid
+                ? const Icon(
+                  Icons.check_circle,
+                  color: ColorManager.green,
+                  size: 16,
+                )
+                : null,
         border: InputBorder.none,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,

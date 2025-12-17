@@ -1,5 +1,1 @@
-enum Environment {
-  test,
-  pre,
-  pro,
-}
+enum Environment { test, pre, pro }

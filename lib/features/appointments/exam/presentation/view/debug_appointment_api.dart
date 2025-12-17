@@ -5,7 +5,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 
 class DebugAppointmentAPI extends StatefulWidget {
   final String clinicCode;
-  
+
   const DebugAppointmentAPI({super.key, required this.clinicCode});
 
   @override
@@ -17,28 +17,33 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
   Map<String, dynamic>? selectedPet;
   bool isLoading = false;
   String resultMessage = '';
-  String appointmentDate = DateTime.now().add(Duration(days: 1)).toString().split(' ')[0];
+  String appointmentDate =
+      DateTime.now().add(Duration(days: 1)).toString().split(' ')[0];
   String appointmentTime = '10:00:00';
   String? doctorId;
-  
+
   @override
   void initState() {
     super.initState();
     _loadPets();
   }
-  
+
   Future<void> _loadPets() async {
     setState(() {
       isLoading = true;
-      resultMessage = isArabic() ? 'جاري تحميل أصدقائك الأليفة...' : 'Loading pets...';
+      resultMessage =
+          isArabic() ? 'جاري تحميل أصدقائك الأليفة...' : 'Loading pets...';
     });
-    
+
     try {
       Response response = await DioFinalHelper.getData(
-        method: getClientClinicEndPoint(widget.clinicCode, CacheHelper.getData('phone')),
+        method: getClientClinicEndPoint(
+          widget.clinicCode,
+          CacheHelper.getData('phone'),
+        ),
         language: false,
       );
-      
+
       if (response.data['success'] == true) {
         setState(() {
           pets = List<Map<String, dynamic>>.from(response.data['data']);
@@ -62,7 +67,7 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
       });
     }
   }
-  
+
   Future<void> _createAppointment() async {
     if (selectedPet == null) {
       setState(() {
@@ -70,12 +75,12 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
       });
       return;
     }
-    
+
     setState(() {
       isLoading = true;
       resultMessage = 'Creating appointment...';
     });
-    
+
     try {
       // Create the request payload
       Map<String, dynamic> requestData = {
@@ -86,19 +91,19 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
         "clientId": selectedPet!['clientId'],
         "petSqueakId": selectedPet!['squeakPetId'],
       };
-      
+
       // Only add doctorId if it's not null
       if (doctorId != null && doctorId!.isNotEmpty) {
         requestData["doctorUserId"] = doctorId;
       }
-      
+
       // print("DEBUG: Request payload: $requestData");
-      
+
       Response response = await DioFinalHelper.postData(
         method: '$version/vetcare/reservation/existedClient',
         data: requestData,
       );
-      
+
       setState(() {
         resultMessage = 'Success! Response: ${response.data}';
       });
@@ -121,42 +126,48 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Debug Appointment API'),
-      ),
+      appBar: AppBar(title: Text('Debug Appointment API')),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Clinic Code: ${widget.clinicCode}', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Clinic Code: ${widget.clinicCode}',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 16),
-            
+
             Text('Select Pet:', style: TextStyle(fontWeight: FontWeight.bold)),
             SizedBox(height: 8),
-            
-            if (pets.isEmpty && !isLoading)
-              Text('No pets found'),
-              
+
+            if (pets.isEmpty && !isLoading) Text('No pets found'),
+
             if (pets.isNotEmpty)
               DropdownButton<Map<String, dynamic>>(
                 isExpanded: true,
                 value: selectedPet,
-                items: pets.map((pet) {
-                  return DropdownMenuItem<Map<String, dynamic>>(
-                    value: pet,
-                    child: Text('${pet['name']} (ID: ${pet['id'].toString().substring(0, 8)}...)'),
-                  );
-                }).toList(),
+                items:
+                    pets.map((pet) {
+                      return DropdownMenuItem<Map<String, dynamic>>(
+                        value: pet,
+                        child: Text(
+                          '${pet['name']} (ID: ${pet['id'].toString().substring(0, 8)}...)',
+                        ),
+                      );
+                    }).toList(),
                 onChanged: (value) {
                   setState(() {
                     selectedPet = value;
                   });
                 },
               ),
-            
+
             SizedBox(height: 16),
-            Text('Appointment Date:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Appointment Date:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 8),
             TextFormField(
               initialValue: appointmentDate,
@@ -170,9 +181,12 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
                 });
               },
             ),
-            
+
             SizedBox(height: 16),
-            Text('Appointment Time:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Appointment Time:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 8),
             TextFormField(
               initialValue: appointmentTime,
@@ -186,9 +200,12 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
                 });
               },
             ),
-            
+
             SizedBox(height: 16),
-            Text('Doctor ID (optional):', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Doctor ID (optional):',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 8),
             TextFormField(
               decoration: InputDecoration(
@@ -201,7 +218,7 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
                 });
               },
             ),
-            
+
             SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -209,17 +226,22 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
                 onPressed: isLoading ? null : _createAppointment,
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
-                  child: isLoading 
-                      ?  CareLoadingWidget(
-                        theme: Theme.of(context),
-                        isDark: Theme.of(context).brightness == Brightness.dark,
-                        text: S.of(context).loadingInfo,
-                      )
-                      : Text('Create Appointment', style: TextStyle(fontSize: 16)),
+                  child:
+                      isLoading
+                          ? CareLoadingWidget(
+                            theme: Theme.of(context),
+                            isDark:
+                                Theme.of(context).brightness == Brightness.dark,
+                            text: S.of(context).loadingInfo,
+                          )
+                          : Text(
+                            'Create Appointment',
+                            style: TextStyle(fontSize: 16),
+                          ),
                 ),
               ),
             ),
-            
+
             SizedBox(height: 24),
             Text('Result:', style: TextStyle(fontWeight: FontWeight.bold)),
             SizedBox(height: 8),
@@ -232,10 +254,13 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
               ),
               child: Text(resultMessage),
             ),
-            
+
             if (selectedPet != null) ...[
               SizedBox(height: 24),
-              Text('Selected Pet Details:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                'Selected Pet Details:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               SizedBox(height: 8),
               Container(
                 width: double.infinity,
@@ -261,4 +286,4 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
       ),
     );
   }
-} 
+}

@@ -10,7 +10,6 @@ import 'package:squeak/core/service/global_widget/video_detail.dart';
 import 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
 import '../../domain/entities/boarding_entry_entity.dart';
 
-
 /// Main widget for displaying image/video carousel in a dialog
 class ImageCarouselWidget extends StatefulWidget {
   final bool open;
@@ -41,7 +40,7 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   late AnimationController _fadeController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
-  
+
   int _currentIndex = 0;
 
   @override
@@ -66,9 +65,10 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
       CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
 
     if (widget.open) {
       _animationController.forward();
@@ -80,7 +80,9 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   void didUpdateWidget(ImageCarouselWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.open != oldWidget.open) {
-      widget.open ? _animationController.forward() : _animationController.reverse();
+      widget.open
+          ? _animationController.forward()
+          : _animationController.reverse();
       widget.open ? _fadeController.forward() : _fadeController.reverse();
     }
   }
@@ -96,10 +98,12 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
   // Extract media list based on type
   List<Map<String, dynamic>> _getMediaList() {
     if (widget.boarding == null) return [];
-    
+
     final key = widget.isVideo ? 'videoName' : 'imageName';
     return widget.boarding!.boardingImages
-        .where((media) => media[key] != null && media[key].toString().isNotEmpty)
+        .where(
+          (media) => media[key] != null && media[key].toString().isNotEmpty,
+        )
         .cast<Map<String, dynamic>>()
         .toList();
   }
@@ -125,11 +129,12 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) => _ShareSheet(
-        mediaUrl: mediaUrl,
-        isDarkMode: widget.isDarkMode,
-        onShare: widget.onShare,
-      ),
+      builder:
+          (context) => _ShareSheet(
+            mediaUrl: mediaUrl,
+            isDarkMode: widget.isDarkMode,
+            onShare: widget.onShare,
+          ),
     );
   }
 
@@ -138,37 +143,40 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget>
     if (!widget.open) return const SizedBox.shrink();
 
     final mediaList = _getMediaList();
-    
+
     return AnimatedBuilder(
       animation: _animationController,
-      builder: (context, child) => Transform.scale(
-        scale: _scaleAnimation.value,
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: Dialog(
-            backgroundColor: Colors.transparent,
-            insetPadding: const EdgeInsets.all(16),
-            child: mediaList.isEmpty
-                ? _NoMediaDialog(
-                    isDarkMode: widget.isDarkMode,
-                    isVideo: widget.isVideo,
-                    onClose: () => widget.onOpenChange(false),
-                  )
-                : _MediaCarouselDialog(
-                    mediaList: mediaList,
-                    isDarkMode: widget.isDarkMode,
-                    isVideo: widget.isVideo,
-                    boarding: widget.boarding!,
-                    currentIndex: _currentIndex,
-                    pageController: _pageController,
-                    onPageChanged: (index) => setState(() => _currentIndex = index),
-                    onNavigate: _navigatePage,
-                    onShare: _showShareSheet,
-                    onClose: () => widget.onOpenChange(false),
-                  ),
+      builder:
+          (context, child) => Transform.scale(
+            scale: _scaleAnimation.value,
+            child: FadeTransition(
+              opacity: _fadeAnimation,
+              child: Dialog(
+                backgroundColor: Colors.transparent,
+                insetPadding: const EdgeInsets.all(16),
+                child:
+                    mediaList.isEmpty
+                        ? _NoMediaDialog(
+                          isDarkMode: widget.isDarkMode,
+                          isVideo: widget.isVideo,
+                          onClose: () => widget.onOpenChange(false),
+                        )
+                        : _MediaCarouselDialog(
+                          mediaList: mediaList,
+                          isDarkMode: widget.isDarkMode,
+                          isVideo: widget.isVideo,
+                          boarding: widget.boarding!,
+                          currentIndex: _currentIndex,
+                          pageController: _pageController,
+                          onPageChanged:
+                              (index) => setState(() => _currentIndex = index),
+                          onNavigate: _navigatePage,
+                          onShare: _showShareSheet,
+                          onClose: () => widget.onOpenChange(false),
+                        ),
+              ),
+            ),
           ),
-        ),
-      ),
     );
   }
 }
@@ -188,7 +196,7 @@ class _NoMediaDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = _DialogTheme(isDarkMode);
-    
+
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
@@ -208,7 +216,9 @@ class _NoMediaDialog extends StatelessWidget {
               border: Border.all(color: theme.borderColor),
             ),
             child: Icon(
-              isVideo ? Icons.videocam_off_outlined : Icons.image_not_supported_rounded,
+              isVideo
+                  ? Icons.videocam_off_outlined
+                  : Icons.image_not_supported_rounded,
               size: 70,
               color: theme.iconColor,
             ),
@@ -234,8 +244,12 @@ class _NoMediaDialog extends StatelessWidget {
             ),
             child: Text(
               isVideo
-                  ? (isArabic() ? 'لا توجد فيديو لهذه الإقامة.' : 'No video found for this boarding.')
-                  : (isArabic() ? 'لا توجد صور لهذه الإقامة.' : 'No images found for this boarding.'),
+                  ? (isArabic()
+                      ? 'لا توجد فيديو لهذه الإقامة.'
+                      : 'No video found for this boarding.')
+                  : (isArabic()
+                      ? 'لا توجد صور لهذه الإقامة.'
+                      : 'No images found for this boarding.'),
               style: TextStyle(
                 fontSize: 15,
                 color: theme.secondaryTextColor,
@@ -286,7 +300,7 @@ class _MediaCarouselDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = _DialogTheme(isDarkMode);
-    
+
     return Container(
       decoration: BoxDecoration(
         gradient: theme.dialogGradient,
@@ -343,7 +357,7 @@ class _CarouselHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = _DialogTheme(isDarkMode);
-    
+
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
@@ -367,7 +381,9 @@ class _CarouselHeader extends StatelessWidget {
               ],
             ),
             child: Icon(
-              isVideo ? Icons.video_camera_back_outlined : Icons.photo_library_rounded,
+              isVideo
+                  ? Icons.video_camera_back_outlined
+                  : Icons.photo_library_rounded,
               color: Colors.white,
               size: 28,
             ),
@@ -379,8 +395,12 @@ class _CarouselHeader extends StatelessWidget {
               children: [
                 Text(
                   isVideo
-                      ? (isArabic() ? 'فيديو إقامة ${boarding.pet.name}' : "${boarding.pet.name}'s Boarding Videos")
-                      : (isArabic() ? 'صور إقامة ${boarding.pet.name}' : "${boarding.pet.name}'s Boarding Photos"),
+                      ? (isArabic()
+                          ? 'فيديو إقامة ${boarding.pet.name}'
+                          : "${boarding.pet.name}'s Boarding Videos")
+                      : (isArabic()
+                          ? 'صور إقامة ${boarding.pet.name}'
+                          : "${boarding.pet.name}'s Boarding Photos"),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -390,7 +410,10 @@ class _CarouselHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     gradient: theme.badgeGradient,
                     borderRadius: BorderRadius.circular(10),
@@ -400,7 +423,9 @@ class _CarouselHeader extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        isVideo ? Icons.video_camera_back_outlined : Icons.photo_rounded,
+                        isVideo
+                            ? Icons.video_camera_back_outlined
+                            : Icons.photo_rounded,
                         size: 16,
                         color: theme.accentTextColor,
                       ),
@@ -450,7 +475,7 @@ class _MediaCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = _DialogTheme(isDarkMode);
-    
+
     return SizedBox(
       height: 350,
       child: Stack(
@@ -462,14 +487,15 @@ class _MediaCarousel extends StatelessWidget {
               HapticFeedback.selectionClick();
             },
             itemCount: mediaList.length,
-            itemBuilder: (context, index) => _MediaItem(
-              media: mediaList[index],
-              isDarkMode: isDarkMode,
-              isVideo: isVideo,
-              theme: theme,
-            ),
+            itemBuilder:
+                (context, index) => _MediaItem(
+                  media: mediaList[index],
+                  isDarkMode: isDarkMode,
+                  isVideo: isVideo,
+                  theme: theme,
+                ),
           ),
-          
+
           // Navigation buttons
           if (mediaList.length > 1) ...[
             _NavigationButton(
@@ -485,24 +511,28 @@ class _MediaCarousel extends StatelessWidget {
               theme: theme,
             ),
           ],
-          
+
           // Share button
           if (!isVideo)
             _OverlayButton(
               top: 20,
               right: 20,
               icon: Icons.share_rounded,
-              onPressed: () => onShare(
-                imageUrlWithVetICare + mediaList[currentIndex]['imageName'],
-              ),
+              onPressed:
+                  () => onShare(
+                    imageUrlWithVetICare + mediaList[currentIndex]['imageName'],
+                  ),
               theme: theme,
             ),
-          
+
           // Media counter
           _OverlayButton(
             top: 20,
             left: 20,
-            icon: isVideo ? Icons.video_camera_back_outlined : Icons.photo_rounded,
+            icon:
+                isVideo
+                    ? Icons.video_camera_back_outlined
+                    : Icons.photo_rounded,
             label: '${currentIndex + 1}/${mediaList.length}',
             theme: theme,
           ),
@@ -530,30 +560,39 @@ class _MediaItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final mediaKey = isVideo ? 'videoName' : 'imageName';
     final mediaFileName = media[mediaKey];
-    
+
     // For videos, try multiple URL patterns since the server might use different paths
-    final mediaUrl = isVideo 
-        ? _getVideoUrl(mediaFileName)
-        : imageUrlWithVetICare + mediaFileName;
-    
+    final mediaUrl =
+        isVideo
+            ? _getVideoUrl(mediaFileName)
+            : imageUrlWithVetICare + mediaFileName;
+
     return Column(
       children: [
         Expanded(
           child: GestureDetector(
-            onTap: isVideo ? null : () => _openImageDetail(context, mediaUrl, media['note'] ?? ''),
+            onTap:
+                isVideo
+                    ? null
+                    : () => _openImageDetail(
+                      context,
+                      mediaUrl,
+                      media['note'] ?? '',
+                    ),
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 12),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: isVideo
-                    ? _buildVideo(mediaUrl, mediaFileName)
-                    : Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          _buildImage(mediaUrl),
-                          _buildGradientOverlay(),
-                        ],
-                      ),
+                child:
+                    isVideo
+                        ? _buildVideo(mediaUrl, mediaFileName)
+                        : Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            _buildImage(mediaUrl),
+                            _buildGradientOverlay(),
+                          ],
+                        ),
               ),
             ),
           ),
@@ -589,7 +628,7 @@ class _MediaItem extends StatelessWidget {
       child: Center(
         child: _VideoPlayerWithFallback(
           primaryUrl: url,
-          fallbackUrl: imageUrlWithVetICare + fileName, 
+          fallbackUrl: imageUrlWithVetICare + fileName,
           theme: theme,
         ),
       ),
@@ -603,9 +642,11 @@ class _MediaItem extends StatelessWidget {
       loadingBuilder: (context, child, loadingProgress) {
         if (loadingProgress == null) return child;
         return _LoadingIndicator(
-          progress: loadingProgress.expectedTotalBytes != null
-              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-              : null,
+          progress:
+              loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                  : null,
           theme: theme,
         );
       },
@@ -696,9 +737,7 @@ class _ErrorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: theme.secondaryGradient,
-      ),
+      decoration: BoxDecoration(gradient: theme.secondaryGradient),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -726,10 +765,7 @@ class _ErrorWidget extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             isArabic() ? 'اضغط لإعادة المحاولة' : 'Tap to retry',
-            style: TextStyle(
-              color: theme.secondaryTextColor,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: theme.secondaryTextColor, fontSize: 12),
           ),
         ],
       ),
@@ -750,7 +786,8 @@ class _VideoPlayerWithFallback extends StatefulWidget {
   });
 
   @override
-  State<_VideoPlayerWithFallback> createState() => _VideoPlayerWithFallbackState();
+  State<_VideoPlayerWithFallback> createState() =>
+      _VideoPlayerWithFallbackState();
 }
 
 class _VideoPlayerWithFallbackState extends State<_VideoPlayerWithFallback> {
@@ -759,11 +796,8 @@ class _VideoPlayerWithFallbackState extends State<_VideoPlayerWithFallback> {
   @override
   Widget build(BuildContext context) {
     final videoUrl = _useFallback ? widget.fallbackUrl : widget.primaryUrl;
-    
-    return VideoStringApp(
-      video: videoUrl,
-      key: ValueKey(videoUrl), 
-    );
+
+    return VideoStringApp(video: videoUrl, key: ValueKey(videoUrl));
   }
 }
 
@@ -833,43 +867,40 @@ class _OverlayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final child = Container(
-      padding: label != null
-          ? const EdgeInsets.symmetric(horizontal: 16, vertical: 8)
-          : null,
+      padding:
+          label != null
+              ? const EdgeInsets.symmetric(horizontal: 16, vertical: 8)
+              : null,
       decoration: BoxDecoration(
         gradient: theme.overlayGradient,
         borderRadius: BorderRadius.circular(label != null ? 25 : 30),
         border: Border.all(color: Colors.white.withOpacity(0.2)),
         boxShadow: [theme.overlayButtonShadow],
       ),
-      child: label != null
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, color: Colors.white, size: 16),
-                const SizedBox(width: 6),
-                Text(
-                  label!,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
+      child:
+          label != null
+              ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, color: Colors.white, size: 16),
+                  const SizedBox(width: 6),
+                  Text(
+                    label!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
-            )
-          : IconButton(
-              icon: Icon(icon, color: Colors.white, size: 24),
-              onPressed: onPressed,
-            ),
+                ],
+              )
+              : IconButton(
+                icon: Icon(icon, color: Colors.white, size: 24),
+                onPressed: onPressed,
+              ),
     );
 
-    return Positioned(
-      top: top,
-      left: left,
-      right: right,
-      child: child,
-    );
+    return Positioned(top: top, left: left, right: right, child: child);
   }
 }
 
@@ -888,7 +919,7 @@ class _PageIndicators extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = _DialogTheme(isDarkMode);
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Row(
@@ -903,16 +934,18 @@ class _PageIndicators extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               gradient: currentIndex == index ? theme.accentGradient : null,
-              color: currentIndex != index ? theme.inactiveIndicatorColor : null,
-              boxShadow: currentIndex == index
-                  ? [
-                      BoxShadow(
-                        color: Colors.blue.withOpacity(0.4),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ]
-                  : null,
+              color:
+                  currentIndex != index ? theme.inactiveIndicatorColor : null,
+              boxShadow:
+                  currentIndex == index
+                      ? [
+                        BoxShadow(
+                          color: Colors.blue.withOpacity(0.4),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                      : null,
             ),
           ),
         ),
@@ -931,7 +964,7 @@ class _CloseButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = _DialogTheme(isDarkMode);
-    
+
     return Padding(
       padding: const EdgeInsets.all(28),
       child: SizedBox(
@@ -945,7 +978,11 @@ class _CloseButton extends StatelessWidget {
           ),
           child: ElevatedButton.icon(
             onPressed: onClose,
-            icon: Icon(Icons.close_rounded, size: 22, color: theme.primaryTextColor),
+            icon: Icon(
+              Icons.close_rounded,
+              size: 22,
+              color: theme.primaryTextColor,
+            ),
             label: Text(
               isArabic() ? 'إغلاق' : 'Close',
               style: TextStyle(
@@ -984,7 +1021,7 @@ class _ShareSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = _DialogTheme(isDarkMode);
-    
+
     final shareOptions = [
       {
         'title': isArabic() ? 'فيسبوك' : 'Facebook',
@@ -1029,13 +1066,15 @@ class _ShareSheet extends StatelessWidget {
               borderRadius: BorderRadius.circular(3),
             ),
           ),
-          
+
           // Header
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: theme.sheetHeaderColor,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(28),
+              ),
             ),
             child: Row(
               children: [
@@ -1052,7 +1091,11 @@ class _ShareSheet extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const Icon(Icons.share_rounded, color: Colors.white, size: 26),
+                  child: const Icon(
+                    Icons.share_rounded,
+                    color: Colors.white,
+                    size: 26,
+                  ),
                 ),
                 const SizedBox(width: 18),
                 Expanded(
@@ -1070,13 +1113,18 @@ class _ShareSheet extends StatelessWidget {
                       ),
                       const SizedBox(height: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: theme.subtleBackgroundColor,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          isArabic() ? 'اختر منصة للمشاركة' : 'Choose platform to share',
+                          isArabic()
+                              ? 'اختر منصة للمشاركة'
+                              : 'Choose platform to share',
                           style: TextStyle(
                             fontSize: 13,
                             color: theme.secondaryTextColor,
@@ -1090,7 +1138,7 @@ class _ShareSheet extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Share options
           Padding(
             padding: const EdgeInsets.all(24),
@@ -1106,9 +1154,10 @@ class _ShareSheet extends StatelessWidget {
               itemCount: shareOptions.length,
               itemBuilder: (context, index) {
                 final option = shareOptions[index];
-                final platformColor = isDarkMode
-                    ? (option['darkColor'] as Color)
-                    : (option['color'] as Color);
+                final platformColor =
+                    isDarkMode
+                        ? (option['darkColor'] as Color)
+                        : (option['color'] as Color);
 
                 return _ShareOptionButton(
                   option: option,
@@ -1242,10 +1291,7 @@ class _GradientButton extends StatelessWidget {
           icon: Icon(icon, size: 20),
           label: Text(
             label,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.transparent,
@@ -1270,131 +1316,163 @@ class _DialogTheme {
 
   // Text colors
   Color get primaryTextColor => isDarkMode ? Colors.white : Colors.black87;
-  Color get secondaryTextColor => isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600;
-  Color get accentTextColor => isDarkMode ? Colors.blue.shade300 : Colors.blue.shade700;
+  Color get secondaryTextColor =>
+      isDarkMode ? Colors.grey.shade400 : Colors.grey.shade600;
+  Color get accentTextColor =>
+      isDarkMode ? Colors.blue.shade300 : Colors.blue.shade700;
 
   // Background colors
-  Color get subtleBackgroundColor => isDarkMode 
-      ? Colors.grey.shade800.withOpacity(0.5) 
-      : Colors.grey.shade100;
-  Color get sheetHeaderColor => isDarkMode
-      ? Colors.grey.shade800.withOpacity(0.3)
-      : Colors.blue.shade50;
+  Color get subtleBackgroundColor =>
+      isDarkMode ? Colors.grey.shade800.withOpacity(0.5) : Colors.grey.shade100;
+  Color get sheetHeaderColor =>
+      isDarkMode ? Colors.grey.shade800.withOpacity(0.3) : Colors.blue.shade50;
 
   // Border colors
-  Color get borderColor => isDarkMode 
-      ? Colors.grey.shade700.withOpacity(0.5) 
-      : Colors.grey.shade200.withOpacity(0.5);
-  Color get badgeBorderColor => isDarkMode ? Colors.grey.shade600 : Colors.blue.shade200;
-  Color get closeButtonBorderColor => isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400;
+  Color get borderColor =>
+      isDarkMode
+          ? Colors.grey.shade700.withOpacity(0.5)
+          : Colors.grey.shade200.withOpacity(0.5);
+  Color get badgeBorderColor =>
+      isDarkMode ? Colors.grey.shade600 : Colors.blue.shade200;
+  Color get closeButtonBorderColor =>
+      isDarkMode ? Colors.grey.shade600 : Colors.grey.shade400;
 
   // Icon colors
-  Color get iconColor => isDarkMode ? Colors.grey.shade500 : Colors.grey.shade600;
+  Color get iconColor =>
+      isDarkMode ? Colors.grey.shade500 : Colors.grey.shade600;
 
   // Overlay colors
-  Color get overlayColor => isDarkMode 
-      ? Colors.black.withOpacity(0.7) 
-      : Colors.black.withOpacity(0.5);
-  Color get accentColor => isDarkMode ? Colors.blue.shade400 : Colors.blue.shade600;
+  Color get overlayColor =>
+      isDarkMode
+          ? Colors.black.withOpacity(0.7)
+          : Colors.black.withOpacity(0.5);
+  Color get accentColor =>
+      isDarkMode ? Colors.blue.shade400 : Colors.blue.shade600;
 
   // Shimmer colors
-  Color get shimmerBaseColor => isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300;
-  Color get shimmerHighlightColor => isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100;
+  Color get shimmerBaseColor =>
+      isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300;
+  Color get shimmerHighlightColor =>
+      isDarkMode ? Colors.grey.shade700 : Colors.grey.shade100;
 
   // Indicator colors
-  Color get inactiveIndicatorColor => isDarkMode ? Colors.grey.shade600 : Colors.grey.shade300;
+  Color get inactiveIndicatorColor =>
+      isDarkMode ? Colors.grey.shade600 : Colors.grey.shade300;
 
   // Gradients
   LinearGradient get dialogGradient => LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: isDarkMode
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors:
+        isDarkMode
             ? [Colors.grey.shade900, Colors.grey.shade800, Colors.black87]
             : [Colors.white, Colors.grey.shade50, Colors.blue.shade50],
-      );
+  );
 
   LinearGradient get headerGradient => LinearGradient(
-        colors: isDarkMode
-            ? [Colors.grey.shade800.withOpacity(0.7), Colors.grey.shade900.withOpacity(0.3)]
+    colors:
+        isDarkMode
+            ? [
+              Colors.grey.shade800.withOpacity(0.7),
+              Colors.grey.shade900.withOpacity(0.3),
+            ]
             : [Colors.blue.shade50, Colors.grey.shade50],
-      );
+  );
 
   LinearGradient get accentGradient => LinearGradient(
-        colors: isDarkMode
+    colors:
+        isDarkMode
             ? [Colors.blue.shade700, Colors.blue.shade800]
             : [Colors.blue.shade400, Colors.blue.shade600],
-      );
+  );
 
   LinearGradient get badgeGradient => LinearGradient(
-        colors: isDarkMode
+    colors:
+        isDarkMode
             ? [Colors.grey.shade700, Colors.grey.shade800]
             : [Colors.blue.shade100, Colors.blue.shade50],
-      );
+  );
 
   LinearGradient get secondaryGradient => LinearGradient(
-        colors: isDarkMode
+    colors:
+        isDarkMode
             ? [Colors.grey.shade800, Colors.grey.shade900]
             : [Colors.grey.shade100, Colors.grey.shade200],
-      );
+  );
 
-  LinearGradient get overlayGradient => LinearGradient(
-        colors: [overlayColor, overlayColor.withOpacity(0.8)],
-      );
+  LinearGradient get overlayGradient =>
+      LinearGradient(colors: [overlayColor, overlayColor.withOpacity(0.8)]);
 
   LinearGradient get closeButtonGradient => LinearGradient(
-        colors: isDarkMode
+    colors:
+        isDarkMode
             ? [Colors.grey.shade700, Colors.grey.shade800]
             : [Colors.grey.shade200, Colors.grey.shade300],
-      );
+  );
 
   LinearGradient get buttonGradient => LinearGradient(
-        colors: isDarkMode
+    colors:
+        isDarkMode
             ? [Colors.blue.shade700, Colors.blue.shade800]
             : [Colors.blue.shade500, Colors.blue.shade600],
-      );
+  );
 
   LinearGradient get shareButtonGradient => LinearGradient(
-        colors: isDarkMode
+    colors:
+        isDarkMode
             ? [Colors.grey.shade800, Colors.grey.shade900]
             : [Colors.white, Colors.grey.shade50],
-      );
+  );
 
   LinearGradient get handleBarGradient => LinearGradient(
-        colors: isDarkMode
+    colors:
+        isDarkMode
             ? [Colors.grey.shade600, Colors.grey.shade500]
             : [Colors.grey.shade400, Colors.grey.shade300],
-      );
+  );
 
   // Shadows
   BoxShadow get dialogShadow => BoxShadow(
-        color: isDarkMode ? Colors.black.withOpacity(0.7) : Colors.black.withOpacity(0.15),
-        blurRadius: 40,
-        offset: const Offset(0, 20),
-      );
+    color:
+        isDarkMode
+            ? Colors.black.withOpacity(0.7)
+            : Colors.black.withOpacity(0.15),
+    blurRadius: 40,
+    offset: const Offset(0, 20),
+  );
 
   BoxShadow get overlayButtonShadow => BoxShadow(
-        color: Colors.black.withOpacity(0.3),
-        blurRadius: 10,
-        offset: const Offset(0, 4),
-      );
+    color: Colors.black.withOpacity(0.3),
+    blurRadius: 10,
+    offset: const Offset(0, 4),
+  );
 
   BoxShadow get buttonShadow => BoxShadow(
-        color: isDarkMode ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.1),
-        blurRadius: 10,
-        offset: const Offset(0, 4),
-      );
+    color:
+        isDarkMode
+            ? Colors.black.withOpacity(0.3)
+            : Colors.black.withOpacity(0.1),
+    blurRadius: 10,
+    offset: const Offset(0, 4),
+  );
 
   BoxShadow get shareButtonShadow => BoxShadow(
-        color: isDarkMode ? Colors.black.withOpacity(0.3) : Colors.black.withOpacity(0.05),
-        blurRadius: 10,
-        offset: const Offset(0, 4),
-      );
+    color:
+        isDarkMode
+            ? Colors.black.withOpacity(0.3)
+            : Colors.black.withOpacity(0.05),
+    blurRadius: 10,
+    offset: const Offset(0, 4),
+  );
 
   BoxShadow get sheetShadow => BoxShadow(
-        color: isDarkMode ? Colors.black.withOpacity(0.6) : Colors.black.withOpacity(0.1),
-        blurRadius: 25,
-        offset: const Offset(0, -8),
-      );
+    color:
+        isDarkMode
+            ? Colors.black.withOpacity(0.6)
+            : Colors.black.withOpacity(0.1),
+    blurRadius: 25,
+    offset: const Offset(0, -8),
+  );
 }
 
 // Helper functions
@@ -1405,21 +1483,23 @@ void showEnhancedImageCarousel(
   bool isVideo = false,
   bool? isDarkMode,
 }) {
-  final effectiveDarkMode = isDarkMode ?? Theme.of(context).brightness == Brightness.dark;
-  
+  final effectiveDarkMode =
+      isDarkMode ?? Theme.of(context).brightness == Brightness.dark;
+
   showDialog(
     context: context,
     barrierDismissible: true,
     barrierColor: effectiveDarkMode ? Colors.black87 : Colors.black54,
-    builder: (context) => ImageCarouselWidget(
-      open: true,
-      onOpenChange: (open) {
-        if (!open) Navigator.of(context).pop();
-      },
-      boarding: boarding,
-      onShare: onShare,
-      isVideo: isVideo,
-      isDarkMode: effectiveDarkMode,
-    ),
+    builder:
+        (context) => ImageCarouselWidget(
+          open: true,
+          onOpenChange: (open) {
+            if (!open) Navigator.of(context).pop();
+          },
+          boarding: boarding,
+          onShare: onShare,
+          isVideo: isVideo,
+          isDarkMode: effectiveDarkMode,
+        ),
   );
 }

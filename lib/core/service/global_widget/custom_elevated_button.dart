@@ -22,18 +22,17 @@ class CustomElevatedButton extends StatelessWidget {
       height: 50,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           backgroundColor: ColorManager.primaryColor,
         ),
-        onPressed: isLoading
-            ? null
-            : () {
-                if (formKey.currentState!.validate()) {
-                  onPressed();
-                }
-              },
+        onPressed:
+            isLoading
+                ? null
+                : () {
+                  if (formKey.currentState!.validate()) {
+                    onPressed();
+                  }
+                },
         child: isLoading ? CircularProgressIndicator() : Text(buttonText),
       ),
     );

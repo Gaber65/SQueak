@@ -1,4 +1,1 @@
-enum AppointmentNavigationAction {
-  goToHome,
-  goToRate,
-}
+enum AppointmentNavigationAction { goToHome, goToRate }

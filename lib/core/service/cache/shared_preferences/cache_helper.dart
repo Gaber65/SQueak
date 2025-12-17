@@ -14,7 +14,7 @@ class CacheHelper {
 
     final encrypted = List<int>.generate(
       dataBytes.length,
-          (i) => dataBytes[i] ^ keyBytes[i % keyBytes.length],
+      (i) => dataBytes[i] ^ keyBytes[i % keyBytes.length],
     );
 
     return base64.encode(encrypted);
@@ -26,7 +26,7 @@ class CacheHelper {
 
     final decrypted = List<int>.generate(
       encryptedBytes.length,
-          (i) => encryptedBytes[i] ^ keyBytes[i % keyBytes.length],
+      (i) => encryptedBytes[i] ^ keyBytes[i % keyBytes.length],
     );
 
     return utf8.decode(decrypted);
@@ -46,7 +46,10 @@ class CacheHelper {
         return await sharedPreferences.setStringList(key, value);
       } else if (value is Map<String, dynamic>) {
         final jsonStr = json.encode(value);
-        return await sharedPreferences.setString(key, _xorEncrypt(jsonStr, key));
+        return await sharedPreferences.setString(
+          key,
+          _xorEncrypt(jsonStr, key),
+        );
       }
       throw Exception('Unsupported data type');
     } catch (e) {
@@ -74,6 +77,5 @@ class CacheHelper {
   static Future<bool> removeData(String key) async =>
       await sharedPreferences.remove(key);
 
-  static Future<bool> clearData() async =>
-      await sharedPreferences.clear();
+  static Future<bool> clearData() async => await sharedPreferences.clear();
 }

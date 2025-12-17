@@ -7,14 +7,10 @@ import '../community/controller/community_cubit.dart';
 import '../widget/edit_post/edit_post_controller.dart';
 import '../widget/edit_post/edit_post_ui.dart';
 
-
 class EditPostScreen extends StatefulWidget {
   final PostEntity postEntity;
 
-  const EditPostScreen({
-    super.key,
-    required this.postEntity,
-  });
+  const EditPostScreen({super.key, required this.postEntity});
 
   @override
   State<EditPostScreen> createState() => _EditPostScreenState();
@@ -44,11 +40,14 @@ class _EditPostScreenState extends State<EditPostScreen>
   void _initializeData() {
     petID =
         widget.postEntity.petOwner?.petId ?? CacheHelper.getData('petId') ?? '';
-    name = widget.postEntity.petOwner?.petName ?? CacheHelper.getData('name') ??
+    name =
+        widget.postEntity.petOwner?.petName ??
+        CacheHelper.getData('name') ??
         '';
-    image = widget.postEntity.petOwner?.imageName != null
-        ? imageUrl + widget.postEntity.petOwner!.imageName!
-        : '';
+    image =
+        widget.postEntity.petOwner?.imageName != null
+            ? imageUrl + widget.postEntity.petOwner!.imageName!
+            : '';
   }
 
   @override
@@ -61,16 +60,13 @@ class _EditPostScreenState extends State<EditPostScreen>
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => sl<PostCubit>(),
-        ),
-        BlocProvider(
-          create: (context) => CommunityCubit(),
-        ),
+        BlocProvider(create: (context) => sl<PostCubit>()),
+        BlocProvider(create: (context) => CommunityCubit()),
       ],
       child: BlocListener<PostCubit, PostState>(
-        listener: (context, state) =>
-            _controller.handlePostStateChanges(context, state),
+        listener:
+            (context, state) =>
+                _controller.handlePostStateChanges(context, state),
         child: EditPostUI(controller: _controller, widget: widget),
       ),
     );

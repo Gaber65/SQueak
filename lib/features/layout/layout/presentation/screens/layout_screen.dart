@@ -10,7 +10,9 @@ import '../../../../settings/persentaion/controller/setting_cubit.dart';
 import '../widgets/update_dialog.dart';
 
 class LayoutScreen extends StatefulWidget {
-  const LayoutScreen({super.key});
+  final bool showPostCreatedSnackbar;
+
+  const LayoutScreen({super.key, this.showPostCreatedSnackbar = false});
 
   @override
   State<LayoutScreen> createState() => _LayoutScreenState();
@@ -27,6 +29,66 @@ class _LayoutScreenState extends State<LayoutScreen>
   void initState() {
     // print(CacheHelper.getData('havePets'));
     super.initState();
+
+    if (widget.showPostCreatedSnackbar) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check_circle_rounded,
+                      color: Color(0xFF10B981),
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Post created successfully!',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'تم إنشاء المنشور بنجاح!',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.white.withOpacity(0.9),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: const Color(0xFF10B981),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              duration: const Duration(seconds: 3),
+              elevation: 6,
+            ),
+          );
+        });
+      });
+    }
 
     MainCubit.get(context).saveToken();
     MainCubit.get(
@@ -62,11 +124,10 @@ class _LayoutScreenState extends State<LayoutScreen>
         BlocProvider(
           create:
               (context) =>
-          sl<LayoutCubit>()
-            ..getAppVersion()
-            ..getVersion(),
+                  sl<LayoutCubit>()
+                    ..getAppVersion()
+                    ..getVersion(),
         ),
-
       ],
       child: BlocConsumer<LayoutCubit, LayoutState>(
         listener: (context, state) async {
@@ -152,7 +213,9 @@ class _LayoutScreenState extends State<LayoutScreen>
                           icon,
                           size: isActive ? 30 : 26,
                           color:
-                          isActive ? ColorManager.primaryColor : Colors.grey,
+                              isActive
+                                  ? ColorManager.primaryColor
+                                  : Colors.grey,
                         ),
                         const SizedBox(height: 2),
                         Flexible(
@@ -161,9 +224,9 @@ class _LayoutScreenState extends State<LayoutScreen>
                             style: TextStyle(
                               fontSize: 12,
                               color:
-                              isActive
-                                  ? ColorManager.primaryColor
-                                  : Colors.grey,
+                                  isActive
+                                      ? ColorManager.primaryColor
+                                      : Colors.grey,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),

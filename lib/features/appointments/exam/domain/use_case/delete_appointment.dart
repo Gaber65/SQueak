@@ -2,7 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 
-class DeleteAppointmentUseCase implements BaseUseCase<Unit, DeleteAppointmentParams> {
+class DeleteAppointmentUseCase
+    implements BaseUseCase<Unit, DeleteAppointmentParams> {
   final AppointmentRepository repository;
 
   DeleteAppointmentUseCase(this.repository);

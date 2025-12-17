@@ -4,6 +4,6 @@ class ImageModel extends ImageEntity {
   const ImageModel({required super.data});
 
   factory ImageModel.fromJson(Map<String, dynamic> json) {
-    return ImageModel(data: json['message']);
+    return ImageModel(data: json['message'] ?? '');
   }
 }

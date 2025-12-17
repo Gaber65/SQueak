@@ -8,11 +8,11 @@ AppBar buildAppBar(BuildContext context, CommentState state) {
     centerTitle: true,
     title: Text(S.of(context).comments),
     bottom:
-    (state is DeleteCommentLoading)
-        ? PreferredSize(
-      preferredSize: const Size.fromHeight(1.0),
-      child: LinearProgressIndicator(),
-    )
-        : null,
+        (state is DeleteCommentLoading)
+            ? PreferredSize(
+              preferredSize: const Size.fromHeight(1.0),
+              child: LinearProgressIndicator(),
+            )
+            : null,
   );
 }

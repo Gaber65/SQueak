@@ -44,9 +44,10 @@ class DateFieldWidget extends StatelessWidget {
                     child: Text(
                       controller.text.isEmpty ? 'Select data' : controller.text,
                       style: TextStyle(
-                        color: controller.text.isEmpty 
-                            ? Colors.grey.shade600 
-                            : Colors.black,
+                        color:
+                            controller.text.isEmpty
+                                ? Colors.grey.shade600
+                                : Colors.black,
                       ),
                     ),
                   ),
@@ -80,7 +81,9 @@ class DateFieldWidget extends StatelessWidget {
         final TimeOfDay? pickedTime = await showTimePicker(
           // ignore: use_build_context_synchronously
           context: context,
-          initialTime: TimeOfDay.fromDateTime(selectedDateTime ?? DateTime.now()),
+          initialTime: TimeOfDay.fromDateTime(
+            selectedDateTime ?? DateTime.now(),
+          ),
         );
 
         if (pickedTime != null) {

@@ -1,4 +1,3 @@
-
 import 'package:squeak/features/auth/password/domin/repositries/password_repository.dart';
 
 class ForgetPasswordUseCase {

@@ -26,7 +26,9 @@ class CompactAuthHeader extends StatelessWidget {
     return Stack(
       children: [
         Positioned.fill(
-          child: RepaintBoundary(child: CustomPaint(painter: PawPatternPainter())),
+          child: RepaintBoundary(
+            child: CustomPaint(painter: PawPatternPainter()),
+          ),
         ),
         if (showHelpButton)
           Positioned(

@@ -8,7 +8,7 @@ class ApiLoggerInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     final id = options.hashCode.toString();
-    
+
     // Store start time
     _startTimes[id] = DateTime.now();
 
@@ -18,7 +18,9 @@ class ApiLoggerInterceptor extends Interceptor {
         id: id,
         method: options.method,
         url: options.uri.toString(),
-        requestHeaders: options.headers.map((key, value) => MapEntry(key, value.toString())),
+        requestHeaders: options.headers.map(
+          (key, value) => MapEntry(key, value.toString()),
+        ),
         requestBody: options.data,
         timestamp: DateTime.now(),
       ),
