@@ -5,6 +5,7 @@ import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/features/layout/post/presentation/widget/post_item.dart';
 import 'package:squeak/features/layout/stories/presentation/pages/stroy_page.dart';
 
+import '../../../stories/presentation/controllers/story_cubit.dart';
 import 'add_post_form.dart';
 import '../controller/post_cubit.dart';
 import 'build_post_item_shimmer.dart';
@@ -115,6 +116,7 @@ NotificationListener<ScrollNotification> buildNotificationListenerUserPosts(
     child: RefreshIndicator(
       onRefresh: () async {
         await cubit.handleRefresh(petId);
+        await StoryCubit.get(context).loadAllFriendStories(petId);
       },
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),

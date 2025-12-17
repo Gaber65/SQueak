@@ -24,9 +24,18 @@ class _CreateStoryModalState extends State<CreateStoryModal> {
   Future<void> _pickImage() async {
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (picked != null && mounted) {
-      setState(() => _selectedFile = File(picked.path));
+      final file = File(picked.path);
+      final sizeInMB = await file.length() / (1024 * 1024); // bytes → MB
+
+      if (sizeInMB > 10) {
+        errorToast(context, "Image is too large. Max size is 10 MB.");
+        return;
+      }
+
+      setState(() => _selectedFile = file);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

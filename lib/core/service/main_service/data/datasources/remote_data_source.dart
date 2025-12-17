@@ -150,46 +150,73 @@ class MainRemoteDataSource {
     }
   }
 
+  int maxFileSizeInBytes = 5 * 1024 * 1024; // 5MB
   Future<ImageModel> uploadFile(
-    File file,
-    String endpoint,
-    int uploadPlace,
-    String type,
-    String subtype,
-  ) async {
+      File file,
+      String endpoint,
+      int uploadPlace,
+      String type,
+      String subtype,
+      ) async {
     String fileName = file.path.split('/').last;
+
+    // التحقق من حجم الملف قبل الرفع
+    final fileSize = await file.length();
+    if (fileSize > maxFileSizeInBytes) {
+      throw Exception(
+        'File size is too large (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB). Max allowed: 5 MB',
+      );
+    }
+
     try {
-      File fileToUpload = file;
-      
+      MultipartFile multipartFile;
 
-      if (type == 'image' && subtype != 'gif') {
-        fileToUpload = await compressImage(file);
+      if (type == 'image' && subtype == 'gif') {
+        // رفع GIF من الملف الأصلي كما هو
+        multipartFile = await MultipartFile.fromFile(
+          file.path,
+          filename: fileName,
+          contentType: MediaType('image', 'gif'),
+        );
+      } else if (type == 'image') {
+        // ضغط الصور العادية قبل الرفع
+        File fileToUpload = await compressImage(file);
+        multipartFile = await MultipartFile.fromFile(
+          fileToUpload.path,
+          filename: fileName,
+          contentType: MediaType(type, subtype),
+        );
+      } else {
+        // رفع أي ملفات أخرى كما هي
+        multipartFile = await MultipartFile.fromFile(
+          file.path,
+          filename: fileName,
+          contentType: MediaType(type, subtype),
+        );
       }
-      
-      String filePath = fileToUpload.path;
-      debugPrint('📤 Uploading $type file: $fileName to endpoint: $endpoint');
-      debugPrint('📦 Upload place: $uploadPlace, Content-Type: $type/$subtype');
 
+      debugPrint('📤 Uploading $type/$subtype file: $fileName to endpoint: $endpoint');
+      debugPrint('📦 Upload place: $uploadPlace');
+
+      // إرسال البيانات
       Response response = await DioFinalHelper.postData(
         method: endpoint,
         data: FormData.fromMap({
-          "File": await MultipartFile.fromFile(
-            filePath,
-            filename: fileName,
-            contentType: MediaType(type, subtype),
-          ),
+          'File': multipartFile,
           'UploadPlace': '$uploadPlace',
         }),
       );
+
       return ImageModel.fromJson(response.data);
     } on DioException catch (e) {
-      // Handle cases where response might be null (network errors, timeouts, etc.)
+      debugPrint('Dio error: ${e.error}');
+      debugPrint('Dio response: ${e.response?.data}');
+
       if (e.response != null && e.response!.data != null) {
         throw ServerException(
           errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
         );
       } else {
-        // Create a fallback error model for network/connection errors
         throw ServerException(
           errorMessageModel: ErrorMessageModel(
             errors: {},

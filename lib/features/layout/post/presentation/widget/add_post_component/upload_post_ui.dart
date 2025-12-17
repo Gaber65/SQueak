@@ -437,36 +437,42 @@ class UploadPostUI extends StatelessWidget {
 
   Widget _buildMediaItem(CommunityCubit cubit, int index) {
     final isUploading = controller.isLoading;
+    final file = cubit.mediaFiles[index];
+    final type = cubit.mediaTypes[index];
+
+    bool isImage = type.startsWith('image'); // JPG, PNG, GIF, WebP
+    bool isVideo = type == 'video';
 
     return Stack(
       children: [
         Container(
           color: Colors.grey[200],
-          child:
-              cubit.mediaTypes[index] == 'image'
-                  ? Image.file(
-                      cubit.mediaFiles[index],
-                      width: double.infinity,
-                      height: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return _buildVideoThumbnail(cubit.mediaFiles[index]);
-                      },
-                    )
-                  : _buildVideoThumbnail(cubit.mediaFiles[index]),
+          child: isImage
+              ? Image.file(
+            file,
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              // لو حصل أي مشكلة في الصورة، اعرض thumbnail فيديو
+              return _buildVideoThumbnail(file);
+            },
+          )
+              : _buildVideoThumbnail(file),
         ),
 
         // Upload overlay
         if (isUploading)
           Container(
             color: Colors.black54,
-            child: Center(
+            child: const Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
             ),
           ),
 
+        // زر إزالة الملف
         Positioned(
           top: 8,
           right: 8,
@@ -483,7 +489,8 @@ class UploadPostUI extends StatelessWidget {
           ),
         ),
 
-        if (cubit.mediaTypes[index] == 'video')
+        // Badge للفيديو
+        if (isVideo)
           Positioned(
             bottom: 8,
             left: 8,

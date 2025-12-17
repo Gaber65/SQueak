@@ -40,7 +40,6 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 80,
     );
 
     if (pickedFile != null) {

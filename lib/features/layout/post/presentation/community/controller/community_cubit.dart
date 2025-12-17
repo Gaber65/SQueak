@@ -24,33 +24,55 @@ class CommunityCubit extends Cubit<CommunityState> {
   // Pick multiple images - now supports both images and videos
   Future<void> pickMultipleImages({required ImageSource source}) async {
     try {
-      // Use pickMultipleMedia to allow selecting both images and videos
-      final List<XFile> pickedFiles = await picker.pickMultipleMedia(
-        maxWidth: 1920,
-        maxHeight: 1080,
-        imageQuality: 85,
-      );
+      final List<XFile> pickedFiles = await picker.pickMultipleMedia();
 
-      if (pickedFiles.isNotEmpty) {
-        if (mediaFiles.length + pickedFiles.length > maxMediaFiles) {
-          emit(
-            MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'),
-          );
-          return;
-        }
+      if (pickedFiles.isEmpty) return;
 
-        for (var file in pickedFiles) {
-          mediaFiles.add(File(file.path));
-          // Detect actual file type based on MIME type or extension
-          final fileType = _detectMediaType(file);
-          mediaTypes.add(fileType);
-        }
-        emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
+      if (mediaFiles.length + pickedFiles.length > maxMediaFiles) {
+        emit(MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'));
+        return;
       }
+
+      for (var file in pickedFiles) {
+        final fileObj = File(file.path);
+        final fileType = _detectImageType(file);
+
+        // تحقق من نوع الصورة
+        if (fileType == 'unsupported') {
+          emit(MediaSelectionErrorState(
+              'Unsupported file type: ${file.name}. Supported types: JPG, PNG, GIF, WebP'));
+          continue;
+        }
+
+        // تحقق من حجم الصورة
+        final fileSize = await fileObj.length();
+        if (fileSize > 10 * 1024 * 1024) { // 10MB
+          emit(MediaSelectionErrorState(
+              'File ${file.name} is too large (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB). Max allowed: 10 MB'));
+          continue;
+        }
+
+        // إضافة الملف المقبول
+        mediaFiles.add(fileObj);
+        mediaTypes.add(fileType);
+      }
+
+      emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
     } catch (e) {
-      emit(MediaSelectionErrorState('Failed to pick images: $e'));
+      emit(MediaSelectionErrorState('Failed to pick media: $e'));
     }
   }
+
+// كشف نوع الصورة بناءً على الامتداد
+  String _detectImageType(XFile file) {
+    final path = file.path.toLowerCase();
+    if (path.endsWith('.jpg') || path.endsWith('.jpeg')) return 'image/jpeg';
+    if (path.endsWith('.png')) return 'image/png';
+    if (path.endsWith('.gif')) return 'image/gif';
+    if (path.endsWith('.webp')) return 'image/webp';
+    return 'unsupported';
+  }
+
 
   // Pick multiple videos
   Future<void> pickMultipleVideos({required ImageSource source}) async {

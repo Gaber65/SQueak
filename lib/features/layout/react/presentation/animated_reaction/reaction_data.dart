@@ -1,5 +1,6 @@
 class ReactionData {
   static List<String> facebookReactionIcon = [
+    unActiveReactionImage,
     "assets/react/cat/like.gif",
     "assets/react/cat/love.gif",
     "assets/react/cat/haha.gif",

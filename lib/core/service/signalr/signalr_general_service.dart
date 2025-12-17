@@ -154,8 +154,7 @@ class _GeneralHubManager {
     try {
       _logger.info('Connecting to GeneralHub for petId: $petId');
 
-      final urlWithParams =
-          '$generalHubEndPoint?petId=$petId&fullName=${fullName ?? ''}&image=${image ?? ''}';
+      final urlWithParams = '$generalHubEndPoint?petId=$petId&fullName=${fullName ?? ''}&image=${image ?? ''}';
 
       _connection =
           HubConnectionBuilder()

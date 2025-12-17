@@ -268,7 +268,7 @@ class StoryReactionsView extends StatelessWidget {
 
                     // Reaction Type & Time
                     Text(
-                      '${ReactionData.facebookReactionText[type.value]} • ${_formatTime(reaction.reactedAt)}',
+                      '• ${_formatTime(reaction.reactedAt)}',
                       style: TextStyle(
                         fontSize: 13,
                         color:
