@@ -6,6 +6,7 @@ class StoryEntity {
   final String description;
   final DateTime issueDate;
   final DateTime expireDate;
+  final DateTime createdAt;
   final String petName;
   final String petImage;
   final bool isViewed;
@@ -17,6 +18,7 @@ class StoryEntity {
     this.image,
     this.video,
     required this.isViewed,
+    required this.createdAt,
     required this.myReactType,
     required this.description,
     required this.issueDate,
@@ -28,6 +30,7 @@ class StoryEntity {
   StoryEntity copyWith({bool? isViewed, int? myReactType}) {
     return StoryEntity(
       id: id,
+      createdAt: createdAt,
       petId: petId,
       image: image,
       video: video,
