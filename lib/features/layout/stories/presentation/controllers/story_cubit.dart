@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/network/dio.dart';
-import '../../../react/domain/entities/react_entities.dart';
 import '../../domain/entities/story.dart';
 import '../../domain/repositories/story_repository.dart';
 import '../../domain/usecases/create_story.dart';
