@@ -529,20 +529,28 @@ class EditPostUI extends StatelessWidget {
 
   Widget _buildNewMediaItem(CommunityCubit cubit, int index) {
     final isUploading = controller.isLoading;
+    final file = cubit.mediaFiles[index];
+    final type = cubit.mediaTypes[index];
+
+    bool isImage = type.startsWith('image'); // JPG, PNG, GIF, WebP
+    bool isVideo = type == 'video';
 
     return Stack(
       children: [
         Container(
           color: Colors.grey[200],
-          child:
-              cubit.mediaTypes[index] == 'image'
-                  ? Image.file(
-                    cubit.mediaFiles[index],
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
-                  )
-                  : _buildVideoThumbnail(cubit.mediaFiles[index]),
+          child: isImage
+              ? Image.file(
+            file,
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              // لو حصل أي مشكلة في الصورة، اعرض thumbnail فيديو
+              return _buildVideoThumbnail(file);
+            },
+          )
+              : _buildVideoThumbnail(file),
         ),
 
         // Upload overlay
@@ -556,7 +564,7 @@ class EditPostUI extends StatelessWidget {
             ),
           ),
 
-        // Remove button
+        // زر إزالة الملف
         Positioned(
           top: 8,
           right: 8,
@@ -573,8 +581,8 @@ class EditPostUI extends StatelessWidget {
           ),
         ),
 
-        // Video badge
-        if (cubit.mediaTypes[index] == 'video')
+        // Badge للفيديو
+        if (isVideo)
           Positioned(
             bottom: 8,
             left: 8,
@@ -584,9 +592,9 @@ class EditPostUI extends StatelessWidget {
                 color: Colors.black54,
                 borderRadius: BorderRadius.circular(4),
               ),
-              child: Text(
-                isArabic() ? 'فيديو' : 'VIDEO',
-                style: const TextStyle(
+              child: const Text(
+                'VIDEO',
+                style: TextStyle(
                   color: Colors.white,
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
@@ -594,27 +602,6 @@ class EditPostUI extends StatelessWidget {
               ),
             ),
           ),
-
-        // New badge
-        Positioned(
-          top: 8,
-          left: 8,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: Colors.orange[700],
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              isArabic() ? 'جديد' : 'NEW',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 9,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }

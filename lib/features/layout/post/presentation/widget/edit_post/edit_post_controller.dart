@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
@@ -165,7 +167,17 @@ class EditPostController {
     existingMedia.clear();
     setState(() {});
   }
+  bool isFileSizeValid({
+    required File file,
+    required String type,
+  }) {
+    final sizeMB = file.lengthSync() / (1024 * 1024);
 
+    if (type.startsWith('image')) return sizeMB <= 10; // JPG, PNG, GIF, WebP
+    if (type == 'video') return sizeMB <= 100;
+
+    return false;
+  }
   Future<void> handlePostUpdate(
     BuildContext context,
     CommunityCubit cubit,
@@ -192,17 +204,21 @@ class EditPostController {
     }
 
     // Check file sizes for new media
-    for (final file in cubit.mediaFiles) {
-      final sizeMB = file.lengthSync() / (1024 * 1024);
-      if (sizeMB > 15) {
+    for (int i = 0; i < cubit.mediaFiles.length; i++) {
+      final file = cubit.mediaFiles[i];
+      final type = cubit.mediaTypes[i];
+
+      if (!isFileSizeValid(file: file, type: type)) {
+        final isImage = type.startsWith('image');
         return dialogs.showValidationDialog(
           context,
-          'File Too Large',
-          'File size cannot exceed 15MB.',
-          'لا يمكن أن يتجاوز حجم الملف 15 ميجابايت.',
+          isImage ? 'Image Too Large' : 'Video Too Large',
+          isImage ? 'Image size must be 10MB or less.' : 'Video size must be 100MB or less.',
+          isImage ? 'لا يمكن أن يتجاوز حجم الصورة 10 ميجابايت.' : 'لا يمكن أن يتجاوز حجم الفيديو 100 ميجابايت.',
         );
       }
     }
+
 
     // Update post
     final postCubit = PostCubit.get(context);
@@ -234,7 +250,6 @@ class EditPostController {
       // Add existing media (keep network media)
       for (var media in existingMedia) {
         postSocialMedias.add({
-          'id': media.id,
           'ImagePath': media.type == 'image' ? media.path : null,
           'VideoPath': media.type == 'video' ? media.path : null,
         });
@@ -243,7 +258,7 @@ class EditPostController {
       // Upload new media
       for (int i = 0; i < cubit.mediaFiles.length; i++) {
         final file = cubit.mediaFiles[i];
-        final isImage = cubit.mediaTypes[i] == 'image';
+        final isImage = cubit.mediaTypes[i].contains('image');
 
         if (isImage) {
           await mainCubit.getGlobalImage(file, UploadPlace.postImages);

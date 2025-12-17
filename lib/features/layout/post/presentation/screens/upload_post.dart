@@ -56,7 +56,7 @@ class _UploadPostState extends State<UploadPost>
 
     return MultiBlocProvider(
       providers: [
-//check if cubitValue is not null then provide it using BlocProvider.value else create a new one        
+        //check if cubitValue is not null then provide it using BlocProvider.value else create a new one
         if (cubitValue != null)
           BlocProvider<CommunityCubit>.value(value: cubitValue)
         else

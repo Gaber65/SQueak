@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart'
@@ -22,8 +21,8 @@ class UploadPostController {
   late Animation<Offset> slideAnimation;
   final FocusNode textFocusNode = FocusNode();
   final TextEditingController textContentEditingController =
-      TextEditingController();
-  
+  TextEditingController();
+
   bool isLoading = false;
   final ValueNotifier<bool> isLoadingNotifier = ValueNotifier<bool>(false);
   late UploadPostAnimations animations;
@@ -83,9 +82,9 @@ class UploadPostController {
 
   // Media handling methods
   Future<void> pickMultipleImages(
-    CommunityCubit cubit,
-    BuildContext context,
-  ) async {
+      CommunityCubit cubit,
+      BuildContext context,
+      ) async {
     try {
       await cubit.pickMultipleImages(source: ImageSource.gallery);
       setState(() {});
@@ -95,9 +94,9 @@ class UploadPostController {
   }
 
   Future<void> pickMultipleVideos(
-    CommunityCubit cubit,
-    BuildContext context,
-  ) async {
+      CommunityCubit cubit,
+      BuildContext context,
+      ) async {
     try {
       await cubit.pickMultipleVideos(source: ImageSource.gallery);
       setState(() {});
@@ -112,9 +111,9 @@ class UploadPostController {
   }
 
   Future<void> handlePostSubmit(
-    BuildContext context,
-    CommunityCubit cubit,
-  ) async {
+      BuildContext context,
+      CommunityCubit cubit,
+      ) async {
     final content = textContentEditingController.text.trim();
 
     // Validation
@@ -136,31 +135,22 @@ class UploadPostController {
       );
     }
 
-    // for (final file in cubit.mediaFiles) {
-    //   final sizeMB = file.lengthSync() / (1024 * 1024);
-    //   if (sizeMB >= 10) {
-    //     return dialogs.showValidationDialog(
-    //       context,
-    //       'File Too Large',
-    //       'File size cannot exceed 10MB.',
-    //       'لا يمكن أن يتجاوز حجم الملف 10 ميجابايت.',
-    //     );
-    //   }
-    // }
-
-    for (int i=0; i < cubit.mediaFiles.length; i++) {
-      final file =cubit.mediaFiles[i];
+    // Validate file sizes
+    for (int i = 0; i < cubit.mediaFiles.length; i++) {
+      final file = cubit.mediaFiles[i];
       final type = cubit.mediaTypes[i];
 
-      if(!isFileSizeValid(file:file,type:type)){
+      if (!isFileSizeValid(file: file, type: type)) {
+        final isImage = type.startsWith('image');
         return dialogs.showValidationDialog(
           context,
-          type=='image' ? 'Image Too Large' : 'Video Too Large',
-          type=='image' ? 'Image size must be 10MB or less.' : 'Video size must be 100MB or less.',
-          type=='image' ? 'لا يمكن أن يتجاوز حجم الصورة 10 ميجابايت.' : 'لا يمكن أن يتجاوز حجم الفيديو 100 ميجابايت.',
+          isImage ? 'Image Too Large' : 'Video Too Large',
+          isImage ? 'Image size must be 10MB or less.' : 'Video size must be 100MB or less.',
+          isImage ? 'لا يمكن أن يتجاوز حجم الصورة 10 ميجابايت.' : 'لا يمكن أن يتجاوز حجم الفيديو 100 ميجابايت.',
         );
       }
     }
+
     // Submit logic
     final postCubit = PostCubit.get(context);
     final mainCubit = MainCubit.get(context);
@@ -201,7 +191,8 @@ class UploadPostController {
 
       for (int i = 0; i < cubit.mediaFiles.length; i++) {
         final file = cubit.mediaFiles[i];
-        final isImage = cubit.mediaTypes[i] == 'image';
+        final type = cubit.mediaTypes[i];
+        final isImage = type.startsWith('image');
 
         if (isImage) {
           await mainCubit.getGlobalImage(file, UploadPlace.postImages);
@@ -246,7 +237,7 @@ class UploadPostController {
   void handleClose(BuildContext context, CommunityCubit cubit) {
     final hasContent =
         textContentEditingController.text.trim().isNotEmpty ||
-        cubit.mediaFiles.isNotEmpty;
+            cubit.mediaFiles.isNotEmpty;
 
     if (hasContent) {
       dialogs.showDiscardDialog(context);
@@ -258,7 +249,7 @@ class UploadPostController {
   Future<bool> onWillPop(BuildContext context, CommunityCubit cubit) async {
     final hasContent =
         textContentEditingController.text.trim().isNotEmpty ||
-        cubit.mediaFiles.isNotEmpty;
+            cubit.mediaFiles.isNotEmpty;
 
     if (hasContent) {
       final shouldPop = await dialogs.showDiscardDialog(context);
@@ -272,16 +263,16 @@ class UploadPostController {
     final arabicRegex = RegExp(r'[\u0600-\u06FF]');
     return arabicRegex.hasMatch(text) ? TextDirection.rtl : TextDirection.ltr;
   }
+
   bool isFileSizeValid({
     required File file,
     required String type,
   }) {
     final sizeMB = file.lengthSync() / (1024 * 1024);
 
-    if (type == 'image') return sizeMB <= 10; 
-    if (type == 'video') return sizeMB <= 100; 
+    if (type.startsWith('image')) return sizeMB <= 10; // JPG, PNG, GIF, WebP
+    if (type == 'video') return sizeMB <= 100;
 
     return false;
   }
 }
-

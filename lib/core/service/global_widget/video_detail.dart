@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/theme/color_mangment/color_manager.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:path_provider/path_provider.dart';
 
 /// Stateful widget to fetch and then display video content.
 class VideoStringApp extends StatefulWidget {
@@ -241,6 +243,25 @@ class _VideoStringAppState extends State<VideoStringApp> {
         ),
       ),
     );
+  }
+}
+
+Future<File?> generateVideoThumbnail(String videoUrl) async {
+  try {
+    final dir = await getTemporaryDirectory();
+    final path = await VideoThumbnail.thumbnailFile(
+      video: videoUrl,
+      thumbnailPath: dir.path,
+      imageFormat: ImageFormat.JPEG,
+      maxHeight: 400,
+      quality: 75,
+    );
+
+    if (path == null) return null;
+    return File(path);
+  } catch (e) {
+    debugPrint('Thumbnail error: $e');
+    return null;
   }
 }
 
