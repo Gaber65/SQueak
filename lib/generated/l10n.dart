@@ -4994,6 +4994,21 @@ class S {
     return Intl.message('Edit Video', name: 'editVideo', desc: '', args: []);
   }
 
+  /// `Gallery`
+  String get gallery {
+    return Intl.message('Gallery', name: 'gallery', desc: '', args: []);
+  }
+
+  /// `Create Story`
+  String get createStory {
+    return Intl.message(
+      'Create Story',
+      name: 'createStory',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Preview`
   String get preview {
     return Intl.message('Preview', name: 'preview', desc: '', args: []);

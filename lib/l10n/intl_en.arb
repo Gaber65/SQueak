@@ -598,6 +598,8 @@
   "videoLoadingFailed":"Failed to load video.",
   "editImage":"Edit Image",
   "editVideo":"Edit Video",
+  "gallery":"Gallery",
+  "createStory":"Create Story",
   "preview":"Preview",
   "audioFile":"Audio File",
   "offline":"Last seen recently",

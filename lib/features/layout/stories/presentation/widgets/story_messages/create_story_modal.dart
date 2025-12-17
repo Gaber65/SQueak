@@ -95,13 +95,11 @@ class _CreateStoryModalState extends State<CreateStoryModal> {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-
-                  /// Header
                   Row(
                     children: [
                       Expanded(
                         child: Text(
-                          "Create Story",
+                         S.of(context).createStory,
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -121,14 +119,12 @@ class _CreateStoryModalState extends State<CreateStoryModal> {
                   ),
 
                   const SizedBox(height: 24),
-
-                  /// Image Picker Options - Always Above Image
                   Row(
                     children: [
                       Expanded(
                         child: _buildPickerButton(
                           icon: Icons.photo_library_rounded,
-                          label: 'Gallery',
+                          label: S.of(context).gallery,
                           onTap: _pickImage,
                           gradient: LinearGradient(
                             colors: [
@@ -142,7 +138,7 @@ class _CreateStoryModalState extends State<CreateStoryModal> {
                       Expanded(
                         child: _buildPickerButton(
                           icon: Icons.camera_alt_rounded,
-                          label: 'Camera',
+                          label: S.of(context).camera,
                           onTap: _pickFromCamera,
                           gradient: LinearGradient(
                             colors: [
@@ -156,8 +152,6 @@ class _CreateStoryModalState extends State<CreateStoryModal> {
                   ),
 
                   const SizedBox(height: 16),
-
-                  /// Image Preview (Full Height)
                   if (_selectedFile != null)
                     Stack(
                       children: [

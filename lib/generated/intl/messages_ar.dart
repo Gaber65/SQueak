@@ -336,6 +336,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "أضف تفاصيل وصور صديقك الصغير",
     ),
     "createPost": MessageLookupByLibrary.simpleMessage("إنشاء منشور"),
+    "createStory": MessageLookupByLibrary.simpleMessage("إنشاء قصة"),
     "darkMode": MessageLookupByLibrary.simpleMessage("الوضع الداكن"),
     "dataEncryption": MessageLookupByLibrary.simpleMessage("تشفير البيانات"),
     "dataEncryptionDesc": MessageLookupByLibrary.simpleMessage(
@@ -520,6 +521,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fullName": MessageLookupByLibrary.simpleMessage("الاسم الكامل"),
     "furryFriend": MessageLookupByLibrary.simpleMessage("إضافة صديق"),
     "gaber": MessageLookupByLibrary.simpleMessage("اختبارEN"),
+    "gallery": MessageLookupByLibrary.simpleMessage("معرض الصور"),
     "gender": MessageLookupByLibrary.simpleMessage("الجنس"),
     "generalInformation": MessageLookupByLibrary.simpleMessage("معلومات عامة"),
     "goToClinicsFromPetsScreen": MessageLookupByLibrary.simpleMessage(
