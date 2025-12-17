@@ -69,7 +69,7 @@ class _PostsTabState extends State<PostsTab> {
 //  Single Post View
 class _SinglePostView extends StatelessWidget {
   final PetEntities pet;
-  final dynamic post;
+  final PostEntity post;
   final VoidCallback onBack;
 
   const _SinglePostView({

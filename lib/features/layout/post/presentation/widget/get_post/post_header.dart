@@ -46,7 +46,7 @@ class PostHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  formatFacebookTimePost(postItem.createdAt!),
+                  formatFacebookTimePost(postItem.createdAt ??''),
                   style: TextStyle(
                     color: isDark ? Colors.white54 : Colors.grey[500],
                     fontSize: 11,

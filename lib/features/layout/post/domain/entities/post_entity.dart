@@ -51,6 +51,8 @@ class PostEntity {
     this.petArereactedWithThisPost,
     this.userArereactedWithThisPost,
   });
+
+
 }
 
 class PostMediaEntity {
@@ -113,7 +115,26 @@ class PetOwnerEntity {
     required this.specieId,
     required this.imageName,
   });
+
+  PetOwnerEntity copyWith({
+    String? petName,
+    String? petId,
+    int? gender,
+    String? breedId,
+    String? specieId,
+    String? imageName,
+  }) {
+    return PetOwnerEntity(
+      petName: petName ?? this.petName,
+      petId: petId ?? this.petId,
+      gender: gender ?? this.gender,
+      breedId: breedId ?? this.breedId,
+      specieId: specieId ?? this.specieId,
+      imageName: imageName ?? this.imageName,
+    );
+  }
 }
+
 
 class MediaItem {
   final MediaType type;
