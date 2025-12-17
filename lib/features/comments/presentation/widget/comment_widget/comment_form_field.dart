@@ -55,27 +55,40 @@ Widget buildPaddingFormComment(
                 final iconColor = hasText
                     ? Theme.of(context).primaryColor
                     : (isDark ? Colors.white54 : Colors.black54);
+
                 return IconButton(
-                  onPressed: cubit.isLoading
+                  onPressed: (cubit.isLoading || !hasText)
                       ? null
                       : () {
-                          if (commentController.text.isNotEmpty) {
-                            cubit.createComment(
-                              postId: postId,
-                              content: commentController.text,
-                              petId: petID,
-                              parentId: isReplayCommentOpen
-                                  ? CacheHelper.getData('replayCommentID')
-                                  : null,
-                            );
-                          }
+                          cubit.createComment(
+                            postId: postId,
+                            content: commentController.text,
+                            petId: petID,
+                            parentId: isReplayCommentOpen
+                                ? CacheHelper.getData('replayCommentID')
+                                : null,
+                          );
                         },
                   icon: cubit.isLoading
-                      ? CircularProgressIndicator(
-                          strokeWidth: 2.0,
-                          valueColor: AlwaysStoppedAnimation<Color?>(iconColor),
+                      ? SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.0,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color?>(iconColor),
+                          ),
                         )
-                      : Icon(IconlyLight.send, color: iconColor),
+                      : (hasText
+                          ? Icon(
+                            IconlyBold.send,
+                            color: Colors.blue,
+                           
+                          )
+                          : Icon(
+                              IconlyLight.send,
+                              color: iconColor,
+                            )),
                 );
               },
             ),

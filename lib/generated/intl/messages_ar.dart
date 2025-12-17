@@ -359,6 +359,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "daysAgo": m1,
     "delete": MessageLookupByLibrary.simpleMessage("حذف"),
     "deleteComment": MessageLookupByLibrary.simpleMessage("حذف التعليق"),
+    "deleteCommentConfirmation": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد أنك تريد حذف هذا التعليق؟",
+    ),
     "deleteConfirmation": MessageLookupByLibrary.simpleMessage("تاكيد الحذف"),
     "deleteMessage": MessageLookupByLibrary.simpleMessage("حذف الرسالة"),
     "deleteMessageForEveryone": MessageLookupByLibrary.simpleMessage(

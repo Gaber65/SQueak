@@ -4,15 +4,12 @@ import 'package:squeak/features/layout/post/presentation/widget/post_item.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 import '../../../../../core/network/end_points.dart';
-import '../../../../../core/service/global_widget/video_detail.dart';
 import '../../../../layout/post/domain/entities/post_entity.dart';
 
 class PostsTab extends StatefulWidget {
   final PetEntities pet;
   final bool isDarkMode;
-
   const PostsTab({super.key, required this.pet, required this.isDarkMode});
-
   @override
   State<PostsTab> createState() => _PostsTabState();
 }
@@ -25,7 +22,6 @@ class _PostsTabState extends State<PostsTab> {
 
   @override
   Widget build(BuildContext context) {
-    // If a post is selected, show it in single view
     if (_selectedPostIndex != null) {
       return _SinglePostView(
         pet: widget.pet,
@@ -66,7 +62,7 @@ class _PostsTabState extends State<PostsTab> {
   }
 }
 
-//  Single Post View
+
 class _SinglePostView extends StatelessWidget {
   final PetEntities pet;
   final PostEntity post;
@@ -82,7 +78,6 @@ class _SinglePostView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Header with back button
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: Row(
@@ -106,7 +101,6 @@ class _SinglePostView extends StatelessWidget {
             ],
           ),
         ),
-        // Post content
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
@@ -118,7 +112,6 @@ class _SinglePostView extends StatelessWidget {
   }
 }
 
-//Header Widget
 class _PostsHeader extends StatelessWidget {
   final int postsCount;
   final bool isGridView;
@@ -161,7 +154,7 @@ class _PostsHeader extends StatelessWidget {
   }
 }
 
-// View Toggle Button
+
 class _ViewToggleButton extends StatelessWidget {
   final bool isGridView;
   final ValueChanged<bool> onViewChanged;
@@ -250,7 +243,7 @@ class _ToggleIconButton extends StatelessWidget {
   }
 }
 
-// List View
+
 class _PostsListView extends StatelessWidget {
   final PetEntities pet;
   final List posts;
@@ -277,7 +270,7 @@ class _PostsListView extends StatelessWidget {
   }
 }
 
-//  Grid View
+
 class _PostsGridView extends StatelessWidget {
   final PetEntities pet;
   final List posts;
@@ -315,8 +308,6 @@ class _PostsGridView extends StatelessWidget {
   }
 }
 
-//  Grid Item
-// Grid Item
 class _PostGridItem extends StatelessWidget {
   final PetEntities pet;
   final PostEntity post;
@@ -360,18 +351,14 @@ class _PostGridItem extends StatelessWidget {
     if (images.isEmpty && videos.isEmpty) {
       return _PostPlaceholder(index: index, title: post.title);
     }
-
-    // لو في صورة واحدة فقط
+  
     if (images.length == 1 && videos.isEmpty) {
       return _PostImage(imagePath: images.first.imagePath!);
     }
-
-    // لو في فيديو واحد فقط وبدون صور
     if (videos.length == 1 && images.isEmpty) {
-      return VideoStringApp(video: imageUrl + videos.first.videoPath!);
+      return _VideoThumbnail(videoPath: videos.first.videoPath!);
     }
 
-    // لو في عدة صور أو فيديوهات أو خليط
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
@@ -387,14 +374,44 @@ class _PostGridItem extends StatelessWidget {
           return _PostImage(imagePath: images[i].imagePath!);
         } else {
           final vidIndex = i - images.length;
-          return VideoStringApp(video: imageUrl + videos[vidIndex].videoPath!);
+          return _VideoThumbnail(videoPath: videos[vidIndex].videoPath!);
         }
       },
     );
   }
 }
+class _VideoThumbnail extends StatelessWidget {
+  final String videoPath;
 
-//Post Image
+  const _VideoThumbnail({required this.videoPath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.black,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Center(
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.play_arrow,
+                color: Colors.white,
+                size: 32,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _PostImage extends StatelessWidget {
   final String imagePath;
 
@@ -415,7 +432,6 @@ class _PostImage extends StatelessWidget {
   }
 }
 
-//  Post Placeholder
 class _PostPlaceholder extends StatelessWidget {
   final int index;
   final String? title;
