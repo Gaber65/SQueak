@@ -45,7 +45,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
 
     controller = StoryViewerController(
       vsync: this,
-      storyDuration: const Duration(seconds: 5),
+      storyDuration: const Duration(seconds: 30),
       initialIndex: widget.initialIndex,
       onNextStory: _goToNextStory,
       onPreviousStory: _goToPreviousStory,
