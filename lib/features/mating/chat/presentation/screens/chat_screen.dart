@@ -54,6 +54,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   final List<UploadingMedia> _uploadingFiles = [];
   bool _isOtherUserTyping = false;
   bool _isFriendInConversation = false;
+  bool _isLoadingMore = false;
+  int? _firstVisibleIndexBeforeLoad;
+  int _oldMessagesLengthBeforeLoad = 0;
   Timer? _typingTimer;
   int _incomingTypingEventCount = 0;
   Timer? _incomingTypingResetTimer;
@@ -341,16 +344,26 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               if (state is ChatMessagesLoaded) {
                 final messages = cubit.messagesList.toList();
                 if (messages.isNotEmpty) {
-                  final lastIndex = messages.length - 1;
-
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     try {
-                      _itemScrollController.jumpTo(index: lastIndex);
+                      if (_isLoadingMore) {
+                        final newLength = cubit.messagesList.length;
+                        final added = newLength - _oldMessagesLengthBeforeLoad;
+                        final firstBefore = _firstVisibleIndexBeforeLoad ?? 0;
+                        int targetIndex = (firstBefore + (added > 0 ? added : 0)).toInt();
+                        if (targetIndex < 0) targetIndex = 0;
+                        if (targetIndex > newLength - 1) targetIndex = newLength - 1;
+                        _itemScrollController.jumpTo(index: targetIndex);
+                      } else {
+                        final lastIndex = messages.length - 1;
+                        _itemScrollController.jumpTo(index: lastIndex);
+                      }
                     } catch (_) {}
+                    _isLoadingMore = false;
+                    _firstVisibleIndexBeforeLoad = null;
+                    _oldMessagesLengthBeforeLoad = 0;
                   });
                 }
-
-                // NOW join conversation and mark messages as read after successful load
                 _joinConversationAfterLoad();
               }
 
@@ -531,7 +544,21 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         isOtherUserTyping: _isOtherUserTyping,
         hasMoreMessages: cubit.hasMoreMessages,
         isLoadingMore: cubit.isLoadingMore,
-        onLoadMore: () => cubit.loadMoreMessages(widget.chat.id),
+            onLoadMore: () {
+              final positions = _itemPositionsListener.itemPositions.value;
+              int firstIndex = 0;
+              if (positions.isNotEmpty) {
+                try {
+                  firstIndex = positions.map((p) => p.index).reduce((a, b) => a < b ? a : b);
+                } catch (_) {}
+              }
+              setState(() {
+                _isLoadingMore = true;
+                _firstVisibleIndexBeforeLoad = firstIndex;
+                _oldMessagesLengthBeforeLoad = cubit.messagesList.length;
+              });
+              cubit.loadMoreMessages(widget.chat.id);
+            },
       );
     }
     return const ChatEmptyState();
