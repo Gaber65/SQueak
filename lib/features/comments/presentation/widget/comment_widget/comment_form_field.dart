@@ -23,6 +23,12 @@ Widget buildPaddingFormComment(
           _buildCommentImagePreview(cubit),
           const SizedBox(height: 12),
         ],
+        // IconButton(
+        //   onPressed: () {
+        //     DioFinalHelper.cancelRequestById('comment');
+        //   },
+        //   icon: const Icon(Icons.cancel),
+        // ),
         TextFormField(
           controller: commentController,
           style: FontStyleThame.textStyle(context: context, fontSize: 15),
@@ -100,6 +106,8 @@ Widget buildPaddingFormComment(
             focusedErrorBorder: _noBorder(),
           ),
         ),
+
+
       ],
     ),
   );
