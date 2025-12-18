@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
-import 'package:squeak/features/layout/react/domain/entities/react_entities.dart';
 import 'package:squeak/features/layout/stories/presentation/pages/view_how_react.dart';
 import '../../../../../core/network/end_points.dart';
 import '../../../react/domain/repo/base_react_repo.dart';
@@ -525,7 +524,8 @@ class _StoryViewerPageState extends State<StoryViewerPage>
   ) {
     showGeneralDialog(
       context: context,
-      barrierDismissible: false,
+       barrierDismissible: true, 
+    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: Colors.black.withOpacity(0.75),
       transitionDuration: const Duration(milliseconds: 300),
       transitionBuilder: (context, animation, secondaryAnimation, child) {

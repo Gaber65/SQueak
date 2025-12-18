@@ -132,8 +132,8 @@ class _DeleteDialogContentStoryState extends State<DeleteDialogContentStory>
                 children: [
                   Text(
                     isArabic()
-                        ? 'هل أنت متأكد أنك تريد حذف هذا المنشور؟ لا يمكن التراجع عن هذا الإجراء.'
-                        : 'Are you sure you want to delete this post? This action cannot be undone.',
+                        ? 'هل أنت متأكد أنك تريد حذف هذه القصة؟ لا يمكن التراجع عن هذا الإجراء.'
+                        : 'Are you sure you want to delete this Story? This action cannot be undone.',
                     style: TextStyle(
                       fontSize: 16,
                       height: 1.5,
