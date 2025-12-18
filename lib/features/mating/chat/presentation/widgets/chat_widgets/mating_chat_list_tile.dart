@@ -78,7 +78,6 @@ class MatingChatListTile extends StatelessWidget {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () async {
-                      // Get the ChatAppCubit from current context before navigation
                       final chatAppCubit = context.read<ChatAppCubit>();
 
                       await Navigator.push(
@@ -135,6 +134,8 @@ class MatingChatListTile extends StatelessWidget {
                               children: [
                                 Text(
                                   chat.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
