@@ -2,16 +2,19 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/image_preview_screen.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/multi_media_preview_screen.dart'
+    as multi;
 import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/camera_screen.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/document_preview_screen.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/multi_document_preview_screen.dart';
 import 'package:squeak/generated/l10n.dart';
 
 enum AttachmentType { image, video, audio, file }
 
 class AttachmentOptionsBottomSheet extends StatelessWidget {
-  final Function(File file, AttachmentType type, {String? caption})
+  final Function(List<File> files, AttachmentType type, {String? caption})
   onAttachmentSelected;
+
+  static const double maxMediaSizeMB = 25.0;
 
   const AttachmentOptionsBottomSheet({
     super.key,
@@ -20,7 +23,7 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
 
   static Future<void> show(
     BuildContext context, {
-    required Function(File file, AttachmentType type, {String? caption})
+    required Function(List<File> files, AttachmentType type, {String? caption})
     onAttachmentSelected,
   }) {
     return showModalBottomSheet(
@@ -33,29 +36,96 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
     );
   }
 
+  double _getFileSizeMB(File file) {
+    try {
+      return file.lengthSync() / (1024 * 1024);
+    } catch (e) {
+      return 0.0;
+    }
+  }
+
+  bool _isFileSizeValid(File file, AttachmentType type) {
+    final sizeMB = _getFileSizeMB(file);
+    return sizeMB <= maxMediaSizeMB; 
+  }
+
+  void _showFileSizeWarning(
+    BuildContext context,
+    File file,
+    AttachmentType type,
+  ) {
+    final sizeMB = _getFileSizeMB(file);
+    final maxSize = _getMaxSizeForType(type);
+    final typeName = _getTypeNameForDialog(type);
+
+    showDialog(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('❌ File Too Large'),
+        content: Text(
+          '$typeName size must be $maxSize MB or less.\n\nCurrent: ${sizeMB.toStringAsFixed(2)} MB',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(c).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  double _getMaxSizeForType(AttachmentType type) {
+    return maxMediaSizeMB; 
+  }
+
+  String _getTypeNameForDialog(AttachmentType type) {
+    switch (type) {
+      case AttachmentType.image:
+        return 'Image';
+      case AttachmentType.video:
+        return 'Video';
+      case AttachmentType.audio:
+        return 'Audio';
+      case AttachmentType.file:
+        return 'File';
+    }
+  }
+
   Future<void> _handlePhoto(BuildContext context) async {
     final navigator = Navigator.of(context);
     navigator.pop();
 
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-    );
+    final pickedFiles = await picker.pickMultiImage();
 
-    if (pickedFile != null) {
-      debugPrint('📷 AttachmentSheet: Photo selected from gallery');
+    if (pickedFiles.isNotEmpty) {
+      final files = <File>[];
+
+      for (final pickedFile in pickedFiles) {
+        final file = File(pickedFile.path);
+        if (!_isFileSizeValid(file, AttachmentType.image)) {
+          _showFileSizeWarning(context, file, AttachmentType.image);
+          continue;
+        }
+        files.add(file);
+      }
+
+      if (files.isEmpty) return;
+
+      debugPrint('📷 AttachmentSheet: ${files.length} photo(s) selected from gallery');
       await navigator.push(
         MaterialPageRoute(
           builder:
-              (context) => MediaPreviewScreen(
-                mediaFile: File(pickedFile.path),
-                mediaType: MediaType.image,
-                onSend: (file, caption) {
+              (context) => multi.MultiMediaPreviewScreen(
+                mediaFiles: files,
+                mediaType: multi.MediaType.image,
+                onSend: (files, caption) {
                   debugPrint(
-                    '✅ AttachmentSheet: Photo confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
+                    '✅ AttachmentSheet: ${files.length} photo(s) confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
                   );
                   onAttachmentSelected(
-                    file,
+                    files,
                     AttachmentType.image,
                     caption: caption,
                   );
@@ -71,22 +141,40 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
     navigator.pop();
 
     final picker = ImagePicker();
-    final pickedFile = await picker.pickVideo(source: ImageSource.gallery);
+    final pickedFiles = await picker.pickMultipleMedia();
 
-    if (pickedFile != null) {
-      debugPrint('🎥 AttachmentSheet: Video selected from gallery');
+    if (pickedFiles.isNotEmpty) {
+      final files = <File>[];
+
+      for (final pickedFile in pickedFiles) {
+        // Only include video files
+        if (pickedFile.path.contains(RegExp(r'\.(mp4|mov|avi|mkv|flv|wmv|webm|3gp|m4v)$', caseSensitive: false))) {
+          final file = File(pickedFile.path);
+          
+          // Check file size
+          if (!_isFileSizeValid(file, AttachmentType.video)) {
+            _showFileSizeWarning(context, file, AttachmentType.video);
+            continue;
+          }
+          files.add(file);
+        }
+      }
+
+      if (files.isEmpty) return;
+
+      debugPrint('🎥 AttachmentSheet: ${files.length} video(s) selected from gallery');
       await navigator.push(
         MaterialPageRoute(
           builder:
-              (context) => MediaPreviewScreen(
-                mediaFile: File(pickedFile.path),
-                mediaType: MediaType.video,
-                onSend: (file, caption) {
+              (context) => multi.MultiMediaPreviewScreen(
+                mediaFiles: files,
+                mediaType: multi.MediaType.video,
+                onSend: (files, caption) {
                   debugPrint(
-                    '✅ AttachmentSheet: Video confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
+                    '✅ AttachmentSheet: ${files.length} video(s) confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
                   );
                   onAttachmentSelected(
-                    file,
+                    files,
                     AttachmentType.video,
                     caption: caption,
                   );
@@ -116,27 +204,41 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
           'wav',
           'webm',
         ],
-        allowMultiple: false,
+        allowMultiple: true,
       );
 
-      if (result != null &&
-          result.files.isNotEmpty &&
-          result.files.single.path != null) {
-        final file = File(result.files.single.path!);
-        debugPrint('🎵 AttachmentSheet: Audio file selected: ${file.path}');
+      if (result != null && result.files.isNotEmpty) {
+        final files = <File>[];
+
+        for (final platformFile in result.files) {
+          if (platformFile.path != null) {
+            final file = File(platformFile.path!);
+            
+            // Check file size
+            if (!_isFileSizeValid(file, AttachmentType.audio)) {
+              _showFileSizeWarning(context, file, AttachmentType.audio);
+              continue;
+            }
+            files.add(file);
+          }
+        }
+
+        if (files.isEmpty) return;
+
+        debugPrint('🎵 AttachmentSheet: ${files.length} audio file(s) selected');
 
         await navigator.push(
           MaterialPageRoute(
             builder:
-                (context) => MediaPreviewScreen(
-                  mediaFile: file,
-                  mediaType: MediaType.audio,
-                  onSend: (file, caption) {
+                (context) => multi.MultiMediaPreviewScreen(
+                  mediaFiles: files,
+                  mediaType: multi.MediaType.audio,
+                  onSend: (files, caption) {
                     debugPrint(
-                      '✅ AttachmentSheet: Audio confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
+                      '✅ AttachmentSheet: ${files.length} audio file(s) confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
                     );
                     onAttachmentSelected(
-                      file,
+                      files,
                       AttachmentType.audio,
                       caption: caption,
                     );
@@ -170,26 +272,38 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.any,
-        allowMultiple: false,
+        allowMultiple: true,
       );
 
-      if (result != null &&
-          result.files.isNotEmpty &&
-          result.files.single.path != null) {
-        final file = File(result.files.single.path!);
-        debugPrint('📄 AttachmentSheet: Document file selected: ${file.path}');
+      if (result != null && result.files.isNotEmpty) {
+        final files = <File>[];
+
+        for (final platformFile in result.files) {
+          if (platformFile.path != null) {
+            final file = File(platformFile.path!);
+            if (!_isFileSizeValid(file, AttachmentType.file)) {
+              _showFileSizeWarning(context, file, AttachmentType.file);
+              continue;
+            }
+            files.add(file);
+          }
+        }
+
+        if (files.isEmpty) return;
+
+        debugPrint('📄 AttachmentSheet: ${files.length} document file(s) selected');
 
         await navigator.push(
           MaterialPageRoute(
             builder:
-                (context) => DocumentPreviewScreen(
-                  documentFile: file,
-                  onSend: (file, caption) {
+                (context) => MultiDocumentPreviewScreen(
+                  documentFiles: files,
+                  onSend: (files, caption) {
                     debugPrint(
-                      '✅ AttachmentSheet: Document confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
+                      '✅ AttachmentSheet: ${files.length} document(s) confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
                     );
                     onAttachmentSelected(
-                      file,
+                      files,
                       AttachmentType.file,
                       caption: caption,
                     );

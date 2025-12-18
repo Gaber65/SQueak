@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/image_preview_screen.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/attachment_options_bottom_sheet.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/multi_media_preview_screen.dart';
 
 class CameraScreen extends StatefulWidget {
-  final Function(File file, AttachmentType type, {String? caption})
+  final Function(List<File> files, AttachmentType type, {String? caption})
   onAttachmentSelected;
 
   const CameraScreen({super.key, required this.onAttachmentSelected});
@@ -52,16 +52,15 @@ class _CameraScreenState extends State<CameraScreen> {
           context,
           MaterialPageRoute(
             builder:
-                (context) => MediaPreviewScreen(
-                  mediaFile: File(pickedFile.path),
+                (context) => MultiMediaPreviewScreen(
+                  mediaFiles: [File(pickedFile.path)],
                   mediaType: MediaType.image,
-                  cameraOption: true,
-                  onSend: (file, caption) {
+                  onSend: (files, caption) {
                     debugPrint(
                       '✅ CameraScreen: Photo sent with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
                     );
                     widget.onAttachmentSelected(
-                      file,
+                      files,
                       AttachmentType.image,
                       caption: caption,
                     );
@@ -113,16 +112,15 @@ class _CameraScreenState extends State<CameraScreen> {
           context,
           MaterialPageRoute(
             builder:
-                (context) => MediaPreviewScreen(
-                  mediaFile: File(pickedFile.path),
+                (context) => MultiMediaPreviewScreen(
+                  mediaFiles: [File(pickedFile.path)],
                   mediaType: MediaType.image,
-                  cameraOption: true,
-                  onSend: (file, caption) {
+                  onSend: (files, caption) {
                     debugPrint(
                       '✅ CameraScreen: Photo sent with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
                     );
                     widget.onAttachmentSelected(
-                      file,
+                      files,
                       AttachmentType.image,
                       caption: caption,
                     );

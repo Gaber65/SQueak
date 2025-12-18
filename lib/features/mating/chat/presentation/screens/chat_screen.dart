@@ -20,6 +20,7 @@ import 'package:squeak/features/mating/chat/presentation/widgets/message_widgets
 import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/recording_overlay.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/message_widgets/uploading_bubble.dart';
 import 'package:squeak/core/service/signalr/signalr_conversation_services.dart';
+import 'package:squeak/features/mating/chat/domain/entities/message_entity.dart';
 import '../../../../../core/service/service_locator/locatore_export_path.dart';
 import '../../../../pets/domain/entities/pet_entity.dart';
 import '../controllers/chat_messages_state.dart';
@@ -67,6 +68,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   ChatMessagesCubit? _recordingCubit;
   ChatAppCubit? _recordingChatAppCubit;
   ChatAppCubit? _chatAppCubit;
+
+  // Media size constraints (in MB) - Per BC1: Maximum file size = 25MB per media item
+  static const double maxMediaSizeMB = 25.0;
 
   @override
   void initState() {
@@ -453,10 +457,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                                   () => _startRecording(cubit, chatAppCubit),
                               onStopRecording:
                                   () => _stopRecording(cubit, chatAppCubit),
-                              onAttachmentSelected: (file, type, {caption}) {
+                              onAttachmentSelected: (files, type, {caption}) {
                                 final mainCubit = context.read<MainCubit>();
-                                _handleAttachment(
-                                  file,
+                                _handleAttachments(
+                                  files,
                                   type,
                                   cubit,
                                   mainCubit,
@@ -538,6 +542,44 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     return const ChatEmptyState();
   }
 
+  double _getFileSizeMB(File file) {
+    try {
+      return file.lengthSync() / (1024 * 1024);
+    } catch (e) {
+      return 0.0;
+    }
+  }
+
+  bool _isFileSizeValid(File file, AttachmentType type) {
+    final sizeMB = _getFileSizeMB(file);
+    return sizeMB <= maxMediaSizeMB; 
+  }
+
+  String _getFileSizeErrorMessage(File file, AttachmentType type) {
+    final sizeMB = _getFileSizeMB(file);
+    return 'File too large. Maximum size is ${maxMediaSizeMB.toInt()}MB. Current: ${sizeMB.toStringAsFixed(2)} MB';
+  }
+
+  void _handleAttachments(
+    List<File> files,
+    AttachmentType type,
+    ChatMessagesCubit cubit,
+    MainCubit mainCubit,
+    ChatAppCubit chatAppCubit, {
+    String? caption,
+  }) {
+    for (final file in files) {
+      _handleAttachment(
+        file,
+        type,
+        cubit,
+        mainCubit,
+        chatAppCubit,
+        caption: caption,
+      );
+    }
+  }
+
   void _handleAttachment(
     File file,
     AttachmentType type,
@@ -546,6 +588,14 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     ChatAppCubit chatAppCubit, {
     String? caption,
   }) async {
+    if (!_isFileSizeValid(file, type)) {
+      if (mounted) {
+        final errorMessage = _getFileSizeErrorMessage(file, type);
+        errorToast(context, errorMessage);
+      }
+      return;
+    }
+
     final uploadId = DateTime.now().millisecondsSinceEpoch.toString();
 
     if (mounted) {
@@ -682,6 +732,21 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       if (path != null && path.isNotEmpty) {
         final file = File(path);
         if (await file.exists()) {
+          // Check audio file size before processing
+          if (!_isFileSizeValid(file, AttachmentType.audio)) {
+            if (mounted) {
+              final errorMessage = _getFileSizeErrorMessage(file, AttachmentType.audio);
+              errorToast(context, errorMessage);
+            }
+            // Delete the recorded file if it's too large
+            try {
+              await file.delete();
+            } catch (e) {
+              debugPrint('❌ Error deleting oversized audio file: $e');
+            }
+            return;
+          }
+
           final mainCubit = context.read<MainCubit>();
           _handleAttachment(
             file,
@@ -735,12 +800,30 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       return;
     }
 
+    // Stop typing indicators
     chatAppCubit.setTyping(conversationId: widget.chat.id, isTyping: false);
     chatAppCubit.setTypingInGeneral(
       petId: widget.chat.petId,
       isTyping: false,
       fromPetId: widget.pet?.petId ?? '',
     );
+
+    // Add an optimistic outgoing message locally so sender sees it immediately
+    final localMessage = MessageEntity(
+      id: 'local_${DateTime.now().millisecondsSinceEpoch}',
+      description: text,
+      image: null,
+      video: null,
+      audio: null,
+      file: null,
+      fromUserId: widget.pet?.petId ?? '',
+      toUserId: widget.chat.petId,
+      createdAt: DateTime.now(),
+      toMe: false,
+    );
+    try {
+      cubit.addOutgoingMessage(localMessage);
+    } catch (_) {}
 
     // Scroll to show the new message
     Future.delayed(const Duration(milliseconds: 100), () {
@@ -752,6 +835,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       }
     });
 
+    // Send to server
     chatAppCubit.sendMessage(
       conversationId: widget.chat.id,
       toPetId: widget.chat.petId,

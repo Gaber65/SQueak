@@ -419,8 +419,6 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     }
   }
 
-  /// فحص حالة الاتصال للصديق من القاموس المحلي (بدون استدعاء الخادم)
-  /// Check if pet is online from local dictionary (without server call)
   Future<bool> checkIfPetOnline(String friendPetId) async {
     try {
       final isOnline = generalHub.isPetOnlineFromDict(friendPetId);

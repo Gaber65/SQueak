@@ -270,6 +270,16 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     emit(ChatMessagesLoaded(List.from(messagesList)));
   }
 
+  void addOutgoingMessage(MessageEntity message) {
+    final id = message.id;
+    if (id != null && id.isNotEmpty) {
+      deliveryStatuses[id] = 'one';
+      _updateMessageStatus(id, MessageStatus.sent);
+    }
+    messagesList.add(message);
+    emit(ChatMessagesLoaded(List.from(messagesList)));
+  }
+
   void markOutgoingMessagesAsRead() {
     for (var i = 0; i < messagesList.length; i++) {
       final m = messagesList[i];

@@ -150,7 +150,15 @@ class MainRemoteDataSource {
     }
   }
 
-  int maxFileSizeInBytes = 5 * 1024 * 1024; // 5MB
+  int maxFileSizeInBytes = 25 * 1024 * 1024; 
+  int _getMaxFileSizeInBytes(String type, String subtype) {
+    return maxFileSizeInBytes; 
+  }
+
+  String _getMaxFileSizeDisplayText(String type, String subtype) {
+    return '25 MB'; 
+  }
+
   Future<ImageModel> uploadFile(
       File file,
       String endpoint,
@@ -160,11 +168,13 @@ class MainRemoteDataSource {
       ) async {
     String fileName = file.path.split('/').last;
 
-    // التحقق من حجم الملف قبل الرفع
     final fileSize = await file.length();
-    if (fileSize > maxFileSizeInBytes) {
+    final maxSize = _getMaxFileSizeInBytes(type, subtype);
+    final maxSizeDisplay = _getMaxFileSizeDisplayText(type, subtype);
+    
+    if (fileSize > maxSize) {
       throw Exception(
-        'File size is too large (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB). Max allowed: 5 MB',
+        'File size is too large (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB). Max allowed: $maxSizeDisplay',
       );
     }
 
@@ -172,7 +182,6 @@ class MainRemoteDataSource {
       MultipartFile multipartFile;
 
       if (type == 'image' && subtype == 'gif') {
-        // رفع GIF من الملف الأصلي كما هو
         multipartFile = await MultipartFile.fromFile(
           file.path,
           filename: fileName,
