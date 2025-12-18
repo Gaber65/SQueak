@@ -14,12 +14,10 @@ import '../cubit/boarding_state.dart';
 
 class RateBoarding extends StatefulWidget {
   final BoardingEntryEntity boardingEntryEntity;
-  final bool isNav;
 
   const RateBoarding({
     super.key,
     required this.boardingEntryEntity,
-    required this.isNav,
   });
 
   @override

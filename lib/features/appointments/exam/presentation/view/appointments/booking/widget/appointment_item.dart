@@ -113,7 +113,6 @@ Widget buildItemAppointment(
                                       context,
                                       RateAppointment(
                                         model: appointments,
-                                        isNav: true,
                                       ),
                                     );
                                   },
@@ -242,7 +241,6 @@ Widget buildItemAppointment(
                                     navigateToScreen(
                                       context,
                                       RateAppointment(
-                                        isNav: true,
                                         model: appointments,
                                       ),
                                     );
@@ -365,7 +363,6 @@ Widget buildItemAppointment(
                                     navigateToScreen(
                                       context,
                                       RateAppointment(
-                                        isNav: true,
                                         model: appointments,
                                       ),
                                     );

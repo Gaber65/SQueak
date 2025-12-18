@@ -570,7 +570,6 @@ class _ExaminationListPlaceholderState
               if (index < displayed.length) {
                 final appointment = displayed[index];
                 return RepaintBoundary(
-                  key: ValueKey('appointment_${appointment.id}_$index'),
                   child: buildItem(
                     appointment,
                     context,
@@ -768,7 +767,6 @@ class _BoardingListState extends State<_BoardingList> with PaginationMixin {
         itemBuilder: (context, index) {
           if (index < displayed.length) {
             return RepaintBoundary(
-              key: ValueKey('boarding_${displayed[index].id}_$index'),
               child: BoardingCard(
                 isDarkMode: isDarkMode,
                 entry: displayed[index],

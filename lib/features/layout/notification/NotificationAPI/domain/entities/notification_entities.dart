@@ -36,6 +36,23 @@ class NotificationEntities {
       return null;
     }
   }
+
+
+  Map<String, dynamic> toJson() {
+    return {
+      'message': message,
+      'eventType': eventType.toString(),
+      'eventTypeId': eventTypeId,
+      'title': title,
+      'logo': logo,
+      'notificationEvents': notificationEvents.map((e) => e.toJson()).toList(),
+      'id': id,
+      'createdAt': createdAt,
+      'isActive': isActive,
+      'isDeleted': isDeleted,
+    };
+  }
+
 }
 
 class NotificationEventEntities {
@@ -58,4 +75,18 @@ class NotificationEventEntities {
     required this.notificationStatues,
     required this.note,
   });
+
+
+  Map<String, dynamic> toJson() {
+    return {
+      'isRead': isRead,
+      'isView': isView,
+      'viewAt': viewAt.toIso8601String(),
+      'id': id,
+      'sendAt': sendAt.toIso8601String(),
+      'readedAt': readedAt.toIso8601String(),
+      'notificationStatues': notificationStatues,
+      'note': note,
+    };
+  }
 }

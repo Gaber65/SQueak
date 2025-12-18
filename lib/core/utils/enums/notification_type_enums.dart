@@ -25,12 +25,60 @@ enum NotificationType {
   AndroidAndIOSCustomeNotification,
   QrCodeNotification,
   NewBoardingImage,
-  Unknown, // ✅ جديد
+  NewPetFriendRequest,
+  AcceptPetFriendShipRequest,
+  MakePetAvaliable,
+  AcceptMatingRequest,
+  MatingRate,
+  SendMatingRequest,
+  PetMarriage,
+  Discover,
+  Pregenant,
+  SetBaby,
+  CheckPrepegant,
+  NewStory,
+  StoryViewed,
+  StoryReaction,
+  ReplyOnStory,
+  NewPetCommentOnPost,
+  Unknown,
 }
 
 extension NotificationTypeExtension on NotificationType {
   String get typeName {
     switch (this) {
+      case NotificationType.NewPetFriendRequest:
+        return 'NewPetFriendRequest';
+      case NotificationType.AcceptPetFriendShipRequest:
+        return 'AcceptPetFriendShipRequest';
+      case NotificationType.MakePetAvaliable:
+        return 'MakePetAvaliable';
+      case NotificationType.AcceptMatingRequest:
+        return 'AcceptMatingRequest';
+      case NotificationType.MatingRate:
+        return 'MatingRate';
+      case NotificationType.SendMatingRequest:
+        return 'SendMatingRequest';
+      case NotificationType.PetMarriage:
+        return 'PetMarriage';
+      case NotificationType.Discover:
+        return 'Discover';
+      case NotificationType.Pregenant:
+        return 'Pregenant';
+      case NotificationType.SetBaby:
+        return 'SetBaby';
+      case NotificationType.CheckPrepegant:
+        return 'CheckPrepegant';
+      case NotificationType.NewStory:
+        return 'NewStory';
+      case NotificationType.StoryViewed:
+        return 'StoryViewed';
+      case NotificationType.StoryReaction:
+        return 'StoryReaction';
+      case NotificationType.ReplyOnStory:
+        return 'ReplyOnStory';
+      case NotificationType.NewPetCommentOnPost:
+        return 'NewPetCommentOnPost';
       case NotificationType.NewAppointmentOrReservation:
         return 'NewAppointmentOrReservation';
       case NotificationType.NewCommentOnYourPost:

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../../core/utils/enums/notification_type_enums.dart';
 import '../../domain/entities/notification_entities.dart';
 
@@ -47,6 +46,39 @@ IconData getNotificationIcon(NotificationEntities notification) {
       return Icons.qr_code;
     case NotificationType.NewBoardingImage:
       return Icons.image;
+    case NotificationType.NewPetFriendRequest:
+      return Icons.pets;
+    case NotificationType.AcceptPetFriendShipRequest:
+      return Icons.handshake;
+    case NotificationType.MakePetAvaliable:
+      return Icons.event_available;
+    case NotificationType.AcceptMatingRequest:
+      return Icons.favorite_border;
+    case NotificationType.MatingRate:
+      return Icons.star_rate;
+    case NotificationType.SendMatingRequest:
+      return Icons.send;
+    case NotificationType.PetMarriage:
+      return Icons.favorite;
+    case NotificationType.Discover:
+      return Icons.explore;
+    case NotificationType.Pregenant:
+      return Icons.child_friendly;
+    case NotificationType.SetBaby:
+      return Icons.child_care;
+    case NotificationType.CheckPrepegant:
+      return Icons.health_and_safety;
+    case NotificationType.NewStory:
+      return Icons.circle;
+    case NotificationType.StoryViewed:
+      return Icons.remove_red_eye;
+    case NotificationType.StoryReaction:
+      return Icons.emoji_emotions;
+    case NotificationType.ReplyOnStory:
+      return Icons.reply;
+    case NotificationType.NewPetCommentOnPost:
+      return Icons.pets;
+
     case NotificationType.Unknown:
       return Icons.notifications;
   }
@@ -96,6 +128,39 @@ Color getNotificationColor(NotificationEntities notification) {
       return Colors.grey;
     case NotificationType.QrCodeNotification:
       return Colors.blueGrey;
+    case NotificationType.NewPetFriendRequest:
+      return Colors.purple;
+    case NotificationType.AcceptPetFriendShipRequest:
+      return Colors.lightGreen;
+    case NotificationType.MakePetAvaliable:
+      return Colors.lightBlue;
+    case NotificationType.AcceptMatingRequest:
+      return Colors.pink;
+    case NotificationType.MatingRate:
+      return Colors.amber;
+    case NotificationType.SendMatingRequest:
+      return Colors.deepPurple;
+    case NotificationType.PetMarriage:
+      return Colors.redAccent;
+    case NotificationType.Discover:
+      return Colors.teal;
+    case NotificationType.Pregenant:
+      return Colors.pink[100]!;
+    case NotificationType.SetBaby:
+      return Colors.blue[100]!;
+    case NotificationType.CheckPrepegant:
+      return Colors.green;
+    case NotificationType.NewStory:
+      return Colors.deepPurpleAccent;
+    case NotificationType.StoryViewed:
+      return Colors.blueGrey;
+    case NotificationType.StoryReaction:
+      return Colors.yellow[700]!;
+    case NotificationType.ReplyOnStory:
+      return Colors.cyan;
+    case NotificationType.NewPetCommentOnPost:
+      return Colors.brown[300]!;
+
     case NotificationType.Unknown:
       return Colors.grey;
   }

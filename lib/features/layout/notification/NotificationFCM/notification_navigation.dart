@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:squeak/features/appointments/boarding/domain/entities/boarding_entry_entity.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
 import '../../../pets/presentation/view/pet_screen.dart';
@@ -15,39 +16,47 @@ class NotificationNavigation {
       final String id = data['id'] ?? '';
       final String typeName = data['typeName'] ?? '';
 
-      final NotificationType? type = _getNotificationType(typeName);
+      final NotificationType? notificationType = _getNotificationType(typeName);
       final BuildContext? context = navigatorKey.currentContext;
 
-      if (context == null || type == null) {
+      if (context == null || notificationType == null) {
         // print('Navigation failed: context or type is null');
         return;
       }
 
-      // print('Navigating for type: $typeName, id: $id');
 
-      switch (type) {
-        case NotificationType.NewAppointmentOrReservation:
-        case NotificationType.AppointmentCompleted:
-        case NotificationType.ReservationReminder:
-          getAppointment(id: id, type: type, isNav: true, context: context);
-          break;
-
-        case NotificationType.NewPetAdded:
+      switch (notificationType) {
         case NotificationType.VaccinationReminder:
-          _navigateToScreen(context, PetScreen());
-          break;
-
-        case NotificationType.NewPostAdded:
-        case NotificationType.NewCommentOnPost:
-          _navigateToScreen(context, PostNotification(id: id));
+        case NotificationType.NewPetAdded:
+          navigateToScreen(context, PetScreen());
           break;
 
         case NotificationType.FollowRequest:
-          _navigateToScreen(context, FollowRequestScreen(clinicID: id));
+          navigateToScreen(context, FollowRequestScreen(clinicID: id));
+          break;
+
+        case NotificationType.NewCommentOnPost:
+        case NotificationType.NewPostAdded:
+        case NotificationType.NewCommentOnYourPost:
+        case NotificationType.NewReactionOnPost:
+        case NotificationType.NewPetCommentOnPost:
+          navigateToScreen(context, PostNotification(postId: id));
+          break;
+
+        case NotificationType.NewAppointmentOrReservation:
+        case NotificationType.AppointmentCompleted:
+        case NotificationType.ReservationReminder:
+          getAppointment(id: id, type: notificationType, context: context);
+          break;
+
+        case NotificationType.BoardingCheckOut:
+        case NotificationType.BoardingPartialPaided:
+        case NotificationType.BoardingPaided:
+        case NotificationType.NewBoardingImage:
+          getBaording(id: id, type: notificationType, context: context);
           break;
 
         default:
-          // print('Unknown notification type: $typeName');
           break;
       }
     } catch (e) {

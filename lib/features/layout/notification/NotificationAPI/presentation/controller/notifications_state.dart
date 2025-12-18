@@ -3,12 +3,77 @@ part of 'notifications_cubit.dart';
 @immutable
 sealed class NotificationsState {}
 
-final class NotificationsInitial extends NotificationsState {}
+class NotificationsStateData extends NotificationsState {
+  final List<NotificationEntities> notifications;
+  final List<PostEntity> posts;
+  final PostEntity? postModel;
+  final bool isLoading;
+  final bool isRefreshing;
+  final bool isLoadingPost;
+  final bool postFound;
+  final String? errorMessage;
 
-final class NotificationsLoadingState extends NotificationsState {}
+  NotificationsStateData({
+    required this.notifications,
+    this.posts = const [],
+    this.postModel,
+    this.isLoading = false,
+    this.isRefreshing = false,
+    this.isLoadingPost = false,
+    this.postFound = false,
+    this.errorMessage,
+  });
 
-final class NotificationsSuccessState extends NotificationsState {}
+  NotificationsStateData copyWith({
+    List<NotificationEntities>? notifications,
+    List<PostEntity>? posts,
+    PostEntity? postModel,
+    bool? isLoading,
+    bool? isRefreshing,
+    bool? isLoadingPost,
+    bool? postFound,
+    String? errorMessage,
+  }) {
+    return NotificationsStateData(
+      notifications: notifications ?? this.notifications,
+      posts: posts ?? this.posts,
+      postModel: postModel ?? this.postModel,
+      isLoading: isLoading ?? this.isLoading,
+      isRefreshing: isRefreshing ?? this.isRefreshing,
+      isLoadingPost: isLoadingPost ?? this.isLoadingPost,
+      postFound: postFound ?? this.postFound,
+      errorMessage: errorMessage,
+    );
+  }
 
-final class NotificationsErrorState extends NotificationsState {}
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
 
-final class GetPostError extends NotificationsState {}
+    return other is NotificationsStateData &&
+        other.notifications == notifications &&
+        other.posts == posts &&
+        other.postModel == postModel &&
+        other.isLoading == isLoading &&
+        other.isRefreshing == isRefreshing &&
+        other.isLoadingPost == isLoadingPost &&
+        other.postFound == postFound &&
+        other.errorMessage == errorMessage;
+  }
+
+  @override
+  int get hashCode {
+    return notifications.hashCode ^
+    posts.hashCode ^
+    postModel.hashCode ^
+    isLoading.hashCode ^
+    isRefreshing.hashCode ^
+    isLoadingPost.hashCode ^
+    postFound.hashCode ^
+    errorMessage.hashCode;
+  }
+}
+
+final class NotificationsInitial extends NotificationsStateData {
+  NotificationsInitial() : super(notifications: []);
+}

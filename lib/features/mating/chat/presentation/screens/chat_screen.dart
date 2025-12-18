@@ -222,7 +222,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 final messageId = state.message.id;
                 final alreadyExists =
                     messageId != null &&
-                    cubit.messagesList.any((m) => m.id == messageId);
+                    cubit.messagesList.any((m) => m.postId == messageId);
                 if (!alreadyExists) {
                   cubit.addReceivedMessage(state.message, widget.pet!.ownerId);
                   Future.delayed(const Duration(milliseconds: 100), () {

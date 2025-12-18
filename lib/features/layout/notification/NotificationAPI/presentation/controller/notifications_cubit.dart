@@ -22,31 +22,79 @@ class NotificationsCubit extends Cubit<NotificationsState> {
 
   static NotificationsCubit get(context) => BlocProvider.of(context);
 
-  List<NotificationEntities> notifications = [];
+  Future<void> fetchNotifications({bool isRefreshing = false}) async {
+    final currentState = state;
 
-  Future<void> fetchNotifications() async {
-    emit(NotificationsLoadingState());
+    if (currentState is NotificationsStateData) {
+      // Don't show loading for refresh, just show refreshing state
+      if (!isRefreshing) {
+        emit(currentState.copyWith(isLoading: true, errorMessage: null));
+      } else {
+        emit(currentState.copyWith(isRefreshing: true, errorMessage: null));
+      }
+    }
+
     final result = await getAllNotificationsUseCase(const NoParameters());
 
     result.fold(
       (failure) {
-        emit(NotificationsErrorState());
+        if (state is NotificationsStateData) {
+          final currentState = state as NotificationsStateData;
+          emit(
+            currentState.copyWith(
+              isLoading: false,
+              isRefreshing: false,
+              errorMessage: 'Failed to load notifications',
+            ),
+          );
+        }
       },
       (notificationsList) {
-        notifications = notificationsList.reversed.toList();
-        CacheHelper.saveData('notificationsNum', notifications.length);
-        emit(NotificationsSuccessState());
+        final filteredNotifications =
+            notificationsList.reversed.toList().where((element) {
+              if (element.notificationEvents.isEmpty) {
+                return false;
+              }
+              return element.notificationEvents.first.isRead == false;
+            }).toList();
+
+        CacheHelper.saveData('notificationsNum', filteredNotifications.length);
+
+        if (state is NotificationsStateData) {
+          final currentState = state as NotificationsStateData;
+          emit(
+            currentState.copyWith(
+              notifications: filteredNotifications,
+              isLoading: false,
+              isRefreshing: false,
+              errorMessage: null,
+            ),
+          );
+        }
       },
     );
   }
 
   Future<void> updateNotification(String id) async {
-    emit(NotificationsLoadingState());
+    final currentState = state;
+
+    if (currentState is NotificationsStateData) {
+      emit(currentState.copyWith(isLoading: true, errorMessage: null));
+    }
+
     final result = await updateNotificationStateUseCase(id);
 
     result.fold(
       (failure) {
-        emit(NotificationsErrorState());
+        if (state is NotificationsStateData) {
+          final currentState = state as NotificationsStateData;
+          emit(
+            currentState.copyWith(
+              isLoading: false,
+              errorMessage: 'Failed to update notification',
+            ),
+          );
+        }
       },
       (_) async {
         await fetchNotifications();
@@ -54,37 +102,65 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     );
   }
 
-  List<PostEntity> post = [];
-  PostEntity? postModel;
-  bool isLoadingPost = false;
-  bool postFound = false;
   Future<void> getPostNotification(String postId) async {
-    isLoadingPost = true;
-    postFound = false;
-    postModel = null;
-    emit(NotificationsLoadingState());
+    final currentState = state;
+
+    if (currentState is NotificationsStateData) {
+      emit(
+        currentState.copyWith(
+          isLoadingPost: true,
+          postFound: false,
+          postModel: null,
+          errorMessage: null,
+        ),
+      );
+    }
 
     final result = await getPostNotificationUseCase(postId);
 
     result.fold(
       (failure) {
-        isLoadingPost = false;
-        emit(NotificationsErrorState());
+        if (state is NotificationsStateData) {
+          final currentState = state as NotificationsStateData;
+          emit(
+            currentState.copyWith(
+              isLoadingPost: false,
+              errorMessage: 'Failed to load post',
+            ),
+          );
+        }
       },
       (r) {
-        post = r;
-
         try {
-          postModel = post.firstWhere((element) => element.postId == postId);
-          postFound = true;
-          isLoadingPost = false;
-          emit(NotificationsSuccessState());
+          final postModel = r.firstWhere((element) => element.postId == postId);
+
+          if (state is NotificationsStateData) {
+            final currentState = state as NotificationsStateData;
+            emit(
+              currentState.copyWith(
+                posts: r,
+                postModel: postModel,
+                postFound: true,
+                isLoadingPost: false,
+                errorMessage: null,
+              ),
+            );
+          }
         } catch (_) {
           // postId not found in the list
-          isLoadingPost = false;
-          postModel = null;
-          postFound = false;
-          emit(GetPostError());
+          if (state is NotificationsStateData) {
+            updateNotification(postId);
+            final currentState = state as NotificationsStateData;
+            emit(
+              currentState.copyWith(
+                posts: r,
+                postModel: null,
+                postFound: false,
+                isLoadingPost: false,
+                errorMessage: 'Post not found',
+              ),
+            );
+          }
         }
       },
     );

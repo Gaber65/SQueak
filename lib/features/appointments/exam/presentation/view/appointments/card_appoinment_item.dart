@@ -893,21 +893,18 @@ void _handleMenuAction(
       cubit.printReceipt(appointment, context);
       break;
     case 2:
-      navigateToScreen(
-        context,
-        RateAppointment(model: appointment, isNav: true),
-      );
+      navigateToScreen(context, RateAppointment(model: appointment));
       break;
     case 3:
       navigateToScreen(
         context,
-        PrescriptionForPetScreen(reservationid: appointment.id),
+        PrescriptionForPetScreen(reservationid: appointment.postId),
       );
       break;
     case 4:
       navigateToScreen(
         context,
-        FilesForPetScreen(reservationid: appointment.id),
+        FilesForPetScreen(reservationid: appointment.postId),
       );
       break;
   }

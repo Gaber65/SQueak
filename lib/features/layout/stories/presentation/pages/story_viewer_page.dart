@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_function/time_format.dart';
+import 'package:squeak/features/layout/react/domain/entities/react_entities.dart';
 import 'package:squeak/features/layout/stories/presentation/pages/view_how_react.dart';
 import '../../../../../core/network/end_points.dart';
 import '../../../react/domain/repo/base_react_repo.dart';
@@ -299,13 +301,27 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: Text(
-                          widget.friendsStories?.petName ?? story.petName,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.friendsStories?.petName ?? story.petName,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              formatFacebookTimePost(story.createdAt.toString()),
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                          ],
                         ),
                       ),
                       IconButton(

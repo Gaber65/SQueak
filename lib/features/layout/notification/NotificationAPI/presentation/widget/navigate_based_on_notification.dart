@@ -7,6 +7,7 @@ import 'package:squeak/features/vetcare/presenation/view/follow_request_screen.d
 
 import '../../../../../pets/presentation/view/pet_screen.dart';
 import '../../domain/entities/notification_entities.dart';
+import '../screens/custom_message_notification_screen.dart';
 import '../screens/post_notfication.dart';
 import 'get_appoiment_function.dart';
 
@@ -19,6 +20,7 @@ void navigateBasedOnNotification(
   );
 
   switch (notificationType) {
+
     case NotificationType.VaccinationReminder:
     case NotificationType.NewPetAdded:
       navigateToScreen(context, PetScreen());
@@ -36,7 +38,13 @@ void navigateBasedOnNotification(
 
     case NotificationType.NewCommentOnPost:
     case NotificationType.NewPostAdded:
-      navigateToScreen(context, PostNotification(id: notification.eventTypeId));
+    case NotificationType.NewCommentOnYourPost:
+    case NotificationType.NewReactionOnPost:
+    case NotificationType.NewPetCommentOnPost:
+      navigateToScreen(
+        context,
+        PostNotification(postId: notification.eventTypeId),
+      );
       break;
 
     case NotificationType.NewAppointmentOrReservation:
@@ -45,9 +53,22 @@ void navigateBasedOnNotification(
       getAppointment(
         id: notification.eventTypeId,
         type: notificationType,
-        isNav: true,
         context: context,
-        notification: notification,
+      );
+      break;
+    case NotificationType.CustomeMessage:
+      navigateToScreen(
+        context,
+        CustomMessageNotificationScreen(notification: notification),
+      );
+    case NotificationType.BoardingCheckOut:
+    case NotificationType.BoardingPartialPaided:
+    case NotificationType.BoardingPaided:
+    case NotificationType.NewBoardingImage:
+      getBaording(
+        id: notification.eventTypeId,
+        type: notificationType,
+        context: context,
       );
       break;
 
