@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
-import 'package:squeak/core/utils/export_path/export_files.dart';
-import 'package:squeak/features/layout/notification/NotificationAPI/presentation/controller/notifications_cubit.dart';
 
-import '../../../../../comments/presentation/controller/comment_cubit.dart';
 import '../../../../../comments/presentation/widget/comment_widget/success_comment.dart';
 import '../../../../post/presentation/widget/build_post_item_shimmer.dart';
 import '../../../../post/presentation/widget/post_item.dart';

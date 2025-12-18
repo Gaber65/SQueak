@@ -190,10 +190,7 @@ class _MultiDocumentPreviewScreenState extends State<MultiDocumentPreviewScreen>
     });
 
     final caption = _captionController.text.trim();
-    debugPrint(
-      '📄 MultiDocumentPreview: Sending ${_documentFiles.length} document(s) with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
-    );
-
+  
     widget.onSend(_documentFiles, caption);
     await Future.delayed(const Duration(milliseconds: 300));
     if (mounted) {
