@@ -31,7 +31,7 @@ class LoginHandler {
   static void _saveUserData(dynamic userData) {
     CacheHelper.saveData('token', userData.token);
     CacheHelper.saveData('role', userData.role);
-    CacheHelper.saveData('clintId', userData.id);
+    CacheHelper.saveData('clintId', userData.postId);
     CacheHelper.saveData('refreshToken', userData.refreshToken);
     CacheHelper.saveData('phone', userData.phone);
     CacheHelper.saveData('name', userData.fullName);

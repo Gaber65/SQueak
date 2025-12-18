@@ -40,7 +40,7 @@ class MatingSentRequestsView extends StatelessWidget {
   void _handleCancel(BuildContext context, dynamic request) {
     ManageRequestMatingCubit.get(context).updateRequestStatus(
       UpdateRequestStatusParams(
-        matingRequestId: request.id,
+        matingRequestId: request.postId,
         status: RequestStatus.canceled,
       ),
       false,

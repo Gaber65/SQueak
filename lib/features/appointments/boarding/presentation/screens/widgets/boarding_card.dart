@@ -190,7 +190,7 @@ class BoardingCard extends StatelessWidget {
                   Future.delayed(Duration.zero, () {
                     navigateToScreen(
                       context,
-                      RateBoarding(boardingEntryEntity: entry, isNav: true),
+                      RateBoarding(boardingEntryEntity: entry,),
                     );
                   });
                 },

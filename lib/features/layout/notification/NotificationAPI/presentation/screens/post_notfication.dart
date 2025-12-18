@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
+import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/controller/notifications_cubit.dart';
 
@@ -10,9 +11,9 @@ import '../../../../post/presentation/widget/build_post_item_shimmer.dart';
 import '../../../../post/presentation/widget/post_item.dart';
 
 class PostNotification extends StatelessWidget {
-  PostNotification({super.key, required this.id});
+  PostNotification({super.key, required this.postId});
 
-  final String id;
+  final String postId;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final commentController = TextEditingController();
 
@@ -21,11 +22,14 @@ class PostNotification extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => sl<CommentCubit>()..getComment(postId: id),
+          create: (context) => sl<CommentCubit>()..getComment(postId: postId),
         ),
         BlocProvider(
           create:
-              (context) => sl<NotificationsCubit>()..getPostNotification(id),
+              (context) => sl<NotificationsCubit>()..getPostNotification(postId),
+        ),
+        BlocProvider(
+          create: (context) => sl<PostCubit>(),
         ),
       ],
       child: BlocConsumer<CommentCubit, CommentState>(
@@ -38,19 +42,11 @@ class PostNotification extends StatelessWidget {
           var cubit = NotificationsCubit.get(context);
           var cubitComment = CommentCubit.get(context);
           bool isBottomSheetOpen = CacheHelper.getBool('isBottomSheetOpen');
-
           bool isReplayCommentOpen = CacheHelper.getBool('isReplayCommentOpen');
+
           return Scaffold(
             key: scaffoldKey,
-            appBar: AppBar(
-              leading: IconButton(
-                onPressed: () {
-                  CacheHelper.saveData('isReplayCommentOpen', false);
-                  navigateToScreen(context, LayoutScreen());
-                },
-                icon: const Icon(IconlyLight.arrow_left),
-              ),
-            ),
+            appBar: AppBar(),
             body: WillPopScope(
               onWillPop: () async {
                 if (isReplayCommentOpen) {
@@ -66,97 +62,118 @@ class PostNotification extends StatelessWidget {
                 slivers: [
                   BlocConsumer<NotificationsCubit, NotificationsState>(
                     listener: (context, state) {
-                      if (state is GetPostError) {
-                        cubit.isLoadingPost = false;
-                        cubit.postFound = false;
-                      }
+                      // Error handling is now part of the state data
                     },
                     builder: (context, state) {
                       return SliverToBoxAdapter(
                         child: Builder(
                           builder: (_) {
-                            if (cubit.isLoadingPost) {
-                              return BuildPostItemShimmer();
-                            }
+                            // Check if state is NotificationsStateData
+                            if (state is NotificationsStateData) {
+                              final data = state;
 
-                            if (cubit.postModel == null) {
-                              return Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.sizeOf(context).height *
-                                          0.2,
-                                    ),
-                                    const Icon(
-                                      Icons.error_outline,
-                                      size: 80,
-                                      color: Colors.red,
-                                    ),
-                                    const SizedBox(height: 24),
-                                    Text(
-                                      isArabic()
-                                          ? 'عذرًا! المنشور غير موجود'
-                                          : 'Oops! Post Not Found',
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
+                              if (data.isLoadingPost) {
+                                return BuildPostItemShimmer();
+                              }
+
+                              if (data.postModel == null) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height:
+                                        MediaQuery.sizeOf(context).height *
+                                            0.2,
                                       ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      isArabic()
-                                          ? 'نأسف، لكن المنشور الذي تبحث عنه قد تم حذفه أو غير موجود.'
-                                          : "We're sorry, but the post you're looking for has been deleted or doesn't exist.",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    const SizedBox(height: 24),
-                                  ],
-                                ),
+                                      const Icon(
+                                        Icons.error_outline,
+                                        size: 80,
+                                        color: Colors.red,
+                                      ),
+                                      const SizedBox(height: 24),
+                                      Text(
+                                        isArabic()
+                                            ? 'عذرًا! المنشور غير موجود'
+                                            : 'Oops! Post Not Found',
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        isArabic()
+                                            ? 'نأسف، لكن المنشور الذي تبحث عنه قد تم حذفه أو غير موجود.'
+                                            : "We're sorry, but the post you're looking for has been deleted or doesn't exist.",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      const SizedBox(height: 24),
+                                    ],
+                                  ),
+                                );
+                              }
+
+                              return BuildPostItem(
+                                postItem: data.postModel!,
                               );
                             }
 
-                            return BuildPostItem(
-                              postItem: cubit.postModel!,
-                            );
+                            // Default loading state
+                            return BuildPostItemShimmer();
                           },
                         ),
                       );
                     },
                   ),
-                  if (cubit.postModel != null)
-                    SliverList(
-                      delegate: SliverChildListDelegate([
-                        SuccessComment(
-                          petID: '',
-                          scaffoldKey: scaffoldKey,
-                          cubit: cubitComment,
-                          isScrolle: false,
-                          comments: cubitComment.comments,
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.1,
-                        ),
-                      ]),
-                    ),
+                  BlocBuilder<NotificationsCubit, NotificationsState>(
+                    builder: (context, state) {
+                      if (state is NotificationsStateData) {
+                        final data = state;
+                        if (data.postModel != null) {
+                          return SliverList(
+                            delegate: SliverChildListDelegate([
+                              SuccessComment(
+                                petID: '',
+                                scaffoldKey: scaffoldKey,
+                                cubit: cubitComment,
+                                isScrolle: false,
+                                comments: cubitComment.comments,
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.1,
+                              ),
+                            ]),
+                          );
+                        }
+                      }
+                      return const SliverToBoxAdapter(child: SizedBox.shrink());
+                    },
+                  ),
                 ],
               ),
             ),
             floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton:
-                (cubit.postModel != null)
-                    ? isBottomSheetOpen
-                        ? null
-                        : buildPaddingFormComment(
-                          cubitComment,
-                          context,
-                          isReplayCommentOpen,
-                        )
-                    : null,
+            FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: BlocBuilder<NotificationsCubit, NotificationsState>(
+              builder: (context, state) {
+                if (state is NotificationsStateData) {
+                  final data = state;
+
+                  if (data.postModel != null && !isBottomSheetOpen) {
+                    return buildPaddingFormComment(
+                      cubitComment,
+                      context,
+                      isReplayCommentOpen,
+                    );
+                  }
+                }
+
+                return const SizedBox.shrink();
+              },
+            ),
           );
         },
       ),
@@ -164,10 +181,10 @@ class PostNotification extends StatelessWidget {
   }
 
   Padding buildPaddingFormComment(
-    CommentCubit cubit,
-    BuildContext context,
-    bool isReplayCommentOpen,
-  ) {
+      CommentCubit cubit,
+      BuildContext context,
+      bool isReplayCommentOpen,
+      ) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -209,9 +226,9 @@ class PostNotification extends StatelessWidget {
             maxLines: 1,
             decoration: InputDecoration(
               hintText:
-                  isReplayCommentOpen
-                      ? S.of(context).addReplayComment
-                      : S.of(context).addComment,
+              isReplayCommentOpen
+                  ? S.of(context).addReplayComment
+                  : S.of(context).addComment,
               contentPadding: EdgeInsetsDirectional.only(start: 10),
               // prefixIcon: IconButton(
               //   onPressed: () {
@@ -228,44 +245,44 @@ class PostNotification extends StatelessWidget {
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 fontColor:
-                    MainCubit.get(context).isDark
-                        ? Colors.white54
-                        : Colors.black54,
+                MainCubit.get(context).isDark
+                    ? Colors.white54
+                    : Colors.black54,
               ),
               suffixIcon: IconButton(
                 onPressed:
-                    cubit.isLoading
-                        ? null
-                        : () {
-                          if (commentController.text.isNotEmpty) {
-                            cubit.createComment(
-                              postId: id,
-                              content: commentController.text,
-                              petId:
-                                  CacheHelper.getData('isPet') == true
-                                      ? CacheHelper.getData('activeId')
-                                      : null,
-                              image:
-                                  MainCubit.get(context).modelImage == null
-                                      ? ''
-                                      : MainCubit.get(context).modelImage!.data,
-                              parentId:
-                                  isReplayCommentOpen
-                                      ? CacheHelper.getData('replayCommentID')
-                                      : null,
-                            );
-                          }
-                        },
+                cubit.isLoading
+                    ? null
+                    : () {
+                  if (commentController.text.isNotEmpty) {
+                    cubit.createComment(
+                      postId: postId,
+                      content: commentController.text,
+                      petId:
+                      CacheHelper.getData('isPet') == true
+                          ? CacheHelper.getData('activeId')
+                          : null,
+                      image:
+                      MainCubit.get(context).modelImage == null
+                          ? ''
+                          : MainCubit.get(context).modelImage!.data,
+                      parentId:
+                      isReplayCommentOpen
+                          ? CacheHelper.getData('replayCommentID')
+                          : null,
+                    );
+                  }
+                },
                 icon:
-                    cubit.isLoading
-                        ? const CircularProgressIndicator()
-                        : const Icon(IconlyLight.send),
+                cubit.isLoading
+                    ? const CircularProgressIndicator()
+                    : const Icon(IconlyLight.send),
               ),
               filled: true,
               fillColor:
-                  MainCubit.get(context).isDark
-                      ? ColorManager.myPetsBaseBlackColor
-                      : Colors.grey.shade200,
+              MainCubit.get(context).isDark
+                  ? ColorManager.myPetsBaseBlackColor
+                  : Colors.grey.shade200,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide.none,

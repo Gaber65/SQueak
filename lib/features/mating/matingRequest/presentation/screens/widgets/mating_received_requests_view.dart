@@ -51,7 +51,7 @@ class MatingReceivedRequestsView extends StatelessWidget {
   void _handleReject(BuildContext context, dynamic request) {
     ManageRequestMatingCubit.get(context).updateRequestStatus(
       UpdateRequestStatusParams(
-        matingRequestId: request.id,
+        matingRequestId: request.postId,
         status: RequestStatus.rejected,
       ),
       false,

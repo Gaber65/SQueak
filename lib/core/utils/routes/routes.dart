@@ -24,7 +24,6 @@ Map<String, WidgetBuilder> routes = {
   '/Rate':
       (context) => RateAppointment(
         model: ModalRoute.of(context)!.settings.arguments as AppointmentEntity,
-        isNav: true,
       ),
   '/followedClinic':
       (context) => FollowRequestScreen(
@@ -32,6 +31,6 @@ Map<String, WidgetBuilder> routes = {
       ),
   '/postNotification':
       (context) => PostNotification(
-        id: ModalRoute.of(context)!.settings.arguments as String,
+        postId: ModalRoute.of(context)!.settings.arguments as String,
       ),
 };

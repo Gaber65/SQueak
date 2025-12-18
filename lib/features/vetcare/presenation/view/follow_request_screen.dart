@@ -62,7 +62,7 @@ class _FollowRequestContent extends StatelessWidget {
   }
 
   void _showErrorToast(BuildContext context, ErrorAcceptIvationState state) {
-    final errorMessage =
+    String errorMessage =
         state.error is Map &&
                 state.error['errors'] != null &&
                 state.error['errors'].isNotEmpty
