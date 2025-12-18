@@ -44,7 +44,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
 
     controller = StoryViewerController(
       vsync: this,
-      storyDuration: const Duration(seconds: 5),
+      storyDuration: const Duration(seconds: 30),
       initialIndex: widget.initialIndex,
       onNextStory: _goToNextStory,
       onPreviousStory: _goToPreviousStory,
@@ -65,7 +65,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
         reactionsIndex =  widget.stories[controller.currentIndex].myReactType;
         widget.storyCubit.reactToStory(
           userStoryId: widget.stories[controller.currentIndex].id,
-          reactType: null,
+          reactType: 0,
           petId: widget.petID,
         );
       } else {
