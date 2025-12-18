@@ -287,6 +287,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "createPetProfileSub": MessageLookupByLibrary.simpleMessage(
             "أضف تفاصيل وصور صديقك الصغير"),
         "createPost": MessageLookupByLibrary.simpleMessage("إنشاء منشور"),
+        "createStory": MessageLookupByLibrary.simpleMessage("إنشاء قصة"),
         "customMessage":
             MessageLookupByLibrary.simpleMessage("نموذج رسالة مخصصة للعيادة"),
         "darkMode": MessageLookupByLibrary.simpleMessage("الوضع الداكن"),
@@ -442,6 +443,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "fullName": MessageLookupByLibrary.simpleMessage("الاسم الكامل"),
         "furryFriend": MessageLookupByLibrary.simpleMessage("إضافة صديق"),
         "gaber": MessageLookupByLibrary.simpleMessage("اختبارEN"),
+        "gallery": MessageLookupByLibrary.simpleMessage("معرض الصور"),
         "gender": MessageLookupByLibrary.simpleMessage("الجنس"),
         "generalInformation":
             MessageLookupByLibrary.simpleMessage("معلومات عامة"),

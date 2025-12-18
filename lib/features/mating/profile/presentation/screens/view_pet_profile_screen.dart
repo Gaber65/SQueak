@@ -47,6 +47,8 @@ class ViewPetProfileScreen extends StatelessWidget {
                     ..getPetProfileMating(petId)
                     ..getPetProfileMatingHistory(petId),
         ),
+        BlocProvider(create: (_) => sl<PostCubit>()),
+
         BlocProvider(create: (context) => sl<PetFriendsCubit>()),
       ],
       child: MultiBlocListener(
