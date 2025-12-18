@@ -53,6 +53,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   bool _isBlockedByOther = false;
   final List<UploadingMedia> _uploadingFiles = [];
   bool _isOtherUserTyping = false;
+  bool _isFriendInConversation = false;
   Timer? _typingTimer;
   int _incomingTypingEventCount = 0;
   Timer? _incomingTypingResetTimer;
@@ -68,8 +69,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   ChatMessagesCubit? _recordingCubit;
   ChatAppCubit? _recordingChatAppCubit;
   ChatAppCubit? _chatAppCubit;
-
-  // Media size constraints (in MB) - Per BC1: Maximum file size = 25MB per media item
   static const double maxMediaSizeMB = 25.0;
 
   @override
@@ -183,7 +182,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             conversationId: widget.chat.id,
             isTyping: false,
           );
-          // Also clear the general typing indicator so list tiles update correctly
           try {
             context.read<ChatAppCubit>().setTypingInGeneral(
               petId: widget.chat.petId,
@@ -192,7 +190,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             );
           } catch (_) {}
         } catch (_) {
-          // Provider not available yet
         }
       }
     }
@@ -270,7 +267,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                     }
                   }
                 } else {
-                  // Other user stopped typing -> clear immediately
                   _incomingTypingResetTimer?.cancel();
                   _incomingTypingEventCount = 0;
                   _incomingTypingHideTimer?.cancel();
@@ -290,10 +286,13 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                   try {
                     ChatMessagesCubit.get(context).markOutgoingMessagesAsRead();
                   } catch (e) {}
+                  if (mounted) {
+                    setState(() {
+                      _isFriendInConversation = true;
+                    });
+                  }
                 }
               }
-
-              // Clear typing indicator when friend leaves conversation
               if (state is PetLeftConversation) {
                 final data = state.data;
                 final leftPetId = data['petId']?.toString();
@@ -303,20 +302,17 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                   if (mounted) {
                     setState(() {
                       _isOtherUserTyping = false;
+                      _isFriendInConversation = false;
                     });
                   }
                 }
               }
-
-              // Handle errors
               if (state is ChatAppError) {
                 debugPrint('❌ ChatAppCubit Error: ${state.message}');
                 if (mounted) {
                   errorToast(context, state.message);
                 }
               }
-
-              // Handle FriendOnlineStatusChanged for optimistic UI updates
               if (state is FriendOnlineStatusChanged) {
                 if (state.petId == widget.chat.petId && state.isOnline) {
                   ChatMessagesCubit.get(context).markSentMessagesAsDelivered();
@@ -342,7 +338,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 errorToast(context, state.message);
               }
 
-              // NEW: Handle messages loaded successfully
               if (state is ChatMessagesLoaded) {
                 final messages = cubit.messagesList.toList();
                 if (messages.isNotEmpty) {
@@ -808,6 +803,11 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       fromPetId: widget.pet?.petId ?? '',
     );
 
+    // Debug: log outgoing attempt
+    try {
+      debugPrint('➡️ Sending message locally: "$text" to ${widget.chat.petId}');
+    } catch (_) {}
+
     // Add an optimistic outgoing message locally so sender sees it immediately
     final localMessage = MessageEntity(
       id: 'local_${DateTime.now().millisecondsSinceEpoch}',
@@ -821,9 +821,22 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       createdAt: DateTime.now(),
       toMe: false,
     );
-    try {
-      cubit.addOutgoingMessage(localMessage);
-    } catch (_) {}
+    if (_isFriendInConversation) {
+      try {
+        cubit.addOutgoingMessage(localMessage);
+        try {
+          debugPrint('✅ Added local message id=${localMessage.id} currentCount=${cubit.messagesList.length}');
+        } catch (_) {}
+      } catch (e) {
+        debugPrint('❌ addOutgoingMessage error: $e');
+      }
+    } else {
+      // Friend not in conversation: do not show optimistic local bubble
+      try {
+        debugPrint('ℹ️ Friend not in conversation, skipping local optimistic message');
+      } catch (_) {}
+     
+    }
 
     // Scroll to show the new message
     Future.delayed(const Duration(milliseconds: 100), () {
@@ -836,11 +849,18 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     });
 
     // Send to server
-    chatAppCubit.sendMessage(
-      conversationId: widget.chat.id,
-      toPetId: widget.chat.petId,
-      description: text,
-    );
+    try {
+      chatAppCubit.sendMessage(
+        conversationId: widget.chat.id,
+        toPetId: widget.chat.petId,
+        description: text,
+      );
+      try {
+        debugPrint('📤 Sent to server: "$text" (local id=${localMessage.id})');
+      } catch (_) {}
+    } catch (e) {
+      debugPrint('❌ sendMessage error: $e');
+    }
 
     chatAppCubit.increaseUnreadMessageCount(
       conversationId: widget.chat.id,

@@ -83,10 +83,14 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   void _subscribeConversationEvents() {
     // Prevent multiple subscriptions
     _conversationEventSubscription?.cancel();
-    _conversationEventSubscription = conversationSignalEventStream.stream.listen((
+    _conversationEventSubscription = conversationSignalEventStream.stream.listen(
+      (
       event,
     ) {
       try {
+        try {
+          debugPrint('🔁 Conversation event received: ${event.method}');
+        } catch (_) {}
         if (event.hub != 'ConversationHub') return;
 
         final method = event.method;
@@ -102,10 +106,20 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
                 final serverMsg = MessageModel.fromJson(
                   Map<String, dynamic>.from(payload),
                 );
+                try {
+                  debugPrint('📨 Server payload for $method: $payload');
+                } catch (_) {}
+                try {
+                  debugPrint(
+                      '🔍 ServerMsg id=${serverMsg.id} from=${serverMsg.fromUserId} desc="${serverMsg.description}" createdAt=${serverMsg.createdAt.toIso8601String()}');
+                } catch (_) {}
                 final id = serverMsg.id ?? '';
 
                 // Update or insert into messagesList to reflect server-sent message
                 final existsById = messagesList.any((m) => m.id == id);
+                try {
+                  debugPrint('existsById=$existsById for server id=$id');
+                } catch (_) {}
                 if (!existsById) {
                   // Try to find a local optimistic message match (by description, fromUserId, createdAt proximity)
                   final matchIndex = messagesList.indexWhere((m) {
@@ -114,14 +128,26 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
                     final timeDiff =
                         (serverMsg.createdAt.difference(m.createdAt).inSeconds)
                             .abs();
-                    return sameSender && sameText && timeDiff <= 10;
+                    final isLocal = m.id != null && m.id!.startsWith('local_');
+                    // Match if it's a local optimistic message, or within 60s window
+                    return sameSender && sameText && (isLocal || timeDiff <= 60);
                   });
+
+                  try {
+                    debugPrint('matchIndex=$matchIndex for server id=$id');
+                  } catch (_) {}
 
                   if (matchIndex >= 0) {
                     // Replace local optimistic message with server message
+                    try {
+                      debugPrint('Replacing local optimistic message at $matchIndex with server id=$id');
+                    } catch (_) {}
                     messagesList[matchIndex] = serverMsg;
                   } else {
                     // Append server message
+                    try {
+                      debugPrint('Appending server message id=$id');
+                    } catch (_) {}
                     messagesList.add(serverMsg);
                   }
                 } else {}
@@ -266,7 +292,30 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   bool isLoadingMore = false;
 
   void addReceivedMessage(MessageEntity message, String senderID) {
-    messagesList.add(message);
+    // Prevent duplicates: if server-provided id exists and matches, skip.
+    final id = message.id;
+    if (id != null && id.isNotEmpty) {
+      final existsById = messagesList.any((m) => m.id == id);
+      if (existsById) {
+        return;
+      }
+    }
+
+    // Try to match and replace local optimistic messages (ids like 'local_*')
+    final matchIndex = messagesList.indexWhere((m) {
+      final sameSender = m.fromUserId == message.fromUserId;
+      final sameText = m.description == message.description;
+      final timeDiff = (message.createdAt.difference(m.createdAt).inSeconds).abs();
+      final isLocal = m.id != null && m.id!.startsWith('local_');
+      return sameSender && sameText && (isLocal || timeDiff <= 60);
+    });
+
+    if (matchIndex >= 0) {
+      messagesList[matchIndex] = message;
+    } else {
+      messagesList.add(message);
+    }
+
     emit(ChatMessagesLoaded(List.from(messagesList)));
   }
 
@@ -276,6 +325,10 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       deliveryStatuses[id] = 'one';
       _updateMessageStatus(id, MessageStatus.sent);
     }
+
+    // Ensure messagesList is a List<MessageEntity> at runtime to avoid
+    // runtime type checks when inserting MessageEntity into a list
+    messagesList = List<MessageEntity>.from(messagesList);
     messagesList.add(message);
     emit(ChatMessagesLoaded(List.from(messagesList)));
   }
@@ -338,12 +391,13 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
         emit(ChatMessagesError(failure.toString()));
       },
       (messages) async {
-        messagesList = messages.reversed.toList();
+        // Convert server models into a runtime List<MessageEntity> so later
+        // adding optimistic MessageEntity items won't fail runtime checks.
+        messagesList = List<MessageEntity>.from(messages.reversed.toList());
 
         hasMoreMessages = messages.length >= 30;
-        try {} catch (e) {}
 
-        emit(ChatMessagesLoaded(messages));
+        emit(ChatMessagesLoaded(List.from(messagesList)));
       },
     );
   }
@@ -368,7 +422,8 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
         if (messages.isEmpty) {
           hasMoreMessages = false;
         } else {
-          messagesList.insertAll(0, messages.reversed.toList());
+          final newItems = List<MessageEntity>.from(messages.reversed.toList());
+          messagesList.insertAll(0, newItems);
           hasMoreMessages = messages.length >= 30;
         }
 
