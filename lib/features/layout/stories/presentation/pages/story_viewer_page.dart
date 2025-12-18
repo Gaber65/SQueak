@@ -66,7 +66,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
         reactionsIndex =  widget.stories[controller.currentIndex].myReactType;
         widget.storyCubit.reactToStory(
           userStoryId: widget.stories[controller.currentIndex].id,
-          reactType: null,
+          reactType: 0,
           petId: widget.petID,
         );
       } else {
