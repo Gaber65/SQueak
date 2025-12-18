@@ -23,6 +23,12 @@ Widget buildPaddingFormComment(
           _buildCommentImagePreview(cubit),
           const SizedBox(height: 12),
         ],
+        // IconButton(
+        //   onPressed: () {
+        //     DioFinalHelper.cancelRequestById('comment');
+        //   },
+        //   icon: const Icon(Icons.cancel),
+        // ),
         TextFormField(
           controller: commentController,
           style: FontStyleThame.textStyle(context: context, fontSize: 15),
@@ -52,43 +58,41 @@ Widget buildPaddingFormComment(
               animation: commentController,
               builder: (context, _) {
                 final hasText = commentController.text.isNotEmpty;
-                final iconColor = hasText
-                    ? Theme.of(context).primaryColor
-                    : (isDark ? Colors.white54 : Colors.black54);
+                final iconColor =
+                    hasText
+                        ? Theme.of(context).primaryColor
+                        : (isDark ? Colors.white54 : Colors.black54);
 
                 return IconButton(
-                  onPressed: (cubit.isLoading || !hasText)
-                      ? null
-                      : () {
-                          cubit.createComment(
-                            postId: postId,
-                            content: commentController.text,
-                            petId: petID,
-                            parentId: isReplayCommentOpen
-                                ? CacheHelper.getData('replayCommentID')
-                                : null,
-                          );
-                        },
-                  icon: cubit.isLoading
-                      ? SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.0,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color?>(iconColor),
-                          ),
-                        )
-                      : (hasText
-                          ? Icon(
-                            IconlyBold.send,
-                            color: Colors.blue,
-                           
+                  onPressed:
+                      (cubit.isLoading || !hasText)
+                          ? null
+                          : () {
+                            cubit.createComment(
+                              postId: postId,
+                              content: commentController.text,
+                              petId: petID,
+                              parentId:
+                                  isReplayCommentOpen
+                                      ? CacheHelper.getData('replayCommentID')
+                                      : null,
+                            );
+                          },
+                  icon:
+                      cubit.isLoading
+                          ? SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.0,
+                              valueColor: AlwaysStoppedAnimation<Color?>(
+                                iconColor,
+                              ),
+                            ),
                           )
-                          : Icon(
-                              IconlyLight.send,
-                              color: iconColor,
-                            )),
+                          : (hasText
+                              ? Icon(IconlyBold.send, color: Colors.blue)
+                              : Icon(IconlyLight.send, color: iconColor)),
                 );
               },
             ),

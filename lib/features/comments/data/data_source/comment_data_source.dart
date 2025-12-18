@@ -29,6 +29,7 @@ class CommentRemoteDataSource extends BaseCommentRemoteDataSource {
     try {
       var result = await DioFinalHelper.postData(
         method: createCommentEndPoint,
+        requestId: 'comment',
         data: {
           "content": parameters.content,
           "image": parameters.image,
@@ -39,9 +40,19 @@ class CommentRemoteDataSource extends BaseCommentRemoteDataSource {
       );
       return CommentModel.fromJson(result.data['data']);
     } on DioException catch (e) {
-      throw ServerException(
-        errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
-      );
+      if (e.type == DioExceptionType.cancel) {
+        final model = ErrorMessageModel(
+          errors: {},
+          message: e.response?.toString() ?? 'Request canceled',
+          success: false,
+          statusCode: 0,
+        );
+        throw ServerException(errorMessageModel: model);
+      } else {
+        throw ServerException(
+          errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
+        );
+      }
     }
   }
 

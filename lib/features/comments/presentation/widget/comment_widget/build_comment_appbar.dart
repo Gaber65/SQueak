@@ -7,6 +7,7 @@ AppBar buildAppBar(BuildContext context, CommentState state) {
   return AppBar(
     centerTitle: true,
     title: Text(S.of(context).comments),
+
     bottom:
         (state is DeleteCommentLoading)
             ? PreferredSize(

@@ -16,10 +16,11 @@ class CommentRepository extends BaseCommentRepository {
   Future<Either<Failure, CommentEntity>> createComment(
     CreateCommentParameters parameters,
   ) async {
-    final result = await baseCommentRemoteDataSource.createCommentDataSource(
-      parameters,
-    );
+
     try {
+      final result = await baseCommentRemoteDataSource.createCommentDataSource(
+        parameters,
+      );
       return Right(result);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));
