@@ -297,6 +297,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "createPetProfileSub": MessageLookupByLibrary.simpleMessage(
             "Add your pet\'s details and photos"),
         "createPost": MessageLookupByLibrary.simpleMessage("Create Post "),
+        "createStory": MessageLookupByLibrary.simpleMessage("Create Story"),
         "customMessage":
             MessageLookupByLibrary.simpleMessage("Custom Message form Clinic"),
         "darkMode": MessageLookupByLibrary.simpleMessage("Dark Mode"),
@@ -451,6 +452,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "fullName": MessageLookupByLibrary.simpleMessage("Full Name"),
         "furryFriend": MessageLookupByLibrary.simpleMessage("Furry Friend"),
         "gaber": MessageLookupByLibrary.simpleMessage("testEN"),
+        "gallery": MessageLookupByLibrary.simpleMessage("Gallery"),
         "gender": MessageLookupByLibrary.simpleMessage("gender"),
         "generalInformation":
             MessageLookupByLibrary.simpleMessage("General Information"),
