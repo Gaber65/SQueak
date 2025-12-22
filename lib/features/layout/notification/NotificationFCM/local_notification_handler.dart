@@ -1,11 +1,17 @@
 // local_notification_handler.dart
+import 'dart:convert';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
+import '../../../../core/service/main_service/presentation/screens/navigator_key.dart';
+import '../../../../core/utils/enums/notification_type_enums.dart';
+import '../NotificationAPI/domain/entities/notification_entities.dart';
+import '../NotificationAPI/presentation/widget/navigate_based_on_notification.dart';
 import 'notification_initializer.dart';
-import 'notification_navigation.dart';
 
 class LocalNotificationHandler {
   /// Handle notification responses (clicks and actions)
+  @pragma('vm:entry-point')
   static Future<void> handleNotificationResponse(
     NotificationResponse response,
   ) async {
@@ -23,7 +29,8 @@ class LocalNotificationHandler {
     }
 
     // Handle navigation for regular notification clicks
-    NotificationNavigation.handleNavigation(response.payload!);
+    final entity = payloadToNotificationEntity(response.payload!);
+    return navigateBasedOnNotification(entity, navigatorKey.currentContext!);
   }
 
   /// Handle snooze action - reschedule notification for 5 minutes later
@@ -96,4 +103,26 @@ class LocalNotificationHandler {
     await flutterLocalNotificationsPlugin.cancelAll();
     // print("All scheduled notifications have been cancelled.");
   }
+}
+
+NotificationEntities payloadToNotificationEntity(String payload) {
+  final jsonData = jsonDecode(payload);
+
+  return NotificationEntities(
+    message: jsonData['message'] ?? '',
+    eventType: NotificationType.values.firstWhere(
+      (e) =>
+          e.toString().split('.').last ==
+          (jsonData['eventType'] ?? '').toString(),
+      orElse: () => NotificationType.NewPostAdded,
+    ),
+    eventTypeId: jsonData['eventTypeId'] ?? '',
+    title: jsonData['title'] ?? '',
+    logo: jsonData['logo'] ?? '',
+    notificationEvents: [],
+    id: jsonData['id'] ?? '',
+    createdAt: jsonData['createdAt'] ?? '',
+    isActive: jsonData['isActive'] ?? true,
+    isDeleted: jsonData['isDeleted'] ?? false,
+  );
 }

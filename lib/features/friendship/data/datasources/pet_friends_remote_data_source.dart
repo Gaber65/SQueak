@@ -183,14 +183,11 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
       if (pageSize != null) "pageSize": pageSize.toString(),
     };
 
-    final uri = Uri.parse(
-      searchFriendsEndPoint,
-    ).replace(queryParameters: queryParams);
-
-    // Debug: show GET endpoint for searchFriends (with query params)
-    // print('GET ${uri.toString()}');
     return _handleRequest(
-      () => DioFinalHelper.getData(method: uri.toString()),
+      () => DioFinalHelper.getData(
+        method: searchFriendsEndPoint,
+        query: queryParams,
+      ),
       (json) => (json as List).map((e) => PetData.fromJson(e)).toList(),
     );
   }

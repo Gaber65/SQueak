@@ -46,7 +46,7 @@ class UploadPostUI extends StatelessWidget {
       backgroundColor: Colors.white,
       elevation: 0,
       leading: _buildLeadingButton(context, cubit),
-      title: _buildAppBarTitle( context),
+      title: _buildAppBarTitle(context),
       centerTitle: true,
       actions: [_buildPostButton(context, cubit)],
       bottom: _buildAppBarDivider(),
@@ -115,17 +115,21 @@ class UploadPostUI extends StatelessWidget {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 child: TextButton(
-                  onPressed: hasContent && !isLoading
-                      ? () => controller.handlePostSubmit(context, cubit)
-                      : null,
+                  onPressed:
+                      hasContent && !isLoading
+                          ? () => controller.handlePostSubmit(context, cubit)
+                          : null,
                   style: TextButton.styleFrom(
-                    backgroundColor: hasContent && !isLoading
-                        ? ColorManager.primaryColor
-                        : Colors.grey[300],
+                    backgroundColor:
+                        hasContent && !isLoading
+                            ? ColorManager.primaryColor
+                            : Colors.grey[300],
                     foregroundColor: Colors.white,
                     disabledForegroundColor: Colors.grey[500],
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 10),
+                      horizontal: 24,
+                      vertical: 10,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
                     ),
@@ -141,8 +145,9 @@ class UploadPostUI extends StatelessWidget {
                           height: 14,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -440,77 +445,92 @@ class UploadPostUI extends StatelessWidget {
     final file = cubit.mediaFiles[index];
     final type = cubit.mediaTypes[index];
 
+    bool isSize = file.lengthSync() > 10 * 1024 * 1024;
+
     bool isImage = type.startsWith('image'); // JPG, PNG, GIF, WebP
     bool isVideo = type == 'video';
 
-    return Stack(
-      children: [
-        Container(
-          color: Colors.grey[200],
-          child: isImage
-              ? Image.file(
-            file,
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              // لو حصل أي مشكلة في الصورة، اعرض thumbnail فيديو
-              return _buildVideoThumbnail(file);
-            },
-          )
-              : _buildVideoThumbnail(file),
-        ),
+    return Container(
 
-        // Upload overlay
-        if (isUploading)
-          Container(
-            color: Colors.black54,
-            child: const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: isSize ? Colors.red : Colors.transparent,width: 5),
+      ),
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+
+            child: Container(
+              color: Colors.grey[200],
+              child:
+                  isImage
+                      ? Image.file(
+                        file,
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          // لو حصل أي مشكلة في الصورة، اعرض thumbnail فيديو
+                          return _buildVideoThumbnail(file);
+                        },
+                      )
+                      : _buildVideoThumbnail(file),
             ),
           ),
 
-        // زر إزالة الملف
-        Positioned(
-          top: 8,
-          right: 8,
-          child: GestureDetector(
-            onTap: controller.isLoading ? null : () => cubit.removeMedia(index),
-            child: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: controller.isLoading ? Colors.grey : Colors.black54,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.close, color: Colors.white, size: 18),
-            ),
-          ),
-        ),
-
-        // Badge للفيديو
-        if (isVideo)
-          Positioned(
-            bottom: 8,
-            left: 8,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Text(
-                'VIDEO',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
+          // Upload overlay
+          if (isUploading)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               ),
             ),
+
+          // زر إزالة الملف
+          Positioned(
+            top: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap:
+                  controller.isLoading ? null : () => cubit.removeMedia(index),
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: controller.isLoading ? Colors.grey : Colors.black54,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.close, color: Colors.white, size: 18),
+              ),
+            ),
           ),
-      ],
+
+          // Badge للفيديو
+          if (isVideo)
+            Positioned(
+              bottom: 8,
+              left: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Text(
+                  'VIDEO',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 

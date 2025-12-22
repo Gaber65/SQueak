@@ -193,7 +193,6 @@ class _StoryViewerPageState extends State<StoryViewerPage>
   @override
   Widget build(BuildContext context) {
     final story = widget.stories[controller.currentIndex];
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: GestureDetector(
@@ -226,7 +225,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                 // IMAGE
                 Image.network(
                   imageUrl + (story.image ?? ''),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                   errorBuilder:
                       (_, __, ___) => const Center(
                         child: Icon(Icons.error, color: Colors.white),
@@ -293,8 +292,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                         radius: 18,
                         backgroundImage: NetworkImage(
                           imageUrl +
-                              (widget.friendsStories?.petImage ??
-                                  story.petImage),
+                              (widget.friendsStories?.petImage ?? story.petImage),
                         ),
                       ),
                       const SizedBox(width: 10),

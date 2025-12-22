@@ -1,15 +1,20 @@
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
-// ignore: depend_on_referenced_packages
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/utils/firebase_token_helper.dart';
 import 'package:squeak/features/layout/notification/NotificationFCM/notification_message.dart';
-import '../../../../../firebase_options.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:squeak/firebase_options.dart';
+
+import '../../../../../features/layout/notification/NotificationAPI/domain/entities/notification_entities.dart';
+import '../../../connectivity/conectivity_services.dart';
 
 @pragma('vm:entry-point')
 class InitFunctions {
@@ -31,6 +36,7 @@ class InitFunctions {
     await _initDio();
     await _configureChucker();
     await _setupMessaging();
+    ConnectivityService().startMonitoring();
   }
 
   static Future<void> _setupMessaging() async {
@@ -68,18 +74,13 @@ class InitFunctions {
     _handleMessage(message);
   }
 
+
   @pragma('vm:entry-point')
   static void _handleMessage(RemoteMessage message) async {
     // print('Message received: ${message.toMap()}\n \n \n');
-    final model = NotificationMessage.fromJson(message.toMap());
-
-    NotificationScheduler.scheduleInstantNotification(
-      title: model.data!.title!,
-      body: model.data!.body!,
-      id: model.data!.targetTypeId!,
-      typeName: model.data!.targetType!,
-      largeImageUrl: model.data!.imageUrl!,
-    );
+    final notificationMessage = NotificationMessage.fromJson(message.toMap());
+    final entity = notificationMessageToEntity(notificationMessage);
+    NotificationScheduler.scheduleInstantNotification(entites: entity);
   }
 
   static Future<void> _initFirebase() async {

@@ -24,7 +24,6 @@ export 'package:squeak/core/utils/debug_utils.dart';
 // local_notifications
 export 'package:squeak/features/layout/notification/NotificationFCM/local_notification_handler.dart';
 export 'package:squeak/features/layout/notification/NotificationFCM/notification_initializer.dart';
-export 'package:squeak/features/layout/notification/NotificationFCM/notification_navigation.dart';
 export 'package:squeak/features/layout/notification/NotificationFCM/notification_scheduler.dart';
 
 // main_service/data

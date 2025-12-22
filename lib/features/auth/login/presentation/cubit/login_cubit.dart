@@ -6,6 +6,7 @@ import 'package:squeak/features/auth/login/domin/entities/login_entity.dart';
 import 'package:squeak/features/auth/login/domin/usecses/login_use_case.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 part 'login_state.dart';
 
@@ -166,6 +167,27 @@ class LoginCubit extends Cubit<LoginState> {
     passwordController.clear();
   }
 
+  Future<void> loginWithFacebook() async {
+    try {
+      // 1. Trigger the popup
+      final LoginResult result = await FacebookAuth.instance.login();
+
+      if (result.status == LoginStatus.success) {
+        // 2. Get user data (name, email, image)
+        final userData = await FacebookAuth.instance.getUserData();
+
+        print("Logged in as: ${userData['name']}");
+        print("Email: ${userData['email']}");
+
+        // TODO: Send this data to your backend or save locally
+      } else {
+        print("Login failed: ${result.status}");
+        print("Message: ${result.message}");
+      }
+    } catch (error) {
+      print("Error: $error");
+    }
+  }
   @override
   Future<void> close() {
     // Dispose controllers when cubit is closed to avoid memory leaks

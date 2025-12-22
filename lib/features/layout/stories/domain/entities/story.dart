@@ -4,9 +4,9 @@ class StoryEntity {
   final String? image;
   final String? video;
   final String description;
-  final DateTime issueDate;
-  final DateTime expireDate;
-  final DateTime createdAt;
+  final String issueDate;
+  final String expireDate;
+  final String createdAt;
   final String petName;
   final String petImage;
   final bool isViewed;
@@ -27,22 +27,36 @@ class StoryEntity {
     required this.petImage,
   });
 
-  StoryEntity copyWith({bool? isViewed, int? myReactType}) {
+  StoryEntity copyWith({
+    String? id,
+    String? createdAt,
+    String? petId,
+    String? image,
+    String? video,
+    String? description,
+    String? issueDate,
+    String? expireDate,
+    String? petName,
+    String? petImage,
+    bool? isViewed,
+    int? myReactType,
+  }) {
     return StoryEntity(
-      id: id,
-      createdAt: createdAt,
-      petId: petId,
-      image: image,
-      video: video,
-      description: description,
-      issueDate: issueDate,
-      expireDate: expireDate,
-      petName: petName,
-      petImage: petImage,
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      petId: petId ?? this.petId,
+      image: image ?? this.image,
+      video: video ?? this.video,
+      description: description ?? this.description,
+      issueDate: issueDate ?? this.issueDate,
+      expireDate: expireDate ?? this.expireDate,
+      petName: petName ?? this.petName,
+      petImage: petImage ?? this.petImage,
       isViewed: isViewed ?? this.isViewed,
       myReactType: myReactType ?? this.myReactType,
     );
   }
+
 }
 
 class FrindStoryEntity {

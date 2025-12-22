@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/appointments/boarding/data/models/boarding_entry_model.dart';
 import 'package:squeak/features/appointments/boarding/presentation/screens/boarding_rating.dart';
 import 'package:squeak/features/appointments/exam/data/models/appointment_model.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/all_apointment.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/rate_appointment.dart';
+import 'package:squeak/features/layout/stories/domain/entities/story.dart';
+import 'package:squeak/features/mating/chat/presentation/screens/chat_list_screen.dart';
 
 import '../../../../../appointments/boarding/presentation/screens/share_image_pet_screen.dart';
+import '../../../../stories/data/models/story_model.dart';
+import '../../../../stories/presentation/controllers/story_cubit.dart';
+import '../../../../stories/presentation/pages/story_viewer_page.dart';
 
 Future<void> getAppointment({
   required String id,
@@ -128,6 +134,77 @@ void _showImages(context, isVideo, entry) {
               ),
             );
           },
+        ),
+  );
+}
+
+Future<void> getStroy({
+  required String id,
+  required NotificationType type,
+  required BuildContext context,
+}) async {
+  try {
+    final response = await DioFinalHelper.getData(
+      method: deleteStoryEndPoint + id,
+      language: true,
+    );
+
+    final stories = StoryModel.fromJson(response.data['data']['userStory']);
+    String? storyOwnerId = response.data['data']['storyOwnerId'];
+    final res = stories.copyWith(
+      petName: response.data['data']['userStory']['petOwner']['petName'],
+      petImage: response.data['data']['userStory']['petOwner']['imageName'],
+    );
+    final action = _determineNavigationActionStory(type);
+
+    switch (action) {
+      case StoryNavigationAction.goToHome:
+        navigateToScreen(context, LayoutScreen());
+        break;
+      case StoryNavigationAction.openChat:
+        navigateToScreen(context, ChatListScreen());
+        break;
+      case StoryNavigationAction.goToMyFrindStory:
+      case StoryNavigationAction.goToMyStory:
+
+        /// wating Implement
+        showStory(context, [res], storyOwnerId ?? '');
+
+        break;
+    }
+  } on DioException catch (e) {
+    debugPrint('DioException: ${e.response}');
+  }
+}
+
+StoryNavigationAction _determineNavigationActionStory(NotificationType type) {
+  switch (type) {
+    case NotificationType.StoryReaction:
+    case NotificationType.StoryViewed:
+      return StoryNavigationAction.goToMyStory;
+    case NotificationType.ReplyOnStory:
+      return StoryNavigationAction.openChat;
+    case NotificationType.NewStory:
+      return StoryNavigationAction.goToMyFrindStory;
+    default:
+      return StoryNavigationAction.goToHome;
+  }
+}
+
+void showStory(context, List<StoryEntity> myStories, petID) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder:
+        (_) => BlocProvider(
+          create: (context) => sl<StoryCubit>(),
+          child: StoryViewerPage(
+            storyCubit: sl<StoryCubit>(),
+            stories: myStories,
+            petID: petID,
+            initialIndex: 0,
+          ),
         ),
   );
 }

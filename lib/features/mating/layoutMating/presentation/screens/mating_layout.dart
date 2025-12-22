@@ -4,12 +4,12 @@ import 'package:squeak/features/mating/layoutMating/presentation/controller/mati
 import 'package:squeak/features/mating/layoutMating/presentation/screens/widgets/bottom_navigation.dart';
 
 class MatingLayoutScreen extends StatelessWidget {
-  const MatingLayoutScreen({super.key});
-
+  const MatingLayoutScreen({super.key, this.indexID = 0});
+  final int indexID;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => MatingLayoutCubit(),
+      create: (context) => MatingLayoutCubit()..changeIndex(indexID),
       child: BlocConsumer<MatingLayoutCubit, MatingLayoutState>(
         listener: (context, state) {},
         builder: (context, state) {

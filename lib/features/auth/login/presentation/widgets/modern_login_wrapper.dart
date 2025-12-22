@@ -413,6 +413,11 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
                     ),
                   ),
                 ),
+                ElevatedButton(
+                  onPressed: widget.cubit.loginWithFacebook,
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1877F2)), // FB Blue
+                  child: const Text("Continue with Facebook", style: TextStyle(color: Colors.white)),
+                )
               ],
             );
           },

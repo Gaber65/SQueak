@@ -48,7 +48,7 @@ class _ReactionButtonState extends State<ReactionButton> {
       widget.postItm.reactSadCount,
       widget.postItm.reactLoveCount,
       widget.postItm.reactLikeCount,
-    ].map((e) => e ?? 0).fold(0, (a, b) => a + b);
+    ].map((e) => e).fold(0, (a, b) => a + b!);
   }
 
   void _handleReact(BuildContext context, int? newIndex) {

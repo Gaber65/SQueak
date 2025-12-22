@@ -113,8 +113,10 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     required String specieId,
     String? name,
   }) async {
+    print(specieId);
+    print(name);
     emit(SuggestedFriendsLoading());
-    final result = await searchFriendsUseCase.call(
+    final result = await searchFriendsUseCase(
       SearchFriendsParams(speciesId: specieId, name: name),
     );
 

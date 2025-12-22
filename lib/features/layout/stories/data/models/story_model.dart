@@ -25,9 +25,9 @@ class StoryModel extends StoryEntity {
       isViewed: json['isViewed'] ?? false,
       myReactType: json['myReactType'],
       description: json['description'] ?? '',
-      issueDate: DateTime.tryParse(json['issueDate'] ?? '') ?? DateTime(0001),
-      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime(0001),
-      expireDate: DateTime.tryParse(json['expireDate'] ?? '') ?? DateTime(0001),
+      issueDate:json['issueDate'],
+      createdAt: json['createdAt'],
+      expireDate: json['expireDate'],
       petName: json['petName'] ?? '',
       petImage: json['petImage'] ?? '',
     );
