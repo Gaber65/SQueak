@@ -189,8 +189,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               fromPetId: widget.pet?.petId ?? '',
             );
           } catch (_) {}
-        } catch (_) {
-        }
+        } catch (_) {}
       }
     }
   }
@@ -222,7 +221,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                 final messageId = state.message.id;
                 final alreadyExists =
                     messageId != null &&
-                    cubit.messagesList.any((m) => m.postId == messageId);
+                    cubit.messagesList.any((m) {
+                      return m.id == messageId;
+                    });
                 if (!alreadyExists) {
                   cubit.addReceivedMessage(state.message, widget.pet!.ownerId);
                   Future.delayed(const Duration(milliseconds: 100), () {
@@ -547,7 +548,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
   bool _isFileSizeValid(File file, AttachmentType type) {
     final sizeMB = _getFileSizeMB(file);
-    return sizeMB <= maxMediaSizeMB; 
+    return sizeMB <= maxMediaSizeMB;
   }
 
   String _getFileSizeErrorMessage(File file, AttachmentType type) {
@@ -730,7 +731,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           // Check audio file size before processing
           if (!_isFileSizeValid(file, AttachmentType.audio)) {
             if (mounted) {
-              final errorMessage = _getFileSizeErrorMessage(file, AttachmentType.audio);
+              final errorMessage = _getFileSizeErrorMessage(
+                file,
+                AttachmentType.audio,
+              );
               errorToast(context, errorMessage);
             }
             // Delete the recorded file if it's too large
@@ -769,8 +773,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     }
   }
 
-  
-
   void _sendMessage(ChatMessagesCubit cubit, ChatAppCubit chatAppCubit) {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
@@ -779,18 +781,19 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     if (text.length > MessageInputWidget.maxCharacters) {
       showDialog(
         context: context,
-        builder: (c) => AlertDialog(
-          title: const Text('Character Limit Reached'),
-          content: Text(
-            'Message cannot exceed ${MessageInputWidget.maxCharacters} characters. Current: ${text.length}',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(c).pop(),
-              child: const Text('OK'),
+        builder:
+            (c) => AlertDialog(
+              title: const Text('Character Limit Reached'),
+              content: Text(
+                'Message cannot exceed ${MessageInputWidget.maxCharacters} characters. Current: ${text.length}',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(c).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
             ),
-          ],
-        ),
       );
       return;
     }
@@ -825,7 +828,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       try {
         cubit.addOutgoingMessage(localMessage);
         try {
-          debugPrint('✅ Added local message id=${localMessage.id} currentCount=${cubit.messagesList.length}');
+          debugPrint(
+            '✅ Added local message id=${localMessage.id} currentCount=${cubit.messagesList.length}',
+          );
         } catch (_) {}
       } catch (e) {
         debugPrint('❌ addOutgoingMessage error: $e');
@@ -833,9 +838,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     } else {
       // Friend not in conversation: do not show optimistic local bubble
       try {
-        debugPrint('ℹ️ Friend not in conversation, skipping local optimistic message');
+        debugPrint(
+          'ℹ️ Friend not in conversation, skipping local optimistic message',
+        );
       } catch (_) {}
-     
     }
 
     // Scroll to show the new message

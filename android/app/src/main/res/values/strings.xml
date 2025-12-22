@@ -1,10 +1,8 @@
-
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="com_facebook_button_background_color_focused_disabled">#FF0000</color>
-    <color name="com_facebook_button_background_color_focused">#00FF00</color>
-    <color name="com_facebook_button_border_color_focused">#0000FF</color>
-    <string name="facebook_app_id">801213825008804</string>
-    <string name="facebook_client_token">55d1fa0383d1f08dceccf16012e41f26</string>
-<!--    <string name="facebook_client_token">56789</string>-->
+    <string name="app_name">Squeak</string>
 
+    <string name="facebook_app_id">1358684989332924</string>
+    <string name="facebook_client_token">e8e27232e5f09569becd4cc42c5d9ebe</string>
+    <string name="fb_login_protocol_scheme">1358684989332924</string>
 </resources>

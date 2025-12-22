@@ -95,6 +95,7 @@ String formatDate(String dateString) {
 }
 
 String formatFacebookTimePost(String createdAt) {
+  print(createdAt);
   try {
     final backendFormat = DateFormat(
       'EEE MMM dd yyyy HH:mm:ss \'GMT\'z',

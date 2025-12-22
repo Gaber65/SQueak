@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:squeak/core/service/global_widget/toast.dart';
 import 'package:squeak/features/layout/post/presentation/community/controller/community_cubit.dart';
 import '../../../../../core/service/global_widget/custom_text_form_field.dart';
 import '../../../../../generated/l10n.dart';
@@ -11,7 +12,7 @@ import 'get_posts_when_user_follow.dart';
 
 Widget buildWhatsonyourmindSanjay(BuildContext context, String petId) {
   final switchProfileCubit = SwitchProfileCubit.get(context);
-  
+
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Row(
@@ -30,9 +31,10 @@ Widget buildWhatsonyourmindSanjay(BuildContext context, String petId) {
 Widget _buildProfileAvatar(SwitchProfileCubit cubit) {
   return CircleAvatar(
     backgroundColor: Colors.blue,
-    child: cubit.image.isNotEmpty
-        ? _buildNetworkImage(cubit)
-        : _buildInitialText(cubit),
+    child:
+        cubit.image.isNotEmpty
+            ? _buildNetworkImage(cubit)
+            : _buildInitialText(cubit),
   );
 }
 
@@ -75,7 +77,6 @@ Widget _buildPostInputField(
             hintText: '${S.of(context).labelPost} ${cubit.name}?',
             obscureText: false,
             enable: false,
-            prefixIcon: const Icon(IconlyLight.image, size: 16),
           ),
         ),
       ),
@@ -138,11 +139,12 @@ void _navigateToUploadPost(BuildContext context, SwitchProfileCubit cubit) {
     context,
     DialogRoute(
       context: context,
-      builder: (context) => UploadPost(
-        petID: cubit.petID,
-        image: cubit.image,
-        name: cubit.name,
-      ),
+      builder:
+          (context) => UploadPost(
+            petID: cubit.petID,
+            image: cubit.image,
+            name: cubit.name,
+          ),
     ),
   );
 }
@@ -156,16 +158,18 @@ void _navigateToUploadPostWithCubit(
     context,
     DialogRoute(
       context: context,
-      builder: (newContext) => BlocProvider<CommunityCubit>.value(
-        value: communityCubit,
-        child: Builder(
-          builder: (ctx) => UploadPost(
-            petID: cubit.petID,
-            image: cubit.image,
-            name: cubit.name,
+      builder:
+          (newContext) => BlocProvider<CommunityCubit>.value(
+            value: communityCubit,
+            child: Builder(
+              builder:
+                  (ctx) => UploadPost(
+                    petID: cubit.petID,
+                    image: cubit.image,
+                    name: cubit.name,
+                  ),
+            ),
           ),
-        ),
-      ),
     ),
   );
 }

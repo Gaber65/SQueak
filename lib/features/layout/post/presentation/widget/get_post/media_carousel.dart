@@ -6,7 +6,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../domain/entities/post_entity.dart';
 
-class MediaCarousel extends StatelessWidget {
+class MediaCarousel extends StatefulWidget {
   const MediaCarousel({
     super.key,
     required this.media,
@@ -25,28 +25,33 @@ class MediaCarousel extends StatelessWidget {
   final ValueChanged<String> onVideoTap;
 
   @override
+  State<MediaCarousel> createState() => _MediaCarouselState();
+}
+
+class _MediaCarouselState extends State<MediaCarousel> {
+  @override
   Widget build(BuildContext context) {
-    if (media.isEmpty) return const SizedBox.shrink();
+    if (widget.media.isEmpty) return const SizedBox.shrink();
 
     return Stack(
       children: [
         SizedBox(
-          height: _getMediaHeight(media),
+          height: _getMediaHeight(widget.media),
           child: PageView.builder(
-            controller: pageController,
-            itemCount: media.length,
-            onPageChanged: onPageChanged,
+            controller: widget.pageController,
+            itemCount: widget.media.length,
+            onPageChanged: widget.onPageChanged,
             itemBuilder: (context, index) {
-              final item = media[index];
+              final item = widget.media[index];
               return _MediaItem(
                 mediaItem: item,
-                onImageTap: () => onImageTap(item.path),
-                onVideoTap: () => onVideoTap(item.path),
+                onImageTap: () => widget.onImageTap(item.path),
+                onVideoTap: () => widget.onVideoTap(item.path),
               );
             },
           ),
         ),
-        if (media.length > 1)
+        if (widget.media.length > 1)
           Positioned(
             top: 12,
             right: 12,
@@ -57,7 +62,7 @@ class MediaCarousel extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(
-                '${currentIndex + 1}/${media.length}',
+                '${widget.currentIndex + 1}/${widget.media.length}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,
@@ -66,12 +71,15 @@ class MediaCarousel extends StatelessWidget {
               ),
             ),
           ),
-        if (media.length > 1)
+        if (widget.media.length > 1)
           Positioned(
             bottom: 12,
             left: 0,
             right: 0,
-            child: _MediaDots(count: media.length, currentIndex: currentIndex),
+            child: _MediaDots(
+              count: widget.media.length,
+              currentIndex: widget.currentIndex,
+            ),
           ),
       ],
     );
@@ -110,7 +118,9 @@ class _MediaItemState extends State<_MediaItem> {
     // ✅ Generate thumbnail مرة واحدة بس
     if (widget.mediaItem.type == MediaType.video &&
         (widget.mediaItem.thumbnail?.isEmpty ?? true)) {
-      _thumbnailFuture = generateVideoThumbnail(imageUrl+widget.mediaItem.path);
+      _thumbnailFuture = generateVideoThumbnail(
+        imageUrl + widget.mediaItem.path,
+      );
     }
   }
 
@@ -183,11 +193,7 @@ class _MediaItemState extends State<_MediaItem> {
         ),
 
         // 🎥 Badge
-        Positioned(
-          bottom: 12,
-          right: 12,
-          child: _videoBadge(),
-        ),
+        Positioned(bottom: 12, right: 12, child: _videoBadge()),
       ],
     );
   }
@@ -246,6 +252,7 @@ class _MediaItemState extends State<_MediaItem> {
       ),
     );
   }
+
 }
 
 class _MediaDots extends StatelessWidget {

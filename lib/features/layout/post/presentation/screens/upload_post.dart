@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/layout/post/presentation/community/controller/community_cubit.dart';
+import '../../../../../core/service/global_widget/toast.dart';
 import '../../../../../core/service/service_locator/service_locator.dart';
 import '../controller/post_cubit.dart';
 import '../widget/add_post_component/upload_post_controller.dart';
@@ -63,8 +64,20 @@ class _UploadPostState extends State<UploadPost>
           BlocProvider(create: (context) => CommunityCubit()),
         BlocProvider(create: (context) => sl<PostCubit>()),
       ],
-      child: BlocListener<PostCubit, PostState>(
-        listener: controller.handlePostStateChanges,
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<PostCubit, PostState>(
+            listener: controller.handlePostStateChanges,
+          ),
+          BlocListener<CommunityCubit, CommunityState>(
+            listener: (context, state) {
+              if (state is MediaSelectionErrorState) {
+                errorToast(context, state.error);
+              }
+            },
+          ),
+          // ممكن تضيف listeners أكتر هنا
+        ],
         child: UploadPostUI(controller: controller, widget: widget),
       ),
     );

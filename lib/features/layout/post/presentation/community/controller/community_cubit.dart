@@ -39,17 +39,22 @@ class CommunityCubit extends Cubit<CommunityState> {
 
         // تحقق من نوع الصورة
         if (fileType == 'unsupported') {
-          emit(MediaSelectionErrorState(
-              'Unsupported file type: ${file.name}. Supported types: JPG, PNG, GIF, WebP'));
-          continue;
+          emit(
+            MediaSelectionErrorState(
+              'Unsupported file type: ${file.name}. Supported types: JPG, PNG, GIF, WebP',
+            ),
+          );
         }
 
         // تحقق من حجم الصورة
         final fileSize = await fileObj.length();
-        if (fileSize > 10 * 1024 * 1024) { // 10MB
-          emit(MediaSelectionErrorState(
-              'File ${file.name} is too large (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB). Max allowed: 10 MB'));
-          continue;
+        if (fileSize > 10 * 1024 * 1024) {
+          // 10MB
+          emit(
+            MediaSelectionErrorState(
+              'File ${file.name} is too large (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB). Max allowed: 10 MB',
+            ),
+          );
         }
 
         // إضافة الملف المقبول
@@ -63,7 +68,7 @@ class CommunityCubit extends Cubit<CommunityState> {
     }
   }
 
-// كشف نوع الصورة بناءً على الامتداد
+  // كشف نوع الصورة بناءً على الامتداد
   String _detectImageType(XFile file) {
     final path = file.path.toLowerCase();
     if (path.endsWith('.jpg') || path.endsWith('.jpeg')) return 'image/jpeg';
@@ -72,7 +77,6 @@ class CommunityCubit extends Cubit<CommunityState> {
     if (path.endsWith('.webp')) return 'image/webp';
     return 'unsupported';
   }
-
 
   // Pick multiple videos
   Future<void> pickMultipleVideos({required ImageSource source}) async {
@@ -101,35 +105,43 @@ class CommunityCubit extends Cubit<CommunityState> {
   }
 
   // Pick mixed media (both images and videos)
-  Future<void> pickMixedMedia({required ImageSource source}) async {
+  Future<String?> pickMixedMedia({required ImageSource source}) async {
     try {
-      // For mixed media, we'll use pickFiles which allows both
-      final List<XFile> files = await picker.pickMultipleMedia(
-        maxWidth: 1920,
-        maxHeight: 1080,
-        imageQuality: 85,
-      );
+      final List<XFile> files = await picker.pickMultipleMedia();
 
       if (files.isNotEmpty) {
-        // Check if adding these files would exceed the limit
         if (mediaFiles.length + files.length > maxMediaFiles) {
           emit(
             MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'),
           );
-          return;
+          return 'Maximum $maxMediaFiles files allowed';
         }
 
         for (var file in files) {
+          final fileSize = await File(file.path).length(); // حجم الملف بالبايت
+          const maxSizeInBytes = 10 * 1024 * 1024; // 10 ميجابايت
+          if (fileSize > maxSizeInBytes) {
+            emit(
+              MediaSelectionErrorState(
+                'File ${file.name} exceeds the 10 MB limit',
+              ),
+            );
+
+          }
           mediaFiles.add(File(file.path));
-          // Detect actual file type
           final fileType = _detectMediaType(file);
           mediaTypes.add(fileType);
         }
-        emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
+
+        if (mediaFiles.isNotEmpty) {
+          emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
+        }
       }
     } catch (e) {
       emit(MediaSelectionErrorState('Failed to pick media: $e'));
+      return 'Failed to pick media: $e';
     }
+    return null;
   }
 
   // Helper method to detect if a file is an image or video

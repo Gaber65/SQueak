@@ -8,17 +8,57 @@ import '../../community/controller/community_cubit.dart';
 import '../../screens/edit_post_screen.dart';
 import 'edit_post_controller.dart';
 
-class EditPostUI extends StatelessWidget {
+class EditPostUI extends StatefulWidget {
   final EditPostController controller;
   final EditPostScreen widget;
 
   const EditPostUI({super.key, required this.controller, required this.widget});
 
   @override
+  State<EditPostUI> createState() => _EditPostUIState();
+}
+
+class _EditPostUIState extends State<EditPostUI> {
+  bool _isUpdating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Listen to text changes to rebuild UI
+    widget.controller.textContentEditingController.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.textContentEditingController.removeListener(_onTextChanged);
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    if (!_isUpdating) {
+      setState(() {}); // Rebuild to update hasChanges
+    }
+  }
+
+  void _setUpdating(bool value) {
+    setState(() {
+      _isUpdating = value;
+    });
+  }
+
+  bool _hasChanges(CommunityCubit cubit) {
+    return widget.controller.textContentEditingController.text.trim() !=
+        (widget.widget.postEntity.content ?? '') ||
+        cubit.mediaFiles.isNotEmpty ||
+        widget.controller.existingMedia.length !=
+            (widget.widget.postEntity.postSocialMedia?.length ?? 0);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop:
-          () => controller.onWillPop(context, CommunityCubit.get(context)),
+      onWillPop: () =>
+          widget.controller.onWillPop(context, CommunityCubit.get(context)),
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: BlocBuilder<CommunityCubit, CommunityState>(
@@ -36,12 +76,7 @@ class EditPostUI extends StatelessWidget {
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context, CommunityCubit cubit) {
-    final bool hasChanges =
-        controller.textContentEditingController.text.trim() !=
-            (widget.postEntity.content ?? '') ||
-        cubit.mediaFiles.isNotEmpty ||
-        controller.existingMedia.length !=
-            (widget.postEntity.postSocialMedia?.length ?? 0);
+    final bool hasChanges = _hasChanges(cubit);
 
     return AppBar(
       backgroundColor: Colors.white,
@@ -55,7 +90,7 @@ class EditPostUI extends StatelessWidget {
   }
 
   Widget _buildLeadingButton(BuildContext context, CommunityCubit cubit) {
-    if (controller.isLoading) {
+    if (_isUpdating || widget.controller.isLoading) {
       return Center(
         child: SizedBox(
           width: 24,
@@ -83,7 +118,7 @@ class EditPostUI extends StatelessWidget {
           size: 18,
         ),
       ),
-      onPressed: () => controller.handleClose(context, cubit),
+      onPressed: () => widget.controller.handleClose(context, cubit),
       splashRadius: 24,
     );
   }
@@ -101,60 +136,61 @@ class EditPostUI extends StatelessWidget {
   }
 
   Widget _buildUpdateButton(
-    bool hasChanges,
-    BuildContext context,
-    CommunityCubit cubit,
-  ) {
+      bool hasChanges,
+      BuildContext context,
+      CommunityCubit cubit,
+      ) {
+    final bool isEnabled = hasChanges && !_isUpdating && !widget.controller.isLoading;
+
     return Padding(
       padding: const EdgeInsets.only(right: 12),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        child: TextButton(
-          onPressed:
-              hasChanges && !controller.isLoading
-                  ? () => controller.handlePostUpdate(context, cubit)
-                  : null,
-          style: TextButton.styleFrom(
-            backgroundColor:
-                hasChanges && !controller.isLoading
-                    ? ColorManager.primaryColor
-                    : Colors.grey[300],
-            foregroundColor: Colors.white,
-            disabledForegroundColor: Colors.grey[500],
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
-            ),
-            elevation: hasChanges && !controller.isLoading ? 2 : 0,
-            shadowColor: ColorManager.primaryColor.withOpacity(0.3),
+      child: TextButton(
+        onPressed: isEnabled
+            ? () async {
+          _setUpdating(true);
+          await widget.controller.handlePostUpdate(context, cubit);
+          if (mounted) {
+            _setUpdating(false);
+          }
+        }
+            : null,
+        style: TextButton.styleFrom(
+          backgroundColor:
+          isEnabled ? ColorManager.primaryColor : Colors.grey[300],
+          foregroundColor: Colors.white,
+          disabledForegroundColor: Colors.grey[500],
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (controller.isLoading) ...[
-                const SizedBox(
-                  width: 14,
-                  height: 14,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                ),
-                const SizedBox(width: 8),
-              ],
-              Text(
-                controller.isLoading
-                    ? (isArabic() ? 'جاري التحديث...' : 'Updating...')
-                    : (isArabic() ? 'حفظ' : 'Save'),
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.3,
+          elevation: isEnabled ? 2 : 0,
+          shadowColor: ColorManager.primaryColor.withOpacity(0.3),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_isUpdating || widget.controller.isLoading) ...[
+              const SizedBox(
+                width: 14,
+                height: 14,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               ),
+              const SizedBox(width: 8),
             ],
-          ),
+            Text(
+              _isUpdating || widget.controller.isLoading
+                  ? (isArabic() ? 'جاري التحديث...' : 'Updating...')
+                  : (isArabic() ? 'حفظ' : 'Save'),
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.3,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -176,9 +212,9 @@ class EditPostUI extends StatelessWidget {
 
   Widget _buildAnimatedBody(BuildContext context, CommunityCubit cubit) {
     return FadeTransition(
-      opacity: controller.fadeAnimation,
+      opacity: widget.controller.fadeAnimation,
       child: SlideTransition(
-        position: controller.slideAnimation,
+        position: widget.controller.slideAnimation,
         child: _buildBody(context, cubit),
       ),
     );
@@ -195,7 +231,7 @@ class EditPostUI extends StatelessWidget {
               children: [
                 const SizedBox(height: 16),
                 _buildTextInputSection(cubit),
-                if (controller.getTotalMediaCount(cubit) > 0) ...[
+                if (widget.controller.getTotalMediaCount(cubit) > 0) ...[
                   const SizedBox(height: 16),
                   _buildMediaPreview(cubit),
                 ],
@@ -245,7 +281,7 @@ class EditPostUI extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                controller.name,
+                widget.controller.name,
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
@@ -266,7 +302,7 @@ class EditPostUI extends StatelessWidget {
 
   Widget _buildAvatar() {
     return Hero(
-      tag: 'pet_avatar_edit_${controller.petID}',
+      tag: 'pet_avatar_edit_${widget.controller.petID}',
       child: Container(
         padding: const EdgeInsets.all(2.5),
         decoration: BoxDecoration(
@@ -293,18 +329,16 @@ class EditPostUI extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white, width: 3),
-            image:
-                controller.image.isNotEmpty
-                    ? DecorationImage(
-                      image: NetworkImage(controller.image),
-                      fit: BoxFit.cover,
-                    )
-                    : null,
+            image: widget.controller.image.isNotEmpty
+                ? DecorationImage(
+              image: NetworkImage(widget.controller.image),
+              fit: BoxFit.cover,
+            )
+                : null,
           ),
-          child:
-              controller.image.isEmpty
-                  ? Icon(Icons.pets, color: Colors.grey[400], size: 28)
-                  : null,
+          child: widget.controller.image.isEmpty
+              ? Icon(Icons.pets, color: Colors.grey[400], size: 28)
+              : null,
         ),
       ),
     );
@@ -339,12 +373,12 @@ class EditPostUI extends StatelessWidget {
 
   Widget _buildTextFieldContent() {
     return TextField(
-      controller: controller.textContentEditingController,
+      controller: widget.controller.textContentEditingController,
       maxLines: null,
       minLines: 5,
       maxLength: 1000,
-      textDirection: controller.getTextDirection(
-        controller.textContentEditingController.text,
+      textDirection: widget.controller.getTextDirection(
+        widget.controller.textContentEditingController.text,
       ),
       style: TextStyle(
         fontSize: 16,
@@ -353,10 +387,9 @@ class EditPostUI extends StatelessWidget {
         fontWeight: FontWeight.w400,
       ),
       decoration: InputDecoration(
-        hintText:
-            isArabic()
-                ? 'ماذا يدور في ذهنك، ${controller.name.split(' ').first}؟'
-                : "What's on your mind, ${controller.name.split(' ').first}?",
+        hintText: isArabic()
+            ? 'ماذا يدور في ذهنك، ${widget.controller.name.split(' ').first}؟'
+            : "What's on your mind, ${widget.controller.name.split(' ').first}?",
         hintStyle: TextStyle(
           fontSize: 16,
           color: Colors.grey[400],
@@ -368,7 +401,6 @@ class EditPostUI extends StatelessWidget {
         contentPadding: EdgeInsets.zero,
         counterText: '',
       ),
-      onChanged: (text) => controller.setState(() {}),
     );
   }
 
@@ -396,7 +428,7 @@ class EditPostUI extends StatelessWidget {
   }
 
   Widget _buildMediaGrid(CommunityCubit cubit) {
-    final totalMedia = controller.getTotalMediaCount(cubit);
+    final totalMedia = widget.controller.getTotalMediaCount(cubit);
     final displayCount = totalMedia > 4 ? 4 : totalMedia;
 
     return GridView.builder(
@@ -414,16 +446,14 @@ class EditPostUI extends StatelessWidget {
           return _buildMoreItemsOverlay(totalMedia - 4, cubit, index);
         }
 
-        // Show existing media first
-        if (index < controller.existingMedia.length) {
+        if (index < widget.controller.existingMedia.length) {
           return _buildExistingMediaItem(
-            controller.existingMedia[index],
+            widget.controller.existingMedia[index],
             index,
           );
         }
 
-        // Then show new media
-        final newMediaIndex = index - controller.existingMedia.length;
+        final newMediaIndex = index - widget.controller.existingMedia.length;
         return _buildNewMediaItem(cubit, newMediaIndex);
       },
     );
@@ -434,47 +464,49 @@ class EditPostUI extends StatelessWidget {
       children: [
         Container(
           color: Colors.grey[200],
-          child:
-              media.type == 'image'
-                  ? FastCachedImage(
-                    url: imageUrl + media.path,
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[300],
-                        child: Icon(
-                          Icons.broken_image,
-                          color: Colors.grey[600],
-                        ),
-                      );
-                    },
-                  )
-                  : _buildVideoPlaceholder(),
+          child: media.type == 'image'
+              ? FastCachedImage(
+            url: imageUrl + media.path,
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: Colors.grey[300],
+                child: Icon(
+                  Icons.broken_image,
+                  color: Colors.grey[600],
+                ),
+              );
+            },
+          )
+              : _buildVideoPlaceholder(),
         ),
-
-        // Remove button
         Positioned(
           top: 8,
           right: 8,
-          child: GestureDetector(
-            onTap:
-                controller.isLoading
-                    ? null
-                    : () => controller.removeExistingMedia(index),
-            child: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: controller.isLoading ? Colors.grey : Colors.black54,
-                shape: BoxShape.circle,
+          child: AbsorbPointer(
+            absorbing: _isUpdating || widget.controller.isLoading,
+            child: GestureDetector(
+              onTap: _isUpdating || widget.controller.isLoading
+                  ? null
+                  : () {
+                widget.controller.removeExistingMedia(index);
+                setState(() {});
+              },
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: _isUpdating || widget.controller.isLoading
+                      ? Colors.grey
+                      : Colors.black54,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.close, color: Colors.white, size: 18),
               ),
-              child: const Icon(Icons.close, color: Colors.white, size: 18),
             ),
           ),
         ),
-
-        // Video badge
         if (media.type == 'video')
           Positioned(
             bottom: 8,
@@ -495,8 +527,6 @@ class EditPostUI extends StatelessWidget {
               ),
             ),
           ),
-
-        // Network badge
         Positioned(
           top: 8,
           left: 8,
@@ -528,93 +558,104 @@ class EditPostUI extends StatelessWidget {
   }
 
   Widget _buildNewMediaItem(CommunityCubit cubit, int index) {
-    final isUploading = controller.isLoading;
+    final isUploading = _isUpdating || widget.controller.isLoading;
     final file = cubit.mediaFiles[index];
     final type = cubit.mediaTypes[index];
+    bool isSize = file.lengthSync() > 10 * 1024 * 1024;
 
-    bool isImage = type.startsWith('image'); // JPG, PNG, GIF, WebP
+    bool isImage = type.startsWith('image');
     bool isVideo = type == 'video';
 
-    return Stack(
-      children: [
-        Container(
-          color: Colors.grey[200],
-          child: isImage
-              ? Image.file(
-            file,
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              // لو حصل أي مشكلة في الصورة، اعرض thumbnail فيديو
-              return _buildVideoThumbnail(file);
-            },
-          )
-              : _buildVideoThumbnail(file),
-        ),
-
-        // Upload overlay
-        if (isUploading)
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+            color: isSize ? Colors.red : Colors.transparent, width: 5),
+      ),
+      child: Stack(
+        children: [
           Container(
-            color: Colors.black54,
-            child: const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            color: Colors.grey[200],
+            child: isImage
+                ? Image.file(
+              file,
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return _buildVideoThumbnail(file);
+              },
+            )
+                : _buildVideoThumbnail(file),
+          ),
+          if (isUploading)
+            Container(
+              color: Colors.black54,
+              child: const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
               ),
             ),
-          ),
-
-        // زر إزالة الملف
-        Positioned(
-          top: 8,
-          right: 8,
-          child: GestureDetector(
-            onTap: controller.isLoading ? null : () => cubit.removeMedia(index),
-            child: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: controller.isLoading ? Colors.grey : Colors.black54,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.close, color: Colors.white, size: 18),
-            ),
-          ),
-        ),
-
-        // Badge للفيديو
-        if (isVideo)
           Positioned(
-            bottom: 8,
-            left: 8,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Text(
-                'VIDEO',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
+            top: 8,
+            right: 8,
+            child: AbsorbPointer(
+              absorbing: _isUpdating || widget.controller.isLoading,
+              child: GestureDetector(
+                onTap: _isUpdating || widget.controller.isLoading
+                    ? null
+                    : () {
+                  cubit.removeMedia(index);
+                  setState(() {});
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: _isUpdating || widget.controller.isLoading
+                        ? Colors.grey
+                        : Colors.black54,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 18),
                 ),
               ),
             ),
           ),
-      ],
+          if (isVideo)
+            Positioned(
+              bottom: 8,
+              left: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Text(
+                  'VIDEO',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
   Widget _buildMoreItemsOverlay(
-    int remainingCount,
-    CommunityCubit cubit,
-    int index,
-  ) {
-    if (index < controller.existingMedia.length) {
+      int remainingCount,
+      CommunityCubit cubit,
+      int index,
+      ) {
+    if (index < widget.controller.existingMedia.length) {
       return Stack(
         children: [
-          _buildExistingMediaItem(controller.existingMedia[index], index),
+          _buildExistingMediaItem(widget.controller.existingMedia[index], index),
           Container(
             color: Colors.black54,
             child: Center(
@@ -632,7 +673,7 @@ class EditPostUI extends StatelessWidget {
       );
     }
 
-    final newMediaIndex = index - controller.existingMedia.length;
+    final newMediaIndex = index - widget.controller.existingMedia.length;
     return Stack(
       children: [
         _buildNewMediaItem(cubit, newMediaIndex),
@@ -672,8 +713,8 @@ class EditPostUI extends StatelessWidget {
   }
 
   Widget _buildMediaInfo(CommunityCubit cubit) {
-    final totalMedia = controller.getTotalMediaCount(cubit);
-    final existingCount = controller.existingMedia.length;
+    final totalMedia = widget.controller.getTotalMediaCount(cubit);
+    final existingCount = widget.controller.existingMedia.length;
     final newCount = cubit.mediaFiles.length;
 
     return Container(
@@ -754,9 +795,9 @@ class EditPostUI extends StatelessWidget {
   }
 
   Widget _buildActionButtonsSection(
-    BuildContext context,
-    CommunityCubit cubit,
-  ) {
+      BuildContext context,
+      CommunityCubit cubit,
+      ) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -791,7 +832,7 @@ class EditPostUI extends StatelessWidget {
                   _buildMediaActionButtons(cubit, context),
                 ],
               ),
-              if (controller.getTotalMediaCount(cubit) > 0) ...[
+              if (widget.controller.getTotalMediaCount(cubit) > 0) ...[
                 const SizedBox(height: 12),
                 _buildMediaStats(cubit),
               ],
@@ -804,9 +845,9 @@ class EditPostUI extends StatelessWidget {
 
   Widget _buildMediaStats(CommunityCubit cubit) {
     final existingImages =
-        controller.existingMedia.where((m) => m.type == 'image').length;
+        widget.controller.existingMedia.where((m) => m.type == 'image').length;
     final existingVideos =
-        controller.existingMedia.where((m) => m.type == 'video').length;
+        widget.controller.existingMedia.where((m) => m.type == 'video').length;
     final newImages = cubit.mediaTypes.where((type) => type == 'image').length;
     final newVideos = cubit.mediaTypes.where((type) => type == 'video').length;
 
@@ -845,36 +886,44 @@ class EditPostUI extends StatelessWidget {
   }
 
   Widget _buildMediaActionButtons(CommunityCubit cubit, BuildContext context) {
-    return Row(
-      children: [
-        _buildMediaActionButton(
-          icon: IconlyBold.image,
-          label: isArabic() ? 'صور' : 'Photos',
-          color: const Color(0xFF10B981),
-          onTap: () {
-            if (controller.isLoading) return;
-            controller.pickMultipleImages(cubit, context);
-          },
-        ),
-        const SizedBox(width: 10),
-        _buildMediaActionButton(
-          icon: Icons.videocam_rounded,
-          label: isArabic() ? 'فيديو' : 'Videos',
-          color: const Color(0xFFEF4444),
-          onTap: () {
-            if (controller.isLoading) return;
-            controller.pickMultipleVideos(cubit, context);
-          },
-        ),
-        const SizedBox(width: 10),
-        if (controller.getTotalMediaCount(cubit) > 0 && !controller.isLoading)
+    return AbsorbPointer(
+      absorbing: _isUpdating || widget.controller.isLoading,
+      child: Row(
+        children: [
           _buildMediaActionButton(
-            icon: Icons.delete_outline,
-            label: isArabic() ? 'مسح الكل' : 'Clear All',
-            color: Colors.orange,
-            onTap: () => controller.clearAllMedia(cubit),
+            icon: IconlyBold.image,
+            label: isArabic() ? 'صور' : 'Photos',
+            color: const Color(0xFF10B981),
+            onTap: () {
+              if (_isUpdating || widget.controller.isLoading) return;
+              widget.controller.pickMultipleImages(cubit, context);
+            },
           ),
-      ],
+          const SizedBox(width: 10),
+          _buildMediaActionButton(
+            icon: Icons.videocam_rounded,
+            label: isArabic() ? 'فيديو' : 'Videos',
+            color: const Color(0xFFEF4444),
+            onTap: () {
+              if (_isUpdating || widget.controller.isLoading) return;
+              widget.controller.pickMultipleVideos(cubit, context);
+            },
+          ),
+          const SizedBox(width: 10),
+          if (widget.controller.getTotalMediaCount(cubit) > 0 &&
+              !_isUpdating &&
+              !widget.controller.isLoading)
+            _buildMediaActionButton(
+              icon: Icons.delete_outline,
+              label: isArabic() ? 'مسح الكل' : 'Clear All',
+              color: Colors.orange,
+              onTap: () {
+                widget.controller.clearAllMedia(cubit);
+                setState(() {});
+              },
+            ),
+        ],
+      ),
     );
   }
 
@@ -884,25 +933,33 @@ class EditPostUI extends StatelessWidget {
     required Color color,
     required VoidCallback onTap,
   }) {
+    final isDisabled = _isUpdating || widget.controller.isLoading;
+
     return Tooltip(
       message: label,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: controller.isLoading ? null : onTap,
+          onTap: isDisabled ? null : onTap,
           borderRadius: BorderRadius.circular(14),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [color.withOpacity(0.15), color.withOpacity(0.08)],
+                colors: isDisabled
+                    ? [Colors.grey[200]!, Colors.grey[300]!]
+                    : [color.withOpacity(0.15), color.withOpacity(0.08)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: color.withOpacity(0.3), width: 1.5),
-              boxShadow: [
+              border: Border.all(
+                  color: isDisabled ? Colors.grey[400]! : color.withOpacity(0.3),
+                  width: 1.5),
+              boxShadow: isDisabled
+                  ? []
+                  : [
                 BoxShadow(
                   color: color.withOpacity(0.2),
                   blurRadius: 8,
@@ -912,7 +969,7 @@ class EditPostUI extends StatelessWidget {
             ),
             child: Icon(
               icon,
-              color: controller.isLoading ? Colors.grey[400] : color,
+              color: isDisabled ? Colors.grey[400] : color,
               size: 26,
             ),
           ),

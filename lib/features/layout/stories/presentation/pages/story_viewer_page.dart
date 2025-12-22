@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
-import 'package:squeak/features/layout/react/domain/entities/react_entities.dart';
 import 'package:squeak/features/layout/stories/presentation/pages/view_how_react.dart';
 import '../../../../../core/network/end_points.dart';
 import '../../../react/domain/repo/base_react_repo.dart';
@@ -195,7 +194,6 @@ class _StoryViewerPageState extends State<StoryViewerPage>
   @override
   Widget build(BuildContext context) {
     final story = widget.stories[controller.currentIndex];
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: GestureDetector(
@@ -228,7 +226,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                 // IMAGE
                 Image.network(
                   imageUrl + (story.image ?? ''),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                   errorBuilder:
                       (_, __, ___) => const Center(
                         child: Icon(Icons.error, color: Colors.white),
@@ -295,8 +293,7 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                         radius: 18,
                         backgroundImage: NetworkImage(
                           imageUrl +
-                              (widget.friendsStories?.petImage ??
-                                  story.petImage),
+                              (widget.friendsStories?.petImage ?? story.petImage),
                         ),
                       ),
                       const SizedBox(width: 10),

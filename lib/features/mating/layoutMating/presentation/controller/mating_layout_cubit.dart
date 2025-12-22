@@ -27,8 +27,8 @@ class MatingLayoutCubit extends Cubit<MatingLayoutState> {
     const ChatListScreen(),
   ];
 
-  void changeIndex(int index) {
-    currentIndex = index;
+  void changeIndex(int? index) {
+    currentIndex = index ?? 0;
     emit(ChangeIndexState());
   }
 }

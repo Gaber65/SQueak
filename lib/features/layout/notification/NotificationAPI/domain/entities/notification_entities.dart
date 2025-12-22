@@ -2,6 +2,8 @@
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
+import '../../../NotificationFCM/notification_message.dart';
+
 class NotificationEntities {
   final String message;
   final NotificationType eventType;
@@ -37,11 +39,36 @@ class NotificationEntities {
     }
   }
 
+  NotificationEntities copyWith({
+    String? message,
+    NotificationType? eventType,
+    String? eventTypeId,
+    String? title,
+    String? logo,
+    List<NotificationEventEntities>? notificationEvents,
+    String? id,
+    String? createdAt,
+    bool? isActive,
+    bool? isDeleted,
+  }) {
+    return NotificationEntities(
+      message: message ?? this.message,
+      eventType: eventType ?? this.eventType,
+      eventTypeId: eventTypeId ?? this.eventTypeId,
+      title: title ?? this.title,
+      logo: logo ?? this.logo,
+      notificationEvents: notificationEvents ?? this.notificationEvents,
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      isActive: isActive ?? this.isActive,
+      isDeleted: isDeleted ?? this.isDeleted,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
       'message': message,
-      'eventType': eventType.toString(),
+      'eventType': eventType.name.toString(),
       'eventTypeId': eventTypeId,
       'title': title,
       'logo': logo,
@@ -52,7 +79,28 @@ class NotificationEntities {
       'isDeleted': isDeleted,
     };
   }
+}
 
+NotificationEntities notificationMessageToEntity(NotificationMessage msg) {
+  final data = msg.data;
+
+  return NotificationEntities(
+    message: data?.body ?? '',
+    eventType: NotificationType.values.firstWhere(
+      (e) =>
+          e.toString().split('.').last.toLowerCase() ==
+          (data?.targetType ?? '').toLowerCase(),
+      orElse: () => NotificationType.NewPostAdded, // default لو تحب تغيّر
+    ),
+    eventTypeId: data?.targetTypeId ?? '',
+    title: data?.title ?? '',
+    logo: data?.imageUrl ?? '',
+    notificationEvents: const [], // لو مش محتاجها للنافجيشن
+    id: msg.messageId ?? '',
+    createdAt: DateTime.now().toIso8601String(),
+    isActive: true,
+    isDeleted: false,
+  );
 }
 
 class NotificationEventEntities {
@@ -76,6 +124,27 @@ class NotificationEventEntities {
     required this.note,
   });
 
+  NotificationEventEntities copyWith({
+    bool? isRead,
+    bool? isView,
+    DateTime? viewAt,
+    String? id,
+    DateTime? sendAt,
+    DateTime? readedAt,
+    int? notificationStatues,
+    String? note,
+  }) {
+    return NotificationEventEntities(
+      isRead: isRead ?? this.isRead,
+      isView: isView ?? this.isView,
+      viewAt: viewAt ?? this.viewAt,
+      id: id ?? this.id,
+      sendAt: sendAt ?? this.sendAt,
+      readedAt: readedAt ?? this.readedAt,
+      notificationStatues: notificationStatues ?? this.notificationStatues,
+      note: note ?? this.note,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {

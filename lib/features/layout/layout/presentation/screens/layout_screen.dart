@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:squeak/features/layout/notification/NotificationAPI/presentation/widget/navigate_based_on_notification.dart';
 import '../../../../pets/presentation/controller/pet_cubit.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import '../../../../settings/persentaion/controller/setting_cubit.dart';
@@ -79,7 +80,9 @@ class _LayoutScreenState extends State<LayoutScreen>
               ),
               backgroundColor: const Color(0xFF10B981),
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               margin: const EdgeInsets.all(16),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               duration: const Duration(seconds: 3),
@@ -106,6 +109,16 @@ class _LayoutScreenState extends State<LayoutScreen>
         _jumpController.forward();
       });
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (initialNotificationPayload != null) {
+        final entity = payloadToNotificationEntity(initialNotificationPayload!);
+
+        // reset
+        initialNotificationPayload = null;
+        return navigateBasedOnNotification(entity, context);
+      }
+    });
   }
 
   @override

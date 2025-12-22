@@ -16,8 +16,7 @@ class EditPostScreen extends StatefulWidget {
   State<EditPostScreen> createState() => _EditPostScreenState();
 }
 
-class _EditPostScreenState extends State<EditPostScreen>
-    with TickerProviderStateMixin {
+class _EditPostScreenState extends State<EditPostScreen> with TickerProviderStateMixin {
   late EditPostController _controller;
   late String petID;
   late String name;

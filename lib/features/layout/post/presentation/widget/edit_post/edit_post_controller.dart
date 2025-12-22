@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../../../core/service/global_function/format_utils.dart';
 import '../../../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
 import '../../../../../../core/utils/enums/upload_place.dart';
 import '../../../domain/entities/post_entity.dart';
@@ -10,6 +11,8 @@ import '../../controller/post_cubit.dart';
 import '../add_post_component/upload_post_animations.dart';
 import '../add_post_component/upload_post_dialogs.dart';
 import '../add_post_component/upload_post_snackbars.dart';
+
+
 
 class EditPostController {
   final TickerProvider vsync;
@@ -23,11 +26,12 @@ class EditPostController {
   late Animation<Offset> slideAnimation;
   final FocusNode textFocusNode = FocusNode();
   final TextEditingController textContentEditingController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController textTitleEditingController =
-      TextEditingController();
+  TextEditingController();
 
   bool isLoading = false;
+  bool _isProcessing = false; // Add this flag to prevent double taps
   late UploadPostAnimations animations;
   late UploadPostDialogs dialogs;
   late UploadPostSnackbars snackbars;
@@ -88,6 +92,7 @@ class EditPostController {
     textFocusNode.dispose();
     textContentEditingController.dispose();
     textTitleEditingController.dispose();
+    _isProcessing = false; // Reset flag on dispose
   }
 
   void _autoFocusTextField() {
@@ -107,6 +112,10 @@ class EditPostController {
 
     if (state is CreatePostErrorState) {
       snackbars.showErrorSnackBar(context, state.message);
+      // Reset processing flag on error
+      _isProcessing = false;
+      isLoading = false;
+      setState(() {});
     }
 
     if (state is CreatePostSuccessState) {
@@ -134,10 +143,11 @@ class EditPostController {
 
   // Media handling methods
   Future<void> pickMultipleImages(
-    CommunityCubit cubit,
-    BuildContext context,
-  ) async {
+      CommunityCubit cubit,
+      BuildContext context,
+      ) async {
     try {
+      if (_isProcessing) return; // Prevent during processing
       await cubit.pickMultipleImages(source: ImageSource.gallery);
       setState(() {});
     } catch (e) {
@@ -146,10 +156,11 @@ class EditPostController {
   }
 
   Future<void> pickMultipleVideos(
-    CommunityCubit cubit,
-    BuildContext context,
-  ) async {
+      CommunityCubit cubit,
+      BuildContext context,
+      ) async {
     try {
+      if (_isProcessing) return; // Prevent during processing
       await cubit.pickMultipleVideos(source: ImageSource.gallery);
       setState(() {});
     } catch (e) {
@@ -158,15 +169,18 @@ class EditPostController {
   }
 
   void clearAllNewMedia(CommunityCubit cubit) {
+    if (_isProcessing) return; // Prevent during processing
     cubit.clearAllMedia();
     setState(() {});
   }
 
   void clearAllMedia(CommunityCubit cubit) {
+    if (_isProcessing) return; // Prevent during processing
     cubit.clearAllMedia();
     existingMedia.clear();
     setState(() {});
   }
+
   bool isFileSizeValid({
     required File file,
     required String type,
@@ -178,10 +192,17 @@ class EditPostController {
 
     return false;
   }
+
   Future<void> handlePostUpdate(
-    BuildContext context,
-    CommunityCubit cubit,
-  ) async {
+      BuildContext context,
+      CommunityCubit cubit,
+      ) async {
+    // Prevent double execution
+    if (_isProcessing) {
+      debugPrint('Update already in progress, ignoring duplicate tap');
+      return;
+    }
+
     final content = textContentEditingController.text.trim();
 
     // Validation
@@ -219,19 +240,34 @@ class EditPostController {
       }
     }
 
+    // Start processing
+    _isProcessing = true;
+    isLoading = true;
+    setState(() {});
 
-    // Update post
-    final postCubit = PostCubit.get(context);
-    final mainCubit = MainCubit.get(context);
+    try {
+      // Update post
+      final postCubit = PostCubit.get(context);
+      final mainCubit = MainCubit.get(context);
 
-    await _uploadAndUpdatePost(
-      context: context,
-      cubit: cubit,
-      postCubit: postCubit,
-      mainCubit: mainCubit,
-      title: textTitleEditingController.text.trim(),
-      content: content,
-    );
+      await _uploadAndUpdatePost(
+        context: context,
+        cubit: cubit,
+        postCubit: postCubit,
+        mainCubit: mainCubit,
+        title: textTitleEditingController.text.trim(),
+        content: content,
+      );
+    } catch (e) {
+      // Reset flags on error
+      _isProcessing = false;
+      isLoading = false;
+      setState(() {});
+      snackbars.showErrorSnackBar(context, 'Failed to update post: $e');
+    } finally {
+      // Note: Don't reset _isProcessing here if navigation is expected
+      // Let handlePostStateChanges handle it
+    }
   }
 
   Future<void> _uploadAndUpdatePost({
@@ -242,8 +278,6 @@ class EditPostController {
     required String title,
     required String content,
   }) async {
-    setState(() => isLoading = true);
-
     try {
       List<Map<String, String?>> postSocialMedias = [];
 
@@ -290,12 +324,22 @@ class EditPostController {
         postSocialMedias: postSocialMedias,
       );
     } catch (e) {
-      snackbars.showErrorSnackBar(context, 'Failed to update post: $e');
-      setState(() => isLoading = false);
+      // Reset processing flag
+      _isProcessing = false;
+      rethrow;
     }
   }
 
   void handleClose(BuildContext context, CommunityCubit cubit) {
+    if (_isProcessing) {
+      // Show message that operation is in progress
+      snackbars.showErrorSnackBar(
+        context,
+        isArabic() ? 'جاري التحديث... الرجاء الانتظار' : 'Updating... Please wait',
+      );
+      return;
+    }
+
     final hasChanges = _hasContentChanged() || cubit.mediaFiles.isNotEmpty;
 
     if (hasChanges) {
@@ -307,12 +351,21 @@ class EditPostController {
 
   bool _hasContentChanged() {
     return textContentEditingController.text.trim() !=
-            (postEntity.content ?? '') ||
+        (postEntity.content ?? '') ||
         textTitleEditingController.text.trim() != (postEntity.title ?? '') ||
         existingMedia.length != (postEntity.postSocialMedia?.length ?? 0);
   }
 
   Future<bool> onWillPop(BuildContext context, CommunityCubit cubit) async {
+    if (_isProcessing) {
+      // Prevent back navigation during processing
+      snackbars.showErrorSnackBar(
+        context,
+        isArabic() ? 'جاري التحديث... الرجاء الانتظار' : 'Updating... Please wait',
+      );
+      return false;
+    }
+
     final hasChanges = _hasContentChanged() || cubit.mediaFiles.isNotEmpty;
 
     if (hasChanges) {
@@ -330,6 +383,12 @@ class EditPostController {
 
   int getTotalMediaCount(CommunityCubit cubit) {
     return existingMedia.length + cubit.mediaFiles.length;
+  }
+
+  // Helper method to reset processing flag (call this when done)
+  void resetProcessing() {
+    _isProcessing = false;
+    isLoading = false;
   }
 }
 

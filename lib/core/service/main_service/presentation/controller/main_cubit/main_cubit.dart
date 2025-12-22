@@ -1,8 +1,7 @@
-// presentation/cubit/main_cubit.dart
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/enums/upload_place.dart';
-
+import 'package:video_compress/video_compress.dart';
 import '../../../../cache/shared_preferences/cache_helper.dart';
 import '../../../domain/entities/image_entity.dart';
 import '../../../domain/entities/language_entity.dart';
@@ -60,8 +59,6 @@ class MainCubit extends Cubit<MainState> {
     } else {
       isDark = !isDark;
       CacheHelper.saveData('isDark', isDark);
-      // print(isDark);
-      // print(CacheHelper.getData('isDark'));
       emit(AppChangeModeState());
     }
   }
@@ -139,11 +136,35 @@ class MainCubit extends Cubit<MainState> {
     });
   }
 
+  Future<File?> convertToMp4(File file) async {
+    try {
+      final info = await VideoCompress.compressVideo(
+        file.path,
+        quality: VideoQuality.MediumQuality,
+        deleteOrigin: false,
+        includeAudio: true,
+      );
+
+      return info?.file;
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<void> getGlobalVideo(File file, UploadPlace uploadPlace) async {
     emit(VideoHelperLoading());
+
+    final mp4File = await convertToMp4(file);
+
+    if (mp4File == null) {
+      emit(VideoHelperError());
+      return;
+    }
+
     final result = await manageUploadVideoUseCase(
-      UploadImageParams(file: file, uploadPlace: uploadPlace),
+      UploadImageParams(file: mp4File, uploadPlace: uploadPlace),
     );
+
     result.fold((l) => emit(VideoHelperError()), (r) {
       emit(VideoHelperSuccess());
       modelImage = r;

@@ -42,6 +42,8 @@ class NotificationInitializer {
     // Initialize the plugin with notification response handler
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
+      onDidReceiveBackgroundNotificationResponse:
+          LocalNotificationHandler.handleNotificationResponse,
       onDidReceiveNotificationResponse:
           LocalNotificationHandler.handleNotificationResponse,
     );

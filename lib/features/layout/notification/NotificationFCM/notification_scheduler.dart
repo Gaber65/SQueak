@@ -1,23 +1,22 @@
 // notification_scheduler.dart
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:path/path.dart';
+import '../NotificationAPI/domain/entities/notification_entities.dart';
 import 'notification_initializer.dart';
 
 class NotificationScheduler {
   /// Schedule instant notification (for Firebase messages)
   static Future<void> scheduleInstantNotification({
-    required String title,
-    required String body,
-    required String id,
-    required String typeName,
-    String? largeImageUrl,
+    required NotificationEntities entites,
+
     int notificationId = 888,
   }) async {
-    String? imagePath = await _downloadImage(largeImageUrl);
+    String? imagePath = await _downloadImage(entites.logo);
 
     final notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
@@ -30,8 +29,8 @@ class NotificationScheduler {
                 ? BigPictureStyleInformation(
                   FilePathAndroidBitmap(imagePath),
                   largeIcon: FilePathAndroidBitmap(imagePath),
-                  contentTitle: title,
-                  summaryText: body,
+                  contentTitle: entites.title,
+                  summaryText: entites.message,
                 )
                 : null,
         playSound: true,
@@ -47,14 +46,13 @@ class NotificationScheduler {
       ),
     );
 
-    final payload = '{"id": "$id", "typeName": "$typeName"}';
-
+    print(entites.toJson());
     await flutterLocalNotificationsPlugin.show(
       notificationId,
-      title,
-      body,
+      entites.title,
+      entites.message,
       notificationDetails,
-      payload: payload,
+      payload: jsonEncode(entites.toJson()),
     );
 
     // print("Instant notification scheduled: $title");
