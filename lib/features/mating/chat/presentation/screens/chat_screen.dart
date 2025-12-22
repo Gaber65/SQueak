@@ -764,7 +764,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               );
               errorToast(context, errorMessage);
             }
-            // Delete the recorded file if it's too large
             try {
               await file.delete();
             } catch (e) {
