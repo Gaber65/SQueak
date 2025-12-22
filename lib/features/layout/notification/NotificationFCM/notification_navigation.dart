@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:squeak/features/appointments/boarding/domain/entities/boarding_entry_entity.dart';
 
 import '../../../../core/utils/export_path/export_files.dart';
 import '../../../pets/presentation/view/pet_screen.dart';

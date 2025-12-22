@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:squeak/core/network/dio.dart';
 import '../../../domain/entities/message_entity.dart';
 import 'message_bubble.dart';
 import '../chat_widgets/date_divider.dart';
@@ -38,9 +39,12 @@ class MessagesList extends StatefulWidget {
 }
 
 class _MessagesListState extends State<MessagesList> {
+  late Set<String> _cancelledUploadIds;
+
   @override
   void initState() {
     super.initState();
+    _cancelledUploadIds = {};
     widget.itemPositionsListener.itemPositions.addListener(_onScroll);
   }
 
@@ -81,9 +85,14 @@ class _MessagesListState extends State<MessagesList> {
     final isDark = theme.brightness == Brightness.dark;
     final typingCount = widget.isOtherUserTyping ? 1 : 0;
     final loadingCount = widget.isLoadingMore ? 1 : 0;
+    final activeUploadingFiles =
+        widget.uploadingFiles
+            .where((upload) => !_cancelledUploadIds.contains(upload.id))
+            .toList();
+
     final totalItems =
         widget.messages.length +
-        widget.uploadingFiles.length +
+        activeUploadingFiles.length +
         typingCount +
         loadingCount;
 
@@ -118,7 +127,7 @@ class _MessagesListState extends State<MessagesList> {
 
             final adjustedIndex = widget.isLoadingMore ? index - 1 : index;
             final messagesAndUploadsCount =
-                widget.messages.length + widget.uploadingFiles.length;
+                widget.messages.length + activeUploadingFiles.length;
 
             if (adjustedIndex >= messagesAndUploadsCount) {
               if (widget.isOtherUserTyping) {
@@ -156,8 +165,15 @@ class _MessagesListState extends State<MessagesList> {
               );
             } else {
               final uploadIndex = adjustedIndex - widget.messages.length;
+              final uploadMedia = activeUploadingFiles[uploadIndex];
               return UploadingBubble(
-                upload: widget.uploadingFiles[uploadIndex],
+                upload: uploadMedia,
+                onCancel: () {
+                  DioFinalHelper.cancelRequestById(uploadMedia.id);
+                  setState(() {
+                    _cancelledUploadIds.add(uploadMedia.id);
+                  });
+                },
               );
             }
           },

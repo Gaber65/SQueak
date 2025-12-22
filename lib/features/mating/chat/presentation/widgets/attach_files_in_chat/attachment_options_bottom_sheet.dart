@@ -147,11 +147,8 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
       final files = <File>[];
 
       for (final pickedFile in pickedFiles) {
-        // Only include video files
         if (pickedFile.path.contains(RegExp(r'\.(mp4|mov|avi|mkv|flv|wmv|webm|3gp|m4v)$', caseSensitive: false))) {
           final file = File(pickedFile.path);
-          
-          // Check file size
           if (!_isFileSizeValid(file, AttachmentType.video)) {
             _showFileSizeWarning(context, file, AttachmentType.video);
             continue;

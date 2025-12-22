@@ -18,8 +18,9 @@ class UploadingMedia {
 
 class UploadingBubble extends StatelessWidget {
   final UploadingMedia upload;
+  final VoidCallback? onCancel;
 
-  const UploadingBubble({super.key, required this.upload});
+  const UploadingBubble({super.key, required this.upload, this.onCancel});
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +91,8 @@ class UploadingBubble extends StatelessWidget {
               ),
             ),
           ),
+          if (onCancel != null)
+            Positioned(top: 8, right: 8, child: _buildCancelButton()),
         ],
       ),
     );
@@ -103,17 +106,23 @@ class UploadingBubble extends StatelessWidget {
         color: Colors.black54,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Stack(
         children: [
-          Icon(Icons.videocam, color: Colors.white, size: 40),
-          SizedBox(height: 8),
-          CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
-          SizedBox(height: 8),
-          Text(
-            'Uploading video...',
-            style: TextStyle(color: Colors.white, fontSize: 12),
+          const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.videocam, color: Colors.white, size: 40),
+              SizedBox(height: 8),
+              CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+              SizedBox(height: 8),
+              Text(
+                'Uploading video...',
+                style: TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ],
           ),
+          if (onCancel != null)
+            Positioned(top: 8, right: 8, child: _buildCancelButton()),
         ],
       ),
     );
@@ -126,18 +135,22 @@ class UploadingBubble extends StatelessWidget {
         color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.mic, color: Colors.white, size: 24),
-          SizedBox(width: 12),
-          CircularProgressIndicator(
+          const Icon(Icons.mic, color: Colors.white, size: 24),
+          const SizedBox(width: 12),
+          const CircularProgressIndicator(
             color: Colors.white,
             strokeWidth: 2,
             strokeCap: StrokeCap.round,
           ),
-          SizedBox(width: 12),
-          Text('Uploading...', style: TextStyle(color: Colors.white)),
+          const SizedBox(width: 12),
+          const Text('Uploading...', style: TextStyle(color: Colors.white)),
+          if (onCancel != null) ...[
+            const SizedBox(width: 12),
+            _buildCancelButton(),
+          ],
         ],
       ),
     );
@@ -150,19 +163,42 @@ class UploadingBubble extends StatelessWidget {
         color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.insert_drive_file, color: Colors.white, size: 24),
-          SizedBox(width: 12),
-          CircularProgressIndicator(
+          const Icon(Icons.insert_drive_file, color: Colors.white, size: 24),
+          const SizedBox(width: 12),
+          const CircularProgressIndicator(
             color: Colors.white,
             strokeWidth: 2,
             strokeCap: StrokeCap.round,
           ),
-          SizedBox(width: 12),
-          Text('Uploading file...', style: TextStyle(color: Colors.white)),
+          const SizedBox(width: 12),
+          const Text(
+            'Uploading file...',
+            style: TextStyle(color: Colors.white),
+          ),
+          if (onCancel != null) ...[
+            const SizedBox(width: 12),
+            _buildCancelButton(),
+          ],
         ],
+      ),
+    );
+  }
+
+  Widget _buildCancelButton() {
+    return GestureDetector(
+      onTap: () {
+        onCancel!();
+      },
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: Colors.black45,
+          shape: BoxShape.circle,
+        ),
+        child: const Icon(Icons.close, color: Colors.white, size: 18),
       ),
     );
   }
