@@ -1,11 +1,12 @@
 // EditCommentInputCard
 import 'package:flutter/material.dart';
+import 'package:squeak/features/comments/presentation/widget/comment_widget/comment_form_field.dart';
 
 import '../../../../../core/utils/export_path/export_files.dart';
 import '../../../domain/entities/comment_entity.dart';
 import '../../controller/comment_cubit.dart';
 import 'build_edit_comment_save_button.dart';
-
+bool _hasShownMaxLengthDialog = false;
 Widget buildEditCommentInputCard(
   BuildContext context,
   CommentCubit cubit,
@@ -21,7 +22,6 @@ Widget buildEditCommentInputCard(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 1,
@@ -33,7 +33,23 @@ Widget buildEditCommentInputCard(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TextFormField(
+            maxLength: 500,
             controller: commentController,
+               onChanged: (value) {
+            final maxLength = value.length;
+            if (maxLength >= 500 && !_hasShownMaxLengthDialog) {
+              _hasShownMaxLengthDialog = true;
+              showDialog(
+                context: context,
+                useRootNavigator: true,
+                barrierDismissible: true,
+                builder: (dialogContext) => CommentMaxLengthDialog(),
+              ).then((_) {
+                _hasShownMaxLengthDialog = false;
+              });
+            }
+          },
+        
             validator: (value) {
               if (value!.isEmpty) {
                 return comment.parentId == null
@@ -53,7 +69,7 @@ Widget buildEditCommentInputCard(
             cursorHeight: 20,
             style: TextStyle(
               fontSize: 14,
-              height: 1.4, // line height to improve multi-line spacing
+              height: 1.4, 
               color:
                   MainCubit.get(context).isDark ? Colors.white : Colors.black87,
             ),

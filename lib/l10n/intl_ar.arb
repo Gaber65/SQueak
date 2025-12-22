@@ -609,7 +609,9 @@
   "deleteCommentConfirmation": "هل أنت متأكد أنك تريد حذف هذا التعليق؟",
   "customMessage" : "نموذج رسالة مخصصة للعيادة",
   "sendStoryMessage" : "إرسال رسالة...",
-  "viewReactions": "التفاعلات"
+  "viewReactions": "التفاعلات",
+  "alert": "تنبيه",
+  "commentMaxLength": "لا يمكن أن يتجاوز التعليق 500 حرف"
 
 
 

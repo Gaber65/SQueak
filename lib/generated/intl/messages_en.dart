@@ -113,6 +113,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "address_validation":
             MessageLookupByLibrary.simpleMessage("Please enter your address"),
         "age": MessageLookupByLibrary.simpleMessage("Age"),
+        "alert": MessageLookupByLibrary.simpleMessage("Alert"),
         "all": MessageLookupByLibrary.simpleMessage("All"),
         "allChats": MessageLookupByLibrary.simpleMessage("All Chats"),
         "allYourAppointments":
@@ -255,6 +256,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "clinicFollowedBefore": MessageLookupByLibrary.simpleMessage(
             "You have already followed this clinic before"),
         "closeIn": MessageLookupByLibrary.simpleMessage("Close In"),
+        "commentMaxLength": MessageLookupByLibrary.simpleMessage(
+            "Comment cannot exceed 500 characters"),
         "commentReply": MessageLookupByLibrary.simpleMessage("Comment Reply"),
         "comments": MessageLookupByLibrary.simpleMessage("Comments"),
         "community_access":

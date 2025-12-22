@@ -237,37 +237,47 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                   top: 40,
                   left: 8,
                   right: 8,
-                  child: Row(
-                    children: List.generate(widget.stories.length, (i) {
-                      return Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 2),
-                          height: 3,
-                          decoration: BoxDecoration(
-                            color: Colors.white24,
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                          child:
-                              i == controller.currentIndex
+                  child: Builder(
+                    builder: (context) {
+                      final isRTL = Directionality.of(context) == TextDirection.rtl;
+                      final totalStories = widget.stories.length;
+                      final currentIndex = controller.currentIndex;
+                      
+                      return Row(
+                        textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
+                        children: List.generate(totalStories, (i) {
+                          // In RTL mode, reverse the index for display order
+                          final displayIndex = isRTL ? totalStories - 1 - i : i;
+                          final isCurrentStory = displayIndex == currentIndex;
+                          final isCompleted = isRTL 
+                              ? displayIndex > currentIndex 
+                              : displayIndex < currentIndex;
+                          
+                          return Expanded(
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 2),
+                              height: 3,
+                              decoration: BoxDecoration(
+                                color: Colors.white24,
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                              child: isCurrentStory
                                   ? AnimatedBuilder(
                                     animation: controller.progressController,
-                                    builder:
-                                        (_, __) => FractionallySizedBox(
-                                          alignment: Alignment.centerLeft,
-                                          widthFactor:
-                                              controller
-                                                  .progressController
-                                                  .value,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(3),
-                                            ),
-                                          ),
+                                    builder: (_, __) => FractionallySizedBox(
+                                      alignment: isRTL 
+                                          ? Alignment.centerRight 
+                                          : Alignment.centerLeft,
+                                      widthFactor: controller.progressController.value,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(3),
                                         ),
+                                      ),
+                                    ),
                                   )
-                                  : i < controller.currentIndex
+                                  : isCompleted
                                   ? Container(
                                     decoration: BoxDecoration(
                                       color: Colors.white,
@@ -275,9 +285,11 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                                     ),
                                   )
                                   : const SizedBox.shrink(),
-                        ),
+                            ),
+                          );
+                        }),
                       );
-                    }),
+                    },
                   ),
                 ),
 

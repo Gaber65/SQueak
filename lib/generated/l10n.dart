@@ -6129,6 +6129,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Alert`
+  String get alert {
+    return Intl.message(
+      'Alert',
+      name: 'alert',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Comment cannot exceed 500 characters`
+  String get commentMaxLength {
+    return Intl.message(
+      'Comment cannot exceed 500 characters',
+      name: 'commentMaxLength',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

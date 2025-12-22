@@ -4,6 +4,7 @@ import 'package:iconly/iconly.dart';
 import '../../../../../core/utils/export_path/export_files.dart';
 import '../../controller/comment_cubit.dart';
 
+bool _hasShownMaxLengthDialog = false;
 Widget buildPaddingFormComment(
   CommentCubit cubit,
   BuildContext context,
@@ -13,7 +14,6 @@ Widget buildPaddingFormComment(
   String petID,
 ) {
   final isDark = MainCubit.get(context).isDark;
-
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Column(
@@ -24,7 +24,22 @@ Widget buildPaddingFormComment(
           const SizedBox(height: 12),
         ],
         TextFormField(
+          maxLength: 500,
           controller: commentController,
+          onChanged: (value) {
+            final maxLength = value.length;
+            if (maxLength >= 500 && !_hasShownMaxLengthDialog) {
+              _hasShownMaxLengthDialog = true;
+              showDialog(
+                context: context,
+                useRootNavigator: true,
+                barrierDismissible: true,
+                builder: (dialogContext) => CommentMaxLengthDialog(),
+              ).then((_) {
+                _hasShownMaxLengthDialog = false;
+              });
+            }
+          },
           style: FontStyleThame.textStyle(context: context, fontSize: 15),
           maxLines: 1,
           decoration: InputDecoration(
@@ -101,6 +116,96 @@ Widget buildPaddingFormComment(
       ],
     ),
   );
+}
+
+class CommentMaxLengthDialog extends StatelessWidget {
+  const CommentMaxLengthDialog({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      elevation: 8,
+      backgroundColor: Colors.white,
+      title: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.orange.shade50,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.warning_amber_rounded,
+              color: Colors.orange.shade600,
+              size: 32,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            S.of(context).alert,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.black87,
+            ),
+          ),
+        ],
+      ),
+      content: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Text(
+          S.of(context).commentMaxLength,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 15,
+            color: Colors.grey[600],
+            height: 1.5,
+          ),
+        ),
+      ),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 24,
+        vertical: 16,
+      ),
+      actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
+      actionsAlignment: MainAxisAlignment.center,
+      actions: [
+        ElevatedButton(
+          onPressed:
+              () =>
+                  Navigator.of(
+                    context,
+                    rootNavigator: true,
+                  ).pop(),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange.shade500,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 32,
+              vertical: 14,
+            ),
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: Text(
+            S.of(context).ok,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 OutlineInputBorder _noBorder() {

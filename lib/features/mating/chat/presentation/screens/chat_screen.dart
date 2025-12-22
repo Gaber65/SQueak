@@ -862,11 +862,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         debugPrint('❌ addOutgoingMessage error: $e');
       }
     } else {
-      // Friend not in conversation: do not show optimistic local bubble
+
       try {
-        debugPrint(
-          'ℹ️ Friend not in conversation, skipping local optimistic message',
-        );
       } catch (_) {}
     }
 
@@ -888,10 +885,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         description: text,
       );
       try {
-        debugPrint('📤 Sent to server: "$text" (local id=${localMessage.id})');
+      
       } catch (_) {}
     } catch (e) {
-      debugPrint('❌ sendMessage error: $e');
+      
     }
 
     chatAppCubit.increaseUnreadMessageCount(

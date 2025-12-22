@@ -105,6 +105,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "address_validation":
             MessageLookupByLibrary.simpleMessage("يرجى إدخال عنوانك"),
         "age": MessageLookupByLibrary.simpleMessage("العمر"),
+        "alert": MessageLookupByLibrary.simpleMessage("تنبيه"),
         "all": MessageLookupByLibrary.simpleMessage("الكل"),
         "allChats": MessageLookupByLibrary.simpleMessage("جميع المحادثات"),
         "allYourAppointments":
@@ -244,6 +245,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "clinicFollowedBefore": MessageLookupByLibrary.simpleMessage(
             "لقد تابعت هذه العيادة من قبل"),
         "closeIn": MessageLookupByLibrary.simpleMessage("يغلق في"),
+        "commentMaxLength": MessageLookupByLibrary.simpleMessage(
+            "لا يمكن أن يتجاوز التعليق 500 حرف"),
         "commentReply": MessageLookupByLibrary.simpleMessage("رد التعليق"),
         "comments": MessageLookupByLibrary.simpleMessage("التعليقات"),
         "community_access":
