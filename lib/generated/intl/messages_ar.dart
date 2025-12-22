@@ -789,6 +789,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "sendMeNow": MessageLookupByLibrary.simpleMessage("أرسل لي الآن"),
         "sendMessage": MessageLookupByLibrary.simpleMessage("محادثة"),
         "sendRequest": MessageLookupByLibrary.simpleMessage("أرسل طلب"),
+        "sendStoryMessage":
+            MessageLookupByLibrary.simpleMessage("إرسال رسالة..."),
         "sent": MessageLookupByLibrary.simpleMessage("الصادرة"),
         "sentVerification":
             MessageLookupByLibrary.simpleMessage("لقد أرسلنا رمز التحقق إلى"),
@@ -916,6 +918,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "viewAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
         "viewProfile": MessageLookupByLibrary.simpleMessage("عرض الملف الشخصي"),
         "viewProfileSnack": m8,
+        "viewReactions": MessageLookupByLibrary.simpleMessage("التفاعلات"),
         "viewReplies": m9,
         "waitingForResponse":
             MessageLookupByLibrary.simpleMessage("في انتظار الرد..."),

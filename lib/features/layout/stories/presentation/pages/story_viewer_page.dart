@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
 import 'package:squeak/features/layout/stories/presentation/pages/view_how_react.dart';
+import 'package:squeak/generated/l10n.dart';
 import '../../../../../core/network/end_points.dart';
 import '../../../react/domain/repo/base_react_repo.dart';
 import '../../domain/entities/story.dart';
@@ -196,11 +197,10 @@ class _StoryViewerPageState extends State<StoryViewerPage>
     return Scaffold(
       backgroundColor: Colors.black,
       body: GestureDetector(
+        behavior: HitTestBehavior.deferToChild,
         onTapDown: (details) {
           final width = MediaQuery.of(context).size.width;
           final dx = details.globalPosition.dx;
-
-          // Left tap → previous
           if (dx < width / 2) {
             controller.goPrevious();
           } else {
@@ -290,11 +290,24 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                     children: [
                       CircleAvatar(
                         radius: 18,
-                        backgroundImage: NetworkImage(
-                          imageUrl +
-                              (widget.friendsStories?.petImage ??
-                                  story.petImage),
-                        ),
+                        backgroundImage:
+                            (widget.friendsStories?.petImage != null &&
+                                    widget.friendsStories!.petImage.isNotEmpty)
+                                ? NetworkImage(
+                                  imageUrl +
+                                      (widget.friendsStories?.petImage ??
+                                          story.petImage),
+                                )
+                                : null,
+                        child:
+                            (widget.friendsStories?.petImage == null ||
+                                    widget.friendsStories!.petImage.isEmpty)
+                                ? Icon(
+                                  Icons.pets, 
+                                  color: Colors.black,
+                                  size: 20,
+                                )
+                                : null,
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -374,9 +387,8 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // Show top 3 reaction icons
                             Text(
-                              'View',
+                              S.of(context).viewReactions,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500,
@@ -424,7 +436,6 @@ class _StoryViewerPageState extends State<StoryViewerPage>
         top: false,
         child: Row(
           children: [
-            // REACTIONS
             InkWell(
               key: key,
               onTap: () {
@@ -468,7 +479,6 @@ class _StoryViewerPageState extends State<StoryViewerPage>
 
             const SizedBox(width: 8),
 
-            // COMMENT INPUT
             Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
@@ -485,8 +495,8 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                           color: Colors.white,
                           fontSize: 14,
                         ),
-                        decoration: const InputDecoration(
-                          hintText: "Send message...",
+                        decoration: InputDecoration(
+                          hintText: S.of(context).sendStoryMessage,
                           hintStyle: TextStyle(color: Colors.white54),
                           border: InputBorder.none,
                           enabledBorder: InputBorder.none,

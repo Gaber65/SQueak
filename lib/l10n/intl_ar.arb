@@ -607,7 +607,9 @@
   "characterLimitReached":"تم الوصول إلى الحد الأقصى للأحرف",
   "MessageCannotExceed4000Characters":"لا يمكن أن تتجاوز الرسالة 4000 حرف",
   "deleteCommentConfirmation": "هل أنت متأكد أنك تريد حذف هذا التعليق؟",
-  "customMessage" : "نموذج رسالة مخصصة للعيادة"
+  "customMessage" : "نموذج رسالة مخصصة للعيادة",
+  "sendStoryMessage" : "إرسال رسالة...",
+  "viewReactions": "التفاعلات"
 
 
 

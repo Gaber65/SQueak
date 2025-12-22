@@ -804,6 +804,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "sendMeNow": MessageLookupByLibrary.simpleMessage("Send me now"),
         "sendMessage": MessageLookupByLibrary.simpleMessage("Message"),
         "sendRequest": MessageLookupByLibrary.simpleMessage("Send"),
+        "sendStoryMessage":
+            MessageLookupByLibrary.simpleMessage("Send Message..."),
         "sent": MessageLookupByLibrary.simpleMessage("Sent"),
         "sentVerification": MessageLookupByLibrary.simpleMessage(
             "We have sent a verification code to"),
@@ -933,6 +935,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "viewAll": MessageLookupByLibrary.simpleMessage("View All"),
         "viewProfile": MessageLookupByLibrary.simpleMessage("View Profile"),
         "viewProfileSnack": m8,
+        "viewReactions": MessageLookupByLibrary.simpleMessage("Views"),
         "viewReplies": m9,
         "waitingForResponse":
             MessageLookupByLibrary.simpleMessage("Waiting for response..."),

@@ -174,20 +174,12 @@ class LoginCubit extends Cubit<LoginState> {
 
       if (result.status == LoginStatus.success) {
         // 2. Get user data (name, email, image)
-        final userData = await FacebookAuth.instance.getUserData();
-
-        print("Logged in as: ${userData['name']}");
-        print("Email: ${userData['email']}");
-
-        // TODO: Send this data to your backend or save locally
-      } else {
-        print("Login failed: ${result.status}");
-        print("Message: ${result.message}");
-      }
-    } catch (error) {
-      print("Error: $error");
-    }
+        await FacebookAuth.instance.getUserData();
+      } else {}
+      // ignore: empty_catches
+    } catch (error) {}
   }
+
   @override
   Future<void> close() {
     // Dispose controllers when cubit is closed to avoid memory leaks
