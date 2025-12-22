@@ -62,14 +62,14 @@ class _StoryViewerPageState extends State<StoryViewerPage>
       );
     } else {
       if (widget.stories[controller.currentIndex].isViewed == false) {
-        reactionsIndex =  widget.stories[controller.currentIndex].myReactType;
+        reactionsIndex = widget.stories[controller.currentIndex].myReactType;
         widget.storyCubit.reactToStory(
           userStoryId: widget.stories[controller.currentIndex].id,
           reactType: 0,
           petId: widget.petID,
         );
       } else {
-        reactionsIndex =  widget.stories[controller.currentIndex].myReactType;
+        reactionsIndex = widget.stories[controller.currentIndex].myReactType;
       }
     }
   }
@@ -160,7 +160,6 @@ class _StoryViewerPageState extends State<StoryViewerPage>
 
   void _handleStoryView(int index) {
     final story = widget.stories[index];
-
 
     // صاحب الستوري → حمل قائمة الريأكشنز فقط
     if (widget.petID == story.petId) {
@@ -312,14 +311,15 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                               ),
                             ),
                             Text(
-                              formatFacebookTimePost(story.createdAt.toString()),
+                              formatFacebookTimePost(
+                                story.createdAt.toString(),
+                              ),
                               style: const TextStyle(
                                 color: Colors.grey,
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-
                           ],
                         ),
                       ),
@@ -524,8 +524,8 @@ class _StoryViewerPageState extends State<StoryViewerPage>
   ) {
     showGeneralDialog(
       context: context,
-       barrierDismissible: true, 
-    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: Colors.black.withOpacity(0.75),
       transitionDuration: const Duration(milliseconds: 300),
       transitionBuilder: (context, animation, secondaryAnimation, child) {
