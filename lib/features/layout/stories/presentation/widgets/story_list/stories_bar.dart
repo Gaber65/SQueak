@@ -65,7 +65,7 @@ class StoriesBar extends StatelessWidget {
                   StoryThumbnail(
                     avatarUrl: imageUrl + state.myStories.first.petImage,
                     label: state.myStories.first.petName,
-                    hasActiveStory: true, // set correctly if needed
+                    hasActiveStory: true,
                     onTap: () {
                       if (petID.isEmpty) {
                         showGuideOverlay(context);

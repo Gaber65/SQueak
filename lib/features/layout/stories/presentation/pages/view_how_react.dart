@@ -393,7 +393,7 @@ class StoryReactionsOverlay extends StatelessWidget {
         color: Colors.black54,
         child: Center(
           child: GestureDetector(
-            onTap: () {}, // Prevent bubbling
+            onTap: () {}, 
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: StoryReactionsView(

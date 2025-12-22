@@ -292,7 +292,8 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                         radius: 18,
                         backgroundImage: NetworkImage(
                           imageUrl +
-                              (widget.friendsStories?.petImage ?? story.petImage),
+                              (widget.friendsStories?.petImage ??
+                                  story.petImage),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -302,6 +303,8 @@ class _StoryViewerPageState extends State<StoryViewerPage>
                           children: [
                             Text(
                               widget.friendsStories?.petName ?? story.petName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,
