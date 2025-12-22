@@ -10,7 +10,7 @@ abstract class ProfileRemoteDataSource {
     required String address,
     required String imageName,
     required String birthDate,
-    required int gender,
+    required int? gender,
   });
 }
 
@@ -39,7 +39,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     required String address,
     required String imageName,
     required String birthDate,
-    required int gender,
+    required int? gender,
   }) async {
     try {
       final response = await DioFinalHelper.putData(

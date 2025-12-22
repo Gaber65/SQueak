@@ -448,6 +448,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "gaber": MessageLookupByLibrary.simpleMessage("اختبارEN"),
         "gallery": MessageLookupByLibrary.simpleMessage("معرض الصور"),
         "gender": MessageLookupByLibrary.simpleMessage("الجنس"),
+        "genderUnknown": MessageLookupByLibrary.simpleMessage(
+            "النوع غير معروف يجب اختيار النوع"),
         "generalInformation":
             MessageLookupByLibrary.simpleMessage("معلومات عامة"),
         "goToClinicsFromPetsScreen":

@@ -10,6 +10,6 @@ abstract class ProfileRepository {
     required String address,
     required String imageName,
     required String birthDate,
-    required int gender,
+    required int? gender,
   });
 }

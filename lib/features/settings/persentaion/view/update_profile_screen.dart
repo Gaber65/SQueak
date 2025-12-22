@@ -19,7 +19,6 @@ class UpProfileScreen extends StatelessWidget {
             successToast(context, S.of(context).updateSuccess);
             CacheHelper.saveData('name', state.owner.fullName);
             SettingCubit.get(context).getOwnerData();
-            // Changed from index 3 to index 0 for first tab
             LayoutCubit.get(context).changeBottomNav(0);
             navigateAndFinish(context, LayoutScreen());
           }
@@ -173,6 +172,42 @@ class UpProfileScreen extends StatelessWidget {
                           ),
                         ],
                       ),
+                      if (cubit.gender == null) ...[
+                        const SizedBox(height: 8),
+                        Container(
+                          margin: const EdgeInsets.only(top: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade50,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.red.shade200),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.warning_amber_rounded,
+                                color: Colors.red.shade700,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 8),
+                              Flexible(
+                                child: Text(
+                                  S.of(context).genderUnknown,
+                                  style: TextStyle(
+                                    color: Colors.red.shade700,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
 
                       // Save Button
                       SizedBox(height: 30),

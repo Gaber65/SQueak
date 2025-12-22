@@ -24,7 +24,7 @@ class OwnerModel extends Owner {
       address: json['address'] ?? '',
       imageName: json['imageName'] ?? '',
       birthdate: json['birthDate'] ?? '',
-      gender: json['gender'] ?? 1,
+      gender: json['gender'],
       role: json['userType'] ?? 1,
       countryId: json['countryId'] ?? 1,
       id: json['id'] ?? '',

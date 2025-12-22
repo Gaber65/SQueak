@@ -39,7 +39,7 @@ class SettingCubit extends Cubit<SettingState> {
   final birthDateController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  int gender = 1;
+  int? gender;
   Owner? profile;
 
   Future<void> getOwnerData() async {

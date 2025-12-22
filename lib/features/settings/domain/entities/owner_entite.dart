@@ -9,7 +9,7 @@ class Owner extends Equatable {
   final String imageName;
   final dynamic countryId;
   final String birthdate;
-  final int gender;
+  final int? gender;
   final int role;
   final String id;
 

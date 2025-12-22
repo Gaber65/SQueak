@@ -31,7 +31,7 @@ class UpdateProfileParameters extends Equatable {
   final String address;
   final String imageName;
   final String birthDate;
-  final int gender;
+  final int? gender;
 
   const UpdateProfileParameters({
     required this.fullName,
@@ -42,5 +42,5 @@ class UpdateProfileParameters extends Equatable {
   });
 
   @override
-  List<Object> get props => [fullName, address, imageName, birthDate, gender];
+  List<Object> get props => [fullName, address, imageName, birthDate];
 }

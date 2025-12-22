@@ -56,7 +56,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     required String address,
     required String imageName,
     required String birthDate,
-    required int gender,
+    required int? gender,
   }) async {
     try {
       final updatedOwner = await remoteDataSource.updateProfile(

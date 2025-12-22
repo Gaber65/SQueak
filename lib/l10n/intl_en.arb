@@ -618,7 +618,8 @@
   "sendStoryMessage":"Send Message...",
   "viewReactions":"Views",
   "alert":"Alert",
-  "commentMaxLength":"Comment cannot exceed 500 characters"
+  "commentMaxLength":"Comment cannot exceed 500 characters",
+  "genderUnknown":"Gender unknown you must choose gender"
 
   
  

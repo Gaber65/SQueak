@@ -6149,6 +6149,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Gender unknown you must choose gender`
+  String get genderUnknown {
+    return Intl.message(
+      'Gender unknown you must choose gender',
+      name: 'genderUnknown',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

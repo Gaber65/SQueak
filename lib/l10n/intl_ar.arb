@@ -611,7 +611,8 @@
   "sendStoryMessage" : "إرسال رسالة...",
   "viewReactions": "التفاعلات",
   "alert": "تنبيه",
-  "commentMaxLength": "لا يمكن أن يتجاوز التعليق 500 حرف"
+  "commentMaxLength": "لا يمكن أن يتجاوز التعليق 500 حرف",
+  "genderUnknown": "النوع غير معروف يجب اختيار النوع"
 
 
 
