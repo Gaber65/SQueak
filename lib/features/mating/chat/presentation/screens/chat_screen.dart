@@ -233,9 +233,10 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                     final lastIndex =
                         ChatMessagesCubit.get(context).messagesList.length - 1;
                     if (lastIndex >= 0) {
-                      try {
+                      // Safety check for scroll controller
+                      if (_itemScrollController.isAttached) {
                         _itemScrollController.jumpTo(index: lastIndex);
-                      } catch (_) {}
+                      }
                     }
                   });
                 }
@@ -331,9 +332,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               if (state is MessageSent) {
                 final lastIndex = cubit.messagesList.length - 1;
                 if (lastIndex >= 0) {
-                  try {
+                  if (_itemScrollController.isAttached) {
                     _itemScrollController.jumpTo(index: lastIndex);
-                  } catch (_) {}
+                  }
                 }
                 _animationController.forward().then(
                   (_) => _animationController.reverse(),
@@ -351,13 +352,19 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                         final newLength = cubit.messagesList.length;
                         final added = newLength - _oldMessagesLengthBeforeLoad;
                         final firstBefore = _firstVisibleIndexBeforeLoad ?? 0;
-                        int targetIndex = (firstBefore + (added > 0 ? added : 0)).toInt();
+                        int targetIndex =
+                            (firstBefore + (added > 0 ? added : 0)).toInt();
                         if (targetIndex < 0) targetIndex = 0;
-                        if (targetIndex > newLength - 1) targetIndex = newLength - 1;
+                        if (targetIndex > newLength - 1) {
+                          targetIndex = newLength - 1;
+                        }
                         _itemScrollController.jumpTo(index: targetIndex);
                       } else {
                         final lastIndex = messages.length - 1;
-                        _itemScrollController.jumpTo(index: lastIndex);
+
+                        if (_itemScrollController.isAttached) {
+                          _itemScrollController.jumpTo(index: lastIndex);
+                        }
                       }
                     } catch (_) {}
                     _isLoadingMore = false;
@@ -545,21 +552,23 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         isOtherUserTyping: _isOtherUserTyping,
         hasMoreMessages: cubit.hasMoreMessages,
         isLoadingMore: cubit.isLoadingMore,
-            onLoadMore: () {
-              final positions = _itemPositionsListener.itemPositions.value;
-              int firstIndex = 0;
-              if (positions.isNotEmpty) {
-                try {
-                  firstIndex = positions.map((p) => p.index).reduce((a, b) => a < b ? a : b);
-                } catch (_) {}
-              }
-              setState(() {
-                _isLoadingMore = true;
-                _firstVisibleIndexBeforeLoad = firstIndex;
-                _oldMessagesLengthBeforeLoad = cubit.messagesList.length;
-              });
-              cubit.loadMoreMessages(widget.chat.id);
-            },
+        onLoadMore: () {
+          final positions = _itemPositionsListener.itemPositions.value;
+          int firstIndex = 0;
+          if (positions.isNotEmpty) {
+            try {
+              firstIndex = positions
+                  .map((p) => p.index)
+                  .reduce((a, b) => a < b ? a : b);
+            } catch (_) {}
+          }
+          setState(() {
+            _isLoadingMore = true;
+            _firstVisibleIndexBeforeLoad = firstIndex;
+            _oldMessagesLengthBeforeLoad = cubit.messagesList.length;
+          });
+          cubit.loadMoreMessages(widget.chat.id);
+        },
       );
     }
     return const ChatEmptyState();
@@ -862,9 +871,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         debugPrint('❌ addOutgoingMessage error: $e');
       }
     } else {
-
-      try {
-      } catch (_) {}
+      try {} catch (_) {}
     }
 
     // Scroll to show the new message
@@ -884,12 +891,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         toPetId: widget.chat.petId,
         description: text,
       );
-      try {
-      
-      } catch (_) {}
-    } catch (e) {
-      
-    }
+      try {} catch (_) {}
+    } catch (e) {}
 
     chatAppCubit.increaseUnreadMessageCount(
       conversationId: widget.chat.id,

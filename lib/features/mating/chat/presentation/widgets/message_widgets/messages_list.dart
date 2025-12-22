@@ -109,6 +109,7 @@ class _MessagesListState extends State<MessagesList> {
         ScrollablePositionedList.builder(
           itemScrollController: widget.itemScrollController,
           itemPositionsListener: widget.itemPositionsListener,
+          initialScrollIndex: totalItems > 0 ? totalItems - 1 : 0,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           itemCount: totalItems,
           itemBuilder: (_, index) {
