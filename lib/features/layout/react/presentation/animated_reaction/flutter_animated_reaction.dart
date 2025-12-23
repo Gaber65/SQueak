@@ -12,6 +12,7 @@ class AnimatedFlutterReaction {
     required GlobalKey key,
     List<String>? reactions,
     required Function(int) onReaction,
+     VoidCallback? onDismiss,
     Color? backgroundColor,
     double? overlaySize,
     Size? iconSize,
@@ -45,6 +46,7 @@ class AnimatedFlutterReaction {
         return ReactionOverlay(
           onDismiss: () {
             hideOverlay(context);
+            onDismiss?.call();
           },
           relativeRect: relativeRect,
           overlaySize: overlaySize ?? MediaQuery.of(context).size.width * 0.3,

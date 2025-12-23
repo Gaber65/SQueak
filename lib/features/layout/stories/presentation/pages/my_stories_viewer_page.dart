@@ -255,8 +255,10 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            Text(    
                               currentStory.petName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,
@@ -294,8 +296,6 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                     ],
                   ),
                 ),
-
-                // REACTIONS BUTTON
                 Positioned(
                   bottom: 80,
                   right: 16,

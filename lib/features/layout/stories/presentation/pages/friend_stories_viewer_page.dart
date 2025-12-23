@@ -139,7 +139,6 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: PageView.builder(
@@ -166,10 +165,10 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
   }
 
   Widget _buildStoryPage(
-      BuildContext context,
-      int index,
-      StoryEntity currentStory,
-      ) {
+    BuildContext context,
+    int index,
+    StoryEntity currentStory,
+  ) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTapDown: (details) {
@@ -219,8 +218,9 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
               imageUrl + (currentStory.image ?? ''),
               fit: BoxFit.contain,
               errorBuilder:
-                  (_, __, ___) =>
-              const Center(child: Icon(Icons.error, color: Colors.white)),
+                  (_, __, ___) => const Center(
+                    child: Icon(Icons.error, color: Colors.white),
+                  ),
             ),
           ),
 
@@ -247,41 +247,44 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                       ],
                     ),
                     child:
-                    i == controller.currentIndex
-                        ? AnimatedBuilder(
-                      animation: controller.progressController,
-                      builder:
-                          (_, __) => FractionallySizedBox(
-                        alignment: Alignment.centerLeft,
-                        widthFactor:
-                        controller.progressController.value,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Colors.blueAccent, Colors.white],
-                            ),
-                            borderRadius: BorderRadius.circular(2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.blue.withOpacity(0.5),
-                                blurRadius: 4,
-                                offset: const Offset(0, 0),
+                        i == controller.currentIndex
+                            ? AnimatedBuilder(
+                              animation: controller.progressController,
+                              builder:
+                                  (_, __) => FractionallySizedBox(
+                                    alignment: Alignment.centerLeft,
+                                    widthFactor:
+                                        controller.progressController.value,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                          colors: [
+                                            Colors.blueAccent,
+                                            Colors.white,
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(2),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.blue.withOpacity(0.5),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 0),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                            )
+                            : i < controller.currentIndex
+                            ? Container(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Colors.white, Colors.grey],
+                                ),
+                                borderRadius: BorderRadius.circular(2),
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                        : i < controller.currentIndex
-                        ? Container(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Colors.white, Colors.grey],
-                        ),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    )
-                        : const SizedBox.shrink(),
+                            )
+                            : const SizedBox.shrink(),
                   ),
                 );
               }),
@@ -321,7 +324,9 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                     children: [
                       Text(
                         widget.friendsStories.petName,
-                        style:  TextStyle(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -354,7 +359,11 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                       color: Colors.black.withOpacity(0.5),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.close, color: Colors.white, size: 20),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                   onPressed: () => Navigator.pop(context),
                 ),
@@ -423,6 +432,9 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                     );
                     controller.resume();
                   },
+                  onDismiss: () {
+                    controller.resume();
+                  },
                 );
               },
               child: Container(
@@ -430,7 +442,10 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.white.withOpacity(0.2),
-                  border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
+                    width: 1,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
@@ -458,11 +473,17 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
             // COMMENT INPUT with enhanced styling
             Expanded(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 2,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(28),
-                  border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
+                    width: 1,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
@@ -503,7 +524,11 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                           color: Colors.blueAccent.withOpacity(0.8),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.near_me, color: Colors.white, size: 18),
+                        child: const Icon(
+                          Icons.near_me,
+                          color: Colors.white,
+                          size: 18,
+                        ),
                       ),
                       onPressed: () {
                         _addComment();
