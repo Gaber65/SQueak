@@ -219,6 +219,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               if (state is ConversationJoined) {}
 
               if (state is MessageReceived) {
+                print('message received************: ${state.message}');
                 final cubit = ChatMessagesCubit.get(context);
                 cubit.addReceivedMessage(state.message, widget.pet!.ownerId);
                 Future.delayed(const Duration(milliseconds: 100), () {

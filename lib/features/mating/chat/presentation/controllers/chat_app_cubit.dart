@@ -257,10 +257,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     });
     conversationHub.onMessageReceived((data) {
       var message = MessageModel.fromJson(data);
-      print('message: $message');
-      if (message.toMe) {
-        emit(MessageReceived(currentConversationId!, message));
-      }
+      emit(MessageReceived(currentConversationId!, message));
     });
 
     conversationHub.onMessageIsRead((isRead) {
