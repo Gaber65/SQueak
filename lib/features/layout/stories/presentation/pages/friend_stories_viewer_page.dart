@@ -469,8 +469,6 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
             ),
 
             const SizedBox(width: 12),
-
-            // COMMENT INPUT with enhanced styling
             Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(

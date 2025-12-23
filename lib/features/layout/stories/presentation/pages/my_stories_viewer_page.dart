@@ -67,10 +67,19 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
         context: context,
         barrierColor: Colors.transparent,
         builder:
-            (context) => StoryReactionsOverlay(
-              reactions: widget.storyCubit.state.reactions?.reactions ?? [],
-              currentPetId: widget.petID,
-              onClose: () => Navigator.of(context).pop(),
+            (context) => GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Material(
+                child: GestureDetector(
+                  onTap: () {},
+                  child: StoryReactionsOverlay(
+                    reactions:
+                        widget.storyCubit.state.reactions?.reactions ?? [],
+                    currentPetId: widget.petID,
+                    onClose: () => Navigator.of(context).pop(),
+                  ),
+                ),
+              ),
             ),
       ).then((value) {
         controller.resume();
@@ -255,7 +264,7 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(    
+                            Text(
                               currentStory.petName,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -356,7 +365,8 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
   ) {
     showGeneralDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: Colors.black.withOpacity(0.75),
       transitionDuration: const Duration(milliseconds: 300),
       transitionBuilder: (context, animation, secondaryAnimation, child) {
