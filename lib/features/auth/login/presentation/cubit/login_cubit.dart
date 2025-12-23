@@ -174,8 +174,6 @@ class LoginCubit extends Cubit<LoginState> {
       if (result.status == LoginStatus.success) {
         // 2. Get user data (name, email, image)
         final _ = await FacebookAuth.instance.getUserData();
-
-        // TODO: Send this data to your backend or save locally
       } else {}
     } catch (_) {}
   }

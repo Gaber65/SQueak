@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../common/gradient_ring.dart';
 
 class StoryThumbnail extends StatelessWidget {
-  final String avatarUrl;
+  final String? avatarUrl; // خليها nullable
   final String label;
   final bool hasActiveStory;
   final VoidCallback onTap;
@@ -25,10 +25,7 @@ class StoryThumbnail extends StatelessWidget {
           child: GradientRing(
             size: 72,
             active: hasActiveStory,
-            child:
-                avatarUrl.isNotEmpty
-                    ? Image.network(avatarUrl, fit: BoxFit.cover)
-                    : Icon(Icons.pets, size: 36, color: Colors.grey.shade600),
+            child: _buildAvatar(),
           ),
         ),
         const SizedBox(height: 6),
@@ -45,6 +42,40 @@ class StoryThumbnail extends StatelessWidget {
       ],
     );
   }
+
+  Widget _buildAvatar() {
+    if (avatarUrl == null || avatarUrl!.isEmpty) {
+      return _petIcon();
+    }
+
+    return ClipOval(
+      child: Image.network(
+        avatarUrl!,
+        fit: BoxFit.cover,
+        width: 72,
+        height: 72,
+        errorBuilder: (context, error, stackTrace) {
+          return _petIcon();
+        },
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return const Center(
+            child: CircularProgressIndicator(strokeWidth: 2),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _petIcon() {
+    return Center(
+      child: Icon(
+        Icons.pets,
+        size: 36,
+        color: Colors.grey.shade600,
+      ),
+    );
+  }
 }
 
-// TODO: Implement story_thumbnail.dart
+

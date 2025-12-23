@@ -137,7 +137,7 @@ class MainCubit extends Cubit<MainState> {
   }
 
   Future<File?> convertToMp4(File file) async {
-    print('*****************');
+   
     try {
       final info = await VideoCompress.compressVideo(
         file.path,
@@ -148,8 +148,7 @@ class MainCubit extends Cubit<MainState> {
 
       return info?.file;
     } catch (e) {
-      print(e.toString());
-      print('***************');
+     
       return null;
     }
   }

@@ -219,14 +219,12 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
               if (state is ConversationJoined) {}
 
               if (state is MessageReceived) {
-                print('message received************: ${state.message}');
                 final cubit = ChatMessagesCubit.get(context);
                 cubit.addReceivedMessage(state.message, widget.pet!.ownerId);
                 Future.delayed(const Duration(milliseconds: 100), () {
                   final lastIndex =
                       ChatMessagesCubit.get(context).messagesList.length - 1;
                   if (lastIndex >= 0) {
-                    // Safety check for scroll controller
                     if (_itemScrollController.isAttached) {
                       _itemScrollController.jumpTo(index: lastIndex);
                     }
@@ -637,8 +635,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
     try {
       String? mediaUrl;
-      final videoUrl = mainCubit.modelImage?.data ?? '';
-
       if (type == AttachmentType.image) {
         await mainCubit.getGlobalImage(file, UploadPlace.messageImage);
         mediaUrl = mainCubit.modelImage?.data;

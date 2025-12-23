@@ -66,11 +66,12 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
       showDialog(
         context: context,
         barrierColor: Colors.transparent,
-        builder: (context) => StoryReactionsOverlay(
-          reactions: widget.storyCubit.state.reactions?.reactions ?? [],
-          currentPetId: widget.petID,
-          onClose: () => Navigator.of(context).pop(),
-        ),
+        builder:
+            (context) => StoryReactionsOverlay(
+              reactions: widget.storyCubit.state.reactions?.reactions ?? [],
+              currentPetId: widget.petID,
+              onClose: () => Navigator.of(context).pop(),
+            ),
       ).then((value) {
         controller.resume();
       });
@@ -127,7 +128,6 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: PageView.builder(
@@ -146,7 +146,8 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
             behavior: HitTestBehavior.translucent,
             onTapDown: (details) {
               // Ignore taps if the user is interacting with bottom UI
-              final bottomUIHeight = 100.0; // Approximate height of reactions button area
+              final bottomUIHeight =
+                  100.0; // Approximate height of reactions button area
               final screenHeight = MediaQuery.of(context).size.height;
 
               if (details.globalPosition.dy > screenHeight - bottomUIHeight) {
@@ -180,9 +181,10 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                 Image.network(
                   imageUrl + (currentStory.image ?? ''),
                   fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => const Center(
-                    child: Icon(Icons.error, color: Colors.white),
-                  ),
+                  errorBuilder:
+                      (_, __, ___) => const Center(
+                        child: Icon(Icons.error, color: Colors.white),
+                      ),
                 ),
 
                 // PROGRESS INDICATORS
@@ -200,28 +202,34 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                             color: Colors.white24,
                             borderRadius: BorderRadius.circular(3),
                           ),
-                          child: i == controller.currentIndex
-                              ? AnimatedBuilder(
-                            animation: controller.progressController,
-                            builder: (_, __) => FractionallySizedBox(
-                              alignment: Alignment.centerLeft,
-                              widthFactor: controller.progressController.value,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(3),
-                                ),
-                              ),
-                            ),
-                          )
-                              : i < controller.currentIndex
-                              ? Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(3),
-                            ),
-                          )
-                              : const SizedBox.shrink(),
+                          child:
+                              i == controller.currentIndex
+                                  ? AnimatedBuilder(
+                                    animation: controller.progressController,
+                                    builder:
+                                        (_, __) => FractionallySizedBox(
+                                          alignment: Alignment.centerLeft,
+                                          widthFactor:
+                                              controller
+                                                  .progressController
+                                                  .value,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(3),
+                                            ),
+                                          ),
+                                        ),
+                                  )
+                                  : i < controller.currentIndex
+                                  ? Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(3),
+                                    ),
+                                  )
+                                  : const SizedBox.shrink(),
                         ),
                       );
                     }),
@@ -237,8 +245,9 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                     children: [
                       CircleAvatar(
                         radius: 18,
-                        backgroundImage: NetworkImage(
-                          imageUrl + currentStory.petImage,
+                        backgroundColor: Colors.grey.shade800,
+                        child: ClipOval(
+                          child: _buildPetAvatar(currentStory.petImage),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -255,7 +264,9 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                               ),
                             ),
                             Text(
-                              formatFacebookTimePost(currentStory.createdAt.toString()),
+                              formatFacebookTimePost(
+                                currentStory.createdAt.toString(),
+                              ),
                               style: const TextStyle(
                                 color: Colors.grey,
                                 fontSize: 15,
@@ -273,7 +284,11 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                         icon: const Icon(Icons.delete, color: Colors.white),
                         onPressed: () {
                           controller.pause();
-                          _showDeleteDialog(context, currentStory, widget.storyCubit);
+                          _showDeleteDialog(
+                            context,
+                            currentStory,
+                            widget.storyCubit,
+                          );
                         },
                       ),
                     ],
@@ -335,10 +350,10 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
   }
 
   void _showDeleteDialog(
-      BuildContext context,
-      StoryEntity storyItem,
-      StoryCubit storyCubit,
-      ) {
+    BuildContext context,
+    StoryEntity storyItem,
+    StoryCubit storyCubit,
+  ) {
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
@@ -367,5 +382,25 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
     ).then((value) {
       controller.resume();
     });
+  }
+
+  Widget _buildPetAvatar(String? image) {
+    if (image == null || image.isEmpty) {
+      return _petIcon();
+    }
+
+    return Image.network(
+      imageUrl + image,
+      width: 36,
+      height: 36,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        return _petIcon();
+      },
+    );
+  }
+
+  Widget _petIcon() {
+    return Icon(Icons.pets, size: 18, color: Colors.grey.shade400);
   }
 }
