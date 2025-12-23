@@ -137,6 +137,7 @@ class MainCubit extends Cubit<MainState> {
   }
 
   Future<File?> convertToMp4(File file) async {
+    print('*****************');
     try {
       final info = await VideoCompress.compressVideo(
         file.path,
@@ -147,6 +148,8 @@ class MainCubit extends Cubit<MainState> {
 
       return info?.file;
     } catch (e) {
+      print(e.toString());
+      print('***************');
       return null;
     }
   }
@@ -154,20 +157,26 @@ class MainCubit extends Cubit<MainState> {
   Future<void> getGlobalVideo(File file, UploadPlace uploadPlace) async {
     emit(VideoHelperLoading());
 
-    final mp4File = await convertToMp4(file);
+    File uploadFile = file;
 
-    if (mp4File == null) {
-      emit(VideoHelperError());
-      return;
+    if (uploadPlace != UploadPlace.messageVideo) {
+      final convertedFile = await convertToMp4(file);
+
+      if (convertedFile == null) {
+        emit(VideoHelperError());
+        return;
+      }
+
+      uploadFile = convertedFile;
     }
 
     final result = await manageUploadVideoUseCase(
-      UploadImageParams(file: mp4File, uploadPlace: uploadPlace),
+      UploadImageParams(file: uploadFile, uploadPlace: uploadPlace),
     );
 
     result.fold((l) => emit(VideoHelperError()), (r) {
-      emit(VideoHelperSuccess());
       modelImage = r;
+      emit(VideoHelperSuccess());
     });
   }
 

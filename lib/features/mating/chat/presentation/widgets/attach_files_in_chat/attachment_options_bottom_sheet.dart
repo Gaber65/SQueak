@@ -137,11 +137,14 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
   }
 
   Future<void> _handleVideo(BuildContext context) async {
+
+
+
     final navigator = Navigator.of(context);
     navigator.pop();
 
     final picker = ImagePicker();
-    final pickedFiles = await picker.pickMultipleMedia();
+    final pickedFiles = await picker.pickMultiVideo();
 
     if (pickedFiles.isNotEmpty) {
       final files = <File>[];

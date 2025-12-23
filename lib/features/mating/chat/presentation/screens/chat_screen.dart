@@ -218,28 +218,19 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             listener: (context, state) {
               if (state is ConversationJoined) {}
 
-              if (state is MessageReceived &&
-                  state.conversationId == widget.chat.id) {
+              if (state is MessageReceived) {
                 final cubit = ChatMessagesCubit.get(context);
-                final messageId = state.message.id;
-                final alreadyExists =
-                    messageId != null &&
-                    cubit.messagesList.any((m) {
-                      return m.id == messageId;
-                    });
-                if (!alreadyExists) {
-                  cubit.addReceivedMessage(state.message, widget.pet!.ownerId);
-                  Future.delayed(const Duration(milliseconds: 100), () {
-                    final lastIndex =
-                        ChatMessagesCubit.get(context).messagesList.length - 1;
-                    if (lastIndex >= 0) {
-                      // Safety check for scroll controller
-                      if (_itemScrollController.isAttached) {
-                        _itemScrollController.jumpTo(index: lastIndex);
-                      }
+                cubit.addReceivedMessage(state.message, widget.pet!.ownerId);
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  final lastIndex =
+                      ChatMessagesCubit.get(context).messagesList.length - 1;
+                  if (lastIndex >= 0) {
+                    // Safety check for scroll controller
+                    if (_itemScrollController.isAttached) {
+                      _itemScrollController.jumpTo(index: lastIndex);
                     }
-                  });
-                }
+                  }
+                });
               }
               if (state is FriendTypingInConversation &&
                   state.conversationId == widget.chat.id) {
@@ -645,6 +636,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
     try {
       String? mediaUrl;
+      final videoUrl = mainCubit.modelImage?.data ?? '';
 
       if (type == AttachmentType.image) {
         await mainCubit.getGlobalImage(file, UploadPlace.messageImage);
