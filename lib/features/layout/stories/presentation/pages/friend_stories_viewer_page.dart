@@ -67,9 +67,13 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
     return reactionIndices[index];
   }
 
-  void _setReactionIndex(int index, int? value) {
+  void _setReactionIndex(int index, int? reactTypeValue) {
     setState(() {
-      reactionIndices[index] = value;
+      // reactTypeValue can be:
+      // null = not viewed/not reacted
+      // 0 = viewed but no reaction
+      // 1-5 = has reaction
+      reactionIndices[index] = reactTypeValue;
     });
   }
 
@@ -77,16 +81,23 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
     final story = widget.stories[index];
 
     if (!reactionIndices.containsKey(index)) {
-      if (!story.isViewed) {
+      // If user has already reacted, show that reaction
+      if (story.myReactType != null && story.myReactType! > 0) {
+        // User has a reaction (1-5)
+        reactionIndices[index] = story.myReactType;
+      } else if (story.isViewed) {
+        // Story is viewed but no reaction
+        reactionIndices[index] = 0; // Mark as viewed with no reaction
+      } else {
+        // First time viewing - not viewed yet
         reactionIndices[index] = null;
+        // Send view without reaction (reactType: 0)
         widget.storyCubit.reactToStory(
           userStoryId: story.id,
-          reactType: 0, 
+          reactType: 0, // Send 0 to mark as viewed
           petId: widget.petID,
         );
-        return;
       }
-      reactionIndices[index] = story.myReactType;
     }
   }
 
@@ -404,12 +415,24 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
             InkWell(
               key: reactionKey,
               onTap: () {
-                final newReaction = reactionIndex == null ? 0 : null;
-                _setReactionIndex(pageIndex, newReaction);
+                // Toggle logic for stories:
+                // - If no reaction (null) → react with "like" (5)
+                // - If has reaction (0-5) → remove reaction (send 0)
+                int? newReaction;
+
+                if (reactionIndex == null) {
+                  // Not reacted yet - react with "like"
+                  newReaction = 5; // ReactType.like.value
+                } else {
+                  // Already has reaction - remove it
+                  newReaction = 0; // ReactType.none.value
+                }
+
+                _setReactionIndex(pageIndex, newReaction == 0 ? null : newReaction);
 
                 widget.storyCubit.reactToStory(
                   userStoryId: widget.stories[pageIndex].id,
-                  reactType: newReaction,
+                  reactType: newReaction, // Send 0 to remove, 5 to like
                   petId: widget.petID,
                 );
               },
@@ -418,12 +441,18 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                 AnimatedFlutterReaction().showOverlay(
                   context: context,
                   key: reactionKey,
-                  onReaction: (val) {
-                    _setReactionIndex(pageIndex, val);
+                  reactions: ReactionData.facebookReactionIcon,
+                  onReaction: (uiIndex) {
+                    // Convert UI index to react type
+                    // UI: 0=happy, 1=sad, 2=love, 3=angry, 4=like
+                    // Backend: 1=happy, 2=sad, 3=love, 4=angry, 5=like
+                    int reactType = uiIndex + 1;
+
+                    _setReactionIndex(pageIndex, reactType);
 
                     widget.storyCubit.reactToStory(
                       userStoryId: widget.stories[pageIndex].id,
-                      reactType: val,
+                      reactType: reactType,
                       petId: widget.petID,
                     );
                     controller.resume();
@@ -454,11 +483,7 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                   radius: 16,
                   backgroundColor: Colors.transparent,
                   backgroundImage: AssetImage(
-                    reactionIndex == null
-                        ? ReactionData.unActiveReactionImage
-                        : reactionIndex == 0
-                            ? ReactionData.activeReactionImage
-                            : ReactionData.facebookReactionImage[reactionIndex],
+                    _getStoryReactionImage(reactionIndex),
                   ),
                 ),
               ),
@@ -537,5 +562,33 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
         ),
       ),
     );
+  }
+
+  String _getStoryReactionImage(int? reactTypeValue) {
+    if (reactTypeValue == null) {
+      // No reaction yet (not viewed or not reacted)
+      return ReactionData.unActiveReactionImage;
+    }
+
+    if (reactTypeValue == 0) {
+      // Viewed but no reaction
+      return ReactionData.unActiveReactionImage;
+    }
+
+    // Convert backend react type to UI index
+    // Backend: 1=happy, 2=sad, 3=love, 4=angry, 5=like
+    // UI arrays: [happy, sad, love, angry, like]
+    final uiIndex = reactTypeValue - 1;
+
+    if (reactTypeValue == 5) {
+      // "like" reaction
+      return ReactionData.activeReactionImage;
+    }
+
+    if (uiIndex >= 0 && uiIndex < ReactionData.facebookReactionImage.length) {
+      return ReactionData.facebookReactionImage[uiIndex];
+    }
+
+    return ReactionData.unActiveReactionImage;
   }
 }

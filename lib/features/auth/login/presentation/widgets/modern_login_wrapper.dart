@@ -5,6 +5,7 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/auth/login/presentation/widgets/enhanced_login_widget.dart';
 import 'package:squeak/features/auth/login/presentation/cubit/login_cubit.dart';
+import 'package:squeak/features/auth/login/presentation/widgets/social_login_buttons.dart';
 
 class ModernLoginHeader extends StatefulWidget {
   const ModernLoginHeader({super.key});
@@ -413,11 +414,8 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
                     ),
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: widget.cubit.loginWithFacebook,
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1877F2)), // FB Blue
-                  child: const Text("Continue with Facebook", style: TextStyle(color: Colors.white)),
-                )
+
+
               ],
             );
           },
@@ -478,6 +476,7 @@ class _ModernLoginWrapperState extends State<ModernLoginWrapper>
         ),
         SizedBox(height: width * 0.03), //  Changed
         _buildAnimatedPetMascots(),
+
       ],
     );
   }

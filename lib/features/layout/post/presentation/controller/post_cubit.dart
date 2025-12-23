@@ -173,8 +173,7 @@ class PostCubit extends Cubit<PostState> {
     );
   }
 
-  Future<void> reactOnPost(ReactParams reactParams, int? reactionIndex) async {
-    reactParams.reactType = reactionIndex ?? ReactType.none.index ;
+  Future<void> reactOnPost(ReactParams reactParams) async {
 
     emit(CreateReactionLoading());
 
@@ -186,5 +185,8 @@ class PostCubit extends Cubit<PostState> {
         emit(CreateReactionSuccess(actionResult: actionResult));
       },
     );
+  }
+  void changeReactypet (){
+    emit(CreateReactionLoading());
   }
 }

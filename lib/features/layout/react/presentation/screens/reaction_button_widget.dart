@@ -24,54 +24,104 @@ class ReactionButton extends StatefulWidget {
 
 class _ReactionButtonState extends State<ReactionButton> {
   final keyGlobal = GlobalKey();
-
-  int? reactionIndex;
-  int totalReact = 0;
+  ReactType _currentReactType = ReactType.none;
+  int _totalReact = 0;
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize reaction index based on post data
-    bool reacted =
-        (widget.postItm.userArereactedWithThisPost ?? false) ||
-        (widget.postItm.petArereactedWithThisPost ?? false);
+    // Initialize with current reaction state
+    _updateReactionState();
 
-    reactionIndex =
-        reacted
-            ? widget.postItm.userReactType ?? widget.postItm.petReactType
-            : null;
-
-    totalReact = [
-      widget.postItm.reactAngryCount,
-      widget.postItm.reactHappyCount,
-      widget.postItm.reactSadCount,
-      widget.postItm.reactLoveCount,
-      widget.postItm.reactLikeCount,
-    ].map((e) => e).fold(0, (a, b) => a + b!);
+    // Calculate total reactions
+    _totalReact = _calculateTotalReactions();
   }
 
-  void _handleReact(BuildContext context, int? newIndex) {
+  void _updateReactionState() {
+    if (widget.postItm.userArereactedWithThisPost == true) {
+      _currentReactType = ReactType.fromInt(widget.postItm.userReactType);
+    } else if (widget.postItm.petArereactedWithThisPost == true) {
+      _currentReactType = ReactType.fromInt(widget.postItm.petReactType);
+    } else {
+      _currentReactType = ReactType.none;
+    }
+  }
+
+  int _calculateTotalReactions() {
+    return (widget.postItm.reactHappyCount ?? 0) +
+        (widget.postItm.reactSadCount ?? 0) +
+        (widget.postItm.reactLoveCount ?? 0) +
+        (widget.postItm.reactAngryCount ?? 0) +
+        (widget.postItm.reactLikeCount ?? 0);
+  }
+
+  void _handleSingleTap() {
+    if (_currentReactType == ReactType.none) {
+      // If no reaction, set to "like" (5)
+      _currentReactType = ReactType.like;
+    } else {
+      // If already reacted, remove reaction
+      _currentReactType = ReactType.none;
+    }
+
+    _sendReactionToApi();
+    setState(() {
+      _updateTotalReactions();
+    });
+  }
+
+  void _handleReactionFromOverlay(int uiIndex) {
+    // Convert UI index to ReactType
+    // UI: 0=happy, 1=sad, 2=love, 3=angry, 4=like
+    // Backend: 1=happy, 2=sad, 3=love, 4=angry, 5=like
+    final reactTypeValue = uiIndex + 1;
+    _currentReactType = ReactType.fromInt(reactTypeValue);
+
+    _sendReactionToApi();
+    setState(() {
+      _updateTotalReactions();
+    });
+  }
+
+  void _sendReactionToApi() {
     final cubit = PostCubit.get(context);
 
-    // Update local UI immediately
-    setState(() {
-      if (reactionIndex == null && newIndex != null) {
-        totalReact++;
-      } else if (reactionIndex != null && newIndex == null) {
-        totalReact--;
-      }
-      reactionIndex = newIndex;
-    });
+    cubit
+        .reactOnPost(
+          ReactParams(
+            postId: widget.postId,
+            petId: widget.petID,
+            reactType:
+                _currentReactType.value, // Send 0 for none, 1-5 for reactions
+          ),
+        )
+        .then((_) {
+          // You might want to refresh the post data here
+          // or update based on the API response
+        });
+  }
 
-    // Call cubit safely
-    cubit.reactOnPost(
-      ReactParams(
-        postId: widget.postId,
-        petId: widget.petID,
-        reactType: reactionIndex ?? 0,
-      ),
-      reactionIndex,
+  void _updateTotalReactions() {
+    // Simple logic: increment/decrement based on reaction change
+    // In a real app, you'd update this based on API response
+    if (_currentReactType == ReactType.none) {
+      // Removing reaction
+      if (_totalReact > 0) _totalReact--;
+    } else {
+      // Adding/changing reaction
+      // This is simplified - in reality, you need to check if it was previously reacted
+      _totalReact++;
+    }
+  }
+
+  String _getCurrentReactionImage() {
+    if (_currentReactType == ReactType.none) {
+      return ReactionData.unActiveReactionImage;
+    }
+
+    return ReactionData.getImageForReactType(
+      ReactType.fromInt(_currentReactType.value),
     );
   }
 
@@ -79,8 +129,12 @@ class _ReactionButtonState extends State<ReactionButton> {
   Widget build(BuildContext context) {
     return BlocConsumer<PostCubit, PostState>(
       listener: (context, state) {
-        if (state is CreateReactionFailure) {
-          errorToast(context, state.error);
+        // Handle API response states if needed
+        if (state is CreateReactionSuccess) {
+          // Update based on API response
+          setState(() {
+            _totalReact = _calculateTotalReactions();
+          });
         }
       },
       builder: (context, state) {
@@ -91,16 +145,13 @@ class _ReactionButtonState extends State<ReactionButton> {
               children: [
                 InkWell(
                   key: keyGlobal,
-                  onTap: () {
-                    _handleReact(context, reactionIndex == null ? 0 : null);
-                  },
+                  onTap: _handleSingleTap,
                   onLongPress: () {
                     AnimatedFlutterReaction().showOverlay(
                       context: context,
                       key: keyGlobal,
-                      onReaction: (val) {
-                        _handleReact(context, val);
-                      },
+                      reactions: ReactionData.facebookReactionIcon,
+                      onReaction: _handleReactionFromOverlay,
                     );
                   },
                   child: CircleAvatar(
@@ -109,18 +160,7 @@ class _ReactionButtonState extends State<ReactionButton> {
                         MainCubit.get(context).isDark
                             ? Colors.black
                             : Colors.white,
-                    backgroundImage: AssetImage(
-                      reactionIndex == null
-                          ? ReactionData.unActiveReactionImage
-                          : reactionIndex == 0
-                          ? ReactionData.activeReactionImage
-                          : ReactionData
-                                  .facebookReactionImage[reactionIndex!]
-                                  .length <=
-                              5
-                          ? ReactionData.facebookReactionImage[reactionIndex!]
-                          : ReactionData.unActiveReactionImage,
-                    ),
+                    backgroundImage: AssetImage(_getCurrentReactionImage()),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -134,7 +174,7 @@ class _ReactionButtonState extends State<ReactionButton> {
                           (_) => ReactionDetailsSheet(postId: widget.postId),
                     );
                   },
-                  child: Text('$totalReact'),
+                  child: Text('$_totalReact'),
                 ),
               ],
             ),

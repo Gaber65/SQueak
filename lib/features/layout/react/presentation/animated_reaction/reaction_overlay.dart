@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/features/layout/react/presentation/animated_reaction/reaction_data.dart';
 
 import 'reaction.dart';
 
@@ -79,11 +80,19 @@ class _ReactionOverlayState extends State<ReactionOverlay>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       for (int i = 0; i < widget.reactions.length; i++)
-                        Reaction(
-                          path: widget.reactions[i],
-                          onTap: widget.onPressReact,
-                          index: i,
-                          size: widget.size ?? const Size(45, 45),
+                        Column(
+                          children: [
+                            Reaction(
+                              path: widget.reactions[i],
+                              onTap: widget.onPressReact,
+                              index: i,
+                              size: widget.size ?? const Size(35, 35),
+                            ),
+                            Text(ReactionData.facebookNameText[i],
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold)),
+                          ],
                         ),
                     ],
                   ),

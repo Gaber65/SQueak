@@ -63,7 +63,7 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
     final story = widget.stories[controller.currentIndex];
 
     widget.storyCubit.loadStoryReactions(userStoryId: story.id).then((value) {
-      showDialog(
+      showModalBottomSheet(
         context: context,
         barrierColor: Colors.transparent,
         builder: (context) => GestureDetector(
@@ -98,8 +98,9 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
         width: 20,
         height: 20,
         decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
           image: DecorationImage(
-            image: AssetImage(ReactionData.facebookReactionIcon[type.value]),
+            image: AssetImage(ReactionData.getIconForReactType(type)),
             fit: BoxFit.contain,
           ),
         ),
