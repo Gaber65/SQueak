@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:squeak/generated/l10n.dart';
+import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
+
 
 class CancelFriendDialog extends StatefulWidget {
   final PetEntities pet;
@@ -213,7 +214,7 @@ class _CancelFriendDialogState extends State<CancelFriendDialog> {
       if (mounted) {
         setState(() => isLoading = false);
         if (success) {
-          Navigator.of(context).pop();
+          navigateAndFinish(context, LayoutScreen());
         } else {
           _showErrorSnackBar('Failed to delete friend');
         }
