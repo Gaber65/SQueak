@@ -5,6 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../../../core/service/global_function/format_utils.dart';
 import '../../../../../../core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
 import '../../../../../../core/utils/enums/upload_place.dart';
+import '../../../../../../core/utils/theme/navigation_helper/navigation.dart';
+import '../../../../layout/presentation/screens/layout_screen.dart';
 import '../../../domain/entities/post_entity.dart';
 import '../../community/controller/community_cubit.dart';
 import '../../controller/post_cubit.dart';
@@ -124,11 +126,7 @@ class EditPostController {
   }
 
   void _showUpdateSuccessAndNavigate(BuildContext context) {
-    snackbars.showSuccessAndNavigate(context);
-    Future.delayed(const Duration(milliseconds: 1500), () {
-      Navigator.pop(context);
-      Navigator.pop(context); // Pop twice to go back to feed
-    });
+    navigateAndFinish(context, const LayoutScreen());
   }
 
   void setState(VoidCallback callback) {

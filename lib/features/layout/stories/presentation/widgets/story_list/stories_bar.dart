@@ -5,7 +5,8 @@ import 'package:squeak/core/service/global_widget/toast.dart';
 import '../../../../post/presentation/widget/get_posts_when_user_follow.dart';
 import '../../controllers/story_cubit.dart';
 import '../../controllers/story_state.dart';
-import '../../pages/story_viewer_page.dart';
+import '../../pages/my_stories_viewer_page.dart';
+import '../../pages/friend_stories_viewer_page.dart';
 import '../common/app_strings.dart';
 import '../story_messages/create_story_modal.dart';
 import '../story_messages/story_thumbnail.dart';
@@ -39,7 +40,7 @@ class StoriesBar extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               scrollDirection: Axis.horizontal,
               children: [
-                // Your own story tile
+                // Your own story tile (Create Story)
                 _YourStoryTile(
                   imageUrl: imagePath,
                   onTap: () {
@@ -50,17 +51,18 @@ class StoriesBar extends StatelessWidget {
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
-                        builder:
-                            (_) => BlocProvider.value(
-                              value: storyCubit,
-                              child: CreateStoryModal(petId: petID),
-                            ),
+                        builder: (_) => BlocProvider.value(
+                          value: storyCubit,
+                          child: CreateStoryModal(petId: petID),
+                        ),
                       );
                     }
                   },
                 ),
-                if (state.myStories.isNotEmpty) SizedBox(width: 5),
-                // My stories
+
+                if (state.myStories.isNotEmpty) const SizedBox(width: 5),
+
+                // My stories (View your posted stories)
                 if (state.myStories.isNotEmpty)
                   StoryThumbnail(
                     avatarUrl: imageUrl + state.myStories.first.petImage,
@@ -74,26 +76,27 @@ class StoriesBar extends StatelessWidget {
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
-                          builder:
-                              (_) => BlocProvider.value(
-                                value: storyCubit,
-                                child: StoryViewerPage(
-                                  storyCubit: storyCubit,
-                                  stories: state.myStories,
-                                  petID: petID,
-                                  initialIndex: 0,
-                                ),
-                              ),
+                          builder: (_) => BlocProvider.value(
+                            value: storyCubit,
+                            child: MyStoriesViewerPage(
+                              storyCubit: storyCubit,
+                              stories: state.myStories,
+                              petID: petID,
+                              initialIndex: 0,
+                            ),
+                          ),
                         );
                       }
                     },
                   ),
-                SizedBox(width: 5),
+
+                const SizedBox(width: 5),
+
                 // Friends stories
-                ...state.friendsStories.map((story) {
+                ...state.friendsStories.map((friendStory) {
                   return StoryThumbnail(
-                    avatarUrl: imageUrl + story.petImage,
-                    label: story.petName,
+                    avatarUrl: imageUrl + friendStory.petImage,
+                    label: friendStory.petName,
                     hasActiveStory: true,
                     onTap: () {
                       if (petID.isEmpty) {
@@ -103,17 +106,16 @@ class StoriesBar extends StatelessWidget {
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
-                          builder:
-                              (_) => BlocProvider.value(
-                                value: storyCubit,
-                                child: StoryViewerPage(
-                                  storyCubit: storyCubit,
-                                  friendsStories: story,
-                                  stories: story.userStories,
-                                  petID: petID,
-                                  initialIndex: 0,
-                                ),
-                              ),
+                          builder: (_) => BlocProvider.value(
+                            value: storyCubit,
+                            child: FriendStoriesViewerPage(
+                              storyCubit: storyCubit,
+                              friendsStories: friendStory,
+                              stories: friendStory.userStories,
+                              petID: petID,
+                              initialIndex: 0,
+                            ),
+                          ),
                         );
                       }
                     },

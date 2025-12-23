@@ -14,9 +14,9 @@ class NotificationRepository extends BaseNotificationRepository {
 
   @override
   Future<Either<Failure, List<NotificationEntities>>>
-  getAllNotifications() async {
+  getAllNotifications(String id) async {
     try {
-      final result = await baseNotificationRemoteDataSource.getNotifications();
+      final result = await baseNotificationRemoteDataSource.getNotifications(id);
       return Right(result);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));

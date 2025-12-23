@@ -8,12 +8,13 @@ import 'package:squeak/features/appointments/exam/data/models/appointment_model.
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/all_apointment.dart';
 import 'package:squeak/features/appointments/exam/presentation/view/appointments/rate_appointment.dart';
 import 'package:squeak/features/layout/stories/domain/entities/story.dart';
+import 'package:squeak/features/layout/stories/presentation/pages/my_stories_viewer_page.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_list_screen.dart';
 
 import '../../../../../appointments/boarding/presentation/screens/share_image_pet_screen.dart';
 import '../../../../stories/data/models/story_model.dart';
 import '../../../../stories/presentation/controllers/story_cubit.dart';
-import '../../../../stories/presentation/pages/story_viewer_page.dart';
+import '../../../../stories/presentation/pages/friend_stories_viewer_page.dart';
 
 Future<void> getAppointment({
   required String id,
@@ -165,11 +166,14 @@ Future<void> getStroy({
         navigateToScreen(context, ChatListScreen());
         break;
       case StoryNavigationAction.goToMyFrindStory:
+
+        /// wating Implement
+        showStoryFrind(context, [res], storyOwnerId ?? '', res.petId);
+        break;
       case StoryNavigationAction.goToMyStory:
 
         /// wating Implement
-        showStory(context, [res], storyOwnerId ?? '');
-
+        showStoryMy(context, [res], storyOwnerId ?? '');
         break;
     }
   } on DioException catch (e) {
@@ -191,7 +195,7 @@ StoryNavigationAction _determineNavigationActionStory(NotificationType type) {
   }
 }
 
-void showStory(context, List<StoryEntity> myStories, petID) {
+void showStoryMy(context, List<StoryEntity> myStories, petID) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -199,8 +203,41 @@ void showStory(context, List<StoryEntity> myStories, petID) {
     builder:
         (_) => BlocProvider(
           create: (context) => sl<StoryCubit>(),
-          child: StoryViewerPage(
+          child: MyStoriesViewerPage(
+            // Changed from StoryViewerPage
             storyCubit: sl<StoryCubit>(),
+            stories: myStories,
+            petID: petID,
+            initialIndex: 0,
+          ),
+        ),
+  );
+}
+
+void showStoryFrind(
+  context,
+  List<StoryEntity> myStories,
+  petID,
+  String friendPetId,
+) {
+  // Create a FrindStoryEntity object
+  final friendStory = FrindStoryEntity(
+    petId: friendPetId,
+    petName: myStories.first.petName,
+    petImage: myStories.first.petImage,
+    userStories: myStories,
+  );
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder:
+        (_) => BlocProvider(
+          create: (context) => sl<StoryCubit>(),
+          child: FriendStoriesViewerPage(
+            storyCubit: sl<StoryCubit>(),
+            friendsStories: friendStory, // Now passing the required parameter
             stories: myStories,
             petID: petID,
             initialIndex: 0,

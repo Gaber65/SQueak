@@ -32,11 +32,11 @@ class MatingRequestModel extends MatingRequestEntity {
     );
     try {
       if (kDebugMode) {
-        print('MatingRequestModel.fromJson -> ${model.toJson()}');
+
       }
     } catch (_) {
       if (kDebugMode) {
-        print('MatingRequestModel.fromJson -> raw json: $json');
+
       }
     }
 

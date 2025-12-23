@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
+import 'package:squeak/core/service/global_widget/video_detail.dart';
 import 'package:squeak/generated/l10n.dart';
 import '../../../../../../core/utils/theme/color_mangment/color_manager.dart'
     show ColorManager;
@@ -451,10 +452,17 @@ class UploadPostUI extends StatelessWidget {
     bool isVideo = type == 'video';
 
     return Container(
-
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: isSize ? Colors.red : Colors.transparent,width: 5),
+        border: Border.all(
+          color:
+              isImage
+                  ? isSize
+                      ? Colors.red
+                      : Colors.transparent
+                  : Colors.transparent,
+          width: 5,
+        ),
       ),
       child: Stack(
         children: [
@@ -562,9 +570,9 @@ class UploadPostUI extends StatelessWidget {
   Widget _buildVideoThumbnail(File videoFile) {
     return Container(
       color: Colors.black,
-      child: const Center(
-        child: Icon(Icons.play_circle_filled, color: Colors.white, size: 40),
-      ),
+      width: double.infinity,
+      height: double.infinity,
+      child: VideoFileApp(video: videoFile),
     );
   }
 

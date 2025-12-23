@@ -131,8 +131,8 @@ class AppointmentCubit extends Cubit<AppointmentState> {
       },
       (clientClinicList) {
         clientInClinic = clientClinicList.isNotEmpty;
-        // print(clientInClinic);
-        // print(clientClinicList.isNotEmpty);
+
+
         petListInVet = clientClinicList;
         emit(GetClientInClinicSuccess());
       },

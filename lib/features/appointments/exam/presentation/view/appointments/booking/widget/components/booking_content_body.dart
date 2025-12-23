@@ -182,9 +182,9 @@ class _BookingContentBodyState extends State<BookingContentBody> {
                         }
                       },
                       onIntervalSelected: (p0) {
-                        // print("DEBUG: Original time selection: $p0");
+
                         p0 = convertTo24Hour(p0);
-                        // print("DEBUG: After conversion to 24-hour format: $p0");
+
                         if (AppointmentCubit.get(
                           context,
                         ).dateController.text.isEmpty) {
@@ -252,7 +252,7 @@ class _BookingContentBodyState extends State<BookingContentBody> {
                               );
                             }
                           } catch (e) {
-                            // print("DEBUG: Error parsing time: $e");
+
                             infoToast(
                               context,
                               isArabic()
@@ -261,7 +261,7 @@ class _BookingContentBodyState extends State<BookingContentBody> {
                             );
                           }
                         } else {
-                          // print("DEBUG: Selected date is in the past.");
+
                           infoToast(
                             context,
                             isArabic()

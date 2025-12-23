@@ -3,6 +3,7 @@ import '../../../../core/error/exception.dart';
 import '../../../../core/network/dio.dart';
 import '../../../../core/network/end_points.dart';
 import '../../../../core/network/error_message_model.dart';
+import '../../../layout/notification/NotificationFCM/notification_initializer.dart';
 import '../../domain/repository/base_comment_repository.dart';
 import '../model/comment_model.dart';
 
@@ -36,6 +37,9 @@ class CommentRemoteDataSource extends BaseCommentRemoteDataSource {
           "petId": parameters.petId,
           "postId": parameters.postId,
           "parentId": parameters.parentId,
+        },
+        onProgress: (progress) {
+          showUploadNotification(progress, parameters.content!);
         },
       );
       return CommentModel.fromJson(result.data['data']);
@@ -108,7 +112,7 @@ class CommentRemoteDataSource extends BaseCommentRemoteDataSource {
           .map((e) => CommentModel.fromJson(e))
           .toList();
     } on DioException catch (e) {
-      // print(e.response!.data);
+
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

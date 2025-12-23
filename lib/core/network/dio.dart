@@ -98,11 +98,11 @@ class DioFinalHelper {
     required String method,
     required dynamic data,
     String? token,
-    String? requestId, // Optional ID for cancellation
+    String? requestId,
+    void Function(int progress)? onProgress, // <-- new
   }) async {
     await _ensureValidToken();
 
-    // Create cancel token if requestId is provided
     CancelToken? cancelToken;
     if (requestId != null) {
       cancelToken = CancelToken();
@@ -112,14 +112,20 @@ class DioFinalHelper {
     dio.options.headers = _buildHeaders(token: token);
 
     try {
-      return await dio.post(method, data: data, cancelToken: cancelToken);
+      return await dio.post(
+        method,
+        data: data,
+        cancelToken: cancelToken,
+        onSendProgress: (sent, total) {
+          final progress = ((sent / total) * 100).round();
+          if (onProgress != null) onProgress(progress);
+        },
+      );
     } finally {
-      // Remove the cancel token from map after request completes
-      if (requestId != null) {
-        _cancelTokens.remove(requestId);
-      }
+      if (requestId != null) _cancelTokens.remove(requestId);
     }
   }
+
 
   // Modified putData with cancellation support
   static Future<Response> putData({

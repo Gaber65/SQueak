@@ -22,7 +22,10 @@ class NotificationsCubit extends Cubit<NotificationsState> {
 
   static NotificationsCubit get(context) => BlocProvider.of(context);
 
-  Future<void> fetchNotifications({bool isRefreshing = false}) async {
+  Future<void> fetchNotifications({
+    bool isRefreshing = false,
+    String? petId,
+  }) async {
     final currentState = state;
 
     if (currentState is NotificationsStateData) {
@@ -34,7 +37,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
       }
     }
 
-    final result = await getAllNotificationsUseCase(const NoParameters());
+    final result = await getAllNotificationsUseCase(petId ??'' );
 
     result.fold(
       (failure) {
@@ -50,13 +53,8 @@ class NotificationsCubit extends Cubit<NotificationsState> {
         }
       },
       (notificationsList) {
-        final filteredNotifications =
-            notificationsList.reversed.toList().where((element) {
-              if (element.notificationEvents.isEmpty) {
-                return false;
-              }
-              return element.notificationEvents.first.isRead == false;
-            }).toList();
+
+        final filteredNotifications = notificationsList.reversed.toList();
 
         CacheHelper.saveData('notificationsNum', filteredNotifications.length);
 

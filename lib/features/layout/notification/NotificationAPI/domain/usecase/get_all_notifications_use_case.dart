@@ -5,15 +5,15 @@ import '../entities/notification_entities.dart';
 import '../repository/base_repository_notification.dart';
 
 class GetAllNotificationsUseCase
-    extends BaseUseCase<List<NotificationEntities>, NoParameters> {
+    extends BaseUseCase<List<NotificationEntities>, String> {
   final BaseNotificationRepository baseNotificationRepository;
 
   GetAllNotificationsUseCase(this.baseNotificationRepository);
 
   @override
   Future<Either<Failure, List<NotificationEntities>>> call(
-    NoParameters params,
+    String params,
   ) async {
-    return await baseNotificationRepository.getAllNotifications();
+    return await baseNotificationRepository.getAllNotifications(params);
   }
 }

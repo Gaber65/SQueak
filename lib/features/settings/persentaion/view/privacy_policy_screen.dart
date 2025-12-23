@@ -319,9 +319,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                                 ),
                               );
                             }
-                          } catch (e) {
-                            // print('Error launching email client: $e');
-                          }
+                          }catch (_) {}
                         },
                 ),
               if (parts.length > 1)

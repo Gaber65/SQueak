@@ -5,7 +5,7 @@ import '../../../../post/data/model/post_model.dart';
 import '../model/notification_model.dart';
 
 abstract class BaseNotificationRemoteDataSource {
-  Future<List<NotificationModel>> getNotifications();
+  Future<List<NotificationModel>> getNotifications(String id);
   Future<void> updateNotificationState(String id);
 
   Future<List<PostDataModel>> getPostNotification(String postId);
@@ -13,13 +13,18 @@ abstract class BaseNotificationRemoteDataSource {
 
 class NotificationRemoteDataSource extends BaseNotificationRemoteDataSource {
   @override
-  Future<List<NotificationModel>> getNotifications() async {
+  Future<List<NotificationModel>> getNotifications(String id) async {
     try {
       Response response = await DioFinalHelper.getData(
-        method: '$version/notifications',
+        method:
+            id.isNotEmpty
+                ? '$version/notifications/pet/$id'
+                : '$version/notifications',
         language: true,
       );
-      return (response.data['data']['notificationDtos'] as List)
+      return (id.isNotEmpty
+              ? response.data['data']['notifications'] as List
+              : response.data['data']['notificationDtos'] as List)
           .map((e) => NotificationModel.fromJson(e))
           .toList();
     } on DioException catch (e) {

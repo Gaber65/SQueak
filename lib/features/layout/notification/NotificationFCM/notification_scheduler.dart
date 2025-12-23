@@ -1,4 +1,3 @@
-// notification_scheduler.dart
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -46,7 +45,6 @@ class NotificationScheduler {
       ),
     );
 
-    print(entites.toJson());
     await flutterLocalNotificationsPlugin.show(
       notificationId,
       entites.title,
@@ -55,7 +53,6 @@ class NotificationScheduler {
       payload: jsonEncode(entites.toJson()),
     );
 
-    // print("Instant notification scheduled: $title");
   }
 
   /// Schedule reminder notification with frequency
@@ -77,7 +74,6 @@ class NotificationScheduler {
       startTime.minute,
     );
 
-    // print("Scheduling reminder for: ${startDate.year}/${startDate.month}/${startDate.day} ${startTime.hour}:${startTime.minute}");
 
     // Ensure the scheduled data is in the future
     if (scheduledDate.isBefore(tz.TZDateTime.now(tz.local))) {
@@ -121,7 +117,6 @@ class NotificationScheduler {
       payload: 'reminder_$id|$title|$body',
     );
 
-    // print("Reminder scheduled for: $scheduledDate, Frequency: $frequency");
   }
 
   /// Edit a scheduled notification
@@ -146,7 +141,6 @@ class NotificationScheduler {
       frequency: newFrequency,
     );
 
-    // print("Notification with ID $notificationId has been updated.");
   }
 
   /// Download image for notification

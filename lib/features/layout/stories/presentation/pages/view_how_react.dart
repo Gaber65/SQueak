@@ -26,7 +26,6 @@ class StoryReactionsView extends StatelessWidget {
       return _buildEmptyState();
     }
 
-    // Group reactions by type
     final reactionsByType = _groupReactionsByType();
     final totalReactions = reactions.length;
 
@@ -36,30 +35,193 @@ class StoryReactionsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 25,
+            spreadRadius: 1,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Header
-          _buildHeader(totalReactions),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header with gradient
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF4267B2), Color(0xFF898F9C)],
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+                child: Row(
+                  children: [
+                    const Icon(Icons.favorite, color: Colors.white, size: 24),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Reactions',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 2,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '$totalReactions',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
 
-          // Reactions Summary
-          _buildReactionsSummary(reactionsByType),
+            // Reaction Types Summary (Facebook-like chips)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: reactionsByType.entries.map((entry) {
+                  final type = entry.key;
+                  final reactions = entry.value;
+                  final count = reactions.length;
 
-          // Divider
-          const Divider(height: 1, thickness: 0.5),
+                  return Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        // Filter by reaction type
+                      },
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.grey[200]!,
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Reaction Icon with animation effect
+                            Container(
+                              width: 24,
+                              height: 24,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                    ReactionData.facebookReactionIcon[type.value],
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '$count',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
 
-          // Reactions List
-          _buildReactionsList(),
+            const Divider(height: 1, thickness: 0.5),
 
-          // Close Button
-          _buildCloseButton(),
-        ],
+            // Reactions List with shimmer effect
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: reactions.length,
+                itemBuilder: (context, index) {
+                  final reaction = reactions[index];
+                  final type = ReactType.fromInt(reaction.reactType);
+
+                  return _buildReactionItem(reaction, type);
+                },
+              ),
+            ),
+
+            // Close Button (Facebook-style)
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: Colors.grey[200]!, width: 0.5),
+                ),
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onClose,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(16),
+                    bottomRight: Radius.circular(16),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    width: double.infinity,
+                    child: const Center(
+                      child: Text(
+                        'Close',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF4267B2),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -81,20 +243,39 @@ class StoryReactionsView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(24),
             child: Column(
               children: [
-                Icon(Icons.favorite_border, size: 48, color: Colors.grey[400]),
-                const SizedBox(height: 12),
-                Text(
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.favorite_border,
+                    size: 32,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
                   'No reactions yet',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Be the first to react to this story!',
+                  style: TextStyle(
+                    fontSize: 14,
                     color: Colors.grey[600],
                   ),
                 ),
-                const SizedBox(height: 4),
               ],
             ),
           ),
@@ -104,213 +285,137 @@ class StoryReactionsView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(int totalReactions) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-      child: Row(
-        children: [
-          Text(
-            'Reactions',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
-            ),
-          ),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              '$totalReactions',
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildReactionsSummary(
-    Map<ReactType, List<StoryReactionEntity>> reactionsByType,
-  ) {
-    final reactionTypes = reactionsByType.entries.toList();
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Wrap(
-        spacing: 12,
-        runSpacing: 8,
-        children:
-            reactionTypes.map((entry) {
-              final type = entry.key;
-              final reactions = entry.value;
-              final count = reactions.length;
-
-              return Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(width: 1),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Reaction Icon
-                    Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                            ReactionData.facebookReactionIcon[type.value],
-                          ),
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    // Reaction Count
-                    Text(
-                      '$count',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildReactionsList() {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 300),
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: reactions.length,
-        itemBuilder: (context, index) {
-          final reaction = reactions[index];
-          final type = ReactType.fromInt(reaction.reactType);
-
-          return _buildReactionItem(reaction, type);
-        },
-      ),
-    );
-  }
-
   Widget _buildReactionItem(StoryReactionEntity reaction, ReactType type) {
     final isCurrentUser = reaction.petId == currentPetId;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: isCurrentUser ? Colors.blue[50] : Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-        border: isCurrentUser ? Border.all(color: Colors.blue[100]!) : null,
-      ),
-      child: Row(
-        children: [
-          // Avatar
-          if (showAvatars) ...[
-            _buildAvatar(reaction),
-            const SizedBox(width: 12),
-          ],
-
-          // User/Pet Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  reaction.petName ?? reaction.userName ?? 'Unknown',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: isCurrentUser ? Colors.blue[800] : Colors.grey[800],
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                Row(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          // Handle tap on reaction
+        },
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: isCurrentUser ? Colors.blue[50] : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: isCurrentUser
+                ? Border.all(color: Colors.blue[100]!, width: 1)
+                : null,
+          ),
+          child: Row(
+            children: [
+              // Avatar with online indicator
+              if (showAvatars) ...[
+                Stack(
                   children: [
-                    // Reaction Icon
-                    Container(
-                      width: 16,
-                      height: 16,
-                      margin: const EdgeInsets.only(right: 6),
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                            ReactionData.facebookReactionIcon[type.value],
-                          ),
-                          fit: BoxFit.contain,
-                        ),
+                    CircleAvatar(
+                      radius: 22,
+                      backgroundColor: Colors.grey[200],
+                      backgroundImage: NetworkImage(
+                        imageUrl + (reaction.petImage ?? reaction.userImage ?? ''),
                       ),
                     ),
-
-                    // Reaction Type & Time
-                    Text(
-                      '• ${_formatTime(reaction.reactedAt)}',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color:
-                            isCurrentUser ? Colors.blue[600] : Colors.grey[600],
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 2,
+                            ),
+                          ),
+                        ),
                       ),
+                  ],
+                ),
+                const SizedBox(width: 12),
+              ],
+
+              // User Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            reaction.petName ?? reaction.userName ?? 'Unknown',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: isCurrentUser
+                                  ? Colors.blue[800]
+                                  : Colors.grey[800],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (isCurrentUser)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.blue[100],
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              'You',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.blue[800],
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        // Reaction Icon with tooltip
+                        Container(
+                          width: 20,
+                          height: 20,
+                          margin: const EdgeInsets.only(right: 6),
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(
+                                ReactionData.facebookReactionIcon[type.value],
+                              ),
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '• ${_formatTime(reaction.reactedAt)}',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: isCurrentUser
+                                ? Colors.blue[600]
+                                : Colors.grey[600],
+                          ),
+                        ),
+
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-
-          // You Indicator
-          if (isCurrentUser)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.blue[100],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                'You',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.blue[800],
-                ),
-              ),
-            ),
-        ],
+        ),
       ),
-    );
-  }
-
-  Widget _buildAvatar(StoryReactionEntity reaction) {
-    final imagePath =
-        imageUrl + (reaction.petImage ?? reaction.userImage ?? '');
-
-    return CircleAvatar(
-      radius: 20,
-      backgroundColor: Colors.grey[200],
-      backgroundImage: NetworkImage(imagePath),
     );
   }
 
@@ -320,23 +425,26 @@ class StoryReactionsView extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey[200]!, width: 0.5)),
       ),
-      child: TextButton(
-        onPressed: onClose,
-        style: TextButton.styleFrom(
-          padding: const EdgeInsets.all(16),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(16),
-              bottomRight: Radius.circular(16),
-            ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onClose,
+          borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(16),
+            bottomRight: Radius.circular(16),
           ),
-        ),
-        child: const Text(
-          'Close',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: const Center(
+              child: Text(
+                'Close',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF4267B2),
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -350,11 +458,11 @@ class StoryReactionsView extends StatelessWidget {
     if (difference.inMinutes < 1) {
       return 'Just now';
     } else if (difference.inHours < 1) {
-      return '${difference.inMinutes}m';
+      return '${difference.inMinutes}m ago';
     } else if (difference.inDays < 1) {
-      return '${difference.inHours}h';
+      return '${difference.inHours}h ago';
     } else if (difference.inDays < 7) {
-      return '${difference.inDays}d';
+      return '${difference.inDays}d ago';
     } else {
       return DateFormat('MMM d').format(time);
     }
@@ -372,7 +480,6 @@ class StoryReactionsView extends StatelessWidget {
   }
 }
 
-// Usage example in your StoryViewerPage:
 class StoryReactionsOverlay extends StatelessWidget {
   final List<StoryReactionEntity> reactions;
   final String? currentPetId;
@@ -390,12 +497,16 @@ class StoryReactionsOverlay extends StatelessWidget {
     return GestureDetector(
       onTap: onClose,
       child: Container(
-        color: Colors.black54,
+        color: Colors.black.withOpacity(0.75),
         child: Center(
           child: GestureDetector(
-            onTap: () {}, 
-            child: Padding(
-              padding: const EdgeInsets.all(20),
+            onTap: () {}, // Prevent bubbling
+            child: Container(
+              constraints: const BoxConstraints(
+                maxWidth: 400,
+                maxHeight: 500,
+              ),
+              margin: const EdgeInsets.all(20),
               child: StoryReactionsView(
                 reactions: reactions,
                 currentPetId: currentPetId,

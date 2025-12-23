@@ -715,8 +715,7 @@ List<PopupMenuEntry<int>> _buildMenuItems(
   BuildContext context,
   UserAppointmentCubit cubit,
 ) {
-  // print('appointment.appointment: $appointment');
-  // print('appointment.appointmentState: $appointmentState');
+
 
   List<PopupMenuEntry<int>> items = [];
 

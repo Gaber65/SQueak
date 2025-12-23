@@ -309,13 +309,12 @@ class PetCubit extends Cubit<PetState> {
     isLoading = true;
     emit(const PetCreateLoadingState());
 
-    // print(pet.toJson());
     final result = await createPetUseCase(PetParams(pet: pet));
 
     isLoading = false;
     result.fold(
       (error) {
-        // print(error.error.toJson());
+
         emit(PetCreateErrorState(extractFirstError(error)));
       },
       (createdPet) {

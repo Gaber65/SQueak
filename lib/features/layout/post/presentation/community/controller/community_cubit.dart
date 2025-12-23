@@ -74,7 +74,6 @@ class CommunityCubit extends Cubit<CommunityState> {
     if (path.endsWith('.jpg') || path.endsWith('.jpeg')) return 'image/jpeg';
     if (path.endsWith('.png')) return 'image/png';
     if (path.endsWith('.gif')) return 'image/gif';
-    if (path.endsWith('.webp')) return 'image/webp';
     return 'unsupported';
   }
 
@@ -161,11 +160,6 @@ class CommunityCubit extends Cubit<CommunityState> {
       'mp4',
       'mov',
       'avi',
-      'mkv',
-      'flv',
-      'wmv',
-      '3gp',
-      'm4v',
       'webm',
     ];
     final imageExtensions = [
@@ -173,10 +167,7 @@ class CommunityCubit extends Cubit<CommunityState> {
       'jpeg',
       'png',
       'gif',
-      'bmp',
-      'webp',
-      'heic',
-      'heif',
+
     ];
 
     if (videoExtensions.contains(extension)) {

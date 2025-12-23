@@ -25,7 +25,8 @@ class RegisterRemoteDataSource {
             password = event.data()!['password'];
           });
     } on Exception {
-      // print(e);
+      username = "Ahmed.Omar@Veticare.com";
+      password = "Password@123";
     }
   }
 
@@ -48,7 +49,6 @@ class RegisterRemoteDataSource {
           .where((e) => e.id != 2)
           .toList();
     } on DioException {
-      // print(e.response);
       rethrow;
     }
   }
@@ -67,8 +67,6 @@ class RegisterRemoteDataSource {
         'Androidevice': Platform.isAndroid,
       };
 
-      // print('[RegisterRemote] Sending register payload with FbToken and device flags: FbToken=${fbToken.substring(0, 8)}... IOSDevice=${Platform.isIOS} Androidevice=${Platform.isAndroid}');
-
       final response = await DioFinalHelper.postData(
         method: registerEndPoint,
         data: enhancedData,
@@ -77,7 +75,7 @@ class RegisterRemoteDataSource {
       // The register endpoint returns the same shape as login (AuthModel-like).
       // Parse and return it so callers can handle tokens/user info similarly to login.
       final authModel = AuthModel.fromJson(response.data);
-      // print('[RegisterRemote] Received auth-like response from register: token=${authModel.data?.token ?? 'null'} id=${authModel.data?.id}');
+
       return authModel;
     } on DioException catch (e) {
       throw ServerException(
@@ -100,15 +98,13 @@ class RegisterRemoteDataSource {
         'Androidevice': Platform.isAndroid,
       };
 
-      // print('[RegisterRemote][QR] Sending registerQr payload with FbToken and device flags: FbToken=${fbToken.substring(0, 8)}... IOSDevice=${Platform.isIOS} Androidevice=${Platform.isAndroid}');
-
       final response = await DioFinalHelper.putData(
         method: registerQrEndPoint,
         data: enhancedData,
       );
 
       final authModel = AuthModel.fromJson(response.data);
-      // print('[RegisterRemote][QR] Received auth-like response from registerQr: token=${authModel.data?.token ?? 'null'} id=${authModel.data?.id}');
+
       return authModel;
     } on DioException catch (e) {
       throw ServerException(

@@ -47,7 +47,7 @@ class InitFunctions {
 
   static void _listenToForegroundMessages() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      // print('app foreground');
+
       _handleMessage(message);
     });
   }
@@ -55,7 +55,7 @@ class InitFunctions {
   @pragma('vm:entry-point')
   static void _listenToMessageOpenedApp() {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      // print('app opened');
+
       _handleMessage(message);
     });
   }
@@ -69,7 +69,6 @@ class InitFunctions {
   static Future<void> _firebaseMessagingBackgroundHandler(
     RemoteMessage message,
   ) async {
-    // print('app Terminated');
 
     _handleMessage(message);
   }
@@ -77,7 +76,7 @@ class InitFunctions {
 
   @pragma('vm:entry-point')
   static void _handleMessage(RemoteMessage message) async {
-    // print('Message received: ${message.toMap()}\n \n \n');
+
     final notificationMessage = NotificationMessage.fromJson(message.toMap());
     final entity = notificationMessageToEntity(notificationMessage);
     NotificationScheduler.scheduleInstantNotification(entites: entity);

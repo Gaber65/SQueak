@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:squeak/core/service/global_widget/toast.dart';
 import 'package:squeak/features/layout/post/presentation/community/controller/community_cubit.dart';
 import '../../../../../core/service/global_widget/custom_text_form_field.dart';
 import '../../../../../generated/l10n.dart';

@@ -36,7 +36,6 @@ class PostNotification extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          var cubit = NotificationsCubit.get(context);
           var cubitComment = CommentCubit.get(context);
           bool isBottomSheetOpen = CacheHelper.getBool('isBottomSheetOpen');
           bool isReplayCommentOpen = CacheHelper.getBool('isReplayCommentOpen');

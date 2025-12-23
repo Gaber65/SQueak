@@ -19,16 +19,15 @@ class LayoutScreen extends StatefulWidget {
   State<LayoutScreen> createState() => _LayoutScreenState();
 }
 
-class _LayoutScreenState extends State<LayoutScreen>
-    with SingleTickerProviderStateMixin {
+class _LayoutScreenState extends State<LayoutScreen> with SingleTickerProviderStateMixin {
   bool _isDialogShown = false;
   int selectedIndex = 0;
 
   late AnimationController _jumpController;
 
   @override
-  void initState() {
-    // print(CacheHelper.getData('havePets'));
+  initState() {
+
     super.initState();
 
     if (widget.showPostCreatedSnackbar) {
@@ -110,6 +109,8 @@ class _LayoutScreenState extends State<LayoutScreen>
       });
     }
 
+    getNotificationAppLaunchDetails();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (initialNotificationPayload != null) {
         final entity = payloadToNotificationEntity(initialNotificationPayload!);
@@ -121,8 +122,19 @@ class _LayoutScreenState extends State<LayoutScreen>
     });
   }
 
+  Future<void> getNotificationAppLaunchDetails() async {
+    final details =
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+
+    if (details?.didNotificationLaunchApp ?? false) {
+      initialNotificationPayload = details!.notificationResponse?.payload;
+
+    }
+  }
+
   @override
   void dispose() {
+    flutterLocalNotificationsPlugin.cancelAll();
     _jumpController.dispose();
     super.dispose();
   }

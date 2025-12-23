@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:squeak/core/error/exception.dart';
 
+import '../../../../../features/layout/notification/NotificationFCM/notification_initializer.dart';
 import '../../../../network/dio.dart';
 import '../../../../network/end_points.dart';
 import '../../../../network/error_message_model.dart';
@@ -50,7 +51,7 @@ class MainRemoteDataSource {
             await CacheHelper.saveData('DeviceToken', fbToken);
           }
         } catch (tokenError) {
-          // print('Error getting Firebase token in saveToken: $tokenError');
+
           // في حالة الفشل، نستخدم توكن مؤقت
           fbToken = 'temp_token_${DateTime.now().millisecondsSinceEpoch}';
           await CacheHelper.saveData('DeviceToken', fbToken);
@@ -65,14 +66,14 @@ class MainRemoteDataSource {
 
       // التحقق من نجاح العملية
       if (response.statusCode == 201 || response.statusCode == 200) {
-        // print('Token saved successfully');
+
       } else {
         throw Exception(
           'Failed to save token: unexpected status code ${response.statusCode}',
         );
       }
     } catch (e) {
-      // print('Failed to save token: $e');
+
       // حذف التوكن المحلي في حالة الفشل لإتاحة المحاولة مرة أخرى
       await CacheHelper.removeData('DeviceToken');
       throw Exception('Failed to save token');
@@ -93,7 +94,7 @@ class MainRemoteDataSource {
       // حذف التوكن من التخزين المحلي بعد نجاح الحذف
       CacheHelper.removeData('DeviceToken');
     } catch (e) {
-      // print('Failed to remove token: $e');
+
       // حذف التوكن من التخزين المحلي حتى لو فشل الطلب
       CacheHelper.removeData('DeviceToken');
       throw Exception('Failed to remove token');
@@ -117,17 +118,17 @@ class MainRemoteDataSource {
             await saveToken();
           }
         } catch (tokenError) {
-          // print('Error getting Firebase token: $tokenError');
+
           // في حالة الفشل، نحاول استخدام التوكن المؤقت
           final tempToken =
               'temp_token_${DateTime.now().millisecondsSinceEpoch}';
           await CacheHelper.saveData('DeviceToken', tempToken);
         }
       } else {
-        // print('Notification permissions not granted: ${status.authorizationStatus}');
+
       }
     } catch (permissionError) {
-      // print('Error requesting notification permissions: $permissionError');
+
       // الاستمرار بدون توكن Firebase
     }
   }
@@ -145,33 +146,33 @@ class MainRemoteDataSource {
       }
       return currentToken != null;
     } catch (e) {
-      // print('Error validating token: $e');
+
       return false;
     }
   }
 
-  int maxFileSizeInBytes = 25 * 1024 * 1024; 
+  int maxFileSizeInBytes = 25 * 1024 * 1024;
   int _getMaxFileSizeInBytes(String type, String subtype) {
-    return maxFileSizeInBytes; 
+    return maxFileSizeInBytes;
   }
 
   String _getMaxFileSizeDisplayText(String type, String subtype) {
-    return '25 MB'; 
+    return '25 MB';
   }
 
   Future<ImageModel> uploadFile(
-      File file,
-      String endpoint,
-      int uploadPlace,
-      String type,
-      String subtype,
-      ) async {
+    File file,
+    String endpoint,
+    int uploadPlace,
+    String type,
+    String subtype,
+  ) async {
     String fileName = file.path.split('/').last;
 
     final fileSize = await file.length();
     final maxSize = _getMaxFileSizeInBytes(type, subtype);
     final maxSizeDisplay = _getMaxFileSizeDisplayText(type, subtype);
-    
+
     if (fileSize > maxSize) {
       throw Exception(
         'File size is too large (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB). Max allowed: $maxSizeDisplay',
@@ -204,7 +205,9 @@ class MainRemoteDataSource {
         );
       }
 
-      debugPrint('📤 Uploading $type/$subtype file: $fileName to endpoint: $endpoint');
+      debugPrint(
+        '📤 Uploading $type/$subtype file: $fileName to endpoint: $endpoint',
+      );
       debugPrint('📦 Upload place: $uploadPlace');
 
       // إرسال البيانات
@@ -214,8 +217,10 @@ class MainRemoteDataSource {
           'File': multipartFile,
           'UploadPlace': '$uploadPlace',
         }),
+        onProgress: (progress) {
+          showUploadNotification(progress, fileName);
+        },
       );
-
       return ImageModel.fromJson(response.data);
     } on DioException catch (e) {
       debugPrint('Dio error: ${e.error}');

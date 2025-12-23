@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -13,7 +14,18 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+    <!-- Required for Android 11+ Facebook visibility -->
+    <queries>
+        <!-- Facebook -->
+        <package android:name="com.facebook.katana"/>
+        <!-- Facebook Lite -->
+        <package android:name="com.facebook.wakizashi"/>
+        <!-- Messenger -->
+        <package android:name="com.facebook.orca"/>
+        <!-- Optional Instagram -->
+        <package android:name="com.instagram.android"/>
+    </queries>
 
     <application
             android:name="${applicationName}"
@@ -31,8 +43,8 @@
                 android:hardwareAccelerated="true"
                 android:launchMode="singleTop"
                 android:showWhenLocked="true"
-                android:theme="@style/LaunchTheme"
                 android:turnScreenOn="true"
+                android:theme="@style/LaunchTheme"
                 android:windowSoftInputMode="adjustResize"
                 android:screenOrientation="portrait">
 
@@ -131,6 +143,7 @@
             </intent-filter>
         </receiver>
 
+        <!-- Facebook Config -->
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
 
@@ -151,16 +164,5 @@
         </activity>
 
     </application>
-
-    <!-- IMPORTANT Android 11 Package Visibility -->
-    <queries>
-        <provider android:authorities="com.facebook.katana.provider.PlatformProvider" />
-        <provider android:authorities="com.facebook.orca.provider.PlatformProvider" />
-
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="https" />
-        </intent>
-    </queries>
 
 </manifest>

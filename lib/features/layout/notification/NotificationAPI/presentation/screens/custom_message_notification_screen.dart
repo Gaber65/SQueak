@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../domain/entities/notification_entities.dart';
@@ -190,58 +189,6 @@ class CustomMessageNotificationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEventTile(NotificationEventEntities event) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            event.isRead ? Icons.check_circle : Icons.circle_outlined,
-            color: event.isRead ? Colors.green : Colors.orange,
-            size: 20,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Event ID: ${event.id}',
-                  style: const TextStyle(fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Status: ${_getStatusText(event.notificationStatues)}',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                _formatTime(event.sendAt),
-                style: const TextStyle(fontSize: 12),
-              ),
-              if (event.note.isNotEmpty)
-                Text(
-                  'Note: ${event.note}',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 11),
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   // Helper Methods
   Color _getColorForType(NotificationType type) {
     switch (type) {
@@ -258,25 +205,6 @@ class CustomMessageNotificationScreen extends StatelessWidget {
         return Icons.notifications;
       default:
         return Icons.info;
-    }
-  }
-
-  String _formatTime(DateTime dateTime) {
-    return DateFormat('h:mm a').format(dateTime);
-  }
-
-  String _getStatusText(int status) {
-    switch (status) {
-      case 0:
-        return 'Pending';
-      case 1:
-        return 'Sent';
-      case 2:
-        return 'Delivered';
-      case 3:
-        return 'Read';
-      default:
-        return 'Unknown';
     }
   }
 }

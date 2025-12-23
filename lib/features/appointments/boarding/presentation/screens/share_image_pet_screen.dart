@@ -621,8 +621,8 @@ class _MediaItem extends StatelessWidget {
   }
 
   Widget _buildVideo(String url, String fileName) {
-    // print(fileName);
-    // print("url: $url");
+
+
     return Container(
       color: Colors.black,
       child: Center(

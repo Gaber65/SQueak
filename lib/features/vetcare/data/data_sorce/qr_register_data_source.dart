@@ -15,10 +15,10 @@ abstract class QRRemoteDataSource {
 class QRRemoteDataSourceImpl implements QRRemoteDataSource {
   @override
   Future<bool> checkClinicInSupplier(CheckClinicParams params) async {
-    // print('checkClinicInSupplier');
-    // print(params.clinicCode);
+
+
     for (var element in params.suppliers.data) {
-      // print(element.data.code);
+
     }
 
     try {

@@ -28,7 +28,7 @@ class QrSave extends StatelessWidget {
         throw Exception("Failed to convert image to ByteData.");
       }
     } catch (e) {
-      // print(e);
+
       throw Exception("Failed to capture image.");
     }
   }

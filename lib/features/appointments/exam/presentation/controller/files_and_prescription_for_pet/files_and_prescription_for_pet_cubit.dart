@@ -24,7 +24,6 @@ class FilesAndPrescriptionForPetCubit
         ),
         language: true,
       );
-      // print(response.data);
 
       // doctors = (response.data['data'] as List)
       //     .map((e) => DoctorModel.fromJson(e))
@@ -34,13 +33,11 @@ class FilesAndPrescriptionForPetCubit
         response.data,
       );
 
-      // print("************************************");
-      // print(getPrescriptionAndFilesModel.data!.files!.isEmpty);
 
       getTheFilesAndPrescriptionForPetLoading = false;
       emit(GetFilesAndPrescriptionForPetSuccessState());
     } on DioException {
-      // print(e);
+
       getTheFilesAndPrescriptionForPetLoading = false;
       emit(GetFilesAndPrescriptionForPetErrorState());
     }
