@@ -1,9 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
 import 'package:squeak/features/layout/react/domain/entities/react_entities.dart';
 
 import '../../../../../core/error/failure.dart';
-import '../../presentation/animated_reaction/reaction_data.dart';
 
 abstract class BaseReactRepo {
   Future<Either<Failure, ReactionSummary>> getAllReactOnPost(String postId);

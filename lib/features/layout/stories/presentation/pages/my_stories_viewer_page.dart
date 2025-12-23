@@ -71,7 +71,7 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
           child: Material(
             child: GestureDetector(
               onTap: () {},
-              child: StoryReactionsOverlay(
+              child: StoryReactionsView(
                 reactions: widget.storyCubit.state.reactions?.reactions ?? [],
                 currentPetId: widget.petID,
                 onClose: () => Navigator.of(context).pop(),

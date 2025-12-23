@@ -1,4 +1,3 @@
-import '../../presentation/animated_reaction/reaction_data.dart';
 import '../repo/base_react_repo.dart';
 
 class ReactionPet {

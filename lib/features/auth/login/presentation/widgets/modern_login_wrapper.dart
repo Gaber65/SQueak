@@ -5,7 +5,6 @@ import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/auth/login/presentation/widgets/enhanced_login_widget.dart';
 import 'package:squeak/features/auth/login/presentation/cubit/login_cubit.dart';
-import 'package:squeak/features/auth/login/presentation/widgets/social_login_buttons.dart';
 
 class ModernLoginHeader extends StatefulWidget {
   const ModernLoginHeader({super.key});
