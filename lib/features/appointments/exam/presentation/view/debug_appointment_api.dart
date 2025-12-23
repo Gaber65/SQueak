@@ -97,8 +97,6 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
         requestData["doctorUserId"] = doctorId;
       }
 
-      // print("DEBUG: Request payload: $requestData");
-
       Response response = await DioFinalHelper.postData(
         method: '$version/vetcare/reservation/existedClient',
         data: requestData,
@@ -111,7 +109,7 @@ class _DebugAppointmentAPIState extends State<DebugAppointmentAPI> {
       setState(() {
         resultMessage = 'API Error: ${e.response?.data ?? e.message}';
       });
-      // print("DEBUG: Error response: ${e.response?.data}");
+
     } catch (e) {
       setState(() {
         resultMessage = 'Error creating appointment: $e';

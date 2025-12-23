@@ -53,7 +53,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
   Future<void> _initData() async {
     try {
       // Fetch pets
-      // print("DEBUG: Fetching pets directly for clinic: ${widget.clinicCode}");
+
       Response petResponse = await DioFinalHelper.getData(
         method: getClientClinicEndPoint(
           widget.clinicCode,
@@ -66,7 +66,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
             (petResponse.data['data'] as List)
                 .map((e) => PetClinicModel.fromJson(e))
                 .toList();
-        // print("DEBUG: Loaded ${_localPetList.length} pets directly.");
+
       } else {
         // print(
         //   "DEBUG: Failed to load pets directly: ${petResponse.data['message']}",
@@ -107,14 +107,14 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
             (doctorResponse.data['data'] as List)
                 .map((e) => DoctorModel.fromJson(e))
                 .toList();
-        // print("DEBUG: Loaded ${_localDoctors.length} doctors directly.");
+
       } else {
         // print(
         //   "DEBUG: Failed to load doctors directly or no data: ${doctorResponse.data['message']}",
         // );
       }
     } catch (e) {
-      // print("DEBUG: Error during _initData: $e");
+
       // Optionally show an error toast here if data loading fails critically
       errorToast(
         context,
@@ -130,13 +130,13 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
   }
 
   PetClinicModel? findPet(List<PetClinicModel> data, String petIdToFind) {
-    // print("DEBUG: Looking for petId: $petIdToFind in ${data.length} pets");
+
     for (var element in data) {
       // print(
       //   "DEBUG: Checking pet - ID: ${element.petId}, Name: ${element.petName}, SqueakID: ${element.petSqueakId}",
       // );
       if (element.petId == petIdToFind || element.petSqueakId == petIdToFind) {
-        // print("DEBUG: Found exact match for pet: ${element.petName}");
+
         return element;
       }
     }
@@ -146,12 +146,12 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       // );
       return data.first;
     }
-    // print("DEBUG: No pets found in list");
+
     return null;
   }
 
   Future<void> _handleBooking() async {
-    // print("DEBUG: handleBooking called");
+
     if (dateController.text.isEmpty || time == null) {
       // print(
       //   "DEBUG: Missing data or time - Date: ${dateController.text}, Time: $time",
@@ -164,9 +164,9 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       );
       return;
     }
-    // print("DEBUG: Date: ${dateController.text}, Time: $time");
+
     if (_localPetList.isEmpty) {
-      // print("DEBUG: _localPetList is empty");
+
       errorToast(
         context,
         isArabic()
@@ -181,10 +181,10 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       });
     }
     try {
-      // print("DEBUG: _localPetList has ${_localPetList.length} pets");
+
       PetClinicModel? matchedPet = findPet(_localPetList, widget.petId);
       if (matchedPet == null) {
-        // print("DEBUG: No matching pet found for ID: ${widget.petId}");
+
         errorToast(
           context,
           isArabic() ? 'لم يتم العثور على الصغار الأليفة' : 'No pets found',
@@ -194,8 +194,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       }
       var formattedTime = convertLocalTimeToUTC(time!);
 
-      // print("DEBUG: Formatted time: $formattedTime");
-      // print("DEBUG: time: $time");
+
       Map<String, dynamic> requestData = {
         "data": dateController.text,
         "time": formattedTime,
@@ -208,8 +207,8 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       if (doctorId != null && doctorId!.isNotEmpty) {
         requestData["doctorUserId"] = doctorId;
       }
-      // print("DEBUG: Direct API call with payload: $requestData");
-      // print("DEBUG: API response: ${response.data}");
+
+
       if (mounted) {
         LayoutCubit.get(context).selectedIndex = 2;
         navigateAndFinish(context, const LayoutScreen());
@@ -219,7 +218,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
         isArabic() ? 'تم حجز الموعد بنجاح' : 'Appointment booked successfully',
       );
     } on DioException catch (e) {
-      // print("DEBUG: Dio error: ${e.response!.data}");
+
       String extractFirstErrorTO(dynamic error) {
         try {
           final entries = error.errors?.entries;
@@ -240,7 +239,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
         extractFirstErrorTO(ErrorMessageModel.fromJson(e.response!.data)),
       );
     } catch (e) {
-      // print("DEBUG: General error: $e");
+
       errorToast(
         context,
         isArabic() ? 'حدث خطأ غير متوقع' : 'An unexpected error occurred',
@@ -256,7 +255,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // print("DEBUG: Book Again Screen building. Data loaded: $areDataLoaded");
+
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).appointmentButtonBooking),
@@ -398,7 +397,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                               }
                             },
                             onIntervalSelected: (p0) {
-                              // print("DEBUG: Original time selection: $p0");
+
                               p0 = convertTo24Hour(p0);
                               // print(
                               //   "DEBUG: After conversion to 24-hour format: $p0",
@@ -456,7 +455,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                                       ) ||
                                       selectedDateTime.isAfter(nowForCompare)) {
                                     if (mounted) setState(() => time = p0);
-                                    // print("DEBUG: Time set to: $time");
+
                                   } else {
                                     // print(
                                     //   "DEBUG: Selected time is before current time",
@@ -469,7 +468,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                                     );
                                   }
                                 } catch (e) {
-                                  // print("DEBUG: Error parsing time: $e");
+
                                   infoToast(
                                     context,
                                     isArabic()
@@ -478,7 +477,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                                   );
                                 }
                               } else {
-                                // print("DEBUG: Selected date is in the past.");
+
                                 infoToast(
                                   context,
                                   isArabic()

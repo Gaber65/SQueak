@@ -53,7 +53,7 @@ class CacheHelper {
       }
       throw Exception('Unsupported data type');
     } catch (e) {
-      // print('CacheHelper::saveData error → $e');
+
       return false;
     }
   }

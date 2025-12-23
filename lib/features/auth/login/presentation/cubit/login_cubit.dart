@@ -106,7 +106,6 @@ class LoginCubit extends Cubit<LoginState> {
             // ignore: use_build_context_synchronously
             await MainCubit.get(context).saveToken();
           } catch (e) {
-            // print('Error during login data saving: $e');
             // إذا فشل حفظ البيانات، نقوم بمسح كل شيء ونرمي خطأ
             await CacheHelper.clearData();
             throw Exception('Failed to save login data');
@@ -174,20 +173,13 @@ class LoginCubit extends Cubit<LoginState> {
 
       if (result.status == LoginStatus.success) {
         // 2. Get user data (name, email, image)
-        final userData = await FacebookAuth.instance.getUserData();
-
-        print("Logged in as: ${userData['name']}");
-        print("Email: ${userData['email']}");
+        final _ = await FacebookAuth.instance.getUserData();
 
         // TODO: Send this data to your backend or save locally
-      } else {
-        print("Login failed: ${result.status}");
-        print("Message: ${result.message}");
-      }
-    } catch (error) {
-      print("Error: $error");
-    }
+      } else {}
+    } catch (_) {}
   }
+
   @override
   Future<void> close() {
     // Dispose controllers when cubit is closed to avoid memory leaks

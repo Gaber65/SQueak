@@ -114,7 +114,12 @@ class _ReactionButtonState extends State<ReactionButton> {
                           ? ReactionData.unActiveReactionImage
                           : reactionIndex == 0
                           ? ReactionData.activeReactionImage
-                          : ReactionData.facebookReactionImage[reactionIndex!],
+                          : ReactionData
+                                  .facebookReactionImage[reactionIndex!]
+                                  .length <=
+                              5
+                          ? ReactionData.facebookReactionImage[reactionIndex!]
+                          : ReactionData.unActiveReactionImage,
                     ),
                   ),
                 ),

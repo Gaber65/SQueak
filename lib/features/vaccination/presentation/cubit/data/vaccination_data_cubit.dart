@@ -58,7 +58,6 @@ class VaccinationDataCubit extends Cubit<VaccinationDataState> {
       int month = int.parse(dateParts[1]);
       int day = int.parse(dateParts[2]);
 
-      // print("reminder.notificationID: ${reminder.notificationID}");
       await NotificationScheduler.scheduleReminderNotification(
         id: int.parse(reminder.notificationID),
         title:

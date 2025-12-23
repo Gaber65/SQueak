@@ -64,7 +64,7 @@ class _BlockedPetsScreenContentState extends State<_BlockedPetsScreenContent> {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('⚠️ Error initializing pet ID: $e');
+
       }
     }
   }

@@ -64,9 +64,7 @@ class FollowRequestCubit extends Cubit<FollowRequestState> {
 
       entities = ClinicModel.fromJson(response.data['data']['clinic']);
       getClientInapp(entities!.code);
-    } on DioException {
-      // print(e);
-    }
+    } catch (_) {}
   }
 
   String clintId = '';
@@ -86,15 +84,15 @@ class FollowRequestCubit extends Cubit<FollowRequestState> {
           headers: {'accept': '*/*', 'Authorization': basicAuth},
         ),
       );
-      // print(response.data);
+
       // print(
       //   '${ConfigModel.baseApiUrlSqueak}$version/vetcare/client/${CacheHelper.getData('phone')}/$code',
       // );
       clintId = response.data['data']['vetICareId'];
-      // print(clintId);
+
       emit(SuccessGetClientState());
     } on DioException {
-      // print(e.response);
+
       emit(ErrorGetClientState());
     }
   }
@@ -109,13 +107,11 @@ class FollowRequestCubit extends Cubit<FollowRequestState> {
           .doc('Is0fJjcbMCqOrWmQdKoj')
           .snapshots()
           .listen((event) {
-            // print(event.data());
+
             Username = event.data()!['Username'];
             password = event.data()!['password'];
           });
-    } on Exception {
-      // print(e);
-    }
+    } catch (_) {}
   }
 
   Future<void> getNotifications(String id) async {

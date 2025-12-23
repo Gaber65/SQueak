@@ -7,7 +7,7 @@ import 'package:squeak/features/layout/search/presentation/screens/search_screen
 
 import '../../../../profile_switch/Presentation/widget/screens/profile_switcher_page.dart';
 
-AppBar buildAppBarHome(context) {
+AppBar buildAppBarHome(context,petId) {
   return AppBar(
     automaticallyImplyLeading: false,
     centerTitle: false,
@@ -35,7 +35,7 @@ AppBar buildAppBarHome(context) {
       IconButton(
         iconSize: 32,
         onPressed: () {
-          navigateToScreen(context, NotificationScreen());
+          navigateToScreen(context, NotificationScreen(petId: petId,));
         },
         icon:
             (CacheHelper.getData('notificationsNum') != null)

@@ -40,13 +40,13 @@ class ConfirmationScreen extends StatelessWidget {
       child: BlocConsumer<UserAppointmentCubit, UserAppointmentState>(
         listener: (context, state) {
           if (state is GetSupplierSuccess) {
-            // print('suppliers ${state.suppliers}');
-            // print('suppliers $clinicCode*************************');
+
+
             QRCubit.get(
               context,
             ).checkClinicInMySupplier(clinicCode, state.suppliers);
             suppliers = state.suppliers;
-            // print('suppliers ${state.suppliers}' '*************************');
+
           }
         },
         builder: (context, state) {

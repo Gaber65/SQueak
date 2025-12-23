@@ -47,11 +47,9 @@ class _CalendarScreenState extends State<CalendarScreen>
       vsync: this,
     );
 
-    // print('${widget.selectedDate}-----------------');
-
     if (widget.selectedDate != null) {
       _selectedDate = widget.selectedDate;
-      // print('$_selectedDate-----------------');
+
       setState(() {});
       final slot =
           _timeSlots[DayOfWeek.values[(_selectedDate!.weekday - 1 + 7) % 7]]!
@@ -126,7 +124,7 @@ class _CalendarScreenState extends State<CalendarScreen>
           lastDay: DateTime(2030),
 
           onFormatChanged: (format) {
-            // print('Calendar format changed to $format');
+
           },
           selectedDayPredicate: (day) => isSameDay(_selectedDate, day),
           onDaySelected: (selectedDay, focusedDay) {
@@ -292,7 +290,6 @@ class _CalendarScreenState extends State<CalendarScreen>
       );
     }
 
-    // print(intervals);
     return intervals;
   }
 }

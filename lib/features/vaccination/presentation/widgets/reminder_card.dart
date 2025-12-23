@@ -1135,7 +1135,7 @@ class _ReminderCardState extends State<ReminderCard>
 
       return DateTime(date.year, date.month, date.day, hour, minute);
     } catch (e) {
-      // print("Error parsing data/time: $e");
+
       return null;
     }
   }

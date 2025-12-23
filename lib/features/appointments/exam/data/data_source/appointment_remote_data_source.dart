@@ -98,10 +98,8 @@ class AppointmentRemoteDataSourceImpl implements AppointmentRemoteDataSource {
           .map((e) => PetClinicModel.fromJson(e))
           .toList();
     } on DioException catch (e) {
-      // print('***********error**********');
-      // print('***********error**********');
 
-      // print(e.response!.data);
+
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

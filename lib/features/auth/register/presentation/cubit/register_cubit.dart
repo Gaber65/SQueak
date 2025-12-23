@@ -308,8 +308,6 @@ class RegisterCubit extends Cubit<RegisterState> {
       shareData: isAccept,
     );
 
-    // print(entity.toMap());
-
     try {
       final authResult = await registerQrUseCase.execute(entity, clinicCode);
       // Persist auth data returned from register via QR so subsequent requests will use it.

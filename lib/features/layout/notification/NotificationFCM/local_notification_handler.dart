@@ -1,4 +1,3 @@
-// local_notification_handler.dart
 import 'dart:convert';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -15,7 +14,6 @@ class LocalNotificationHandler {
   static Future<void> handleNotificationResponse(
     NotificationResponse response,
   ) async {
-    // print('Notification response received: ${response.payload}');
 
     if (response.payload == null) return;
 
@@ -72,11 +70,8 @@ class LocalNotificationHandler {
           payload: 'reminder_$id|$originalTitle|$originalBody',
         );
 
-        // print("Notification $id snoozed until $snoozeTime");
       }
-    } catch (e) {
-      // print('Error handling snooze: $e');
-    }
+    } catch (_) {}
   }
 
   /// Handle ignore action - cancel the notification
@@ -86,22 +81,20 @@ class LocalNotificationHandler {
     try {
       final id = int.parse(payload.split('_')[1]);
       await flutterLocalNotificationsPlugin.cancel(id);
-      // print("Notification $id ignored and cancelled");
-    } catch (e) {
-      // print('Error handling ignore: $e');
-    }
+
+    } catch (_) {}
   }
 
   /// Cancel specific notification
   static Future<void> cancelNotification(int id) async {
     await flutterLocalNotificationsPlugin.cancel(id);
-    // print("Notification with ID: $id has been cancelled.");
+
   }
 
   /// Cancel all notifications
   static Future<void> cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
-    // print("All scheduled notifications have been cancelled.");
+
   }
 }
 

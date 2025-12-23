@@ -7,12 +7,15 @@ import 'package:squeak/features/layout/notification/NotificationAPI/presentation
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/screens/test.dart';
 
 class NotificationScreen extends StatelessWidget {
-  const NotificationScreen({super.key});
+  const NotificationScreen({super.key, required this.petId});
+  final String petId;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<NotificationsCubit>()..fetchNotifications(),
+      create:
+          (context) =>
+              sl<NotificationsCubit>()..fetchNotifications(petId: petId),
       child: BlocConsumer<NotificationsCubit, NotificationsState>(
         listener: (context, state) {},
         builder: (context, state) {

@@ -32,7 +32,7 @@ String? extractFirstUuidFromUrl(String url) {
     }
   } catch (e) {
     // لو حصل أي استثناء (مثلاً null أو غير متوقع)
-    // print('Error extracting UUID from URL: $e');
+
     return null;
   }
 }

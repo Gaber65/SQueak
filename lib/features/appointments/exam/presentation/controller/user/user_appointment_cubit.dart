@@ -30,7 +30,9 @@ class UserAppointmentCubit extends Cubit<UserAppointmentState> {
   }) : super(UserAppointmentInitial());
 
   static UserAppointmentCubit get(context) => BlocProvider.of(context);
-
+  void rateEmit() {
+    emit(RatingInitialized());
+  }
   List<AppointmentEntity> appointments = [];
   MySupplier? suppliers;
   Invoice? invoice;

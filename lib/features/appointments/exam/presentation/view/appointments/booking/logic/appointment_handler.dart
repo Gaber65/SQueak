@@ -20,7 +20,7 @@ class AppointmentHandler {
     required int petGender,
     required bool? isSpayed,
   }) {
-    // print("DEBUG: createAppointment called$breedId");
+
     // Validate inputs
     if (time == null) {
       infoToast(context, isArabic() ? 'الوقت مطلوب' : 'Please select time');

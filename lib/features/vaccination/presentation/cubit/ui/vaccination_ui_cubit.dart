@@ -69,7 +69,7 @@ class VaccinationUiCubit extends Cubit<VaccinationUiState> {
         isLoading = false;
         isButtonSheetShown = false;
         dataCubit.getPetReminders(state.petId);
-        // print("reminder created");
+
         emit(ReminderActionSuccess());
       } else if (state is CreateReminderError) {
         isLoading = false;

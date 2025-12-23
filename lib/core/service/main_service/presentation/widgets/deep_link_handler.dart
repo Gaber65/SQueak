@@ -64,9 +64,9 @@ void initDeepLinkHandler(
 void handleDeepLink(Uri uri, GlobalKey<NavigatorState> navigatorKey) async {
   final url = uri.toString();
   final params = extractQueryParams(url);
-  // print(params);
-  // print(url);
-  // print("/******************************/");
+
+
+
   // Handle QR clinic registration
   if (params.values.every((v) => v != null && v.isNotEmpty)) {
     final route =

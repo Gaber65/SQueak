@@ -202,7 +202,7 @@ class RateAppointment extends StatelessWidget {
                                 !model.isRating
                                     ? () {
                                       cubit.ratingDoctor = index + 1;
-                                      cubit.emit(RatingInitialized());
+                                      cubit.rateEmit();
                                     }
                                     : null,
                             child:
@@ -251,7 +251,7 @@ class RateAppointment extends StatelessWidget {
                                     ? () {
                                       cubit.ratingCleanliness = index + 1;
 
-                                      cubit.emit(RatingInitialized());
+                                      cubit.rateEmit();
                                     }
                                     : null,
                             child:

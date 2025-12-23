@@ -16,8 +16,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [BlocProvider(create: (context) => sl<PostCubit>())],
+    return BlocProvider(
+      create: (context) => sl<PostCubit>(),
       child: BlocConsumer<PostCubit, PostState>(
         listener: (context, state) {
           if (state is DeletePostErrorState) {
@@ -53,7 +53,7 @@ class HomeScreen extends StatelessWidget {
             },
             builder: (context, state) {
               return Scaffold(
-                appBar: buildAppBarHome(context),
+                appBar: buildAppBarHome(context , state?.petId ?? ''),
                 body: NotificationListener<ScrollNotification>(
                   onNotification: (notification) {
                     return false;

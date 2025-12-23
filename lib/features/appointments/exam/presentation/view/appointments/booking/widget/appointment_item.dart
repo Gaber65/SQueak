@@ -524,7 +524,7 @@ Widget buildItemAppointment(
                             : 'the location is missing , please ask the admin to add his location',
                       );
                     } else {
-                      // print(appointments.clinicLocation);
+
                       launchUrl((Uri.parse(appointments.clinicLocation)));
                     }
                   },

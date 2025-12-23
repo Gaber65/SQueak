@@ -117,8 +117,9 @@ void navigateBasedOnNotification(
     case NotificationType.NewPetFriendRequest:
       navigateToScreen(context, FriendsScreen());
       break;
+
     default:
-      // print('Unhandled notification type (should not reach here): $notificationType');
+
       break;
   }
 }

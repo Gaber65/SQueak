@@ -45,7 +45,7 @@ enum ReactType {
   /// Convert int (from API or DB) to ReactType
   static ReactType fromInt(int? value) {
     return ReactType.values.firstWhere(
-          (type) => type.value == value,
+      (type) => type.value == value,
       orElse: () => ReactType.none,
     );
   }
@@ -90,7 +90,7 @@ enum ReactType {
   String get iconPath {
     switch (this) {
       case ReactType.none:
-        return '';
+        return ReactionData.unActiveReactionImage;
       case ReactType.happy:
         return ReactionData.facebookReactionIcon[2];
       case ReactType.sad:
