@@ -13,6 +13,7 @@ import 'package:squeak/features/mating/chat/domain/entities/message_status.dart'
 import 'package:squeak/features/mating/chat/presentation/widgets/chat_widgets/mating_chat_list_tile.dart';
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_app_cubit.dart';
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_app_state.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/connection_quick_actions.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
 class ChatsTab extends StatefulWidget {
@@ -102,7 +103,7 @@ class _ChatsTabState extends State<ChatsTab> {
                       lastMessage: newLastMessage,
                     );
 
-                    // Create new list with updated chat
+                    
                     final updatedChats = List<ChatEntity>.from(chats);
                     updatedChats[chatIndex] = updatedChat;
 
@@ -111,6 +112,16 @@ class _ChatsTabState extends State<ChatsTab> {
                       context,
                     ).emit(ChatsLoaded(chats: updatedChats));
                   }
+                }
+              },
+            ),
+            // Print when ChatApp connects successfully
+            BlocListener<ChatAppCubit, ChatAppState>(
+              listener: (context, chatAppState) {
+                if (chatAppState is ChatAppConnected) {
+                  final connectionId = context.read<ChatAppCubit>().generalHub.connectionId;
+                  debugPrint('✅ [ChatsTab] GeneralHub connected (ChatAppConnected)');
+                  debugPrint('🔗 [ChatsTab] GeneralHub connectionId: $connectionId');
                 }
               },
             ),
@@ -154,8 +165,6 @@ class _ChatsTabState extends State<ChatsTab> {
               _buildChatsHeader(chats.length),
               const SizedBox(height: 16),
               ...chats.map((chat) {
-                // الحصول على البيانات من القاموس مباشرة
-                // Get data from dictionary directly
                 final isOnline = chatAppCubit.generalHub.isPetOnlineFromDict(
                   chat.petId,
                 );
@@ -200,29 +209,7 @@ class _ChatsTabState extends State<ChatsTab> {
   }
 
   Widget _buildQuickActions() {
-    return BlocBuilder<ChatAppCubit, ChatAppState>(
-      builder: (context, state) {
-        final isConnected = state is ChatAppConnected;
-        return Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            color: isConnected ? Colors.green : Colors.orange,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color:
-                    isConnected
-                        ? Colors.green.withOpacity(0.5)
-                        : Colors.orange.withOpacity(0.5),
-                blurRadius: 4,
-                spreadRadius: 1,
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    return const ConnectionQuickActions();
   }
 
   bool isArabic() {

@@ -15,6 +15,7 @@ import '../widgets/chat_widgets/mating_chat_list_tile.dart';
 import '../controllers/chat_list_state.dart';
 import '../controllers/chat_app_cubit.dart';
 import '../controllers/chat_app_state.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/connection_quick_actions.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
@@ -32,6 +33,9 @@ class ChatListScreen extends StatelessWidget {
     );
   }
 }
+
+
+// using shared ConnectionQuickActions widget from widgets/
 
 class _ChatListView extends StatefulWidget {
   const _ChatListView();
@@ -150,6 +154,11 @@ class _ChatListViewState extends State<_ChatListView> {
                   context,
                 ).showSnackBar(SnackBar(content: Text(state.message)));
               }
+              if (state is ChatAppConnected) {
+                final connectionId = context.read<ChatAppCubit>().generalHub.connectionId;
+                debugPrint('✅ [ChatListScreen] GeneralHub connected (ChatAppConnected)');
+                debugPrint('🔗 [ChatListScreen] GeneralHub connectionId: $connectionId');
+              }
             },
           ),
           BlocListener<ChatListCubit, ChatListState>(
@@ -209,9 +218,15 @@ class _ChatListViewState extends State<_ChatListView> {
           color: theme.colorScheme.onSurface,
         ),
       ),
-      actions: [buildProfileSwitcher(context)],
+      actions: [
+        // Connection quick actions (status + retry)
+        const ConnectionQuickActions(),
+        buildProfileSwitcher(context),
+      ],
     );
   }
+
+
 
   Widget _buildChatListContent(ChatListState state, PetEntities? pet) {
     final theme = Theme.of(context);
