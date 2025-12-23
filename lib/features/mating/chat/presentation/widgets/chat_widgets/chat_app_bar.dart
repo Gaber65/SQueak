@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../controllers/chat_messages_state.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/rating_pet_mating.dart';
 import '../../../../profile/presentation/screens/view_pet_profile_screen.dart';
 import '../../../domain/entities/chat_entity.dart';
 import 'chat_dialog_helper.dart';
 import 'chat_app_bar_widgets/menu_item_widget.dart';
+import '../../controllers/chat_app_cubit.dart';
 
 class ChatAppBar extends StatefulWidget implements PreferredSizeWidget {
   final ChatEntity chat;
@@ -39,7 +41,6 @@ class _ChatAppBarState extends State<ChatAppBar> {
   @override
   void initState() {
     super.initState();
-    _isBlocked = widget.chat.isBlock;
     _isBlockedByMe = widget.chat.isBlockedByMe;
     _isBlockedByOther = widget.chat.isBlockedByOther;
     _subscription = widget.cubit.stream.listen((state) {
@@ -97,6 +98,8 @@ class _ChatAppBarState extends State<ChatAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    final chatAppCubit = context.read<ChatAppCubit>();
+    final convConnected = chatAppCubit.conversationHub.isConnected;
     return AppBar(
       leading: IconButton(
         icon: Container(
@@ -231,6 +234,64 @@ class _ChatAppBarState extends State<ChatAppBar> {
         ],
       ),
       actions: [
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            IconButton(
+              tooltip:
+                  Localizations.localeOf(context).languageCode == 'ar'
+                      ? 'الاتصال بالمحادثة'
+                      : 'Connect Conversation',
+              icon: const Icon(Icons.link_rounded, size: 20),
+              onPressed: () async {
+                final chatAppCubit = context.read<ChatAppCubit>();
+                debugPrint(
+                  '🔗 [ChatAppBar] Connect pressed for ${widget.chat.id}',
+                );
+
+                try {
+                  if (chatAppCubit.conversationHub.isConnected) {
+                    debugPrint(
+                      '🔁 [ChatAppBar] Conversation hub already connected — reconnecting',
+                    );
+                    await chatAppCubit.conversationHub.disconnect();
+                    await chatAppCubit.joinConversation(widget.chat.id);
+                    final connId = chatAppCubit.conversationHub.connectionId;
+                    debugPrint(
+                      '✅ [ChatAppBar] Reconnected to conversation ${widget.chat.id} (connectionId: $connId)',
+                    );
+                  } else {
+                    debugPrint(
+                      '➡️ [ChatAppBar] Conversation hub not connected — joining',
+                    );
+                    await chatAppCubit.joinConversation(widget.chat.id);
+                    final connId = chatAppCubit.conversationHub.connectionId;
+                    debugPrint(
+                      '✅ [ChatAppBar] Joined conversation ${widget.chat.id} (connectionId: $connId)',
+                    );
+                  }
+                } catch (e) {
+                  debugPrint(
+                    '❌ [ChatAppBar] Error connecting to conversation: $e',
+                  );
+                }
+              },
+            ),
+            Positioned(
+              right: -2,
+              bottom: 8,
+              child: Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: convConnected ? Colors.green : Colors.grey,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 1.2),
+                ),
+              ),
+            ),
+          ],
+        ),
         PopupMenuButton<String>(
           onSelected: (value) => _handleAction(context, value),
           icon: Container(
