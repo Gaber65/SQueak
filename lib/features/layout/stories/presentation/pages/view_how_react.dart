@@ -22,12 +22,16 @@ class StoryReactionsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (reactions.isEmpty) {
+    // Filter out reactions with type 0 (view-only, no reaction)
+    final validReactions =
+        reactions.toList();
+
+    if (validReactions.isEmpty) {
       return _buildEmptyState();
     }
 
-    final reactionsByType = _groupReactionsByType();
-    final totalReactions = reactions.length;
+    final reactionsByType = _groupReactionsByType(validReactions);
+    final totalReactions = validReactions.length;
 
     return Container(
       decoration: BoxDecoration(
@@ -79,8 +83,10 @@ class StoryReactionsView extends StatelessWidget {
                     ),
                     const Spacer(),
                     Container(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
@@ -99,88 +105,15 @@ class StoryReactionsView extends StatelessWidget {
               ),
             ),
 
-            // Reaction Types Summary (Facebook-like chips)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: reactionsByType.entries.map((entry) {
-                  final type = entry.key;
-                  final reactions = entry.value;
-                  final count = reactions.length;
-
-                  return Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {
-                        // Filter by reaction type
-                      },
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[50],
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.grey[200]!,
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Reaction Icon with animation effect
-                            Container(
-                              width: 24,
-                              height: 24,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: AssetImage(
-                                    ReactionData.facebookReactionIcon[type.value],
-                                  ),
-                                  fit: BoxFit.cover,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              '$count',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-
             const Divider(height: 1, thickness: 0.5),
 
             // Reactions List with shimmer effect
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                itemCount: reactions.length,
+                itemCount: validReactions.length,
                 itemBuilder: (context, index) {
-                  final reaction = reactions[index];
+                  final reaction = validReactions[index];
                   final type = ReactType.fromInt(reaction.reactType);
 
                   return _buildReactionItem(reaction, type);
@@ -188,38 +121,7 @@ class StoryReactionsView extends StatelessWidget {
               ),
             ),
 
-            // Close Button (Facebook-style)
-            Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: Colors.grey[200]!, width: 0.5),
-                ),
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: onClose,
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(16),
-                    bottomRight: Radius.circular(16),
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    width: double.infinity,
-                    child: const Center(
-                      child: Text(
-                        'Close',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF4267B2),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+
           ],
         ),
       ),
@@ -271,10 +173,7 @@ class StoryReactionsView extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   'Be the first to react to this story!',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -300,9 +199,10 @@ class StoryReactionsView extends StatelessWidget {
           decoration: BoxDecoration(
             color: isCurrentUser ? Colors.blue[50] : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            border: isCurrentUser
-                ? Border.all(color: Colors.blue[100]!, width: 1)
-                : null,
+            border:
+                isCurrentUser
+                    ? Border.all(color: Colors.blue[100]!, width: 1)
+                    : null,
           ),
           child: Row(
             children: [
@@ -314,25 +214,23 @@ class StoryReactionsView extends StatelessWidget {
                       radius: 22,
                       backgroundColor: Colors.grey[200],
                       backgroundImage: NetworkImage(
-                        imageUrl + (reaction.petImage ?? reaction.userImage ?? ''),
+                        imageUrl +
+                            (reaction.petImage ?? reaction.userImage ?? ''),
                       ),
                     ),
-                      Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          width: 12,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color: Colors.green,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 2,
-                            ),
-                          ),
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
                         ),
                       ),
+                    ),
                   ],
                 ),
                 const SizedBox(width: 12),
@@ -351,9 +249,10 @@ class StoryReactionsView extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
-                              color: isCurrentUser
-                                  ? Colors.blue[800]
-                                  : Colors.grey[800],
+                              color:
+                                  isCurrentUser
+                                      ? Colors.blue[800]
+                                      : Colors.grey[800],
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -391,7 +290,7 @@ class StoryReactionsView extends StatelessWidget {
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: AssetImage(
-                                ReactionData.facebookReactionIcon[type.value],
+                                ReactionData.getIconForReactType(type),
                               ),
                               fit: BoxFit.contain,
                             ),
@@ -401,12 +300,12 @@ class StoryReactionsView extends StatelessWidget {
                           '• ${_formatTime(reaction.reactedAt)}',
                           style: TextStyle(
                             fontSize: 13,
-                            color: isCurrentUser
-                                ? Colors.blue[600]
-                                : Colors.grey[600],
+                            color:
+                                isCurrentUser
+                                    ? Colors.blue[600]
+                                    : Colors.grey[600],
                           ),
                         ),
-
                       ],
                     ),
                   ],
@@ -468,54 +367,20 @@ class StoryReactionsView extends StatelessWidget {
     }
   }
 
-  Map<ReactType, List<StoryReactionEntity>> _groupReactionsByType() {
+  Map<ReactType, List<StoryReactionEntity>> _groupReactionsByType(
+    List<StoryReactionEntity> reactions,
+  ) {
     final Map<ReactType, List<StoryReactionEntity>> grouped = {};
 
     for (final reaction in reactions) {
       final type = ReactType.fromInt(reaction.reactType);
-      grouped.putIfAbsent(type, () => []).add(reaction);
+      if (type != ReactType.none) {
+        // Only group valid reactions
+        grouped.putIfAbsent(type, () => []).add(reaction);
+      }
     }
 
     return grouped;
   }
 }
 
-class StoryReactionsOverlay extends StatelessWidget {
-  final List<StoryReactionEntity> reactions;
-  final String? currentPetId;
-  final VoidCallback onClose;
-
-  const StoryReactionsOverlay({
-    super.key,
-    required this.reactions,
-    this.currentPetId,
-    required this.onClose,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onClose,
-      child: Container(
-        color: Colors.black.withOpacity(0.75),
-        child: Center(
-          child: GestureDetector(
-            onTap: () {}, // Prevent bubbling
-            child: Container(
-              constraints: const BoxConstraints(
-                maxWidth: 400,
-                maxHeight: 500,
-              ),
-              margin: const EdgeInsets.all(20),
-              child: StoryReactionsView(
-                reactions: reactions,
-                currentPetId: currentPetId,
-                onClose: onClose,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

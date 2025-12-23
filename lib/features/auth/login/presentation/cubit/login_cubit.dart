@@ -7,7 +7,8 @@ import 'package:squeak/features/auth/login/domin/usecses/login_use_case.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
@@ -178,6 +179,36 @@ class LoginCubit extends Cubit<LoginState> {
     } catch (_) {}
   }
 
+
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  Future<User?> signInWithGoogle() async {
+    try {
+      // 1. يفتح صفحة اختيار حساب Google
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return null; // المستخدم لغى العملية
+
+      // 2. يحصل على التوكن
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      // 3. يبني الـ credential للفايربيز
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // 4. يسجل دخول المستخدم في Firebase
+      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+
+      print(userCredential.user);
+      // 5. المستخدم جاهز
+      return userCredential.user;
+    } catch (e) {
+      print('Google sign-in failed: $e');
+      return null;
+    }
+  }
   @override
   Future<void> close() {
     // Dispose controllers when cubit is closed to avoid memory leaks

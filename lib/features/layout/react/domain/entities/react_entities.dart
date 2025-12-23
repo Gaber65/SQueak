@@ -37,8 +37,23 @@ class ReactionItem {
 
 
 
+// In your react_entities.dart or wherever getReactionIcon is defined
 String getReactionIcon(ReactType type) {
-  return ReactionData.facebookReactionIcon[type.index];
+  // Map ReactType to asset paths
+  switch (type) {
+    case ReactType.happy:
+      return "assets/react/cat/haha.jpg";  // or .gif depending on what you need
+    case ReactType.sad:
+      return "assets/react/cat/sad.jpg";
+    case ReactType.love:
+      return "assets/react/cat/love.jpg";
+    case ReactType.angry:
+      return "assets/react/cat/angry.jpg";
+    case ReactType.like:
+      return "assets/react/cat/like_fill_cat.jpg";
+    case ReactType.none:
+      return "assets/react/cat/like_gap_cat.jpg"; // Default icon for no reaction
+  }
 }
 
 class ReactionSummary {

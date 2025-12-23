@@ -31,6 +31,7 @@ class ReactParams {
   }
 }
 
+
 enum ReactType {
   none(0),
   happy(1),
@@ -44,63 +45,159 @@ enum ReactType {
 
   /// Convert int (from API or DB) to ReactType
   static ReactType fromInt(int? value) {
+    if (value == null) return ReactType.none;
+
     return ReactType.values.firstWhere(
-      (type) => type.value == value,
+          (type) => type.value == value,
       orElse: () => ReactType.none,
     );
   }
 
-  /// Display text for UI
+  /// Convert from UI index (0-4) to ReactType
+  /// UI: 0=happy, 1=sad, 2=love, 3=angry, 4=like
+  static ReactType fromUiIndex(int uiIndex) {
+    if (uiIndex < 0 || uiIndex > 4) return ReactType.none;
+    return fromInt(uiIndex + 1);
+  }
+
+  /// Convert this ReactType to UI index
+  /// Returns null for ReactType.none
+  int? get uiIndex {
+    if (this == ReactType.none) return null;
+    return value - 1;
+  }
+
+  /// Check if this is a valid reaction (not none)
+  bool get isValidReaction => this != ReactType.none;
+
+  /// Get display name for this reaction
   String get displayName {
     switch (this) {
-      case ReactType.none:
-        return 'None';
       case ReactType.happy:
-        return 'Happy';
+        return 'haha';
       case ReactType.sad:
-        return 'Sad';
+        return 'sad';
       case ReactType.love:
-        return 'Love';
+        return 'love';
       case ReactType.angry:
-        return 'Angry';
+        return 'angry';
       case ReactType.like:
-        return 'Like';
+        return 'like';
+      case ReactType.none:
+        return 'none';
     }
   }
 
-  /// Color associated with reaction
-  Color get color {
+  /// Get display emoji/icon name for this reaction
+  String get emojiName {
     switch (this) {
-      case ReactType.none:
-        return Colors.grey;
       case ReactType.happy:
-        return const Color(0xFFF7B928); // Yellow
+        return '😄';
       case ReactType.sad:
-        return const Color(0xFF1877F2); // Blue
+        return '😢';
       case ReactType.love:
-        return const Color(0xFFF33E58); // Red
+        return '❤️';
       case ReactType.angry:
-        return const Color(0xFFE9710F); // Orange
+        return '😠';
       case ReactType.like:
-        return const Color(0xFF1877F2); // Blue
+        return '👍';
+      case ReactType.none:
+        return '';
     }
   }
 
-  /// Icon path for UI
-  String get iconPath {
+  /// Check if this reaction is positive
+  bool get isPositive {
+    return this == ReactType.happy ||
+        this == ReactType.love ||
+        this == ReactType.like;
+  }
+
+  /// Check if this reaction is negative
+  bool get isNegative {
+    return this == ReactType.sad ||
+        this == ReactType.angry;
+  }
+
+  /// Get color for this reaction (useful for UI)
+  int get colorValue {
     switch (this) {
-      case ReactType.none:
-        return ReactionData.unActiveReactionImage;
       case ReactType.happy:
-        return ReactionData.facebookReactionIcon[2];
+        return 0xFFFFD700; // Gold/Yellow
       case ReactType.sad:
-        return ReactionData.facebookReactionIcon[3];
+        return 0xFF1E90FF; // DodgerBlue
       case ReactType.love:
-        return ReactionData.facebookReactionIcon[1];
+        return 0xFFFF1493; // DeepPink
       case ReactType.angry:
-        return ReactionData.facebookReactionIcon[4];
+        return 0xFFFF4500; // OrangeRed
       case ReactType.like:
-        return ReactionData.facebookReactionIcon[0];
+        return 0xFF0080FF; // Facebook Blue
+      case ReactType.none:
+        return 0xFF808080; // Grey
     }
+  }
+
+  /// Compare two ReactTypes
+  bool isSameAs(ReactType other) {
+    return value == other.value;
+  }
+
+  /// Check if this is greater than another ReactType
+  bool isGreaterThan(ReactType other) {
+    return value > other.value;
+  }
+
+  /// Check if this is less than another ReactType
+  bool isLessThan(ReactType other) {
+    return value < other.value;
+  }
+
+  @override
+  String toString() {
+    return 'ReactType.$name($value)';
+  }
+
+  /// Parse from string (useful for serialization)
+  static ReactType? fromString(String value) {
+    try {
+      // Try to parse as "ReactType.name(value)"
+      if (value.contains('(')) {
+        final name = value.split('(').first;
+        return ReactType.values.firstWhere((e) => e.name == name);
+      }
+      // Try to parse as just the name
+      return ReactType.values.firstWhere((e) => e.name == value);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Get all valid reaction types (excluding none)
+  static List<ReactType> get validReactions {
+    return ReactType.values.where((type) => type != ReactType.none).toList();
+  }
+
+  /// Get all UI indices for valid reactions
+  static List<int> get validUiIndices {
+    return validReactions.map((type) => type.uiIndex!).toList();
+  }
+}
+
+/// Extension for int to easily convert to ReactType
+extension IntToReactType on int {
+  ReactType toReactType() {
+    return ReactType.fromInt(this);
+  }
+
+  /// Convert to UI index (for arrays)
+  int? toReactUiIndex() {
+    return ReactType.fromInt(this).uiIndex;
+  }
+}
+
+/// Extension for nullable int
+extension NullableIntToReactType on int? {
+  ReactType toReactTypeOrNone() {
+    return ReactType.fromInt(this);
   }
 }

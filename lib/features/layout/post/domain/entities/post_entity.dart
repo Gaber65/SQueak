@@ -52,7 +52,6 @@ class PostEntity {
     this.userArereactedWithThisPost,
   });
 
-
 }
 
 class PostMediaEntity {

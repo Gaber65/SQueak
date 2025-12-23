@@ -9,6 +9,7 @@ import 'package:squeak/core/accessibility/accessibility_helper.dart';
 // Performance monitoring import removed for memory optimization
 
 import 'package:squeak/features/auth/login/presentation/cubit/login_cubit.dart';
+import 'package:squeak/features/auth/login/presentation/widgets/social_login_buttons.dart';
 import 'package:squeak/features/auth/password/presentation/pages/forgot_password.dart';
 import 'package:squeak/features/auth/register/presentation/pages/register_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -466,7 +467,11 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
                   ],
                 ),
               ),
+              SocialLoginButtons(
+                onFacebookLogin: widget.cubit.loginWithFacebook,
+                onGoogleLogin: widget.cubit.signInWithGoogle,
 
+              ),
               // Form Validation Status (for screen readers)
               if (!_isFormValid)
                 AccessibilityHelper.semanticWrapper(
