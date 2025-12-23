@@ -129,7 +129,7 @@ String formatFacebookTimePost(String createdAt) {
           : DateFormat('MMM d \'at\' h:mm a').format(localTime);
     }
   } catch (e) {
-    return 'Invalid data';
+    return 'Invalid date';
   }
 }
 

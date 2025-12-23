@@ -53,7 +53,6 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
       onResumeUI: () => setState(() {}),
     );
 
-    // Handle first story view
     _handleStoryView(widget.initialIndex);
   }
 
@@ -77,20 +76,16 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
   void _handleStoryView(int index) {
     final story = widget.stories[index];
 
-    // Initialize reaction state if not already set
     if (!reactionIndices.containsKey(index)) {
-      // First time viewing (not viewed yet)
       if (!story.isViewed) {
         reactionIndices[index] = null;
         widget.storyCubit.reactToStory(
           userStoryId: story.id,
-          reactType: 0, // Auto-mark as viewed
+          reactType: 0, 
           petId: widget.petID,
         );
         return;
       }
-
-      // Already viewed - set the existing reaction
       reactionIndices[index] = story.myReactType;
     }
   }
@@ -152,8 +147,6 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
         },
         itemBuilder: (_, index) {
           final currentStory = widget.stories[index];
-
-          // Only build the current page and adjacent pages
           if ((index - controller.currentIndex).abs() > 1) {
             return const SizedBox.shrink();
           }
@@ -173,19 +166,27 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
       behavior: HitTestBehavior.translucent,
       onTapDown: (details) {
         if (index != controller.currentIndex) return;
-
+        final isRTL = Directionality.of(context) == TextDirection.rtl;
         final bottomUIHeight = 120.0;
         final screenHeight = MediaQuery.of(context).size.height;
-
         if (details.globalPosition.dy > screenHeight - bottomUIHeight) return;
-
         final width = MediaQuery.of(context).size.width;
         final dx = details.globalPosition.dx;
 
-        if (dx < width / 3) {
-          controller.goPrevious();
-        } else if (dx > width * 2 / 3) {
-          controller.goNext();
+        if (isRTL) {
+          if (dx > width * 2 / 3) {
+            controller.goNext();
+          }
+          else if (dx < width / 3) {
+            controller.goPrevious();
+          }
+        } else {
+          if (dx < width / 3) {
+            controller.goPrevious();
+          }
+          else if (dx > width * 2 / 3) {
+            controller.goNext();
+          }
         }
       },
       onLongPressStart: (details) {
@@ -193,9 +194,7 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
 
         final bottomUIHeight = 120.0;
         final screenHeight = MediaQuery.of(context).size.height;
-
         if (details.globalPosition.dy > screenHeight - bottomUIHeight) return;
-
         controller.pause();
       },
       onLongPressEnd: (_) {
@@ -205,7 +204,6 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // Creative background with subtle gradient overlay for depth
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -217,81 +215,81 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
             child: Image.network(
               imageUrl + (currentStory.image ?? ''),
               fit: BoxFit.contain,
-              errorBuilder:
-                  (_, __, ___) => const Center(
-                    child: Icon(Icons.error, color: Colors.white),
-                  ),
+              errorBuilder: (_, __, ___) => const Center(
+                child: Icon(Icons.error, color: Colors.white),
+              ),
             ),
           ),
-
-          // PROGRESS INDICATORS with enhanced styling
           Positioned(
             top: 40,
             left: 8,
             right: 8,
-            child: Row(
-              children: List.generate(widget.stories.length, (i) {
-                return Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 2),
-                    height: 4, // Slightly thicker for better visibility
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 2,
-                          offset: const Offset(0, 1),
+            child: Builder(
+              builder: (context) {
+                final isRTL = Directionality.of(context) == TextDirection.rtl;
+                return Row(
+                  children: List.generate(widget.stories.length, (index) {
+                    return Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 2),
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 2,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child:
-                        i == controller.currentIndex
+                        child: index == controller.currentIndex
                             ? AnimatedBuilder(
-                              animation: controller.progressController,
-                              builder:
-                                  (_, __) => FractionallySizedBox(
-                                    alignment: Alignment.centerLeft,
-                                    widthFactor:
-                                        controller.progressController.value,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            Colors.blueAccent,
-                                            Colors.white,
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.circular(2),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.blue.withOpacity(0.5),
-                                            blurRadius: 4,
-                                            offset: const Offset(0, 0),
-                                          ),
+                                animation: controller.progressController,
+                                builder: (_, __) => FractionallySizedBox(
+                                  alignment: isRTL
+                                      ? Alignment.centerRight
+                                      : Alignment.centerLeft,
+                                  widthFactor:
+                                      controller.progressController.value,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Colors.blueAccent,
+                                          Colors.white,
                                         ],
                                       ),
+                                      borderRadius: BorderRadius.circular(2),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.blue.withOpacity(0.5),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 0),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                            )
-                            : i < controller.currentIndex
-                            ? Container(
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [Colors.white, Colors.grey],
                                 ),
-                                borderRadius: BorderRadius.circular(2),
-                              ),
-                            )
-                            : const SizedBox.shrink(),
-                  ),
+                              )
+                            : index < controller.currentIndex
+                                ? Container(
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [Colors.white, Colors.grey],
+                                      ),
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                      ),
+                    );
+                  }),
                 );
-              }),
+              },
             ),
           ),
-
-          // HEADER with improved styling
           Positioned(
             top: 52,
             left: 8,
@@ -334,7 +332,7 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                             Shadow(
                               color: Colors.black.withOpacity(0.5),
                               blurRadius: 4,
-                              offset: Offset(0, 2),
+                              offset: const Offset(0, 2),
                             ),
                           ],
                         ),
@@ -370,7 +368,6 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
               ],
             ),
           ),
-
           if (index == controller.currentIndex)
             Positioned(
               left: 0,
@@ -404,7 +401,6 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
         top: false,
         child: Row(
           children: [
-            // REACTIONS with Facebook-like styling
             InkWell(
               key: reactionKey,
               onTap: () {
@@ -461,8 +457,8 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                     reactionIndex == null
                         ? ReactionData.unActiveReactionImage
                         : reactionIndex == 0
-                        ? ReactionData.activeReactionImage
-                        : ReactionData.facebookReactionImage[reactionIndex],
+                            ? ReactionData.activeReactionImage
+                            : ReactionData.facebookReactionImage[reactionIndex],
                   ),
                 ),
               ),

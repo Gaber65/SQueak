@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
 import 'package:squeak/features/layout/stories/presentation/pages/view_how_react.dart';
+import 'package:squeak/generated/l10n.dart';
 import '../../../../../core/network/end_points.dart';
 import '../../domain/entities/story.dart';
 import '../../domain/entities/story_reaction_entity.dart';
@@ -50,7 +51,6 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
       onResumeUI: () => setState(() {}),
     );
 
-    // Load reactions for the first story
     _loadReactionsForCurrentStory();
   }
 
@@ -66,21 +66,19 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
       showDialog(
         context: context,
         barrierColor: Colors.transparent,
-        builder:
-            (context) => GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              child: Material(
-                child: GestureDetector(
-                  onTap: () {},
-                  child: StoryReactionsOverlay(
-                    reactions:
-                        widget.storyCubit.state.reactions?.reactions ?? [],
-                    currentPetId: widget.petID,
-                    onClose: () => Navigator.of(context).pop(),
-                  ),
-                ),
+        builder: (context) => GestureDetector(
+          onTap: () => Navigator.of(context).pop(),
+          child: Material(
+            child: GestureDetector(
+              onTap: () {},
+              child: StoryReactionsOverlay(
+                reactions: widget.storyCubit.state.reactions?.reactions ?? [],
+                currentPetId: widget.petID,
+                onClose: () => Navigator.of(context).pop(),
               ),
             ),
+          ),
+        ),
       ).then((value) {
         controller.resume();
       });
@@ -154,31 +152,35 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
           return GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTapDown: (details) {
-              // Ignore taps if the user is interacting with bottom UI
-              final bottomUIHeight =
-                  100.0; // Approximate height of reactions button area
+              final isRTL = Directionality.of(context) == TextDirection.rtl;
+              final bottomUIHeight = 100.0;
               final screenHeight = MediaQuery.of(context).size.height;
-
               if (details.globalPosition.dy > screenHeight - bottomUIHeight) {
-                return; // Don't navigate if tapping in bottom UI area
+                return;
               }
-
               final width = MediaQuery.of(context).size.width;
               final dx = details.globalPosition.dx;
-
-              if (dx < width / 3) {
-                controller.goPrevious();
-              } else if (dx > width * 2 / 3) {
-                controller.goNext();
+              if (isRTL) {
+                if (dx > width * 2 / 3) {
+                  controller.goNext();
+                } 
+                else if (dx < width / 3) {
+                  controller.goPrevious();
+                }
+              } else {
+                if (dx < width / 3) {
+                  controller.goPrevious();
+                } 
+                else if (dx > width * 2 / 3) {
+                  controller.goNext();
+                }
               }
             },
             onLongPressStart: (details) {
-              // Ignore long press if in bottom UI area
               final bottomUIHeight = 100.0;
               final screenHeight = MediaQuery.of(context).size.height;
-
               if (details.globalPosition.dy > screenHeight - bottomUIHeight) {
-                return; // Let the UI handle it
+                return;
               }
               controller.pause();
             },
@@ -186,66 +188,64 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
             child: Stack(
               fit: StackFit.expand,
               children: [
-                // IMAGE
                 Image.network(
                   imageUrl + (currentStory.image ?? ''),
                   fit: BoxFit.contain,
-                  errorBuilder:
-                      (_, __, ___) => const Center(
-                        child: Icon(Icons.error, color: Colors.white),
-                      ),
+                  errorBuilder: (_, __, ___) => const Center(
+                    child: Icon(Icons.error, color: Colors.white),
+                  ),
                 ),
-
-                // PROGRESS INDICATORS
                 Positioned(
                   top: 40,
                   left: 8,
                   right: 8,
-                  child: Row(
-                    children: List.generate(widget.stories.length, (i) {
-                      return Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 2),
-                          height: 3,
-                          decoration: BoxDecoration(
-                            color: Colors.white24,
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                          child:
-                              i == controller.currentIndex
+                  child: Builder(
+                    builder: (context) {
+                      final isRTL = Directionality.of(context) == TextDirection.rtl;
+                      return Row(
+                        children: List.generate(widget.stories.length, (index) {
+                          return Expanded(
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 2),
+                              height: 3,
+                              decoration: BoxDecoration(
+                                color: Colors.white24,
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                              child: index == controller.currentIndex
                                   ? AnimatedBuilder(
-                                    animation: controller.progressController,
-                                    builder:
-                                        (_, __) => FractionallySizedBox(
-                                          alignment: Alignment.centerLeft,
-                                          widthFactor:
-                                              controller
-                                                  .progressController
-                                                  .value,
+                                      animation: controller.progressController,
+                                      builder: (_, __) {
+                                        return FractionallySizedBox(
+                                          alignment: isRTL
+                                              ? Alignment.centerRight
+                                              : Alignment.centerLeft,
+                                          widthFactor: controller.progressController.value,
                                           child: Container(
+                                            height: 3,
                                             decoration: BoxDecoration(
                                               color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(3),
+                                              borderRadius: BorderRadius.circular(3),
                                             ),
                                           ),
-                                        ),
-                                  )
-                                  : i < controller.currentIndex
-                                  ? Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(3),
-                                    ),
-                                  )
-                                  : const SizedBox.shrink(),
-                        ),
+                                        );
+                                      },
+                                    )
+                                  : index < controller.currentIndex
+                                      ? Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(3),
+                                          ),
+                                        )
+                                      : const SizedBox.shrink(),
+                            ),
+                          );
+                        }),
                       );
-                    }),
+                    },
                   ),
                 ),
-
-                // HEADER
                 Positioned(
                   top: 52,
                   left: 8,
@@ -325,8 +325,8 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text(
-                            'View',
+                           Text(
+                            S.of(context).viewReactions,
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
