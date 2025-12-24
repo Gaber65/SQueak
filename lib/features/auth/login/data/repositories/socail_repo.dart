@@ -2,7 +2,6 @@ import 'package:dartz/dartz.dart';
 import '../../../../../core/error/exception.dart';
 import '../../../../../core/error/failure.dart';
 import '../../domin/entities/login_entity.dart';
-import '../../domin/entities/user_auth_with_facebook.dart';
 import '../../domin/repositries/socail_login_repo.dart';
 import '../../domin/usecses/login_with_facebook.dart';
 import '../datasources/socail_auth_data_source.dart';

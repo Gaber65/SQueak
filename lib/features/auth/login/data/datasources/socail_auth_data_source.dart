@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:squeak/core/network/dio.dart';
 import 'package:squeak/core/network/end_points.dart';
-import 'package:squeak/features/auth/login/data/models/auth_model.dart';
 import 'package:squeak/features/auth/login/domin/usecses/login_with_facebook.dart';
 
 import '../../../../../core/error/exception.dart';

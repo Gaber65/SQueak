@@ -183,8 +183,8 @@ class LoginCubit extends Cubit<LoginState> {
     );
     if (result.status == LoginStatus.success) {
       final accessToken = result.accessToken!.tokenString;
-      print(accessToken);
-      print( await FirebaseMessaging.instance.getToken());
+      // print(accessToken);
+      // print( await FirebaseMessaging.instance.getToken());
       final resultRepo = await loginWithFacebookUseCase(
         LoginWithFacebookPrames(
           facebookAccessToken: accessToken,
