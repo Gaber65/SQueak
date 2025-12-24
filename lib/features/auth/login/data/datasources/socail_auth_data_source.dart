@@ -35,8 +35,8 @@ class SocailAuthRemoteDataSourceImpl implements SocailAuthRemoteDataSource {
   Future<LoginData> signInGoogle(LoginWithFacebookPrames params) async {
     try {
       final response = await DioFinalHelper.postData(
-        method: loginFacebookEndPoint,
-        data: params.toJsonFacebook(),
+        method: loginGoogleEndPoint,
+        data: params.toJsonGoogle(),
       );
 
       return LoginData.fromJson(response.data['data']);

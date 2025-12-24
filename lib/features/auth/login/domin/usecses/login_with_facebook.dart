@@ -42,5 +42,12 @@ class LoginWithFacebookPrames {
     };
   }
 
-
+  Map<String, dynamic> toJsonGoogle() {
+    return {
+      'googleAccessToken': facebookAccessToken,
+      'isIos': isIos,
+      'isAndroid': isAndroid,
+      'fbToken': fbToken,
+    };
+  }
 }
