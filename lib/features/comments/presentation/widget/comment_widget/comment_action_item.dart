@@ -187,6 +187,7 @@ class CommentActionSheet extends StatelessWidget {
                         CommentCubit.get(context).deleteComment(
                           commentId: comment.id,
                           replies: comment.replies,
+                          petId: comment.petId?.toString(),
                         );
                         Navigator.of(context).pop();
                       }

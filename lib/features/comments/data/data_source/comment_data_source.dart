@@ -67,6 +67,7 @@ class CommentRemoteDataSource extends BaseCommentRemoteDataSource {
     try {
       var result = await DioFinalHelper.deleteData(
         method: deleteCommentEndPoint + parameters.commentId!,
+        query: {'petId': parameters.petId},
       );
       return CommentModel.fromJson(result.data['data']);
     } on DioException catch (e) {
@@ -112,7 +113,6 @@ class CommentRemoteDataSource extends BaseCommentRemoteDataSource {
           .map((e) => CommentModel.fromJson(e))
           .toList();
     } on DioException catch (e) {
-
       throw ServerException(
         errorMessageModel: ErrorMessageModel.fromJson(e.response!.data),
       );

@@ -95,6 +95,7 @@ void navigateBasedOnNotification(
     case NotificationType.PetMarriage:
     case NotificationType.Discover:
     case NotificationType.Pregenant:
+    case NotificationType.MakePetAvaliable:
     case NotificationType.SetBaby:
     case NotificationType.CheckPrepegant:
       navigateToScreen(context, MatingLayoutScreen(indexID: 3));
@@ -117,6 +118,12 @@ void navigateBasedOnNotification(
     case NotificationType.NewPetFriendRequest:
       navigateToScreen(context, FriendsScreen());
       break;
+    case NotificationType.SendMessage:
+      navigateToScreen(
+        context,
+        MatingLayoutScreen(indexID:3),
+      );
+      break;  
 
     default:
 

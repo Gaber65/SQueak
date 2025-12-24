@@ -54,7 +54,7 @@ class _ReactionState extends State<Reaction> with TickerProviderStateMixin {
         onTap: () {
           iconScaleController.forward().whenComplete(() async {
             // await player.play(AssetSource("assets/audio/pop.mp3"));
-            print(widget.index);
+            // print(widget.index);
             widget.onTap(widget.index);
           });
         },

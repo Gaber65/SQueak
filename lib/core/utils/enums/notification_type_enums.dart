@@ -41,6 +41,8 @@ enum NotificationType {
   StoryReaction,
   ReplyOnStory,
   NewPetCommentOnPost,
+  SendMessage,
+
   Unknown,
 }
 
@@ -129,6 +131,8 @@ extension NotificationTypeExtension on NotificationType {
         return 'NewBoardingImage';
       case NotificationType.Unknown:
         return 'Unknown';
+      case NotificationType.SendMessage:
+        return 'SendMessage';
     }
   }
 }

@@ -126,7 +126,6 @@ class DioFinalHelper {
     }
   }
 
-
   // Modified putData with cancellation support
   static Future<Response> putData({
     required String method,
@@ -204,6 +203,7 @@ class DioFinalHelper {
     String? token,
     Map<String, dynamic>? data,
     String? requestId,
+    Map<String, dynamic>? query,
   }) async {
     await _ensureValidToken();
 
@@ -216,7 +216,12 @@ class DioFinalHelper {
     dio.options.headers = _buildHeaders(token: token);
 
     try {
-      return await dio.delete(method, data: data, cancelToken: cancelToken);
+      return await dio.delete(
+        method,
+        data: data,
+        cancelToken: cancelToken,
+        queryParameters: query,
+      );
     } finally {
       if (requestId != null) {
         _cancelTokens.remove(requestId);

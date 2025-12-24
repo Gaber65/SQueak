@@ -123,16 +123,21 @@ class CommentCubit extends Cubit<CommentState> {
   Future<void> deleteComment({
     required String commentId,
     required List<CommentEntity> replies,
+    String? petId,
   }) async {
     emit(DeleteCommentLoading());
 
     final result = await deleteCommentPostUseCase(
-      CreateCommentParameters(commentId: commentId),
+      CreateCommentParameters(commentId: commentId, petId: petId),
     );
 
     result.fold((_) => emit(DeleteCommentError()), (_) async {
       for (final reply in replies) {
-        await deleteComment(commentId: reply.id, replies: reply.replies);
+        await deleteComment(
+          commentId: reply.id,
+          replies: reply.replies,
+          petId: reply.petId?.toString(),
+        );
       }
 
       _removeCommentById(commentId);

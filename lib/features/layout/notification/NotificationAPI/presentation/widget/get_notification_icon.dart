@@ -78,6 +78,8 @@ IconData getNotificationIcon(NotificationEntities notification) {
       return Icons.reply;
     case NotificationType.NewPetCommentOnPost:
       return Icons.pets;
+    case NotificationType.SendMessage:
+      return Icons.message;  
 
     case NotificationType.Unknown:
       return Icons.notifications;
@@ -160,6 +162,8 @@ Color getNotificationColor(NotificationEntities notification) {
       return Colors.cyan;
     case NotificationType.NewPetCommentOnPost:
       return Colors.brown[300]!;
+    case NotificationType.SendMessage:
+      return Colors.indigo;  
 
     case NotificationType.Unknown:
       return Colors.grey;

@@ -30,7 +30,7 @@ class StoryReactionsView extends StatelessWidget {
       return _buildEmptyState();
     }
 
-    final reactionsByType = _groupReactionsByType(validReactions);
+    _groupReactionsByType(validReactions);
     final totalReactions = validReactions.length;
 
     return Container(

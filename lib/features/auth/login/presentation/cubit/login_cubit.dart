@@ -201,11 +201,10 @@ class LoginCubit extends Cubit<LoginState> {
       // 4. يسجل دخول المستخدم في Firebase
       final UserCredential userCredential = await _auth.signInWithCredential(credential);
 
-      print(userCredential.user);
-      // 5. المستخدم جاهز
+   
       return userCredential.user;
     } catch (e) {
-      print('Google sign-in failed: $e');
+      // print('Google sign-in failed: $e');
       return null;
     }
   }
