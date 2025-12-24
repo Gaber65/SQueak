@@ -469,7 +469,7 @@ class _EnhancedLoginViewState extends State<EnhancedLoginView>
               ),
               SocialLoginButtons(
                 onFacebookLogin: widget.cubit.loginWithFacebook,
-                onGoogleLogin: widget.cubit.signInWithGoogle,
+                onGoogleLogin: widget.cubit.loginWithGoogle,
 
               ),
               // Form Validation Status (for screen readers)

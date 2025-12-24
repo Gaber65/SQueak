@@ -6,9 +6,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/auth/login/data/datasources/login_remote_data_source.dart';
 import 'package:squeak/features/auth/login/data/repositories/login_repository.dart';
 import 'package:squeak/features/auth/login/domin/usecses/login_use_case.dart';
+import 'package:squeak/features/auth/login/domin/usecses/login_with_facebook.dart';
 import 'package:squeak/features/auth/login/presentation/cubit/login_cubit.dart';
 import 'package:squeak/features/auth/login/presentation/widgets/modern_login_wrapper.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+
+import '../../data/datasources/socail_auth_data_source.dart';
+import '../../data/repositories/socail_repo.dart';
+import '../../domin/usecses/login_with_google.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -60,6 +65,13 @@ class _LoginScreenState extends State<LoginScreen>
           (context) => LoginCubit(
             LoginUseCase(
               LoginRepositoryImpl(remoteDataSource: LoginRemoteDataSource()),
+            ),
+
+            LoginWithGoogleUseCase(
+              SocialRepo(SocailAuthRemoteDataSourceImpl()),
+            ),
+            LoginWithFacebookUseCase(
+              SocialRepo(SocailAuthRemoteDataSourceImpl()),
             ),
           ),
       child: BlocConsumer<LoginCubit, LoginState>(

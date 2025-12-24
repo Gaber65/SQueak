@@ -6,6 +6,8 @@ import 'package:squeak/core/base_usecase/base_usecase.dart';
 import 'package:squeak/features/appointments/service_screen.dart';
 import 'package:squeak/features/friendship/presentation/pages/pet_friend_layout.dart';
 import 'package:squeak/features/layout/post/presentation/screens/home_screen.dart';
+import 'package:squeak/features/mating/chat/presentation/screens/chat_list_screen.dart';
+import 'package:squeak/features/mating/profile/presentation/screens/pet_profile_screen.dart';
 import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
 import 'package:squeak/features/settings/persentaion/view/setting_screen.dart';
 
@@ -23,19 +25,24 @@ class LayoutCubit extends Cubit<LayoutState> {
   LayoutCubit({
     required this.getVersionUseCase,
     required this.getCurrentAppVersionUseCase,
-  }) : super(LayoutInitial()) {
-    screens = [
-      HomeScreen(),
-      FriendsScreen(),
-      PetScreen(),
-      CareHubScreen(),
-      SettingScreen(),
-    ];
-  }
+  }) : super(LayoutInitial());
 
   static LayoutCubit get(context) => BlocProvider.of(context);
 
-  late final List<Widget> screens;
+  late final List<Widget> screens = [
+    HomeScreen(),
+    FriendsScreen(),
+    PetScreen(),
+    CareHubScreen(),
+    SettingScreen(),
+  ];
+  late final List<Widget> screensPets = [
+    HomeScreen(),
+    Scaffold(),
+    PetProfileScreen(),
+    Scaffold(),
+    ChatListScreen(),
+  ];
 
   int selectedIndex = 0;
   String currentVersion = '';

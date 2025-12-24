@@ -15,6 +15,11 @@ import 'package:squeak/features/mating/chat/domain/usecases/delete_message_use_c
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_list_cubit.dart';
 import 'package:squeak/features/mating/profile/domain/usecases/get_pet_profile_history_usecase.dart';
 
+import '../../../features/auth/login/data/datasources/socail_auth_data_source.dart';
+import '../../../features/auth/login/data/repositories/socail_repo.dart';
+import '../../../features/auth/login/domin/repositries/socail_login_repo.dart';
+import '../../../features/auth/login/domin/usecses/login_with_facebook.dart';
+import '../../../features/auth/login/domin/usecses/login_with_google.dart';
 import '../../../features/layout/search/presentation/controller/search_cubit.dart';
 import '../../../features/layout/stories/domain/usecases/get_all_friend_stories_usecase.dart';
 import '../../../features/layout/stories/domain/usecases/get_story_reactions_usecase.dart';
@@ -593,5 +598,11 @@ class ServiceLocator {
     sl.registerLazySingleton<ReactDataSource>(() => ReactDataSourceImpl());
     sl.registerLazySingleton(() => ReactOnPostUseCase(sl()));
     sl.registerLazySingleton(() => GetAllReactOnPostUseCase(sl()));
+
+
+    sl.registerLazySingleton<SoicalAuthRepository>(() => SocialRepo(sl()));
+    sl.registerLazySingleton<SocailAuthRemoteDataSource>(() => SocailAuthRemoteDataSourceImpl());
+    sl.registerLazySingleton(() => LoginWithFacebookUseCase(sl()));
+    sl.registerLazySingleton(() => LoginWithGoogleUseCase(sl()));
   }
 }

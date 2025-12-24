@@ -5,8 +5,12 @@ import 'package:squeak/features/auth/login/presentation/cubit/login_cubit.dart';
 import 'package:squeak/features/auth/register/presentation/cubit/register_cubit.dart';
 
 import '../../../auth/login/data/datasources/login_remote_data_source.dart';
+import '../../../auth/login/data/datasources/socail_auth_data_source.dart';
 import '../../../auth/login/data/repositories/login_repository.dart';
+import '../../../auth/login/data/repositories/socail_repo.dart';
 import '../../../auth/login/domin/usecses/login_use_case.dart';
+import '../../../auth/login/domin/usecses/login_with_facebook.dart';
+import '../../../auth/login/domin/usecses/login_with_google.dart';
 import '../../../auth/register/data/datasources/register_remote_data_source.dart';
 import '../../../auth/register/data/repositories/register_repository_impl.dart';
 import '../../../auth/register/domin/usecses/get_countries_use_case.dart';
@@ -56,6 +60,12 @@ class RegisterQrScreen extends StatelessWidget {
                   LoginRepositoryImpl(
                     remoteDataSource: LoginRemoteDataSource(),
                   ),
+                ),
+                LoginWithGoogleUseCase(
+                  SocialRepo(SocailAuthRemoteDataSourceImpl()),
+                ),
+                LoginWithFacebookUseCase(
+                  SocialRepo(SocailAuthRemoteDataSourceImpl()),
                 ),
               ),
         ),
