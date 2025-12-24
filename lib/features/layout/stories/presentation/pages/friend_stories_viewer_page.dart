@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
 import 'package:squeak/features/layout/stories/presentation/widgets/story_list/story_pet_avatar.dart';
+import 'package:squeak/generated/l10n.dart';
 import '../../../../../core/network/end_points.dart';
+import 'package:squeak/features/comments/presentation/widget/comment_widget/comment_form_field.dart'
+    show CommentMaxLengthDialog;
 
 import '../../domain/entities/story.dart';
 import '../controllers/story_viewer_controller.dart';
@@ -36,6 +39,7 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
   final TextEditingController _commentController = TextEditingController();
   final Map<int, GlobalKey> reactionKeys = {};
   final Map<int, int?> reactionIndices = {};
+  bool _hasShownMaxLengthDialog = false;
 
   @override
   void initState() {
@@ -71,10 +75,6 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
 
   void _setReactionIndex(int index, int? reactTypeValue) {
     setState(() {
-      // reactTypeValue can be:
-      // null = not viewed/not reacted
-      // 0 = viewed but no reaction
-      // 1-5 = has reaction
       reactionIndices[index] = reactTypeValue;
     });
   }
@@ -326,15 +326,15 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                     backgroundColor: Colors.transparent,
                     child: ClipOval(
                       child: StoryPetAvatar(
-                        image: (widget.friendsStories.petImage.isNotEmpty &&
-                                widget.friendsStories.petImage != 'null')
-                            ? widget.friendsStories.petImage
-                            : null,
-                        size:36,
+                        image:
+                            (widget.friendsStories.petImage.isNotEmpty &&
+                                    widget.friendsStories.petImage != 'null')
+                                ? widget.friendsStories.petImage
+                                : null,
+                        size: 36,
                       ),
                     ),
                   ),
-
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -517,20 +517,40 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                   children: [
                     Expanded(
                       child: TextField(
+                        maxLength: 500,
                         controller: _commentController,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                         ),
-                        decoration: const InputDecoration(
-                          hintText: "Send message...",
+                        decoration: InputDecoration(
+                          hintText: S.of(context).sendStoryMessage,
                           hintStyle: TextStyle(color: Colors.white70),
                           border: InputBorder.none,
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
                           fillColor: Colors.transparent,
+                          counterStyle: const TextStyle(color: Colors.white),
                           contentPadding: EdgeInsets.all(0),
                         ),
+                        onChanged: (value) {
+                          final len = value.length;
+                          if (len >= 500 && !_hasShownMaxLengthDialog) {
+                            _hasShownMaxLengthDialog = true;
+                            controller.pause();
+                            showDialog(
+                              context: context,
+                              useRootNavigator: true,
+                              barrierDismissible: true,
+                              builder:
+                                  (dialogContext) =>
+                                      const CommentMaxLengthDialog(),
+                            ).then((_) {
+                              _hasShownMaxLengthDialog = false;
+                              controller.resume();
+                            });
+                          }
+                        },
                         onTap: controller.pause,
                         onSubmitted: (_) {
                           _addComment();
