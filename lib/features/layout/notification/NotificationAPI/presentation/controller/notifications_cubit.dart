@@ -54,15 +54,15 @@ class NotificationsCubit extends Cubit<NotificationsState> {
       },
       (notificationsList) {
 
-        // final filteredNotifications = notificationsList.reversed.toList();
+        final filteredNotifications = notificationsList.reversed.toList();
 
-        CacheHelper.saveData('notificationsNum', notificationsList.length);
+        CacheHelper.saveData('notificationsNum', filteredNotifications.length);
 
         if (state is NotificationsStateData) {
           final currentState = state as NotificationsStateData;
           emit(
             currentState.copyWith(
-              notifications: notificationsList,
+              notifications: filteredNotifications,
               isLoading: false,
               isRefreshing: false,
               errorMessage: null,
