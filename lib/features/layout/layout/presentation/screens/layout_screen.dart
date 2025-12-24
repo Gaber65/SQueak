@@ -195,7 +195,7 @@ class _LayoutScreenState extends State<LayoutScreen> with SingleTickerProviderSt
             extendBody: false,
             resizeToAvoidBottomInset: false,
 
-            body: cubit.screens[selectedIndex],
+            body: cubit.screensPets[selectedIndex],
 
             bottomNavigationBar: BlocConsumer<MainCubit, MainState>(
               listener: (context, state) {},
