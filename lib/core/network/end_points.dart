@@ -239,6 +239,12 @@ const String sendReplyMsgToStoryPetEndPoint = '$version/pet/reply/stories';
 const String getStoryReactionsEndPoint = '$version/mypet/react/stories/';
 const String reactToStoryEndPoint = '$version/pet/stories/react/';
 
+
+/// login with socail medai
+const String loginFacebookEndPoint = '$version/signin-facebook';
+const String loginGoogleEndPoint = '$version/signin-google';
+
+
 /// App State
 String? clintId;
 String? uId = '';

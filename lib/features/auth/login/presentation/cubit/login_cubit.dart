@@ -1,21 +1,30 @@
-import 'package:equatable/equatable.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:io';
 
+import 'package:equatable/equatable.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/features/auth/login/domin/entities/login_entity.dart';
 import 'package:squeak/features/auth/login/domin/usecses/login_use_case.dart';
-
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+import '../../domin/usecses/login_with_facebook.dart';
+import '../../domin/usecses/login_with_google.dart';
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   static LoginCubit get(BuildContext context) => BlocProvider.of(context);
   final LoginUseCase loginUseCase;
+  final LoginWithGoogleUseCase loginWithGoogleUseCase;
+  final LoginWithFacebookUseCase loginWithFacebookUseCase;
 
-  LoginCubit(this.loginUseCase) : super(LoginInitial());
+  LoginCubit(
+    this.loginUseCase,
+    this.loginWithGoogleUseCase,
+    this.loginWithFacebookUseCase,
+  ) : super(LoginInitial());
 
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
@@ -168,47 +177,50 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginWithFacebook() async {
-    try {
-      // 1. Trigger the popup
-      final LoginResult result = await FacebookAuth.instance.login();
-
-      if (result.status == LoginStatus.success) {
-        // 2. Get user data (name, email, image)
-        final _ = await FacebookAuth.instance.getUserData();
-      } else {}
-    } catch (_) {}
-  }
-
-
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  Future<User?> signInWithGoogle() async {
-    try {
-      // 1. يفتح صفحة اختيار حساب Google
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return null; // المستخدم لغى العملية
-
-      // 2. يحصل على التوكن
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-      // 3. يبني الـ credential للفايربيز
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+    FacebookAuth.instance.logOut();
+    final result = await FacebookAuth.instance.login(
+      permissions: ['email', 'public_profile'],
+    );
+    if (result.status == LoginStatus.success) {
+      final accessToken = result.accessToken!.tokenString;
+      print(accessToken);
+      print( await FirebaseMessaging.instance.getToken());
+      final resultRepo = await loginWithFacebookUseCase(
+        LoginWithFacebookPrames(
+          facebookAccessToken: accessToken,
+          isIos: Platform.isIOS,
+          isAndroid: Platform.isAndroid,
+          fbToken: await FirebaseMessaging.instance.getToken() ?? '',
+        ),
       );
 
-      // 4. يسجل دخول المستخدم في Firebase
-      final UserCredential userCredential = await _auth.signInWithCredential(credential);
-
-      print(userCredential.user);
-      // 5. المستخدم جاهز
-      return userCredential.user;
-    } catch (e) {
-      print('Google sign-in failed: $e');
-      return null;
+      resultRepo.fold(
+        (l) => emit(LoginError(l.error)),
+        (r) => emit(LoginSuccess(r)),
+      );
     }
   }
+
+  Future<void> loginWithGoogle() async {
+    final googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) return;
+
+    final auth = await googleUser.authentication;
+
+    final resultRepo = await loginWithGoogleUseCase(
+      LoginWithFacebookPrames(
+        facebookAccessToken: auth.accessToken!,
+        isIos: Platform.isIOS,
+        isAndroid: Platform.isAndroid,
+        fbToken: await FirebaseMessaging.instance.getToken() ?? '',
+      ),
+    );
+    resultRepo.fold(
+      (l) => emit(LoginError(l.error)),
+      (r) => emit(LoginSuccess(r)),
+    );
+  }
+
   @override
   Future<void> close() {
     // Dispose controllers when cubit is closed to avoid memory leaks

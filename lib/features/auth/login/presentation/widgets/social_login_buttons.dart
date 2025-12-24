@@ -24,37 +24,38 @@ class SocialLoginButtons extends StatelessWidget {
 
     return Row(
       children: [
-        _SocialLoginButton(
-          onPressed: onFacebookLogin,
-          isLoading: isLoadingFacebook,
-          backgroundColor: const Color(0xFF1877F2),
-          icon: Image.asset(
-            'assets/icons/facebook_logo.png',
-            width: 24,
-            height: 24,
-            color: Colors.white,
+        Expanded(
+          child: _SocialLoginButton(
+            onPressed: onFacebookLogin,
+            isLoading: isLoadingFacebook,
+            backgroundColor:Colors.white,
+            icon: Image.network(
+              'https://1.bp.blogspot.com/-S8HTBQqmfcs/XN0ACIRD9PI/AAAAAAAAAlo/FLhccuLdMfIFLhocRjWqsr9cVGdTN_8sgCPcBGAYYCw/s1600/f_logo_RGB-Blue_1024.png',
+              width: 24,
+              height: 24,
+            ),
+            textColor: Colors.white,
+            errorText: facebookError,
           ),
-          text: 'Continue with Facebook',
-          textColor: Colors.white,
-          errorText: facebookError,
         ),
 
         const SizedBox(width: 16),
 
         // Google Button
-        _SocialLoginButton(
-          onPressed: onGoogleLogin,
-          isLoading: isLoadingGoogle,
-          backgroundColor: Colors.white,
-          icon: Image.asset(
-            'assets/icons/google_logo.png',
-            width: 24,
-            height: 24,
+        Expanded(
+          child: _SocialLoginButton(
+            onPressed: onGoogleLogin,
+            isLoading: isLoadingGoogle,
+            backgroundColor: Colors.white,
+            icon: Image.network(
+              'https://imagepng.org/wp-content/uploads/2019/08/google-icon.png',
+              width: 24,
+              height: 24,
+            ),
+            textColor: Colors.black87,
+            borderColor: Colors.grey[300],
+            errorText: googleError,
           ),
-          text: 'Continue with Google',
-          textColor: Colors.black87,
-          borderColor: Colors.grey[300],
-          errorText: googleError,
         ),
       ],
     );
@@ -67,7 +68,6 @@ class _SocialLoginButton extends StatelessWidget {
   final bool isLoading;
   final Color backgroundColor;
   final Widget icon;
-  final String text;
   final Color textColor;
   final Color? borderColor;
   final String? errorText;
@@ -77,7 +77,6 @@ class _SocialLoginButton extends StatelessWidget {
     required this.isLoading,
     required this.backgroundColor,
     required this.icon,
-    required this.text,
     required this.textColor,
     this.borderColor,
     this.errorText,
@@ -86,6 +85,7 @@ class _SocialLoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
+      height: 40,
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
         color: backgroundColor,
@@ -111,25 +111,7 @@ class _SocialLoginButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           splashColor: Colors.white.withOpacity(0.2),
           highlightColor: Colors.black.withOpacity(0.1),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-
-                Text(
-                  text,
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.3,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
+          child: icon,
         ),
       ),
     );
