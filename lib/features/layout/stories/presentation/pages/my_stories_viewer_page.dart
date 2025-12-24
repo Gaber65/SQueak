@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
 import 'package:squeak/features/layout/stories/presentation/pages/view_how_react.dart';
+import 'package:squeak/features/layout/stories/presentation/widgets/story_list/story_pet_avatar.dart';
 import 'package:squeak/generated/l10n.dart';
 import '../../../../../core/network/end_points.dart';
 import '../../domain/entities/story.dart';
@@ -257,7 +258,10 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                         radius: 18,
                         backgroundColor: Colors.grey.shade800,
                         child: ClipOval(
-                          child: _buildPetAvatar(currentStory.petImage),
+                          child: StoryPetAvatar(
+                            image: currentStory.petImage,
+                            size: 36,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -395,23 +399,5 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
     });
   }
 
-  Widget _buildPetAvatar(String? image) {
-    if (image == null || image.isEmpty) {
-      return _petIcon();
-    }
-
-    return Image.network(
-      imageUrl + image,
-      width: 36,
-      height: 36,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) {
-        return _petIcon();
-      },
-    );
-  }
-
-  Widget _petIcon() {
-    return Icon(Icons.pets, size: 18, color: Colors.grey.shade400);
-  }
+  // Pet avatar rendering moved to shared `PetAvatar` widget.
 }

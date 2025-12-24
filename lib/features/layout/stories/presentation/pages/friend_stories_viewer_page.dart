@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
+import 'package:squeak/features/layout/stories/presentation/widgets/story_list/story_pet_avatar.dart';
 import '../../../../../core/network/end_points.dart';
+
 import '../../domain/entities/story.dart';
 import '../controllers/story_viewer_controller.dart';
 import '../../../react/presentation/animated_reaction/flutter_animated_reaction.dart';
@@ -321,10 +323,18 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                   ),
                   child: CircleAvatar(
                     radius: 20,
-                    backgroundImage: NetworkImage(
-                      imageUrl + widget.friendsStories.petImage,
+                    backgroundColor: Colors.transparent,
+                    child: ClipOval(
+                      child: StoryPetAvatar(
+                        image: (widget.friendsStories.petImage.isNotEmpty &&
+                                widget.friendsStories.petImage != 'null')
+                            ? widget.friendsStories.petImage
+                            : null,
+                        size:36,
+                      ),
                     ),
                   ),
+
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -415,27 +425,20 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
             InkWell(
               key: reactionKey,
               onTap: () {
-                // Toggle logic for stories:
-                // - If no reaction (null) → react with "like" (5)
-                // - If has reaction (0-5) → remove reaction (send 0)
                 int? newReaction;
 
                 if (reactionIndex == null) {
-                  // Not reacted yet - react with "like"
-                  newReaction = 5; // ReactType.like.value
+                  newReaction = 5;
                 } else {
-                  // Already has reaction - remove it
-                  newReaction = 0; // ReactType.none.value
+                  newReaction = 0;
                 }
-
                 _setReactionIndex(
                   pageIndex,
                   newReaction == 0 ? null : newReaction,
                 );
-
                 widget.storyCubit.reactToStory(
                   userStoryId: widget.stories[pageIndex].id,
-                  reactType: newReaction, // Send 0 to remove, 5 to like
+                  reactType: newReaction,
                   petId: widget.petID,
                 );
               },
@@ -446,11 +449,7 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                   key: reactionKey,
                   reactions: ReactionData.facebookReactionIcon,
                   onReaction: (uiIndex) {
-                    // Convert UI index to react type
-                    // UI: 0=happy, 1=sad, 2=love, 3=angry, 4=like
-                    // Backend: 1=happy, 2=sad, 3=love, 4=angry, 5=like
                     int reactType = uiIndex + 1;
-
                     _setReactionIndex(pageIndex, reactType);
 
                     widget.storyCubit.reactToStory(
@@ -578,13 +577,9 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
       return ReactionData.unActiveReactionImage;
     }
 
-    // Convert backend react type to UI index
-    // Backend: 1=happy, 2=sad, 3=love, 4=angry, 5=like
-    // UI arrays: [happy, sad, love, angry, like]
     final uiIndex = reactTypeValue - 1;
 
     if (reactTypeValue == 5) {
-      // "like" reaction
       return ReactionData.activeReactionImage;
     }
 
@@ -594,4 +589,6 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
 
     return ReactionData.unActiveReactionImage;
   }
+
+  // Pet avatar rendering moved to shared `PetAvatar` widget.
 }
