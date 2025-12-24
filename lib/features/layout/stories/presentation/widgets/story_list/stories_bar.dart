@@ -36,64 +36,69 @@ class StoriesBar extends StatelessWidget {
           builder: (context, state) {
             final storyCubit = StoryCubit.get(context);
 
-            return ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              scrollDirection: Axis.horizontal,
-              children: [
-                // Your own story tile (Create Story)
-                _YourStoryTile(
-                  imageUrl: imagePath,
-                  onTap: () {
-                    if (petID.isEmpty) {
-                      showGuideOverlay(context);
-                    } else {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (_) => BlocProvider.value(
-                          value: storyCubit,
-                          child: CreateStoryModal(petId: petID),
-                        ),
-                      );
-                    }
-                  },
+            return SizedBox(
+              height: 110,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
                 ),
-
-                if (state.myStories.isNotEmpty) const SizedBox(width: 5),
-
-                // My stories (View your posted stories)
-                if (state.myStories.isNotEmpty)
-                  StoryThumbnail(
-                    avatarUrl: imageUrl + state.myStories.first.petImage,
-                    label: state.myStories.first.petName,
-                    hasActiveStory: true,
-                    onTap: () {
-                      if (petID.isEmpty) {
-                        showGuideOverlay(context);
-                      } else {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (_) => BlocProvider.value(
-                            value: storyCubit,
-                            child: MyStoriesViewerPage(
-                              storyCubit: storyCubit,
-                              stories: state.myStories,
-                              petID: petID,
-                              initialIndex: 0,
+                separatorBuilder: (_, __) => const SizedBox(width: 5),
+                itemCount: _itemsCount(state),
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return _YourStoryTile(
+                      imageUrl: imagePath,
+                      onTap: () {
+                        if (petID.isEmpty) {
+                          showGuideOverlay(context);
+                        } else {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (_) => BlocProvider.value(
+                              value: storyCubit,
+                              child: CreateStoryModal(petId: petID),
                             ),
-                          ),
-                        );
-                      }
-                    },
-                  ),
+                          );
+                        }
+                      },
+                    );
+                  }
 
-                const SizedBox(width: 5),
+                  if (state.myStories.isNotEmpty && index == 1) {
+                    return StoryThumbnail(
+                      avatarUrl: imageUrl + state.myStories.first.petImage,
+                      label: state.myStories.first.petName,
+                      hasActiveStory: true,
+                      onTap: () {
+                        if (petID.isEmpty) {
+                          showGuideOverlay(context);
+                        } else {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (_) => BlocProvider.value(
+                              value: storyCubit,
+                              child: MyStoriesViewerPage(
+                                storyCubit: storyCubit,
+                                stories: state.myStories,
+                                petID: petID,
+                                initialIndex: 0,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  }
 
-                // Friends stories
-                ...state.friendsStories.map((friendStory) {
+                  final friendIndex = state.myStories.isNotEmpty ? index - 2 : index - 1;
+                  final friendStory = state.friendsStories[friendIndex];
+                  
                   return StoryThumbnail(
                     avatarUrl: imageUrl + friendStory.petImage,
                     label: friendStory.petName,
@@ -120,14 +125,21 @@ class StoriesBar extends StatelessWidget {
                       }
                     },
                   );
-                }),
-              ],
+                },
+              ),
             );
           },
         ),
       ),
     );
   }
+}
+
+int _itemsCount(StoryState state) {
+  int count = 1; 
+  if (state.myStories.isNotEmpty) count++;
+  count += state.friendsStories.length;
+  return count;
 }
 
 class _YourStoryTile extends StatelessWidget {

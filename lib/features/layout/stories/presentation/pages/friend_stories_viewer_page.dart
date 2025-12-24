@@ -79,22 +79,16 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
 
   void _handleStoryView(int index) {
     final story = widget.stories[index];
-
     if (!reactionIndices.containsKey(index)) {
-      // If user has already reacted, show that reaction
       if (story.myReactType != null && story.myReactType! > 0) {
-        // User has a reaction (1-5)
         reactionIndices[index] = story.myReactType;
       } else if (story.isViewed) {
-        // Story is viewed but no reaction
-        reactionIndices[index] = 0; // Mark as viewed with no reaction
+        reactionIndices[index] = 0;
       } else {
-        // First time viewing - not viewed yet
         reactionIndices[index] = null;
-        // Send view without reaction (reactType: 0)
         widget.storyCubit.reactToStory(
           userStoryId: story.id,
-          reactType: 0, // Send 0 to mark as viewed
+          reactType: 0,
           petId: widget.petID,
         );
       }
@@ -187,15 +181,13 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
         if (isRTL) {
           if (dx > width * 2 / 3) {
             controller.goNext();
-          }
-          else if (dx < width / 3) {
+          } else if (dx < width / 3) {
             controller.goPrevious();
           }
         } else {
           if (dx < width / 3) {
             controller.goPrevious();
-          }
-          else if (dx > width * 2 / 3) {
+          } else if (dx > width * 2 / 3) {
             controller.goNext();
           }
         }
@@ -226,9 +218,10 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
             child: Image.network(
               imageUrl + (currentStory.image ?? ''),
               fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) => const Center(
-                child: Icon(Icons.error, color: Colors.white),
-              ),
+              errorBuilder:
+                  (_, __, ___) => const Center(
+                    child: Icon(Icons.error, color: Colors.white),
+                  ),
             ),
           ),
           Positioned(
@@ -255,44 +248,51 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                             ),
                           ],
                         ),
-                        child: index == controller.currentIndex
-                            ? AnimatedBuilder(
-                                animation: controller.progressController,
-                                builder: (_, __) => FractionallySizedBox(
-                                  alignment: isRTL
-                                      ? Alignment.centerRight
-                                      : Alignment.centerLeft,
-                                  widthFactor:
-                                      controller.progressController.value,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      gradient: const LinearGradient(
-                                        colors: [
-                                          Colors.blueAccent,
-                                          Colors.white,
-                                        ],
-                                      ),
-                                      borderRadius: BorderRadius.circular(2),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.blue.withOpacity(0.5),
-                                          blurRadius: 4,
-                                          offset: const Offset(0, 0),
+                        child:
+                            index == controller.currentIndex
+                                ? AnimatedBuilder(
+                                  animation: controller.progressController,
+                                  builder:
+                                      (_, __) => FractionallySizedBox(
+                                        alignment:
+                                            isRTL
+                                                ? Alignment.centerRight
+                                                : Alignment.centerLeft,
+                                        widthFactor:
+                                            controller.progressController.value,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            gradient: const LinearGradient(
+                                              colors: [
+                                                Colors.blueAccent,
+                                                Colors.white,
+                                              ],
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              2,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.blue.withOpacity(
+                                                  0.5,
+                                                ),
+                                                blurRadius: 4,
+                                                offset: const Offset(0, 0),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : index < controller.currentIndex
-                                ? Container(
-                                    decoration: BoxDecoration(
-                                      gradient: const LinearGradient(
-                                        colors: [Colors.white, Colors.grey],
                                       ),
-                                      borderRadius: BorderRadius.circular(2),
+                                )
+                                : index < controller.currentIndex
+                                ? Container(
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [Colors.white, Colors.grey],
                                     ),
-                                  )
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                )
                                 : const SizedBox.shrink(),
                       ),
                     );
@@ -428,7 +428,10 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                   newReaction = 0; // ReactType.none.value
                 }
 
-                _setReactionIndex(pageIndex, newReaction == 0 ? null : newReaction);
+                _setReactionIndex(
+                  pageIndex,
+                  newReaction == 0 ? null : newReaction,
+                );
 
                 widget.storyCubit.reactToStory(
                   userStoryId: widget.stories[pageIndex].id,
