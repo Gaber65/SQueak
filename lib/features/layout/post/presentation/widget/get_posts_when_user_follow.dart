@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/features/layout/post/presentation/widget/post_item.dart';
 import 'package:squeak/features/layout/stories/presentation/pages/stroy_page.dart';
-import 'package:squeak/core/utils/enums/profile_type.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../stories/presentation/controllers/story_cubit.dart';
@@ -107,7 +106,7 @@ NotificationListener<ScrollNotification> buildNotificationListenerUserPosts(
   dynamic activeProfile,
 ) {
   
-  final isPetProfile = activeProfile.type == ProfileType.pet;
+  // final isPetProfile = activeProfile.type == ProfileType.pet;
 
   return NotificationListener<ScrollNotification>(
     onNotification: (notification) {
@@ -128,8 +127,10 @@ NotificationListener<ScrollNotification> buildNotificationListenerUserPosts(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (isPetProfile) buildWhatsonyourmindSanjay(context, petId),
-            if (isPetProfile) StoryPage(imagePath: imagePath, petID: petId),
+            // if (isPetProfile) buildWhatsonyourmindSanjay(context, petId),
+              // if (isPetProfile) StoryPage(imagePath: imagePath, petID: petId),
+            buildWhatsonyourmindSanjay(context, petId),
+             StoryPage(imagePath: imagePath, petID: petId),
             ListView.separated(
               padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 7),
               physics: const NeverScrollableScrollPhysics(),
