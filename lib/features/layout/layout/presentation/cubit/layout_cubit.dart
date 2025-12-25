@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/base_usecase/base_usecase.dart';
 import 'package:squeak/features/appointments/service_screen.dart';
 import 'package:squeak/features/friendship/presentation/pages/pet_friend_layout.dart';
+import 'package:squeak/features/layout/layout/presentation/screens/browse_screen.dart';
+import 'package:squeak/features/layout/layout/presentation/screens/requests_screen.dart';
 import 'package:squeak/features/layout/post/presentation/screens/home_screen.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_list_screen.dart';
 import 'package:squeak/features/mating/profile/presentation/screens/pet_profile_screen.dart';
@@ -38,10 +40,10 @@ class LayoutCubit extends Cubit<LayoutState> {
   ];
   late final List<Widget> screensPets = [
     HomeScreen(),
-    Scaffold(),
-    PetProfileScreen(),
-    Scaffold(),
+    BrowseScreen(),
+    RequestsScreen(),
     ChatListScreen(),
+    PetProfileScreen(),
   ];
 
   int selectedIndex = 0;

@@ -95,7 +95,6 @@ class _FriendsScreenState extends State<FriendsScreen> {
               if (activeProfile == null) {
                 return const ProfileSwitchNotificationScreen();
               } else if (activeProfile.type == ProfileType.pet) {
-                // Conditionally provide ChatAppCubit only when on Chats tab
                 final isChatsTab = cubit.selectedTab == 3;
 
                 Widget content = Column(

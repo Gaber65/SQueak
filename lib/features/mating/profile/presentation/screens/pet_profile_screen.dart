@@ -74,21 +74,7 @@ class PetProfileScreen extends StatelessWidget {
                       child: buildProfileSwitcher(context),
                     ),
                   ],
-                  leading: IconButton(
-                    icon: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color:
-                            MainCubit.get(context).isDark
-                                ? Colors.white.withOpacity(0.1)
-                                : Colors.black.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(Icons.arrow_back_ios_new_rounded, size: 18),
-                    ),
-                    onPressed: () => navigateAndFinish(context, LayoutScreen()),
-                  ),
-                ),
+               ),
                 body: NestedScrollView(
                   headerSliverBuilder: (context, innerBoxIsScrolled) {
                     return [

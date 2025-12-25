@@ -208,10 +208,11 @@ class _ChatListViewState extends State<_ChatListView> {
     bool isDark,
   ) {
     return SliverAppBar(
+      centerTitle: true,
       floating: true,
       pinned: true,
       title: Text(
-        "All Chats",
+        S.of(context).AllChats,
         style: TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.bold,

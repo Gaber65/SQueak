@@ -2,9 +2,11 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
+import 'package:squeak/core/utils/enums/profile_type.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/widget/navigate_based_on_notification.dart';
+import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
 import '../../../../pets/presentation/controller/pet_cubit.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import '../../../../settings/persentaion/controller/setting_cubit.dart';
@@ -19,7 +21,8 @@ class LayoutScreen extends StatefulWidget {
   State<LayoutScreen> createState() => _LayoutScreenState();
 }
 
-class _LayoutScreenState extends State<LayoutScreen> with SingleTickerProviderStateMixin {
+class _LayoutScreenState extends State<LayoutScreen>
+    with SingleTickerProviderStateMixin {
   bool _isDialogShown = false;
   int selectedIndex = 0;
 
@@ -27,7 +30,6 @@ class _LayoutScreenState extends State<LayoutScreen> with SingleTickerProviderSt
 
   @override
   initState() {
-
     super.initState();
 
     if (widget.showPostCreatedSnackbar) {
@@ -128,7 +130,6 @@ class _LayoutScreenState extends State<LayoutScreen> with SingleTickerProviderSt
 
     if (details?.didNotificationLaunchApp ?? false) {
       initialNotificationPayload = details!.notificationResponse?.payload;
-
     }
   }
 
@@ -182,86 +183,126 @@ class _LayoutScreenState extends State<LayoutScreen> with SingleTickerProviderSt
         builder: (context, state) {
           final cubit = LayoutCubit.get(context);
           selectedIndex = cubit.selectedIndex;
+          return BlocBuilder<SwitchProfileCubit, SwitchProfileState>(
+            builder: (context, profileState) {
+              final activeProfile =
+                  context.read<SwitchProfileCubit>().activeProfile;
+              final isPetProfile = activeProfile?.type == ProfileType.pet;
 
-          final icons = [
-            IconlyBold.home,
-            FontAwesomeIcons.bone,
-            Icons.pets_outlined,
-            IconlyBold.time_circle,
-            IconlyBold.setting,
-          ];
+              final petIcons = [
+                IconlyBold.home,
+                Icons.explore_outlined,
+                Icons.favorite_border,
+                Icons.chat_bubble_outline,
+                Icons.pets,
+              ];
 
-          return Scaffold(
-            extendBody: false,
-            resizeToAvoidBottomInset: false,
+              final ownerIcons = [
+                IconlyBold.home,
+                FontAwesomeIcons.bone,
+                Icons.pets_outlined,
+                IconlyBold.time_circle,
+                IconlyBold.setting,
+              ];
 
-            body: cubit.screens[selectedIndex],
+              final icons = isPetProfile ? petIcons : ownerIcons;
 
-            bottomNavigationBar: BlocConsumer<MainCubit, MainState>(
-              listener: (context, state) {},
-              builder: (context, state) {
-                final theme = Theme.of(context);
-                return AnimatedBottomNavigationBar.builder(
-                  itemCount: icons.length,
-                  gapLocation: GapLocation.none,
-                  notchSmoothness: NotchSmoothness.softEdge,
-                  backgroundColor: theme.colorScheme.surface,
-                  activeIndex: selectedIndex,
-                  onTap: (index) {
-                    cubit.changeBottomNav(index);
-                    setState(() {
-                      selectedIndex = index;
-                    });
-                  },
-                  tabBuilder: (int index, bool isActive) {
-                    final icon = icons[index];
-                    final labelsEN = [
-                      'Home',
-                      'Friends',
-                      'Pets',
-                      'Care',
-                      'Settings',
-                    ];
-                    final labelsAR = [
-                      'الرئيسية',
-                      'الأصدقاء',
-                      'الصغار',
-                      'العناية',
-                      'الإعدادات',
-                    ];
+              final petLabelsEN = [
+                'Home',
+                'Browse',
+                'Requests',
+                'Chats',
+                'Profile',
+              ];
 
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          icon,
-                          size: isActive ? 30 : 26,
-                          color:
-                              isActive
-                                  ? ColorManager.primaryColor
-                                  : Colors.grey,
-                        ),
-                        const SizedBox(height: 2),
-                        Flexible(
-                          child: Text(
-                            isArabic() ? labelsAR[index] : labelsEN[index],
-                            style: TextStyle(
-                              fontSize: 12,
+              final petLabelsAR = [
+                'الرئيسية',
+                'استكشاف',
+                'الطلبات',
+                'الرسائل',
+                'الملف الشخصي',
+              ];
+
+              final ownerLabelsEN = [
+                'Home',
+                'Friends',
+                'Pets',
+                'Care',
+                'Settings',
+              ];
+
+              final ownerLabelsAR = [
+                'الرئيسية',
+                'الأصدقاء',
+                'الصغار',
+                'العناية',
+                'الإعدادات',
+              ];
+
+              final labelsEN = isPetProfile ? petLabelsEN : ownerLabelsEN;
+              final labelsAR = isPetProfile ? petLabelsAR : ownerLabelsAR;
+
+              return Scaffold(
+                extendBody: false,
+                resizeToAvoidBottomInset: false,
+                body:
+                    isPetProfile
+                        ? cubit
+                            .screensPets[selectedIndex] 
+                        : cubit.screens[selectedIndex], 
+                bottomNavigationBar: BlocConsumer<MainCubit, MainState>(
+                  listener: (context, state) {},
+                  builder: (context, state) {
+                    final theme = Theme.of(context);
+                    return AnimatedBottomNavigationBar.builder(
+                      itemCount: icons.length,
+                      gapLocation: GapLocation.none,
+                      notchSmoothness: NotchSmoothness.softEdge,
+                      backgroundColor: theme.colorScheme.surface,
+                      activeIndex: selectedIndex,
+                      onTap: (index) {
+                        cubit.changeBottomNav(index);
+                        setState(() {
+                          selectedIndex = index;
+                        });
+                      },
+                      tabBuilder: (int index, bool isActive) {
+                        final icon = icons[index];
+
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              icon,
+                              size: isActive ? 30 : 26,
                               color:
                                   isActive
                                       ? ColorManager.primaryColor
                                       : Colors.grey,
                             ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                            const SizedBox(height: 2),
+                            Flexible(
+                              child: Text(
+                                isArabic() ? labelsAR[index] : labelsEN[index],
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color:
+                                      isActive
+                                          ? ColorManager.primaryColor
+                                          : Colors.grey,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
-                );
-              },
-            ),
+                ),
+              );
+            },
           );
         },
       ),
