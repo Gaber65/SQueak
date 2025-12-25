@@ -76,7 +76,6 @@ class _UploadPostState extends State<UploadPost>
               }
             },
           ),
-          // ممكن تضيف listeners أكتر هنا
         ],
         child: UploadPostUI(controller: controller, widget: widget),
       ),

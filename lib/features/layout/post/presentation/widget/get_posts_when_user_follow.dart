@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/features/layout/post/presentation/widget/post_item.dart';
 import 'package:squeak/features/layout/stories/presentation/pages/stroy_page.dart';
+import 'package:squeak/core/utils/enums/profile_type.dart';
+import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../stories/presentation/controllers/story_cubit.dart';
 import 'add_post_form.dart';
@@ -77,7 +79,6 @@ void showGuideOverlay(BuildContext context) {
               ),
             ),
 
-            // Highlight around the target button with glow
             Positioned(
               left: offset.dx,
               top: offset.dy,
@@ -103,7 +104,11 @@ NotificationListener<ScrollNotification> buildNotificationListenerUserPosts(
   String petId,
   BuildContext context,
   String imagePath,
+  dynamic activeProfile,
 ) {
+  
+  final isPetProfile = activeProfile.type == ProfileType.pet;
+
   return NotificationListener<ScrollNotification>(
     onNotification: (notification) {
       if (notification is ScrollUpdateNotification &&
@@ -123,10 +128,8 @@ NotificationListener<ScrollNotification> buildNotificationListenerUserPosts(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildWhatsonyourmindSanjay(context, petId),
-
-            StoryPage(imagePath: imagePath, petID: petId),
-
+            if (isPetProfile) buildWhatsonyourmindSanjay(context, petId),
+            if (isPetProfile) StoryPage(imagePath: imagePath, petID: petId),
             ListView.separated(
               padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 7),
               physics: const NeverScrollableScrollPhysics(),

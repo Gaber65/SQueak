@@ -4,8 +4,6 @@ import 'package:quickalert/quickalert.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:iconly/iconly.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:squeak/features/friendship/presentation/pages/block_list_screen.dart';
-import 'package:squeak/features/mating/layoutMating/presentation/screens/profle_complete.dart';
 import '../../../../core/utils/export_path/export_files.dart';
 import '../../../auth/contactus/presentation/pages/contact_us.dart';
 import '../../../auth/login/presentation/pages/login_screen.dart';
@@ -69,44 +67,44 @@ class SettingScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 25),
-                  Text(
-                    S.of(context).managePets,
-                    style: FontStyleThame.textStyle(
-                      context: context,
-                      fontSize: 18,
-                    ),
-                  ),
-                  SizedBox(height: 12),
+                  // Text(
+                  //   S.of(context).managePets,
+                  //   style: FontStyleThame.textStyle(
+                  //     context: context,
+                  //     fontSize: 18,
+                  //   ),
+                  // ),
+                  // SizedBox(height: 12),
 
-                  // MatingLayout pet  Section
-                  _buildSettingItem(
-                    context: context,
-                    icon:
-                        'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/rb_49299.png?alt=media&token=3f7daec5-e664-43bc-9e62-0ef2b7f018f3',
-                    title: S.of(context).matingShows,
-                    subtitle: '',
-                    trailingWidget: IconButton(
-                      onPressed: () {
-                        navigateToScreen(context, ProfileComplete());
-                      },
-                      icon: Icon(Icons.chevron_right),
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  _buildSettingItem(
-                    context: context,
-                    icon:
-                        'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/rb_48102.png?alt=media&token=1f3f3f6e-F4b1-4f6d-8f6e-5c3e3e6e7e8e',
-                    title: S.of(context).blockedPets,
-                    subtitle: '',
-                    onTap: () {
-                      navigateToScreen(context, const BlockedPetsScreen());
-                    },
-                    trailingWidget: IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.block),
-                    ),
-                  ),
+                  // // MatingLayout pet  Section
+                  // _buildSettingItem(
+                  //   context: context,
+                  //   icon:
+                  //       'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/rb_49299.png?alt=media&token=3f7daec5-e664-43bc-9e62-0ef2b7f018f3',
+                  //   title: S.of(context).matingShows,
+                  //   subtitle: '',
+                  //   trailingWidget: IconButton(
+                  //     onPressed: () {
+                  //       navigateToScreen(context, ProfileComplete());
+                  //     },
+                  //     icon: Icon(Icons.chevron_right),
+                  //   ),
+                  // ),
+                  // SizedBox(height: 12),
+                  // _buildSettingItem(
+                  //   context: context,
+                  //   icon:
+                  //       '',
+                  //   title: S.of(context).blockedPets,
+                  //   subtitle: '',
+                  //   onTap: () {
+                  //     navigateToScreen(context, const BlockedPetsScreen());
+                  //   },
+                  //   trailingWidget: IconButton(
+                  //     onPressed: () {},
+                  //     icon: Icon(Icons.block),
+                  //   ),
+                  // ),
                   SizedBox(height: 12),
                   // Personalization Section
                   Text(

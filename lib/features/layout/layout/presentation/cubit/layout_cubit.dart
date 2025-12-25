@@ -8,7 +8,6 @@ import 'package:squeak/features/friendship/presentation/pages/pet_friend_layout.
 import 'package:squeak/features/layout/layout/presentation/screens/browse_screen.dart';
 import 'package:squeak/features/layout/layout/presentation/screens/requests_screen.dart';
 import 'package:squeak/features/layout/post/presentation/screens/home_screen.dart';
-import 'package:squeak/features/mating/chat/presentation/screens/chat_list_screen.dart';
 import 'package:squeak/features/mating/profile/presentation/screens/pet_profile_screen.dart';
 import 'package:squeak/features/pets/presentation/view/pet_screen.dart';
 import 'package:squeak/features/settings/persentaion/view/setting_screen.dart';
@@ -41,8 +40,9 @@ class LayoutCubit extends Cubit<LayoutState> {
   late final List<Widget> screensPets = [
     HomeScreen(),
     BrowseScreen(),
+    FriendsScreen(),
     RequestsScreen(),
-    ChatListScreen(),
+    // ChatListScreen(),
     PetProfileScreen(),
   ];
 

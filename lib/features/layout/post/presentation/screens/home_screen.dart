@@ -101,6 +101,7 @@ class HomeScreen extends StatelessWidget {
       petId,
       context,
       imagePath,
+      SwitchProfileCubit.get(context).activeProfile,
     );
   }
 }
