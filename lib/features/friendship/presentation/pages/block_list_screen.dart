@@ -63,9 +63,7 @@ class _BlockedPetsScreenContentState extends State<_BlockedPetsScreenContent> {
         _loadBlockedFriends();
       }
     } catch (e) {
-      if (kDebugMode) {
-
-      }
+      if (kDebugMode) {}
     }
   }
 
@@ -242,31 +240,7 @@ class _BlockedPetsScreenContentState extends State<_BlockedPetsScreenContent> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor:
-            isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5),
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_outlined,
-            color: isDark ? Colors.white : Color(0xFF2D3142),
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: Text(
-          S.of(context).blockedPets,
-          style: TextStyle(
-            color: isDark ? Colors.white : Color(0xFF2D3142),
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      backgroundColor: isDark ? const Color(0xFF121212) : Colors.white,
       body: BlocConsumer<SwitchProfileCubit, SwitchProfileState>(
         listener: (context, switchState) {
           try {

@@ -100,9 +100,10 @@ class TabBarPetFriend extends StatelessWidget {
                 fontSize: fontSize,
                 countSize: countSize,
               ),
+
               _TabItem(
                 icon: IconlyBold.chat,
-                label: isArabic() ? 'المحادثات' : 'Chats',
+                label: isArabic() ? 'قائمة الحظر' : 'Block List',
                 count: chatsCount,
                 isSelected: selectedTab == 3,
                 onTap: () {

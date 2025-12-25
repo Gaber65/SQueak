@@ -5,6 +5,7 @@ import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/enums/profile_type.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/widget/navigate_based_on_notification.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
 import '../../../../pets/presentation/controller/pet_cubit.dart';
@@ -147,6 +148,7 @@ class _LayoutScreenState extends State<LayoutScreen>
         BlocProvider(create: (_) => sl<PetCubit>()..getOwnerPets()),
         BlocProvider(create: (_) => sl<SettingCubit>()..getOwnerData()),
         BlocProvider(create: (_) => sl<SwitchProfileCubit>()..loadProfile()),
+        BlocProvider(create: (context) => sl<PetFriendsCubit>()),
         BlocProvider(
           create:
               (context) =>
@@ -191,9 +193,9 @@ class _LayoutScreenState extends State<LayoutScreen>
 
               final petIcons = [
                 IconlyBold.home,
-                Icons.explore_outlined,
+                IconlyBold.user_3,
                 Icons.favorite_border,
-                Icons.chat_bubble_outline,
+                IconlyLight.chat,
                 Icons.pets,
               ];
 
@@ -209,16 +211,16 @@ class _LayoutScreenState extends State<LayoutScreen>
 
               final petLabelsEN = [
                 'Home',
-                'Browse',
-                'Requests',
+                'Friends',
+                'Mating',
                 'Chats',
                 'Profile',
               ];
 
               final petLabelsAR = [
                 'الرئيسية',
-                'استكشاف',
-                'الطلبات',
+                'الأصدقاء',
+                'التزاوج',
                 'الرسائل',
                 'الملف الشخصي',
               ];
@@ -247,9 +249,8 @@ class _LayoutScreenState extends State<LayoutScreen>
                 resizeToAvoidBottomInset: false,
                 body:
                     isPetProfile
-                        ? cubit
-                            .screensPets[selectedIndex] 
-                        : cubit.screens[selectedIndex], 
+                        ? cubit.screensPets[selectedIndex]
+                        : cubit.screens[selectedIndex],
                 bottomNavigationBar: BlocConsumer<MainCubit, MainState>(
                   listener: (context, state) {},
                   builder: (context, state) {
@@ -265,6 +266,20 @@ class _LayoutScreenState extends State<LayoutScreen>
                         setState(() {
                           selectedIndex = index;
                         });
+
+                        if (index == 2 && isPetProfile) {
+                          final friendsCubit = context.read<PetFriendsCubit>();
+                          final switchProfileCubit =
+                              context.read<SwitchProfileCubit>();
+                          final activePet =
+                              switchProfileCubit.activeProfile?.pet;
+
+                          if (activePet != null && activePet.specieId != null) {
+                            friendsCubit.loadSuggestedFriends(
+                              specieId: activePet.specieId!,
+                            );
+                          }
+                        }
                       },
                       tabBuilder: (int index, bool isActive) {
                         final icon = icons[index];

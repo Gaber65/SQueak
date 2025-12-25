@@ -73,14 +73,12 @@ class ViewPetProfileScreen extends StatelessWidget {
             listener: (context, state) {
               if (state is BlockFriendshipSuccess ||
                   state is FriendRequestUpdated) {
-                if (context.mounted) Navigator.of(context).pop();
+                if (context.mounted) {
+                  navigateAndFinish(context, LayoutScreen());      
+                }
               } else if (state is DeleteFriendShipSuccess) {
                 if (context.mounted) {
-                  Navigator.of(context).pop();
-                  // Refresh the previous screen
-                  context.read<PetFriendsCubit>().loadSentFriends(
-                    petId: activePetId ?? '',
-                  );
+                  navigateAndFinish(context, LayoutScreen());
                 }
               } else if (state is FriendRequestCancelled) {
                 if (context.mounted && isSent == true) {
