@@ -634,5 +634,5 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
     return ReactionData.unActiveReactionImage;
   }
 
-  // Pet avatar rendering moved to shared `PetAvatar` widget.
+  
 }

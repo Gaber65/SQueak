@@ -308,7 +308,7 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                                 currentStory.createdAt.toString(),
                               ),
                               style: const TextStyle(
-                                color: Colors.grey,
+                                color: Colors.white,
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -423,5 +423,4 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
     });
   }
 
-  // Pet avatar rendering moved to shared `PetAvatar` widget.
 }

@@ -1,5 +1,7 @@
 // lib/features/stories/presentation/widgets/chat_messages/create_story_modal.dart
 import 'dart:io';
+import 'dart:async';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -25,12 +27,8 @@ class _CreateStoryModalState extends State<CreateStoryModal> {
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (picked != null && mounted) {
       final file = File(picked.path);
-      final sizeInMB = await file.length() / (1024 * 1024);
-
-      if (sizeInMB > 10) {
-        errorToast(context, "Image is too large. Max size is 10 MB.");
-        return;
-      }
+      final valid = await _validateImageFile(file);
+      if (!valid) return;
 
       setState(() => _selectedFile = file);
     }
@@ -40,14 +38,50 @@ class _CreateStoryModalState extends State<CreateStoryModal> {
     final picked = await ImagePicker().pickImage(source: ImageSource.camera);
     if (picked != null && mounted) {
       final file = File(picked.path);
-      final sizeInMB = await file.length() / (1024 * 1024);
-
-      if (sizeInMB > 10) {
-        errorToast(context, "Image is too large. Max size is 10 MB.");
-        return;
-      }
+      final valid = await _validateImageFile(file);
+      if (!valid) return;
 
       setState(() => _selectedFile = file);
+    }
+  }
+
+  Future<bool> _validateImageFile(File file) async {
+    try {
+      final length = await file.length();
+
+      if (length == 0) {
+        errorToast(context, 'Selected image is empty or corrupted.');
+        return false;
+      }
+
+      final sizeInMB = length / (1024 * 1024);
+      if (sizeInMB > 10) {
+        errorToast(context, 'Image is too large. Max size is 10 MB.');
+        return false;
+      }
+
+      // Try to decode the image bytes to ensure it's a valid image
+      final bytes = await file.readAsBytes();
+      final completer = Completer<bool>();
+
+      ui.decodeImageFromList(bytes, (ui.Image img) {
+        completer.complete(true);
+      });
+
+      // Add a timeout to avoid hanging on bad files.
+      final decoded = await completer.future.timeout(const Duration(seconds: 3), onTimeout: () {
+        return false;
+      });
+
+      if (!decoded) {
+        errorToast(context, 'Selected image appears to be corrupted.');
+        return false;
+      }
+
+      return true;
+    } catch (e) {
+      errorToast(context, 'Selected image is corrupted or unreadable.');
+      return false;
     }
   }
 

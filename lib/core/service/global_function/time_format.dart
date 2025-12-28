@@ -34,7 +34,6 @@ String formatTimeToAmPm(String time) {
 
     return '$hour:$formattedMinutes $suffix';
   } catch (e) {
-
     return '';
   }
 }
@@ -100,10 +99,18 @@ String formatFacebookTimePost(String createdAt) {
       'EEE MMM dd yyyy HH:mm:ss \'GMT\'z',
       'en_US',
     );
-    final utcTime = backendFormat.parse(createdAt, true);
-    final localTime = utcTime.toLocal();
+
+    final parsedTime = backendFormat.parse(createdAt);
+    final localTime = parsedTime.toLocal();
     final now = DateTime.now();
     final difference = now.difference(localTime);
+
+    if (difference.isNegative) {
+      if (difference.inMinutes.abs() < 1) {
+        return isArabic() ? 'الآن' : 'Just now';
+      }
+      return DateFormat('h:mm a').format(localTime);
+    }
 
     if (difference.inSeconds < 60) {
       return isArabic() ? 'الآن' : 'Just now';
@@ -144,8 +151,6 @@ String formatBILL(String createdAt) {
 }
 
 String formatTimeToAmPmReminder(String time) {
-
-
   if (time.trim().isEmpty) return '';
   final parts = time.trim().split(':').map((e) => e.trim()).toList();
   if (parts.length < 2) return '';
@@ -162,7 +167,6 @@ String formatTimeToAmPmReminder(String time) {
 }
 
 String formatBoarding(String createdAt) {
-
   try {
     // لو السيرفر بيرسل التوقيت كـ UTC بدون 'Z' في آخره
     // لازم نحلل التاريخ باعتباره في UTC manually
@@ -174,7 +178,6 @@ String formatBoarding(String createdAt) {
     // ننسق الناتج
     return DateFormat('MMM dd yyyy, hh:mm a', 'en_US').format(localTime);
   } catch (e) {
-
     return createdAt;
   }
 }
@@ -208,14 +211,11 @@ String convertLocalTimeToUTC(String time) {
 
     return '$utcHours:$utcMinutes:$utcSeconds';
   } catch (e) {
-
     return '';
   }
 }
 
 String formatAge(dynamic birthDate, {bool isUser = false}) {
-
-
   try {
     // تأكد إنه DateTime
     final date =
