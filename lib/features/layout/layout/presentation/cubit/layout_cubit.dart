@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/appointments/service_screen.dart';
 import 'package:squeak/features/friendship/presentation/pages/pet_friend_layout.dart';
-import 'package:squeak/features/layout/layout/presentation/screens/browse_screen.dart';
+import 'package:squeak/features/layout/layout/presentation/screens/mating_requests_view.dart';
 import 'package:squeak/features/layout/post/presentation/screens/home_screen.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_list_screen.dart';
 import 'package:squeak/features/mating/profile/presentation/screens/pet_profile_screen.dart';
@@ -36,7 +36,7 @@ class LayoutCubit extends Cubit<LayoutState> {
   late final List<Widget> screensPets = [
     HomeScreen(),
     FriendsScreen(),
-    BrowseScreen(),
+    MatingRequestsTab(),
     ChatListScreen(),
     PetProfileScreen(),
   ];

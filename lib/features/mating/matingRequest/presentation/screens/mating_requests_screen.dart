@@ -6,7 +6,6 @@ import 'package:squeak/features/mating/chat/presentation/controllers/chat_list_c
 import 'package:squeak/features/settings/persentaion/controller/setting_cubit.dart';
 import '../../../../pets/domain/entities/pet_entity.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
-import '../../../layoutMating/presentation/screens/widgets/profile_switcher_builder.dart';
 import 'widgets/mating_requests_body.dart';
 
 class MatingRequestsScreen extends StatelessWidget {
@@ -37,7 +36,7 @@ class MatingRequestsScreen extends StatelessWidget {
           return DefaultTabController(
             length: 2,
             child: Scaffold(
-              appBar: _buildAppBar(context),
+              // appBar: _buildAppBar(context),
               body: BlocSelector<
                 SwitchProfileCubit,
                 SwitchProfileState,
@@ -69,20 +68,20 @@ class MatingRequestsScreen extends StatelessWidget {
     );
   }
 
-  AppBar _buildAppBar(BuildContext context) {
-    return AppBar(
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios, color: ColorManager.primaryColor),
-        onPressed: () => navigateAndFinish(context, LayoutScreen()),
-      ),
-      title: Text(
-        S.of(context).mangeMatingRequests,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-      ),
-      centerTitle: true,
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      actions: [buildProfileSwitcher(context)],
-    );
-  }
+  // AppBar _buildAppBar(BuildContext context) {
+  //   return AppBar(
+  //     leading: IconButton(
+  //       icon: Icon(Icons.arrow_back_ios, color: ColorManager.primaryColor),
+  //       onPressed: () => navigateAndFinish(context, LayoutScreen()),
+  //     ),
+  //     title: Text(
+  //       S.of(context).mangeMatingRequests,
+  //       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+  //     ),
+  //     centerTitle: true,
+  //     elevation: 0,
+  //     backgroundColor: Colors.transparent,
+  //     actions: [buildProfileSwitcher(context)],
+  //   );
+  // }
 }

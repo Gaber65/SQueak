@@ -4,6 +4,7 @@ import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/core/utils/enums/profile_type.dart';
 import 'package:squeak/features/mating/profile/presentation/screens/view_pet_profile_screen.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
+import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
 import '../../../../settings/persentaion/controller/setting_cubit.dart';
 import '../../domain/usecases/mating_parameters.dart';
@@ -27,6 +28,20 @@ class PetFeedScreen extends StatelessWidget {
       child: BlocBuilder<MatingFeedsCubit, MatingFeedsState>(
         builder: (context, state) {
           final cubit = MatingFeedsCubit.get(context);
+          final theme = Theme.of(context);
+          final isDark = theme.brightness == Brightness.dark;
+
+          // Show loading when state is MatingFeedsLoading
+          if (state is MatingFeedsLoading) {
+            return Scaffold(
+              body: DogLoadingStateWidget(
+                theme: theme,
+                isDark: isDark,
+                s: S.of(context),
+                text: 'Loading mating feeds...',
+              ),
+            );
+          }
 
           return Scaffold(
             // appBar: AppBar(
