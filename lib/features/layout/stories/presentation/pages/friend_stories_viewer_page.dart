@@ -174,23 +174,29 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
       behavior: HitTestBehavior.translucent,
       onTapDown: (details) {
         if (index != controller.currentIndex) return;
+        
+        // 1. Check text direction (Arabic vs English)
         final isRTL = Directionality.of(context) == TextDirection.rtl;
+        
         final bottomUIHeight = 120.0;
         final screenHeight = MediaQuery.of(context).size.height;
+      
         if (details.globalPosition.dy > screenHeight - bottomUIHeight) return;
+        
         final width = MediaQuery.of(context).size.width;
         final dx = details.globalPosition.dx;
-
         if (isRTL) {
           if (dx > width * 2 / 3) {
-            controller.goNext();
-          } else if (dx < width / 3) {
-            controller.goPrevious();
+            controller.goPrevious(); 
+          } 
+          else if (dx < width / 3) {
+            controller.goNext(); 
           }
         } else {
           if (dx < width / 3) {
             controller.goPrevious();
-          } else if (dx > width * 2 / 3) {
+          } 
+          else if (dx > width * 2 / 3) {
             controller.goNext();
           }
         }
@@ -210,11 +216,9 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // Blurred background layer
           Stack(
             fit: StackFit.expand,
             children: [
-              // Blurred background image
               Image.network(
                 imageUrl + (currentStory.image ?? ''),
                 fit: BoxFit.cover,
@@ -226,11 +230,9 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                   );
                 },
               ),
-              // Dark overlay for better contrast
               Container(
                 color: Colors.black.withOpacity(0.3),
               ),
-              // Main sharp image
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -633,6 +635,4 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
 
     return ReactionData.unActiveReactionImage;
   }
-
-  
 }

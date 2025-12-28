@@ -68,19 +68,21 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
       showModalBottomSheet(
         context: context,
         barrierColor: Colors.transparent,
-        builder: (context) => GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Material(
-            child: GestureDetector(
-              onTap: () {},
-              child: StoryReactionsView(
-                reactions: widget.storyCubit.state.reactions?.reactions ?? [],
-                currentPetId: widget.petID,
-                onClose: () => Navigator.of(context).pop(),
+        builder:
+            (context) => GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Material(
+                child: GestureDetector(
+                  onTap: () {},
+                  child: StoryReactionsView(
+                    reactions:
+                        widget.storyCubit.state.reactions?.reactions ?? [],
+                    currentPetId: widget.petID,
+                    onClose: () => Navigator.of(context).pop(),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
       ).then((value) {
         controller.resume();
       });
@@ -158,23 +160,24 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
               final isRTL = Directionality.of(context) == TextDirection.rtl;
               final bottomUIHeight = 100.0;
               final screenHeight = MediaQuery.of(context).size.height;
+
               if (details.globalPosition.dy > screenHeight - bottomUIHeight) {
                 return;
               }
+
               final width = MediaQuery.of(context).size.width;
               final dx = details.globalPosition.dx;
+
               if (isRTL) {
                 if (dx > width * 2 / 3) {
-                  controller.goNext();
-                } 
-                else if (dx < width / 3) {
                   controller.goPrevious();
+                } else if (dx < width / 3) {
+                  controller.goNext();
                 }
               } else {
                 if (dx < width / 3) {
                   controller.goPrevious();
-                } 
-                else if (dx > width * 2 / 3) {
+                } else if (dx > width * 2 / 3) {
                   controller.goNext();
                 }
               }
@@ -199,8 +202,14 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                     Image.network(
                       imageUrl + (currentStory.image ?? ''),
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(color: Colors.black),
-                      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                      errorBuilder:
+                          (_, __, ___) => Container(color: Colors.black),
+                      frameBuilder: (
+                        context,
+                        child,
+                        frame,
+                        wasSynchronouslyLoaded,
+                      ) {
                         return ImageFiltered(
                           imageFilter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                           child: child,
@@ -208,16 +217,15 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                       },
                     ),
                     // Dark overlay for better contrast
-                    Container(
-                      color: Colors.black.withOpacity(0.3),
-                    ),
+                    Container(color: Colors.black.withOpacity(0.3)),
                     // Main sharp image
                     Image.network(
                       imageUrl + (currentStory.image ?? ''),
                       fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => const Center(
-                        child: Icon(Icons.error, color: Colors.white),
-                      ),
+                      errorBuilder:
+                          (_, __, ___) => const Center(
+                            child: Icon(Icons.error, color: Colors.white),
+                          ),
                     ),
                   ],
                 ),
@@ -227,7 +235,8 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                   right: 8,
                   child: Builder(
                     builder: (context) {
-                      final isRTL = Directionality.of(context) == TextDirection.rtl;
+                      final isRTL =
+                          Directionality.of(context) == TextDirection.rtl;
                       return Row(
                         children: List.generate(widget.stories.length, (index) {
                           return Expanded(
@@ -238,32 +247,41 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                                 color: Colors.white24,
                                 borderRadius: BorderRadius.circular(3),
                               ),
-                              child: index == controller.currentIndex
-                                  ? AnimatedBuilder(
-                                      animation: controller.progressController,
-                                      builder: (_, __) {
-                                        return FractionallySizedBox(
-                                          alignment: isRTL
-                                              ? Alignment.centerRight
-                                              : Alignment.centerLeft,
-                                          widthFactor: controller.progressController.value,
-                                          child: Container(
-                                            height: 3,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.circular(3),
+                              child:
+                                  index == controller.currentIndex
+                                      ? AnimatedBuilder(
+                                        animation:
+                                            controller.progressController,
+                                        builder: (_, __) {
+                                          return FractionallySizedBox(
+                                            alignment:
+                                                isRTL
+                                                    ? Alignment.centerRight
+                                                    : Alignment.centerLeft,
+                                            widthFactor:
+                                                controller
+                                                    .progressController
+                                                    .value,
+                                            child: Container(
+                                              height: 3,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(3),
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  : index < controller.currentIndex
+                                          );
+                                        },
+                                      )
+                                      : index < controller.currentIndex
                                       ? Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(3),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            3,
                                           ),
-                                        )
+                                        ),
+                                      )
                                       : const SizedBox.shrink(),
                             ),
                           );
@@ -354,7 +372,7 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                           Text(
+                          Text(
                             S.of(context).viewReactions,
                             style: TextStyle(
                               color: Colors.white,
@@ -422,5 +440,4 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
       controller.resume();
     });
   }
-
 }
