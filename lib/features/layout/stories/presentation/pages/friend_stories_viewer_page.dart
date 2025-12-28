@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
 import 'package:squeak/features/layout/stories/presentation/widgets/story_list/story_pet_avatar.dart';
@@ -209,22 +210,45 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black.withOpacity(0.1), Colors.transparent],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+          // Blurred background layer
+          Stack(
+            fit: StackFit.expand,
+            children: [
+              // Blurred background image
+              Image.network(
+                imageUrl + (currentStory.image ?? ''),
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(color: Colors.black),
+                frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                  return ImageFiltered(
+                    imageFilter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                    child: child,
+                  );
+                },
               ),
-            ),
-            child: Image.network(
-              imageUrl + (currentStory.image ?? ''),
-              fit: BoxFit.contain,
-              errorBuilder:
-                  (_, __, ___) => const Center(
-                    child: Icon(Icons.error, color: Colors.white),
+              // Dark overlay for better contrast
+              Container(
+                color: Colors.black.withOpacity(0.3),
+              ),
+              // Main sharp image
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.black.withOpacity(0.1), Colors.transparent],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                   ),
-            ),
+                ),
+                child: Image.network(
+                  imageUrl + (currentStory.image ?? ''),
+                  fit: BoxFit.contain,
+                  errorBuilder:
+                      (_, __, ___) => const Center(
+                        child: Icon(Icons.error, color: Colors.white),
+                      ),
+                ),
+              ),
+            ],
           ),
           Positioned(
             top: 40,
