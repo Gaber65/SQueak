@@ -96,9 +96,19 @@ class StoriesBar extends StatelessWidget {
                     );
                   }
 
-                  final friendIndex = state.myStories.isNotEmpty ? index - 2 : index - 1;
-                  final friendStory = state.friendsStories[friendIndex];
-                  
+                  // Only consider friends that have at least one story
+                  final visibleFriends =
+                      state.friendsStories.where((f) => f.userStories.isNotEmpty).toList();
+
+                  final friendIndex =
+                      state.myStories.isNotEmpty ? index - 2 : index - 1;
+
+                  if (friendIndex < 0 || friendIndex >= visibleFriends.length) {
+                    return const SizedBox.shrink();
+                  }
+
+                  final friendStory = visibleFriends[friendIndex];
+
                   return StoryThumbnail(
                     avatarUrl: imageUrl + friendStory.petImage,
                     label: friendStory.petName,
@@ -136,9 +146,11 @@ class StoriesBar extends StatelessWidget {
 }
 
 int _itemsCount(StoryState state) {
-  int count = 1; 
+  int count = 1;
   if (state.myStories.isNotEmpty) count++;
-  count += state.friendsStories.length;
+  final visibleFriends =
+      state.friendsStories.where((f) => f.userStories.isNotEmpty).length;
+  count += visibleFriends;
   return count;
 }
 
