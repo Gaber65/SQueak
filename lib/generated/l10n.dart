@@ -6159,6 +6159,36 @@ class S {
       args: [],
     );
   }
+
+  /// `No reactions yet`
+  String get noReactions {
+    return Intl.message(
+      'No reactions yet',
+      name: 'noReactions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Views & Reactions`
+  String get viewsAndReactions {
+    return Intl.message(
+      'Views & Reactions',
+      name: 'viewsAndReactions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No views yet`
+  String get noViewsYet {
+    return Intl.message(
+      'No views yet',
+      name: 'noViewsYet',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

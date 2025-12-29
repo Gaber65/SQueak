@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; // ADDED: Required for BlocBuilder
 import 'package:squeak/core/service/global_function/time_format.dart';
+import 'package:squeak/features/layout/stories/presentation/controllers/story_state.dart';
 import 'package:squeak/features/layout/stories/presentation/pages/view_how_react.dart';
 import 'package:squeak/features/layout/stories/presentation/widgets/story_list/story_pet_avatar.dart';
 import 'package:squeak/generated/l10n.dart';
@@ -58,6 +60,7 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
 
   void _loadReactionsForCurrentStory() {
     final story = widget.stories[controller.currentIndex];
+    // This triggers the API call. The state will update asynchronously.
     widget.storyCubit.loadStoryReactions(userStoryId: story.id);
   }
 
@@ -369,30 +372,39 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                         color: Colors.black.withOpacity(0.6),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            S.of(context).viewReactions,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                            ),
-                          ),
-                          ..._buildReactionIconsPreview(
-                            widget.storyCubit.state.reactions?.reactions ?? [],
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            '${widget.storyCubit.state.reactions?.reactions.length ?? 0}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
+                      // CHANGED: Wrapped with BlocBuilder to listen for data updates
+                      child: BlocBuilder<StoryCubit, StoryState>(
+                        bloc: widget.storyCubit, // Explicitly pass the cubit
+                        builder: (context, state) {
+                          // Get the latest list from the stream
+                          final currentReactions = state.reactions?.reactions ?? [];
+                          
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                S.of(context).viewReactions,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              // CHANGED: Use the list from 'state', not 'widget'
+                              ..._buildReactionIconsPreview(currentReactions),
+                              const SizedBox(width: 6),
+                              // CHANGED: Use the count from 'state', not 'widget'
+                              Text(
+                                '${currentReactions.length}', 
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ),
                   ),

@@ -619,7 +619,11 @@
   "viewReactions":"Views",
   "alert":"Alert",
   "commentMaxLength":"Comment cannot exceed 500 characters",
-  "genderUnknown":"Gender unknown you must choose gender"
+  "genderUnknown":"Gender unknown you must choose gender",
+  "noReactions":"No reactions yet",
+  "viewsAndReactions":"Views & Reactions",
+  "noViewsYet":"No views yet"
+
   
 
   

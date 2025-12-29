@@ -624,6 +624,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "noPetsFound": MessageLookupByLibrary.simpleMessage("No Pets Found"),
         "noPetsInVetICare": MessageLookupByLibrary.simpleMessage(
             "No pets are available in this clinic, or they have already been added to SQueak"),
+        "noReactions": MessageLookupByLibrary.simpleMessage("No reactions yet"),
         "noReceivedRequests":
             MessageLookupByLibrary.simpleMessage("No received requests"),
         "noReceivedRequestsSub": MessageLookupByLibrary.simpleMessage(
@@ -631,6 +632,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "noRequests": MessageLookupByLibrary.simpleMessage("No requests found"),
         "noSentRequests":
             MessageLookupByLibrary.simpleMessage("No sent requests"),
+        "noViewsYet": MessageLookupByLibrary.simpleMessage("No views yet"),
         "notAvailableForMating":
             MessageLookupByLibrary.simpleMessage("Not Available For Mating"),
         "notEqualPassword": MessageLookupByLibrary.simpleMessage(
@@ -942,6 +944,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "viewProfileSnack": m8,
         "viewReactions": MessageLookupByLibrary.simpleMessage("Views"),
         "viewReplies": m9,
+        "viewsAndReactions":
+            MessageLookupByLibrary.simpleMessage("Views & Reactions"),
         "waitingForResponse":
             MessageLookupByLibrary.simpleMessage("Waiting for response..."),
         "wantBlockUser":

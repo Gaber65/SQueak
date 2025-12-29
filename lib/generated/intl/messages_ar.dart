@@ -612,6 +612,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("لا توجد أصدقاء صغار الآن"),
         "noPetsInVetICare": MessageLookupByLibrary.simpleMessage(
             "لا يوجد أصدقاء صغار في هذه العيادة، أو قد تم إضافتها بالفعل على SQueak"),
+        "noReactions":
+            MessageLookupByLibrary.simpleMessage("لا توجد تفاعلات بعد"),
         "noReceivedRequests":
             MessageLookupByLibrary.simpleMessage("لا توجد طلبات واردة"),
         "noReceivedRequestsSub": MessageLookupByLibrary.simpleMessage(
@@ -619,6 +621,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "noRequests": MessageLookupByLibrary.simpleMessage("لا توجد طلبات"),
         "noSentRequests":
             MessageLookupByLibrary.simpleMessage("لا توجد طلبات صادرة"),
+        "noViewsYet":
+            MessageLookupByLibrary.simpleMessage("لا توجد مشاهدات بعد"),
         "notAvailableForMating":
             MessageLookupByLibrary.simpleMessage("غير متاح للتزاوج"),
         "notEqualPassword": MessageLookupByLibrary.simpleMessage(
@@ -925,6 +929,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "viewProfileSnack": m8,
         "viewReactions": MessageLookupByLibrary.simpleMessage("التفاعلات"),
         "viewReplies": m9,
+        "viewsAndReactions":
+            MessageLookupByLibrary.simpleMessage("المشاهدات والتفاعلات"),
         "waitingForResponse":
             MessageLookupByLibrary.simpleMessage("في انتظار الرد..."),
         "wantBlockUser": MessageLookupByLibrary.simpleMessage("هل تريد حظر"),

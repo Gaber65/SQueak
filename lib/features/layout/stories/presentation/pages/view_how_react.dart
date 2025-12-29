@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:squeak/core/network/end_points.dart';
+import 'package:squeak/generated/l10n.dart';
 
 import '../../../react/domain/repo/base_react_repo.dart';
 import '../../../react/presentation/animated_reaction/reaction_data.dart';
@@ -22,15 +23,12 @@ class StoryReactionsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Filter out reactions with type 0 (view-only, no reaction)
-    final validReactions =
-        reactions.toList();
+    final validReactions = reactions.toList();
 
     if (validReactions.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(context);
     }
 
-    _groupReactionsByType(validReactions);
     final totalReactions = validReactions.length;
 
     return Container(
@@ -51,7 +49,6 @@ class StoryReactionsView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Header with gradient
             Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -64,10 +61,10 @@ class StoryReactionsView extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
                 child: Row(
                   children: [
-                    const Icon(Icons.favorite, color: Colors.white, size: 24),
+                    const Icon(Icons.visibility, color: Colors.white, size: 24),
                     const SizedBox(width: 10),
                     Text(
-                      'Reactions',
+                      S.of(context).viewsAndReactions, 
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -107,7 +104,6 @@ class StoryReactionsView extends StatelessWidget {
 
             const Divider(height: 1, thickness: 0.5),
 
-            // Reactions List with shimmer effect
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(vertical: 8),
@@ -120,15 +116,13 @@ class StoryReactionsView extends StatelessWidget {
                 },
               ),
             ),
-
-
           ],
         ),
       ),
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -156,24 +150,19 @@ class StoryReactionsView extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
-                    Icons.favorite_border,
+                    Icons.visibility_off_outlined,
                     size: 32,
                     color: Colors.grey,
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'No reactions yet',
-                  style: TextStyle(
+                Text(
+                  S.of(context).noViewsYet, 
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: Colors.black87,
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Be the first to react to this story!',
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -186,12 +175,14 @@ class StoryReactionsView extends StatelessWidget {
 
   Widget _buildReactionItem(StoryReactionEntity reaction, ReactType type) {
     final isCurrentUser = reaction.petId == currentPetId;
+    
+    final isViewOnly = type == ReactType.none; 
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          // Handle tap on reaction
+          // Navigate to profile
         },
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -199,39 +190,20 @@ class StoryReactionsView extends StatelessWidget {
           decoration: BoxDecoration(
             color: isCurrentUser ? Colors.blue[50] : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            border:
-                isCurrentUser
-                    ? Border.all(color: Colors.blue[100]!, width: 1)
-                    : null,
+            border: isCurrentUser
+                ? Border.all(color: Colors.blue[100]!, width: 1)
+                : null,
           ),
           child: Row(
             children: [
-              // Avatar with online indicator
+              // Avatar
               if (showAvatars) ...[
-                Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 22,
-                      backgroundColor: Colors.grey[200],
-                      backgroundImage: NetworkImage(
-                        imageUrl +
-                            (reaction.petImage ?? reaction.userImage ?? ''),
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                      ),
-                    ),
-                  ],
+                CircleAvatar(
+                  radius: 22,
+                  backgroundColor: Colors.grey[200],
+                  backgroundImage: NetworkImage(
+                    imageUrl + (reaction.petImage ?? reaction.userImage ?? ''),
+                  ),
                 ),
                 const SizedBox(width: 12),
               ],
@@ -249,10 +221,9 @@ class StoryReactionsView extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
-                              color:
-                                  isCurrentUser
-                                      ? Colors.blue[800]
-                                      : Colors.grey[800],
+                              color: isCurrentUser
+                                  ? Colors.blue[800]
+                                  : Colors.grey[800],
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -282,28 +253,39 @@ class StoryReactionsView extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        // Reaction Icon with tooltip
-                        Container(
-                          width: 20,
-                          height: 20,
-                          margin: const EdgeInsets.only(right: 6),
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(
-                                ReactionData.getIconForReactType(type),
+                        if (isViewOnly)
+                          const Padding(
+                            padding: EdgeInsets.only(right: 6),
+                            child: Icon(
+                              Icons.visibility_outlined,
+                              size: 16,
+                              color: Colors.grey,
+                            ),
+                          )
+                        else
+                          // 2. Show Emoji Image for Reactions
+                          Container(
+                            width: 20,
+                            height: 20,
+                            margin: const EdgeInsets.only(right: 6),
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(
+                                  ReactionData.getIconForReactType(type),
+                                ),
+                                fit: BoxFit.contain,
                               ),
-                              fit: BoxFit.contain,
                             ),
                           ),
-                        ),
+                        
+                        // Time Text
                         Text(
                           '• ${_formatTime(reaction.reactedAt)}',
                           style: TextStyle(
                             fontSize: 13,
-                            color:
-                                isCurrentUser
-                                    ? Colors.blue[600]
-                                    : Colors.grey[600],
+                            color: isCurrentUser
+                                ? Colors.blue[600]
+                                : Colors.grey[600],
                           ),
                         ),
                       ],
@@ -366,21 +348,4 @@ class StoryReactionsView extends StatelessWidget {
       return DateFormat('MMM d').format(time);
     }
   }
-
-  Map<ReactType, List<StoryReactionEntity>> _groupReactionsByType(
-    List<StoryReactionEntity> reactions,
-  ) {
-    final Map<ReactType, List<StoryReactionEntity>> grouped = {};
-
-    for (final reaction in reactions) {
-      final type = ReactType.fromInt(reaction.reactType);
-      if (type != ReactType.none) {
-        // Only group valid reactions
-        grouped.putIfAbsent(type, () => []).add(reaction);
-      }
-    }
-
-    return grouped;
-  }
 }
-
