@@ -58,10 +58,11 @@ class StoriesBar extends StatelessWidget {
                             context: context,
                             isScrollControlled: true,
                             backgroundColor: Colors.transparent,
-                            builder: (_) => BlocProvider.value(
-                              value: storyCubit,
-                              child: CreateStoryModal(petId: petID),
-                            ),
+                            builder:
+                                (_) => BlocProvider.value(
+                                  value: storyCubit,
+                                  child: CreateStoryModal(petId: petID),
+                                ),
                           );
                         }
                       },
@@ -81,24 +82,25 @@ class StoriesBar extends StatelessWidget {
                             context: context,
                             isScrollControlled: true,
                             backgroundColor: Colors.transparent,
-                            builder: (_) => BlocProvider.value(
-                              value: storyCubit,
-                              child: MyStoriesViewerPage(
-                                storyCubit: storyCubit,
-                                stories: state.myStories,
-                                petID: petID,
-                                initialIndex: 0,
-                              ),
-                            ),
+                            builder:
+                                (_) => BlocProvider.value(
+                                  value: storyCubit,
+                                  child: MyStoriesViewerPage(
+                                    storyCubit: storyCubit,
+                                    stories: state.myStories,
+                                    petID: petID,
+                                    initialIndex: 0,
+                                  ),
+                                ),
                           );
                         }
                       },
                     );
                   }
-
-                  // Only consider friends that have at least one story
                   final visibleFriends =
-                      state.friendsStories.where((f) => f.userStories.isNotEmpty).toList();
+                      state.friendsStories
+                          .where((f) => f.userStories.isNotEmpty)
+                          .toList();
 
                   final friendIndex =
                       state.myStories.isNotEmpty ? index - 2 : index - 1;
@@ -121,16 +123,17 @@ class StoriesBar extends StatelessWidget {
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
-                          builder: (_) => BlocProvider.value(
-                            value: storyCubit,
-                            child: FriendStoriesViewerPage(
-                              storyCubit: storyCubit,
-                              friendsStories: friendStory,
-                              stories: friendStory.userStories,
-                              petID: petID,
-                              initialIndex: 0,
-                            ),
-                          ),
+                          builder:
+                              (_) => BlocProvider.value(
+                                value: storyCubit,
+                                child: FriendStoriesViewerPage(
+                                  storyCubit: storyCubit,
+                                  friendsStories: friendStory,
+                                  stories: friendStory.userStories,
+                                  petID: petID,
+                                  initialIndex: 0,
+                                ),
+                              ),
                         );
                       }
                     },

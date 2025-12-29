@@ -100,17 +100,10 @@ String formatFacebookTimePost(String createdAt) {
       'en_US',
     );
 
-    final parsedTime = backendFormat.parse(createdAt);
-    final localTime = parsedTime.toLocal();
+    final utcTime = backendFormat.parse(createdAt, true);
+    final localTime = utcTime.toLocal();
     final now = DateTime.now();
     final difference = now.difference(localTime);
-
-    if (difference.isNegative) {
-      if (difference.inMinutes.abs() < 1) {
-        return isArabic() ? 'الآن' : 'Just now';
-      }
-      return DateFormat('h:mm a').format(localTime);
-    }
 
     if (difference.inSeconds < 60) {
       return isArabic() ? 'الآن' : 'Just now';
@@ -224,7 +217,7 @@ String formatAge(dynamic birthDate, {bool isUser = false}) {
             : DateTime.tryParse(birthDate.toString());
 
     if (date == null) {
-      return isArabic() ? "تاريخ غير صالح" : "Invalid data";
+      return isArabic() ? "تاريخ غير صالح" : "Invalid date";
     }
 
     final today = DateTime.now();
@@ -288,6 +281,6 @@ String formatAge(dynamic birthDate, {bool isUser = false}) {
 
     return arabic ? parts.join(" و ") : parts.join(", ");
   } catch (e) {
-    return isArabic() ? "تاريخ غير صالح" : "Invalid data";
+    return isArabic() ? "تاريخ غير صالح" : "Invalid date";
   }
 }
