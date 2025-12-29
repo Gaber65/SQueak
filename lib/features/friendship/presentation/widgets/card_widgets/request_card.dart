@@ -83,7 +83,11 @@ class RequestCard extends StatelessWidget {
                       ),
                       Text(
                         formatAge(
-                          DateTime.parse(pet.friendPetAge.substring(0, 10)),
+                          DateTime.parse(
+                            pet.friendPetAge.length >= 10
+                                ? pet.friendPetAge.substring(0, 10)
+                                : DateTime.now().toIso8601String(),
+                          ),
                         ),
                         style: TextStyle(
                           fontSize: 14,
