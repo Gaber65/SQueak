@@ -258,43 +258,9 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
       (chatsList) {
         chats = chatsList;
         emit(ChatsLoaded(chats: chatsList));
-        // _fetchUnreadCounts(petId);
       },
     );
   }
-
-  // Future<void> _fetchUnreadCounts(String petId) async {
-  //   // final signalRService = SignalRService();
-  //   final unreadCounts = await signalRService.getUnreadMessageCounts(petId);
-
-  //   if (unreadCounts != null && chats.isNotEmpty) {
-  //     final updatedChats = chats.map((chat) {
-  //       final count = unreadCounts.length;
-  //       return ChatEntity(
-  //         id: chat.id,
-  //         isGroup: chat.isGroup,
-  //         isPetChat: chat.isPetChat,
-  //         name: chat.name,
-  //         image: chat.image,
-  //         groupImage: chat.groupImage,
-  //         petId: chat.petId,
-  //         matingId: chat.matingId,
-  //         completeMarriageStatues: chat.completeMarriageStatues,
-  //         createdAt: chat.createdAt,
-  //         lastMessageSendDateTime: chat.lastMessageSendDateTime,
-  //         isBlock: chat.isBlock,
-  //         isBlockedByMe: chat.isBlockedByMe,
-  //         isBlockedByOther: chat.isBlockedByOther,
-  //         isReadOnly: chat.isReadOnly,
-  //         unreadedCount: count,
-  //         lastMessage: chat.lastMessage,
-  //       );
-  //     }).toList();
-
-  //     chats = updatedChats;
-  //     emit(ChatsLoaded(chats: updatedChats));
-  //   }
-  // }
 
   Future<void> loadBlockedFriends({required String petId}) async {
     emit(BlockedFriendsLoading());

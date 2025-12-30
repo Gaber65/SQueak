@@ -119,14 +119,10 @@ void navigateBasedOnNotification(
       navigateToScreen(context, FriendsScreen());
       break;
     case NotificationType.SendMessage:
-      navigateToScreen(
-        context,
-        MatingLayoutScreen(indexID:3),
-      );
-      break;  
+      navigateToScreen(context, LayoutScreen(indexID: 3));
+      break;
 
     default:
-
       break;
   }
 }

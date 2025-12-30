@@ -47,13 +47,9 @@ factory PetFriendModel.fromJson(Map<String, dynamic> json) {
       myPetName: json['myPetName'] ?? "", 
       myPetImage: json['myPetImage'] ?? "",
       myPetAge: json['myPetAge'] ?? "",
-      
       friendPetName: json['friendPetName'] ?? "",
-      
-      // *** هنا سبب المشكلة في السطر 66 ***
       friendPetImage: json['friendPetImage'] ?? "", 
       friendPetAge: json['friendPetAge']?.toString() ?? "", 
-      
       friendName: json['friendName'] ?? "",
     );
   }  Map<String, dynamic> toJson() {

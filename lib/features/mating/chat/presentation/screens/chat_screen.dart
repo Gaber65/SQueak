@@ -834,8 +834,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     try {
       debugPrint('➡️ Sending message locally: "$text" to ${widget.chat.petId}');
     } catch (_) {}
-
-    // Add an optimistic outgoing message locally so sender sees it immediately
     final localMessage = MessageEntity(
       id: 'local_${DateTime.now().millisecondsSinceEpoch}',
       description: text,

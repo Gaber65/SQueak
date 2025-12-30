@@ -15,8 +15,12 @@ import '../widgets/update_dialog.dart';
 
 class LayoutScreen extends StatefulWidget {
   final bool showPostCreatedSnackbar;
-
-  const LayoutScreen({super.key, this.showPostCreatedSnackbar = false});
+  final int indexID;
+  const LayoutScreen({
+    super.key,
+    this.showPostCreatedSnackbar = false,
+    this.indexID = 0,
+  });
 
   @override
   State<LayoutScreen> createState() => _LayoutScreenState();
@@ -150,11 +154,12 @@ class _LayoutScreenState extends State<LayoutScreen>
         BlocProvider(create: (_) => sl<SwitchProfileCubit>()..loadProfile()),
         BlocProvider(create: (context) => sl<PetFriendsCubit>()),
         BlocProvider(
-          create:
+            create:
               (context) =>
-                  sl<LayoutCubit>()
-                    ..getAppVersion()
-                    ..getVersion(),
+                sl<LayoutCubit>()
+                ..getAppVersion()
+                ..getVersion()
+                ..changeBottomNav(widget.indexID),
         ),
       ],
       child: BlocConsumer<LayoutCubit, LayoutState>(

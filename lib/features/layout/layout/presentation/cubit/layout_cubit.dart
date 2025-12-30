@@ -46,15 +46,21 @@ class LayoutCubit extends Cubit<LayoutState> {
   VersionEntity? versionEntity;
   bool getVersionFromBackLoading = true;
 
-  void changeBottomNav(int index) {
-    if (selectedIndex != index) {
-      selectedIndex = index;
-      if (index == 2) {
+  void changeBottomNav(int? index) {
+    final newIndex = index ?? 0;
+
+    if (selectedIndex != newIndex) {
+      selectedIndex = newIndex;
+      if (newIndex == 2) {
         try {} catch (e) {
-          // print('Error loading suggested friends: $e');
+          selectedIndex = 0;
         }
       }
 
+      emit(ChangeBottomNavState());
+    } else if (index != null) {
+      // If an explicit index was provided (e.g. on initialization),
+      // emit to ensure listeners react even if the value didn't change.
       emit(ChangeBottomNavState());
     }
   }
