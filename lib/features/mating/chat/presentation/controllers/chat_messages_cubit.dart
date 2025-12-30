@@ -81,7 +81,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   StreamSubscription? _conversationEventSubscription;
 
   void _subscribeConversationEvents() {
-    // Prevent multiple subscriptions
     _conversationEventSubscription?.cancel();
     _conversationEventSubscription = conversationSignalEventStream.stream.listen(
       (
@@ -292,7 +291,6 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   bool isLoadingMore = false;
 
   void addReceivedMessage(MessageEntity message, String senderID) {
-    // Prevent duplicates: if server-provided id exists and matches, skip.
     final id = message.id;
     if (id != null && id.isNotEmpty) {
       final existsById = messagesList.any((m) => m.id == id);

@@ -125,6 +125,15 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           ]),
         );
         _chatAppCubit!.leaveConversation();
+
+        try {
+          // Also disconnect general hub when closing the chat (non-blocking)
+          _chatAppCubit!.conversationHub.disconnect().then((_) {
+            debugPrint('🔌 [MatingChatDetailScreen] GeneralHub disconnected on chat close');
+          }).catchError((e) {
+            debugPrint('❌ [MatingChatDetailScreen] Failed to disconnect GeneralHub: $e');
+          });
+        } catch (e) {}
       } catch (e) {}
     }
     _messageController.dispose();
@@ -660,6 +669,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         await chatAppCubit.sendMessage(
           conversationId: widget.chat.id,
           toPetId: widget.chat.petId,
+          fromPetId: widget.pet?.petId ?? '',
           description: caption ?? '',
           image: type == AttachmentType.image ? mediaUrl : null,
           video: type == AttachmentType.video ? mediaUrl : null,
@@ -876,7 +886,9 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       chatAppCubit.sendMessage(
         conversationId: widget.chat.id,
         toPetId: widget.chat.petId,
+        fromPetId: widget.pet?.petId ?? '',
         description: text,
+
       );
       try {} catch (_) {}
     } catch (e) {}

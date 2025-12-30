@@ -42,7 +42,6 @@ enum NotificationType {
   ReplyOnStory,
   NewPetCommentOnPost,
   SendMessage,
-
   Unknown,
 }
 
@@ -129,10 +128,10 @@ extension NotificationTypeExtension on NotificationType {
         return 'QrCodeNotification';
       case NotificationType.NewBoardingImage:
         return 'NewBoardingImage';
-      case NotificationType.Unknown:
-        return 'Unknown';
       case NotificationType.SendMessage:
         return 'SendMessage';
+      case NotificationType.Unknown:
+        return 'Unknown';
     }
   }
 }

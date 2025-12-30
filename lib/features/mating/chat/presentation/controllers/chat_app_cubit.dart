@@ -318,7 +318,9 @@ class ChatAppCubit extends Cubit<ChatAppState> {
   Future<void> sendMessage({
     required String conversationId,
     required String toPetId,
+    required String fromPetId,
     required String description,
+    String? clincId,
     String? image,
     String? video,
     String? audio,
@@ -329,6 +331,8 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         'ConversationId': conversationId,
         'ToPetId': toPetId,
         'Description': description,
+        'FromPetId': fromPetId,
+        if (clincId != null) 'ClincId': clincId,
         if (image != null) 'Image': image,
         if (video != null) 'Video': video,
         if (audio != null) 'Audio': audio,

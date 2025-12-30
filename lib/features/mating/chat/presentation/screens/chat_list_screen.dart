@@ -48,6 +48,7 @@ class _ChatListViewState extends State<_ChatListView> {
   String? _currentPetId;
 
   StreamSubscription<bool>? _connectivitySubscription;
+  ChatAppCubit? _chatAppCubit;
 
   @override
   void initState() {
@@ -70,6 +71,16 @@ class _ChatListViewState extends State<_ChatListView> {
   @override
   void dispose() {
     _connectivitySubscription?.cancel();
+
+    try {
+      _chatAppCubit?.generalHub.disconnect().then((_) {
+        debugPrint('🔌 [ChatListScreen] GeneralHub disconnected on tab close');
+      }).catchError((e) {
+        debugPrint('❌ [ChatListScreen] Failed to disconnect GeneralHub: $e');
+      });
+    // ignore: empty_catches
+    } catch (e) {}
+
     super.dispose();
   }
 
@@ -94,12 +105,15 @@ class _ChatListViewState extends State<_ChatListView> {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         }
         return BlocProvider(
-          create:
-              (context) => ChatAppCubit(
-                petId: pet.petId!,
-                fullName: pet.petName ?? '',
-                image: pet.imageName ?? '',
-              )..initialize(),
+          create: (context) {
+            _chatAppCubit = ChatAppCubit(
+              petId: pet.petId!,
+              fullName: pet.petName ?? '',
+              image: pet.imageName ?? '',
+            );
+            _chatAppCubit!.initialize();
+            return _chatAppCubit!;
+          },
           child: _buildMainUi(pet),
         );
       },

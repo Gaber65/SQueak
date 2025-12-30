@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/friendship/presentation/pages/pet_friend_layout.dart';
-
 import 'package:squeak/features/layout/notification/NotificationAPI/presentation/controller/notifications_cubit.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/rating_pet_mating.dart';
-import 'package:squeak/features/mating/layoutMating/presentation/screens/mating_layout.dart';
 import 'package:squeak/features/vetcare/presenation/view/follow_request_screen.dart';
-
 import '../../../../../mating/chat/presentation/controllers/chat_messages_cubit.dart';
 import '../../../../../pets/presentation/view/pet_screen.dart';
 import '../../domain/entities/notification_entities.dart';
@@ -87,10 +83,10 @@ void navigateBasedOnNotification(
       );
       break;
     case NotificationType.AcceptMatingRequest:
-      navigateToScreen(context, MatingLayoutScreen(indexID: 2));
+      navigateToScreen(context, LayoutScreen(indexID: 2));
       break;
     case NotificationType.SendMatingRequest:
-      navigateToScreen(context, MatingLayoutScreen(indexID: 2));
+      navigateToScreen(context, LayoutScreen(indexID: 2));
       break;
     case NotificationType.PetMarriage:
     case NotificationType.Discover:
@@ -98,7 +94,7 @@ void navigateBasedOnNotification(
     case NotificationType.MakePetAvaliable:
     case NotificationType.SetBaby:
     case NotificationType.CheckPrepegant:
-      navigateToScreen(context, MatingLayoutScreen(indexID: 3));
+      navigateToScreen(context, LayoutScreen(indexID: 3));
       break;
     case NotificationType.MatingRate:
       navigateToScreen(
