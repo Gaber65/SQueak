@@ -17,7 +17,7 @@ class SocailAuthRemoteDataSourceImpl implements SocailAuthRemoteDataSource {
   @override
   Future<LoginData> signInFacebook(LoginWithFacebookPrames params) async {
     try {
-      final response = await DioFinalHelper.postData(
+    final response = await DioFinalHelper.postData(
         method: loginFacebookEndPoint,
         data: params.toJsonFacebook(),
       );
@@ -33,7 +33,7 @@ class SocailAuthRemoteDataSourceImpl implements SocailAuthRemoteDataSource {
   @override
   Future<LoginData> signInGoogle(LoginWithFacebookPrames params) async {
     try {
-      final response = await DioFinalHelper.postData(
+     final response = await DioFinalHelper.postData(
         method: loginGoogleEndPoint,
         data: params.toJsonGoogle(),
       );

@@ -14,7 +14,7 @@ import '../repositries/socail_login_repo.dart';
 
   @override
   Future<Either<Failure,LoginEntity>> call(LoginWithFacebookPrames parameters) {
-    return loginRepository.signInWithFacebook(parameters);
+   return loginRepository.signInWithFacebook(parameters);
   }
 }
 
@@ -42,9 +42,9 @@ class LoginWithFacebookPrames {
 
   Map<String, dynamic> toJsonGoogle() {
     return {
-      'googleAccessToken': facebookAccessToken,
-      'isIos': isIos,
-      'isAndroid': isAndroid,
+      'googleToken': facebookAccessToken,
+      'iOSDevice': isIos,
+      'androidDevice': isAndroid,
       'fbToken': fbToken,
     };
   }

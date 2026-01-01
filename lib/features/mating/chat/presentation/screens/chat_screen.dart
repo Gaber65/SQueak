@@ -598,16 +598,141 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     MainCubit mainCubit,
     ChatAppCubit chatAppCubit, {
     String? caption,
-  }) {
-    for (final file in files) {
-      _handleAttachment(
-        file,
-        type,
-        cubit,
-        mainCubit,
-        chatAppCubit,
-        caption: caption,
+  }) async {
+    debugPrint('📎 [MultiAttachment] Processing ${files.length} ${type.name}(s)...');
+    
+    try {
+      // Validate all files before uploading
+      debugPrint('🔍 [Validation] Checking file sizes...');
+      for (var i = 0; i < files.length; i++) {
+        final file = files[i];
+        if (!_isFileSizeValid(file, type)) {
+          final errorMessage = _getFileSizeErrorMessage(file, type);
+          debugPrint('❌ [Validation] File ${i + 1} is too large: $errorMessage');
+          if (mounted) {
+            errorToast(context, errorMessage);
+          }
+          return;
+        }
+        debugPrint('   ✓ File ${i + 1}: ${file.path.split('/').last} (OK)');
+      }
+
+      // Show uploading indicators for all files
+      final uploadIds = <String>[];
+      debugPrint('📤 [Upload] Starting upload for ${files.length} file(s)...');
+      
+      if (mounted) {
+        setState(() {
+          for (final file in files) {
+            final uploadId = '${DateTime.now().millisecondsSinceEpoch}_${uploadIds.length}';
+            uploadIds.add(uploadId);
+            _uploadingFiles.add(
+              UploadingMedia(
+                id: uploadId,
+                file: file,
+                type: type,
+                caption: caption ?? '',
+              ),
+            );
+          }
+        });
+      }
+
+      // Upload all files
+      final uploadedUrls = <String>[];
+      for (var i = 0; i < files.length; i++) {
+        final file = files[i];
+        debugPrint('   ⏳ Uploading ${type.name} ${i + 1}/${files.length}...');
+        
+        try {
+          String? mediaUrl;
+          if (type == AttachmentType.image) {
+            await mainCubit.getGlobalImage(file, UploadPlace.messageImage);
+            mediaUrl = mainCubit.modelImage?.data;
+          } else if (type == AttachmentType.video) {
+            await mainCubit.getGlobalVideo(file, UploadPlace.messageVideo);
+            mediaUrl = mainCubit.modelImage?.data;
+          } else if (type == AttachmentType.audio) {
+            await mainCubit.getGlobalSound(file, UploadPlace.messageRecord);
+            mediaUrl = mainCubit.modelImage?.data;
+          } else if (type == AttachmentType.file) {
+            await mainCubit.getGlobalDocument(file, UploadPlace.messageFiles);
+            mediaUrl = mainCubit.modelImage?.data;
+          }
+
+          if (mediaUrl != null && mediaUrl.isNotEmpty) {
+            uploadedUrls.add(mediaUrl);
+            debugPrint('   ✅ File ${i + 1} uploaded: ${mediaUrl.split('/').last}');
+          } else {
+            debugPrint('   ❌ File ${i + 1} upload failed: URL is empty');
+          }
+        } catch (e) {
+          debugPrint('   ❌ File ${i + 1} upload error: $e');
+        }
+      }
+
+      // Remove uploading indicators
+      if (mounted) {
+        setState(() {
+          for (final id in uploadIds) {
+            _uploadingFiles.removeWhere((item) => item.id == id);
+          }
+        });
+      }
+
+      // Check if all uploads succeeded
+      if (uploadedUrls.isEmpty) {
+        debugPrint('❌ [Upload] All uploads failed!');
+        if (mounted) errorToast(context, 'Upload failed for all files');
+        return;
+      }
+
+      debugPrint('✅ [Upload] ${uploadedUrls.length}/${files.length} files uploaded successfully');
+
+      // Prepare attachments
+      debugPrint('📦 [Prepare] Creating ${uploadedUrls.length} attachment(s)...');
+      final attachments = uploadedUrls
+          .map((url) => AttachmentPayload(
+                url: url,
+                type: type,
+              ))
+          .toList();
+
+      // Send message with all attachments
+      debugPrint('🚀 [Send] Sending message with ${attachments.length} ${type.name}(s)...');
+      await chatAppCubit.sendMessage(
+        conversationId: widget.chat.id,
+        toPetId: widget.chat.petId,
+        fromPetId: widget.pet?.petId ?? '',
+        description: caption ?? '',
+        dateTimeInUTC: DateTime.now().toUtc(),
+        attachments: attachments,
       );
+
+      // Update unread count
+      debugPrint('📊 [Count] Updating unread message count...');
+      await chatAppCubit.increaseUnreadMessageCount(
+        conversationId: widget.chat.id,
+        toPetId: widget.chat.petId,
+        fromPetId: widget.pet?.petId ?? '',
+        content: caption ?? '',
+        imageMessage: type == AttachmentType.image,
+        videoMessage: type == AttachmentType.video,
+        fileMessage: type == AttachmentType.file,
+        audioMessage: type == AttachmentType.audio,
+      );
+
+      debugPrint('✅ [Complete] ${uploadedUrls.length} ${type.name}(s) sent successfully!');
+      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      
+    } catch (e) {
+      debugPrint('❌ [Error] Error in _handleAttachments: $e');
+      if (mounted) {
+        setState(() {
+          _uploadingFiles.clear();
+        });
+      }
+      if (mounted) errorToast(context, 'Failed to send: $e');
     }
   }
 
@@ -618,92 +743,18 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     MainCubit mainCubit,
     ChatAppCubit chatAppCubit, {
     String? caption,
-  }) async {
-    if (!_isFileSizeValid(file, type)) {
-      if (mounted) {
-        final errorMessage = _getFileSizeErrorMessage(file, type);
-        errorToast(context, errorMessage);
-      }
-      return;
-    }
-
-    final uploadId = DateTime.now().millisecondsSinceEpoch.toString();
-
-    if (mounted) {
-      setState(() {
-        _uploadingFiles.add(
-          UploadingMedia(
-            id: uploadId,
-            file: file,
-            type: type,
-            caption: caption ?? '',
-          ),
-        );
-      });
-    }
-
-    try {
-      String? mediaUrl;
-      if (type == AttachmentType.image) {
-        await mainCubit.getGlobalImage(file, UploadPlace.messageImage);
-        mediaUrl = mainCubit.modelImage?.data;
-      } else if (type == AttachmentType.video) {
-        await mainCubit.getGlobalVideo(file, UploadPlace.messageVideo);
-        mediaUrl = mainCubit.modelImage?.data;
-      } else if (type == AttachmentType.audio) {
-        await mainCubit.getGlobalSound(file, UploadPlace.messageRecord);
-        mediaUrl = mainCubit.modelImage?.data;
-      } else if (type == AttachmentType.file) {
-        await mainCubit.getGlobalDocument(file, UploadPlace.messageFiles);
-        mediaUrl = mainCubit.modelImage?.data;
-      }
-
-      if (mounted) {
-        setState(() {
-          _uploadingFiles.removeWhere((item) => item.id == uploadId);
-        });
-      }
-
-      if (mediaUrl != null && mediaUrl.isNotEmpty) {
-        debugPrint('📤 Sending media message: $mediaUrl');
-        await chatAppCubit.sendMessage(
-          conversationId: widget.chat.id,
-          toPetId: widget.chat.petId,
-          fromPetId: widget.pet?.petId ?? '',
-          description: caption ?? '',
-          image: type == AttachmentType.image ? mediaUrl : null,
-          video: type == AttachmentType.video ? mediaUrl : null,
-          audio: type == AttachmentType.audio ? mediaUrl : null,
-          file: type == AttachmentType.file ? mediaUrl : null,
-        );
-
-        // Increase unread count with media type flags
-        await chatAppCubit.increaseUnreadMessageCount(
-          conversationId: widget.chat.id,
-          toPetId: widget.chat.petId,
-          fromPetId: widget.pet?.petId ?? '',
-          content: caption ?? '',
-          imageMessage: type == AttachmentType.image,
-          videoMessage: type == AttachmentType.video,
-          fileMessage: type == AttachmentType.file,
-          audioMessage: type == AttachmentType.audio,
-        );
-
-        debugPrint('✅ Media message sent successfully');
-      } else {
-        debugPrint('❌ Upload failed: mediaUrl is null or empty');
-        if (mounted) errorToast(context, 'Upload failed');
-      }
-    } catch (e) {
-      debugPrint('❌ Error in _handleAttachment: $e');
-      if (mounted) {
-        setState(() {
-          _uploadingFiles.removeWhere((item) => item.id == uploadId);
-        });
-      }
-      if (mounted) errorToast(context, 'Failed to send: $e');
-    }
+  }) {
+    // Delegate to _handleAttachments for consistent handling
+    _handleAttachments(
+      [file],
+      type,
+      cubit,
+      mainCubit,
+      chatAppCubit,
+      caption: caption,
+    );
   }
+
 
   Future<void> _startRecording(
     ChatMessagesCubit cubit,
@@ -888,6 +939,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         toPetId: widget.chat.petId,
         fromPetId: widget.pet?.petId ?? '',
         description: text,
+        dateTimeInUTC: DateTime.now().toUtc(),
+        attachments: [],
 
       );
       try {} catch (_) {}

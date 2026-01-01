@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  bool _isNavigating = false; // Prevent multiple navigation calls
+  bool _isNavigating = false; 
 
   @override
   void initState() {

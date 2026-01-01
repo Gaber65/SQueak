@@ -1,11 +1,32 @@
 // ignore_for_file: empty_catches
 
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/signalr/signalr_conversation_services.dart';
 import 'package:squeak/features/mating/chat/data/models/message_model.dart';
 import '../../../../../core/service/signalr/signalr_general_service.dart';
+import '../widgets/attach_files_in_chat/attachment_options_bottom_sheet.dart';
 import 'chat_app_state.dart';
+
+/// Represents a single attachment to be sent with a message
+class AttachmentPayload {
+  final String url;
+  final AttachmentType type;
+  final int? attachmentPlaceholder;
+
+  AttachmentPayload({
+    required this.url,
+    required this.type,
+    this.attachmentPlaceholder,
+  });
+
+  Map<String, dynamic> toJson() => {
+    'url': url,
+    'attachmentType': type.index, 
+    if (attachmentPlaceholder != null) 'attachmentPlaceholder': attachmentPlaceholder,
+  };
+}
 
 class ChatAppCubit extends Cubit<ChatAppState> {
   final String petId;
@@ -320,27 +341,66 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     required String toPetId,
     required String fromPetId,
     required String description,
-    String? clincId,
-    String? image,
-    String? video,
-    String? audio,
-    String? file,
+    String? clinicId,
+    List<AttachmentPayload>? attachments,
+    required DateTime dateTimeInUTC,
   }) async {
     try {
+      // 📨 Start message sending process
+      debugPrint('📨 [SendMessage] Starting message send process...');
+      debugPrint('   • ConversationId: $conversationId');
+      debugPrint('   • ToPetId: $toPetId');
+      debugPrint('   • FromPetId: $fromPetId');
+      debugPrint('   • Message: "${description.isEmpty ? '(empty)' : description}"');
+      debugPrint('   • AttachmentCount: ${attachments?.length ?? 0}');
+      debugPrint('   • DateTimeInUTC: $dateTimeInUTC');
+
+      // ✅ Validate attachments if present
+      if (attachments != null && attachments.isNotEmpty) {
+        debugPrint('🔍 [Validation] Checking attachments...');
+        
+        // Ensure all attachments are the same type (WhatsApp style)
+        final firstType = attachments.first.type;
+        final allSameType = attachments.every((att) => att.type == firstType);
+        
+        if (!allSameType) {
+          debugPrint('❌ [Validation] ERROR: Mixed attachment types detected!');
+          debugPrint('   • Expected: ${firstType.name}');
+          debugPrint('   • Received: ${attachments.map((a) => a.type.name).toSet()}');
+          emit(ChatAppError('Cannot send mixed attachment types. Please send ${firstType.name}s only.'));
+          return;
+        }
+
+        debugPrint('✅ [Validation] All ${attachments.length} attachments are of type: ${firstType.name}');
+        
+        // Log each attachment
+        for (int i = 0; i < attachments.length; i++) {
+          final att = attachments[i];
+          debugPrint('   • Attachment ${i + 1}: ${att.type.name} - ${att.url.split('/').last}');
+        }
+      }
+
+      // 📦 Build command payload
+      debugPrint('📦 [Payload] Building command payload...');
       final command = {
         'ConversationId': conversationId,
         'ToPetId': toPetId,
-        'Description': description,
         'FromPetId': fromPetId,
-        if (clincId != null) 'ClincId': clincId,
-        if (image != null) 'Image': image,
-        if (video != null) 'Video': video,
-        if (audio != null) 'Audio': audio,
-        if (file != null) 'file': file,
+        'Description': description,
+        'DateTimeInUTC': dateTimeInUTC.toIso8601String(),
+        if (clinicId != null) 'ClinicId': clinicId,
+        if (attachments != null && attachments.isNotEmpty)
+          'attachments': attachments.map((att) => att.toJson()).toList(),
       };
 
+      debugPrint('📤 [Hub] Sending via SignalR...');
       await conversationHub.sendMessageToUser(command);
+      
+      debugPrint('✅ [Success] Message sent successfully!');
+      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      
     } catch (e) {
+      debugPrint('❌ [Error] Failed to send message: $e');
       emit(ChatAppError('Failed to send message: $e'));
     }
   }

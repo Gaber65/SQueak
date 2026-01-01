@@ -205,12 +205,16 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Media content
+                        // Media content (legacy single attachment fields)
                         if (widget.message.image != null) _buildImageContent(),
                         if (widget.message.video != null) _buildVideoContent(),
                         if (widget.message.audio != null) _buildAudioContent(),
                         if (widget.message.file != null)
                           _buildDocumentContent(),
+
+                        // New attachments array handling
+                        if (widget.message.attachments.isNotEmpty)
+                          ..._buildAttachmentsContent(),
 
                         // Text message
                         if (widget.message.description.isNotEmpty)
@@ -705,6 +709,308 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
               ),
             ),
             // Download icon removed per design request
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build a list of widgets for attachments from the attachments array
+  List<Widget> _buildAttachmentsContent() {
+    final widgets = <Widget>[];
+
+    for (final attachment in widget.message.attachments) {
+      switch (attachment.attachmentType) {
+        case 0:
+          widgets.add(_buildAttachmentImage(attachment.url));
+          break;
+        case 1:
+          widgets.add(_buildAttachmentVideo(attachment.url));
+          break;
+        case 2:
+          widgets.add(_buildAttachmentAudio(attachment.url));
+          break;
+        case 3:
+          widgets.add(_buildAttachmentDocument(attachment.url));
+          break;
+      }
+    }
+
+    return widgets;
+  }
+
+  /// Build image widget for attachment
+  Widget _buildAttachmentImage(String attachmentUrl) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder:
+                (context) => FullScreenMediaViewer(
+                  mediaUrl: imageUrl + attachmentUrl,
+                  mediaType: MediaType.image,
+                ),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: FastCachedImage(
+            url: imageUrl + attachmentUrl,
+            width: 220,
+            height: 160,
+            fit: BoxFit.cover,
+            errorBuilder: (context, exception, stacktrace) {
+              return Container(
+                width: 220,
+                height: 160,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Center(child: Icon(Icons.image_not_supported)),
+              );
+            },
+            loadingBuilder: (context, imageProvider) {
+              return Container(
+                width: 220,
+                height: 160,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Center(child: CircularProgressIndicator()),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Build video widget for attachment
+  Widget _buildAttachmentVideo(String attachmentUrl) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder:
+                (context) => FullScreenMediaViewer(
+                  mediaUrl: videoUrl + attachmentUrl,
+                  mediaType: MediaType.video,
+                ),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        width: 220,
+        height: 160,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.black87, Colors.black54],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: FastCachedImage(
+                url: videoUrl + attachmentUrl,
+                width: 220,
+                height: 160,
+                fit: BoxFit.cover,
+                errorBuilder: (context, exception, stacktrace) {
+                  return Container(color: Colors.grey[800]);
+                },
+                loadingBuilder: (context, imageProvider) {
+                  return Container(
+                    color: Colors.grey[800],
+                    child: const Center(child: CircularProgressIndicator()),
+                  );
+                },
+              ),
+            ),
+            const Positioned(
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Icon(
+                  Icons.play_circle_filled,
+                  color: Colors.white,
+                  size: 50,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build audio widget for attachment
+  Widget _buildAttachmentAudio(String attachmentUrl) {
+    final theme = Theme.of(context);
+    return AudioPlayerWidget(
+      audioUrl: audioUrl + attachmentUrl,
+      isMe: widget.isMe,
+      primaryColor: theme.colorScheme.primary,
+    );
+  }
+
+  /// Build document widget for attachment
+  Widget _buildAttachmentDocument(String attachmentUrl) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final fileName = attachmentUrl.split('/').last.split('?').first;
+    final extension = fileName.split('.').last.toUpperCase();
+
+    IconData icon;
+    Color iconColor;
+
+    switch (extension) {
+      case 'PDF':
+        icon = Icons.picture_as_pdf;
+        iconColor = Colors.red;
+        break;
+      case 'DOC':
+      case 'DOCX':
+        icon = Icons.description;
+        iconColor = Colors.blue;
+        break;
+      case 'XLS':
+      case 'XLSX':
+        icon = Icons.table_chart;
+        iconColor = Colors.green;
+        break;
+      case 'PPT':
+      case 'PPTX':
+        icon = Icons.slideshow;
+        iconColor = Colors.orange;
+        break;
+      case 'TXT':
+        icon = Icons.text_snippet;
+        iconColor = Colors.grey;
+        break;
+      case 'ZIP':
+      case 'RAR':
+      case '7Z':
+        icon = Icons.folder_zip;
+        iconColor = Colors.amber;
+        break;
+      default:
+        icon = Icons.insert_drive_file;
+        iconColor = Colors.blueGrey;
+    }
+
+    return InkWell(
+      onTap: () {
+        final fullUrl = documentUrl + attachmentUrl;
+        final lowerExtension = extension.toLowerCase();
+
+        if ([
+          'jpg',
+          'jpeg',
+          'png',
+          'gif',
+          'webp',
+          'bmp',
+        ].contains(lowerExtension)) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder:
+                  (context) => FullScreenMediaViewer(
+                    mediaUrl: fullUrl,
+                    mediaType: MediaType.image,
+                  ),
+            ),
+          );
+        } else if (lowerExtension == 'pdf') {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder:
+                  (context) => InAppDocumentViewer(
+                    documentUrl: fullUrl,
+                    fileName: fileName,
+                  ),
+            ),
+          );
+        } else {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder:
+                  (context) => InAppDocumentViewer(
+                    documentUrl: fullUrl,
+                    fileName: fileName,
+                  ),
+            ),
+          );
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: (widget.isMe
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.primary)
+              .withOpacity(0.5),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: theme.colorScheme.primary.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: iconColor, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    fileName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color:
+                          widget.isMe
+                              ? Colors.white
+                              : (isDark ? Colors.white : Colors.black87),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    extension,
+                    style: TextStyle(
+                      color:
+                          widget.isMe
+                              ? Colors.white.withOpacity(0.7)
+                              : (isDark ? Colors.grey[400] : Colors.grey[600]),
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

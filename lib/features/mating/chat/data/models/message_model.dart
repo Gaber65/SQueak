@@ -14,6 +14,7 @@ class MessageModel extends MessageEntity {
     required super.toUserId,
     required super.createdAt,
     required super.toMe,
+    super.attachments = const [],
   });
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
@@ -65,6 +66,14 @@ class MessageModel extends MessageEntity {
       }
     }
 
+    // Parse attachments from the attachments array
+    List<Attachment> attachments = [];
+    if (json['attachments'] != null && json['attachments'] is List) {
+      attachments = (json['attachments'] as List)
+          .map((item) => Attachment.fromJson(item as Map<String, dynamic>))
+          .toList();
+    }
+
     return MessageModel(
       id: json['id'] ?? '',
       description: json['description'] ?? '',
@@ -77,6 +86,7 @@ class MessageModel extends MessageEntity {
       toUserId: json['toUserId'] ?? '',
       createdAt: parsedCreatedAt,
       toMe: json['toMe'] ?? false,
+      attachments: attachments,
     );
   }
 
@@ -113,6 +123,7 @@ class MessageModel extends MessageEntity {
     String? toUserId,
     DateTime? createdAt,
     bool? toMe,
+    List<Attachment>? attachments,
   }) {
     return MessageModel(
       id: id ?? this.id,
@@ -126,6 +137,7 @@ class MessageModel extends MessageEntity {
       toUserId: toUserId ?? this.toUserId,
       createdAt: createdAt ?? this.createdAt,
       toMe: toMe ?? this.toMe,
+      attachments: attachments ?? this.attachments,
     );
   }
 }

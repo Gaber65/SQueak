@@ -203,10 +203,9 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> loginWithGoogle() async {
     final googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) return;
+    if (googleUser == null) return ;
 
     final auth = await googleUser.authentication;
-
     final resultRepo = await loginWithGoogleUseCase(
       LoginWithFacebookPrames(
         facebookAccessToken: auth.accessToken!,
