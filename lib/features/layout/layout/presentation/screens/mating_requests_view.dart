@@ -133,7 +133,7 @@ class _MatingRequestsTabState extends State<MatingRequestsTab> {
                 theme: theme,
                 isDark: isDark,
                 s: S.of(context),
-                text: 'Loading mating requests...',
+                text: S.of(context).loadingSuggestions,
               );
             }
 
