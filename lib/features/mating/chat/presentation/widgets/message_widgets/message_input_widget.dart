@@ -37,7 +37,7 @@ class MessageInputWidget extends StatelessWidget {
   final VoidCallback onSendMessage;
   final VoidCallback onStartRecording;
   final VoidCallback onStopRecording;
-  final Function(List<File> files, AttachmentType type, {String? caption})
+  final Function(List<File> files, AttachmentType type, {String? caption, List<String?>? captions})
       onAttachmentSelected;
 
   static const int maxCharacters = 4000;
@@ -239,11 +239,12 @@ class MessageInputWidget extends StatelessWidget {
 
                           AttachmentOptionsBottomSheet.show(
                             context,
-                            onAttachmentSelected: (files, type, {caption}) {
+                            onAttachmentSelected: (files, type, {caption, captions}) {
                               onAttachmentSelected(
                                 files,
                                 type,
                                 caption: caption,
+                                captions: captions,
                               );
                             },
                           );

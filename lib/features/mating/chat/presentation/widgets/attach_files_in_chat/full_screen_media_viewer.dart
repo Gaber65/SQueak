@@ -11,11 +11,13 @@ enum MediaType { image, video, document }
 class FullScreenMediaViewer extends StatefulWidget {
   final String mediaUrl;
   final MediaType mediaType;
+  final String? caption;
 
   const FullScreenMediaViewer({
     super.key,
     required this.mediaUrl,
     required this.mediaType,
+    this.caption,
   });
 
   @override
@@ -115,6 +117,39 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
                     ? _buildVideoViewer()
                     : _buildDocumentViewer(),
           ),
+
+          // Caption at bottom (for image)
+          if (widget.mediaType == MediaType.image && widget.caption != null && widget.caption!.isNotEmpty)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.9),
+                      Colors.black.withOpacity(0.7),
+                      Colors.black.withOpacity(0.3),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+                padding: const EdgeInsets.fromLTRB(16, 32, 16, 24),
+                child: Text(
+                  widget.caption!,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    height: 1.4,
+                  ),
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
 
           // Close button and menu for video
           SafeArea(
@@ -455,7 +490,6 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
       }
     }
   }
-
   Widget _buildDocumentViewer() {
     final fileName = widget.mediaUrl.split('/').last.split('?').first;
     final extension = fileName.split('.').last.toUpperCase();

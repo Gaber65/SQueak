@@ -6,7 +6,7 @@ import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in
 import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/multi_media_preview_screen.dart';
 
 class CameraScreen extends StatefulWidget {
-  final Function(List<File> files, AttachmentType type, {String? caption})
+  final Function(List<File> files, AttachmentType type, {String? caption, List<String?>? captions})
   onAttachmentSelected;
 
   const CameraScreen({super.key, required this.onAttachmentSelected});
@@ -55,14 +55,14 @@ class _CameraScreenState extends State<CameraScreen> {
                 (context) => MultiMediaPreviewScreen(
                   mediaFiles: [File(pickedFile.path)],
                   mediaType: MediaType.image,
-                  onSend: (files, caption) {
+                  onSend: (files, captions) {
                     debugPrint(
-                      '✅ CameraScreen: Photo sent with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
+                      '✅ CameraScreen: Photo sent with captions',
                     );
                     widget.onAttachmentSelected(
                       files,
                       AttachmentType.image,
-                      caption: caption,
+                      captions: captions,
                     );
                     Navigator.pop(context, true); // Return true when sent
                   },
@@ -115,14 +115,14 @@ class _CameraScreenState extends State<CameraScreen> {
                 (context) => MultiMediaPreviewScreen(
                   mediaFiles: [File(pickedFile.path)],
                   mediaType: MediaType.image,
-                  onSend: (files, caption) {
+                  onSend: (files, captions) {
                     debugPrint(
-                      '✅ CameraScreen: Photo sent with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
+                      '✅ CameraScreen: Photo sent with captions',
                     );
                     widget.onAttachmentSelected(
                       files,
                       AttachmentType.image,
-                      caption: caption,
+                      captions: captions,
                     );
                     Navigator.pop(context, true); // Return true when sent
                   },

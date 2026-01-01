@@ -472,7 +472,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                                   () => _startRecording(cubit, chatAppCubit),
                               onStopRecording:
                                   () => _stopRecording(cubit, chatAppCubit),
-                              onAttachmentSelected: (files, type, {caption}) {
+                              onAttachmentSelected: (files, type, {caption, captions}) {
                                 final mainCubit = context.read<MainCubit>();
                                 _handleAttachments(
                                   files,
@@ -481,6 +481,7 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                                   mainCubit,
                                   chatAppCubit,
                                   caption: caption,
+                                  captions: captions,
                                 );
                               },
                             ),
@@ -598,10 +599,14 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
     MainCubit mainCubit,
     ChatAppCubit chatAppCubit, {
     String? caption,
+    List<String?>? captions,
   }) async {
     debugPrint('📎 [MultiAttachment] Processing ${files.length} ${type.name}(s)...');
     
     try {
+      // Use captions list if provided, otherwise fall back to single caption
+      final captionsList = captions ?? [caption];
+      
       // Validate all files before uploading
       debugPrint('🔍 [Validation] Checking file sizes...');
       for (var i = 0; i < files.length; i++) {
@@ -623,15 +628,15 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       
       if (mounted) {
         setState(() {
-          for (final file in files) {
+          for (var i = 0; i < files.length; i++) {
             final uploadId = '${DateTime.now().millisecondsSinceEpoch}_${uploadIds.length}';
             uploadIds.add(uploadId);
             _uploadingFiles.add(
               UploadingMedia(
                 id: uploadId,
-                file: file,
+                file: files[i],
                 type: type,
-                caption: caption ?? '',
+                caption: (i < captionsList.length ? captionsList[i] : null) ?? '',
               ),
             );
           }
@@ -640,6 +645,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
       // Upload all files
       final uploadedUrls = <String>[];
+      final uploadedCaptions = <String?>[];
+      
       for (var i = 0; i < files.length; i++) {
         final file = files[i];
         debugPrint('   ⏳ Uploading ${type.name} ${i + 1}/${files.length}...');
@@ -662,6 +669,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
           if (mediaUrl != null && mediaUrl.isNotEmpty) {
             uploadedUrls.add(mediaUrl);
+            // Store the caption for this file
+            uploadedCaptions.add(i < captionsList.length ? captionsList[i] : null);
             debugPrint('   ✅ File ${i + 1} uploaded: ${mediaUrl.split('/').last}');
           } else {
             debugPrint('   ❌ File ${i + 1} upload failed: URL is empty');
@@ -689,14 +698,18 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
 
       debugPrint('✅ [Upload] ${uploadedUrls.length}/${files.length} files uploaded successfully');
 
-      // Prepare attachments
+      // Prepare attachments with their respective captions
       debugPrint('📦 [Prepare] Creating ${uploadedUrls.length} attachment(s)...');
-      final attachments = uploadedUrls
-          .map((url) => AttachmentPayload(
-                url: url,
-                type: type,
-              ))
-          .toList();
+      final attachments = <AttachmentPayload>[];
+      for (var i = 0; i < uploadedUrls.length; i++) {
+        attachments.add(
+          AttachmentPayload(
+            url: uploadedUrls[i],
+            type: type,
+            description: uploadedCaptions[i], // Add caption to attachment
+          ),
+        );
+      }
 
       // Send message with all attachments
       debugPrint('🚀 [Send] Sending message with ${attachments.length} ${type.name}(s)...');
@@ -784,7 +797,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             });
           }
 
-          // Auto-stop at max duration
           if (_recordDuration >= _maxRecordDuration &&
               _recordingCubit != null &&
               _recordingChatAppCubit != null) {

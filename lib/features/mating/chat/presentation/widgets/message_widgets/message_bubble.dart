@@ -722,10 +722,10 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
     for (final attachment in widget.message.attachments) {
       switch (attachment.attachmentType) {
         case 0:
-          widgets.add(_buildAttachmentImage(attachment.url));
+          widgets.add(_buildAttachmentImage(attachment.url, attachment.description));
           break;
         case 1:
-          widgets.add(_buildAttachmentVideo(attachment.url));
+          widgets.add(_buildAttachmentVideo(attachment.url, attachment.description));
           break;
         case 2:
           widgets.add(_buildAttachmentDocument(attachment.url));
@@ -740,124 +740,131 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
   }
 
   /// Build image widget for attachment
-  Widget _buildAttachmentImage(String attachmentUrl) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder:
-                (context) => FullScreenMediaViewer(
-                  mediaUrl: imageUrl + attachmentUrl,
-                  mediaType: MediaType.image,
+  Widget _buildAttachmentImage(String attachmentUrl, String? caption) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder:
+                      (context) => FullScreenMediaViewer(
+                        mediaUrl: imageUrl + attachmentUrl,
+                        mediaType: MediaType.image,
+                        caption: caption,
+                      ),
                 ),
-          ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: FastCachedImage(
-            url: imageUrl + attachmentUrl,
-            width: 220,
-            height: 160,
-            fit: BoxFit.cover,
-            errorBuilder: (context, exception, stacktrace) {
-              return Container(
-                width: 220,
-                height: 160,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Center(child: Icon(Icons.image_not_supported)),
               );
             },
-            loadingBuilder: (context, imageProvider) {
-              return Container(
-                width: 220,
-                height: 160,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Center(child: CircularProgressIndicator()),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Build video widget for attachment
-  Widget _buildAttachmentVideo(String attachmentUrl) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder:
-                (context) => FullScreenMediaViewer(
-                  mediaUrl: videoUrl + attachmentUrl,
-                  mediaType: MediaType.video,
-                ),
-          ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        width: 220,
-        height: 160,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.black87, Colors.black54],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            ClipRRect(
+            child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: FastCachedImage(
-                url: videoUrl + attachmentUrl,
+                url: imageUrl + attachmentUrl,
                 width: 220,
                 height: 160,
                 fit: BoxFit.cover,
                 errorBuilder: (context, exception, stacktrace) {
-                  return Container(color: Colors.grey[800]);
+                  return Container(
+                    width: 220,
+                    height: 160,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Center(child: Icon(Icons.image_not_supported)),
+                  );
                 },
                 loadingBuilder: (context, imageProvider) {
                   return Container(
-                    color: Colors.grey[800],
+                    width: 220,
+                    height: 160,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: const Center(child: CircularProgressIndicator()),
                   );
                 },
               ),
             ),
-            const Positioned(
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Icon(
-                  Icons.play_circle_filled,
-                  color: Colors.white,
-                  size: 50,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Build video widget for attachment
+  Widget _buildAttachmentVideo(String attachmentUrl, String? caption) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder:
+                      (context) => FullScreenMediaViewer(
+                        mediaUrl: videoUrl + attachmentUrl,
+                        mediaType: MediaType.video,
+                        caption: caption,
+                      ),
                 ),
+              );
+            },
+            child: Container(
+              width: 220,
+              height: 160,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Colors.black87, Colors.black54],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: FastCachedImage(
+                      url: videoUrl + attachmentUrl,
+                      width: 220,
+                      height: 160,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, exception, stacktrace) {
+                        return Container(color: Colors.grey[800]);
+                      },
+                      loadingBuilder: (context, imageProvider) {
+                        return Container(
+                          color: Colors.grey[800],
+                          child: const Center(child: CircularProgressIndicator()),
+                        );
+                      },
+                    ),
+                  ),
+                  const Icon(
+                    Icons.play_circle_filled,
+                    color: Colors.white,
+                    size: 50,
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

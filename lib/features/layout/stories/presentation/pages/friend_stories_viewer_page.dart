@@ -174,13 +174,9 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
       behavior: HitTestBehavior.translucent,
       onTapDown: (details) {
         if (index != controller.currentIndex) return;
-        
-        // 1. Check text direction (Arabic vs English)
         final isRTL = Directionality.of(context) == TextDirection.rtl;
-        
         final bottomUIHeight = 120.0;
         final screenHeight = MediaQuery.of(context).size.height;
-      
         if (details.globalPosition.dy > screenHeight - bottomUIHeight) return;
         
         final width = MediaQuery.of(context).size.width;

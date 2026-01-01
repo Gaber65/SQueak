@@ -10,7 +10,7 @@ enum MediaType { image, video, audio }
 class MultiMediaPreviewScreen extends StatefulWidget {
   final List<File> mediaFiles;
   final MediaType mediaType;
-  final Function(List<File> files, String caption) onSend;
+  final Function(List<File> files, List<String?> captions) onSend;
 
   static const double maxMediaSizeMB = 25.0;
   static const int maxMediaCount = 10;
@@ -29,6 +29,7 @@ class MultiMediaPreviewScreen extends StatefulWidget {
 
 class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
   late List<File> _mediaFiles;
+  late List<String?> _captions; // Store captions for each file
   int _currentIndex = 0;
   final TextEditingController _captionController = TextEditingController();
   VideoPlayerController? _videoController;
@@ -102,6 +103,7 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
   void initState() {
     super.initState();
     _mediaFiles = List.from(widget.mediaFiles);
+    _captions = List<String?>.filled(_mediaFiles.length, null); // Initialize captions list
     _initializeCurrentMedia();
     _checkTotalFileSize();
   }
@@ -154,6 +156,14 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
     _videoController?.dispose();
     _audioPlayer?.dispose();
     super.dispose();
+  }
+
+  void _updateCurrentCaption() {
+    _captions[_currentIndex] = _captionController.text.trim();
+  }
+
+  void _loadCaptionForCurrentMedia() {
+    _captionController.text = _captions[_currentIndex] ?? '';
   }
 
   void _toggleVideoPlayPause() {
@@ -240,14 +250,16 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
       _isSending = true;
     });
 
-    final caption = _captionController.text.trim();
+    // Update current media's caption before sending
+    _captions[_currentIndex] = _captionController.text.trim();
+    
     String mediaTypeName = _isVideo ? 'video' : (_isAudio ? 'audio' : 'image');
     debugPrint(
-      '📸 MultiMediaPreview: Sending ${_mediaFiles.length} $mediaTypeName(s) with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
+      '📸 MultiMediaPreview: Sending ${_mediaFiles.length} $mediaTypeName(s) with captions',
     );
 
-    // Send the media
-    widget.onSend(_mediaFiles, caption);
+    // Send the media with captions
+    widget.onSend(_mediaFiles, _captions);
     await Future.delayed(const Duration(milliseconds: 300));
     if (mounted) {
       Navigator.pop(context);
@@ -489,20 +501,23 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
           // Thumbnail strip for multi-file preview
           if (_mediaFiles.length > 1)
             Container(
-              height: 80,
+              height: 100,
               color: const Color(0xFF1E1E1E),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: _mediaFiles.length,
                 itemBuilder: (context, index) {
+                  final hasCaption = _captions[index] != null && _captions[index]!.isNotEmpty;
                   return GestureDetector(
                     onTap: () {
+                      _updateCurrentCaption();
                       setState(() {
                         _currentIndex = index;
                         _isAudioPlaying = false;
                         _audioPosition = Duration.zero;
+                        _initializeCurrentMedia();
+                        _loadCaptionForCurrentMedia();
                       });
-                      _initializeCurrentMedia();
                     },
                     child: Container(
                       margin: const EdgeInsets.all(8),
@@ -517,29 +532,51 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
                         ),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child:
-                            _isAudio
-                                ? Container(
-                                  width: 64,
-                                  color: const Color(0xFF2E2E2E),
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.audiotrack,
-                                      color: Color(0xFFFF9800),
-                                      size: 32,
+                      child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child:
+                                _isAudio
+                                    ? Container(
+                                      width: 64,
+                                      color: const Color(0xFF2E2E2E),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.audiotrack,
+                                          color: Color(0xFFFF9800),
+                                          size: 32,
+                                        ),
+                                      ),
+                                    )
+                                    : _isVideo
+                                    ? VideoThumbnail(_mediaFiles[index])
+                                    : Image.file(
+                                      _mediaFiles[index],
+                                      fit: BoxFit.cover,
+                                      width: 64,
+                                      height: 64,
                                     ),
-                                  ),
-                                )
-                                : _isVideo
-                                ? VideoThumbnail(_mediaFiles[index])
-                                : Image.file(
-                                  _mediaFiles[index],
-                                  fit: BoxFit.cover,
-                                  width: 64,
-                                  height: 64,
+                          ),
+                          // Caption indicator badge
+                          if (hasCaption)
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF6200EA),
+                                  shape: BoxShape.circle,
                                 ),
+                                child: const Icon(
+                                  Icons.text_fields,
+                                  color: Colors.white,
+                                  size: 12,
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                   );
@@ -559,65 +596,96 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
               ],
             ),
             child: SafeArea(
-              child: Row(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _captionController,
-                      enabled: !_isSending,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        hintText: S.of(context).addCaption,
-                        hintStyle: TextStyle(color: Colors.grey[400]),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[800],
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 10,
+                  // Caption hint for multiple files
+                  if (_mediaFiles.length > 1)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            size: 14,
+                            color: Colors.grey[400],
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              'Item ${_currentIndex + 1}/${_mediaFiles.length} - Add caption (optional)',
+                              style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  // Caption input field
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _captionController,
+                          enabled: !_isSending,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: S.of(context).addCaption,
+                            hintStyle: TextStyle(color: Colors.grey[400]),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[800],
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
+                          ),
+                          maxLines: 3,
+                          minLines: 1,
+                          textInputAction: TextInputAction.newline,
                         ),
                       ),
-                      maxLines: null,
-                      textInputAction: TextInputAction.newline,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF6200EA), Color(0xFF9C27B0)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF6200EA).withOpacity(0.4),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
+                      const SizedBox(width: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF6200EA), Color(0xFF9C27B0)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF6200EA).withOpacity(0.4),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon:
-                          _isSending
-                              ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation(
-                                    Colors.white,
-                                  ),
-                                  strokeWidth: 2,
-                                ),
-                              )
-                              : const Icon(Icons.send, color: Colors.white),
-                      onPressed: _isSending ? null : _handleSend,
-                      tooltip: S.of(context).send,
-                    ),
+                        child: IconButton(
+                          icon:
+                              _isSending
+                                  ? const SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation(
+                                        Colors.white,
+                                      ),
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                  : const Icon(Icons.send, color: Colors.white),
+                          onPressed: _isSending ? null : _handleSend,
+                          tooltip: S.of(context).send,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

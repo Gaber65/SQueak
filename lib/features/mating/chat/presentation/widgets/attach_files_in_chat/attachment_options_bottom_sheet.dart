@@ -11,7 +11,7 @@ import 'package:squeak/generated/l10n.dart';
 enum AttachmentType { image, video, file, audio }
 
 class AttachmentOptionsBottomSheet extends StatelessWidget {
-  final Function(List<File> files, AttachmentType type, {String? caption})
+  final Function(List<File> files, AttachmentType type, {String? caption, List<String?>? captions})
   onAttachmentSelected;
 
   static const double maxMediaSizeMB = 25.0;
@@ -24,7 +24,7 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
 
   static Future<void> show(
     BuildContext context, {
-    required Function(List<File> files, AttachmentType type, {String? caption})
+    required Function(List<File> files, AttachmentType type, {String? caption, List<String?>? captions})
     onAttachmentSelected,
   }) {
     return showModalBottomSheet(
@@ -129,14 +129,14 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
               (context) => multi.MultiMediaPreviewScreen(
                 mediaFiles: files,
                 mediaType: multi.MediaType.image,
-                onSend: (files, caption) {
+                onSend: (files, captions) {
                   debugPrint(
-                    '✅ AttachmentSheet: ${files.length} photo(s) confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
+                    '✅ AttachmentSheet: ${files.length} photo(s) confirmed, passing to chat with captions',
                   );
                   onAttachmentSelected(
                     files,
                     AttachmentType.image,
-                    caption: caption,
+                    captions: captions,
                   );
                 },
               ),
@@ -188,14 +188,14 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
               (context) => multi.MultiMediaPreviewScreen(
                 mediaFiles: files,
                 mediaType: multi.MediaType.video,
-                onSend: (files, caption) {
+                onSend: (files, captions) {
                   debugPrint(
-                    '✅ AttachmentSheet: ${files.length} video(s) confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
+                    '✅ AttachmentSheet: ${files.length} video(s) confirmed, passing to chat with captions',
                   );
                   onAttachmentSelected(
                     files,
                     AttachmentType.video,
-                    caption: caption,
+                    captions: captions,
                   );
                 },
               ),
@@ -249,14 +249,14 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
                 (context) => multi.MultiMediaPreviewScreen(
                   mediaFiles: files,
                   mediaType: multi.MediaType.audio,
-                  onSend: (files, caption) {
+                  onSend: (files, captions) {
                     debugPrint(
-                      '✅ AttachmentSheet: ${files.length} audio file(s) confirmed, passing to chat with caption: "${caption.isEmpty ? '(no caption)' : caption}"',
+                      '✅ AttachmentSheet: ${files.length} audio file(s) confirmed, passing to chat with captions',
                     );
                     onAttachmentSelected(
                       files,
                       AttachmentType.audio,
-                      caption: caption,
+                      captions: captions,
                     );
                   },
                 ),
