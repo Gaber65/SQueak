@@ -99,27 +99,36 @@ class UploadingBubble extends StatelessWidget {
   }
 
   Widget _buildVideoUpload() {
-    return Container(
-      width: 220,
-      height: 160,
-      decoration: BoxDecoration(
-        color: Colors.black54,
-        borderRadius: BorderRadius.circular(12),
-      ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
       child: Stack(
         children: [
-          const Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.videocam, color: Colors.white, size: 40),
-              SizedBox(height: 8),
-              CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
-              SizedBox(height: 8),
-              Text(
-                'Uploading video...',
-                style: TextStyle(color: Colors.white, fontSize: 12),
+          Container(
+            width: 220,
+            height: 160,
+            color: Colors.black54,
+            child: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.videocam, color: Colors.white, size: 40),
+                SizedBox(height: 8),
+                Text(
+                  'Video',
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          Positioned.fill(
+            child: Container(
+              color: Colors.black38,
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 3,
+                ),
               ),
-            ],
+            ),
           ),
           if (onCancel != null)
             Positioned(top: 8, right: 8, child: _buildCancelButton()),

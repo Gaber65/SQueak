@@ -43,10 +43,6 @@ class MessageModel extends MessageEntity {
       }
     }
 
-    // تحديد حالة الرسالة من الـ API مباشرة
-    // Determine message status from API directly
-    // Backend values: 1=sent, 2=delivered, 3=seen
-    // Enum indices:   0=sent, 1=delivered, 2=seen
     MessageStatus parsedStatus = MessageStatus.sent;
     if (json['messageStatus'] != null) {
       final statusValue = json['messageStatus'] as int;

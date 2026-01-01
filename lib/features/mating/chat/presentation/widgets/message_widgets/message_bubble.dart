@@ -728,10 +728,10 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
           widgets.add(_buildAttachmentVideo(attachment.url));
           break;
         case 2:
-          widgets.add(_buildAttachmentAudio(attachment.url));
+          widgets.add(_buildAttachmentDocument(attachment.url));
           break;
         case 3:
-          widgets.add(_buildAttachmentDocument(attachment.url));
+          widgets.add(_buildAttachmentAudio(attachment.url));
           break;
       }
     }
