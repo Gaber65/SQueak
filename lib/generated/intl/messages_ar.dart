@@ -410,6 +410,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "female": MessageLookupByLibrary.simpleMessage("أنثى"),
         "fetchingPetChats": MessageLookupByLibrary.simpleMessage(
             "جاري جلب محادثات حيوانك الأليف..."),
+        "fileIsTooLarge":
+            MessageLookupByLibrary.simpleMessage("الملف كبير جدًا للتحميل"),
         "files": MessageLookupByLibrary.simpleMessage("الملفات"),
         "filesAndPrescription":
             MessageLookupByLibrary.simpleMessage("الملفات والوصفات"),
@@ -556,6 +558,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "mating_features":
             MessageLookupByLibrary.simpleMessage("ميزات التزاوج"),
         "maxCharacters": m4,
+        "maxFileSize": MessageLookupByLibrary.simpleMessage(
+            "الحد الأقصى لحجم الملف هو 25 ميجابايت"),
         "maybe_later": MessageLookupByLibrary.simpleMessage("ربما لاحقًا"),
         "mergePets": MessageLookupByLibrary.simpleMessage("دمج"),
         "message_hint": MessageLookupByLibrary.simpleMessage("أدخل رسالتك"),

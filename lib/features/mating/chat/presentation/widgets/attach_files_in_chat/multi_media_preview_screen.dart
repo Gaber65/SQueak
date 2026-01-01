@@ -13,6 +13,7 @@ class MultiMediaPreviewScreen extends StatefulWidget {
   final Function(List<File> files, String caption) onSend;
 
   static const double maxMediaSizeMB = 25.0;
+  static const int maxMediaCount = 10;
 
   const MultiMediaPreviewScreen({
     super.key,
@@ -22,7 +23,8 @@ class MultiMediaPreviewScreen extends StatefulWidget {
   });
 
   @override
-  State<MultiMediaPreviewScreen> createState() => _MultiMediaPreviewScreenState();
+  State<MultiMediaPreviewScreen> createState() =>
+      _MultiMediaPreviewScreenState();
 }
 
 class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
@@ -65,37 +67,34 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1E1E),
-        title: const Text(
-          'File Size Warning',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        content: Text(
-          'The total size of selected media is ${totalSizeMB.toStringAsFixed(2)} MB. '
-          'Please keep it under ${MultiMediaPreviewScreen.maxMediaSizeMB.toInt()} MB.',
-          style: const TextStyle(color: Colors.white70),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text(
-              'Go Back',
-              style: TextStyle(color: Color(0xFF6200EA)),
+      builder:
+          (context) => AlertDialog(
+            backgroundColor: const Color(0xFF1E1E1E),
+            title: const Text(
+              'File Size Warning',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Continue',
-              style: TextStyle(color: Color(0xFF6200EA)),
+            content: Text(
+              'The total size of selected media is ${totalSizeMB.toStringAsFixed(2)} MB. '
+              'Please keep it under ${MultiMediaPreviewScreen.maxMediaSizeMB.toInt()} MB.',
+              style: const TextStyle(color: Colors.white70),
             ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'Go Back',
+                  style: TextStyle(color: Color(0xFF6200EA)),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -290,178 +289,201 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
         children: [
           Expanded(
             child: Center(
-              child: _isVideo
-                  ? _videoController != null && _videoController!.value.isInitialized
-                      ? GestureDetector(
-                          onTap: _toggleVideoPlayPause,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              AspectRatio(
-                                aspectRatio: _videoController!.value.aspectRatio,
-                                child: VideoPlayer(_videoController!),
-                              ),
-                              if (!_videoController!.value.isPlaying)
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.3),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.play_arrow,
-                                    color: Colors.white,
-                                    size: 50,
-                                  ),
+              child:
+                  _isVideo
+                      ? _videoController != null &&
+                              _videoController!.value.isInitialized
+                          ? GestureDetector(
+                            onTap: _toggleVideoPlayPause,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                AspectRatio(
+                                  aspectRatio:
+                                      _videoController!.value.aspectRatio,
+                                  child: VideoPlayer(_videoController!),
                                 ),
-                            ],
-                          ),
-                        )
-                      : const CircularProgressIndicator()
-                  : _isAudio
+                                if (!_videoController!.value.isPlaying)
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.3),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.play_arrow,
+                                      color: Colors.white,
+                                      size: 50,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          )
+                          : const CircularProgressIndicator()
+                      : _isAudio
                       ? Container(
-                          margin: const EdgeInsets.all(40),
-                          padding: const EdgeInsets.all(32),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1E1E1E),
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
+                        margin: const EdgeInsets.all(40),
+                        padding: const EdgeInsets.all(32),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1E1E1E),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFFFF9800),
+                                    Color(0xFFFF6F00),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(
+                                      0xFFFF9800,
+                                    ).withOpacity(0.4),
+                                    blurRadius: 15,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(24),
+                              child: const Icon(
+                                Icons.audiotrack,
+                                color: Colors.white,
+                                size: 48,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            Text(
+                              S.of(context).audioFile,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              _getFileName(),
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 32),
+                            // Audio progress slider
+                            if (_audioDuration.inSeconds > 0)
+                              Column(
+                                children: [
+                                  SliderTheme(
+                                    data: SliderThemeData(
+                                      trackHeight: 4.0,
+                                      thumbShape: const RoundSliderThumbShape(
+                                        enabledThumbRadius: 6.0,
+                                      ),
+                                    ),
+                                    child: Slider(
+                                      value:
+                                          _audioPosition.inSeconds.toDouble(),
+                                      max: _audioDuration.inSeconds.toDouble(),
+                                      onChanged: (value) async {
+                                        await _audioPlayer?.seek(
+                                          Duration(seconds: value.toInt()),
+                                        );
+                                      },
+                                      activeColor: const Color(0xFFFF9800),
+                                      inactiveColor: Colors.grey[700],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          _formatDuration(_audioPosition),
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        Text(
+                                          _formatDuration(_audioDuration),
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            const SizedBox(height: 16),
+                            // Play/Pause button
+                            GestureDetector(
+                              onTap: _toggleAudioPlayPause,
+                              child: Container(
+                                width: 60,
+                                height: 60,
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFFFF9800), Color(0xFFFF6F00)],
+                                    colors: [
+                                      Color(0xFFFF9800),
+                                      Color(0xFFFF6F00),
+                                    ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   ),
-                                  borderRadius: BorderRadius.circular(20),
+                                  shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFFFF9800).withOpacity(0.4),
-                                      blurRadius: 15,
-                                      offset: const Offset(0, 8),
+                                      color: const Color(
+                                        0xFFFF9800,
+                                      ).withOpacity(0.4),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 6),
                                     ),
                                   ],
                                 ),
-                                child: const Icon(
-                                  Icons.audiotrack,
+                                child: Icon(
+                                  _isAudioPlaying
+                                      ? Icons.pause
+                                      : Icons.play_arrow,
                                   color: Colors.white,
-                                  size: 48,
+                                  size: 30,
                                 ),
                               ),
-                              const SizedBox(height: 24),
-                              Text(
-                                S.of(context).audioFile,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                _getFileName(),
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                ),
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 32),
-                              // Audio progress slider
-                              if (_audioDuration.inSeconds > 0)
-                                Column(
-                                  children: [
-                                    SliderTheme(
-                                      data: SliderThemeData(
-                                        trackHeight: 4.0,
-                                        thumbShape: const RoundSliderThumbShape(
-                                          enabledThumbRadius: 6.0,
-                                        ),
-                                      ),
-                                      child: Slider(
-                                        value: _audioPosition.inSeconds.toDouble(),
-                                        max: _audioDuration.inSeconds.toDouble(),
-                                        onChanged: (value) async {
-                                          await _audioPlayer
-                                              ?.seek(Duration(seconds: value.toInt()));
-                                        },
-                                        activeColor: const Color(0xFFFF9800),
-                                        inactiveColor: Colors.grey[700],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            _formatDuration(_audioPosition),
-                                            style: const TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          Text(
-                                            _formatDuration(_audioDuration),
-                                            style: const TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              const SizedBox(height: 16),
-                              // Play/Pause button
-                              GestureDetector(
-                                onTap: _toggleAudioPlayPause,
-                                child: Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [Color(0xFFFF9800), Color(0xFFFF6F00)],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color(0xFFFF9800).withOpacity(0.4),
-                                        blurRadius: 12,
-                                        offset: const Offset(0, 6),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Icon(
-                                    _isAudioPlaying ? Icons.pause : Icons.play_arrow,
-                                    color: Colors.white,
-                                    size: 30,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : InteractiveViewer(
-                          minScale: 0.5,
-                          maxScale: 4.0,
-                          child: Image.file(_mediaFiles[_currentIndex], fit: BoxFit.contain),
+                            ),
+                          ],
                         ),
+                      )
+                      : InteractiveViewer(
+                        minScale: 0.5,
+                        maxScale: 4.0,
+                        child: Image.file(
+                          _mediaFiles[_currentIndex],
+                          fit: BoxFit.contain,
+                        ),
+                      ),
             ),
           ),
           // Thumbnail strip for multi-file preview
@@ -487,35 +509,37 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: _currentIndex == index
-                              ? const Color(0xFF6200EA)
-                              : Colors.transparent,
+                          color:
+                              _currentIndex == index
+                                  ? const Color(0xFF6200EA)
+                                  : Colors.transparent,
                           width: 3,
                         ),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(6),
-                        child: _isAudio
-                            ? Container(
-                                width: 64,
-                                color: const Color(0xFF2E2E2E),
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.audiotrack,
-                                    color: Color(0xFFFF9800),
-                                    size: 32,
+                        child:
+                            _isAudio
+                                ? Container(
+                                  width: 64,
+                                  color: const Color(0xFF2E2E2E),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.audiotrack,
+                                      color: Color(0xFFFF9800),
+                                      size: 32,
+                                    ),
                                   ),
-                                ),
-                              )
-                            : _isVideo
+                                )
+                                : _isVideo
                                 ? VideoThumbnail(_mediaFiles[index])
                                 : Image.file(
-                                    _mediaFiles[index],
-                                    fit: BoxFit.cover,
-                                    width: 64,
-                                    height: 64,
-                                  ),
+                                  _mediaFiles[index],
+                                  fit: BoxFit.cover,
+                                  width: 64,
+                                  height: 64,
+                                ),
                       ),
                     ),
                   );
@@ -578,16 +602,19 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
                       ],
                     ),
                     child: IconButton(
-                      icon: _isSending
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation(Colors.white),
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : const Icon(Icons.send, color: Colors.white),
+                      icon:
+                          _isSending
+                              ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation(
+                                    Colors.white,
+                                  ),
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : const Icon(Icons.send, color: Colors.white),
                       onPressed: _isSending ? null : _handleSend,
                       tooltip: S.of(context).send,
                     ),
@@ -651,11 +678,7 @@ class _VideoThumbnailState extends State<VideoThumbnail> {
           aspectRatio: _controller!.value.aspectRatio,
           child: VideoPlayer(_controller!),
         ),
-        const Icon(
-          Icons.play_circle_filled,
-          color: Colors.white70,
-          size: 24,
-        ),
+        const Icon(Icons.play_circle_filled, color: Colors.white70, size: 24),
       ],
     );
   }

@@ -8,13 +8,14 @@ import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in
 import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/multi_document_preview_screen.dart';
 import 'package:squeak/generated/l10n.dart';
 
-enum AttachmentType { image, video, audio, file }
+enum AttachmentType { image, video, file, audio }
 
 class AttachmentOptionsBottomSheet extends StatelessWidget {
   final Function(List<File> files, AttachmentType type, {String? caption})
   onAttachmentSelected;
 
   static const double maxMediaSizeMB = 25.0;
+  static const int maxMediaCount = 10;
 
   const AttachmentOptionsBottomSheet({
     super.key,
@@ -46,7 +47,7 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
 
   bool _isFileSizeValid(File file, AttachmentType type) {
     final sizeMB = _getFileSizeMB(file);
-    return sizeMB <= maxMediaSizeMB; 
+    return sizeMB <= maxMediaSizeMB;
   }
 
   void _showFileSizeWarning(
@@ -54,52 +55,58 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
     File file,
     AttachmentType type,
   ) {
-    final sizeMB = _getFileSizeMB(file);
-    final maxSize = _getMaxSizeForType(type);
-    final typeName = _getTypeNameForDialog(type);
-
     showDialog(
       context: context,
-      builder: (c) => AlertDialog(
-        title: const Text('❌ File Too Large'),
-        content: Text(
-          '$typeName size must be $maxSize MB or less.\n\nCurrent: ${sizeMB.toStringAsFixed(2)} MB',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(c).pop(),
-            child: const Text('OK'),
+      builder:
+          (c) => AlertDialog(
+            title: Text(S.of(context).fileIsTooLarge),
+            content: Text(S.of(context).maxFileSize),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(c).pop(),
+                child: Text(S.of(context).ok),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
-  double _getMaxSizeForType(AttachmentType type) {
-    return maxMediaSizeMB; 
+  void _showMaxFileCountWarning(BuildContext context, int selectedCount) {
+    showDialog(
+      context: context,
+      builder:
+          (c) => AlertDialog(
+            title: Text('Too Many Files'),
+            content: Text(
+              'You can select a maximum of $maxMediaCount files. '
+              'You selected $selectedCount files.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(c).pop(),
+                child: Text(S.of(context).ok),
+              ),
+            ],
+          ),
+    );
   }
 
-  String _getTypeNameForDialog(AttachmentType type) {
-    switch (type) {
-      case AttachmentType.image:
-        return 'Image';
-      case AttachmentType.video:
-        return 'Video';
-      case AttachmentType.audio:
-        return 'Audio';
-      case AttachmentType.file:
-        return 'File';
-    }
-  }
+
 
   Future<void> _handlePhoto(BuildContext context) async {
-    final navigator = Navigator.of(context);
-    navigator.pop();
-
     final picker = ImagePicker();
     final pickedFiles = await picker.pickMultiImage();
 
     if (pickedFiles.isNotEmpty) {
+      // Check if user selected more than max allowed files
+      if (pickedFiles.length > maxMediaCount) {
+        _showMaxFileCountWarning(context, pickedFiles.length);
+        return;
+      }
+
+      final navigator = Navigator.of(context);
+      navigator.pop();
+
       final files = <File>[];
 
       for (final pickedFile in pickedFiles) {
@@ -113,7 +120,9 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
 
       if (files.isEmpty) return;
 
-      debugPrint('📷 AttachmentSheet: ${files.length} photo(s) selected from gallery');
+      debugPrint(
+        '📷 AttachmentSheet: ${files.length} photo(s) selected from gallery',
+      );
       await navigator.push(
         MaterialPageRoute(
           builder:
@@ -137,20 +146,28 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
   }
 
   Future<void> _handleVideo(BuildContext context) async {
-
-
-
-    final navigator = Navigator.of(context);
-    navigator.pop();
-
     final picker = ImagePicker();
     final pickedFiles = await picker.pickMultiVideo();
 
     if (pickedFiles.isNotEmpty) {
+      // Check if user selected more than max allowed files
+      if (pickedFiles.length > maxMediaCount) {
+        _showMaxFileCountWarning(context, pickedFiles.length);
+        return;
+      }
+
+      final navigator = Navigator.of(context);
+      navigator.pop();
+
       final files = <File>[];
 
       for (final pickedFile in pickedFiles) {
-        if (pickedFile.path.contains(RegExp(r'\.(mp4|mov|avi|mkv|flv|wmv|webm|3gp|m4v)$', caseSensitive: false))) {
+        if (pickedFile.path.contains(
+          RegExp(
+            r'\.(mp4|mov|avi|mkv|flv|wmv|webm|3gp|m4v)$',
+            caseSensitive: false,
+          ),
+        )) {
           final file = File(pickedFile.path);
           if (!_isFileSizeValid(file, AttachmentType.video)) {
             _showFileSizeWarning(context, file, AttachmentType.video);
@@ -162,7 +179,9 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
 
       if (files.isEmpty) return;
 
-      debugPrint('🎥 AttachmentSheet: ${files.length} video(s) selected from gallery');
+      debugPrint(
+        '🎥 AttachmentSheet: ${files.length} video(s) selected from gallery',
+      );
       await navigator.push(
         MaterialPageRoute(
           builder:
@@ -186,28 +205,29 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
   }
 
   Future<void> _handleAudio(BuildContext context) async {
-    final navigator = Navigator.of(context);
-    navigator.pop();
-
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: [
-          'ogg',
-          'mp3',
-          'm4a',
-          'wav',
-        ],
+        allowedExtensions: ['ogg', 'mp3', 'm4a', 'wav'],
         allowMultiple: true,
       );
 
       if (result != null && result.files.isNotEmpty) {
+        // Check if user selected more than max allowed files
+        if (result.files.length > maxMediaCount) {
+          _showMaxFileCountWarning(context, result.files.length);
+          return;
+        }
+
+        final navigator = Navigator.of(context);
+        navigator.pop();
+
         final files = <File>[];
 
         for (final platformFile in result.files) {
           if (platformFile.path != null) {
             final file = File(platformFile.path!);
-            
+
             // Check file size
             if (!_isFileSizeValid(file, AttachmentType.audio)) {
               _showFileSizeWarning(context, file, AttachmentType.audio);
@@ -219,7 +239,9 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
 
         if (files.isEmpty) return;
 
-        debugPrint('🎵 AttachmentSheet: ${files.length} audio file(s) selected');
+        debugPrint(
+          '🎵 AttachmentSheet: ${files.length} audio file(s) selected',
+        );
 
         await navigator.push(
           MaterialPageRoute(
@@ -260,9 +282,6 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
   }
 
   Future<void> _handleDocument(BuildContext context) async {
-    final navigator = Navigator.of(context);
-    navigator.pop();
-
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.any,
@@ -270,6 +289,15 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
       );
 
       if (result != null && result.files.isNotEmpty) {
+        // Check if user selected more than max allowed files
+        if (result.files.length > maxMediaCount) {
+          _showMaxFileCountWarning(context, result.files.length);
+          return;
+        }
+
+        final navigator = Navigator.of(context);
+        navigator.pop();
+
         final files = <File>[];
 
         for (final platformFile in result.files) {
@@ -285,7 +313,9 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
 
         if (files.isEmpty) return;
 
-        debugPrint('📄 AttachmentSheet: ${files.length} document file(s) selected');
+        debugPrint(
+          '📄 AttachmentSheet: ${files.length} document file(s) selected',
+        );
 
         await navigator.push(
           MaterialPageRoute(

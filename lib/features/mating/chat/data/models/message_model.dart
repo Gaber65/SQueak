@@ -103,6 +103,7 @@ class MessageModel extends MessageEntity {
       'toUserId': toUserId,
       'createdAt': createdAt.toUtc().toIso8601String(),
       'toMe': toMe,
+      'attachments': attachments.map((a) => a.toJson()).toList(),
     };
   }
 

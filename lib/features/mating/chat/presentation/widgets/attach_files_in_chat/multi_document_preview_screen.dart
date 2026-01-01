@@ -7,6 +7,7 @@ class MultiDocumentPreviewScreen extends StatefulWidget {
   final Function(List<File> files, String caption) onSend;
 
   static const double maxMediaSizeMB = 25.0;
+  static const int maxMediaCount = 10;
 
   const MultiDocumentPreviewScreen({
     super.key,

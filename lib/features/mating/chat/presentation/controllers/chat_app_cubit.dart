@@ -9,21 +9,23 @@ import '../../../../../core/service/signalr/signalr_general_service.dart';
 import '../widgets/attach_files_in_chat/attachment_options_bottom_sheet.dart';
 import 'chat_app_state.dart';
 
-/// Represents a single attachment to be sent with a message
 class AttachmentPayload {
   final String url;
+  final String? description;
   final AttachmentType type;
   final int? attachmentPlaceholder;
 
   AttachmentPayload({
     required this.url,
     required this.type,
+    this.description,
     this.attachmentPlaceholder,
   });
 
   Map<String, dynamic> toJson() => {
     'url': url,
-    'attachmentType': type.index, 
+    'type': type.index, 
+    if (description != null) 'description': description,
     if (attachmentPlaceholder != null) 'attachmentPlaceholder': attachmentPlaceholder,
   };
 }

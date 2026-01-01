@@ -3,23 +3,31 @@ import 'message_status.dart';
 /// Represents a single attachment in a message
 class Attachment {
   final String url;
-  final int attachmentType; // 0=image, 1=video, 2=audio, 3=file
+  final String? description;
+  final int attachmentType;
+  final int? attachmentPlaceholder;
 
   const Attachment({
     required this.url,
     required this.attachmentType,
+    this.description,
+    this.attachmentPlaceholder,
   });
 
   factory Attachment.fromJson(Map<String, dynamic> json) {
     return Attachment(
       url: json['url'] ?? '',
-      attachmentType: json['attachmentType'] ?? 0,
+      attachmentType: json['attachmentType'] ?? json['type'] ?? 0,
+      description: json['description'],
+      attachmentPlaceholder: json['attachmentPlaceholder'] ?? json['attachmentPlaceHolder'],
     );
   }
 
   Map<String, dynamic> toJson() => {
     'url': url,
     'attachmentType': attachmentType,
+    if (description != null) 'description': description,
+    if (attachmentPlaceholder != null) 'attachmentPlaceholder': attachmentPlaceholder,
   };
 }
 

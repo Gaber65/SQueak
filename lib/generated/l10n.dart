@@ -6189,6 +6189,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Files Is Too Large`
+  String get fileIsTooLarge {
+    return Intl.message(
+      'Files Is Too Large',
+      name: 'fileIsTooLarge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Max Files size is 25 MB`
+  String get maxFileSize {
+    return Intl.message(
+      'Max Files size is 25 MB',
+      name: 'maxFileSize',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

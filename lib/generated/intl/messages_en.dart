@@ -419,6 +419,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "female": MessageLookupByLibrary.simpleMessage("Female"),
         "fetchingPetChats":
             MessageLookupByLibrary.simpleMessage("Fetching your pet chats..."),
+        "fileIsTooLarge":
+            MessageLookupByLibrary.simpleMessage("Files Is Too Large"),
         "files": MessageLookupByLibrary.simpleMessage("Files"),
         "filesAndPrescription":
             MessageLookupByLibrary.simpleMessage("Files And Prescription"),
@@ -569,6 +571,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "mating_features":
             MessageLookupByLibrary.simpleMessage("Mating Features"),
         "maxCharacters": m4,
+        "maxFileSize":
+            MessageLookupByLibrary.simpleMessage("Max Files size is 25 MB"),
         "maybe_later": MessageLookupByLibrary.simpleMessage("Maybe Later"),
         "mergePets": MessageLookupByLibrary.simpleMessage("Merge"),
         "message_hint":

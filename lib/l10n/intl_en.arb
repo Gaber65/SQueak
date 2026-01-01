@@ -622,7 +622,9 @@
   "genderUnknown":"Gender unknown you must choose gender",
   "noReactions":"No reactions yet",
   "viewsAndReactions":"Views & Reactions",
-  "noViewsYet":"No views yet"
+  "noViewsYet":"No views yet",
+  "fileIsTooLarge":"Files Is Too Large",
+  "maxFileSize":"Max Files size is 25 MB"
 
   
 
