@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:squeak/features/friendship/domain/entities/pet_friend_counts_entity.dart';
 import 'package:squeak/features/friendship/domain/usecases/cancel_friendship.dart';
 import 'package:squeak/features/friendship/domain/usecases/unblock_friend.dart';
 import 'package:squeak/features/friendship/domain/usecases/send_pet_request.dart';
@@ -33,4 +34,5 @@ abstract class PetFriendRepository {
   Future<Either<Failure, Map<String, dynamic>>> sendFriendMessage(
     SendFriendPetMessageParameters params,
   );
+  Future<Either<Failure,FriendshipCounts>> getFriendshipCounts(String myPetId);
 }

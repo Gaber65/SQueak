@@ -154,12 +154,12 @@ class _LayoutScreenState extends State<LayoutScreen>
         BlocProvider(create: (_) => sl<SwitchProfileCubit>()..loadProfile()),
         BlocProvider(create: (context) => sl<PetFriendsCubit>()),
         BlocProvider(
-            create:
+          create:
               (context) =>
-                sl<LayoutCubit>()
-                ..getAppVersion()
-                ..getVersion()
-                ..changeBottomNav(widget.indexID),
+                  sl<LayoutCubit>()
+                    ..getAppVersion()
+                    ..getVersion()
+                    ..changeBottomNav(widget.indexID),
         ),
       ],
       child: BlocConsumer<LayoutCubit, LayoutState>(
@@ -271,6 +271,31 @@ class _LayoutScreenState extends State<LayoutScreen>
                         setState(() {
                           selectedIndex = index;
                         });
+
+                        // Call endpoint when clicking Friends tab (index 1)
+                        if (index == 1) {
+                          final friendsCubit = context.read<PetFriendsCubit>();
+                          final switchProfileCubit =
+                              context.read<SwitchProfileCubit>();
+                          final activePet =
+                              switchProfileCubit.activeProfile?.pet;
+
+                          if (activePet != null) {
+                            // Call friendship counts endpoint
+                            if (activePet.petId != null) {
+                              friendsCubit.loadFriendshipCounts(
+                                petId: activePet.petId!,
+                              );
+                            }
+
+                            // // Load suggested friends
+                            // if (activePet.specieId != null) {
+                            //   friendsCubit.loadSuggestedFriends(
+                            //     specieId: activePet.specieId!,
+                            //   );
+                            // }
+                          }
+                        }
 
                         if (index == 2 && isPetProfile) {
                           final friendsCubit = context.read<PetFriendsCubit>();

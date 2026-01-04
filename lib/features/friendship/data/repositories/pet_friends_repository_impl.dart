@@ -1,5 +1,6 @@
 // data/repositories/pet_friend_repository_impl.dart
 import 'package:dartz/dartz.dart';
+import 'package:squeak/features/friendship/domain/entities/pet_friend_counts_entity.dart';
 import 'package:squeak/features/friendship/domain/usecases/delete_friendship.dart';
 
 import '../../../../core/service/service_locator/locatore_export_path.dart';
@@ -153,6 +154,16 @@ class PetFriendRepositoryImpl implements PetFriendRepository {
   ) async {
     try {
       final result = await remoteDataSource.deleteFriendship(params);
+      return Right(result);
+    } on ServerException catch (failure) {
+      return Left(ServerFailure(failure.errorMessageModel));
+    }
+  }
+
+  @override
+  Future<Either<Failure,FriendshipCounts>> getFriendshipCounts(String myPetId)async {
+    try {
+      final result = await remoteDataSource.getFriendshipCounts(myPetId);
       return Right(result);
     } on ServerException catch (failure) {
       return Left(ServerFailure(failure.errorMessageModel));

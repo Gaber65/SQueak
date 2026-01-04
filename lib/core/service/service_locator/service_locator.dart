@@ -2,6 +2,7 @@ import 'package:squeak/core/service/signalr/signalr_conversation_services.dart';
 import 'package:squeak/core/service/signalr/signalr_general_service.dart';
 import 'package:squeak/features/friendship/domain/usecases/delete_friendship.dart';
 import 'package:squeak/features/friendship/domain/usecases/block_friend.dart';
+import 'package:squeak/features/friendship/domain/usecases/friend_ship_counts.dart';
 import 'package:squeak/features/layout/post/domain/usecase/create_post.dart';
 import 'package:squeak/features/layout/post/domain/usecase/delete_post_usecase.dart';
 import 'package:squeak/features/layout/stories/domain/usecases/delete_story_usecase.dart';
@@ -434,6 +435,7 @@ class ServiceLocator {
     sl.registerLazySingleton(() => GetSentRequestsUseCase(sl()));
     sl.registerLazySingleton(() => SearchFriendsUseCase(sl()));
     sl.registerLazySingleton(() => SendFriendMessageUseCase(sl()));
+    sl.registerLazySingleton(() => GetFriendshipCountsUseCase(sl()));
 
     /// 🔹 Data sources
     sl.registerLazySingleton<PetFriendRemoteDataSource>(
@@ -441,8 +443,9 @@ class ServiceLocator {
     );
 
     /// 🔹 Cubit
-    sl.registerFactory(
-      () => PetFriendsCubit(
+    sl.registerSingleton(
+      PetFriendsCubit(
+        sl(),
         sl(),
         sl(),
         sl(),
@@ -599,9 +602,10 @@ class ServiceLocator {
     sl.registerLazySingleton(() => ReactOnPostUseCase(sl()));
     sl.registerLazySingleton(() => GetAllReactOnPostUseCase(sl()));
 
-
     sl.registerLazySingleton<SoicalAuthRepository>(() => SocialRepo(sl()));
-    sl.registerLazySingleton<SocailAuthRemoteDataSource>(() => SocailAuthRemoteDataSourceImpl());
+    sl.registerLazySingleton<SocailAuthRemoteDataSource>(
+      () => SocailAuthRemoteDataSourceImpl(),
+    );
     sl.registerLazySingleton(() => LoginWithFacebookUseCase(sl()));
     sl.registerLazySingleton(() => LoginWithGoogleUseCase(sl()));
   }

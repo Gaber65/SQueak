@@ -180,6 +180,7 @@ const String cancelFriendshipEndPoint = '$version/petfriends/cancel';
 const String deleteFriendShipEndPoint = '$version/petfriends/delete';
 const String searchFriendsEndPoint = '$version/search/petfriends';
 const String getSentRequestsEndPoint = '$version/pet/sendrequest?MyPetId=';
+const String friendShipCountesEndPoint = '$version/general/friendship/counts?PetId=';
 String clearChatEndPoint(
   String conversationId, {
   bool deleteForMeOnly = true,

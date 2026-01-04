@@ -1,5 +1,6 @@
 import 'package:squeak/features/friendship/domain/entities/friend_request_stats.dart';
 import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
+import 'package:squeak/features/friendship/domain/entities/pet_friend_counts_entity.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
@@ -171,3 +172,9 @@ class UnBlockFriendshipFailed extends PetFriendsState {
 }
 
 class UnBlockFriendshipSuccess extends PetFriendsState {}
+
+// Friendship counts
+class FriendshipCountsLoaded extends PetFriendsState {
+  final FriendshipCounts counts;
+  FriendshipCountsLoaded({required this.counts});
+}

@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/friendship/domain/entities/friend_request_stats.dart';
 import 'package:squeak/features/friendship/domain/entities/pet_friend_request_entity.dart';
+import 'package:squeak/features/friendship/domain/entities/pet_friend_counts_entity.dart';
 import 'package:squeak/features/friendship/domain/usecases/update_pet_request.dart';
 import 'package:squeak/features/friendship/domain/usecases/block_friend.dart';
+import 'package:squeak/features/friendship/domain/usecases/friend_ship_counts.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_state.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
@@ -23,6 +25,7 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     this.updatePetRequestUseCase,
     this.getBlockedFriendsUseCase,
     this.deleteFriendshipUseCase,
+    this.getFriendshipCountsUseCase,
   ) : super(FriendsInitial());
 
   static PetFriendsCubit get(BuildContext context) =>
@@ -39,6 +42,7 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
   final UpdatePetRequestUseCase updatePetRequestUseCase;
   final GetBlockedFriendsUseCase getBlockedFriendsUseCase;
   final DeleteFriendShipUseCase deleteFriendshipUseCase;
+  final GetFriendshipCountsUseCase getFriendshipCountsUseCase;
 
   List<PetEntities> friends = [];
   List<PetEntities> suggestedFriends = [];
@@ -46,6 +50,7 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
   List<PetEntities> sentRequests = [];
   List<ChatEntity> chats = [];
   List<PetFriendRequestEntity> blockedFriends = [];
+  FriendshipCounts? friendshipCounts;
 
   int selectedTab = 0;
   String requestFilter = 'received';
@@ -58,6 +63,8 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     if (specieId != null) _currentSpecieId = specieId;
 
     emit(ChangeTab(tabIndex: tabIndex));
+
+    // Call the appropriate method based on tab index
     switch (tabIndex) {
       case 0:
         if (_currentPetId != null) {
@@ -113,8 +120,6 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
     required String specieId,
     String? name,
   }) async {
-
-
     emit(SuggestedFriendsLoading());
     final result = await searchFriendsUseCase(
       SearchFriendsParams(speciesId: specieId, name: name),
@@ -274,5 +279,19 @@ class PetFriendsCubit extends Cubit<PetFriendsState> {
         emit(BlockedFriendsLoaded(blockedFriends: blockedList));
       },
     );
+  }
+
+  Future<void> loadFriendshipCounts({required String petId}) async {
+    try {
+      final result = await getFriendshipCountsUseCase.call(petId);
+      result.fold((failure) {}, (counts) {
+        // Store the counts
+        friendshipCounts = counts;
+
+        // Emit state to trigger rebuild
+        emit(FriendshipCountsLoaded(counts: counts));
+      });
+      // ignore: empty_catches
+    } catch (e) {}
   }
 }

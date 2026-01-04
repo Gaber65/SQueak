@@ -41,7 +41,6 @@ class _FriendsScreenState extends State<FriendsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => sl<PetFriendsCubit>()),
         BlocProvider(create: (_) => sl<SwitchProfileCubit>()..loadProfile()),
         BlocProvider(
           create: (_) => sl<PetCubit>()..getOwnerPets(),
@@ -67,12 +66,15 @@ class _FriendsScreenState extends State<FriendsScreen> {
         body: MultiBlocListener(
           listeners: [
             BlocListener<PetFriendsCubit, PetFriendsState>(
-              listener: (context, state) {},
+              listener: (context, state) {
+                if (state is FriendshipCountsLoaded) {}
+              },
             ),
             BlocListener<SwitchProfileCubit, SwitchProfileState>(
               listener: (context, state) {
                 if (state is ProfileLoaded) {
                   if (state.profile.type == ProfileType.pet) {
+                  
                     PetFriendsCubit.get(context).getFriends(
                       petId:
                           SwitchProfileCubit.get(
@@ -125,11 +127,14 @@ class _FriendsScreenState extends State<FriendsScreen> {
                     const SizedBox(height: 25),
                     TabBarPetFriend(
                       selectedTab: cubit.selectedTab,
-                      friendsCount: cubit.friends.length,
-                      suggestedCount: cubit.suggestedFriends.length,
-                      receivedCount: cubit.pendingRequests.length,
-                      sentCount: cubit.sentRequests.length,
-                      chatsCount: 0,
+                      friendsCount: cubit.friendshipCounts?.friendsCount ?? 0,
+                      suggestedCount:
+                          cubit.friendshipCounts?.suggestedFriendsCount ?? 0,
+                      receivedCount:
+                          (cubit.friendshipCounts?.requestsCount ?? 0) +
+                          (cubit.friendshipCounts?.receivedRequestsCount ?? 0),
+                      sentCount: 0,
+                      chatsCount: cubit.friendshipCounts?.blockList ?? 0,
                     ),
                     if (cubit.selectedTab == 2)
                       RequestFilterWidget(

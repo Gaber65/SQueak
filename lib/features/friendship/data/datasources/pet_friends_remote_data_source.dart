@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/friendship/data/models/pet_friend_model.dart';
+import 'package:squeak/features/friendship/data/models/pet_friend_counts.dart';
+import 'package:squeak/features/friendship/domain/entities/pet_friend_counts_entity.dart';
 import 'package:squeak/features/friendship/domain/usecases/cancel_friendship.dart';
 import 'package:squeak/features/friendship/domain/usecases/send_pet_request.dart';
 import 'package:squeak/features/friendship/domain/usecases/unblock_friend.dart';
@@ -30,6 +32,7 @@ abstract class PetFriendRemoteDataSource {
   Future<Map<String, dynamic>> sendFriendMessage(
     SendFriendPetMessageParameters params,
   );
+  Future<FriendshipCounts> getFriendshipCounts(String myPetId);
 }
 
 class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
@@ -233,5 +236,17 @@ class PetFriendRemoteDataSourceImpl implements PetFriendRemoteDataSource {
         data: {"myPetId": params.myPetId, "myFrienPetId": params.myFrienPetId},
       );
     }, (json) => true);
+  }
+
+  @override
+  Future<FriendshipCounts> getFriendshipCounts(String myPetId) async {
+    final endpoint = "$friendShipCountesEndPoint$myPetId";
+    return _handleRequest(
+      () => DioFinalHelper.getData(method: endpoint),
+      (json) {
+        final result = FriendshipCountsModel.fromJson(json);
+        return result;
+      },
+    );
   }
 }
