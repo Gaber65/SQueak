@@ -102,8 +102,8 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
   @override
   void initState() {
     super.initState();
-    _mediaFiles = List.from(widget.mediaFiles);
-    _captions = List<String?>.filled(_mediaFiles.length, null); // Initialize captions list
+    _mediaFiles = List.from(widget.mediaFiles, growable: true);
+    _captions = List<String?>.filled(_mediaFiles.length, null, growable: true); // Initialize captions list
     _initializeCurrentMedia();
     _checkTotalFileSize();
   }
@@ -268,6 +268,28 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
 
   void _handleBack() {
     Navigator.pop(context);
+  }
+
+  void _removeMedia(int index) {
+    setState(() {
+      _mediaFiles.removeAt(index);
+      _captions.removeAt(index);
+
+      // Adjust current index if necessary
+      if (_currentIndex >= _mediaFiles.length && _mediaFiles.isNotEmpty) {
+        _currentIndex = _mediaFiles.length - 1;
+      }
+
+      // If all files are removed, go back
+      if (_mediaFiles.isEmpty) {
+        Navigator.pop(context);
+        return;
+      }
+
+      // Reinitialize the current media
+      _initializeCurrentMedia();
+      _loadCaptionForCurrentMedia();
+    });
   }
 
   @override
@@ -576,6 +598,25 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
                                 ),
                               ),
                             ),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: () => _removeMedia(index),
+                              child: Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.withOpacity(0.9),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),

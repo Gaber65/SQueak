@@ -28,7 +28,7 @@ class _MultiDocumentPreviewScreenState extends State<MultiDocumentPreviewScreen>
   @override
   void initState() {
     super.initState();
-    _documentFiles = List.from(widget.documentFiles);
+    _documentFiles = List.from(widget.documentFiles, growable: true);
     _checkTotalFileSize();
   }
 
@@ -203,6 +203,22 @@ class _MultiDocumentPreviewScreenState extends State<MultiDocumentPreviewScreen>
     Navigator.pop(context);
   }
 
+  void _removeDocument(int index) {
+    setState(() {
+      _documentFiles.removeAt(index);
+
+      // Adjust current index if necessary
+      if (_currentIndex >= _documentFiles.length && _documentFiles.isNotEmpty) {
+        _currentIndex = _documentFiles.length - 1;
+      }
+
+      // If all files are removed, go back
+      if (_documentFiles.isEmpty) {
+        Navigator.pop(context);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -371,21 +387,45 @@ class _MultiDocumentPreviewScreenState extends State<MultiDocumentPreviewScreen>
                           color: const Color(0xFF2E2E2E),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        child: Stack(
                           children: [
-                            Icon(
-                              _getFileIcon(),
-                              color: _getFileIconColor(),
-                              size: 32,
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  _getFileIcon(),
+                                  color: _getFileIconColor(),
+                                  size: 32,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  _documentFiles[index].path.split('/').last.split('.').last.toUpperCase(),
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              _documentFiles[index].path.split('/').last.split('.').last.toUpperCase(),
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
+                            // Remove button overlay
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: () => _removeDocument(index),
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.withOpacity(0.9),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                    size: 14,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
