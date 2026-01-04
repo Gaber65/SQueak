@@ -51,14 +51,52 @@ class _MultiDocumentPreviewScreenState extends State<MultiDocumentPreviewScreen>
   }
 
   Future<void> _addMoreDocuments(List<File> newFiles) async {
+    final int initialCount = _documentFiles.length;
+    final int availableSlots = MultiDocumentPreviewScreen.maxMediaCount - initialCount;
+    int filesAdded = 0;
+
     setState(() {
       for (final file in newFiles) {
+        // Stop adding files if we've reached the limit
+        if (_documentFiles.length >= MultiDocumentPreviewScreen.maxMediaCount) {
+          break;
+        }
         // Skip duplicate files
         if (!_isFileAlreadySelected(file)) {
           _documentFiles.add(file);
+          filesAdded++;
         }
       }
     });
+
+    // Show dialog if unable to add all files
+    if (filesAdded < newFiles.length && mounted) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: const Color(0xFF1E1E1E),
+          title: const Text(
+            'File Limit Reached',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            availableSlots == 0
+                ? 'You can only add up to ${MultiDocumentPreviewScreen.maxMediaCount} files total.'
+                : 'You can only add $availableSlots more file(s). Added $filesAdded out of ${newFiles.length} selected files.',
+            style: const TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Color(0xFF6200EA)),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   String _getFileName() {
@@ -390,6 +428,20 @@ class _MultiDocumentPreviewScreenState extends State<MultiDocumentPreviewScreen>
                   if (index == _documentFiles.length) {
                     return GestureDetector(
                       onTap: () async {
+                        // Check if already at max capacity
+                        if (_documentFiles.length >= MultiDocumentPreviewScreen.maxMediaCount) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('You can only add up to ${MultiDocumentPreviewScreen.maxMediaCount} files'),
+                                backgroundColor: Colors.red,
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                          return;
+                        }
+
                         // Call the onAddMore callback and wait for files to be returned
                         if (widget.onAddMore != null) {
                           try {

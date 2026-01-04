@@ -305,15 +305,53 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
   }
 
   Future<void> _addMoreMedia(List<File> newFiles) async {
+    final int initialCount = _mediaFiles.length;
+    final int availableSlots = MultiMediaPreviewScreen.maxMediaCount - initialCount;
+    int filesAdded = 0;
+
     setState(() {
       for (final file in newFiles) {
+        // Stop adding files if we've reached the limit
+        if (_mediaFiles.length >= MultiMediaPreviewScreen.maxMediaCount) {
+          break;
+        }
         // Skip duplicate files
         if (!_isFileAlreadySelected(file)) {
           _mediaFiles.add(file);
           _captions.add(null);
+          filesAdded++;
         }
       }
     });
+
+    // Show dialog if unable to add all files
+    if (filesAdded < newFiles.length && mounted) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: const Color(0xFF1E1E1E),
+          title: const Text(
+            'File Limit Reached',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            availableSlots == 0
+                ? 'You can only add up to ${MultiMediaPreviewScreen.maxMediaCount} files total.'
+                : 'You can only add $availableSlots more file(s). Added $filesAdded out of ${newFiles.length} selected files.',
+            style: const TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Color(0xFF6200EA)),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -557,6 +595,20 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
                   if (index == _mediaFiles.length) {
                     return GestureDetector(
                       onTap: () async {
+                        // Check if already at max capacity
+                        if (_mediaFiles.length >= MultiMediaPreviewScreen.maxMediaCount) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('You can only add up to ${MultiMediaPreviewScreen.maxMediaCount} files'),
+                                backgroundColor: Colors.red,
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                          return;
+                        }
+
                         // Call the onAddMore callback and wait for files to be returned
                         if (widget.onAddMore != null) {
                           try {
