@@ -408,19 +408,44 @@ class MatingChatListTile extends StatelessWidget {
 
     String messageText = message.description;
     IconData? mediaIcon;
-    if (message.image != null && message.image!.isNotEmpty) {
-      mediaIcon = Icons.image;
-      messageText = isArabic() ? 'صورة' : 'Photo';
-    } else if (message.video != null && message.video!.isNotEmpty) {
-      mediaIcon = Icons.videocam;
-      messageText = isArabic() ? 'فيديو' : 'Video';
-    } else if (message.audio != null && message.audio!.isNotEmpty) {
-      mediaIcon = Icons.mic;
-      messageText = isArabic() ? 'صوت' : 'Audio';
-    } else if (message.file != null && message.file!.isNotEmpty) {
-      mediaIcon = Icons.insert_drive_file;
-      messageText = isArabic() ? 'مستند' : 'Document';
+    
+    // Check for attachments first (API response structure)
+    if (message.attachments.isNotEmpty) {
+      final firstAttachment = message.attachments.first;
+      final attachmentType = firstAttachment.attachmentType;
+      
+      if (attachmentType == 0) {
+        // Image
+        mediaIcon = Icons.image;
+        messageText = isArabic() ? 'صورة' : 'Photo';
+      } else if (attachmentType == 1) {
+        // Video
+        mediaIcon = Icons.videocam;
+        messageText = isArabic() ? 'فيديو' : 'Video';
+      } else if (attachmentType == 2) {
+        // File/Document
+        mediaIcon = Icons.insert_drive_file;
+        messageText = isArabic() ? 'مستند' : 'Document';
+      } else if (attachmentType == 3) {
+        // Audio
+        mediaIcon = Icons.mic;
+        messageText = isArabic() ? 'صوت' : 'Audio';
+      }
     }
+    // Fallback to old structure if attachments not available
+    // else if (message.image != null && message.image!.isNotEmpty) {
+    //   mediaIcon = Icons.image;
+    //   messageText = isArabic() ? 'صورة' : 'Photo';
+    // } else if (message.video != null && message.video!.isNotEmpty) {
+    //   mediaIcon = Icons.videocam;
+    //   messageText = isArabic() ? 'فيديو' : 'Video';
+    // } else if (message.audio != null && message.audio!.isNotEmpty) {
+    //   mediaIcon = Icons.mic;
+    //   messageText = isArabic() ? 'صوت' : 'Audio';
+    // } else if (message.file != null && message.file!.isNotEmpty) {
+    //   mediaIcon = Icons.insert_drive_file;
+    //   messageText = isArabic() ? 'مستند' : 'Document';
+    // }
 
     if (mediaIcon == null && messageText.isEmpty) {
       return Text(
