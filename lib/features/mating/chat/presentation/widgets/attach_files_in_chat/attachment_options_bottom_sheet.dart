@@ -139,6 +139,9 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
                     captions: captions,
                   );
                 },
+                onAddMore: (mediaType) async {
+                  return await _handleAddMoreImages(context);
+                },
               ),
         ),
       );
@@ -197,6 +200,9 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
                     AttachmentType.video,
                     captions: captions,
                   );
+                },
+                onAddMore: (mediaType) async {
+                  return await _handleAddMoreVideos(context);
                 },
               ),
         ),
@@ -258,6 +264,9 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
                       AttachmentType.audio,
                       captions: captions,
                     );
+                  },
+                  onAddMore: (mediaType) async {
+                    return await _handleAddMoreAudio(context);
                   },
                 ),
           ),
@@ -331,6 +340,9 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
                       AttachmentType.file,
                       caption: caption,
                     );
+                  },
+                  onAddMore: () async {
+                    return await _handleAddMoreDocuments(context);
                   },
                 ),
           ),
@@ -484,4 +496,99 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
       ),
     );
   }
+
+  Future<List<File>> _handleAddMoreImages(BuildContext context) async {
+    final picker = ImagePicker();
+    final pickedFiles = await picker.pickMultiImage();
+
+    final files = <File>[];
+    if (pickedFiles.isNotEmpty) {
+      for (final pickedFile in pickedFiles) {
+        final file = File(pickedFile.path);
+        if (_isFileSizeValid(file, AttachmentType.image)) {
+          files.add(file);
+        }
+      }
+
+      if (files.isNotEmpty) {
+        debugPrint('🖼️ Adding ${files.length} more image(s)');
+      }
+    }
+    return files;
+  }
+
+  Future<List<File>> _handleAddMoreVideos(BuildContext context) async {
+    final picker = ImagePicker();
+    final pickedFiles = await picker.pickMultiVideo();
+
+    final files = <File>[];
+    if (pickedFiles.isNotEmpty) {
+      for (final pickedFile in pickedFiles) {
+        final file = File(pickedFile.path);
+        if (_isFileSizeValid(file, AttachmentType.video)) {
+          files.add(file);
+        }
+      }
+
+      if (files.isNotEmpty) {
+        debugPrint('🎬 Adding ${files.length} more video(s)');
+      }
+    }
+    return files;
+  }
+
+  Future<List<File>> _handleAddMoreAudio(BuildContext context) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['ogg', 'mp3', 'm4a', 'wav'],
+      allowMultiple: true,
+    );
+
+    final files = <File>[];
+    if (result != null && result.files.isNotEmpty) {
+      for (final platformFile in result.files) {
+        if (platformFile.path != null) {
+          final file = File(platformFile.path!);
+          if (_isFileSizeValid(file, AttachmentType.audio)) {
+            files.add(file);
+          }
+        }
+      }
+
+      if (files.isNotEmpty) {
+        debugPrint('🎵 Adding ${files.length} more audio file(s)');
+      }
+    }
+    return files;
+  }
+
+  Future<List<File>> _handleAddMoreDocuments(BuildContext context) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.any,
+        allowMultiple: true,
+      );
+
+      final files = <File>[];
+      if (result != null && result.files.isNotEmpty) {
+        for (final platformFile in result.files) {
+          if (platformFile.path != null) {
+            final file = File(platformFile.path!);
+            if (_isFileSizeValid(file, AttachmentType.file)) {
+              files.add(file);
+            }
+          }
+        }
+
+        if (files.isNotEmpty) {
+          debugPrint('📄 Adding ${files.length} more document(s)');
+        }
+      }
+      return files;
+    } catch (e) {
+      debugPrint('❌ Error picking additional document files: $e');
+      return [];
+    }
+  }
 }
+

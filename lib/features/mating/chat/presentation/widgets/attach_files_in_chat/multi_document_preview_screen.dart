@@ -5,6 +5,7 @@ import 'package:squeak/generated/l10n.dart';
 class MultiDocumentPreviewScreen extends StatefulWidget {
   final List<File> documentFiles;
   final Function(List<File> files, String caption) onSend;
+  final Future<List<File>> Function()? onAddMore;
 
   static const double maxMediaSizeMB = 25.0;
   static const int maxMediaCount = 10;
@@ -13,6 +14,7 @@ class MultiDocumentPreviewScreen extends StatefulWidget {
     super.key,
     required this.documentFiles,
     required this.onSend,
+    this.onAddMore,
   });
 
   @override
@@ -36,6 +38,27 @@ class _MultiDocumentPreviewScreenState extends State<MultiDocumentPreviewScreen>
   void dispose() {
     _captionController.dispose();
     super.dispose();
+  }
+
+  /// Public method to add more document files from outside the widget
+  /// Filters out duplicates automatically
+  void addDocumentFiles(List<File> newFiles) {
+    _addMoreDocuments(newFiles);
+  }
+
+  bool _isFileAlreadySelected(File file) {
+    return _documentFiles.any((f) => f.path == file.path);
+  }
+
+  Future<void> _addMoreDocuments(List<File> newFiles) async {
+    setState(() {
+      for (final file in newFiles) {
+        // Skip duplicate files
+        if (!_isFileAlreadySelected(file)) {
+          _documentFiles.add(file);
+        }
+      }
+    });
   }
 
   String _getFileName() {
@@ -354,15 +377,59 @@ class _MultiDocumentPreviewScreenState extends State<MultiDocumentPreviewScreen>
             ),
           ),
           // File list preview
-          if (_documentFiles.length > 1)
+          if (_documentFiles.isNotEmpty)
             Container(
               height: 100,
               color: const Color(0xFF1E1E1E),
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: _documentFiles.length,
+                itemCount: _documentFiles.length + (_documentFiles.length < MultiDocumentPreviewScreen.maxMediaCount ? 1 : 0),
                 itemBuilder: (context, index) {
+                  // Add button for adding more documents
+                  if (index == _documentFiles.length) {
+                    return GestureDetector(
+                      onTap: () async {
+                        // Call the onAddMore callback and wait for files to be returned
+                        if (widget.onAddMore != null) {
+                          try {
+                            final result = await widget.onAddMore!();
+                            
+                            // If files were returned, add them to the preview
+                            if (result.isNotEmpty) {
+                              _addMoreDocuments(result);
+                            }
+                          } catch (e) {
+                            debugPrint('Error adding more documents: $e');
+                          }
+                        }
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 8),
+                        padding: const EdgeInsets.all(4),
+                        child: Container(
+                          width: 80,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2E2E2E),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Colors.grey[600]!,
+                              width: 2,
+                              style: BorderStyle.solid,
+                            ),
+                          ),
+                          child: Center(
+                            child: Icon(
+                              Icons.add,
+                              color: Colors.grey[400],
+                              size: 28,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+
                   return GestureDetector(
                     onTap: () {
                       setState(() {

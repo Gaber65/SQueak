@@ -11,6 +11,7 @@ class MultiMediaPreviewScreen extends StatefulWidget {
   final List<File> mediaFiles;
   final MediaType mediaType;
   final Function(List<File> files, List<String?> captions) onSend;
+  final Future<List<File>> Function(MediaType mediaType)? onAddMore;
 
   static const double maxMediaSizeMB = 25.0;
   static const int maxMediaCount = 10;
@@ -20,6 +21,7 @@ class MultiMediaPreviewScreen extends StatefulWidget {
     required this.mediaFiles,
     this.mediaType = MediaType.image,
     required this.onSend,
+    this.onAddMore,
   });
 
   @override
@@ -158,6 +160,12 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
     super.dispose();
   }
 
+  /// Public method to add more media files from outside the widget
+  /// Filters out duplicates automatically
+  void addMediaFiles(List<File> newFiles) {
+    _addMoreMedia(newFiles);
+  }
+
   void _updateCurrentCaption() {
     _captions[_currentIndex] = _captionController.text.trim();
   }
@@ -289,6 +297,22 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
       // Reinitialize the current media
       _initializeCurrentMedia();
       _loadCaptionForCurrentMedia();
+    });
+  }
+
+  bool _isFileAlreadySelected(File file) {
+    return _mediaFiles.any((f) => f.path == file.path);
+  }
+
+  Future<void> _addMoreMedia(List<File> newFiles) async {
+    setState(() {
+      for (final file in newFiles) {
+        // Skip duplicate files
+        if (!_isFileAlreadySelected(file)) {
+          _mediaFiles.add(file);
+          _captions.add(null);
+        }
+      }
     });
   }
 
@@ -521,14 +545,59 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
             ),
           ),
           // Thumbnail strip for multi-file preview
-          if (_mediaFiles.length > 1)
+          if (_mediaFiles.isNotEmpty)
             Container(
               height: 100,
               color: const Color(0xFF1E1E1E),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: _mediaFiles.length,
+                itemCount: _mediaFiles.length + (_mediaFiles.length < MultiMediaPreviewScreen.maxMediaCount ? 1 : 0),
                 itemBuilder: (context, index) {
+                  // Add button for adding more media
+                  if (index == _mediaFiles.length) {
+                    return GestureDetector(
+                      onTap: () async {
+                        // Call the onAddMore callback and wait for files to be returned
+                        if (widget.onAddMore != null) {
+                          try {
+                            final result = await widget.onAddMore!(widget.mediaType);
+                            
+                            // If files were returned, add them to the preview
+                            if (result.isNotEmpty) {
+                              _addMoreMedia(result);
+                            }
+                          } catch (e) {
+                            debugPrint('Error adding more media: $e');
+                          }
+                        }
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(2),
+                        child: Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2E2E2E),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: Colors.grey[600]!,
+                              width: 2,
+                              style: BorderStyle.solid,
+                            ),
+                          ),
+                          child: Center(
+                            child: Icon(
+                              Icons.add,
+                              color: Colors.grey[400],
+                              size: 32,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+
                   final hasCaption = _captions[index] != null && _captions[index]!.isNotEmpty;
                   return GestureDetector(
                     onTap: () {
