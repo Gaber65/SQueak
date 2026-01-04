@@ -18,16 +18,7 @@ class BlockedPetsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => sl<PetCubit>()..getOwnerPets()),
-        BlocProvider(create: (context) => sl<PetFriendsCubit>()),
-        BlocProvider(
-          create: (context) => sl<SwitchProfileCubit>()..loadProfile(),
-        ),
-      ],
-      child: _BlockedPetsScreenContent(petId: petId),
-    );
+    return _BlockedPetsScreenContent(petId: petId);
   }
 }
 

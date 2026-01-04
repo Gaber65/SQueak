@@ -63,7 +63,6 @@ class TabBarPetFriend extends StatelessWidget {
               _TabItem(
                 icon: IconlyBold.add_user,
                 label: isArabic() ? 'الأصدقاء المقترحون' : 'Suggested',
-                count: suggestedCount,
                 isSelected: selectedTab == 1,
                 onTap: () {
                   final cubit = context.read<PetFriendsCubit>();
@@ -132,7 +131,7 @@ class TabBarPetFriend extends StatelessWidget {
 class _TabItem extends StatelessWidget {
   final IconData icon;
   final String label;
-  final int count;
+  final int? count;
   final bool isSelected;
   final VoidCallback onTap;
   final double iconSize;
@@ -142,7 +141,7 @@ class _TabItem extends StatelessWidget {
   const _TabItem({
     required this.icon,
     required this.label,
-    required this.count,
+    this.count,
     required this.isSelected,
     required this.onTap,
     required this.iconSize,
@@ -207,27 +206,32 @@ class _TabItem extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 3),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color:
-                      isSelected
-                          ? Colors.white.withOpacity(0.2)
-                          : Colors.grey.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  count.toString(),
-                  style: TextStyle(
+              if (count != null && count! >= 0)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
                     color:
                         isSelected
-                            ? Colors.white
-                            : (isDark ? Colors.white70 : Colors.grey[700]),
-                    fontSize: countSize,
-                    fontWeight: FontWeight.bold,
+                            ? Colors.white.withOpacity(0.2)
+                            : Colors.grey.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(8),
                   ),
+                  child: Text(
+                    count.toString(),
+                    style: TextStyle(
+                      color:
+                          isSelected
+                              ? Colors.white
+                              : (isDark ? Colors.white70 : Colors.grey[700]),
+                      fontSize: countSize,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )
+              else
+                SizedBox(
+                  height: countSize + 4,
                 ),
-              ),
             ],
           ),
         ),

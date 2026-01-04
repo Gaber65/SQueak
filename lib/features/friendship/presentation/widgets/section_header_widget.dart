@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 class SectionHeader extends StatelessWidget {
   final IconData icon;
   final String title;
-  final int count;
+  final int ?count;
   final Color color;
 
   const SectionHeader({
     super.key,
     required this.icon,
     required this.title,
-    required this.count,
+     this.count,
     required this.color,
   });
 
@@ -35,21 +35,22 @@ class SectionHeader extends StatelessWidget {
           ),
         ),
         SizedBox(width: 8),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-          decoration: BoxDecoration(
-            color: backgroundCountColor,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            count.toString(),
-            style: TextStyle(
-              color: countTextColor,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
+        if (count != null && count! >= 0)
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: backgroundCountColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              count.toString(),
+              style: TextStyle(
+                color: countTextColor,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-        ),
       ],
     );
   }
