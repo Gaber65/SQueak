@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in_chat/multi_media_preview_screen.dart'
     as multi;
@@ -9,6 +8,21 @@ import 'package:squeak/features/mating/chat/presentation/widgets/attach_files_in
 import 'package:squeak/generated/l10n.dart';
 
 enum AttachmentType { image, video, file, audio }
+
+// Helper class to hold separated media files
+class SeparatedMedia {
+  final List<File> images;
+  final List<File> videos;
+
+  SeparatedMedia({
+    required this.images,
+    required this.videos,
+  });
+
+  bool get hasImages => images.isNotEmpty;
+  bool get hasVideos => videos.isNotEmpty;
+  bool get isMixed => hasImages && hasVideos;
+}
 
 class AttachmentOptionsBottomSheet extends StatelessWidget {
   final Function(List<File> files, AttachmentType type, {String? caption, List<String?>? captions})
@@ -48,6 +62,35 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
   bool _isFileSizeValid(File file, AttachmentType type) {
     final sizeMB = _getFileSizeMB(file);
     return sizeMB <= maxMediaSizeMB;
+  }
+
+  /// Determine if a file is an image based on its extension
+  bool _isImageFile(File file) {
+    final extension = file.path.toLowerCase().split('.').last;
+    return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].contains(extension);
+  }
+
+  /// Determine if a file is a video based on its extension
+  bool _isVideoFile(File file) {
+    final extension = file.path.toLowerCase().split('.').last;
+    return ['mp4', 'mov', 'avi', 'mkv', 'flv', 'wmv', 'webm', '3gp', 'm4v']
+        .contains(extension);
+  }
+
+  /// Separate files into images and videos
+  SeparatedMedia _separateMediaFiles(List<File> files) {
+    final images = <File>[];
+    final videos = <File>[];
+
+    for (final file in files) {
+      if (_isImageFile(file)) {
+        images.add(file);
+      } else if (_isVideoFile(file)) {
+        videos.add(file);
+      }
+    }
+
+    return SeparatedMedia(images: images, videos: videos);
   }
 
   void _showFileSizeWarning(
@@ -94,44 +137,56 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
 
 
   Future<void> _handlePhoto(BuildContext context) async {
-    final picker = ImagePicker();
-    final pickedFiles = await picker.pickMultiImage();
-
-    if (pickedFiles.isNotEmpty) {
-      // Check if user selected more than max allowed files
-      if (pickedFiles.length > maxMediaCount) {
-        _showMaxFileCountWarning(context, pickedFiles.length);
-        return;
-      }
-
-      final navigator = Navigator.of(context);
-      navigator.pop();
-
-      final files = <File>[];
-
-      for (final pickedFile in pickedFiles) {
-        final file = File(pickedFile.path);
-        if (!_isFileSizeValid(file, AttachmentType.image)) {
-          _showFileSizeWarning(context, file, AttachmentType.image);
-          continue;
-        }
-        files.add(file);
-      }
-
-      if (files.isEmpty) return;
-
-      debugPrint(
-        '📷 AttachmentSheet: ${files.length} photo(s) selected from gallery',
+    try {
+      // Use FilePicker to allow selecting both images and videos
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.media,
+        allowMultiple: true,
       );
-      await navigator.push(
-        MaterialPageRoute(
-          builder:
-              (context) => multi.MultiMediaPreviewScreen(
+
+      if (result != null && result.files.isNotEmpty) {
+        // Check if user selected more than max allowed files
+        if (result.files.length > maxMediaCount) {
+          _showMaxFileCountWarning(context, result.files.length);
+          return;
+        }
+
+        final navigator = Navigator.of(context);
+        navigator.pop();
+
+        final files = <File>[];
+
+        for (final platformFile in result.files) {
+          if (platformFile.path != null) {
+            final file = File(platformFile.path!);
+            if (!_isFileSizeValid(file, AttachmentType.image)) {
+              _showFileSizeWarning(context, file, AttachmentType.image);
+              continue;
+            }
+            files.add(file);
+          }
+        }
+
+        if (files.isEmpty) return;
+
+        // Separate images and videos
+        final separated = _separateMediaFiles(files);
+
+        debugPrint(
+          '📷 AttachmentSheet: ${files.length} file(s) selected (images: ${separated.images.length}, videos: ${separated.videos.length})',
+        );
+
+        // If mixed media, show both in the preview with separate handlers
+        if (separated.isMixed) {
+          debugPrint('🎨 Mixed media detected - sending images first, then videos');
+          await navigator.push(
+            MaterialPageRoute(
+              builder: (context) => multi.MultiMediaPreviewScreen(
                 mediaFiles: files,
                 mediaType: multi.MediaType.image,
                 onSend: (files, captions) {
                   debugPrint(
-                    '✅ AttachmentSheet: ${files.length} photo(s) confirmed, passing to chat with captions',
+                    '✅ AttachmentSheet: ${files.length} media file(s) confirmed with captions',
                   );
                   onAttachmentSelected(
                     files,
@@ -140,60 +195,22 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
                   );
                 },
                 onAddMore: (mediaType) async {
-                  return await _handleAddMoreImages(context);
+                  return await _handleAddMoreMedia(context);
                 },
               ),
-        ),
-      );
-    }
-  }
-
-  Future<void> _handleVideo(BuildContext context) async {
-    final picker = ImagePicker();
-    final pickedFiles = await picker.pickMultiVideo();
-
-    if (pickedFiles.isNotEmpty) {
-      // Check if user selected more than max allowed files
-      if (pickedFiles.length > maxMediaCount) {
-        _showMaxFileCountWarning(context, pickedFiles.length);
-        return;
-      }
-
-      final navigator = Navigator.of(context);
-      navigator.pop();
-
-      final files = <File>[];
-
-      for (final pickedFile in pickedFiles) {
-        if (pickedFile.path.contains(
-          RegExp(
-            r'\.(mp4|mov|avi|mkv|flv|wmv|webm|3gp|m4v)$',
-            caseSensitive: false,
-          ),
-        )) {
-          final file = File(pickedFile.path);
-          if (!_isFileSizeValid(file, AttachmentType.video)) {
-            _showFileSizeWarning(context, file, AttachmentType.video);
-            continue;
-          }
-          files.add(file);
-        }
-      }
-
-      if (files.isEmpty) return;
-
-      debugPrint(
-        '🎥 AttachmentSheet: ${files.length} video(s) selected from gallery',
-      );
-      await navigator.push(
-        MaterialPageRoute(
-          builder:
-              (context) => multi.MultiMediaPreviewScreen(
-                mediaFiles: files,
+            ),
+          );
+        } else if (separated.hasVideos) {
+          // All videos
+          debugPrint('🎥 All videos selected - uploading to video helper');
+          await navigator.push(
+            MaterialPageRoute(
+              builder: (context) => multi.MultiMediaPreviewScreen(
+                mediaFiles: separated.videos,
                 mediaType: multi.MediaType.video,
                 onSend: (files, captions) {
                   debugPrint(
-                    '✅ AttachmentSheet: ${files.length} video(s) confirmed, passing to chat with captions',
+                    '✅ AttachmentSheet: ${files.length} video(s) confirmed with captions',
                   );
                   onAttachmentSelected(
                     files,
@@ -202,11 +219,158 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
                   );
                 },
                 onAddMore: (mediaType) async {
-                  return await _handleAddMoreVideos(context);
+                  return await _handleAddMoreMedia(context);
                 },
               ),
-        ),
+            ),
+          );
+        } else {
+          // All images
+          debugPrint('🖼️ All images selected - uploading to image helper');
+          await navigator.push(
+            MaterialPageRoute(
+              builder: (context) => multi.MultiMediaPreviewScreen(
+                mediaFiles: separated.images,
+                mediaType: multi.MediaType.image,
+                onSend: (files, captions) {
+                  debugPrint(
+                    '✅ AttachmentSheet: ${files.length} image(s) confirmed with captions',
+                  );
+                  onAttachmentSelected(
+                    files,
+                    AttachmentType.image,
+                    captions: captions,
+                  );
+                },
+                onAddMore: (mediaType) async {
+                  return await _handleAddMoreMedia(context);
+                },
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ AttachmentSheet: Error picking media: $e');
+    }
+  }
+
+  Future<void> _handleVideo(BuildContext context) async {
+    try {
+      // Use FilePicker to allow selecting both images and videos
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.media,
+        allowMultiple: true,
       );
+
+      if (result != null && result.files.isNotEmpty) {
+        // Check if user selected more than max allowed files
+        if (result.files.length > maxMediaCount) {
+          _showMaxFileCountWarning(context, result.files.length);
+          return;
+        }
+
+        final navigator = Navigator.of(context);
+        navigator.pop();
+
+        final files = <File>[];
+
+        for (final platformFile in result.files) {
+          if (platformFile.path != null) {
+            final file = File(platformFile.path!);
+            if (!_isFileSizeValid(file, AttachmentType.video)) {
+              _showFileSizeWarning(context, file, AttachmentType.video);
+              continue;
+            }
+            files.add(file);
+          }
+        }
+
+        if (files.isEmpty) return;
+
+        // Separate images and videos
+        final separated = _separateMediaFiles(files);
+
+        debugPrint(
+          '🎥 AttachmentSheet: ${files.length} file(s) selected (images: ${separated.images.length}, videos: ${separated.videos.length})',
+        );
+
+        // If mixed media, show both in the preview with separate handlers
+        if (separated.isMixed) {
+          debugPrint('🎨 Mixed media detected - sending videos first, then images');
+          await navigator.push(
+            MaterialPageRoute(
+              builder: (context) => multi.MultiMediaPreviewScreen(
+                mediaFiles: files,
+                mediaType: multi.MediaType.video,
+                onSend: (files, captions) {
+                  debugPrint(
+                    '✅ AttachmentSheet: ${files.length} media file(s) confirmed with captions',
+                  );
+                  onAttachmentSelected(
+                    files,
+                    AttachmentType.video,
+                    captions: captions,
+                  );
+                },
+                onAddMore: (mediaType) async {
+                  return await _handleAddMoreMedia(context);
+                },
+              ),
+            ),
+          );
+        } else if (separated.hasVideos) {
+          // All videos
+          debugPrint('🎥 All videos selected - uploading to video helper');
+          await navigator.push(
+            MaterialPageRoute(
+              builder: (context) => multi.MultiMediaPreviewScreen(
+                mediaFiles: separated.videos,
+                mediaType: multi.MediaType.video,
+                onSend: (files, captions) {
+                  debugPrint(
+                    '✅ AttachmentSheet: ${files.length} video(s) confirmed with captions',
+                  );
+                  onAttachmentSelected(
+                    files,
+                    AttachmentType.video,
+                    captions: captions,
+                  );
+                },
+                onAddMore: (mediaType) async {
+                  return await _handleAddMoreMedia(context);
+                },
+              ),
+            ),
+          );
+        } else {
+          // All images
+          debugPrint('🖼️ All images selected - uploading to image helper');
+          await navigator.push(
+            MaterialPageRoute(
+              builder: (context) => multi.MultiMediaPreviewScreen(
+                mediaFiles: separated.images,
+                mediaType: multi.MediaType.image,
+                onSend: (files, captions) {
+                  debugPrint(
+                    '✅ AttachmentSheet: ${files.length} image(s) confirmed with captions',
+                  );
+                  onAttachmentSelected(
+                    files,
+                    AttachmentType.image,
+                    captions: captions,
+                  );
+                },
+                onAddMore: (mediaType) async {
+                  return await _handleAddMoreMedia(context);
+                },
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ AttachmentSheet: Error picking media: $e');
     }
   }
 
@@ -497,45 +661,36 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
     );
   }
 
-  Future<List<File>> _handleAddMoreImages(BuildContext context) async {
-    final picker = ImagePicker();
-    final pickedFiles = await picker.pickMultiImage();
+  Future<List<File>> _handleAddMoreMedia(BuildContext context) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.media,
+        allowMultiple: true,
+      );
 
-    final files = <File>[];
-    if (pickedFiles.isNotEmpty) {
-      for (final pickedFile in pickedFiles) {
-        final file = File(pickedFile.path);
-        if (_isFileSizeValid(file, AttachmentType.image)) {
-          files.add(file);
+      final files = <File>[];
+      if (result != null && result.files.isNotEmpty) {
+        for (final platformFile in result.files) {
+          if (platformFile.path != null) {
+            final file = File(platformFile.path!);
+            if (_isFileSizeValid(file, AttachmentType.image)) {
+              files.add(file);
+            }
+          }
+        }
+
+        if (files.isNotEmpty) {
+          debugPrint('🎬 Adding ${files.length} more media file(s)');
         }
       }
-
-      if (files.isNotEmpty) {
-        debugPrint('🖼️ Adding ${files.length} more image(s)');
-      }
+      return files;
+    } catch (e) {
+      debugPrint('❌ Error picking additional media files: $e');
+      return [];
     }
-    return files;
   }
 
-  Future<List<File>> _handleAddMoreVideos(BuildContext context) async {
-    final picker = ImagePicker();
-    final pickedFiles = await picker.pickMultiVideo();
 
-    final files = <File>[];
-    if (pickedFiles.isNotEmpty) {
-      for (final pickedFile in pickedFiles) {
-        final file = File(pickedFile.path);
-        if (_isFileSizeValid(file, AttachmentType.video)) {
-          files.add(file);
-        }
-      }
-
-      if (files.isNotEmpty) {
-        debugPrint('🎬 Adding ${files.length} more video(s)');
-      }
-    }
-    return files;
-  }
 
   Future<List<File>> _handleAddMoreAudio(BuildContext context) async {
     final result = await FilePicker.platform.pickFiles(

@@ -622,120 +622,179 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         debugPrint('   ✓ File ${i + 1}: ${file.path.split('/').last} (OK)');
       }
 
-      // Show uploading indicators for all files
-      final uploadIds = <String>[];
-      debugPrint('📤 [Upload] Starting upload for ${files.length} file(s)...');
-      
-      if (mounted) {
-        setState(() {
-          for (var i = 0; i < files.length; i++) {
-            final uploadId = '${DateTime.now().millisecondsSinceEpoch}_${uploadIds.length}';
-            uploadIds.add(uploadId);
-            _uploadingFiles.add(
-              UploadingMedia(
-                id: uploadId,
-                file: files[i],
-                type: type,
-                caption: (i < captionsList.length ? captionsList[i] : null) ?? '',
-              ),
-            );
-          }
-        });
-      }
+      // Separate images and videos
+      final images = <File>[];
+      final imageIndices = <int>[];
+      final videos = <File>[];
+      final videoIndices = <int>[];
 
-      // Upload all files
-      final uploadedUrls = <String>[];
-      final uploadedCaptions = <String?>[];
-      
-      for (var i = 0; i < files.length; i++) {
+      for (int i = 0; i < files.length; i++) {
         final file = files[i];
-        debugPrint('   ⏳ Uploading ${type.name} ${i + 1}/${files.length}...');
+        final extension = file.path.toLowerCase().split('.').last;
         
-        try {
-          String? mediaUrl;
-          if (type == AttachmentType.image) {
-            await mainCubit.getGlobalImage(file, UploadPlace.messageImage);
-            mediaUrl = mainCubit.modelImage?.data;
-          } else if (type == AttachmentType.video) {
-            await mainCubit.getGlobalVideo(file, UploadPlace.messageVideo);
-            mediaUrl = mainCubit.modelImage?.data;
-          } else if (type == AttachmentType.audio) {
-            await mainCubit.getGlobalSound(file, UploadPlace.messageRecord);
-            mediaUrl = mainCubit.modelImage?.data;
-          } else if (type == AttachmentType.file) {
-            await mainCubit.getGlobalDocument(file, UploadPlace.messageFiles);
-            mediaUrl = mainCubit.modelImage?.data;
-          }
-
-          if (mediaUrl != null && mediaUrl.isNotEmpty) {
-            uploadedUrls.add(mediaUrl);
-            // Store the caption for this file
-            uploadedCaptions.add(i < captionsList.length ? captionsList[i] : null);
-            debugPrint('   ✅ File ${i + 1} uploaded: ${mediaUrl.split('/').last}');
-          } else {
-            debugPrint('   ❌ File ${i + 1} upload failed: URL is empty');
-          }
-        } catch (e) {
-          debugPrint('   ❌ File ${i + 1} upload error: $e');
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].contains(extension)) {
+          images.add(file);
+          imageIndices.add(i);
+        } else if (['mp4', 'mov', 'avi', 'mkv', 'flv', 'wmv', 'webm', '3gp', 'm4v'].contains(extension)) {
+          videos.add(file);
+          videoIndices.add(i);
         }
       }
 
-      // Remove uploading indicators
-      if (mounted) {
-        setState(() {
-          for (final id in uploadIds) {
-            _uploadingFiles.removeWhere((item) => item.id == id);
+      // If mixed media, upload to respective helpers
+      final allAttachments = <AttachmentPayload>[];
+
+      // Upload images to image helper
+      if (images.isNotEmpty) {
+        debugPrint('🖼️ [ImageHelper] Uploading ${images.length} image(s)...');
+        final imageUploadIds = <String>[];
+        
+        if (mounted) {
+          setState(() {
+            for (var i = 0; i < images.length; i++) {
+              final uploadId = '${DateTime.now().millisecondsSinceEpoch}_img_${imageUploadIds.length}';
+              imageUploadIds.add(uploadId);
+              _uploadingFiles.add(
+                UploadingMedia(
+                  id: uploadId,
+                  file: images[i],
+                  type: AttachmentType.image,
+                  caption: (imageIndices[i] < captionsList.length ? captionsList[imageIndices[i]] : null) ?? '',
+                ),
+              );
+            }
+          });
+        }
+
+        for (var i = 0; i < images.length; i++) {
+          final file = images[i];
+          debugPrint('   ⏳ Uploading image ${i + 1}/${images.length}...');
+          
+          try {
+            await mainCubit.getGlobalImage(file, UploadPlace.messageImage);
+            final mediaUrl = mainCubit.modelImage?.data;
+
+            if (mediaUrl != null && mediaUrl.isNotEmpty) {
+              final originalIndex = imageIndices[i];
+              allAttachments.add(
+                AttachmentPayload(
+                  url: mediaUrl,
+                  type: AttachmentType.image,
+                  description: originalIndex < captionsList.length ? captionsList[originalIndex] : null,
+                ),
+              );
+              debugPrint('   ✅ Image ${i + 1} uploaded: ${mediaUrl.split('/').last}');
+            } else {
+              debugPrint('   ❌ Image ${i + 1} upload failed: URL is empty');
+            }
+          } catch (e) {
+            debugPrint('   ❌ Image ${i + 1} upload error: $e');
           }
-        });
+        }
+
+        if (mounted) {
+          setState(() {
+            for (final id in imageUploadIds) {
+              _uploadingFiles.removeWhere((item) => item.id == id);
+            }
+          });
+        }
       }
 
-      // Check if all uploads succeeded
-      if (uploadedUrls.isEmpty) {
+      // Upload videos to video helper
+      if (videos.isNotEmpty) {
+        debugPrint('🎥 [VideoHelper] Uploading ${videos.length} video(s)...');
+        final videoUploadIds = <String>[];
+        
+        if (mounted) {
+          setState(() {
+            for (var i = 0; i < videos.length; i++) {
+              final uploadId = '${DateTime.now().millisecondsSinceEpoch}_vid_${videoUploadIds.length}';
+              videoUploadIds.add(uploadId);
+              _uploadingFiles.add(
+                UploadingMedia(
+                  id: uploadId,
+                  file: videos[i],
+                  type: AttachmentType.video,
+                  caption: (videoIndices[i] < captionsList.length ? captionsList[videoIndices[i]] : null) ?? '',
+                ),
+              );
+            }
+          });
+        }
+
+        for (var i = 0; i < videos.length; i++) {
+          final file = videos[i];
+          debugPrint('   ⏳ Uploading video ${i + 1}/${videos.length}...');
+          
+          try {
+            await mainCubit.getGlobalVideo(file, UploadPlace.messageVideo);
+            final mediaUrl = mainCubit.modelImage?.data;
+
+            if (mediaUrl != null && mediaUrl.isNotEmpty) {
+              final originalIndex = videoIndices[i];
+              allAttachments.add(
+                AttachmentPayload(
+                  url: mediaUrl,
+                  type: AttachmentType.video,
+                  description: originalIndex < captionsList.length ? captionsList[originalIndex] : null,
+                ),
+              );
+              debugPrint('   ✅ Video ${i + 1} uploaded: ${mediaUrl.split('/').last}');
+            } else {
+              debugPrint('   ❌ Video ${i + 1} upload failed: URL is empty');
+            }
+          } catch (e) {
+            debugPrint('   ❌ Video ${i + 1} upload error: $e');
+          }
+        }
+
+        if (mounted) {
+          setState(() {
+            for (final id in videoUploadIds) {
+              _uploadingFiles.removeWhere((item) => item.id == id);
+            }
+          });
+        }
+      }
+
+      // Check if any uploads succeeded
+      if (allAttachments.isEmpty) {
         debugPrint('❌ [Upload] All uploads failed!');
         if (mounted) errorToast(context, 'Upload failed for all files');
         return;
       }
 
-      debugPrint('✅ [Upload] ${uploadedUrls.length}/${files.length} files uploaded successfully');
-
-      // Prepare attachments with their respective captions
-      debugPrint('📦 [Prepare] Creating ${uploadedUrls.length} attachment(s)...');
-      final attachments = <AttachmentPayload>[];
-      for (var i = 0; i < uploadedUrls.length; i++) {
-        attachments.add(
-          AttachmentPayload(
-            url: uploadedUrls[i],
-            type: type,
-            description: uploadedCaptions[i], // Add caption to attachment
-          ),
-        );
-      }
+      debugPrint('✅ [Upload] ${allAttachments.length}/${files.length} files uploaded successfully');
 
       // Send message with all attachments
-      debugPrint('🚀 [Send] Sending message with ${attachments.length} ${type.name}(s)...');
+      debugPrint('🚀 [Send] Sending message with ${allAttachments.length} attachment(s)...');
       await chatAppCubit.sendMessage(
         conversationId: widget.chat.id,
         toPetId: widget.chat.petId,
         fromPetId: widget.pet?.petId ?? '',
         description: caption ?? '',
         dateTimeInUTC: DateTime.now().toUtc(),
-        attachments: attachments,
+        attachments: allAttachments,
       );
 
       // Update unread count
       debugPrint('📊 [Count] Updating unread message count...');
+      final hasImages = allAttachments.any((a) => a.type == AttachmentType.image);
+      final hasVideos = allAttachments.any((a) => a.type == AttachmentType.video);
+      
       await chatAppCubit.increaseUnreadMessageCount(
         conversationId: widget.chat.id,
         toPetId: widget.chat.petId,
         fromPetId: widget.pet?.petId ?? '',
         content: caption ?? '',
-        imageMessage: type == AttachmentType.image,
-        videoMessage: type == AttachmentType.video,
+        imageMessage: hasImages,
+        videoMessage: hasVideos,
         fileMessage: type == AttachmentType.file,
         audioMessage: type == AttachmentType.audio,
       );
 
-      debugPrint('✅ [Complete] ${uploadedUrls.length} ${type.name}(s) sent successfully!');
+      debugPrint('✅ [Complete] ${allAttachments.length} file(s) sent successfully!');
       debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       
     } catch (e) {

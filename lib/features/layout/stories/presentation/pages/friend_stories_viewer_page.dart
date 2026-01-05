@@ -38,6 +38,7 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
     with SingleTickerProviderStateMixin {
   late StoryViewerController controller;
   final TextEditingController _commentController = TextEditingController();
+  late FocusNode _commentFocusNode;
   final Map<int, GlobalKey> reactionKeys = {};
   final Map<int, int?> reactionIndices = {};
   bool _hasShownMaxLengthDialog = false;
@@ -45,6 +46,8 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
   @override
   void initState() {
     super.initState();
+
+    _commentFocusNode = FocusNode();
 
     controller = StoryViewerController(
       vsync: this,
@@ -137,6 +140,7 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
   void dispose() {
     controller.dispose();
     _commentController.dispose();
+    _commentFocusNode.dispose();
     super.dispose();
   }
 
@@ -174,6 +178,14 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
       behavior: HitTestBehavior.translucent,
       onTapDown: (details) {
         if (index != controller.currentIndex) return;
+        
+        // Check if comment field is focused, unfocus and resume
+        if (_commentFocusNode.hasFocus) {
+          _commentFocusNode.unfocus();
+          controller.resume();
+          return;
+        }
+        
         final isRTL = Directionality.of(context) == TextDirection.rtl;
         final bottomUIHeight = 120.0;
         final screenHeight = MediaQuery.of(context).size.height;
@@ -541,6 +553,7 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                       child: TextField(
                         maxLength: 500,
                         controller: _commentController,
+                        focusNode: _commentFocusNode,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
