@@ -216,12 +216,24 @@ class ImageGridLayout extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(borderRadius),
           onTap: () {
+            // Prepare list of all image URLs and captions
+            final imageUrlsList = imageAttachments
+                .where((att) => att.attachmentType == 0)
+                .map((att) => imageUrl + att.url)
+                .toList();
+            final captionsList = imageAttachments
+                .where((att) => att.attachmentType == 0)
+                .map((att) => att.description)
+                .toList();
+            
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => FullScreenMediaViewer(
                   mediaUrl: imageUrl + attachmentUrl,
+                  mediaUrls: imageUrlsList,
                   mediaType: MediaType.image,
                   caption: imageAttachments[index].description,
+                  captions: captionsList,
                 ),
               ),
             );
@@ -313,12 +325,24 @@ class ImageGridLayout extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(borderRadius),
           onTap: () {
+            // Prepare list of all image URLs and captions
+            final imageUrlsList = imageAttachments
+                .where((att) => att.attachmentType == 0)
+                .map((att) => imageUrl + att.url)
+                .toList();
+            final captionsList = imageAttachments
+                .where((att) => att.attachmentType == 0)
+                .map((att) => att.description)
+                .toList();
+            
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => FullScreenMediaViewer(
                   mediaUrl: imageUrl + attachmentUrl,
+                  mediaUrls: imageUrlsList,
                   mediaType: MediaType.image,
                   caption: imageAttachments[index].description,
+                  captions: captionsList,
                 ),
               ),
             );

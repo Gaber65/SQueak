@@ -10,14 +10,18 @@ enum MediaType { image, video, document }
 
 class FullScreenMediaViewer extends StatefulWidget {
   final String mediaUrl;
+  final List<String>? mediaUrls; // Support multiple images
   final MediaType mediaType;
   final String? caption;
+  final List<String?>? captions; 
 
   const FullScreenMediaViewer({
     super.key,
     required this.mediaUrl,
+    this.mediaUrls,
     required this.mediaType,
     this.caption,
+    this.captions,
   });
 
   @override
@@ -30,10 +34,28 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
   bool _isInitializing = true;
   String? _errorMessage;
   double _playbackSpeed = 1.0;
+  
+  // For image gallery support
+  late List<String> _imageUrls;
+  late List<String?> _captions;
+  int _currentImageIndex = 0;
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
+    
+    // Initialize image URLs list
+    if (widget.mediaUrls != null && widget.mediaUrls!.isNotEmpty) {
+      _imageUrls = widget.mediaUrls!;
+      _captions = widget.captions ?? List.filled(_imageUrls.length, null);
+    } else {
+      _imageUrls = [widget.mediaUrl];
+      _captions = [widget.caption];
+    }
+    
+    _pageController = PageController();
+    
     if (widget.mediaType == MediaType.video) {
       _initializeVideo();
     } else if (widget.mediaType == MediaType.document) {
@@ -99,6 +121,7 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
   void dispose() {
     _chewieController?.dispose();
     _videoController?.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -112,14 +135,14 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
           Center(
             child:
                 widget.mediaType == MediaType.image
-                    ? _buildImageViewer()
+                    ? _buildImageGallery()
                     : widget.mediaType == MediaType.video
                     ? _buildVideoViewer()
                     : _buildDocumentViewer(),
           ),
 
           // Caption at bottom (for image)
-          if (widget.mediaType == MediaType.image && widget.caption != null && widget.caption!.isNotEmpty)
+          if (widget.mediaType == MediaType.image && _captions[_currentImageIndex] != null && _captions[_currentImageIndex]!.isNotEmpty)
             Positioned(
               bottom: 0,
               left: 0,
@@ -139,7 +162,7 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
                 ),
                 padding: const EdgeInsets.fromLTRB(16, 32, 16, 24),
                 child: Text(
-                  widget.caption!,
+                  _captions[_currentImageIndex]!,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 15,
@@ -151,7 +174,7 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
               ),
             ),
 
-          // Close button and menu for video
+          // Close button and menu for video / Image counter for multiple images
           SafeArea(
             child: Align(
               alignment: Alignment.topRight,
@@ -160,6 +183,24 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    // Image counter (for multiple images)
+                    if (widget.mediaType == MediaType.image && _imageUrls.length > 1)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '${_currentImageIndex + 1}/${_imageUrls.length}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    const SizedBox(width: 8),
                     // More options menu (for video and document)
                     if (widget.mediaType == MediaType.video ||
                         widget.mediaType == MediaType.document)
@@ -281,41 +322,53 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
     );
   }
 
-  Widget _buildImageViewer() {
-    return InteractiveViewer(
-      minScale: 0.5,
-      maxScale: 4.0,
-      child: FastCachedImage(
-        url: widget.mediaUrl,
-        fit: BoxFit.contain,
-        loadingBuilder:
-            (context, progress) => Center(
-              child: CircularProgressIndicator(
-                value: progress.progressPercentage.value / 100,
-                color: Colors.white,
-              ),
-            ),
-        errorBuilder:
-            (context, url, error) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.broken_image_rounded,
-                    color: Colors.white70,
-                    size: 64,
+  Widget _buildImageGallery() {
+    return PageView.builder(
+      controller: _pageController,
+      onPageChanged: (index) {
+        setState(() {
+          _currentImageIndex = index;
+        });
+      },
+      itemCount: _imageUrls.length,
+      itemBuilder: (context, index) {
+        return InteractiveViewer(
+          minScale: 0.5,
+          maxScale: 4.0,
+          child: FastCachedImage(
+            url: _imageUrls[index],
+            fit: BoxFit.contain,
+            loadingBuilder:
+                (context, progress) => Center(
+                  child: CircularProgressIndicator(
+                    value: progress.progressPercentage.value / 100,
+                    color: Colors.white,
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    S.of(context).imageloadingFailed,
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
+                ),
+            errorBuilder:
+                (context, url, error) => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.broken_image_rounded,
+                        color: Colors.white70,
+                        size: 64,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        S.of(context).imageloadingFailed,
+                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-      ),
+                ),
+          ),
+        );
+      },
     );
   }
+
 
   Widget _buildVideoViewer() {
     if (_isInitializing) {
