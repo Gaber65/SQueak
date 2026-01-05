@@ -12,6 +12,7 @@ import '../attach_files_in_chat/audio_player_widget.dart';
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_app_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../attach_files_in_chat/in_app_document_viewer.dart';
+import 'image_grid_layout.dart';
 
 class ChatMessageBubble extends StatefulWidget {
   final MessageEntity message;
@@ -719,81 +720,50 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
   List<Widget> _buildAttachmentsContent() {
     final widgets = <Widget>[];
 
+    // Separate attachments by type
+    final imageAttachments = <Attachment>[];
+    final videoAttachments = <Attachment>[];
+    final documentAttachments = <Attachment>[];
+    final audioAttachments = <Attachment>[];
+
     for (final attachment in widget.message.attachments) {
       switch (attachment.attachmentType) {
         case 0:
-          widgets.add(_buildAttachmentImage(attachment.url, attachment.description));
+          imageAttachments.add(attachment);
           break;
         case 1:
-          widgets.add(_buildAttachmentVideo(attachment.url, attachment.description));
+          videoAttachments.add(attachment);
           break;
         case 2:
-          widgets.add(_buildAttachmentDocument(attachment.url));
+          documentAttachments.add(attachment);
           break;
         case 3:
-          widgets.add(_buildAttachmentAudio(attachment.url));
+          audioAttachments.add(attachment);
           break;
       }
     }
 
-    return widgets;
-  }
+    // Add image grid layout if there are images
+    if (imageAttachments.isNotEmpty) {
+      widgets.add(ImageGridLayout(imageAttachments: imageAttachments));
+    }
 
-  /// Build image widget for attachment
-  Widget _buildAttachmentImage(String attachmentUrl, String? caption) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder:
-                      (context) => FullScreenMediaViewer(
-                        mediaUrl: imageUrl + attachmentUrl,
-                        mediaType: MediaType.image,
-                        caption: caption,
-                      ),
-                ),
-              );
-            },
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: FastCachedImage(
-                url: imageUrl + attachmentUrl,
-                width: 220,
-                height: 160,
-                fit: BoxFit.cover,
-                errorBuilder: (context, exception, stacktrace) {
-                  return Container(
-                    width: 220,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Center(child: Icon(Icons.image_not_supported)),
-                  );
-                },
-                loadingBuilder: (context, imageProvider) {
-                  return Container(
-                    width: 220,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Center(child: CircularProgressIndicator()),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    // Add videos individually
+    for (final attachment in videoAttachments) {
+      widgets.add(_buildAttachmentVideo(attachment.url, attachment.description));
+    }
+
+    // Add documents individually
+    for (final attachment in documentAttachments) {
+      widgets.add(_buildAttachmentDocument(attachment.url));
+    }
+
+    // Add audio individually
+    for (final attachment in audioAttachments) {
+      widgets.add(_buildAttachmentAudio(attachment.url));
+    }
+
+    return widgets;
   }
 
   /// Build video widget for attachment
