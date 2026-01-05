@@ -95,7 +95,8 @@ class CommentItemCard extends StatelessWidget {
   }
 
   void _onLongPress(BuildContext context) {
-    if (data.userId == CacheHelper.getData('clintId')) {
+    if (data.userId == CacheHelper.getData('clintId') && 
+        petID == data.petId) {
       CacheHelper.saveData('isBottomSheetOpen', true);
       cubit.emit(IsBottomSheetOpen());
       scaffoldKey.currentState!

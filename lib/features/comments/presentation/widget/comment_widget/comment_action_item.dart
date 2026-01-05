@@ -184,12 +184,16 @@ class CommentActionSheet extends StatelessWidget {
                       );
 
                       if (confirmed == true && context.mounted) {
-                        CommentCubit.get(context).deleteComment(
-                          commentId: comment.id,
-                          replies: comment.replies,
-                          petId: comment.petId?.toString(),
-                        );
-                        Navigator.of(context).pop();
+                        if (petID == comment.petId.toString()) {
+                          CommentCubit.get(context).deleteComment(
+                            commentId: comment.id,
+                            replies: comment.replies,
+                            petId:petID,
+                          );
+                          Navigator.of(context).pop();
+                        } else {
+                          Navigator.of(context).pop();
+                        }
                       }
                     },
                   ),
