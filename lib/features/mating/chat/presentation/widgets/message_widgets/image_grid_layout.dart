@@ -19,7 +19,7 @@ class ImageGridLayout extends StatelessWidget {
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 12),
       child: _buildImageGrid(context),
     );
   }
@@ -42,9 +42,9 @@ class ImageGridLayout extends StatelessWidget {
     return _buildImageWithTap(
       context,
       attachment.url,
-      width: 220,
-      height: 160,
-      borderRadius: 12,
+      width: 240,
+      height: 180,
+      borderRadius: 16,
       index: index,
     );
   }
@@ -56,19 +56,19 @@ class ImageGridLayout extends StatelessWidget {
         _buildImageWithTap(
           context,
           imageAttachments[0].url,
-          width: 105,
-          height: 160,
-          borderRadius: 12,
-          margin: const EdgeInsets.only(right: 4),
+          width: 115,
+          height: 170,
+          borderRadius: 16,
+          margin: const EdgeInsets.only(right: 6),
           index: 0,
         ),
         _buildImageWithTap(
           context,
           imageAttachments[1].url,
-          width: 105,
-          height: 160,
-          borderRadius: 12,
-          margin: const EdgeInsets.only(left: 4),
+          width: 115,
+          height: 170,
+          borderRadius: 16,
+          margin: const EdgeInsets.only(left: 6),
           index: 1,
         ),
       ],
@@ -86,19 +86,19 @@ class ImageGridLayout extends StatelessWidget {
             _buildImageWithTap(
               context,
               imageAttachments[0].url,
-              width: 108,
-              height: 75,
-              borderRadius: 12,
-              margin: const EdgeInsets.only(right: 2, bottom: 2),
+              width: 115,
+              height: 85,
+              borderRadius: 14,
+              margin: const EdgeInsets.only(right: 4, bottom: 4),
               index: 0,
             ),
             _buildImageWithTap(
               context,
               imageAttachments[1].url,
-              width: 108,
-              height: 75,
-              borderRadius: 12,
-              margin: const EdgeInsets.only(left: 2, bottom: 2),
+              width: 115,
+              height: 85,
+              borderRadius: 14,
+              margin: const EdgeInsets.only(left: 4, bottom: 4),
               index: 1,
             ),
           ],
@@ -106,10 +106,10 @@ class ImageGridLayout extends StatelessWidget {
         _buildImageWithTap(
           context,
           imageAttachments[2].url,
-          width: 218,
-          height: 75,
-          borderRadius: 12,
-          margin: const EdgeInsets.only(top: 2),
+          width: 234,
+          height: 85,
+          borderRadius: 14,
+          margin: const EdgeInsets.only(top: 4),
           index: 2,
         ),
       ],
@@ -129,19 +129,19 @@ class ImageGridLayout extends StatelessWidget {
             _buildImageWithTap(
               context,
               imageAttachments[0].url,
-              width: 108,
-              height: 75,
-              borderRadius: 12,
-              margin: const EdgeInsets.only(right: 2, bottom: 2),
+              width: 115,
+              height: 85,
+              borderRadius: 14,
+              margin: const EdgeInsets.only(right: 4, bottom: 4),
               index: 0,
             ),
             _buildImageWithTap(
               context,
               imageAttachments[1].url,
-              width: 108,
-              height: 75,
-              borderRadius: 12,
-              margin: const EdgeInsets.only(left: 2, bottom: 2),
+              width: 115,
+              height: 85,
+              borderRadius: 14,
+              margin: const EdgeInsets.only(left: 4, bottom: 4),
               index: 1,
             ),
           ],
@@ -153,20 +153,20 @@ class ImageGridLayout extends StatelessWidget {
             _buildImageWithTap(
               context,
               imageAttachments[2].url,
-              width: 108,
-              height: 75,
-              borderRadius: 12,
-              margin: const EdgeInsets.only(right: 2, top: 2),
+              width: 115,
+              height: 85,
+              borderRadius: 14,
+              margin: const EdgeInsets.only(right: 4, top: 4),
               index: 2,
             ),
             if (isMoreThan4)
               _buildImageWithCounterTap(
                 context,
                 imageAttachments[3].url,
-                width: 108,
-                height: 75,
-                borderRadius: 12,
-                margin: const EdgeInsets.only(left: 2, top: 2),
+                width: 115,
+                height: 85,
+                borderRadius: 14,
+                margin: const EdgeInsets.only(left: 4, top: 4),
                 index: 3,
                 remainingCount: imageAttachments.length - 4,
               )
@@ -174,10 +174,10 @@ class ImageGridLayout extends StatelessWidget {
               _buildImageWithTap(
                 context,
                 imageAttachments[3].url,
-                width: 108,
-                height: 75,
-                borderRadius: 12,
-                margin: const EdgeInsets.only(left: 2, top: 2),
+                width: 115,
+                height: 85,
+                borderRadius: 14,
+                margin: const EdgeInsets.only(left: 4, top: 4),
                 index: 3,
               ),
           ],
@@ -186,7 +186,7 @@ class ImageGridLayout extends StatelessWidget {
     );
   }
 
-  /// Build a single image with tap handler
+  /// Build a single image with tap handler and enhanced UI
   Widget _buildImageWithTap(
     BuildContext context,
     String attachmentUrl, {
@@ -196,84 +196,39 @@ class ImageGridLayout extends StatelessWidget {
     EdgeInsets margin = EdgeInsets.zero,
     int index = 0,
   }) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => FullScreenMediaViewer(
-              mediaUrl: imageUrl + attachmentUrl,
-              mediaType: MediaType.image,
-              caption: imageAttachments[index].description,
-            ),
-          ),
-        );
-      },
-      child: Container(
-        margin: margin,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(borderRadius),
-          child: FastCachedImage(
-            url: imageUrl + attachmentUrl,
-            width: width,
-            height: height,
-            fit: BoxFit.cover,
-            errorBuilder: (context, exception, stacktrace) {
-              return Container(
-                width: width,
-                height: height,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(borderRadius),
-                ),
-                child: const Center(child: Icon(Icons.image_not_supported)),
-              );
-            },
-            loadingBuilder: (context, imageProvider) {
-              return Container(
-                width: width,
-                height: height,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(borderRadius),
-                ),
-                child: const Center(child: CircularProgressIndicator()),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
+    final heroTag = 'image_${attachmentUrl}_$index';
 
-  /// Build an image with a counter overlay
-  Widget _buildImageWithCounterTap(
-    BuildContext context,
-    String attachmentUrl, {
-    required double width,
-    required double height,
-    required double borderRadius,
-    EdgeInsets margin = EdgeInsets.zero,
-    int index = 0,
-    required int remainingCount,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => FullScreenMediaViewer(
-              mediaUrl: imageUrl + attachmentUrl,
-              mediaType: MediaType.image,
-              caption: imageAttachments[index].description,
-            ),
+    return Container(
+      margin: margin,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(borderRadius),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-        );
-      },
-      child: Container(
-        margin: margin,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            ClipRRect(
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(borderRadius),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => FullScreenMediaViewer(
+                  mediaUrl: imageUrl + attachmentUrl,
+                  mediaType: MediaType.image,
+                  caption: imageAttachments[index].description,
+                ),
+              ),
+            );
+          },
+          child: Hero(
+            tag: heroTag,
+            child: ClipRRect(
               borderRadius: BorderRadius.circular(borderRadius),
               child: FastCachedImage(
                 url: imageUrl + attachmentUrl,
@@ -285,10 +240,27 @@ class ImageGridLayout extends StatelessWidget {
                     width: width,
                     height: height,
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
+                      color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(borderRadius),
                     ),
-                    child: const Center(child: Icon(Icons.image_not_supported)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.broken_image_rounded,
+                          size: 32,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Failed to load',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 },
                 loadingBuilder: (context, imageProvider) {
@@ -296,35 +268,190 @@ class ImageGridLayout extends StatelessWidget {
                     width: width,
                     height: height,
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
+                      color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(borderRadius),
                     ),
-                    child: const Center(child: CircularProgressIndicator()),
+                    child: _buildShimmerEffect(width, height, borderRadius),
                   );
                 },
               ),
             ),
-            // Dark overlay
-            Container(
-              width: width,
-              height: height,
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(borderRadius),
-              ),
-            ),
-            // Counter text
-            Text(
-              '+$remainingCount',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  /// Build an image with a counter overlay and enhanced UI
+  Widget _buildImageWithCounterTap(
+    BuildContext context,
+    String attachmentUrl, {
+    required double width,
+    required double height,
+    required double borderRadius,
+    EdgeInsets margin = EdgeInsets.zero,
+    int index = 0,
+    required int remainingCount,
+  }) {
+    final heroTag = 'image_${attachmentUrl}_$index';
+
+    return Container(
+      margin: margin,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(borderRadius),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(borderRadius),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => FullScreenMediaViewer(
+                  mediaUrl: imageUrl + attachmentUrl,
+                  mediaType: MediaType.image,
+                  caption: imageAttachments[index].description,
+                ),
+              ),
+            );
+          },
+          child: Hero(
+            tag: heroTag,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(borderRadius),
+                  child: FastCachedImage(
+                    url: imageUrl + attachmentUrl,
+                    width: width,
+                    height: height,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, exception, stacktrace) {
+                      return Container(
+                        width: width,
+                        height: height,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(borderRadius),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.broken_image_rounded,
+                              size: 32,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Failed to load',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    loadingBuilder: (context, imageProvider) {
+                      return Container(
+                        width: width,
+                        height: height,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(borderRadius),
+                        ),
+                        child: _buildShimmerEffect(width, height, borderRadius),
+                      );
+                    },
+                  ),
+                ),
+                // Gradient overlay for better text visibility
+                Container(
+                  width: width,
+                  height: height,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(borderRadius),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withOpacity(0.3),
+                        Colors.black.withOpacity(0.6),
+                      ],
+                    ),
+                  ),
+                ),
+                // Enhanced counter badge
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.7),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    '+$remainingCount',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Build shimmer loading effect
+  Widget _buildShimmerEffect(double width, double height, double borderRadius) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: -1.0, end: 2.0),
+      duration: const Duration(milliseconds: 1500),
+      builder: (context, value, child) {
+        return Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(borderRadius),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              stops: [
+                (value - 0.3).clamp(0.0, 1.0),
+                value.clamp(0.0, 1.0),
+                (value + 0.3).clamp(0.0, 1.0),
+              ],
+              colors: [
+                Colors.grey[200]!,
+                Colors.grey[100]!,
+                Colors.grey[200]!,
+              ],
+            ),
+          ),
+        );
+      },
+      onEnd: () {
+       
+      },
     );
   }
 }
