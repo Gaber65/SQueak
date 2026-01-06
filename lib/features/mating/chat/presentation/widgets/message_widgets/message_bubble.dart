@@ -743,14 +743,12 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
       }
     }
 
-    // Add image grid layout if there are images
-    if (imageAttachments.isNotEmpty) {
-      widgets.add(ImageGridLayout(imageAttachments: imageAttachments));
-    }
-
-    // Add videos individually
-    for (final attachment in videoAttachments) {
-      widgets.add(_buildAttachmentVideo(attachment.url, attachment.description));
+    // Combine images and videos for grid layout (WhatsApp style)
+    final mediaAttachments = [...imageAttachments, ...videoAttachments];
+    
+    // Add media grid layout if there are images or videos
+    if (mediaAttachments.isNotEmpty) {
+      widgets.add(ImageGridLayout(imageAttachments: mediaAttachments));
     }
 
     // Add documents individually
@@ -764,79 +762,6 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
     }
 
     return widgets;
-  }
-
-  /// Build video widget for attachment
-  Widget _buildAttachmentVideo(String attachmentUrl, String? caption) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder:
-                      (context) => FullScreenMediaViewer(
-                        mediaUrl: videoUrl + attachmentUrl,
-                        mediaType: MediaType.video,
-                        caption: caption,
-                      ),
-                ),
-              );
-            },
-            child: Container(
-              width: 220,
-              height: 160,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Colors.black87, Colors.black54],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: FastCachedImage(
-                      url: videoUrl + attachmentUrl,
-                      width: 220,
-                      height: 160,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, exception, stacktrace) {
-                        return Container(color: Colors.grey[800]);
-                      },
-                      loadingBuilder: (context, imageProvider) {
-                        return Container(
-                          color: Colors.grey[800],
-                          child: const Center(child: CircularProgressIndicator()),
-                        );
-                      },
-                    ),
-                  ),
-                  const Icon(
-                    Icons.play_circle_filled,
-                    color: Colors.white,
-                    size: 50,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   /// Build audio widget for attachment

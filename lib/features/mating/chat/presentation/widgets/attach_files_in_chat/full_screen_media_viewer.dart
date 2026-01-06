@@ -10,10 +10,11 @@ enum MediaType { image, video, document }
 
 class FullScreenMediaViewer extends StatefulWidget {
   final String mediaUrl;
-  final List<String>? mediaUrls; // Support multiple images
+  final List<String>? mediaUrls; // Support multiple images/videos
   final MediaType mediaType;
   final String? caption;
-  final List<String?>? captions; 
+  final List<String?>? captions;
+  final List<MediaType>? mediaTypes; // Support mixed media types
 
   const FullScreenMediaViewer({
     super.key,
@@ -22,6 +23,7 @@ class FullScreenMediaViewer extends StatefulWidget {
     required this.mediaType,
     this.caption,
     this.captions,
+    this.mediaTypes,
   });
 
   @override
@@ -36,37 +38,49 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
   double _playbackSpeed = 1.0;
   
   // For image gallery support
-  late List<String> _imageUrls;
+  late List<String> _mediaUrls;
   late List<String?> _captions;
-  int _currentImageIndex = 0;
+  late List<MediaType> _mediaTypes;
+  int _currentIndex = 0;
   late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
     
-    // Initialize image URLs list
+    // Initialize media URLs list
     if (widget.mediaUrls != null && widget.mediaUrls!.isNotEmpty) {
-      _imageUrls = widget.mediaUrls!;
-      _captions = widget.captions ?? List.filled(_imageUrls.length, null);
+      _mediaUrls = widget.mediaUrls!;
+      _captions = widget.captions ?? List.filled(_mediaUrls.length, null);
+      _mediaTypes = widget.mediaTypes ?? List.filled(_mediaUrls.length, widget.mediaType);
     } else {
-      _imageUrls = [widget.mediaUrl];
+      _mediaUrls = [widget.mediaUrl];
       _captions = [widget.caption];
+      _mediaTypes = [widget.mediaType];
     }
     
     _pageController = PageController();
     
-    if (widget.mediaType == MediaType.video) {
-      _initializeVideo();
-    } else if (widget.mediaType == MediaType.document) {
-      // Optionally, auto-download or open document
+    _initializeCurrentMedia();
+  }
+
+  void _initializeCurrentMedia() {
+    if (_mediaTypes[_currentIndex] == MediaType.video) {
+      _initializeVideo(_mediaUrls[_currentIndex]);
+    } else {
+      setState(() {
+        _isInitializing = false;
+      });
     }
   }
 
-  Future<void> _initializeVideo() async {
+  Future<void> _initializeVideo(String videoUrl) async {
     try {
+      _videoController?.dispose();
+      _chewieController?.dispose();
+      
       _videoController = VideoPlayerController.networkUrl(
-        Uri.parse(widget.mediaUrl),
+        Uri.parse(videoUrl),
       );
 
       await _videoController!.initialize();
@@ -125,6 +139,16 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
     super.dispose();
   }
 
+  Widget _buildCurrentMedia() {
+    if (_mediaTypes[_currentIndex] == MediaType.image) {
+      return _buildImageGallery();
+    } else if (_mediaTypes[_currentIndex] == MediaType.video) {
+      return _buildVideoViewer();
+    } else {
+      return _buildDocumentViewer();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,16 +157,11 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
         children: [
           // Media content
           Center(
-            child:
-                widget.mediaType == MediaType.image
-                    ? _buildImageGallery()
-                    : widget.mediaType == MediaType.video
-                    ? _buildVideoViewer()
-                    : _buildDocumentViewer(),
+            child: _buildCurrentMedia(),
           ),
 
-          // Caption at bottom (for image)
-          if (widget.mediaType == MediaType.image && _captions[_currentImageIndex] != null && _captions[_currentImageIndex]!.isNotEmpty)
+          // Caption at bottom (for image/video)
+          if (_captions[_currentIndex] != null && _captions[_currentIndex]!.isNotEmpty)
             Positioned(
               bottom: 0,
               left: 0,
@@ -162,7 +181,7 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
                 ),
                 padding: const EdgeInsets.fromLTRB(16, 32, 16, 24),
                 child: Text(
-                  _captions[_currentImageIndex]!,
+                  _captions[_currentIndex]!,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 15,
@@ -183,8 +202,8 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Image counter (for multiple images)
-                    if (widget.mediaType == MediaType.image && _imageUrls.length > 1)
+                    // Image counter (for multiple media)
+                    if (_mediaUrls.length > 1)
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
@@ -192,7 +211,7 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          '${_currentImageIndex + 1}/${_imageUrls.length}',
+                          '${_currentIndex + 1}/${_mediaUrls.length}',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 14,
@@ -327,18 +346,25 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
       controller: _pageController,
       onPageChanged: (index) {
         setState(() {
-          _currentImageIndex = index;
+          _currentIndex = index;
         });
+        // Initialize video if the new page is a video
+        if (_mediaTypes[index] == MediaType.video) {
+          _initializeVideo(_mediaUrls[index]);
+        }
       },
-      itemCount: _imageUrls.length,
+      itemCount: _mediaUrls.length,
       itemBuilder: (context, index) {
-        return InteractiveViewer(
-          minScale: 0.5,
-          maxScale: 4.0,
-          child: FastCachedImage(
-            url: _imageUrls[index],
-            fit: BoxFit.contain,
-            loadingBuilder:
+        if (_mediaTypes[index] == MediaType.video) {
+          return _buildVideoViewer();
+        } else {
+          return InteractiveViewer(
+            minScale: 0.5,
+            maxScale: 4.0,
+            child: FastCachedImage(
+              url: _mediaUrls[index],
+              fit: BoxFit.contain,
+              loadingBuilder:
                 (context, progress) => Center(
                   child: CircularProgressIndicator(
                     value: progress.progressPercentage.value / 100,
@@ -363,8 +389,9 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
                     ],
                   ),
                 ),
-          ),
-        );
+            ),
+          );
+        }
       },
     );
   }

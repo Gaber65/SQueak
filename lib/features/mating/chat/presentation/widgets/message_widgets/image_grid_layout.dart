@@ -186,7 +186,7 @@ class ImageGridLayout extends StatelessWidget {
     );
   }
 
-  /// Build a single image with tap handler and enhanced UI
+  /// Build a single image or video with tap handler and enhanced UI
   Widget _buildImageWithTap(
     BuildContext context,
     String attachmentUrl, {
@@ -197,6 +197,7 @@ class ImageGridLayout extends StatelessWidget {
     int index = 0,
   }) {
     final heroTag = 'image_${attachmentUrl}_$index';
+    final isVideo = imageAttachments[index].attachmentType == 1;
 
     return Container(
       margin: margin,
@@ -216,77 +217,140 @@ class ImageGridLayout extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(borderRadius),
           onTap: () {
-            // Prepare list of all image URLs and captions
-            final imageUrlsList = imageAttachments
-                .where((att) => att.attachmentType == 0)
+            // Prepare list of all media URLs (images and videos combined)
+            final mediaUrlsList = imageAttachments
                 .map((att) => imageUrl + att.url)
                 .toList();
             final captionsList = imageAttachments
-                .where((att) => att.attachmentType == 0)
                 .map((att) => att.description)
+                .toList();
+            final typesList = imageAttachments
+                .map((att) => att.attachmentType == 0 ? MediaType.image : MediaType.video)
                 .toList();
             
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => FullScreenMediaViewer(
                   mediaUrl: imageUrl + attachmentUrl,
-                  mediaUrls: imageUrlsList,
-                  mediaType: MediaType.image,
+                  mediaUrls: mediaUrlsList,
+                  mediaType: isVideo ? MediaType.video : MediaType.image,
                   caption: imageAttachments[index].description,
                   captions: captionsList,
+                  mediaTypes: typesList,
                 ),
               ),
             );
           },
           child: Hero(
             tag: heroTag,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(borderRadius),
-              child: FastCachedImage(
-                url: imageUrl + attachmentUrl,
-                width: width,
-                height: height,
-                fit: BoxFit.cover,
-                errorBuilder: (context, exception, stacktrace) {
-                  return Container(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (!isVideo)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(borderRadius),
+                    child: FastCachedImage(
+                      url: imageUrl + attachmentUrl,
+                      width: width,
+                      height: height,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, exception, stacktrace) {
+                        return Container(
+                          width: width,
+                          height: height,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(borderRadius),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.broken_image_rounded,
+                                size: 32,
+                                color: Colors.grey[400],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Failed to load',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      loadingBuilder: (context, imageProvider) {
+                        return Container(
+                          width: width,
+                          height: height,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(borderRadius),
+                          ),
+                          child: _buildShimmerEffect(width, height, borderRadius),
+                        );
+                      },
+                    ),
+                  )
+                else
+                  // Video placeholder
+                  Container(
                     width: width,
                     height: height,
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
+                      gradient: LinearGradient(
+                        colors: [Colors.grey[800]!, Colors.grey[900]!],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
                       borderRadius: BorderRadius.circular(borderRadius),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.broken_image_rounded,
-                          size: 32,
-                          color: Colors.grey[400],
+                          Icons.videocam,
+                          color: Colors.white.withOpacity(0.7),
+                          size: 40,
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 8),
                         Text(
-                          'Failed to load',
+                          'Video',
                           style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey[500],
+                            color: Colors.white.withOpacity(0.6),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
-                  );
-                },
-                loadingBuilder: (context, imageProvider) {
-                  return Container(
+                  ),
+                // Play button overlay for videos
+                if (isVideo)
+                  Container(
                     width: width,
                     height: height,
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(borderRadius),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.2),
+                          Colors.black.withOpacity(0.3),
+                        ],
+                      ),
                     ),
-                    child: _buildShimmerEffect(width, height, borderRadius),
-                  );
-                },
-              ),
+                    child: const Icon(
+                      Icons.play_circle_filled,
+                      color: Colors.white,
+                      size: 48,
+                    ),
+                  ),
+              ],
             ),
           ),
         ),
@@ -294,7 +358,7 @@ class ImageGridLayout extends StatelessWidget {
     );
   }
 
-  /// Build an image with a counter overlay and enhanced UI
+  /// Build media with a counter overlay and enhanced UI
   Widget _buildImageWithCounterTap(
     BuildContext context,
     String attachmentUrl, {
@@ -306,6 +370,7 @@ class ImageGridLayout extends StatelessWidget {
     required int remainingCount,
   }) {
     final heroTag = 'image_${attachmentUrl}_$index';
+    final isVideo = imageAttachments[index].attachmentType == 1;
 
     return Container(
       margin: margin,
@@ -325,24 +390,26 @@ class ImageGridLayout extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(borderRadius),
           onTap: () {
-            // Prepare list of all image URLs and captions
-            final imageUrlsList = imageAttachments
-                .where((att) => att.attachmentType == 0)
+            // Prepare list of all media URLs (images and videos combined)
+            final mediaUrlsList = imageAttachments
                 .map((att) => imageUrl + att.url)
                 .toList();
             final captionsList = imageAttachments
-                .where((att) => att.attachmentType == 0)
                 .map((att) => att.description)
+                .toList();
+            final typesList = imageAttachments
+                .map((att) => att.attachmentType == 0 ? MediaType.image : MediaType.video)
                 .toList();
             
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => FullScreenMediaViewer(
                   mediaUrl: imageUrl + attachmentUrl,
-                  mediaUrls: imageUrlsList,
-                  mediaType: MediaType.image,
+                  mediaUrls: mediaUrlsList,
+                  mediaType: isVideo ? MediaType.video : MediaType.image,
                   caption: imageAttachments[index].description,
                   captions: captionsList,
+                  mediaTypes: typesList,
                 ),
               ),
             );
@@ -352,54 +419,88 @@ class ImageGridLayout extends StatelessWidget {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(borderRadius),
-                  child: FastCachedImage(
-                    url: imageUrl + attachmentUrl,
+                if (!isVideo)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(borderRadius),
+                    child: FastCachedImage(
+                      url: imageUrl + attachmentUrl,
+                      width: width,
+                      height: height,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, exception, stacktrace) {
+                        return Container(
+                          width: width,
+                          height: height,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(borderRadius),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.broken_image_rounded,
+                                size: 32,
+                                color: Colors.grey[400],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Failed to load',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      loadingBuilder: (context, imageProvider) {
+                        return Container(
+                          width: width,
+                          height: height,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(borderRadius),
+                          ),
+                          child: _buildShimmerEffect(width, height, borderRadius),
+                        );
+                      },
+                    ),
+                  )
+                else
+                  // Video placeholder
+                  Container(
                     width: width,
                     height: height,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, exception, stacktrace) {
-                      return Container(
-                        width: width,
-                        height: height,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(borderRadius),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.grey[800]!, Colors.grey[900]!],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(borderRadius),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.videocam,
+                          color: Colors.white.withOpacity(0.7),
+                          size: 40,
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.broken_image_rounded,
-                              size: 32,
-                              color: Colors.grey[400],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Failed to load',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey[500],
-                              ),
-                            ),
-                          ],
+                        const SizedBox(height: 8),
+                        Text(
+                          'Video',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.6),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      );
-                    },
-                    loadingBuilder: (context, imageProvider) {
-                      return Container(
-                        width: width,
-                        height: height,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(borderRadius),
-                        ),
-                        child: _buildShimmerEffect(width, height, borderRadius),
-                      );
-                    },
+                      ],
+                    ),
                   ),
-                ),
                 // Gradient overlay for better text visibility
                 Container(
                   width: width,
@@ -416,27 +517,34 @@ class ImageGridLayout extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Enhanced counter badge
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
-                      width: 1,
+                // Counter badge or play button
+                if (!isVideo)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 1,
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    '+$remainingCount',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
+                    child: Text(
+                      '+$remainingCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
                     ),
+                  )
+                else
+                  const Icon(
+                    Icons.play_circle_filled,
+                    color: Colors.white,
+                    size: 48,
                   ),
-                ),
               ],
             ),
           ),
