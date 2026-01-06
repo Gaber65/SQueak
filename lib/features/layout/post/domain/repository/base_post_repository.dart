@@ -48,7 +48,6 @@ class CreatePostParams {
       'title': title,
       'content': content,
       'postSocailMedias': postSocailMedias,
-
       'petId': petId,
     };
   }
