@@ -126,7 +126,7 @@ class EditPostController {
   }
 
   void _showUpdateSuccessAndNavigate(BuildContext context) {
-    navigateAndFinish(context, const LayoutScreen());
+    navigateAndFinish(context, const LayoutScreen(showPostUpdatedSnackbar: true));
   }
 
   void setState(VoidCallback callback) {
