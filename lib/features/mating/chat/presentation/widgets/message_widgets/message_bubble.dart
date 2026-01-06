@@ -72,7 +72,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
     final isDark = theme.brightness == Brightness.dark;
 
     return GestureDetector(
-      onLongPress: () async {
+      onLongPress: !widget.message.toMe ? () async {
         bool onlyForMe = true;
         final confirmed = await showDialog<bool>(
           context: context,
@@ -145,7 +145,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
           final cubit = ChatMessagesCubit.get(context);
           await cubit.deleteMessage(params);
         }
-      },
+      } : null,
       child: SlideTransition(
         position: _slideAnimation,
         child: ScaleTransition(
