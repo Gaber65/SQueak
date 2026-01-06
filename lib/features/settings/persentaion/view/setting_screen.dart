@@ -4,10 +4,10 @@ import 'package:quickalert/quickalert.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:iconly/iconly.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/utils/export_path/export_files.dart';
 import '../../../auth/contactus/presentation/pages/contact_us.dart';
 import '../../../auth/login/presentation/pages/login_screen.dart';
-import '../../../settings/persentaion/view/privacy_policy_screen.dart';
 import '../../../settings/persentaion/view/update_profile_screen.dart';
 import '../controller/setting_cubit.dart';
 import 'about_page.dart';
@@ -66,47 +66,7 @@ class SettingScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 25),
-                  // Text(
-                  //   S.of(context).managePets,
-                  //   style: FontStyleThame.textStyle(
-                  //     context: context,
-                  //     fontSize: 18,
-                  //   ),
-                  // ),
-                  // SizedBox(height: 12),
-
-                  // // MatingLayout pet  Section
-                  // _buildSettingItem(
-                  //   context: context,
-                  //   icon:
-                  //       'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/rb_49299.png?alt=media&token=3f7daec5-e664-43bc-9e62-0ef2b7f018f3',
-                  //   title: S.of(context).matingShows,
-                  //   subtitle: '',
-                  //   trailingWidget: IconButton(
-                  //     onPressed: () {
-                  //       navigateToScreen(context, ProfileComplete());
-                  //     },
-                  //     icon: Icon(Icons.chevron_right),
-                  //   ),
-                  // ),
-                  // SizedBox(height: 12),
-                  // _buildSettingItem(
-                  //   context: context,
-                  //   icon:
-                  //       '',
-                  //   title: S.of(context).blockedPets,
-                  //   subtitle: '',
-                  //   onTap: () {
-                  //     navigateToScreen(context, const BlockedPetsScreen());
-                  //   },
-                  //   trailingWidget: IconButton(
-                  //     onPressed: () {},
-                  //     icon: Icon(Icons.block),
-                  //   ),
-                  // ),
-                  SizedBox(height: 12),
-                  // Personalization Section
+                  SizedBox(height: 35),
                   Text(
                     S.of(context).personalization,
                     style: FontStyleThame.textStyle(
@@ -255,7 +215,7 @@ class SettingScreen extends StatelessWidget {
                     title: S.of(context).privacyPolicy,
                     subtitle: '',
                     onTap: () {
-                      navigateToScreen(context, PrivacyPolicyScreen());
+                      launchUrl(Uri.parse('https://veticareapp.com/privacy/'));
                     },
                     trailingWidget: Icon(Icons.privacy_tip_outlined),
                   ),
