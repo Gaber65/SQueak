@@ -158,16 +158,17 @@ class MainCubit extends Cubit<MainState> {
 
     File uploadFile = file;
 
-    if (uploadPlace != UploadPlace.messageVideo) {
-      final convertedFile = await convertToMp4(file);
-
-      if (convertedFile == null) {
-        emit(VideoHelperError());
-        return;
-      }
-
-      uploadFile = convertedFile;
-    }
+    // Skip video compression for all upload places to preserve video quality
+    // if (uploadPlace != UploadPlace.messageVideo) {
+    //   final convertedFile = await convertToMp4(file);
+    //
+    //   if (convertedFile == null) {
+    //     emit(VideoHelperError());
+    //     return;
+    //   }
+    //
+    //   uploadFile = convertedFile;
+    // }
 
     final result = await manageUploadVideoUseCase(
       UploadImageParams(file: uploadFile, uploadPlace: uploadPlace),

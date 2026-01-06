@@ -45,6 +45,7 @@ const String allClinicEndPoint = '$version/clinics/paggination';
 const String updateClinicEndPoint = '$version/clinics/';
 const String deleteClinicEndPoint = '$version/clinics/';
 const String followClinicEndPoint = '$version/clinics/follow';
+const String myClinicsSearchEndPoint ='$version/clinics/withfollowstatus';
 const String followClinicByCodeEndPoint = '$version/clinics/followbycode';
 const String unfollowClinicEndPoint = '$version/clinics/unfollow';
 const String blockFollowerEndPoint = '$version/clinics/blockfollower';
