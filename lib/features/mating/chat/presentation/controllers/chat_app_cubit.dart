@@ -357,31 +357,6 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       debugPrint('   • AttachmentCount: ${attachments?.length ?? 0}');
       debugPrint('   • DateTimeInUTC: $dateTimeInUTC');
 
-      // ✅ Validate attachments if present
-      if (attachments != null && attachments.isNotEmpty) {
-        debugPrint('🔍 [Validation] Checking attachments...');
-        
-        // Ensure all attachments are the same type (WhatsApp style)
-        final firstType = attachments.first.type;
-        final allSameType = attachments.every((att) => att.type == firstType);
-        
-        if (!allSameType) {
-          debugPrint('❌ [Validation] ERROR: Mixed attachment types detected!');
-          debugPrint('   • Expected: ${firstType.name}');
-          debugPrint('   • Received: ${attachments.map((a) => a.type.name).toSet()}');
-          emit(ChatAppError('Cannot send mixed attachment types. Please send ${firstType.name}s only.'));
-          return;
-        }
-
-        debugPrint('✅ [Validation] All ${attachments.length} attachments are of type: ${firstType.name}');
-        
-        // Log each attachment
-        for (int i = 0; i < attachments.length; i++) {
-          final att = attachments[i];
-          debugPrint('   • Attachment ${i + 1}: ${att.type.name} - ${att.url.split('/').last}');
-        }
-      }
-
       // 📦 Build command payload
       debugPrint('📦 [Payload] Building command payload...');
       final command = {
