@@ -73,7 +73,7 @@ Widget _buildPostInputField(
           ignoring: true,
           child: MyTextForm(
             controller: TextEditingController(),
-            hintText: '${S.of(context).labelPost} ${cubit.name}?',
+            hintText: S.of(context).labelPost,
             obscureText: false,
             enable: false,
           ),

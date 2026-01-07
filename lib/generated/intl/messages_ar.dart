@@ -494,7 +494,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "invoiceNo": MessageLookupByLibrary.simpleMessage("رمز الفاتورة"),
         "itemName": MessageLookupByLibrary.simpleMessage("اسم الصنف"),
         "justNow": MessageLookupByLibrary.simpleMessage("الآن"),
-        "labelPost": MessageLookupByLibrary.simpleMessage("بماذا تفكر؟"),
+        "labelPost": MessageLookupByLibrary.simpleMessage("بما تفكر؟"),
         "langMode": MessageLookupByLibrary.simpleMessage("وضع اللغة"),
         "language": MessageLookupByLibrary.simpleMessage("اللغه"),
         "lastUpdated": MessageLookupByLibrary.simpleMessage("آخر تحديث"),

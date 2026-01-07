@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/features/settings/persentaion/controller/setting_cubit.dart';
 import 'profile_switcher_overlay.dart';
 
 class ProfileSwitcherController {
@@ -28,7 +29,20 @@ class ProfileSwitcherController {
   bool get isOpen => _isOpen;
 
   void toggleDropdown() {
-    _isOpen ? _removeOverlay() : _showOverlay();
+    if (_isOpen) {
+      _removeOverlay();
+    } else {
+      _ensureOwnerDataLoaded();
+      _showOverlay();
+    }
+  }
+
+  void _ensureOwnerDataLoaded() {
+    final settingCubit = SettingCubit.get(context);
+    // If profile is null, it means it hasn't been loaded yet, so fetch it
+    if (settingCubit.profile == null) {
+      settingCubit.getOwnerData();
+    }
   }
 
   void _showOverlay() {

@@ -48,7 +48,6 @@ Widget buildProfileSwitcherOverlay({
 }) {
   final switchProfileCubit = SwitchProfileCubit.get(context);
   final petCubit = PetCubit.get(context);
-  final ownerSnapshot = SettingCubit.get(context).profile;
 
   final mq = MediaQuery.of(context);
   final targetWidth = mq.size.width * 0.9 > 400 ? 400 : 260;
@@ -88,9 +87,9 @@ Widget buildProfileSwitcherOverlay({
                 ),
                 child: BlocBuilder<PetCubit, PetState>(
                   bloc: petCubit,
-                  builder: (bContext, petState) {
+                  builder: (petContext, petState) {
                     final pets = petCubit.pets;
-                    final owner = ownerSnapshot;
+                    final owner = SettingCubit.get(context).profile;
 
                     if (pets.isEmpty && owner == null) {
                       return buildProfileSwitcherShimmer(context);

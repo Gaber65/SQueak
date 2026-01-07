@@ -351,13 +351,6 @@ class _LayoutScreenState extends State<LayoutScreen>
                                 petId: activePet.petId!,
                               );
                             }
-
-                            // // Load suggested friends
-                            // if (activePet.specieId != null) {
-                            //   friendsCubit.loadSuggestedFriends(
-                            //     specieId: activePet.specieId!,
-                            //   );
-                            // }
                           }
                         }
 
