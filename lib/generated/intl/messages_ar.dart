@@ -931,7 +931,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "viewAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
         "viewProfile": MessageLookupByLibrary.simpleMessage("عرض الملف الشخصي"),
         "viewProfileSnack": m8,
-        "viewReactions": MessageLookupByLibrary.simpleMessage("التفاعلات"),
+        "viewReactions": MessageLookupByLibrary.simpleMessage("المشاهدات"),
         "viewReplies": m9,
         "viewsAndReactions":
             MessageLookupByLibrary.simpleMessage("المشاهدات والتفاعلات"),

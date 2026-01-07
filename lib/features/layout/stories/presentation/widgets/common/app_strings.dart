@@ -17,10 +17,10 @@ class AppStrings {
           : 'Please select an image to continue.';
 
   static String postStory(BuildContext context) =>
-      _isArabic(context) ? 'زر نشر القصة' : 'Post Story';
+      _isArabic(context) ? ' نشر القصة' : 'Post Story';
 
   static String cancelStory(BuildContext context) =>
-      _isArabic(context) ? 'إلغاء القصة' : 'Cancel';
+      _isArabic(context) ? 'إلغاء ' : 'Cancel';
 
   static String deleteStoryisDonw(BuildContext context) =>
       _isArabic(context) ? 'تم حذف القصة' : 'Story deleted successfully!';
