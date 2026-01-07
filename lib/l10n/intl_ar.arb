@@ -623,6 +623,16 @@
   "post":"نشر",
   "posting":"جاري النشر...",
   "addToYourPost":"أضف إلى منشورك",
-  "whatIsOnYourMind":"بما تفكر؟"
+  "whatIsOnYourMind":"بما تفكر؟",
+  "discard":"تجاهل",
+  "discardPostConfirmation":"هل أنت متأكد أنك تريد تجاهل هذا المنشور؟ سيتم حذف كل التغييرات الخاصة بك.",
+  "discardPost":"تجاهل المنشور ؟",
+  "unsupportedFileFormat":"تنسيق ملف غير مدعوم",
+  "unsupportedImageFormat":"تنسيق ملف غير مدعوم. تنسيقات الصور المدعومة: JPG, JPEG, PNG, GIF",
+  "unsupportedMixedFormat":"تنسيق ملف غير مدعوم. التنسيقات المدعومة:\nصور: JPG, JPEG, PNG, GIF\nفيديوهات: MP4, WEBM, AVI, MOV",
+  "fileTooLarge":"الملف كبير جداً. الحد الأقصى المسموح به: 10 ميجابايت",
+  "fileExceedsLimit":"الملف يتجاوز حد 10 ميجابايت",
+  "supportedFormats":"التنسيقات المدعومة",
+  "gotIt":"فهمت"
 
 }

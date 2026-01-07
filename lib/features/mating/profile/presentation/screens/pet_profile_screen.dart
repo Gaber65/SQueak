@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/core/service/global_widget/loading_widget.dart';
-import 'package:squeak/features/mating/layoutMating/presentation/screens/widgets/profile_switcher_builder.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import 'package:squeak/features/profile_switch/Presentation/cubit/switch_profile_state.dart';
 
@@ -68,12 +67,12 @@ class PetProfileScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   backgroundColor: Colors.transparent,
-                  actions: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: buildProfileSwitcher(context),
-                    ),
-                  ],
+                  // actions: [
+                  //   Padding(
+                  //     padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  //     child: buildProfileSwitcher(context),
+                  //   ),
+                  // ],
                ),
                 body: NestedScrollView(
                   headerSliverBuilder: (context, innerBoxIsScrolled) {

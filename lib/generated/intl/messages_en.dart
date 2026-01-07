@@ -337,6 +337,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "deletePetConfirmation": MessageLookupByLibrary.simpleMessage(
             "Are you sure you want to delete"),
         "deletePhoto": MessageLookupByLibrary.simpleMessage("Delete Photo"),
+        "discard": MessageLookupByLibrary.simpleMessage("Discard"),
+        "discardPost": MessageLookupByLibrary.simpleMessage("Discard Post ?"),
+        "discardPostConfirmation": MessageLookupByLibrary.simpleMessage(
+            "Are you sure you want to discard this post? All Your changes will not be saved."),
         "divorced": MessageLookupByLibrary.simpleMessage("Divorced"),
         "divorced_desc":
             MessageLookupByLibrary.simpleMessage("Single again after mating"),
@@ -421,8 +425,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "female": MessageLookupByLibrary.simpleMessage("Female"),
         "fetchingPetChats":
             MessageLookupByLibrary.simpleMessage("Fetching your pet chats..."),
+        "fileExceedsLimit": MessageLookupByLibrary.simpleMessage(
+            "File exceeds the 10 MB limit"),
         "fileIsTooLarge":
             MessageLookupByLibrary.simpleMessage("Files Is Too Large"),
+        "fileTooLarge": MessageLookupByLibrary.simpleMessage(
+            "File is too large. Max allowed: 10 MB"),
         "files": MessageLookupByLibrary.simpleMessage("Files"),
         "filesAndPrescription":
             MessageLookupByLibrary.simpleMessage("Files And Prescription"),
@@ -469,6 +477,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Go to clinics"),
         "goodExperience":
             MessageLookupByLibrary.simpleMessage("Good Experience"),
+        "gotIt": MessageLookupByLibrary.simpleMessage("Got it"),
         "greatExperience":
             MessageLookupByLibrary.simpleMessage("Great Experience"),
         "has_set_its_baby":
@@ -873,6 +882,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "sterilization": MessageLookupByLibrary.simpleMessage("Spayed"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit"),
         "submitRating": MessageLookupByLibrary.simpleMessage("Submit Rating"),
+        "supportedFormats":
+            MessageLookupByLibrary.simpleMessage("Supported Formats"),
         "swapPet": MessageLookupByLibrary.simpleMessage(
             "Swipe left or right to select a pet"),
         "switchTitle":
@@ -908,6 +919,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "uniqueCode": MessageLookupByLibrary.simpleMessage("Unique Code"),
         "unknown": MessageLookupByLibrary.simpleMessage("Unknown"),
         "unlinkQrCode": MessageLookupByLibrary.simpleMessage("Unlink QR"),
+        "unsupportedFileFormat":
+            MessageLookupByLibrary.simpleMessage("Unsupported file format"),
+        "unsupportedImageFormat": MessageLookupByLibrary.simpleMessage(
+            "Unsupported file type. Supported image types: JPG, JPEG, PNG, GIF"),
+        "unsupportedMixedFormat": MessageLookupByLibrary.simpleMessage(
+            "Unsupported file type. Supported formats:\nImage: JPG, JPEG, PNG, GIF\nVideo: MP4, WEBM, AVI, MOV"),
         "updateAppointment":
             MessageLookupByLibrary.simpleMessage("Update Appointment"),
         "updateNotification":

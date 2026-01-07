@@ -6259,6 +6259,106 @@ class S {
       args: [],
     );
   }
+
+  /// `Discard`
+  String get discard {
+    return Intl.message(
+      'Discard',
+      name: 'discard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to discard this post? All Your changes will not be saved.`
+  String get discardPostConfirmation {
+    return Intl.message(
+      'Are you sure you want to discard this post? All Your changes will not be saved.',
+      name: 'discardPostConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Discard Post ?`
+  String get discardPost {
+    return Intl.message(
+      'Discard Post ?',
+      name: 'discardPost',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unsupported file format`
+  String get unsupportedFileFormat {
+    return Intl.message(
+      'Unsupported file format',
+      name: 'unsupportedFileFormat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unsupported file type. Supported image types: JPG, JPEG, PNG, GIF`
+  String get unsupportedImageFormat {
+    return Intl.message(
+      'Unsupported file type. Supported image types: JPG, JPEG, PNG, GIF',
+      name: 'unsupportedImageFormat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unsupported file type. Supported formats:\nImage: JPG, JPEG, PNG, GIF\nVideo: MP4, WEBM, AVI, MOV`
+  String get unsupportedMixedFormat {
+    return Intl.message(
+      'Unsupported file type. Supported formats:\nImage: JPG, JPEG, PNG, GIF\nVideo: MP4, WEBM, AVI, MOV',
+      name: 'unsupportedMixedFormat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `File is too large. Max allowed: 10 MB`
+  String get fileTooLarge {
+    return Intl.message(
+      'File is too large. Max allowed: 10 MB',
+      name: 'fileTooLarge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `File exceeds the 10 MB limit`
+  String get fileExceedsLimit {
+    return Intl.message(
+      'File exceeds the 10 MB limit',
+      name: 'fileExceedsLimit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Supported Formats`
+  String get supportedFormats {
+    return Intl.message(
+      'Supported Formats',
+      name: 'supportedFormats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Got it`
+  String get gotIt {
+    return Intl.message(
+      'Got it',
+      name: 'gotIt',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

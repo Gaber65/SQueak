@@ -1,21 +1,21 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:squeak/core/service/global_widget/loading_widget.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/core/service/connectivity/conectivity_services.dart';
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_list_cubit.dart';
+import 'package:squeak/features/mating/chat/presentation/widgets/connection_quick_actions.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
 import '../../../../settings/persentaion/controller/setting_cubit.dart';
-import '../../../layoutMating/presentation/screens/widgets/profile_switcher_builder.dart';
 import '../../domain/entities/chat_entity.dart';
 import '../widgets/chat_widgets/mating_chat_list_tile.dart';
 import '../controllers/chat_list_state.dart';
 import '../controllers/chat_app_cubit.dart';
 import '../controllers/chat_app_state.dart';
-import 'package:squeak/features/mating/chat/presentation/widgets/connection_quick_actions.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
@@ -234,9 +234,10 @@ class _ChatListViewState extends State<_ChatListView> {
         ),
       ),
       actions: [
-        // Connection quick actions (status + retry)
-        const ConnectionQuickActions(),
-        buildProfileSwitcher(context),
+        // Connection quick actions (status + retry) - Test environment only
+        if (kDebugMode || (InitFunctions.currentEnvironment != Environment.pro))
+          const ConnectionQuickActions(),
+        // buildProfileSwitcher(context),
       ],
     );
   }

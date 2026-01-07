@@ -265,10 +265,10 @@ class MainRemoteDataSource {
         return 'png';
       case 'gif':
         return 'gif';
-      case 'bmp':
-        return 'bmp';
-      case 'webp':
-        return 'webp';
+      // case 'bmp':
+      //   return 'bmp';
+      // case 'webp':
+      //   return 'webp';
       default:
         return 'jpeg';
     }
@@ -283,16 +283,16 @@ class MainRemoteDataSource {
         return 'quicktime';
       case 'avi':
         return 'x-msvideo';
-      case 'mkv':
-        return 'x-matroska';
-      case 'flv':
-        return 'x-flv';
-      case 'wmv':
-        return 'x-ms-wmv';
-      case '3gp':
-        return '3gpp';
-      case 'm4v':
-        return 'x-m4v';
+      // case 'mkv':
+      //   return 'x-matroska';
+      // case 'flv':
+      //   return 'x-flv';
+      // case 'wmv':
+      //   return 'x-ms-wmv';
+      // case '3gp':
+      //   return '3gpp';
+      // case 'm4v':
+      //   return 'x-m4v';
       case 'webm':
         return 'webm';
       default:

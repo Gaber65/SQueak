@@ -629,13 +629,15 @@
   "post": "Post",
   "posting": "Posting...",
   "addToYourPost": "Add to your post",
-  "whatIsOnYourMind": "What's on your mind?"
-  
-
-  
-
-  
- 
-
-
+  "whatIsOnYourMind": "What's on your mind?",
+  "discard": "Discard",
+  "discardPostConfirmation": "Are you sure you want to discard this post? All Your changes will not be saved.",
+  "discardPost": "Discard Post ?",
+  "unsupportedFileFormat":"Unsupported file format",
+  "unsupportedImageFormat":"Unsupported file type. Supported image types: JPG, JPEG, PNG, GIF",
+  "unsupportedMixedFormat":"Unsupported file type. Supported formats:\nImage: JPG, JPEG, PNG, GIF\nVideo: MP4, WEBM, AVI, MOV",
+  "fileTooLarge":"File is too large. Max allowed: 10 MB",
+  "fileExceedsLimit":"File exceeds the 10 MB limit",
+  "supportedFormats":"Supported Formats",
+  "gotIt":"Got it"
 }

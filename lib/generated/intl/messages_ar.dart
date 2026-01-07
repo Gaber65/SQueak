@@ -326,6 +326,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "deletePetConfirmation":
             MessageLookupByLibrary.simpleMessage("هل أنت متأكد أنك تريد حذف "),
         "deletePhoto": MessageLookupByLibrary.simpleMessage("حذف الصورة"),
+        "discard": MessageLookupByLibrary.simpleMessage("تجاهل"),
+        "discardPost": MessageLookupByLibrary.simpleMessage("تجاهل المنشور ؟"),
+        "discardPostConfirmation": MessageLookupByLibrary.simpleMessage(
+            "هل أنت متأكد أنك تريد تجاهل هذا المنشور؟ سيتم حذف كل التغييرات الخاصة بك."),
         "divorced": MessageLookupByLibrary.simpleMessage("منفصل"),
         "divorced_desc":
             MessageLookupByLibrary.simpleMessage("أعزب مرة أخرى بعد التزاوج"),
@@ -411,8 +415,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "female": MessageLookupByLibrary.simpleMessage("أنثى"),
         "fetchingPetChats": MessageLookupByLibrary.simpleMessage(
             "جاري جلب محادثات حيوانك الأليف..."),
+        "fileExceedsLimit":
+            MessageLookupByLibrary.simpleMessage("الملف يتجاوز حد 10 ميجابايت"),
         "fileIsTooLarge":
             MessageLookupByLibrary.simpleMessage("الملف كبير جدًا للتحميل"),
+        "fileTooLarge": MessageLookupByLibrary.simpleMessage(
+            "الملف كبير جداً. الحد الأقصى المسموح به: 10 ميجابايت"),
         "files": MessageLookupByLibrary.simpleMessage("الملفات"),
         "filesAndPrescription":
             MessageLookupByLibrary.simpleMessage("الملفات والوصفات"),
@@ -458,6 +466,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "goToClinicsFromPetsScreen":
             MessageLookupByLibrary.simpleMessage("اذهب الى العيادات"),
         "goodExperience": MessageLookupByLibrary.simpleMessage("تجربة جيدة"),
+        "gotIt": MessageLookupByLibrary.simpleMessage("فهمت"),
         "greatExperience": MessageLookupByLibrary.simpleMessage("تجربة رائعة"),
         "has_set_its_baby": MessageLookupByLibrary.simpleMessage("أنجب صغاره"),
         "has_set_its_baby_desc":
@@ -856,6 +865,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "sterilization": MessageLookupByLibrary.simpleMessage("التعقيم"),
         "submit": MessageLookupByLibrary.simpleMessage("إرسال"),
         "submitRating": MessageLookupByLibrary.simpleMessage("إرسال التقييم"),
+        "supportedFormats":
+            MessageLookupByLibrary.simpleMessage("التنسيقات المدعومة"),
         "swapPet": MessageLookupByLibrary.simpleMessage(
             "مرر لليسار أو اليمين لاختيار صديق صغير"),
         "switchTitle":
@@ -893,6 +904,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "unknown": MessageLookupByLibrary.simpleMessage("غير معروف"),
         "unlinkQrCode":
             MessageLookupByLibrary.simpleMessage("إلغاء ربط رمز QR"),
+        "unsupportedFileFormat":
+            MessageLookupByLibrary.simpleMessage("تنسيق ملف غير مدعوم"),
+        "unsupportedImageFormat": MessageLookupByLibrary.simpleMessage(
+            "تنسيق ملف غير مدعوم. تنسيقات الصور المدعومة: JPG, JPEG, PNG, GIF"),
+        "unsupportedMixedFormat": MessageLookupByLibrary.simpleMessage(
+            "تنسيق ملف غير مدعوم. التنسيقات المدعومة:\nصور: JPG, JPEG, PNG, GIF\nفيديوهات: MP4, WEBM, AVI, MOV"),
         "updateAppointment":
             MessageLookupByLibrary.simpleMessage("تحديث الموعد"),
         "updateNotification":

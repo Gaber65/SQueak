@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/generated/l10n.dart';
 
 import '../../../../../../core/utils/theme/color_mangment/color_manager.dart';
 
@@ -36,7 +37,7 @@ class UploadPostDialogs {
                 const SizedBox(width: 14),
                 Expanded(
                   child: Text(
-                    'Discard Post?',
+                    S.of(context).discardPost,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
@@ -48,7 +49,7 @@ class UploadPostDialogs {
               ],
             ),
             content: Text(
-              'Are you sure you want to discard this post? Your changes will not be saved.',
+              S.of(context).discardPostConfirmation,
               style: TextStyle(
                 fontSize: 15,
                 color: Colors.grey[700],
@@ -68,7 +69,7 @@ class UploadPostDialogs {
                   ),
                 ),
                 child: Text(
-                  'Cancel',
+                  S.of(context).cancel,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
@@ -93,8 +94,8 @@ class UploadPostDialogs {
                   ),
                   elevation: 2,
                 ),
-                child: const Text(
-                  'Discard',
+                child:  Text(
+                  S.of(context).discard,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                 ),
               ),
@@ -193,8 +194,8 @@ class UploadPostDialogs {
                   ),
                   elevation: 2,
                 ),
-                child: const Text(
-                  'Got it',
+                child: Text(
+                  S.of(context).gotIt,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                 ),
               ),

@@ -3,13 +3,14 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:squeak/generated/l10n.dart';
 
 part 'community_state.dart';
 
 class CommunityCubit extends Cubit<CommunityState> {
   CommunityCubit() : super(FeedsInitial());
 
-  static CommunityCubit get(context) {
+  static CommunityCubit get(BuildContext context) {
     return BlocProvider.of(context);
   }
 
@@ -22,7 +23,7 @@ class CommunityCubit extends Cubit<CommunityState> {
   static const int maxMediaFiles = 10;
 
   // Pick multiple images - now supports both images and videos
-  Future<void> pickMultipleImages({required ImageSource source}) async {
+  Future<void> pickMultipleImages({required ImageSource source, required BuildContext context}) async {
     try {
       final List<XFile> pickedFiles = await picker.pickMultipleMedia();
 
@@ -41,9 +42,10 @@ class CommunityCubit extends Cubit<CommunityState> {
         if (fileType == 'unsupported') {
           emit(
             MediaSelectionErrorState(
-              'Unsupported file type: ${file.name}. Supported types: JPG, PNG, GIF, WebP',
+              '${S.of(context).supportedFormats}: JPG, JPEG, PNG, GIF',
             ),
           );
+          continue;
         }
 
         // تحقق من حجم الصورة
@@ -55,6 +57,7 @@ class CommunityCubit extends Cubit<CommunityState> {
               'File ${file.name} is too large (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB). Max allowed: 10 MB',
             ),
           );
+          continue;
         }
 
         // إضافة الملف المقبول
@@ -62,7 +65,9 @@ class CommunityCubit extends Cubit<CommunityState> {
         mediaTypes.add(fileType);
       }
 
-      emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
+      if (mediaFiles.isNotEmpty) {
+        emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
+      }
     } catch (e) {
       emit(MediaSelectionErrorState('Failed to pick media: $e'));
     }
@@ -74,6 +79,10 @@ class CommunityCubit extends Cubit<CommunityState> {
     if (path.endsWith('.jpg') || path.endsWith('.jpeg')) return 'image/jpeg';
     if (path.endsWith('.png')) return 'image/png';
     if (path.endsWith('.gif')) return 'image/gif';
+    // Check MIME type as fallback
+    if (file.mimeType != null && file.mimeType!.startsWith('image/')) {
+      return file.mimeType!;
+    }
     return 'unsupported';
   }
 
@@ -117,6 +126,18 @@ class CommunityCubit extends Cubit<CommunityState> {
         }
 
         for (var file in files) {
+          final fileType = _detectMediaType(file);
+          
+          // Check for unsupported formats
+          if (fileType == 'unsupported') {
+            emit(
+              MediaSelectionErrorState(
+                'Unsupported file type: ${file.name}. Supported formats:\nImage: JPG, JPEG, PNG, GIF\nVideo: MP4, WEBM, AVI, MOV',
+              ),
+            );
+            continue;
+          }
+          
           final fileSize = await File(file.path).length(); // حجم الملف بالبايت
           const maxSizeInBytes = 10 * 1024 * 1024; // 10 ميجابايت
           if (fileSize > maxSizeInBytes) {
@@ -125,10 +146,9 @@ class CommunityCubit extends Cubit<CommunityState> {
                 'File ${file.name} exceeds the 10 MB limit',
               ),
             );
-
+            continue;
           }
           mediaFiles.add(File(file.path));
-          final fileType = _detectMediaType(file);
           mediaTypes.add(fileType);
         }
 
@@ -167,7 +187,6 @@ class CommunityCubit extends Cubit<CommunityState> {
       'jpeg',
       'png',
       'gif',
-
     ];
 
     if (videoExtensions.contains(extension)) {
@@ -175,7 +194,7 @@ class CommunityCubit extends Cubit<CommunityState> {
     } else if (imageExtensions.contains(extension)) {
       return 'image';
     }
-    return 'image';
+    return 'unsupported';
   }
 
   // Remove a specific media file
