@@ -95,6 +95,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "addRecord": MessageLookupByLibrary.simpleMessage("إضافة تذكير"),
         "addReplayComment": MessageLookupByLibrary.simpleMessage("أضف رد ..."),
         "addToSqueak": MessageLookupByLibrary.simpleMessage("اضافة الى Squeak"),
+        "addToYourPost": MessageLookupByLibrary.simpleMessage("أضف إلى منشورك"),
         "addYourFirstPet":
             MessageLookupByLibrary.simpleMessage("أضف أول صديق صغير لك"),
         "addedToBlockedList": MessageLookupByLibrary.simpleMessage(
@@ -711,6 +712,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "pleaseSelectRating":
             MessageLookupByLibrary.simpleMessage("يرجى اختيار تقييم"),
         "poorExperience": MessageLookupByLibrary.simpleMessage("تجربة سيئة"),
+        "post": MessageLookupByLibrary.simpleMessage("نشر"),
+        "posting": MessageLookupByLibrary.simpleMessage("جاري النشر..."),
         "posts": MessageLookupByLibrary.simpleMessage("المنشورات"),
         "pregnancyNotificationInfo": MessageLookupByLibrary.simpleMessage(
             "ستتلقى إشعارات الحمل إذا كانت تنطبق"),
@@ -732,6 +735,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("الملف الشخصي غير مكتمل"),
         "profile_incomplete_desc": MessageLookupByLibrary.simpleMessage(
             "ملف صديقك الصغير يحتاج إلى مزيد من المعلومات لفتح جميع المميزات"),
+        "public": MessageLookupByLibrary.simpleMessage("عام"),
         "publish": MessageLookupByLibrary.simpleMessage("نشر"),
         "qrCodeStatus": MessageLookupByLibrary.simpleMessage("حالة رمز QR"),
         "qrNotLinked": MessageLookupByLibrary.simpleMessage("QR غير مرتبط"),
@@ -944,6 +948,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "ابحث عن الشريك المثالي لصديقك الصغير. تواصل، تحدث، وكون عائلة سعيدة معًا."),
         "welcomeToSqueak":
             MessageLookupByLibrary.simpleMessage("مرحبًا بك في سكويك!"),
+        "whatIsOnYourMind": MessageLookupByLibrary.simpleMessage("بما تفكر؟"),
         "year": MessageLookupByLibrary.simpleMessage("سنة"),
         "years": MessageLookupByLibrary.simpleMessage("سنوات"),
         "yes": MessageLookupByLibrary.simpleMessage("نعم"),

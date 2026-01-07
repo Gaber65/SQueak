@@ -624,7 +624,13 @@
   "viewsAndReactions":"Views & Reactions",
   "noViewsYet":"No views yet",
   "fileIsTooLarge":"Files Is Too Large",
-  "maxFileSize":"Max Files size is 25 MB"
+  "maxFileSize":"Max Files size is 25 MB",
+  "public": "Public",
+  "post": "Post",
+  "posting": "Posting...",
+  "addToYourPost": "Add to your post",
+  "whatIsOnYourMind": "What's on your mind?"
+  
 
   
 

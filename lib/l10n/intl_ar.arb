@@ -618,6 +618,11 @@
   "viewsAndReactions": "المشاهدات والتفاعلات",
   "noViewsYet": "لا توجد مشاهدات بعد",
   "fileIsTooLarge": "الملف كبير جدًا للتحميل",
-  "maxFileSize":"الحد الأقصى لحجم الملف هو 25 ميجابايت"
+  "maxFileSize":"الحد الأقصى لحجم الملف هو 25 ميجابايت",
+  "public": "عام",
+  "post":"نشر",
+  "posting":"جاري النشر...",
+  "addToYourPost":"أضف إلى منشورك",
+  "whatIsOnYourMind":"بما تفكر؟"
 
 }

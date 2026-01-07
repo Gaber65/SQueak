@@ -6209,6 +6209,56 @@ class S {
       args: [],
     );
   }
+
+  /// `Public`
+  String get public {
+    return Intl.message(
+      'Public',
+      name: 'public',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Post`
+  String get post {
+    return Intl.message(
+      'Post',
+      name: 'post',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Posting...`
+  String get posting {
+    return Intl.message(
+      'Posting...',
+      name: 'posting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add to your post`
+  String get addToYourPost {
+    return Intl.message(
+      'Add to your post',
+      name: 'addToYourPost',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `What's on your mind?`
+  String get whatIsOnYourMind {
+    return Intl.message(
+      'What\'s on your mind?',
+      name: 'whatIsOnYourMind',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

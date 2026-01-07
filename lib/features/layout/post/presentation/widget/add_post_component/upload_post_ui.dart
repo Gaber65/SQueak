@@ -49,7 +49,7 @@ class UploadPostUI extends StatelessWidget {
       leading: _buildLeadingButton(context, cubit),
       title: _buildAppBarTitle(context),
       centerTitle: true,
-      actions: [_buildPostButton(context, cubit)],
+      actions: [ _buildPostButton(context, cubit)],
       bottom: _buildAppBarDivider(),
     );
   }
@@ -102,7 +102,7 @@ class UploadPostUI extends StatelessWidget {
 
   Widget _buildPostButton(BuildContext context, CommunityCubit cubit) {
     return Padding(
-      padding: const EdgeInsets.only(right: 12),
+      padding: const EdgeInsets.only(right: 12, left: 12),
       child: ValueListenableBuilder<bool>(
         valueListenable: controller.isLoadingNotifier,
         builder: (context, isLoading, __) {
@@ -154,7 +154,7 @@ class UploadPostUI extends StatelessWidget {
                         const SizedBox(width: 8),
                       ],
                       Text(
-                        isLoading ? 'Posting...' : 'Post',
+                        isLoading ? S.of(context).posting : S.of(context).post,
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
@@ -206,7 +206,7 @@ class UploadPostUI extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 16),
-                _buildTextInputSection(cubit),
+                _buildTextInputSection(context, cubit),
                 if (cubit.mediaFiles.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   _buildMediaPreview(cubit),
@@ -221,7 +221,7 @@ class UploadPostUI extends StatelessWidget {
     );
   }
 
-  Widget _buildTextInputSection(CommunityCubit cubit) {
+  Widget _buildTextInputSection(BuildContext context, CommunityCubit cubit) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
@@ -239,17 +239,17 @@ class UploadPostUI extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildUserInfo(),
+          _buildUserInfo(context),
           const SizedBox(height: 20),
           // _buildTextField(),
           // const SizedBox(height: 10),
-          _buildTextFieldContent(),
+          _buildTextFieldContent(context),
         ],
       ),
     );
   }
 
-  Widget _buildUserInfo() {
+  Widget _buildUserInfo(BuildContext context) {
     return Row(
       children: [
         _buildAvatar(),
@@ -270,7 +270,7 @@ class UploadPostUI extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 6),
-              _buildPrivacyBadge(),
+              _buildPrivacyBadge(context),
             ],
           ),
         ),
@@ -334,7 +334,7 @@ class UploadPostUI extends StatelessWidget {
     );
   }
 
-  Widget _buildPrivacyBadge() {
+  Widget _buildPrivacyBadge(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
@@ -348,7 +348,7 @@ class UploadPostUI extends StatelessWidget {
           Icon(Icons.public_rounded, size: 14, color: Colors.blue[800]),
           const SizedBox(width: 5),
           Text(
-            'Public',
+            S.of(context).public,
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
@@ -361,7 +361,7 @@ class UploadPostUI extends StatelessWidget {
     );
   }
 
-  Widget _buildTextFieldContent() {
+  Widget _buildTextFieldContent(BuildContext context) {
     return TextField(
       controller: controller.textContentEditingController,
       maxLines: null,
@@ -378,7 +378,7 @@ class UploadPostUI extends StatelessWidget {
         fontWeight: FontWeight.w400,
       ),
       decoration: InputDecoration(
-        hintText: 'What\'s on your mind, ${widget.name.split(' ').first}?',
+        hintText: S.of(context).whatIsOnYourMind,
         hintStyle: TextStyle(
           fontSize: 16,
           color: Colors.grey[400],
@@ -632,7 +632,7 @@ class UploadPostUI extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    'Add to your post',
+                    S.of(context).addToYourPost,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,

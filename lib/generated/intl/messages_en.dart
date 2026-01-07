@@ -102,6 +102,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "addReplayComment":
             MessageLookupByLibrary.simpleMessage("Add  Reply  Comment . . . ."),
         "addToSqueak": MessageLookupByLibrary.simpleMessage("Add to squeak"),
+        "addToYourPost":
+            MessageLookupByLibrary.simpleMessage("Add to your post"),
         "addYourFirstPet":
             MessageLookupByLibrary.simpleMessage("Add Your First Pet"),
         "addedToBlockedList": MessageLookupByLibrary.simpleMessage(
@@ -724,6 +726,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Please select a rating"),
         "poorExperience":
             MessageLookupByLibrary.simpleMessage("Poor Experience"),
+        "post": MessageLookupByLibrary.simpleMessage("Post"),
+        "posting": MessageLookupByLibrary.simpleMessage("Posting..."),
         "posts": MessageLookupByLibrary.simpleMessage("Posts"),
         "pregnancyNotificationInfo": MessageLookupByLibrary.simpleMessage(
             "You will receive pregnancy notifications if applicable"),
@@ -745,6 +749,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Profile Incomplete"),
         "profile_incomplete_desc": MessageLookupByLibrary.simpleMessage(
             "Your pet profile needs additional information to unlock all features"),
+        "public": MessageLookupByLibrary.simpleMessage("Public"),
         "publish": MessageLookupByLibrary.simpleMessage("Publish"),
         "qrCodeStatus": MessageLookupByLibrary.simpleMessage("QR Code Status"),
         "qrNotLinked": MessageLookupByLibrary.simpleMessage("QR Not Linked"),
@@ -962,6 +967,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Find the perfect match for your beloved pets. Connect, chat, and create beautiful families together."),
         "welcomeToSqueak":
             MessageLookupByLibrary.simpleMessage("Welcome to Squeak!"),
+        "whatIsOnYourMind":
+            MessageLookupByLibrary.simpleMessage("What\'s on your mind?"),
         "year": MessageLookupByLibrary.simpleMessage("Year"),
         "years": MessageLookupByLibrary.simpleMessage("Years"),
         "yes": MessageLookupByLibrary.simpleMessage("Yes"),
