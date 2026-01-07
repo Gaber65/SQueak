@@ -41,14 +41,13 @@ class _FriendsScreenState extends State<FriendsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => sl<SwitchProfileCubit>()..loadProfile()),
         BlocProvider(
           create: (_) => sl<PetCubit>()..getOwnerPets(),
           lazy: false,
         ),
         BlocProvider(
           create: (_) => sl<SettingCubit>()..getOwnerData(),
-          lazy: true,
+          lazy: false,
         ),
       ],
       child: Scaffold(
