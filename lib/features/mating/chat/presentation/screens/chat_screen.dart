@@ -622,11 +622,15 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         debugPrint('   ✓ File ${i + 1}: ${file.path.split('/').last} (OK)');
       }
 
-      // Separate images and videos
+      // Separate images, videos, audio, and document files
       final images = <File>[];
       final imageIndices = <int>[];
       final videos = <File>[];
       final videoIndices = <int>[];
+      final audios = <File>[];
+      final audioIndices = <int>[];
+      final documents = <File>[];
+      final documentIndices = <int>[];
 
       for (int i = 0; i < files.length; i++) {
         final file = files[i];
@@ -638,6 +642,13 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         } else if (['mp4', 'mov', 'avi', 'mkv', 'flv', 'wmv', 'webm', '3gp', 'm4v'].contains(extension)) {
           videos.add(file);
           videoIndices.add(i);
+        } else if (['m4a', 'mp3', 'wav', 'aac', 'flac', 'ogg', 'wma', 'aiff'].contains(extension)) {
+          audios.add(file);
+          audioIndices.add(i);
+        } else {
+          // Any other file type is treated as a document
+          documents.add(file);
+          documentIndices.add(i);
         }
       }
 
@@ -758,6 +769,120 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         }
       }
 
+      // Upload audio files to audio helper
+      if (audios.isNotEmpty) {
+        debugPrint('🎵 [AudioHelper] Uploading ${audios.length} audio file(s)...');
+        final audioUploadIds = <String>[];
+        
+        if (mounted) {
+          setState(() {
+            for (var i = 0; i < audios.length; i++) {
+              final uploadId = '${DateTime.now().millisecondsSinceEpoch}_aud_${audioUploadIds.length}';
+              audioUploadIds.add(uploadId);
+              _uploadingFiles.add(
+                UploadingMedia(
+                  id: uploadId,
+                  file: audios[i],
+                  type: AttachmentType.audio,
+                  caption: (audioIndices[i] < captionsList.length ? captionsList[audioIndices[i]] : null) ?? '',
+                ),
+              );
+            }
+          });
+        }
+
+        for (var i = 0; i < audios.length; i++) {
+          final file = audios[i];
+          debugPrint('   ⏳ Uploading audio ${i + 1}/${audios.length}...');
+          
+          try {
+            await mainCubit.getGlobalSound(file, UploadPlace.messageRecord);
+            final mediaUrl = mainCubit.modelImage?.data;
+
+            if (mediaUrl != null && mediaUrl.isNotEmpty) {
+              final originalIndex = audioIndices[i];
+              allAttachments.add(
+                AttachmentPayload(
+                  url: mediaUrl,
+                  type: AttachmentType.audio,
+                  description: originalIndex < captionsList.length ? captionsList[originalIndex] : null,
+                ),
+              );
+              debugPrint('   ✅ Audio ${i + 1} uploaded: ${mediaUrl.split('/').last}');
+            } else {
+              debugPrint('   ❌ Audio ${i + 1} upload failed: URL is empty');
+            }
+          } catch (e) {
+            debugPrint('   ❌ Audio ${i + 1} upload error: $e');
+          }
+        }
+
+        if (mounted) {
+          setState(() {
+            for (final id in audioUploadIds) {
+              _uploadingFiles.removeWhere((item) => item.id == id);
+            }
+          });
+        }
+      }
+
+      // Upload document files to document helper
+      if (documents.isNotEmpty) {
+        debugPrint('📄 [DocumentHelper] Uploading ${documents.length} document file(s)...');
+        final documentUploadIds = <String>[];
+        
+        if (mounted) {
+          setState(() {
+            for (var i = 0; i < documents.length; i++) {
+              final uploadId = '${DateTime.now().millisecondsSinceEpoch}_doc_${documentUploadIds.length}';
+              documentUploadIds.add(uploadId);
+              _uploadingFiles.add(
+                UploadingMedia(
+                  id: uploadId,
+                  file: documents[i],
+                  type: AttachmentType.file,
+                  caption: (documentIndices[i] < captionsList.length ? captionsList[documentIndices[i]] : null) ?? '',
+                ),
+              );
+            }
+          });
+        }
+
+        for (var i = 0; i < documents.length; i++) {
+          final file = documents[i];
+          debugPrint('   ⏳ Uploading document ${i + 1}/${documents.length}...');
+          
+          try {
+            await mainCubit.getGlobalDocument(file, UploadPlace.messageFiles);
+            final mediaUrl = mainCubit.modelImage?.data;
+
+            if (mediaUrl != null && mediaUrl.isNotEmpty) {
+              final originalIndex = documentIndices[i];
+              allAttachments.add(
+                AttachmentPayload(
+                  url: mediaUrl,
+                  type: AttachmentType.file,
+                  description: originalIndex < captionsList.length ? captionsList[originalIndex] : null,
+                ),
+              );
+              debugPrint('   ✅ Document ${i + 1} uploaded: ${mediaUrl.split('/').last}');
+            } else {
+              debugPrint('   ❌ Document ${i + 1} upload failed: URL is empty');
+            }
+          } catch (e) {
+            debugPrint('   ❌ Document ${i + 1} upload error: $e');
+          }
+        }
+
+        if (mounted) {
+          setState(() {
+            for (final id in documentUploadIds) {
+              _uploadingFiles.removeWhere((item) => item.id == id);
+            }
+          });
+        }
+      }
+
       // Check if any uploads succeeded
       if (allAttachments.isEmpty) {
         debugPrint('❌ [Upload] All uploads failed!');
@@ -782,6 +907,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       debugPrint('📊 [Count] Updating unread message count...');
       final hasImages = allAttachments.any((a) => a.type == AttachmentType.image);
       final hasVideos = allAttachments.any((a) => a.type == AttachmentType.video);
+      final hasAudio = allAttachments.any((a) => a.type == AttachmentType.audio);
+      final hasDocuments = allAttachments.any((a) => a.type == AttachmentType.file);
       
       await chatAppCubit.increaseUnreadMessageCount(
         conversationId: widget.chat.id,
@@ -790,8 +917,8 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
         content: caption ?? '',
         imageMessage: hasImages,
         videoMessage: hasVideos,
-        fileMessage: type == AttachmentType.file,
-        audioMessage: type == AttachmentType.audio,
+        fileMessage: hasDocuments || type == AttachmentType.file,
+        audioMessage: hasAudio || type == AttachmentType.audio,
       );
 
       debugPrint('✅ [Complete] ${allAttachments.length} file(s) sent successfully!');

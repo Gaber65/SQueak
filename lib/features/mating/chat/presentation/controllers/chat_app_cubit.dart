@@ -24,10 +24,24 @@ class AttachmentPayload {
 
   Map<String, dynamic> toJson() => {
     'url': url,
-    'type': type.index, 
+    'type': _getAttachmentTypeValue(type),
     if (description != null) 'description': description,
     if (attachmentPlaceholder != null) 'attachmentPlaceholder': attachmentPlaceholder,
   };
+
+  
+  int _getAttachmentTypeValue(AttachmentType type) {
+    switch (type) {
+      case AttachmentType.image:
+        return 0; 
+      case AttachmentType.video:
+        return 1; 
+      case AttachmentType.file:
+        return 2; 
+      case AttachmentType.audio:
+        return 3; 
+    }
+  }
 }
 
 class ChatAppCubit extends Cubit<ChatAppState> {
