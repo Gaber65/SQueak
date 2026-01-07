@@ -17,6 +17,7 @@ class CommentActionSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = MainCubit.get(context).isDark;
+    final commentPetId = comment.petId.toString();
     
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -55,33 +56,36 @@ class CommentActionSheet extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  _buildOption(
-                    context,
-                    text: S.of(context).editComment.substring(0, 13),
-                    icon: Icons.edit_outlined,
-                    color: isDark ? Colors.blue.shade400 : Colors.blue.shade600,
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      navigateToScreen(
-                        context,
-                        EditComment(comment: comment, petId: petID),
-                      );
-                    },
-                  ),
-                  
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Divider(
-                      color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                      height: 1,
+                  if (petID == commentPetId)
+                    _buildOption(
+                      context,
+                      text: S.of(context).editComment.substring(0, 13),
+                      icon: Icons.edit_outlined,
+                      color: isDark ? Colors.blue.shade400 : Colors.blue.shade600,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        navigateToScreen(
+                          context,
+                          EditComment(comment: comment, petId: commentPetId),
+                        );
+                      },
                     ),
-                  ),
-                  _buildOption(
-                    context,
-                    text: S.of(context).deleteComment,
-                    icon: Icons.delete_outline,
-                    color: Colors.red.shade600,
-                    onPressed: () async {
+                  
+                  if (petID == commentPetId)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Divider(
+                        color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                        height: 1,
+                      ),
+                    ),
+                  if (petID == comment.petId.toString())
+                    _buildOption(
+                      context,
+                      text: S.of(context).deleteComment,
+                      icon: Icons.delete_outline,
+                      color: Colors.red.shade600,
+                      onPressed: () async {
                       final confirmed = await showDialog<bool>(
                         context: context,
                         builder: (context) => Dialog(
@@ -184,19 +188,28 @@ class CommentActionSheet extends StatelessWidget {
                       );
 
                       if (confirmed == true && context.mounted) {
-                        if (petID == comment.petId.toString()) {
-                          CommentCubit.get(context).deleteComment(
-                            commentId: comment.id,
-                            replies: comment.replies,
-                            petId:petID,
-                          );
-                          Navigator.of(context).pop();
-                        } else {
-                          Navigator.of(context).pop();
-                        }
+                        CommentCubit.get(context).deleteComment(
+                          commentId: comment.id,
+                          replies: comment.replies,
+                          petId: commentPetId,
+                        );
+                        Navigator.of(context).pop();
                       }
                     },
-                  ),
+                    ),
+                  if (petID != commentPetId)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      child: Text(
+                        isArabic() ? 'يمكنك فقط تعديل/حذف تعليقاتك الخاصة' : 'You can only edit/delete your own comments',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   
                   SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
                 ],

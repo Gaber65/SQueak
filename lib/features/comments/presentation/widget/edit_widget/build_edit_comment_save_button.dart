@@ -27,22 +27,18 @@ Widget buildEditCommentSaveButton(
         child: ElevatedButton(
           onPressed: () {
             if (formKey.currentState!.validate()) {
-              final activeId = CacheHelper.getData('isPet') == true
-                  ? CacheHelper.getData('activeId')
-                  : null;
-              if (activeId == comment.petId.toString()) {
-                cubit.updateComment(
-                  postId: comment.postId,
-                  commentId: comment.id,
-                  content: commentController.text,
-                  petId: activeId,
-                  image: comment.image,
-                  parentId:
-                      CacheHelper.getData('isReplayCommentOpen') == true
-                          ? CacheHelper.getData('replayCommentID')
-                          : null,
-                );
-              } 
+              final commentPetId = comment.petId.toString();
+              cubit.updateComment(
+                postId: comment.postId,
+                commentId: comment.id,
+                content: commentController.text,
+                petId: commentPetId,
+                image: comment.image,
+                parentId:
+                    CacheHelper.getData('isReplayCommentOpen') == true
+                        ? CacheHelper.getData('replayCommentID')
+                        : null,
+              );
             }
           },
           style: ElevatedButton.styleFrom(
