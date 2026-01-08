@@ -46,7 +46,6 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
   @override
   void initState() {
     super.initState();
-
     _commentFocusNode = FocusNode();
 
     controller = StoryViewerController(
@@ -57,6 +56,8 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
       onPreviousStory: _goToPreviousStory,
       onPageChanged: (index) {
         setState(() {});
+        _handleStoryView(index);
+
       },
       onClose: () => Navigator.of(context).pop(),
       onPauseUI: () => setState(() {}),
