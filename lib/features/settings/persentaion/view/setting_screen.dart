@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:iconly/iconly.dart';
@@ -302,6 +304,8 @@ class SettingScreen extends StatelessWidget {
 
                           // Finally navigate to LoginScreen and clear navigation stack
                           debugPrint('[Logout] Navigating to LoginScreen');
+                          FacebookAuth.instance.logOut();
+                          GoogleSignIn().signOut();
                           navigateAndFinish(context, LoginScreen());
                         },
                       );

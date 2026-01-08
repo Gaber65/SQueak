@@ -4,7 +4,6 @@ import 'core/service/service_locator/locatore_export_path.dart';
 
 Future<void> main() async {
   await InitFunctions.initialize();
-  debugPrint(CacheHelper.getData('token'));
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

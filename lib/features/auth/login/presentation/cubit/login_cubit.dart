@@ -177,14 +177,12 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginWithFacebook() async {
-    FacebookAuth.instance.logOut();
     final result = await FacebookAuth.instance.login(
       permissions: ['email', 'public_profile'],
     );
     if (result.status == LoginStatus.success) {
       final accessToken = result.accessToken!.tokenString;
-      // print(accessToken);
-      // print( await FirebaseMessaging.instance.getToken());
+
       final resultRepo = await loginWithFacebookUseCase(
         LoginWithFacebookPrames(
           facebookAccessToken: accessToken,
@@ -202,13 +200,16 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginWithGoogle() async {
-    final googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) return ;
+    final googleUser =
+        await GoogleSignIn(
+          serverClientId: ConfigModel.serverClientIdGoogle,
+        ).signIn();
+    if (googleUser == null) return;
 
     final auth = await googleUser.authentication;
     final resultRepo = await loginWithGoogleUseCase(
       LoginWithFacebookPrames(
-        facebookAccessToken: auth.accessToken!,
+        facebookAccessToken: auth.idToken!,
         isIos: Platform.isIOS,
         isAndroid: Platform.isAndroid,
         fbToken: await FirebaseMessaging.instance.getToken() ?? '',
