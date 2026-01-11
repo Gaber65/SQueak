@@ -10,7 +10,8 @@ class ConfigModel {
         serverFirstHalfOfImageUrl =
             'https://veticareapi.veticareapp.com:8002/files/';
         baseApiUrlSqueak = 'https://squeakapi.veticareapp.com:8001';
-        serverClientIdGoogle = "205107241099-pu6b4gf1jfqmsjehbpj1s43mqj6svsus.apps.googleusercontent.com";
+        serverClientIdGoogle =
+            "205107241099-pu6b4gf1jfqmsjehbpj1s43mqj6svsus.apps.googleusercontent.com";
         break;
       case Environment.pre:
         serverFirstHalfOfImageUrl = 'https://vicapiub.veticareapp.com/files/';

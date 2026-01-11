@@ -7,12 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:205107241099:android:312e685d4db90d561d748e",
+        "mobilesdk_app_id": "1:205107241099:android:dff03c3d337fc7381d748e",
         "android_client_info": {
-          "package_name": "com.softicare.squeak"
+          "package_name": "com.quadInsight.squeak_chat"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "205107241099-pu6b4gf1jfqmsjehbpj1s43mqj6svsus.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDwEglyUZAt_RlZrPV-9JisoUOwomx09R0"
@@ -20,7 +25,65 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "205107241099-pu6b4gf1jfqmsjehbpj1s43mqj6svsus.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "205107241099-6knltgau126k88gd9im27jpal1mm7iuo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.softicare.squeak",
+                "app_store_id": "6739161083"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205107241099:android:312e685d4db90d561d748e",
+        "android_client_info": {
+          "package_name": "com.softicare.squeak"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "205107241099-c5v31nst3hm3qm2ho6csafqtg4oopc45.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.softicare.squeak",
+            "certificate_hash": "093943517b00700ed6a4fe0ef0701c014eb3baca"
+          }
+        },
+        {
+          "client_id": "205107241099-pu6b4gf1jfqmsjehbpj1s43mqj6svsus.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwEglyUZAt_RlZrPV-9JisoUOwomx09R0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "205107241099-pu6b4gf1jfqmsjehbpj1s43mqj6svsus.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "205107241099-6knltgau126k88gd9im27jpal1mm7iuo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.softicare.squeak",
+                "app_store_id": "6739161083"
+              }
+            }
+          ]
         }
       }
     }

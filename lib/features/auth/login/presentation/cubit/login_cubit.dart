@@ -200,25 +200,27 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginWithGoogle() async {
-    final googleUser =
-        await GoogleSignIn(
-          serverClientId: ConfigModel.serverClientIdGoogle,
-        ).signIn();
-    if (googleUser == null) return;
+    GoogleSignIn().signOut().then((value) async{
+      final googleUser =
+          await GoogleSignIn(
+            serverClientId: ConfigModel.serverClientIdGoogle,
+          ).signIn();
+      if (googleUser == null) return;
 
-    final auth = await googleUser.authentication;
-    final resultRepo = await loginWithGoogleUseCase(
-      LoginWithFacebookPrames(
-        facebookAccessToken: auth.idToken!,
-        isIos: Platform.isIOS,
-        isAndroid: Platform.isAndroid,
-        fbToken: await FirebaseMessaging.instance.getToken() ?? '',
-      ),
-    );
-    resultRepo.fold(
-      (l) => emit(LoginError(l.error)),
-      (r) => emit(LoginSuccess(r)),
-    );
+      final auth = await googleUser.authentication;
+      final resultRepo = await loginWithGoogleUseCase(
+        LoginWithFacebookPrames(
+          facebookAccessToken: auth.idToken!,
+          isIos: Platform.isIOS,
+          isAndroid: Platform.isAndroid,
+          fbToken: await FirebaseMessaging.instance.getToken() ?? '',
+        ),
+      );
+      resultRepo.fold(
+        (l) => emit(LoginError(l.error)),
+        (r) => emit(LoginSuccess(r)),
+      );
+    });
   }
 
   @override
