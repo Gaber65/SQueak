@@ -43,9 +43,9 @@ class LoginWithFacebookPrames {
   Map<String, dynamic> toJsonGoogle() {
     return {
       'googleToken': facebookAccessToken,
+      'fbToken': fbToken,
       'iOSDevice': isIos,
       'androidDevice': isAndroid,
-      'fbToken': fbToken,
     };
   }
 }
