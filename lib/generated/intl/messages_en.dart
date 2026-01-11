@@ -925,6 +925,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "Unsupported file type. Supported image types: JPG, JPEG, PNG, GIF"),
         "unsupportedMixedFormat": MessageLookupByLibrary.simpleMessage(
             "Unsupported file type. Supported formats:\nImage: JPG, JPEG, PNG, GIF\nVideo: MP4, WEBM, AVI, MOV"),
+        "unsupportedVideoFormat":
+            MessageLookupByLibrary.simpleMessage("Unsupported Video Format"),
+        "unsupportedVideoFormatMessage": MessageLookupByLibrary.simpleMessage(
+            "This video format is not supported. Please use: MP4, WEBM, AVI, or MOV"),
         "updateAppointment":
             MessageLookupByLibrary.simpleMessage("Update Appointment"),
         "updateNotification":

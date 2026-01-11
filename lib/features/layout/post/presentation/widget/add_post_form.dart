@@ -126,7 +126,7 @@ Future<void> _handleGalleryButtonPress(
   }
 
   final communityCubit = CommunityCubit();
-  await communityCubit.pickMixedMedia(source: ImageSource.gallery);
+  await communityCubit.pickMixedMedia(context: context, source: ImageSource.gallery);
 
   if (communityCubit.mediaFiles.isNotEmpty && context.mounted) {
     _navigateToUploadPostWithCubit(context, cubit, communityCubit);

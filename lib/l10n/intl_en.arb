@@ -639,5 +639,7 @@
   "fileTooLarge":"File is too large. Max allowed: 10 MB",
   "fileExceedsLimit":"File exceeds the 10 MB limit",
   "supportedFormats":"Supported Formats",
-  "gotIt":"Got it"
+  "gotIt":"Got it",
+  "unsupportedVideoFormat": "Unsupported Video Format",
+  "unsupportedVideoFormatMessage": "This video format is not supported. Please use: MP4, WEBM, AVI, or MOV"
 }

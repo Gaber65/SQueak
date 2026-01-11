@@ -910,6 +910,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "تنسيق ملف غير مدعوم. تنسيقات الصور المدعومة: JPG, JPEG, PNG, GIF"),
         "unsupportedMixedFormat": MessageLookupByLibrary.simpleMessage(
             "تنسيق ملف غير مدعوم. التنسيقات المدعومة:\nصور: JPG, JPEG, PNG, GIF\nفيديوهات: MP4, WEBM, AVI, MOV"),
+        "unsupportedVideoFormat":
+            MessageLookupByLibrary.simpleMessage("صيغة فيديو غير مدعومة"),
+        "unsupportedVideoFormatMessage": MessageLookupByLibrary.simpleMessage(
+            "هذه الصيغة غير مدعومة. يرجى استخدام: MP4 أو WEBM أو AVI أو MOV"),
         "updateAppointment":
             MessageLookupByLibrary.simpleMessage("تحديث الموعد"),
         "updateNotification":

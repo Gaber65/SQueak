@@ -98,7 +98,7 @@ class UploadPostController {
       BuildContext context,
       ) async {
     try {
-      await cubit.pickMultipleVideos(source: ImageSource.gallery);
+      await cubit.pickMultipleVideos(context: context,source: ImageSource.gallery);
       setState(() {});
     } catch (e) {
       snackbars.showErrorSnackBar(context, 'Failed to pick videos: $e');

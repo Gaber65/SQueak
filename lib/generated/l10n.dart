@@ -6359,6 +6359,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Unsupported Video Format`
+  String get unsupportedVideoFormat {
+    return Intl.message(
+      'Unsupported Video Format',
+      name: 'unsupportedVideoFormat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This video format is not supported. Please use: MP4, WEBM, AVI, or MOV`
+  String get unsupportedVideoFormatMessage {
+    return Intl.message(
+      'This video format is not supported. Please use: MP4, WEBM, AVI, or MOV',
+      name: 'unsupportedVideoFormatMessage',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -87,7 +87,7 @@ class CommunityCubit extends Cubit<CommunityState> {
   }
 
   // Pick multiple videos
-  Future<void> pickMultipleVideos({required ImageSource source}) async {
+  Future<void> pickMultipleVideos({required ImageSource source, required BuildContext context}) async {
     try {
       final XFile? videoFile = await picker.pickVideo(
         source: source,
@@ -95,6 +95,17 @@ class CommunityCubit extends Cubit<CommunityState> {
       );
 
       if (videoFile != null) {
+        // Validate video extension
+        final videoValidation = _validateVideoExtension(videoFile);
+        if (videoValidation == 'unsupported_video') {
+          emit(
+            MediaSelectionErrorState(
+              S.of(context).unsupportedVideoFormatMessage,
+            ),
+          );
+          return;
+        }
+
         // Check if adding this file would exceed the limit
         if (mediaFiles.length >= maxMediaFiles) {
           emit(
@@ -113,7 +124,7 @@ class CommunityCubit extends Cubit<CommunityState> {
   }
 
   // Pick mixed media (both images and videos)
-  Future<String?> pickMixedMedia({required ImageSource source}) async {
+  Future<String?> pickMixedMedia({required ImageSource source, required BuildContext context}) async {
     try {
       final List<XFile> files = await picker.pickMultipleMedia();
 
@@ -136,6 +147,19 @@ class CommunityCubit extends Cubit<CommunityState> {
               ),
             );
             continue;
+          }
+
+          // Validate video extension strictly
+          if (fileType == 'video') {
+            final videoValidation = _validateVideoExtension(file);
+            if (videoValidation == 'unsupported_video') {
+              emit(
+                MediaSelectionErrorState(
+                  S.of(context).unsupportedVideoFormatMessage,
+                ),
+              );
+              continue;
+            }
           }
           
           final fileSize = await File(file.path).length(); // حجم الملف بالبايت
@@ -165,16 +189,6 @@ class CommunityCubit extends Cubit<CommunityState> {
 
   // Helper method to detect if a file is an image or video
   String _detectMediaType(XFile file) {
-    // First check MIME type if available
-    if (file.mimeType != null) {
-      if (file.mimeType!.startsWith('video/')) {
-        return 'video';
-      } else if (file.mimeType!.startsWith('image/')) {
-        return 'image';
-      }
-    }
-
-    // Fallback to file extension
     final extension = file.path.split('.').last.toLowerCase();
     final videoExtensions = [
       'mp4',
@@ -189,12 +203,34 @@ class CommunityCubit extends Cubit<CommunityState> {
       'gif',
     ];
 
+    // Check by extension first for stricter validation
     if (videoExtensions.contains(extension)) {
       return 'video';
     } else if (imageExtensions.contains(extension)) {
       return 'image';
     }
+
+    // Fallback to MIME type
+    if (file.mimeType != null) {
+      if (file.mimeType!.startsWith('video/')) {
+        return 'video';
+      } else if (file.mimeType!.startsWith('image/')) {
+        return 'image';
+      }
+    }
+
     return 'unsupported';
+  }
+
+  // Validate if video extension is supported
+  String? _validateVideoExtension(XFile file) {
+    final extension = file.path.split('.').last.toLowerCase();
+    final videoExtensions = ['mp4', 'mov', 'avi', 'webm'];
+
+    if (!videoExtensions.contains(extension)) {
+      return 'unsupported_video';
+    }
+    return null;
   }
 
   // Remove a specific media file

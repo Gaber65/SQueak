@@ -633,6 +633,8 @@
   "fileTooLarge":"الملف كبير جداً. الحد الأقصى المسموح به: 10 ميجابايت",
   "fileExceedsLimit":"الملف يتجاوز حد 10 ميجابايت",
   "supportedFormats":"التنسيقات المدعومة",
-  "gotIt":"فهمت"
+  "gotIt":"فهمت",
+    "unsupportedVideoFormat": "صيغة فيديو غير مدعومة",
+  "unsupportedVideoFormatMessage": "هذه الصيغة غير مدعومة. يرجى استخدام: MP4 أو WEBM أو AVI أو MOV"
 
 }
