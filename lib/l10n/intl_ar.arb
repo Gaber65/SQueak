@@ -202,6 +202,16 @@
   "filter_hint_pets": "فرز حسب اسم الصديق الصغير",
   "filter_hint_State": "فرز حسب الحالة",
   "appointmentsAll": "جميع",
+  "invalidFileExtension": "صيغة ملف غير صحيحة",
+  "invalidFileExtensionMessage": "هذا نوع ملف غير مدعوم. يرجى تحديد ملف صالح",
+  "invalidImageExtension": "صيغة صورة غير صحيحة",
+  "invalidImageExtensionMessage": "يرجى تحديد ملف صورة بإحدى هذه الصيغ: JPG, PNG, GIF, JPEG",
+  "invalidVideoExtension": "صيغة فيديو غير صحيحة",
+  "invalidVideoExtensionMessage": "يرجى تحديد ملف فيديو بإحدى هذه الصيغ: MP4, WEBM, AVI, MOV",
+  "invalidAudioExtension": "صيغة صوت غير صحيحة",
+  "invalidAudioExtensionMessage": "يرجى تحديد ملف صوت بإحدى هذه الصيغ: MP3, WAV, M4A, OGG",
+  "invalidDocumentExtension": "صيغة ملف غير مدعومة",
+  "invalidDocumentExtensionMessage": "هذا نوع ملف غير مدعوم",
   "appointmentsReserved": "محجوز",
   "appointmentsAttended": "حضر",
   "appointmentsStartExamination": "بدء الفحص",
@@ -635,6 +645,12 @@
   "supportedFormats":"التنسيقات المدعومة",
   "gotIt":"فهمت",
     "unsupportedVideoFormat": "صيغة فيديو غير مدعومة",
-  "unsupportedVideoFormatMessage": "هذه الصيغة غير مدعومة. يرجى استخدام: MP4 أو WEBM أو AVI أو MOV"
+  "unsupportedVideoFormatMessage": "هذه الصيغة غير مدعومة. يرجى استخدام: MP4 أو WEBM أو AVI أو MOV",
+  "tooManyFiles": "عدد كبير جدًا من الملفات",
+  "youCanUploadUpTo10Files": "يمكنك تحميل ما يصل إلى 10 ملفات في المرة الواحدة",
+  "fileSizeExceeded":"تحذير",
+  "fileSizeExceededMessage":"لا يمكن أن يتجاوز حجم الملفات 25 ميجا بايت",
+  "fileLimitReached":"تم الوصول إلى الحد الأقصى للملفات",
+  "addCaptionOptional":"إضافة وصف (اختياري)"
 
 }

@@ -434,7 +434,7 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
                         color: Colors.white, size: 48),
                     const SizedBox(height: 16),
                     Text(
-                      'Unable to load image',
+                      S.of(context).imageloadingFailed,
                       style: TextStyle(color: Colors.grey[400]),
                     ),
                   ],
@@ -574,46 +574,87 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
   }
 
   Future<void> _addMoreMedia(List<File> newFiles) async {
-    final int initialCount = _mediaFiles.length;
-    final int availableSlots = MultiMediaPreviewScreen.maxMediaCount - initialCount;
+    // Check if adding files would exceed max size limit
+    double currentTotalSizeMB = _getTotalFileSizeMB();
+    List<File> filesToAdd = [];
+    
+    for (final file in newFiles) {
+      if (_mediaFiles.length >= MultiMediaPreviewScreen.maxMediaCount) {
+        break;
+      }
+      if (!_isFileAlreadySelected(file)) {
+        try {
+          final fileSizeMB = file.lengthSync() / (1024 * 1024);
+          if (currentTotalSizeMB + fileSizeMB > MultiMediaPreviewScreen.maxMediaSizeMB) {
+            // Size limit exceeded, show error message
+            if (mounted) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  backgroundColor: const Color(0xFF1E1E1E),
+                  title: Text(
+                    S.of(context).fileSizeExceeded,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                  content: Text(
+                    S.of(context).fileSizeExceededMessage,
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child:  Text(
+                        S.of(context).ok,
+                        style: TextStyle(color: Color(0xFF6200EA)),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+            return;
+          }
+          filesToAdd.add(file);
+          currentTotalSizeMB += fileSizeMB;
+        } catch (e) {
+          debugPrint('Error getting file size: $e');
+        }
+      }
+    }
+
     int filesAdded = 0;
 
     setState(() {
-      for (final file in newFiles) {
+      for (final file in filesToAdd) {
         // Stop adding files if we've reached the limit
         if (_mediaFiles.length >= MultiMediaPreviewScreen.maxMediaCount) {
           break;
         }
-        // Skip duplicate files
-        if (!_isFileAlreadySelected(file)) {
-          _mediaFiles.add(file);
-          _captions.add(null);
-          filesAdded++;
-        }
+        _mediaFiles.add(file);
+        _captions.add(null);
+        filesAdded++;
       }
     });
 
-    // Show dialog if unable to add all files
-    if (filesAdded < newFiles.length && mounted) {
+    // Show dialog if unable to add all files due to count limit
+    if (filesAdded < filesToAdd.length && mounted) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           backgroundColor: const Color(0xFF1E1E1E),
-          title: const Text(
-            'File Limit Reached',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          title:  Text(
+            S.of(context).fileLimitReached,
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           content: Text(
-            availableSlots == 0
-                ? 'You can only add up to ${MultiMediaPreviewScreen.maxMediaCount} files total.'
-                : 'You can only add $availableSlots more file(s). Added $filesAdded out of ${newFiles.length} selected files.',
+            S.of(context).youCanUploadUpTo10Files,
             style: const TextStyle(color: Colors.white70),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'OK',
+              child:  Text(
+                S.of(context).ok,
                 style: TextStyle(color: Color(0xFF6200EA)),
               ),
             ),
@@ -830,7 +871,7 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              'Item ${_currentIndex + 1}/${_mediaFiles.length} - Add caption (optional)',
+                              ' ${_currentIndex + 1}/${_mediaFiles.length} -  ${S.of(context).addCaptionOptional}',
                               style: TextStyle(
                                 color: Colors.grey[400],
                                 fontSize: 12,

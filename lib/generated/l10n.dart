@@ -2090,6 +2090,106 @@ class S {
     );
   }
 
+  /// `Invalid File Extension`
+  String get invalidFileExtension {
+    return Intl.message(
+      'Invalid File Extension',
+      name: 'invalidFileExtension',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This file type is not supported. Please select a valid file.`
+  String get invalidFileExtensionMessage {
+    return Intl.message(
+      'This file type is not supported. Please select a valid file.',
+      name: 'invalidFileExtensionMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invalid Image Format`
+  String get invalidImageExtension {
+    return Intl.message(
+      'Invalid Image Format',
+      name: 'invalidImageExtension',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select an image file with one of these formats: JPG, PNG, GIF, JPEG`
+  String get invalidImageExtensionMessage {
+    return Intl.message(
+      'Please select an image file with one of these formats: JPG, PNG, GIF, JPEG',
+      name: 'invalidImageExtensionMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invalid Video Format`
+  String get invalidVideoExtension {
+    return Intl.message(
+      'Invalid Video Format',
+      name: 'invalidVideoExtension',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a video file with one of these formats: MP4, WEBM, AVI, MOV`
+  String get invalidVideoExtensionMessage {
+    return Intl.message(
+      'Please select a video file with one of these formats: MP4, WEBM, AVI, MOV',
+      name: 'invalidVideoExtensionMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invalid Audio Format`
+  String get invalidAudioExtension {
+    return Intl.message(
+      'Invalid Audio Format',
+      name: 'invalidAudioExtension',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select an audio file with one of these formats: MP3, WAV, M4A, OGG`
+  String get invalidAudioExtensionMessage {
+    return Intl.message(
+      'Please select an audio file with one of these formats: MP3, WAV, M4A, OGG',
+      name: 'invalidAudioExtensionMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invalid File Format`
+  String get invalidDocumentExtension {
+    return Intl.message(
+      'Invalid File Format',
+      name: 'invalidDocumentExtension',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This file type is not supported`
+  String get invalidDocumentExtensionMessage {
+    return Intl.message(
+      'This file type is not supported',
+      name: 'invalidDocumentExtensionMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Reserved`
   String get appointmentsReserved {
     return Intl.message(
@@ -6375,6 +6475,66 @@ class S {
     return Intl.message(
       'This video format is not supported. Please use: MP4, WEBM, AVI, or MOV',
       name: 'unsupportedVideoFormatMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Too Many Files`
+  String get tooManyFiles {
+    return Intl.message(
+      'Too Many Files',
+      name: 'tooManyFiles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You can upload up to 10 files at a time`
+  String get youCanUploadUpTo10Files {
+    return Intl.message(
+      'You can upload up to 10 files at a time',
+      name: 'youCanUploadUpTo10Files',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `File Size Exceeded`
+  String get fileSizeExceeded {
+    return Intl.message(
+      'File Size Exceeded',
+      name: 'fileSizeExceeded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Files size cannot exceed 25 MB`
+  String get fileSizeExceededMessage {
+    return Intl.message(
+      'Files size cannot exceed 25 MB',
+      name: 'fileSizeExceededMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `File Limit Reached`
+  String get fileLimitReached {
+    return Intl.message(
+      'File Limit Reached',
+      name: 'fileLimitReached',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a caption (optional)`
+  String get addCaptionOptional {
+    return Intl.message(
+      'Add a caption (optional)',
+      name: 'addCaptionOptional',
       desc: '',
       args: [],
     );

@@ -93,6 +93,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "addAvailabilities":
             MessageLookupByLibrary.simpleMessage("Add available times"),
         "addCaption": MessageLookupByLibrary.simpleMessage("Add a caption..."),
+        "addCaptionOptional":
+            MessageLookupByLibrary.simpleMessage("Add a caption (optional)"),
         "addComment":
             MessageLookupByLibrary.simpleMessage("Add  Your Comment . . . ."),
         "addPet": MessageLookupByLibrary.simpleMessage("Add Pet"),
@@ -429,6 +431,12 @@ class MessageLookup extends MessageLookupByLibrary {
             "File exceeds the 10 MB limit"),
         "fileIsTooLarge":
             MessageLookupByLibrary.simpleMessage("Files Is Too Large"),
+        "fileLimitReached":
+            MessageLookupByLibrary.simpleMessage("File Limit Reached"),
+        "fileSizeExceeded":
+            MessageLookupByLibrary.simpleMessage("File Size Exceeded"),
+        "fileSizeExceededMessage": MessageLookupByLibrary.simpleMessage(
+            "Files size cannot exceed 25 MB"),
         "fileTooLarge": MessageLookupByLibrary.simpleMessage(
             "File is too large. Max allowed: 10 MB"),
         "files": MessageLookupByLibrary.simpleMessage("Files"),
@@ -513,6 +521,26 @@ class MessageLookup extends MessageLookupByLibrary {
             "We may collect the following types of information:"),
         "interactWithyourPet": MessageLookupByLibrary.simpleMessage(
             "These pets can\'t interact with yours."),
+        "invalidAudioExtension":
+            MessageLookupByLibrary.simpleMessage("Invalid Audio Format"),
+        "invalidAudioExtensionMessage": MessageLookupByLibrary.simpleMessage(
+            "Please select an audio file with one of these formats: MP3, WAV, M4A, OGG"),
+        "invalidDocumentExtension":
+            MessageLookupByLibrary.simpleMessage("Invalid File Format"),
+        "invalidDocumentExtensionMessage": MessageLookupByLibrary.simpleMessage(
+            "This file type is not supported"),
+        "invalidFileExtension":
+            MessageLookupByLibrary.simpleMessage("Invalid File Extension"),
+        "invalidFileExtensionMessage": MessageLookupByLibrary.simpleMessage(
+            "This file type is not supported. Please select a valid file."),
+        "invalidImageExtension":
+            MessageLookupByLibrary.simpleMessage("Invalid Image Format"),
+        "invalidImageExtensionMessage": MessageLookupByLibrary.simpleMessage(
+            "Please select an image file with one of these formats: JPG, PNG, GIF, JPEG"),
+        "invalidVideoExtension":
+            MessageLookupByLibrary.simpleMessage("Invalid Video Format"),
+        "invalidVideoExtensionMessage": MessageLookupByLibrary.simpleMessage(
+            "Please select a video file with one of these formats: MP4, WEBM, AVI, MOV"),
         "inviteFriends": MessageLookupByLibrary.simpleMessage("Invite friends"),
         "invoiceNo": MessageLookupByLibrary.simpleMessage("Invoice No"),
         "itemName": MessageLookupByLibrary.simpleMessage("Item Name"),
@@ -901,6 +929,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "title_hint": MessageLookupByLibrary.simpleMessage("Enter the title"),
         "title_validation":
             MessageLookupByLibrary.simpleMessage("Please enter a title"),
+        "tooManyFiles": MessageLookupByLibrary.simpleMessage("Too Many Files"),
         "total": MessageLookupByLibrary.simpleMessage("Total"),
         "totalAmount": MessageLookupByLibrary.simpleMessage("Total Invoice"),
         "trademarkInfo":
@@ -1000,6 +1029,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "You have blocked this user. You cannot view this profile while you are blocked."),
         "youCanLinkQrNow": MessageLookupByLibrary.simpleMessage(
             "This pet is not linked to a QR code. You can link it now or learn more about how it works."),
+        "youCanUploadUpTo10Files": MessageLookupByLibrary.simpleMessage(
+            "You can upload up to 10 files at a time"),
         "youWontReceiveMessagesAnymore": MessageLookupByLibrary.simpleMessage(
             "You won\'t receive messages anymore from this user."),
         "yourAppointments":

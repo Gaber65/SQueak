@@ -88,6 +88,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("إضافة الأوقات المتاحة"),
         "addCaption":
             MessageLookupByLibrary.simpleMessage("إضافة وصف الصورة..."),
+        "addCaptionOptional":
+            MessageLookupByLibrary.simpleMessage("إضافة وصف (اختياري)"),
         "addComment": MessageLookupByLibrary.simpleMessage("أضف تعليقك ..."),
         "addPet": MessageLookupByLibrary.simpleMessage("إضافة صديق صغير"),
         "addPetChoose": MessageLookupByLibrary.simpleMessage("اختر..."),
@@ -419,6 +421,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("الملف يتجاوز حد 10 ميجابايت"),
         "fileIsTooLarge":
             MessageLookupByLibrary.simpleMessage("الملف كبير جدًا للتحميل"),
+        "fileLimitReached": MessageLookupByLibrary.simpleMessage(
+            "تم الوصول إلى الحد الأقصى للملفات"),
+        "fileSizeExceeded": MessageLookupByLibrary.simpleMessage("تحذير"),
+        "fileSizeExceededMessage": MessageLookupByLibrary.simpleMessage(
+            "لا يمكن أن يتجاوز حجم الملفات 25 ميجا بايت"),
         "fileTooLarge": MessageLookupByLibrary.simpleMessage(
             "الملف كبير جداً. الحد الأقصى المسموح به: 10 ميجابايت"),
         "files": MessageLookupByLibrary.simpleMessage("الملفات"),
@@ -499,6 +506,26 @@ class MessageLookup extends MessageLookupByLibrary {
             "قد نجمع الأنواع التالية من المعلومات:"),
         "interactWithyourPet": MessageLookupByLibrary.simpleMessage(
             "لن يتمكن المستخدمون المحظورون من التفاعل مع صديقك الصغير."),
+        "invalidAudioExtension":
+            MessageLookupByLibrary.simpleMessage("صيغة صوت غير صحيحة"),
+        "invalidAudioExtensionMessage": MessageLookupByLibrary.simpleMessage(
+            "يرجى تحديد ملف صوت بإحدى هذه الصيغ: MP3, WAV, M4A, OGG"),
+        "invalidDocumentExtension":
+            MessageLookupByLibrary.simpleMessage("صيغة ملف غير مدعومة"),
+        "invalidDocumentExtensionMessage":
+            MessageLookupByLibrary.simpleMessage("هذا نوع ملف غير مدعوم"),
+        "invalidFileExtension":
+            MessageLookupByLibrary.simpleMessage("صيغة ملف غير صحيحة"),
+        "invalidFileExtensionMessage": MessageLookupByLibrary.simpleMessage(
+            "هذا نوع ملف غير مدعوم. يرجى تحديد ملف صالح"),
+        "invalidImageExtension":
+            MessageLookupByLibrary.simpleMessage("صيغة صورة غير صحيحة"),
+        "invalidImageExtensionMessage": MessageLookupByLibrary.simpleMessage(
+            "يرجى تحديد ملف صورة بإحدى هذه الصيغ: JPG, PNG, GIF, JPEG"),
+        "invalidVideoExtension":
+            MessageLookupByLibrary.simpleMessage("صيغة فيديو غير صحيحة"),
+        "invalidVideoExtensionMessage": MessageLookupByLibrary.simpleMessage(
+            "يرجى تحديد ملف فيديو بإحدى هذه الصيغ: MP4, WEBM, AVI, MOV"),
         "inviteFriends": MessageLookupByLibrary.simpleMessage("دعوة الأصدقاء"),
         "invoiceNo": MessageLookupByLibrary.simpleMessage("رمز الفاتورة"),
         "itemName": MessageLookupByLibrary.simpleMessage("اسم الصنف"),
@@ -884,6 +911,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "title_hint": MessageLookupByLibrary.simpleMessage("أدخل العنوان"),
         "title_validation":
             MessageLookupByLibrary.simpleMessage("يرجى إدخال عنوان"),
+        "tooManyFiles":
+            MessageLookupByLibrary.simpleMessage("عدد كبير جدًا من الملفات"),
         "total": MessageLookupByLibrary.simpleMessage("المجموع"),
         "totalAmount": MessageLookupByLibrary.simpleMessage("المجموع"),
         "trademarkInfo":
@@ -981,6 +1010,8 @@ class MessageLookup extends MessageLookupByLibrary {
                 "لقد قمت بحظر هذا المستخدم. لا يمكنك عرض ملفه الشخصي أثناء حظره."),
         "youCanLinkQrNow": MessageLookupByLibrary.simpleMessage(
             "أليفك غير مرتبط برمز QR. يمكنك ربطه الآن أو معرفة المزيد عن كيفية العمل."),
+        "youCanUploadUpTo10Files": MessageLookupByLibrary.simpleMessage(
+            "يمكنك تحميل ما يصل إلى 10 ملفات في المرة الواحدة"),
         "youWontReceiveMessagesAnymore":
             MessageLookupByLibrary.simpleMessage("لن تتلقى رسائل منه بعد الآن"),
         "yourAppointments": MessageLookupByLibrary.simpleMessage("مواعيدك"),

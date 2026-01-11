@@ -64,17 +64,37 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
     return sizeMB <= maxMediaSizeMB;
   }
 
+  /// Allowed extensions for each file type
+  static const List<String> allowedImageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+  static const List<String> allowedVideoExtensions = ['mp4', 'webm', 'avi', 'mov'];
+  static const List<String> allowedAudioExtensions = ['mp3', 'wav', 'm4a', 'ogg'];
+
   /// Determine if a file is an image based on its extension
   bool _isImageFile(File file) {
     final extension = file.path.toLowerCase().split('.').last;
-    return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].contains(extension);
+    return allowedImageExtensions.contains(extension);
   }
 
   /// Determine if a file is a video based on its extension
   bool _isVideoFile(File file) {
     final extension = file.path.toLowerCase().split('.').last;
-    return ['mp4', 'mov', 'avi', 'mkv', 'flv', 'wmv', 'webm', '3gp', 'm4v']
-        .contains(extension);
+    return allowedVideoExtensions.contains(extension);
+  }
+
+  /// Validate file extension for specific attachment type
+  bool _isValidFileExtension(File file, AttachmentType type) {
+    final extension = file.path.toLowerCase().split('.').last;
+    switch (type) {
+      case AttachmentType.image:
+        return allowedImageExtensions.contains(extension);
+      case AttachmentType.video:
+        return allowedVideoExtensions.contains(extension);
+      case AttachmentType.audio:
+        return allowedAudioExtensions.contains(extension);
+      case AttachmentType.file:
+        // For documents, allow any extension but we'll validate based on picked type
+        return true;
+    }
   }
 
   /// Separate files into images and videos
@@ -119,10 +139,9 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
       context: context,
       builder:
           (c) => AlertDialog(
-            title: Text('Too Many Files'),
+            title: Text(S.of(context).tooManyFiles),
             content: Text(
-              'You can select a maximum of $maxMediaCount files. '
-              'You selected $selectedCount files.',
+              S.of(context).youCanUploadUpTo10Files,
             ),
             actions: [
               TextButton(
@@ -131,6 +150,48 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
               ),
             ],
           ),
+    );
+  }
+
+  void _showInvalidExtensionWarning(
+    BuildContext context,
+    AttachmentType type,
+  ) {
+    final s = S.of(context);
+    String title = s.invalidFileExtension;
+    String message = s.invalidFileExtensionMessage;
+
+    switch (type) {
+      case AttachmentType.image:
+        title = s.invalidImageExtension;
+        message = s.invalidImageExtensionMessage;
+        break;
+      case AttachmentType.video:
+        title = s.invalidVideoExtension;
+        message = s.invalidVideoExtensionMessage;
+        break;
+      case AttachmentType.audio:
+        title = s.invalidAudioExtension;
+        message = s.invalidAudioExtensionMessage;
+        break;
+      case AttachmentType.file:
+        title = s.invalidDocumentExtension;
+        message = s.invalidDocumentExtensionMessage;
+        break;
+    }
+
+    showDialog(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(c).pop(),
+            child: Text(s.ok),
+          ),
+        ],
+      ),
     );
   }
 
@@ -159,6 +220,14 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
         for (final platformFile in result.files) {
           if (platformFile.path != null) {
             final file = File(platformFile.path!);
+            
+            // Check for invalid extension first
+            if (!_isValidFileExtension(file, AttachmentType.image) && 
+                !_isValidFileExtension(file, AttachmentType.video)) {
+              _showInvalidExtensionWarning(context, AttachmentType.image);
+              continue;
+            }
+            
             if (!_isFileSizeValid(file, AttachmentType.image)) {
               _showFileSizeWarning(context, file, AttachmentType.image);
               continue;
@@ -278,6 +347,14 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
         for (final platformFile in result.files) {
           if (platformFile.path != null) {
             final file = File(platformFile.path!);
+            
+            // Check for invalid extension first
+            if (!_isValidFileExtension(file, AttachmentType.video) && 
+                !_isValidFileExtension(file, AttachmentType.image)) {
+              _showInvalidExtensionWarning(context, AttachmentType.video);
+              continue;
+            }
+            
             if (!_isFileSizeValid(file, AttachmentType.video)) {
               _showFileSizeWarning(context, file, AttachmentType.video);
               continue;
@@ -397,6 +474,12 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
         for (final platformFile in result.files) {
           if (platformFile.path != null) {
             final file = File(platformFile.path!);
+
+            // Check for invalid extension first
+            if (!_isValidFileExtension(file, AttachmentType.audio)) {
+              _showInvalidExtensionWarning(context, AttachmentType.audio);
+              continue;
+            }
 
             // Check file size
             if (!_isFileSizeValid(file, AttachmentType.audio)) {
@@ -673,6 +756,13 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
         for (final platformFile in result.files) {
           if (platformFile.path != null) {
             final file = File(platformFile.path!);
+            
+            // Check for invalid extension
+            if (!_isValidFileExtension(file, AttachmentType.image) && 
+                !_isValidFileExtension(file, AttachmentType.video)) {
+              continue;
+            }
+            
             if (_isFileSizeValid(file, AttachmentType.image)) {
               files.add(file);
             }
@@ -704,6 +794,12 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
       for (final platformFile in result.files) {
         if (platformFile.path != null) {
           final file = File(platformFile.path!);
+          
+          // Check for invalid extension
+          if (!_isValidFileExtension(file, AttachmentType.audio)) {
+            continue;
+          }
+          
           if (_isFileSizeValid(file, AttachmentType.audio)) {
             files.add(file);
           }
