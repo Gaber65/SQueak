@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:squeak/core/network/end_points.dart';
 
 class StoryPetAvatar extends StatelessWidget {
@@ -17,12 +18,13 @@ class StoryPetAvatar extends StatelessWidget {
       );
     }
 
-    return Image.network(
-      imageUrl + image!,
+    return SafeFastCachedImageExtension.safe(
+  url: imageUrl + image!,
       width: size,
       height: size,
       fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) {
+      errorBuilder: (context, error, stackTrace,
+) {
         return Icon(
           Icons.pets,
           size: (size / 2).clamp(12.0, 24.0),

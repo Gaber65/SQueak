@@ -1,4 +1,4 @@
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/utils/date_time_formatter.dart';
@@ -72,80 +72,93 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
     final isDark = theme.brightness == Brightness.dark;
 
     return GestureDetector(
-      onLongPress: !widget.message.toMe ? () async {
-        bool onlyForMe = true;
-        final confirmed = await showDialog<bool>(
-          context: context,
-          builder: (context) {
-            return StatefulBuilder(
-              builder: (context, setState) {
-                return AlertDialog(
-                  title: Text(S.of(context).deleteMessage),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      RadioListTile<bool>(
-                        value: true,
-                        groupValue: onlyForMe,
-                        onChanged: (v) => setState(() => onlyForMe = v ?? true),
-                        title: Text(S.of(context).deleteMessageForMe),
-                      ),
-                      RadioListTile<bool>(
-                        value: false,
-                        groupValue: onlyForMe,
-                        onChanged: (v) => setState(() => onlyForMe = v ?? true),
-                        title: Text(S.of(context).deleteMessageForEveryone),
-                      ),
-                    ],
-                  ),
-                  actions: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton.icon(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          icon: Icon(Icons.cancel),
-                          label: Text(S.of(context).cancel),
-                        ),
-                        ElevatedButton.icon(
-                          icon: Icon(Icons.delete_sweep_rounded),
-                          label: Text(S.of(context).delete),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
+      onLongPress:
+          !widget.message.toMe
+              ? () async {
+                bool onlyForMe = true;
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (context) {
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        return AlertDialog(
+                          title: Text(S.of(context).deleteMessage),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              RadioListTile<bool>(
+                                value: true,
+                                groupValue: onlyForMe,
+                                onChanged:
+                                    (v) =>
+                                        setState(() => onlyForMe = v ?? true),
+                                title: Text(S.of(context).deleteMessageForMe),
+                              ),
+                              RadioListTile<bool>(
+                                value: false,
+                                groupValue: onlyForMe,
+                                onChanged:
+                                    (v) =>
+                                        setState(() => onlyForMe = v ?? true),
+                                title: Text(
+                                  S.of(context).deleteMessageForEveryone,
+                                ),
+                              ),
+                            ],
                           ),
-                          onPressed: () => Navigator.of(context).pop(true),
-                        ),
-                      ],
-                    ),
-                  ],
+                          actions: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ElevatedButton.icon(
+                                  onPressed:
+                                      () => Navigator.of(context).pop(false),
+                                  icon: Icon(Icons.cancel),
+                                  label: Text(S.of(context).cancel),
+                                ),
+                                ElevatedButton.icon(
+                                  icon: Icon(Icons.delete_sweep_rounded),
+                                  label: Text(S.of(context).delete),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                  ),
+                                  onPressed:
+                                      () => Navigator.of(context).pop(true),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                 );
-              },
-            );
-          },
-        );
 
-        if (confirmed == true) {
-          // Ensure message has an id
-          if (widget.message.id == null || widget.message.id!.isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Cannot delete unsent message')),
-            );
-            return;
-          }
+                if (confirmed == true) {
+                  // Ensure message has an id
+                  if (widget.message.id == null || widget.message.id!.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Cannot delete unsent message'),
+                      ),
+                    );
+                    return;
+                  }
 
-          final params = DeleteMessageParameters(
-            conversationId: widget.conversationId,
-            onlyFromMe: onlyForMe,
-            messageId: widget.message.id!,
-          );
+                  final params = DeleteMessageParameters(
+                    conversationId: widget.conversationId,
+                    onlyFromMe: onlyForMe,
+                    messageId: widget.message.id!,
+                  );
 
-          debugPrint('DeleteMessage request body: ${params.toJson()}');
+                  debugPrint('DeleteMessage request body: ${params.toJson()}');
 
-          // Call cubit to delete
-          final cubit = ChatMessagesCubit.get(context);
-          await cubit.deleteMessage(params);
-        }
-      } : null,
+                  // Call cubit to delete
+                  final cubit = ChatMessagesCubit.get(context);
+                  await cubit.deleteMessage(params);
+                }
+              }
+              : null,
       child: SlideTransition(
         position: _slideAnimation,
         child: ScaleTransition(
@@ -356,8 +369,8 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
         child:
             (widget.chatImage != null && widget.chatImage!.isNotEmpty)
                 ? ClipOval(
-                  child: Image.network(
-                    imageUrl + widget.chatImage!,
+                  child: SafeFastCachedImageExtension.safe(
+                    url: imageUrl + widget.chatImage!,
                     width: 32,
                     height: 32,
                     fit: BoxFit.cover,
@@ -367,8 +380,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                           size: 16,
                           color: Theme.of(context).colorScheme.primary,
                         ),
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
+                    loadingBuilder: (context, loadingProgress) {
                       return Center(
                         child: SizedBox(
                           width: 12,
@@ -376,9 +388,9 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             value:
-                                loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
+                                loadingProgress.totalBytes != null
+                                    ? loadingProgress.downloadedBytes /
+                                        loadingProgress.totalBytes!
                                     : null,
                           ),
                         ),
@@ -413,7 +425,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
         margin: const EdgeInsets.only(bottom: 8),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: FastCachedImage(
+          child: SafeFastCachedImageExtension.safe(
             url: imageUrl + widget.message.image!,
             width: 220,
             height: 160,
@@ -745,7 +757,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
 
     // Combine images and videos for grid layout (WhatsApp style)
     final mediaAttachments = [...imageAttachments, ...videoAttachments];
-    
+
     // Add media grid layout if there are images or videos
     if (mediaAttachments.isNotEmpty) {
       widgets.add(ImageGridLayout(imageAttachments: mediaAttachments));

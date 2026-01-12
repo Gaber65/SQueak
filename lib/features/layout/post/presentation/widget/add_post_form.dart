@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
@@ -32,15 +33,15 @@ Widget _buildProfileAvatar(SwitchProfileCubit cubit) {
     backgroundColor: Colors.blue,
     child:
         cubit.image.isNotEmpty
-            ? _buildNetworkImage(cubit)
+            ? _buildFastCachedImageProvider(cubit)
             : _buildInitialText(cubit),
   );
 }
 
-Widget _buildNetworkImage(SwitchProfileCubit cubit) {
+Widget _buildFastCachedImageProvider(SwitchProfileCubit cubit) {
   return ClipOval(
-    child: Image.network(
-      cubit.image,
+    child: SafeFastCachedImageExtension.safe(
+      url: cubit.image,
       fit: BoxFit.cover,
       width: double.infinity,
       height: double.infinity,

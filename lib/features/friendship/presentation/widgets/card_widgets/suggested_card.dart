@@ -1,6 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member, deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
@@ -399,7 +400,7 @@ class SuggestedCard extends StatelessWidget {
           backgroundColor: isDark ? Color(0xFF3A3A3C) : Color(0xFFE5E5EA),
           backgroundImage:
               pet.imageName?.isNotEmpty == true
-                  ? NetworkImage(imageUrl + pet.imageName!)
+                  ? SafeFastCachedImageProviderExtension.safe(imageUrl + pet.imageName!)
                   : null,
           child:
               pet.imageName?.isNotEmpty != true

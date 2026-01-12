@@ -1,5 +1,5 @@
 // import 'package:flutter/material.dart';
-// import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+// import 'package:squeak/core/service/global_widget/image_detail.dart';
 // import 'package:squeak/core/utils/export_path/export_files.dart';
 // import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 // import '../../../../../core/service/global_widget/image_detail.dart';
@@ -45,7 +45,7 @@
 //           ),
 //           child: ClipRRect(
 //             borderRadius: BorderRadius.circular(12),
-//             child: FastCachedImage(
+//             child: SafeFastCachedImageExtension.safe(
 //               url: imageUrl + images.first.imagePath!,
 //               fit: BoxFit.cover,
 //               height: 250,
@@ -77,7 +77,7 @@
 //               ),
 //               child: ClipRRect(
 //                 borderRadius: BorderRadius.circular(12),
-//                 child: FastCachedImage(
+//                 child: SafeFastCachedImageExtension.safe(
 //                   url: imageUrl + img.imagePath!,
 //                   fit: BoxFit.cover,
 //                 ),
@@ -131,7 +131,7 @@
 //                   CircleAvatar(
 //                     radius: 30,
 //                     backgroundColor: isDark ? Colors.black38 : Colors.white,
-//                     backgroundImage: FastCachedImageProvider(
+//                     backgroundImage: SafeFastCachedImageProviderExtension.safe(
 //                       imageUrl + (petEntities.imageName ?? ''),
 //                     ),
 //                   ),

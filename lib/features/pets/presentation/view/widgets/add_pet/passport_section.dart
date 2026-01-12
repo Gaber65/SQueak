@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import '../../../controller/pet_cubit.dart';
@@ -253,10 +254,11 @@ class PassportSection extends StatelessWidget {
                     cubit.passportImage != null
                         ? Image.file(cubit.passportImage!, fit: BoxFit.contain)
                         : cubit.passportImageNameController.text.isNotEmpty
-                        ? Image.network(
-                          imageUrl + cubit.passportImageNameController.text,
+                        ? SafeFastCachedImageExtension.safe(
+  url: imageUrl + cubit.passportImageNameController.text,
                           fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
+                          errorBuilder: (context, error, stackTrace,
+) {
                             return Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [

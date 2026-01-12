@@ -1,5 +1,6 @@
 // lib/features/stories/presentation/widgets/chat_messages/story_thumbnail.dart
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import '../common/gradient_ring.dart';
 
 class StoryThumbnail extends StatelessWidget {
@@ -49,19 +50,16 @@ class StoryThumbnail extends StatelessWidget {
     }
 
     return ClipOval(
-      child: Image.network(
-        avatarUrl!,
+      child: SafeFastCachedImageExtension.safe(
+        url: avatarUrl!,
         fit: BoxFit.cover,
         width: 72,
         height: 72,
         errorBuilder: (context, error, stackTrace) {
           return _petIcon();
         },
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return const Center(
-            child: CircularProgressIndicator(strokeWidth: 2),
-          );
+        loadingBuilder: (context, loadingProgress) {
+          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
         },
       ),
     );
@@ -69,13 +67,7 @@ class StoryThumbnail extends StatelessWidget {
 
   Widget _petIcon() {
     return Center(
-      child: Icon(
-        Icons.pets,
-        size: 36,
-        color: Colors.grey.shade600,
-      ),
+      child: Icon(Icons.pets, size: 36, color: Colors.grey.shade600),
     );
   }
 }
-
-

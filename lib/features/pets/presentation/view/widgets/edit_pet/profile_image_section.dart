@@ -1,3 +1,4 @@
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -86,8 +87,8 @@ class ProfileImageSection extends StatelessWidget {
                               ),
                             ),
                           )
-                          : Image.network(
-                            imageUrl + (pets.imageName ?? ''),
+                          : SafeFastCachedImageExtension.safe(
+                            url: imageUrl + (pets.imageName ?? ''),
                             fit: BoxFit.cover,
                             errorBuilder:
                                 (_, __, ___) => Container(

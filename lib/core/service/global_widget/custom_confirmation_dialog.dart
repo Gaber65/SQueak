@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/main_service/presentation/controller/main_cubit/main_cubit.dart';
 
@@ -50,7 +51,12 @@ void showCustomConfirmationDialog({
             else
               description,
             const SizedBox(height: 20),
-            CircleAvatar(backgroundImage: NetworkImage(imageUrl), radius: 60),
+            CircleAvatar(
+              backgroundImage: SafeFastCachedImageProviderExtension.safe(
+                imageUrl,
+              ),
+              radius: 60,
+            ),
           ],
         ),
         actions: <Widget>[

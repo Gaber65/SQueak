@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/appointments/exam/data/models/client_clinic_model.dart';
@@ -120,8 +121,7 @@ class PetCarousel extends StatelessWidget {
                     // Pet Image Circle
                     CircleAvatar(
                       radius: 33,
-                      backgroundImage: NetworkImage(
-                        imageUrl +
+                      backgroundImage: SafeFastCachedImageProviderExtension.safe(imageUrl +
                             (pets[index].imageName?.isNotEmpty == true
                                 ? pets[index].imageName!
                                 : ""),

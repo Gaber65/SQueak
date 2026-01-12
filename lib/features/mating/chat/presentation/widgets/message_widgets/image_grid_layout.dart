@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:squeak/core/network/end_points.dart';
+
+import '../../../../../../core/service/global_widget/image_detail.dart';
 import '../attach_files_in_chat/full_screen_media_viewer.dart';
 import '../../../domain/entities/message_entity.dart';
 
@@ -249,50 +250,11 @@ class ImageGridLayout extends StatelessWidget {
                 if (!isVideo)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(borderRadius),
-                    child: FastCachedImage(
+                    child: SafeFastCachedImageExtension.safe(
                       url: imageUrl + attachmentUrl,
                       width: width,
                       height: height,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, exception, stacktrace) {
-                        return Container(
-                          width: width,
-                          height: height,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(borderRadius),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.broken_image_rounded,
-                                size: 32,
-                                color: Colors.grey[400],
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Failed to load',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.grey[500],
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      loadingBuilder: (context, imageProvider) {
-                        return Container(
-                          width: width,
-                          height: height,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(borderRadius),
-                          ),
-                          child: _buildShimmerEffect(width, height, borderRadius),
-                        );
-                      },
                     ),
                   )
                 else
@@ -422,50 +384,12 @@ class ImageGridLayout extends StatelessWidget {
                 if (!isVideo)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(borderRadius),
-                    child: FastCachedImage(
+                    child: SafeFastCachedImageExtension.safe(
                       url: imageUrl + attachmentUrl,
                       width: width,
                       height: height,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, exception, stacktrace) {
-                        return Container(
-                          width: width,
-                          height: height,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(borderRadius),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.broken_image_rounded,
-                                size: 32,
-                                color: Colors.grey[400],
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Failed to load',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.grey[500],
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      loadingBuilder: (context, imageProvider) {
-                        return Container(
-                          width: width,
-                          height: height,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(borderRadius),
-                          ),
-                          child: _buildShimmerEffect(width, height, borderRadius),
-                        );
-                      },
+
                     ),
                   )
                 else
@@ -553,37 +477,5 @@ class ImageGridLayout extends StatelessWidget {
     );
   }
 
-  /// Build shimmer loading effect
-  Widget _buildShimmerEffect(double width, double height, double borderRadius) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: -1.0, end: 2.0),
-      duration: const Duration(milliseconds: 1500),
-      builder: (context, value, child) {
-        return Container(
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(borderRadius),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              stops: [
-                (value - 0.3).clamp(0.0, 1.0),
-                value.clamp(0.0, 1.0),
-                (value + 0.3).clamp(0.0, 1.0),
-              ],
-              colors: [
-                Colors.grey[200]!,
-                Colors.grey[100]!,
-                Colors.grey[200]!,
-              ],
-            ),
-          ),
-        );
-      },
-      onEnd: () {
-       
-      },
-    );
-  }
+
 }

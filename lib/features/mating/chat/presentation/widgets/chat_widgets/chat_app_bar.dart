@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -140,19 +141,19 @@ class _ChatAppBarState extends State<ChatAppBar> {
                 child:
                     (widget.chat.image != null && widget.chat.image!.isNotEmpty)
                         ? ClipOval(
-                          child: Image.network(
-                            imageUrl + widget.chat.image!,
+                          child: SafeFastCachedImageExtension.safe(
+  url: imageUrl + widget.chat.image!,
                             width: 45,
                             height: 45,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
+                            errorBuilder: (context, error, stackTrace,
+) {
                               return const Icon(
                                 Icons.pets,
                                 color: ColorManager.primaryColor,
                               );
                             },
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
+                            loadingBuilder: (context, loadingProgress) {
                               return Center(
                                 child: SizedBox(
                                   width: 20,
@@ -160,12 +161,12 @@ class _ChatAppBarState extends State<ChatAppBar> {
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
                                     value:
-                                        loadingProgress.expectedTotalBytes !=
+                                        loadingProgress.totalBytes !=
                                                 null
                                             ? loadingProgress
-                                                    .cumulativeBytesLoaded /
+                                                    .downloadedBytes /
                                                 loadingProgress
-                                                    .expectedTotalBytes!
+                                                    .totalBytes!
                                             : null,
                                   ),
                                 ),

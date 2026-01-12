@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 
 class ProfileSwitcherItem extends StatelessWidget {
   final String title;
@@ -24,13 +25,14 @@ class ProfileSwitcherItem extends StatelessWidget {
         child:
             image.isNotEmpty
                 ? ClipOval(
-                  child: Image.network(
-                    image,
+                  child: SafeFastCachedImageExtension.safe(
+  url: image,
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: double.infinity,
                     errorBuilder:
-                        (context, error, stackTrace) => Center(
+                        (context, error, stackTrace,
+) => Center(
                           child: Text(
                             title[0].toUpperCase(),
                             style: const TextStyle(color: Colors.white),

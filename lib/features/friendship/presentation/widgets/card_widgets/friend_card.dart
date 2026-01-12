@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
@@ -61,8 +62,7 @@ class FriendCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundImage: NetworkImage(
-                    imageUrl +
+                  backgroundImage: SafeFastCachedImageProviderExtension.safe(imageUrl +
                         (pet.imageName?.isNotEmpty == true
                             ? pet.imageName!
                             : ""),

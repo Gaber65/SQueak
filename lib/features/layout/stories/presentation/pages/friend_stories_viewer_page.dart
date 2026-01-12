@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
 import 'package:squeak/features/layout/stories/presentation/widgets/story_list/story_pet_avatar.dart';
@@ -57,7 +57,6 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
       onPageChanged: (index) {
         setState(() {});
         _handleStoryView(index);
-
       },
       onClose: () => Navigator.of(context).pop(),
       onPauseUI: () => setState(() {}),
@@ -179,33 +178,31 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
       behavior: HitTestBehavior.translucent,
       onTapDown: (details) {
         if (index != controller.currentIndex) return;
-        
+
         // Check if comment field is focused, unfocus and resume
         if (_commentFocusNode.hasFocus) {
           _commentFocusNode.unfocus();
           controller.resume();
           return;
         }
-        
+
         final isRTL = Directionality.of(context) == TextDirection.rtl;
         final bottomUIHeight = 120.0;
         final screenHeight = MediaQuery.of(context).size.height;
         if (details.globalPosition.dy > screenHeight - bottomUIHeight) return;
-        
+
         final width = MediaQuery.of(context).size.width;
         final dx = details.globalPosition.dx;
         if (isRTL) {
           if (dx > width * 2 / 3) {
-            controller.goPrevious(); 
-          } 
-          else if (dx < width / 3) {
-            controller.goNext(); 
+            controller.goPrevious();
+          } else if (dx < width / 3) {
+            controller.goNext();
           }
         } else {
           if (dx < width / 3) {
             controller.goPrevious();
-          } 
-          else if (dx > width * 2 / 3) {
+          } else if (dx > width * 2 / 3) {
             controller.goNext();
           }
         }
@@ -228,20 +225,12 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
           Stack(
             fit: StackFit.expand,
             children: [
-              Image.network(
-                imageUrl + (currentStory.image ?? ''),
+              SafeFastCachedImageExtension.safe(
+                url: imageUrl + (currentStory.image ?? ''),
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => Container(color: Colors.black),
-                frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                  return ImageFiltered(
-                    imageFilter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                    child: child,
-                  );
-                },
               ),
-              Container(
-                color: Colors.black.withOpacity(0.3),
-              ),
+              Container(color: Colors.black.withOpacity(0.3)),
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -250,8 +239,8 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                     end: Alignment.bottomCenter,
                   ),
                 ),
-                child: Image.network(
-                  imageUrl + (currentStory.image ?? ''),
+                child: SafeFastCachedImageExtension.safe(
+                  url: imageUrl + (currentStory.image ?? ''),
                   fit: BoxFit.contain,
                   errorBuilder:
                       (_, __, ___) => const Center(

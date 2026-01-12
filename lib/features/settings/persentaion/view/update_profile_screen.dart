@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use, invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/utils/export_path/export_files.dart';
 import '../controller/setting_cubit.dart';
@@ -65,12 +66,10 @@ class UpProfileScreen extends StatelessWidget {
                                 radius: 50,
                                 backgroundImage:
                                     cubit.profileImage == null
-                                        ? NetworkImage(
-                                          cubit.imageController.text.isNotEmpty
+                                        ? SafeFastCachedImageProviderExtension.safe(cubit.imageController.text.isNotEmpty
                                               ? '$imageUrl${cubit.imageController.text}'
                                               : AssetImageModel
-                                                  .defaultUserImage,
-                                        )
+                                                  .defaultUserImage,)
                                         : FileImage(cubit.profileImage!)
                                             as ImageProvider,
                               ),

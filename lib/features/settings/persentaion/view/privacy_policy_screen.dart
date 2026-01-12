@@ -1,6 +1,6 @@
 // // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
-// import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+// import 'package:squeak/core/service/global_widget/image_detail.dart';
 // import 'package:flutter/gestures.dart';
 // import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
@@ -48,7 +48,7 @@
 //                     padding: const EdgeInsets.all(20.0),
 //                     child: Column(
 //                       children: [
-//                         FastCachedImage(
+//                         SafeFastCachedImageExtension.safe(
 //                           url: "https://veticareapp.com/share/logo.png",
 //                           width: 120,
 //                           height: 120,

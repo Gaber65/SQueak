@@ -1,6 +1,6 @@
 // ignore_for_file: deprecated_member_use, invalid_use_of_protected_member
 
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
@@ -101,8 +101,7 @@ Widget buildItem(
                 children: [
                   CircleAvatar(
                     radius: 25,
-                    backgroundImage: NetworkImage(
-                      ConfigModel.serverFirstHalfOfImageUrl +
+                    backgroundImage: SafeFastCachedImageProviderExtension.safe(ConfigModel.serverFirstHalfOfImageUrl +
                           (appointments.clinicLogo ?? ''),
                     ),
                   ),
@@ -153,7 +152,7 @@ Widget buildItem(
                         launchUrl((Uri.parse(appointments.clinicLocation)));
                       }
                     },
-                    child: FastCachedImage(
+                    child: SafeFastCachedImageExtension.safe(
                       url:
                           'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/google-maps.png?alt=media&token=17b77d3f-92a8-4339-bc65-80cf49dff79e',
                       height: 20,
@@ -414,10 +413,8 @@ List<Widget> _buildActionButtons(
                           ],
                         ),
                       ),
-                      const CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?w=740&t=st=1693530236~exp=1693530836~hmac=754f0eea1ad76b4cfe66e8f471927ff6d1d2c6625ff14e6cb2c81aa69ab9fc90',
-                        ),
+                       CircleAvatar(
+                        backgroundImage: SafeFastCachedImageProviderExtension.safe('https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?w=740&t=st=1693530236~exp=1693530836~hmac=754f0eea1ad76b4cfe66e8f471927ff6d1d2c6625ff14e6cb2c81aa69ab9fc90',),
                         radius: 75,
                       ),
                     ],
@@ -574,10 +571,8 @@ List<Widget> _buildActionButtons(
                           ],
                         ),
                       ),
-                      const CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          'https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?w=740&t=st=1693530236~exp=1693530836~hmac=754f0eea1ad76b4cfe66e8f471927ff6d1d2c6625ff14e6cb2c81aa69ab9fc90',
-                        ),
+                       CircleAvatar(
+                        backgroundImage: SafeFastCachedImageProviderExtension.safe('https://img.freepik.com/free-vector/emotional-support-animal-concept-illustration_114360-19462.jpg?w=740&t=st=1693530236~exp=1693530836~hmac=754f0eea1ad76b4cfe66e8f471927ff6d1d2c6625ff14e6cb2c81aa69ab9fc90',),
                         radius: 75,
                       ),
                     ],

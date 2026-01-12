@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
@@ -80,9 +81,10 @@ class NotificationScreen extends StatelessWidget {
   ) {
     if (data.notifications.isEmpty) {
       return Center(
-        child: Image.network(
-          'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/rb_1220.png?alt=media&token=8c71b107-7849-475e-91d8-feab8b7a4f27',
-        ),
+        child: SafeFastCachedImageExtension.safe(
+  url: 'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/rb_1220.png?alt=media&token=8c71b107-7849-475e-91d8-feab8b7a4f27',
+
+),
       );
     }
 

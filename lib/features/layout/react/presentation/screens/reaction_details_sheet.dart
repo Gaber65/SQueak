@@ -1,5 +1,6 @@
 // reaction_details_sheet.dart
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 
@@ -341,7 +342,7 @@ class _ReactionDetailsSheetState extends State<ReactionDetailsSheet>
                   radius: 26,
                   backgroundImage:
                       imageName.isNotEmpty
-                          ? NetworkImage(imageUrl + imageName)
+                          ? SafeFastCachedImageProviderExtension.safe(imageUrl + imageName)
                           : null,
                   backgroundColor: Theme.of(
                     context,

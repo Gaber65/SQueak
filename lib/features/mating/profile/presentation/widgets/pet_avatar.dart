@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
@@ -50,11 +51,10 @@ class PetAvatar extends StatelessWidget {
                   backgroundColor: Colors.transparent,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(25),
-                    child: Image.network(
-                      fullImageUrl,
+                    child: SafeFastCachedImageExtension.safe(
+                      url: fullImageUrl,
                       fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
+                      loadingBuilder: (context, loadingProgress) {
                         return Center(
                           child: SizedBox(
                             width: 24,
@@ -62,10 +62,9 @@ class PetAvatar extends StatelessWidget {
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
                               value:
-                                  loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          (loadingProgress.expectedTotalBytes ??
-                                              1)
+                                  loadingProgress.totalBytes != null
+                                      ? loadingProgress.downloadedBytes /
+                                          (loadingProgress.totalBytes ?? 1)
                                       : null,
                               color: ColorManager.primaryColor,
                             ),

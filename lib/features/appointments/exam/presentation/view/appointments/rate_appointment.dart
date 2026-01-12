@@ -1,4 +1,4 @@
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -120,7 +120,7 @@ class RateAppointment extends StatelessWidget {
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height * 0.35,
-                    child: FastCachedImage(
+                    child: SafeFastCachedImageExtension.safe(
                       url:
                           'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/dog-breeding-buying-puppy-pet-store-domestic-animal-couple-adopting-puppy-breed-club-top-breed-standard-buy-your-purebred-pet-here-concept-bright-vibrant-violet-isolated-illustration.png?alt=media&token=249eb91a-008a-4c52-b87b-433b1c4eb256',
                       fit: BoxFit.fill,
@@ -207,16 +207,16 @@ class RateAppointment extends StatelessWidget {
                                     : null,
                             child:
                                 model.isRating
-                                    ? FastCachedImage(
+                                    ? SafeFastCachedImageExtension.safe(
                                       url:
                                           index >= cubit.ratingDoctor
                                               ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
                                               : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
                                       width: 20,
                                     )
-                                    : Image.network(
-                                      index >= cubit.ratingDoctor
-                                          ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
+                                    : SafeFastCachedImageExtension.safe(
+  url: index >= cubit.ratingDoctor
+                                          ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1,).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
                                           : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
                                       width: 20,
                                     ),
@@ -256,16 +256,16 @@ class RateAppointment extends StatelessWidget {
                                     : null,
                             child:
                                 model.isRating
-                                    ? FastCachedImage(
+                                    ? SafeFastCachedImageExtension.safe(
                                       url:
                                           index >= cubit.ratingCleanliness
                                               ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
                                               : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
                                       width: 20,
                                     )
-                                    : Image.network(
-                                      index >= cubit.ratingCleanliness
-                                          ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
+                                    : SafeFastCachedImageExtension.safe(
+  url: index >= cubit.ratingCleanliness
+                                          ? 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview%20(1,).png?alt=media&token=b485402a-cc73-42d4-bd28-69a764608121'
                                           : 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/image-removebg-preview.png?alt=media&token=3bc36fe0-8522-4583-9707-7b2647acb481',
                                       width: 20,
                                     ),

@@ -1,4 +1,5 @@
 // EditCommentAvatar
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/utils/export_path/export_files.dart';
@@ -45,7 +46,7 @@ Widget buildEditCommentAvatar(
         ),
         child: CircleAvatar(
           radius: 25,
-          backgroundImage: NetworkImage(imageUrlString),
+          backgroundImage: SafeFastCachedImageProviderExtension.safe(imageUrlString),
         ),
       ),
     ),

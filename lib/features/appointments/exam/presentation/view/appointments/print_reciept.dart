@@ -1,6 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -99,7 +99,7 @@ class PrintScreen extends StatelessWidget {
                                 children: [
                                   SizedBox(
                                     width: 100,
-                                    child: FastCachedImage(
+                                    child: SafeFastCachedImageExtension.safe(
                                       url:
                                           ConfigModel
                                               .serverFirstHalfOfImageUrl +

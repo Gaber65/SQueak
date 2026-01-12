@@ -118,6 +118,7 @@ NotificationListener<ScrollNotification> buildNotificationListenerUserPosts(
     child: RefreshIndicator(
       onRefresh: () async {
         await cubit.handleRefresh(petId);
+        if(petId.isEmpty) return;
         await StoryCubit.get(context).loadAllFriendStories(petId);
       },
       child: SingleChildScrollView(

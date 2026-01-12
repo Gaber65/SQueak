@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 import '../../../../../core/network/end_points.dart';
 import '../../../../../core/utils/theme/color_mangment/color_manager.dart';
@@ -66,28 +67,28 @@ class RatingsTab extends StatelessWidget {
                       border: Border.all(color: Colors.white, width: 1.5),
                     ),
                     child: ClipOval(
-                      child: Image.network(
-                        imageUrl + pet.imageName!,
+                      child: SafeFastCachedImageExtension.safe(
+  url: imageUrl + pet.imageName!,
                         width: 70,
                         height: 70,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
+                        errorBuilder: (context, error, stackTrace,
+) {
                           return Container(
                             color: Colors.grey[300],
                             child: const Icon(Icons.pets, color: Colors.white),
                           );
                         },
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
+                        loadingBuilder: (context, loadingProgress) {
                           return Container(
                             color: Colors.grey[200],
                             child: Center(
                               child: CircularProgressIndicator(
                                 value:
-                                    loadingProgress.expectedTotalBytes != null
+                                    loadingProgress.totalBytes != null
                                         ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
+                                                .downloadedBytes /
+                                            loadingProgress.totalBytes!
                                         : null,
                                 strokeWidth: 2,
                                 valueColor: const AlwaysStoppedAnimation<Color>(

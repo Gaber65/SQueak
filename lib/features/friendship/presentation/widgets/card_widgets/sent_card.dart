@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/friendship/presentation/controllers/pet_friend_cubit.dart';
@@ -226,7 +227,7 @@ class _PetAvatar extends StatelessWidget {
         radius: radius,
         backgroundImage:
             (pet.imageName?.isNotEmpty ?? false)
-                ? NetworkImage(imageUrl + pet.imageName!)
+                ? SafeFastCachedImageProviderExtension.safe(imageUrl + pet.imageName!)
                 : null,
         backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
         child:

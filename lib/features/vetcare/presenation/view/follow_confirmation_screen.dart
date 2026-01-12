@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
@@ -112,7 +113,7 @@ class ConfirmationScreen extends StatelessWidget {
               Center(
                 child: CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage(imageUrl + clinicLogo),
+                  backgroundImage: SafeFastCachedImageProviderExtension.safe(imageUrl + clinicLogo),
                   onBackgroundImageError: (_, __) => Container(),
                   child:
                       clinicLogo.isEmpty

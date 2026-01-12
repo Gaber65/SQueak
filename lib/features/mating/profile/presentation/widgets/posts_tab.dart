@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:squeak/features/layout/post/presentation/widget/post_item.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
@@ -419,7 +419,7 @@ class _PostImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FastCachedImage(
+    return SafeFastCachedImageExtension.safe(
       url: imageUrl + imagePath,
       fit: BoxFit.cover,
       errorBuilder: (context, exception, stackTrace) {

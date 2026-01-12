@@ -1,10 +1,10 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
-import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:squeak/core/service/global_widget/video_detail.dart';
 
 import 'package:squeak/core/utils/theme/navigation_helper/navigation.dart';
@@ -621,8 +621,6 @@ class _MediaItem extends StatelessWidget {
   }
 
   Widget _buildVideo(String url, String fileName) {
-
-
     return Container(
       color: Colors.black,
       child: Center(
@@ -636,16 +634,15 @@ class _MediaItem extends StatelessWidget {
   }
 
   Widget _buildImage(String url) {
-    return Image.network(
-      url,
+    return SafeFastCachedImageExtension.safe(
+      url: url,
       fit: BoxFit.cover,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
+      loadingBuilder: (contex, loadingProgress) {
         return _LoadingIndicator(
           progress:
-              loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded /
-                      loadingProgress.expectedTotalBytes!
+              loadingProgress.totalBytes != null
+                  ? loadingProgress.downloadedBytes /
+                      loadingProgress.totalBytes!
                   : null,
           theme: theme,
         );

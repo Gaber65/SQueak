@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:intl/intl.dart';
 import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/generated/l10n.dart';
@@ -201,8 +202,7 @@ class StoryReactionsView extends StatelessWidget {
                 CircleAvatar(
                   radius: 22,
                   backgroundColor: Colors.grey[200],
-                  backgroundImage: NetworkImage(
-                    imageUrl + (reaction.petImage ?? reaction.userImage ?? ''),
+                  backgroundImage: SafeFastCachedImageProviderExtension.safe(imageUrl + (reaction.petImage ?? reaction.userImage ?? ''),
                   ),
                 ),
                 const SizedBox(width: 12),

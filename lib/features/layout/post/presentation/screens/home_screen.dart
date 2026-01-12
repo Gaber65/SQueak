@@ -8,6 +8,7 @@ import '../../../../../core/utils/enums/profile_type.dart' show ProfileType;
 import '../../../../pets/domain/entities/pet_entity.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
+import '../../../stories/presentation/controllers/story_cubit.dart';
 import '../widget/build_search_box.dart';
 import '../widget/loading_posts.dart';
 
@@ -16,8 +17,11 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<PostCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => sl<PostCubit>()),
+        BlocProvider(create: (context) => sl<StoryCubit>()),
+      ],
       child: BlocConsumer<PostCubit, PostState>(
         listener: (context, state) {
           if (state is DeletePostErrorState) {
@@ -26,6 +30,7 @@ class HomeScreen extends StatelessWidget {
         },
         builder: (context, postState) {
           var cubit = PostCubit.get(context);
+          var storyCubit = StoryCubit.get(context);
           String imagePath = '';
           return BlocSelector<
             SwitchProfileCubit,
@@ -37,11 +42,16 @@ class HomeScreen extends StatelessWidget {
                   state.profile.type == ProfileType.pet) {
                 cubit.clearUserPosts();
                 cubit.getAllUserPosts(state.profile.pet!.petId!);
+                storyCubit.loadMyStories(state.profile.pet!.petId!);
+                storyCubit.loadFriendsStories(state.profile.pet!.petId!);
+
                 imagePath = imageUrl + state.profile.pet!.imageName!;
                 return state.profile.pet;
               } else if (state is ProfileLoaded &&
                   state.profile.type == ProfileType.user) {
                 imagePath = imageUrl + state.profile.user!.imageName;
+                storyCubit.loadMyStories(state.profile.pet!.petId!);
+                storyCubit.loadFriendsStories(state.profile.pet!.petId!);
                 cubit.clearUserPosts();
                 cubit.getAllUserPosts('');
               } else {
@@ -53,7 +63,7 @@ class HomeScreen extends StatelessWidget {
             },
             builder: (context, state) {
               return Scaffold(
-                appBar: buildAppBarHome(context , state?.petId ?? ''),
+                appBar: buildAppBarHome(context, state?.petId ?? ''),
                 body: NotificationListener<ScrollNotification>(
                   onNotification: (notification) {
                     return false;

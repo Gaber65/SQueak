@@ -1,4 +1,4 @@
-// import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+// import 'package:squeak/core/service/global_widget/image_detail.dart';
 // import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:iconly/iconly.dart';
@@ -153,7 +153,7 @@
 //                         ),
 //                         SizedBox(
 //                           height: 300,
-//                           child: FastCachedImage(
+//                           child: SafeFastCachedImageExtension.safe(
 //                             height: 300,
 //                             url:
 //                                 'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/demand-insurance-service-digital-insurer-mobile-app-innovative-business-model-female-customer-ordering-insurance-policy-online.png?alt=media&token=f0862a0f-84ca-4ed0-9264-313967346976',

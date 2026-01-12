@@ -1,4 +1,4 @@
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 
 import '../../../contactus/presentation/pages/contact_us.dart';
@@ -24,7 +24,7 @@ class AuthItem extends StatelessWidget {
                 children: [
                   Stack(
                     children: [
-                      FastCachedImage(
+                      SafeFastCachedImageExtension.safe(
                         url:
                             'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/cat.png?alt=media&token=9579c991-6e61-46c3-ac91-6ba9341ebf22',
                         fit: BoxFit.cover,
@@ -69,10 +69,8 @@ class AuthItem extends StatelessWidget {
                             shape: BoxShape.circle,
                             image: DecorationImage(
                               fit: BoxFit.contain,
-                              image: NetworkImage(
-                                logo ??
-                                    'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/Subtract.png?alt=media&token=2498cad2-41e0-4887-8dd8-6a024d171354',
-                              ),
+                              image: SafeFastCachedImageProviderExtension.safe(logo ??
+                                    'https://firebasestorage.googleapis.com/v0/b/educational-platform-1e5d7.appspot.com/o/Subtract.png?alt=media&token=2498cad2-41e0-4887-8dd8-6a024d171354',),
                             ),
                           ),
                         ),

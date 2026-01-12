@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:quickalert/quickalert.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:iconly/iconly.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -329,15 +329,13 @@ class SettingScreen extends StatelessWidget {
     ImageProvider backgroundImage;
 
     if (imageActive != null && imageActive != '') {
-      backgroundImage = NetworkImage('$imageUrl$imageActive');
+      backgroundImage = SafeFastCachedImageProviderExtension.safe('$imageUrl$imageActive');
     } else if (profile != null && profile.imageName != '') {
-      backgroundImage = NetworkImage('$imageUrl${profile.imageName}');
+      backgroundImage = SafeFastCachedImageProviderExtension.safe('$imageUrl${profile.imageName}');
     } else {
-      backgroundImage = NetworkImage(
-        isPet
+      backgroundImage = SafeFastCachedImageProviderExtension.safe(isPet
             ? AssetImageModel.defaultPetImage
-            : AssetImageModel.defaultUserImage,
-      );
+            : AssetImageModel.defaultUserImage,);
     }
 
     return CircleAvatar(
@@ -365,7 +363,7 @@ class SettingScreen extends StatelessWidget {
           child: Row(
             children: [
               SizedBox(width: 10),
-              FastCachedImage(
+              SafeFastCachedImageExtension.safe(
                 url: icon,
                 height: 40,
                 width: 40,

@@ -1,6 +1,7 @@
 import 'dart:ui'; // For ImageFilter
 
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_function/format_utils.dart';
 
 import '../../../../../../core/service/global_function/time_format.dart';
 import '../../domain/entities/notification_entities.dart';
@@ -72,10 +73,15 @@ class NotificationCard extends StatelessWidget {
                           children: [
                             Flexible(
                               child: Text(
-                                notification.title.trim().replaceAll(
-                                  RegExp(r'\s+'),
-                                  ' ',
-                                ),
+                                isArabic()
+                                    ? notification.arTitle.trim().replaceAll(
+                                      RegExp(r'\s+'),
+                                      ' ',
+                                    )
+                                    : notification.title.trim().replaceAll(
+                                      RegExp(r'\s+'),
+                                      ' ',
+                                    ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -105,10 +111,15 @@ class NotificationCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 4.0),
                         Text(
-                          notification.message.trim().replaceAll(
-                            RegExp(r'\s+'),
-                            ' ',
-                          ),
+                          isArabic()
+                              ? notification.arMessage.trim().replaceAll(
+                                RegExp(r'\s+'),
+                                ' ',
+                              )
+                              : notification.message.trim().replaceAll(
+                                RegExp(r'\s+'),
+                                ' ',
+                              ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(

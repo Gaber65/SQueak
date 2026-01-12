@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import '../../community/controller/community_cubit.dart';
@@ -331,7 +331,7 @@ class _EditPostUIState extends State<EditPostUI> {
             border: Border.all(color: Colors.white, width: 3),
             image: widget.controller.image.isNotEmpty
                 ? DecorationImage(
-              image: NetworkImage(widget.controller.image),
+              image: SafeFastCachedImageProviderExtension.safe(widget.controller.image),
               fit: BoxFit.cover,
             )
                 : null,
@@ -465,7 +465,7 @@ class _EditPostUIState extends State<EditPostUI> {
         Container(
           color: Colors.grey[200],
           child: media.type == 'image'
-              ? FastCachedImage(
+              ? SafeFastCachedImageExtension.safe(
             url: imageUrl + media.path,
             width: double.infinity,
             height: double.infinity,
