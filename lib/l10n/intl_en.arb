@@ -657,5 +657,8 @@
   "fileSizeExceeded":"File Size Exceeded",
   "fileSizeExceededMessage":"Files size cannot exceed 25 MB",
   "fileLimitReached":"File Limit Reached",
-  "addCaptionOptional":"Add a caption (optional)"
+  "addCaptionOptional":"Add a caption (optional)",
+  "seeLess":"See Less",
+  "seeMore":"See More"
+
 }

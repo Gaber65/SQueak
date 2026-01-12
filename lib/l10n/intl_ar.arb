@@ -651,6 +651,8 @@
   "fileSizeExceeded":"تحذير",
   "fileSizeExceededMessage":"لا يمكن أن يتجاوز حجم الملفات 25 ميجا بايت",
   "fileLimitReached":"تم الوصول إلى الحد الأقصى للملفات",
-  "addCaptionOptional":"إضافة وصف (اختياري)"
-
+  "addCaptionOptional":"إضافة وصف (اختياري)",
+  "seeLess":"عرض أقل",
+  "seeMore":"عرض المزيد"
+  
 }

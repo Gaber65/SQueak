@@ -6539,6 +6539,26 @@ class S {
       args: [],
     );
   }
+
+  /// `See Less`
+  String get seeLess {
+    return Intl.message(
+      'See Less',
+      name: 'seeLess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See More`
+  String get seeMore {
+    return Intl.message(
+      'See More',
+      name: 'seeMore',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

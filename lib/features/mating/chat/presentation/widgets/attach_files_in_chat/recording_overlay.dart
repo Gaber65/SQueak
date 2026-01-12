@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 
 class RecordingOverlay extends StatelessWidget {
   final int recordDuration;
-  final int maxRecordDuration;
 
   const RecordingOverlay({
     super.key,
     required this.recordDuration,
-    this.maxRecordDuration = 60,
   });
 
   @override
@@ -16,7 +14,6 @@ class RecordingOverlay extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     final minutes = (recordDuration ~/ 60).toString().padLeft(2, '0');
     final seconds = (recordDuration % 60).toString().padLeft(2, '0');
-    final isNearLimit = recordDuration >= maxRecordDuration - 10;
 
     return Positioned(
       left: 0,
@@ -31,7 +28,7 @@ class RecordingOverlay extends StatelessWidget {
               width: 12,
               height: 12,
               decoration: BoxDecoration(
-                color: isNearLimit ? Colors.orange : Colors.red,
+                color: Colors.red,
                 shape: BoxShape.circle,
               ),
             ),
@@ -41,10 +38,7 @@ class RecordingOverlay extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color:
-                    isNearLimit
-                        ? Colors.orange
-                        : (isDark ? Colors.white : Colors.black87),
+                color: isDark ? Colors.white : Colors.black87,
               ),
             ),
             const SizedBox(width: 16),

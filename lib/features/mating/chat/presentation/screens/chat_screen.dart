@@ -68,9 +68,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
   int _recordDuration = 0;
   Timer? _recordTimer;
   bool _hasText = false;
-  static const int _maxRecordDuration = 120;
-  ChatMessagesCubit? _recordingCubit;
-  ChatAppCubit? _recordingChatAppCubit;
   ChatAppCubit? _chatAppCubit;
   static const double maxMediaSizeMB = 25.0;
 
@@ -491,7 +488,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
                       if (_isRecording)
                         RecordingOverlay(
                           recordDuration: _recordDuration,
-                          maxRecordDuration: _maxRecordDuration,
                         ),
                     ],
                   ),
@@ -971,8 +967,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
           setState(() {
             _isRecording = true;
             _recordDuration = 0;
-            _recordingCubit = cubit;
-            _recordingChatAppCubit = chatAppCubit;
           });
         }
 
@@ -981,12 +975,6 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
             setState(() {
               _recordDuration++;
             });
-          }
-
-          if (_recordDuration >= _maxRecordDuration &&
-              _recordingCubit != null &&
-              _recordingChatAppCubit != null) {
-            _stopRecording(_recordingCubit!, _recordingChatAppCubit!);
           }
         });
       }
@@ -1012,14 +1000,37 @@ class _MatingChatDetailScreenState extends State<MatingChatDetailScreen>
       if (path != null && path.isNotEmpty) {
         final file = File(path);
         if (await file.exists()) {
-          // Check audio file size before processing
-          if (!_isFileSizeValid(file, AttachmentType.audio)) {
+          // Check audio file size before processing (max 10 MB for recorded audio)
+          final fileSizeMB = _getFileSizeMB(file);
+          if (fileSizeMB > 10.0) {
             if (mounted) {
-              final errorMessage = _getFileSizeErrorMessage(
-                file,
-                AttachmentType.audio,
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => AlertDialog(
+                  backgroundColor: const Color(0xFF1E1E1E),
+                  title: const Text(
+                    'File Too Large',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  content: Text(
+                    'Recording is too large. Maximum size is 10 MB. Current: ${fileSizeMB.toStringAsFixed(2)} MB',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text(
+                        'OK',
+                        style: TextStyle(color: Color(0xFF6200EA)),
+                      ),
+                    ),
+                  ],
+                ),
               );
-              errorToast(context, errorMessage);
             }
             try {
               await file.delete();

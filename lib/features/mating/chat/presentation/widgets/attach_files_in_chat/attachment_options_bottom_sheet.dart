@@ -752,6 +752,9 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
       );
 
       final files = <File>[];
+      bool hasInvalidVideoExtensions = false;
+      bool hasInvalidImageExtensions = false;
+      
       if (result != null && result.files.isNotEmpty) {
         for (final platformFile in result.files) {
           if (platformFile.path != null) {
@@ -760,12 +763,31 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
             // Check for invalid extension
             if (!_isValidFileExtension(file, AttachmentType.image) && 
                 !_isValidFileExtension(file, AttachmentType.video)) {
+              // Determine which type of file this looks like it should be
+              if (_isVideoFile(file)) {
+                hasInvalidVideoExtensions = true;
+              } else if (_isImageFile(file)) {
+                hasInvalidImageExtensions = true;
+              } else {
+                // If we can't determine, assume it's trying to be a video
+                hasInvalidVideoExtensions = true;
+              }
               continue;
             }
             
             if (_isFileSizeValid(file, AttachmentType.image)) {
               files.add(file);
             }
+          }
+        }
+
+        // Show dialog if unsupported media was detected
+        if ((hasInvalidImageExtensions || hasInvalidVideoExtensions) && context.mounted) {
+          // Show video warning if invalid videos were detected, otherwise image
+          if (hasInvalidVideoExtensions) {
+            _showInvalidExtensionWarning(context, AttachmentType.video);
+          } else {
+            _showInvalidExtensionWarning(context, AttachmentType.image);
           }
         }
 
@@ -790,6 +812,8 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
     );
 
     final files = <File>[];
+    bool hasInvalidExtensions = false;
+    
     if (result != null && result.files.isNotEmpty) {
       for (final platformFile in result.files) {
         if (platformFile.path != null) {
@@ -797,6 +821,7 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
           
           // Check for invalid extension
           if (!_isValidFileExtension(file, AttachmentType.audio)) {
+            hasInvalidExtensions = true;
             continue;
           }
           
@@ -804,6 +829,11 @@ class AttachmentOptionsBottomSheet extends StatelessWidget {
             files.add(file);
           }
         }
+      }
+
+      // Show dialog if unsupported audio was detected
+      if (hasInvalidExtensions && context.mounted) {
+        _showInvalidExtensionWarning(context, AttachmentType.audio);
       }
 
       if (files.isNotEmpty) {

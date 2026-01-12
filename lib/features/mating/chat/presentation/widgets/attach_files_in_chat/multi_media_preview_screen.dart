@@ -47,14 +47,13 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
   /// Determine if a file is an image based on its extension
   bool _isImageFile(File file) {
     final extension = file.path.toLowerCase().split('.').last;
-    return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].contains(extension);
+    return ['jpg', 'jpeg', 'png', 'gif'].contains(extension);
   }
 
   /// Determine if a file is a video based on its extension
   bool _isVideoFile(File file) {
     final extension = file.path.toLowerCase().split('.').last;
-    return ['mp4', 'mov', 'avi', 'mkv', 'flv', 'wmv', 'webm', '3gp', 'm4v']
-        .contains(extension);
+    return ['mp4', 'mov', 'avi', 'webm'].contains(extension);
   }
 
   /// Get the actual media type for the current file
@@ -102,16 +101,15 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
       builder:
           (context) => AlertDialog(
             backgroundColor: const Color(0xFF1E1E1E),
-            title: const Text(
-              'File Size Warning',
+            title:  Text(
+              S.of(context).fileSizeExceeded,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
             content: Text(
-              'The total size of selected media is ${totalSizeMB.toStringAsFixed(2)} MB. '
-              'Please keep it under ${MultiMediaPreviewScreen.maxMediaSizeMB.toInt()} MB.',
+             S.of(context).fileSizeExceededMessage,
               style: const TextStyle(color: Colors.white70),
             ),
             actions: [
@@ -120,8 +118,8 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
                   Navigator.pop(context);
                   Navigator.pop(context);
                 },
-                child: const Text(
-                  'Go Back',
+                child:  Text(
+                  S.of(context).gotIt,
                   style: TextStyle(color: Color(0xFF6200EA)),
                 ),
               ),
@@ -134,7 +132,11 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
   void initState() {
     super.initState();
     _mediaFiles = List.from(widget.mediaFiles, growable: true);
-    _captions = List<String?>.filled(_mediaFiles.length, null, growable: true); // Initialize captions list
+    _captions = List<String?>.filled(
+      _mediaFiles.length,
+      null,
+      growable: true,
+    ); // Initialize captions list
     _initializeCurrentMedia();
     _checkTotalFileSize();
   }
@@ -251,29 +253,29 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
       case MediaType.video:
         return _videoController != null && _videoController!.value.isInitialized
             ? GestureDetector(
-                onTap: _toggleVideoPlayPause,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    AspectRatio(
-                      aspectRatio: _videoController!.value.aspectRatio,
-                      child: VideoPlayer(_videoController!),
-                    ),
-                    if (!_videoController!.value.isPlaying)
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.3),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.play_arrow,
-                          color: Colors.white,
-                          size: 50,
-                        ),
+              onTap: _toggleVideoPlayPause,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  AspectRatio(
+                    aspectRatio: _videoController!.value.aspectRatio,
+                    child: VideoPlayer(_videoController!),
+                  ),
+                  if (!_videoController!.value.isPlaying)
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.3),
+                        shape: BoxShape.circle,
                       ),
-                  ],
-                ),
-              )
+                      child: const Icon(
+                        Icons.play_arrow,
+                        color: Colors.white,
+                        size: 50,
+                      ),
+                    ),
+                ],
+              ),
+            )
             : const CircularProgressIndicator();
 
       case MediaType.audio:
@@ -298,10 +300,7 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFFFF9800),
-                      Color(0xFFFF6F00),
-                    ],
+                    colors: [Color(0xFFFF9800), Color(0xFFFF6F00)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -332,10 +331,7 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
               const SizedBox(height: 8),
               Text(
                 _getFileName(),
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
-                ),
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -355,8 +351,9 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
                         value: _audioPosition.inSeconds.toDouble(),
                         max: _audioDuration.inSeconds.toDouble(),
                         onChanged: (value) async {
-                          await _audioPlayer
-                              ?.seek(Duration(seconds: value.toInt()));
+                          await _audioPlayer?.seek(
+                            Duration(seconds: value.toInt()),
+                          );
                         },
                         activeColor: const Color(0xFFFF9800),
                         inactiveColor: Colors.grey[700],
@@ -419,7 +416,7 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
         );
 
       case MediaType.image:
-      return InteractiveViewer(
+        return InteractiveViewer(
           minScale: 0.5,
           maxScale: 4.0,
           child: Image.file(
@@ -430,8 +427,11 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.image_not_supported,
-                        color: Colors.white, size: 48),
+                    const Icon(
+                      Icons.image_not_supported,
+                      color: Colors.white,
+                      size: 48,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       S.of(context).imageloadingFailed,
@@ -493,7 +493,7 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
 
     // Update current media's caption before sending
     _captions[_currentIndex] = _captionController.text.trim();
-    
+
     String mediaTypeName = _isVideo ? 'video' : (_isAudio ? 'audio' : 'image');
     debugPrint(
       '📸 MultiMediaPreview: Sending ${_mediaFiles.length} $mediaTypeName(s) with captions',
@@ -540,7 +540,7 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
   /// Build thumbnail widget for a file at the given index
   Widget _buildThumbnail(int index) {
     final file = _mediaFiles[index];
-    
+
     if (_isAudioFile(file)) {
       return Container(
         color: const Color(0xFF2E2E2E),
@@ -577,7 +577,7 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
     // Check if adding files would exceed max size limit
     double currentTotalSizeMB = _getTotalFileSizeMB();
     List<File> filesToAdd = [];
-    
+
     for (final file in newFiles) {
       if (_mediaFiles.length >= MultiMediaPreviewScreen.maxMediaCount) {
         break;
@@ -585,31 +585,36 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
       if (!_isFileAlreadySelected(file)) {
         try {
           final fileSizeMB = file.lengthSync() / (1024 * 1024);
-          if (currentTotalSizeMB + fileSizeMB > MultiMediaPreviewScreen.maxMediaSizeMB) {
+          if (currentTotalSizeMB + fileSizeMB >
+              MultiMediaPreviewScreen.maxMediaSizeMB) {
             // Size limit exceeded, show error message
             if (mounted) {
               showDialog(
                 context: context,
-                builder: (context) => AlertDialog(
-                  backgroundColor: const Color(0xFF1E1E1E),
-                  title: Text(
-                    S.of(context).fileSizeExceeded,
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
-                  content: Text(
-                    S.of(context).fileSizeExceededMessage,
-                    style: const TextStyle(color: Colors.white70),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child:  Text(
-                        S.of(context).ok,
-                        style: TextStyle(color: Color(0xFF6200EA)),
+                builder:
+                    (context) => AlertDialog(
+                      backgroundColor: const Color(0xFF1E1E1E),
+                      title: Text(
+                        S.of(context).fileSizeExceeded,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
+                      content: Text(
+                        S.of(context).fileSizeExceededMessage,
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            S.of(context).ok,
+                            style: TextStyle(color: Color(0xFF6200EA)),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
               );
             }
             return;
@@ -640,26 +645,30 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
     if (filesAdded < filesToAdd.length && mounted) {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          backgroundColor: const Color(0xFF1E1E1E),
-          title:  Text(
-            S.of(context).fileLimitReached,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          content: Text(
-            S.of(context).youCanUploadUpTo10Files,
-            style: const TextStyle(color: Colors.white70),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child:  Text(
-                S.of(context).ok,
-                style: TextStyle(color: Color(0xFF6200EA)),
+        builder:
+            (context) => AlertDialog(
+              backgroundColor: const Color(0xFF1E1E1E),
+              title: Text(
+                S.of(context).fileLimitReached,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
+              content: Text(
+                S.of(context).youCanUploadUpTo10Files,
+                style: const TextStyle(color: Colors.white70),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    S.of(context).ok,
+                    style: TextStyle(color: Color(0xFF6200EA)),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
       );
     }
   }
@@ -693,11 +702,7 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
       ),
       body: Column(
         children: [
-          Expanded(
-            child: Center(
-              child: _buildMediaDisplay(),
-            ),
-          ),
+          Expanded(child: Center(child: _buildMediaDisplay())),
           // Thumbnail strip for multi-file preview
           if (_mediaFiles.isNotEmpty)
             Container(
@@ -705,18 +710,25 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
               color: const Color(0xFF1E1E1E),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: _mediaFiles.length + (_mediaFiles.length < MultiMediaPreviewScreen.maxMediaCount ? 1 : 0),
+                itemCount:
+                    _mediaFiles.length +
+                    (_mediaFiles.length < MultiMediaPreviewScreen.maxMediaCount
+                        ? 1
+                        : 0),
                 itemBuilder: (context, index) {
                   // Add button for adding more media
                   if (index == _mediaFiles.length) {
                     return GestureDetector(
                       onTap: () async {
                         // Check if already at max capacity
-                        if (_mediaFiles.length >= MultiMediaPreviewScreen.maxMediaCount) {
+                        if (_mediaFiles.length >=
+                            MultiMediaPreviewScreen.maxMediaCount) {
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('You can only add up to ${MultiMediaPreviewScreen.maxMediaCount} files'),
+                                content: Text(
+                                  'You can only add up to ${MultiMediaPreviewScreen.maxMediaCount} files',
+                                ),
                                 backgroundColor: Colors.red,
                                 duration: const Duration(seconds: 2),
                               ),
@@ -728,8 +740,10 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
                         // Call the onAddMore callback and wait for files to be returned
                         if (widget.onAddMore != null) {
                           try {
-                            final result = await widget.onAddMore!(widget.mediaType);
-                            
+                            final result = await widget.onAddMore!(
+                              widget.mediaType,
+                            );
+
                             // If files were returned, add them to the preview
                             if (result.isNotEmpty) {
                               _addMoreMedia(result);
@@ -766,7 +780,8 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
                     );
                   }
 
-                  final hasCaption = _captions[index] != null && _captions[index]!.isNotEmpty;
+                  final hasCaption =
+                      _captions[index] != null && _captions[index]!.isNotEmpty;
                   return GestureDetector(
                     onTap: () {
                       _updateCurrentCaption();
@@ -902,9 +917,11 @@ class _MultiMediaPreviewScreenState extends State<MultiMediaPreviewScreen> {
                               horizontal: 20,
                               vertical: 10,
                             ),
+                            counterStyle: const TextStyle(color: Colors.white),
                           ),
                           maxLines: 3,
                           minLines: 1,
+                          maxLength: 500,
                           textInputAction: TextInputAction.newline,
                         ),
                       ),

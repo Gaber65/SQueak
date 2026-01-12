@@ -825,6 +825,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("تدقيقات الأمان المنتظمة"),
         "securityAuditsDesc": MessageLookupByLibrary.simpleMessage(
             "نقوم بإجراء تدقيقات أمنية منتظمة لتحديد ومعالجة المخاطر الأمنية المحتملة. فريقنا مكرس لمراقبة وتعزيز تدابير الأمان باستمرار لضمان سلامة وخصوصية بيانات عيادتك."),
+        "seeLess": MessageLookupByLibrary.simpleMessage("عرض أقل"),
+        "seeMore": MessageLookupByLibrary.simpleMessage("عرض المزيد"),
         "selectBoarding":
             MessageLookupByLibrary.simpleMessage("اختر نوع الإقامة"),
         "selectBoardingBy": MessageLookupByLibrary.simpleMessage("اختر طبيبًا"),

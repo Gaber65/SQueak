@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:squeak/core/network/end_points.dart';
-
+import 'dart:typed_data';
+import 'package:video_thumbnail/video_thumbnail.dart';
 import '../../../../../../core/service/global_widget/image_detail.dart';
 import '../attach_files_in_chat/full_screen_media_viewer.dart';
 import '../../../domain/entities/message_entity.dart';
 
-class ImageGridLayout extends StatelessWidget {
+class ImageGridLayout extends StatefulWidget {
   final List<Attachment> imageAttachments;
 
   const ImageGridLayout({super.key, required this.imageAttachments});
 
   @override
+  State<ImageGridLayout> createState() => _ImageGridLayoutState();
+}
+
+class _ImageGridLayoutState extends State<ImageGridLayout> {
+  final Map<String, Uint8List?> _thumbnailCache = {};
+
+  @override
   Widget build(BuildContext context) {
-    if (imageAttachments.isEmpty) {
+    if (widget.imageAttachments.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -23,12 +31,12 @@ class ImageGridLayout extends StatelessWidget {
   }
 
   Widget _buildImageGrid(BuildContext context) {
-    final count = imageAttachments.length;
+    final count = widget.imageAttachments.length;
 
     if (count == 1) {
       return _buildMediaItem(
         context,
-        imageAttachments[0],
+        widget.imageAttachments[0],
         index: 0,
         width: 240,
         height: 180,
@@ -49,7 +57,7 @@ class ImageGridLayout extends StatelessWidget {
       children: [
         _buildMediaItem(
           context,
-          imageAttachments[0],
+          widget.imageAttachments[0],
           index: 0,
           width: 115,
           height: 170,
@@ -58,7 +66,7 @@ class ImageGridLayout extends StatelessWidget {
         ),
         _buildMediaItem(
           context,
-          imageAttachments[1],
+          widget.imageAttachments[1],
           index: 1,
           width: 115,
           height: 170,
@@ -78,16 +86,16 @@ class ImageGridLayout extends StatelessWidget {
           children: [
             _buildMediaItem(
               context,
-              imageAttachments[0],
+              widget.imageAttachments[0],
               index: 0,
-              width: 115,
+              width: 234,
               height: 85,
               borderRadius: 14,
-              margin: const EdgeInsets.only(right: 4, bottom: 4),
+              margin: const EdgeInsets.only(bottom: 4),
             ),
             _buildMediaItem(
               context,
-              imageAttachments[1],
+              widget.imageAttachments[1],
               index: 1,
               width: 115,
               height: 85,
@@ -98,7 +106,7 @@ class ImageGridLayout extends StatelessWidget {
         ),
         _buildMediaItem(
           context,
-          imageAttachments[2],
+          widget.imageAttachments[1],
           index: 2,
           width: 234,
           height: 85,
@@ -110,7 +118,7 @@ class ImageGridLayout extends StatelessWidget {
   }
 
   Widget _buildFourOrMoreImages(BuildContext context) {
-    final isMoreThan4 = imageAttachments.length > 4;
+    final isMoreThan4 = widget.imageAttachments.length > 4;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -120,7 +128,7 @@ class ImageGridLayout extends StatelessWidget {
           children: [
             _buildMediaItem(
               context,
-              imageAttachments[0],
+              widget.imageAttachments[0],
               index: 0,
               width: 115,
               height: 85,
@@ -129,7 +137,7 @@ class ImageGridLayout extends StatelessWidget {
             ),
             _buildMediaItem(
               context,
-              imageAttachments[1],
+              widget.imageAttachments[1],
               index: 1,
               width: 115,
               height: 85,
@@ -143,7 +151,7 @@ class ImageGridLayout extends StatelessWidget {
           children: [
             _buildMediaItem(
               context,
-              imageAttachments[2],
+              widget.imageAttachments[2],
               index: 2,
               width: 115,
               height: 85,
@@ -153,13 +161,13 @@ class ImageGridLayout extends StatelessWidget {
             
             _buildMediaItem(
               context,
-              imageAttachments[3],
+              widget.imageAttachments[3],
               index: 3,
               width: 115,
               height: 85,
               borderRadius: 14,
               margin: const EdgeInsets.only(left: 4, top: 4),
-              remainingCount: isMoreThan4 ? imageAttachments.length - 4 : null,
+              remainingCount: isMoreThan4 ? widget.imageAttachments.length - 4 : null,
             ),
           ],
         ),
@@ -243,10 +251,25 @@ class ImageGridLayout extends StatelessWidget {
     double height,
   ) {
     if (isVideo) {
-      return Container(
-        width: width,
-        height: height,
-        color: Colors.black87,
+      return FutureBuilder<Uint8List?>(
+        future: _generateVideoThumbnail(videoUrl + url, width, height),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data != null) {
+            return Image.memory(
+              snapshot.data!,
+              width: width,
+              height: height,
+              fit: BoxFit.cover,
+            );
+          } else {
+            return Container(
+              width: width,
+              height: height,
+              color: Colors.black87,
+            );
+          }
+        },
       );
     }
 
@@ -256,6 +279,40 @@ class ImageGridLayout extends StatelessWidget {
       height: height,
       fit: BoxFit.cover,
     );
+  }
+
+  /// Generate thumbnail for video with caching
+  Future<Uint8List?> _generateVideoThumbnail(
+    String videoUrl_,
+    double width,
+    double height,
+  ) async {
+    try {
+      // Check cache first
+      if (_thumbnailCache.containsKey(videoUrl_)) {
+        return _thumbnailCache[videoUrl_];
+      }
+
+      // Generate thumbnail
+      final uint8list = await VideoThumbnail.thumbnailData(
+        video: videoUrl_,
+        imageFormat: ImageFormat.PNG,
+        maxWidth: width.toInt(),
+        maxHeight: height.toInt(),
+        quality: 85,
+        timeMs: 0, // First frame
+      );
+
+      if (uint8list != null) {
+        _thumbnailCache[videoUrl_] = uint8list;
+        debugPrint('✅ [GridVideoThumbnail] Generated for ${videoUrl_.split('/').last}');
+      }
+
+      return uint8list;
+    } catch (e) {
+      debugPrint('❌ [GridVideoThumbnail] Error: $e');
+      return null;
+    }
   }
 
   /// Build overlay for video play button or remaining count
@@ -332,10 +389,10 @@ class ImageGridLayout extends StatelessWidget {
   /// Open full screen media viewer
   void _openMediaViewer(BuildContext context, int index, bool isVideo) {
     final mediaUrlsList =
-        imageAttachments.map((att) => imageUrl + att.url).toList();
-    final captionsList =
-        imageAttachments.map((att) => att.description).toList();
-    final typesList = imageAttachments
+        widget.imageAttachments.map((att) => imageUrl + att.url).toList();
+    final captionList =
+        widget.imageAttachments.map((att) => att.description).toList();
+    final typesList = widget.imageAttachments
         .map(
           (att) =>
               att.attachmentType == 0 ? MediaType.image : MediaType.video,
@@ -345,11 +402,11 @@ class ImageGridLayout extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => FullScreenMediaViewer(
-          mediaUrl: imageUrl + imageAttachments[index].url,
+          mediaUrl: imageUrl + widget.imageAttachments[index].url,
           mediaUrls: mediaUrlsList,
           mediaType: isVideo ? MediaType.video : MediaType.image,
-          caption: imageAttachments[index].description,
-          captions: captionsList,
+          caption: widget.imageAttachments[index].description,
+          captions: captionList,
           mediaTypes: typesList,
           initialIndex: index,
         ),

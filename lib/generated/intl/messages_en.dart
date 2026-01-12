@@ -839,6 +839,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Regular Security Audits"),
         "securityAuditsDesc": MessageLookupByLibrary.simpleMessage(
             "We conduct regular security audits to identify and address potential security risks. Our team is dedicated to continuously monitoring and enhancing our security measures to ensure the safety and privacy of your clinic\'s data."),
+        "seeLess": MessageLookupByLibrary.simpleMessage("See Less"),
+        "seeMore": MessageLookupByLibrary.simpleMessage("See More"),
         "selectBoarding":
             MessageLookupByLibrary.simpleMessage("Select Boarding Type name"),
         "selectBoardingBy":

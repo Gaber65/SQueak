@@ -1,5 +1,6 @@
 import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
 import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/utils/date_time_formatter.dart';
 import 'package:squeak/features/mating/chat/presentation/controllers/chat_messages_cubit.dart';
@@ -13,6 +14,7 @@ import 'package:squeak/features/mating/chat/presentation/controllers/chat_app_cu
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../attach_files_in_chat/in_app_document_viewer.dart';
 import 'image_grid_layout.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class ChatMessageBubble extends StatefulWidget {
   final MessageEntity message;
@@ -37,6 +39,8 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _slideAnimation;
+  final Map<String, Uint8List?> _thumbnailCache = {};
+  bool _isExpanded = false;
 
   @override
   void initState() {
@@ -232,19 +236,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
 
                         // Text message
                         if (widget.message.description.isNotEmpty)
-                          Text(
-                            widget.message.description,
-                            style: TextStyle(
-                              color:
-                                  widget.isMe
-                                      ? Colors.white
-                                      : (isDark
-                                          ? Colors.white
-                                          : Colors.black87),
-                              fontSize: 15,
-                              height: 1.4,
-                            ),
-                          ),
+                          _buildTextMessageWithExpand(),
 
                         // Timestamp and read status
                         const SizedBox(height: 6),
@@ -407,6 +399,53 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
     ];
   }
 
+  Widget _buildTextMessageWithExpand() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final text = widget.message.description;
+    const maxLines = 4;
+    final shouldShowMore = text.length > 150;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          text,
+          style: TextStyle(
+            color:
+                widget.isMe
+                    ? Colors.white
+                    : (isDark
+                        ? Colors.white
+                        : Colors.black87),
+            fontSize: 15,
+            height: 1.4,
+          ),
+          maxLines: _isExpanded ? null : maxLines,
+          overflow: _isExpanded ? null : TextOverflow.ellipsis,
+        ),
+        if (shouldShowMore)
+          GestureDetector(
+            onTap: () => setState(() => _isExpanded = !_isExpanded),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 4.0),
+              child: Text(
+                _isExpanded ? S.of(context).seeLess : S.of(context).seeMore,
+                style: TextStyle(
+                  color:
+                      widget.isMe
+                          ? Colors.brown
+                          :Colors.black,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget _buildImageContent() {
     final theme = Theme.of(context);
     return GestureDetector(
@@ -476,13 +515,14 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
   }
 
   Widget _buildVideoContent() {
+    final videoUrl_ = videoUrl + widget.message.video!;
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder:
                 (context) => FullScreenMediaViewer(
-                  mediaUrl: videoUrl + widget.message.video!,
+                  mediaUrl: videoUrl_,
                   mediaType: MediaType.video,
                   initialIndex: 0,
                 ),
@@ -506,11 +546,36 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
         ),
         child: Stack(
           children: [
-            // Background
+            // Thumbnail image
+            Positioned.fill(
+              child: FutureBuilder<Uint8List?>(
+                future: _generateThumbnail(videoUrl_),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done &&
+                      snapshot.data != null) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.memory(
+                        snapshot.data!,
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black87,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+            // Dim overlay
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.black87,
+                  color: Colors.black.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
@@ -554,6 +619,39 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
         ),
       ),
     );
+  }
+
+  /// Generate thumbnail from video URL with caching
+  Future<Uint8List?> _generateThumbnail(String videoUrl_) async {
+    try {
+      // Check cache first
+      if (_thumbnailCache.containsKey(videoUrl_)) {
+        return _thumbnailCache[videoUrl_];
+      }
+
+      // Generate thumbnail from URL
+      final uint8list = await VideoThumbnail.thumbnailData(
+        video: videoUrl_,
+        imageFormat: ImageFormat.PNG,
+        maxWidth: 240,
+        maxHeight: 180,
+        quality: 85,
+        timeMs: 0, // Get first frame
+      );
+
+      if (uint8list != null) {
+        // Cache the thumbnail
+        _thumbnailCache[videoUrl_] = uint8list;
+        debugPrint('✅ [VideoThumbnail] Generated thumbnail for ${videoUrl_.split('/').last}');
+      } else {
+        debugPrint('❌ [VideoThumbnail] Failed to generate thumbnail for ${videoUrl_.split('/').last}');
+      }
+
+      return uint8list;
+    } catch (e) {
+      debugPrint('❌ [VideoThumbnail] Error generating thumbnail: $e');
+      return null;
+    }
   }
 
   Widget _buildAudioContent() {
@@ -932,3 +1030,4 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
     );
   }
 }
+    
