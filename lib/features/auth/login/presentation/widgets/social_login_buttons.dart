@@ -1,3 +1,4 @@
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 
 class SocialLoginButtons extends StatelessWidget {
@@ -28,9 +29,10 @@ class SocialLoginButtons extends StatelessWidget {
           child: _SocialLoginButton(
             onPressed: onFacebookLogin,
             isLoading: isLoadingFacebook,
-            backgroundColor:Colors.white,
-            icon: Image.network(
-              'https://1.bp.blogspot.com/-S8HTBQqmfcs/XN0ACIRD9PI/AAAAAAAAAlo/FLhccuLdMfIFLhocRjWqsr9cVGdTN_8sgCPcBGAYYCw/s1600/f_logo_RGB-Blue_1024.png',
+            backgroundColor: Colors.white,
+            icon: SafeFastCachedImageExtension.safe(
+              url:
+                  'https://1.bp.blogspot.com/-S8HTBQqmfcs/XN0ACIRD9PI/AAAAAAAAAlo/FLhccuLdMfIFLhocRjWqsr9cVGdTN_8sgCPcBGAYYCw/s1600/f_logo_RGB-Blue_1024.png',
               width: 24,
               height: 24,
             ),
@@ -47,8 +49,9 @@ class SocialLoginButtons extends StatelessWidget {
             onPressed: onGoogleLogin,
             isLoading: isLoadingGoogle,
             backgroundColor: Colors.white,
-            icon: Image.network(
-              'https://imagepng.org/wp-content/uploads/2019/08/google-icon.png',
+            icon: SafeFastCachedImageExtension.safe(
+              url:
+                  'https://imagepng.org/wp-content/uploads/2019/08/google-icon.png',
               width: 24,
               height: 24,
             ),

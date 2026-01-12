@@ -1,3 +1,4 @@
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
@@ -6,7 +7,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/core/utils/firebase_token_helper.dart';
@@ -37,6 +37,7 @@ class InitFunctions {
     await _configureChucker();
     await _setupMessaging();
     ConnectivityService().startMonitoring();
+
   }
 
   static Future<void> _setupMessaging() async {

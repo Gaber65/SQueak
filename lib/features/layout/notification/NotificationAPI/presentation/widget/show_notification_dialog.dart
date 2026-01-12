@@ -1,3 +1,4 @@
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -15,7 +16,6 @@ void showNotificationDialog(
 
   // Retrieve username from cache
   String userName = CacheHelper.getData('name') ?? "Pet Lover";
-
 
   // Extract clinic name from the notification title (assuming "Clinic XYZ: Message")
   String extractedClinicName = model.title.split(":").first.trim();
@@ -79,8 +79,8 @@ void showNotificationDialog(
                               shape: BoxShape.circle,
                             ),
                             child: ClipOval(
-                              child: Image.network(
-                                model.logo,
+                              child: SafeFastCachedImageExtension.safe(
+                                url: model.logo,
                                 width: 100,
                                 height: 100,
                                 fit: BoxFit.contain,

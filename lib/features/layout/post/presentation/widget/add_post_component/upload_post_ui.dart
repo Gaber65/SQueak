@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -325,7 +326,7 @@ class UploadPostUI extends StatelessWidget {
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white, width: 3),
             image: DecorationImage(
-              image: NetworkImage(widget.image),
+              image: SafeFastCachedImageProviderExtension.safe(widget.image),
               fit: BoxFit.cover,
             ),
           ),

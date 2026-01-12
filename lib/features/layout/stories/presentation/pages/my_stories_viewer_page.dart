@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // ADDED: Required for BlocBuilder
 import 'package:squeak/core/service/global_function/time_format.dart';
@@ -202,28 +202,17 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                   fit: StackFit.expand,
                   children: [
                     // Blurred background image
-                    Image.network(
-                      imageUrl + (currentStory.image ?? ''),
+                    SafeFastCachedImageExtension.safe(
+                      url: imageUrl + (currentStory.image ?? ''),
                       fit: BoxFit.cover,
                       errorBuilder:
                           (_, __, ___) => Container(color: Colors.black),
-                      frameBuilder: (
-                        context,
-                        child,
-                        frame,
-                        wasSynchronouslyLoaded,
-                      ) {
-                        return ImageFiltered(
-                          imageFilter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                          child: child,
-                        );
-                      },
                     ),
                     // Dark overlay for better contrast
                     Container(color: Colors.black.withOpacity(0.3)),
                     // Main sharp image
-                    Image.network(
-                      imageUrl + (currentStory.image ?? ''),
+                    SafeFastCachedImageExtension.safe(
+                      url: imageUrl + (currentStory.image ?? ''),
                       fit: BoxFit.contain,
                       errorBuilder:
                           (_, __, ___) => const Center(
@@ -377,8 +366,9 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                         bloc: widget.storyCubit, // Explicitly pass the cubit
                         builder: (context, state) {
                           // Get the latest list from the stream
-                          final currentReactions = state.reactions?.reactions ?? [];
-                          
+                          final currentReactions =
+                              state.reactions?.reactions ?? [];
+
                           return Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -395,7 +385,7 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                               const SizedBox(width: 6),
                               // CHANGED: Use the count from 'state', not 'widget'
                               Text(
-                                '${currentReactions.length}', 
+                                '${currentReactions.length}',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w500,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/service/global_function/time_format.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
@@ -32,12 +33,13 @@ class ChatListItem extends StatelessWidget {
                 height: 60,
                 decoration: BoxDecoration(shape: BoxShape.circle),
                 child: ClipOval(
-                  child: Image.network(
-                    imageUrl + chat.image!,
+                  child: SafeFastCachedImageExtension.safe(
+  url: imageUrl + chat.image!,
                     height: 50,
                     width: 50,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
+                    errorBuilder: (context, error, stackTrace,
+) {
                       return Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,

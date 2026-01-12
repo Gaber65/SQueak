@@ -1,3 +1,4 @@
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
@@ -210,11 +211,12 @@ class _PetCardState extends State<PetCard> {
             child: SizedBox(
               width: 50,
               height: 50,
-              child: Image.network(
-                widget.pet.imageName.toString().contains('PetAvatar') ||
-                        widget.pet.imageName.toString().isEmpty
-                    ? 'https://img.freepik.com/free-vector/hand-drawn-animal-rescue-illustration_52683-109643.jpg'
-                    : '$imageUrl${widget.pet.imageName}',
+              child: SafeFastCachedImageExtension.safe(
+                url:
+                    widget.pet.imageName.toString().contains('PetAvatar') ||
+                            widget.pet.imageName.toString().isEmpty
+                        ? 'https://img.freepik.com/free-vector/hand-drawn-animal-rescue-illustration_52683-109643.jpg'
+                        : '$imageUrl${widget.pet.imageName}',
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
@@ -233,8 +235,7 @@ class _PetCardState extends State<PetCard> {
                     ),
                   );
                 },
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
+                loadingBuilder: (context, loadingProgress) {
                   return Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -247,9 +248,9 @@ class _PetCardState extends State<PetCard> {
                     child: Center(
                       child: CircularProgressIndicator(
                         value:
-                            loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
+                            loadingProgress.totalBytes != null
+                                ? loadingProgress.downloadedBytes /
+                                    loadingProgress.totalBytes!
                                 : null,
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(
@@ -435,17 +436,18 @@ class _PetCardState extends State<PetCard> {
                                         child: SizedBox(
                                           width: 70,
                                           height: 70,
-                                          child: Image.network(
-                                            widget.pet.imageName
-                                                        .toString()
-                                                        .contains(
-                                                          'PetAvatar',
-                                                        ) ||
-                                                    widget.pet.imageName
-                                                        .toString()
-                                                        .isEmpty
-                                                ? 'https://img.freepik.com/free-vector/hand-drawn-animal-rescue-illustration_52683-109643.jpg'
-                                                : '$imageUrl${widget.pet.imageName}',
+                                          child: SafeFastCachedImageExtension.safe(
+                                            url:
+                                                widget.pet.imageName
+                                                            .toString()
+                                                            .contains(
+                                                              'PetAvatar',
+                                                            ) ||
+                                                        widget.pet.imageName
+                                                            .toString()
+                                                            .isEmpty
+                                                    ? 'https://img.freepik.com/free-vector/hand-drawn-animal-rescue-illustration_52683-109643.jpg'
+                                                    : '$imageUrl${widget.pet.imageName}',
                                             fit: BoxFit.cover,
                                             errorBuilder: (
                                               context,

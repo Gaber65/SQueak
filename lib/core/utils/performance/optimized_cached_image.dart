@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import '../../theme/app_theme.dart';
 
 /// Performance-optimized cached network image widget
@@ -33,7 +33,7 @@ class OptimizedCachedImage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    Widget image = FastCachedImage(
+    Widget image = SafeFastCachedImageExtension.safe(
       url: imageUrl,
       width: width,
       height: height,

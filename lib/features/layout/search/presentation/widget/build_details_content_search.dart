@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:iconly/iconly.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 import 'package:squeak/features/layout/search/domain/entities/clinic_search_entity.dart';
@@ -30,7 +31,7 @@ Widget buildDetailsContentSearch(
             ),
             const SizedBox(width: 8),
             CircleAvatar(
-              backgroundImage: NetworkImage('$imageUrl${entities.image}'),
+              backgroundImage: SafeFastCachedImageProviderExtension.safe('$imageUrl${entities.image}'),
               radius: 20,
             ),
           ],
@@ -79,9 +80,7 @@ Widget buildDetailsContentSearch(
                                 const Spacer(),
                                 const Spacer(),
                                 CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                    '$imageUrl${entities.image}',
-                                  ),
+                                  backgroundImage: SafeFastCachedImageProviderExtension.safe('$imageUrl${entities.image}',),
                                   radius: 20,
                                 ),
                               ],

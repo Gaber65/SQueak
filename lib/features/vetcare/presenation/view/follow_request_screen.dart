@@ -1,6 +1,7 @@
 // features/vetcare/presentation/pages/follow_request_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
@@ -171,7 +172,7 @@ class _FollowRequestContent extends StatelessWidget {
   Widget _buildClinicAvatar(String imagePath) {
     return CircleAvatar(
       radius: 30,
-      backgroundImage: NetworkImage(imageUrl + imagePath),
+      backgroundImage: SafeFastCachedImageProviderExtension.safe(imageUrl + imagePath),
     );
   }
 

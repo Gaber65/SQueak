@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:shimmer/shimmer.dart';
@@ -66,7 +67,6 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
             (petResponse.data['data'] as List)
                 .map((e) => PetClinicModel.fromJson(e))
                 .toList();
-
       } else {
         // print(
         //   "DEBUG: Failed to load pets directly: ${petResponse.data['message']}",
@@ -107,14 +107,12 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
             (doctorResponse.data['data'] as List)
                 .map((e) => DoctorModel.fromJson(e))
                 .toList();
-
       } else {
         // print(
         //   "DEBUG: Failed to load doctors directly or no data: ${doctorResponse.data['message']}",
         // );
       }
     } catch (e) {
-
       // Optionally show an error toast here if data loading fails critically
       errorToast(
         context,
@@ -130,13 +128,11 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
   }
 
   PetClinicModel? findPet(List<PetClinicModel> data, String petIdToFind) {
-
     for (var element in data) {
       // print(
       //   "DEBUG: Checking pet - ID: ${element.petId}, Name: ${element.petName}, SqueakID: ${element.petSqueakId}",
       // );
       if (element.petId == petIdToFind || element.petSqueakId == petIdToFind) {
-
         return element;
       }
     }
@@ -151,7 +147,6 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
   }
 
   Future<void> _handleBooking() async {
-
     if (dateController.text.isEmpty || time == null) {
       // print(
       //   "DEBUG: Missing data or time - Date: ${dateController.text}, Time: $time",
@@ -166,7 +161,6 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
     }
 
     if (_localPetList.isEmpty) {
-
       errorToast(
         context,
         isArabic()
@@ -181,10 +175,8 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
       });
     }
     try {
-
       PetClinicModel? matchedPet = findPet(_localPetList, widget.petId);
       if (matchedPet == null) {
-
         errorToast(
           context,
           isArabic() ? 'لم يتم العثور على الصغار الأليفة' : 'No pets found',
@@ -193,7 +185,6 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
         return;
       }
       var formattedTime = convertLocalTimeToUTC(time!);
-
 
       Map<String, dynamic> requestData = {
         "data": dateController.text,
@@ -208,7 +199,6 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
         requestData["doctorUserId"] = doctorId;
       }
 
-
       if (mounted) {
         LayoutCubit.get(context).selectedIndex = 2;
         navigateAndFinish(context, const LayoutScreen());
@@ -218,7 +208,6 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
         isArabic() ? 'تم حجز الموعد بنجاح' : 'Appointment booked successfully',
       );
     } on DioException catch (e) {
-
       String extractFirstErrorTO(dynamic error) {
         try {
           final entries = error.errors?.entries;
@@ -239,7 +228,6 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
         extractFirstErrorTO(ErrorMessageModel.fromJson(e.response!.data)),
       );
     } catch (e) {
-
       errorToast(
         context,
         isArabic() ? 'حدث خطأ غير متوقع' : 'An unexpected error occurred',
@@ -255,7 +243,6 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).appointmentButtonBooking),
@@ -397,7 +384,6 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                               }
                             },
                             onIntervalSelected: (p0) {
-
                               p0 = convertTo24Hour(p0);
                               // print(
                               //   "DEBUG: After conversion to 24-hour format: $p0",
@@ -455,7 +441,6 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                                       ) ||
                                       selectedDateTime.isAfter(nowForCompare)) {
                                     if (mounted) setState(() => time = p0);
-
                                   } else {
                                     // print(
                                     //   "DEBUG: Selected time is before current time",
@@ -468,7 +453,6 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                                     );
                                   }
                                 } catch (e) {
-
                                   infoToast(
                                     context,
                                     isArabic()
@@ -477,7 +461,6 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                                   );
                                 }
                               } else {
-
                                 infoToast(
                                   context,
                                   isArabic()
@@ -531,7 +514,7 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                 Spacer(),
                 CircleAvatar(
                   radius: 20,
-                  backgroundImage: NetworkImage(
+                  backgroundImage: SafeFastCachedImageProviderExtension.safe(
                     doctorImage ??
                         'https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&uid=R78903714&ga=GA1.1.798062041.1678310296&semt=ais',
                   ),
@@ -554,7 +537,9 @@ class _BooKAgainScreenState extends State<BooKAgainScreen> {
                           Spacer(),
                           CircleAvatar(
                             radius: 20,
-                            backgroundImage: NetworkImage(value.image),
+                            backgroundImage: SafeFastCachedImageProviderExtension.safe(
+                              value.image,
+                            ),
                           ),
                         ],
                       ),

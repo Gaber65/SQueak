@@ -13,6 +13,8 @@ class NotificationModel extends NotificationEntities {
     required super.createdAt,
     required super.isActive,
     required super.isDeleted,
+    required super.arTitle,
+    required super.arMessage,
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,8 @@ class NotificationModel extends NotificationEntities {
       createdAt: json['createdAt'],
       isActive: json['isActive'],
       isDeleted: json['isDeleted'],
+      arTitle: json['arTitle'],
+      arMessage: json['arMessage'],
     );
   }
 }

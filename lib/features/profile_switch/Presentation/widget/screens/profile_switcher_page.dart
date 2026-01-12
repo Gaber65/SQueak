@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/core/service/cache/shared_preferences/cache_helper.dart';
 import 'package:squeak/features/profile_switch/Presentation/widget/component/profile_switcher_controller.dart';
@@ -86,8 +87,8 @@ class _ProfileSwitcherButtonState extends State<ProfileSwitcherButton>
                               ),
                             ),
                             child: ClipOval(
-                              child: Image.network(
-                                widget.image,
+                              child: SafeFastCachedImageExtension.safe(
+                                url: widget.image,
                                 width: widget.width - 7,
                                 height: widget.height - 7,
                                 fit: BoxFit.cover,
@@ -100,24 +101,16 @@ class _ProfileSwitcherButtonState extends State<ProfileSwitcherButton>
                                     ),
                                   );
                                 },
-                                loadingBuilder: (
-                                  context,
-                                  child,
-                                  loadingProgress,
-                                ) {
-                                  if (loadingProgress == null) return child;
+                                loadingBuilder: (context, loadingProgress) {
                                   return Container(
                                     color: Colors.grey[200],
                                     child: Center(
                                       child: CircularProgressIndicator(
                                         value:
-                                            loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
+                                            loadingProgress.totalBytes != null
                                                 ? loadingProgress
-                                                        .cumulativeBytesLoaded /
-                                                    loadingProgress
-                                                        .expectedTotalBytes!
+                                                        .downloadedBytes /
+                                                    loadingProgress.totalBytes!
                                                 : null,
                                         strokeWidth: 2,
                                         valueColor:

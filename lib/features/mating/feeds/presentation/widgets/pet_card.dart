@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/pets/domain/entities/pet_entity.dart';
 
@@ -64,12 +65,13 @@ class PetCardMating extends StatelessWidget {
                               ),
                             ),
                             child: ClipOval(
-                              child: Image.network(
-                                imageUrl + pet.imageName!,
+                              child: SafeFastCachedImageExtension.safe(
+  url: imageUrl + pet.imageName!,
                                 width: avatarSize,
                                 height: avatarSize,
                                 fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
+                                errorBuilder: (context, error, stackTrace,
+) {
                                   return Container(
                                     color: Colors.grey[300],
                                     child: const Icon(
@@ -80,22 +82,20 @@ class PetCardMating extends StatelessWidget {
                                 },
                                 loadingBuilder: (
                                   context,
-                                  child,
                                   loadingProgress,
                                 ) {
-                                  if (loadingProgress == null) return child;
                                   return Container(
                                     color: Colors.grey[200],
                                     child: Center(
                                       child: CircularProgressIndicator(
                                         value:
                                             loadingProgress
-                                                        .expectedTotalBytes !=
+                                                        .totalBytes !=
                                                     null
                                                 ? loadingProgress
-                                                        .cumulativeBytesLoaded /
+                                                        .downloadedBytes /
                                                     loadingProgress
-                                                        .expectedTotalBytes!
+                                                        .totalBytes!
                                                 : null,
                                         strokeWidth: 2,
                                         valueColor:

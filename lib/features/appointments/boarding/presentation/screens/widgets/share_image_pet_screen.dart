@@ -1,3 +1,4 @@
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/service/global_function/format_utils.dart';
 
@@ -131,8 +132,8 @@ class _ImageCarouselWidgetState extends State<ImageCarouselWidget> {
             children: [
               AspectRatio(
                 aspectRatio: 1,
-                child: Image.network(
-                  currentImage,
+                child: SafeFastCachedImageExtension.safe(
+                  url: currentImage,
                   fit: BoxFit.cover,
                   errorBuilder:
                       (context, error, _) =>

@@ -117,5 +117,7 @@ NotificationEntities payloadToNotificationEntity(String payload) {
     createdAt: jsonData['createdAt'] ?? '',
     isActive: jsonData['isActive'] ?? true,
     isDeleted: jsonData['isDeleted'] ?? false,
+    arMessage: jsonData['arMessage'] ?? '',
+    arTitle: jsonData['eventType'] ?? '',
   );
 }

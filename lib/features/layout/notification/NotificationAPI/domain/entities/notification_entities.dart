@@ -8,6 +8,8 @@ class NotificationEntities {
   final String message;
   final NotificationType eventType;
   final String eventTypeId;
+  final String arMessage;
+  final String arTitle;
   final String title;
   final String logo;
   final List<NotificationEventEntities> notificationEvents;
@@ -27,6 +29,9 @@ class NotificationEntities {
     required this.createdAt,
     required this.isActive,
     required this.isDeleted,
+    required this.arTitle,
+    required this.arMessage,
+
   });
 
   static NotificationType? getNotificationType(NotificationType typeName) {
@@ -48,6 +53,8 @@ class NotificationEntities {
     List<NotificationEventEntities>? notificationEvents,
     String? id,
     String? createdAt,
+    String? arTitle,
+    String? arMessage,
     bool? isActive,
     bool? isDeleted,
   }) {
@@ -62,6 +69,8 @@ class NotificationEntities {
       createdAt: createdAt ?? this.createdAt,
       isActive: isActive ?? this.isActive,
       isDeleted: isDeleted ?? this.isDeleted,
+      arTitle: arTitle ?? this.arTitle,
+      arMessage: arMessage ?? this.arMessage,
     );
   }
 
@@ -100,6 +109,8 @@ NotificationEntities notificationMessageToEntity(NotificationMessage msg) {
     createdAt: DateTime.now().toIso8601String(),
     isActive: true,
     isDeleted: false,
+    arMessage: '',
+    arTitle: '',
   );
 }
 

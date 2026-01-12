@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
+import '../../../../../mating/profile/presentation/screens/view_pet_profile_screen.dart';
+import '../../../../../profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import '../../../domain/entities/post_entity.dart';
 import '../../controller/post_cubit.dart';
 import 'post_menu.dart';
@@ -25,9 +27,26 @@ class PostHeader extends StatelessWidget {
       padding: const EdgeInsets.all(12.0),
       child: Row(
         children: [
-          _ClinicAvatar(
-            imagePath: postItem.clinic?.image ?? postItem.petOwner?.imageName,
-            isDark: isDark,
+          InkWell(
+            onTap: () {
+              if (postItem.petOwner == null) return;
+              navigateToScreen(
+                context,
+                ViewPetProfileScreen(
+                  petId: postItem.petOwner!.petId!,
+                  isDarkMode: MainCubit.get(context).isDark,
+                  isFriend: false,
+                  activePetId:
+                      SwitchProfileCubit.get(
+                        context,
+                      ).activeProfile!.pet!.petId!,
+                ),
+              );
+            },
+            child: _ClinicAvatar(
+              imagePath: postItem.clinic?.image ?? postItem.petOwner?.imageName,
+              isDark: isDark,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -46,7 +65,7 @@ class PostHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  formatFacebookTimePost(postItem.createdAt ??''),
+                  formatFacebookTimePost(postItem.createdAt ?? ''),
                   style: TextStyle(
                     color: isDark ? Colors.white54 : Colors.grey[500],
                     fontSize: 11,
@@ -104,7 +123,7 @@ class _ClinicAvatar extends StatelessWidget {
         backgroundColor: isDark ? Colors.grey[850] : Colors.grey[200],
         backgroundImage:
             imagePath != null && imagePath!.isNotEmpty
-                ? FastCachedImageProvider(imageUrl + imagePath!)
+                ? SafeFastCachedImageProviderExtension.safe(imageUrl + imagePath!)
                 : null,
         child:
             imagePath == null || imagePath!.isEmpty

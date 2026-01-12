@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/features/mating/chat/domain/entities/chat_entity.dart';
 import 'package:squeak/features/mating/chat/presentation/screens/chat_screen.dart';
@@ -62,11 +63,12 @@ class RequestCardCompact extends StatelessWidget {
                   height: 50,
                   child:
                       pet.imageName != null && pet.imageName!.isNotEmpty
-                          ? Image.network(
-                            imageUrl + pet.imageName!,
+                          ? SafeFastCachedImageExtension.safe(
+  url: imageUrl + pet.imageName!,
                             fit: BoxFit.cover,
                             errorBuilder:
-                                (context, error, stackTrace) => Container(
+                                (context, error, stackTrace,
+) => Container(
                                   color: Colors.grey.shade200,
                                   child: Icon(
                                     Icons.pets,

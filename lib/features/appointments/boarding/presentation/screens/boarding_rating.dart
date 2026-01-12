@@ -1,3 +1,4 @@
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,10 +16,7 @@ import '../cubit/boarding_state.dart';
 class RateBoarding extends StatefulWidget {
   final BoardingEntryEntity boardingEntryEntity;
 
-  const RateBoarding({
-    super.key,
-    required this.boardingEntryEntity,
-  });
+  const RateBoarding({super.key, required this.boardingEntryEntity});
 
   @override
   State<RateBoarding> createState() => _RateBoardingState();
@@ -104,8 +102,8 @@ class _RateBoardingState extends State<RateBoarding> {
       height: MediaQuery.of(context).size.height * 0.35,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        image: const DecorationImage(
-          image: NetworkImage(
+        image: DecorationImage(
+          image: SafeFastCachedImageProviderExtension.safe(
             'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/dog-breeding-buying-puppy-pet-store-domestic-animal-couple-adopting-puppy-breed-club-top-breed-standard-buy-your-purebred-pet-here-concept-bright-vibrant-violet-isolated-illustration.png?alt=media&token=249eb91a-008a-4c52-b87b-433b1c4eb256',
           ),
           fit: BoxFit.cover,

@@ -1,5 +1,6 @@
 import 'package:comment_tree/widgets/comment_tree_widget.dart';
 import 'package:comment_tree/widgets/tree_theme_data.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/core/utils/theme/color_mangment/color_manager.dart';
 
@@ -86,8 +87,7 @@ class SuccessComment extends StatelessWidget {
       preferredSize: Size.fromRadius(25),
       child: CircleAvatar(
         radius: 25,
-        backgroundImage: NetworkImage(
-          data.pet == null
+        backgroundImage: SafeFastCachedImageProviderExtension.safe(data.pet == null
               ? (data.user!.imageName != null &&
                       data.user!.imageName!.isNotEmpty)
                   ? "$imageUrl${data.user!.imageName}"

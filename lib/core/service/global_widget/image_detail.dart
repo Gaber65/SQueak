@@ -1,6 +1,6 @@
 // ignore_for_file: deprecated_member_use
-
 import 'dart:ui';
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../global_function/format_utils.dart';
@@ -48,8 +48,8 @@ class ImageDetailSimple extends StatelessWidget {
                     maxScale: 4.0,
                     child: Hero(
                       tag: path,
-                      child: Image.network(
-                        path,
+                      child: SafeFastCachedImageExtension.safe(
+                        url: path,
                         width: double.infinity,
                         fit: BoxFit.contain,
                       ),
@@ -171,5 +171,53 @@ class ImageDetailSimple extends StatelessWidget {
         },
       ),
     );
+  }
+}
+
+extension SafeFastCachedImageExtension on FastCachedImage {
+  static Widget safe({
+    required String url,
+    double? width,
+    double? height,
+    ImageErrorWidgetBuilder? errorBuilder,
+    Widget Function(BuildContext, FastCachedProgressData)? loadingBuilder,
+    BoxFit fit = BoxFit.cover,
+  }) {
+    return FastCachedImage(
+      url: url,
+      width: width,
+      height: height,
+      fit: fit,
+      loadingBuilder: loadingBuilder ??(context, loadingProgress) {
+        return Center(
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              value:
+                  loadingProgress.totalBytes != null
+                      ? loadingProgress.downloadedBytes /
+                          loadingProgress.totalBytes!
+                      : null,
+            ),
+          ),
+        );
+      },
+
+      errorBuilder:errorBuilder??
+          (context, error, stackTrace) => Container(
+            width: width,
+            height: height,
+            color: Colors.grey[300],
+            child: const Icon(Icons.pets, size: 40, color: Colors.grey),
+          ),
+    );
+  }
+}
+
+extension SafeFastCachedImageProviderExtension on FastCachedImageProvider {
+  static ImageProvider safe(String url) {
+    return FastCachedImageProvider(url);
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:squeak/core/utils/export_path/export_files.dart';
 
 import '../../../domain/entities/post_entity.dart';
@@ -138,7 +138,7 @@ class _MediaItemState extends State<_MediaItem> {
       onTap: widget.onImageTap,
       child: Hero(
         tag: 'image_${widget.mediaItem.id}',
-        child: FastCachedImage(
+        child: SafeFastCachedImageExtension.safe(
           url: imageUrl + widget.mediaItem.path,
           fit: BoxFit.cover,
           width: double.infinity,
@@ -165,7 +165,7 @@ class _MediaItemState extends State<_MediaItem> {
       children: [
         // 1️⃣ Thumbnail من الـ backend
         if (widget.mediaItem.thumbnail?.isNotEmpty ?? false)
-          FastCachedImage(
+          SafeFastCachedImageExtension.safe(
             url: imageUrl + widget.mediaItem.thumbnail!,
             fit: BoxFit.cover,
             width: double.infinity,

@@ -1,6 +1,6 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member, deprecated_member_use
 
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -130,7 +130,7 @@ class _PetMergeContent extends StatelessWidget {
       child: Column(
         children: [
           Center(
-            child: FastCachedImage(
+            child: SafeFastCachedImageExtension.safe(
               url:
                   'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/no-data-concept-illustration.png?alt=media&token=a652ca7d-a387-4a8d-803f-3ef40999366a',
             ),
@@ -190,8 +190,7 @@ class _PetMergeContent extends StatelessWidget {
       width: MediaQuery.of(context).size.width * 0.14,
       child: CircleAvatar(
         radius: 30,
-        backgroundImage: NetworkImage(
-          model.imageName.isNotEmpty
+        backgroundImage: SafeFastCachedImageProviderExtension.safe(model.imageName.isNotEmpty
               ? ConfigModel.serverFirstHalfOfImageUrl +
                   model.imageName.toString()
               : 'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/painting-cat-with-gold-medallion-its-collar.jpg?alt=media&token=2fbc1736-9ee5-4feb-8ba8-c670fd1ecc57',
@@ -379,8 +378,7 @@ class _PetMergeContent extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             radius: 15,
-                            backgroundImage: NetworkImage(
-                              (pet.imageName?.isNotEmpty ?? false)
+                            backgroundImage: SafeFastCachedImageProviderExtension.safe((pet.imageName?.isNotEmpty ?? false)
                                   ? imageUrl + pet.imageName!
                                   : 'https://firebasestorage.googleapis.com/v0/b/squeak-c005f.appspot.com/o/painting-cat-with-gold-medallion-its-collar.jpg?alt=media&token=2fbc1736-9ee5-4feb-8ba8-c670fd1ecc57',
                             ),

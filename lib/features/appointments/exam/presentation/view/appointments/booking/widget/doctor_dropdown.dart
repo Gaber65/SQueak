@@ -1,3 +1,4 @@
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 
 import 'package:squeak/features/appointments/exam/domain/entities/doctor_entity.dart';
@@ -47,7 +48,7 @@ class _DoctorDropdownState extends State<DoctorDropdown> {
                       child: Row(
                         children: [
                           CircleAvatar(
-                            backgroundImage: NetworkImage(doctor.image),
+                            backgroundImage: SafeFastCachedImageProviderExtension.safe(doctor.image),
                             radius: 20,
                           ),
                           const SizedBox(width: 12),
@@ -83,10 +84,8 @@ class _DoctorDropdownState extends State<DoctorDropdown> {
                   Spacer(),
                   CircleAvatar(
                     radius: 20,
-                    backgroundImage: NetworkImage(
-                      selectedDoctorImage ??
-                          'https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&uid=R78903714&ga=GA1.1.798062041.1678310296&semt=ais',
-                    ),
+                    backgroundImage: SafeFastCachedImageProviderExtension.safe(selectedDoctorImage ??
+                          'https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&uid=R78903714&ga=GA1.1.798062041.1678310296&semt=ais',),
                   ),
                 ],
               ),

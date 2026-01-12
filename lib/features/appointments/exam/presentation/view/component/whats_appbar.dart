@@ -2,7 +2,7 @@
 
 import 'dart:math';
 
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
@@ -118,7 +118,7 @@ class WhatsappAppbar extends SliverPersistentHeaderDelegate {
       child: CircleAvatar(
         backgroundColor:
             MainCubit.get(context).isDark ? Colors.black38 : Colors.black12,
-        backgroundImage: FastCachedImageProvider(imageUrl + image),
+        backgroundImage: SafeFastCachedImageProviderExtension.safe(imageUrl + image),
       ),
     );
   }

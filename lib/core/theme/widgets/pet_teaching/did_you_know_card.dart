@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import '../../app_theme.dart';
 
@@ -221,12 +222,13 @@ class _DidYouKnowCardState extends State<DidYouKnowCard>
                     const SizedBox(height: AppTheme.spacing16),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(AppTheme.radius8),
-                      child: Image.network(
-                        widget.imageUrl!,
+                      child: SafeFastCachedImageExtension.safe(
+  url: widget.imageUrl!,
                         height: 150,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
+                        errorBuilder: (context, error, stackTrace,
+) {
                           return Container(
                             height: 150,
                             color: theme.colorScheme.surfaceVariant,

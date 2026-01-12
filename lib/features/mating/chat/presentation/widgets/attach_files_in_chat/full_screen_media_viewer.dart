@@ -1,5 +1,5 @@
 import 'package:chewie/chewie.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:squeak/generated/l10n.dart';
 import 'package:video_player/video_player.dart';
@@ -386,7 +386,7 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
           return InteractiveViewer(
             minScale: 0.5,
             maxScale: 4.0,
-            child: FastCachedImage(
+            child: SafeFastCachedImageExtension.safe(
               url: _mediaUrls[index],
               fit: BoxFit.contain,
               loadingBuilder:

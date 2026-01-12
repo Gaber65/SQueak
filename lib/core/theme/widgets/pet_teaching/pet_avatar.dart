@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import '../../app_theme.dart';
 
 /// Pet avatar component with breed-specific placeholders
@@ -88,7 +88,7 @@ class PetAvatar extends StatelessWidget {
       child: ClipOval(
         child:
             imageUrl != null && imageUrl!.isNotEmpty
-                ? FastCachedImage(
+                ? SafeFastCachedImageExtension.safe(
                   url: imageUrl!,
                   fit: BoxFit.cover,
                   loadingBuilder:

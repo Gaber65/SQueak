@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:squeak/core/service/service_locator/locatore_export_path.dart';
 import 'package:squeak/features/friendship/domain/entities/friend_request_stats.dart';
@@ -53,8 +54,7 @@ class RequestCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 24,
-                  backgroundImage: NetworkImage(
-                    imageUrl + (pet.friendPetImage),
+                  backgroundImage: SafeFastCachedImageProviderExtension.safe(imageUrl + (pet.friendPetImage),
                   ),
                   child:
                       (pet.friendPetImage.isEmpty)

@@ -1,6 +1,6 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -97,7 +97,7 @@ class BoardingCard extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: FastCachedImage(
+              child: SafeFastCachedImageExtension.safe(
                 url: imageUrlWithVetICare + (entry.clinicLogo ?? ''),
                 fit: BoxFit.cover,
                 errorBuilder:

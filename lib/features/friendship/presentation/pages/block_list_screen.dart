@@ -1,3 +1,4 @@
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -397,8 +398,8 @@ class _BlockedPetsScreenContentState extends State<_BlockedPetsScreenContent> {
                                           child: Stack(
                                             fit: StackFit.expand,
                                             children: [
-                                              Image.network(
-                                                _getImageUrl(
+                                              SafeFastCachedImageExtension.safe(
+                                                url: _getImageUrl(
                                                   friendRequest.friendPetImage,
                                                 ),
                                                 fit: BoxFit.cover,
@@ -421,12 +422,8 @@ class _BlockedPetsScreenContentState extends State<_BlockedPetsScreenContent> {
                                                     ),
                                                 loadingBuilder: (
                                                   context,
-                                                  child,
                                                   loadingProgress,
                                                 ) {
-                                                  if (loadingProgress == null) {
-                                                    return child;
-                                                  }
                                                   return Container(
                                                     color: const Color(
                                                       0xFFF4F6FB,

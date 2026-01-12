@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -326,11 +327,12 @@ class MatingChatListTile extends StatelessWidget {
           ),
         ),
         child: ClipOval(
-          child: Image.network(
-            fullUrl,
+          child: SafeFastCachedImageExtension.safe(
+  url: fullUrl,
             fit: BoxFit.cover,
             errorBuilder:
-                (context, error, stackTrace) => Container(
+                (context, error, stackTrace,
+) => Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
