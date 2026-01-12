@@ -345,6 +345,12 @@ class _LayoutScreenState extends State<LayoutScreen>
                               switchProfileCubit.activeProfile?.pet;
 
                           if (activePet != null) {
+                            // Load friends list
+                            if (activePet.petId != null) {
+                              friendsCubit.getFriends(
+                                petId: activePet.petId!,
+                              );
+                            }
                             // Call friendship counts endpoint
                             if (activePet.petId != null) {
                               friendsCubit.loadFriendshipCounts(

@@ -247,6 +247,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "clinicDoctor": MessageLookupByLibrary.simpleMessage("أطباء العيادة"),
         "clinicFollowedBefore": MessageLookupByLibrary.simpleMessage(
             "لقد تابعت هذه العيادة من قبل"),
+        "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
         "closeIn": MessageLookupByLibrary.simpleMessage("يغلق في"),
         "commentMaxLength": MessageLookupByLibrary.simpleMessage(
             "لا يمكن أن يتجاوز التعليق 500 حرف"),

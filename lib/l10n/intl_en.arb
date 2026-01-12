@@ -659,6 +659,7 @@
   "fileLimitReached":"File Limit Reached",
   "addCaptionOptional":"Add a caption (optional)",
   "seeLess":"See Less",
-  "seeMore":"See More"
+  "seeMore":"See More",
+  "close":"Close"
 
 }

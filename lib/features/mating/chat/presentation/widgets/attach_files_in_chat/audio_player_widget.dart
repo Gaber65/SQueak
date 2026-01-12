@@ -33,6 +33,15 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   void initState() {
     super.initState();
     _initializePlayer();
+    _loadAudioDuration();
+  }
+
+  Future<void> _loadAudioDuration() async {
+    try {
+      await _audioPlayer.setSource(UrlSource(widget.audioUrl));
+    } catch (e) {
+      debugPrint('❌ Error loading audio duration: $e');
+    }
   }
 
   void _initializePlayer() {
@@ -220,7 +229,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                     const SizedBox(width: 8),
                     Text(
                       _duration.inMilliseconds > 0
-                          ? _formatDuration(_position)
+                          ? '${_formatDuration(_position)} / ${_formatDuration(_duration)}'
                           : '00:00',
                       style: TextStyle(
                         color:

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:squeak/core/service/global_function/format_utils.dart';
 import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:intl/intl.dart';
 import 'package:squeak/core/network/end_points.dart';
 import 'package:squeak/generated/l10n.dart';
-
 import '../../../react/domain/repo/base_react_repo.dart';
 import '../../../react/presentation/animated_reaction/reaction_data.dart';
 import '../../domain/entities/story_reaction_entity.dart';
@@ -65,7 +65,7 @@ class StoryReactionsView extends StatelessWidget {
                     const Icon(Icons.visibility, color: Colors.white, size: 24),
                     const SizedBox(width: 10),
                     Text(
-                      S.of(context).viewsAndReactions, 
+                      S.of(context).viewsAndReactions,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -158,7 +158,7 @@ class StoryReactionsView extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  S.of(context).noViewsYet, 
+                  S.of(context).noViewsYet,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -168,7 +168,7 @@ class StoryReactionsView extends StatelessWidget {
               ],
             ),
           ),
-          _buildCloseButton(),
+          _buildCloseButton(context),
         ],
       ),
     );
@@ -176,8 +176,8 @@ class StoryReactionsView extends StatelessWidget {
 
   Widget _buildReactionItem(StoryReactionEntity reaction, ReactType type) {
     final isCurrentUser = reaction.petId == currentPetId;
-    
-    final isViewOnly = type == ReactType.none; 
+
+    final isViewOnly = type == ReactType.none;
 
     return Material(
       color: Colors.transparent,
@@ -191,9 +191,10 @@ class StoryReactionsView extends StatelessWidget {
           decoration: BoxDecoration(
             color: isCurrentUser ? Colors.blue[50] : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            border: isCurrentUser
-                ? Border.all(color: Colors.blue[100]!, width: 1)
-                : null,
+            border:
+                isCurrentUser
+                    ? Border.all(color: Colors.blue[100]!, width: 1)
+                    : null,
           ),
           child: Row(
             children: [
@@ -202,7 +203,8 @@ class StoryReactionsView extends StatelessWidget {
                 CircleAvatar(
                   radius: 22,
                   backgroundColor: Colors.grey[200],
-                  backgroundImage: SafeFastCachedImageProviderExtension.safe(imageUrl + (reaction.petImage ?? reaction.userImage ?? ''),
+                  backgroundImage: SafeFastCachedImageProviderExtension.safe(
+                    imageUrl + (reaction.petImage ?? reaction.userImage ?? ''),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -221,9 +223,10 @@ class StoryReactionsView extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
-                              color: isCurrentUser
-                                  ? Colors.blue[800]
-                                  : Colors.grey[800],
+                              color:
+                                  isCurrentUser
+                                      ? Colors.blue[800]
+                                      : Colors.grey[800],
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -277,15 +280,16 @@ class StoryReactionsView extends StatelessWidget {
                               ),
                             ),
                           ),
-                        
+
                         // Time Text
                         Text(
                           '• ${_formatTime(reaction.reactedAt)}',
                           style: TextStyle(
                             fontSize: 13,
-                            color: isCurrentUser
-                                ? Colors.blue[600]
-                                : Colors.grey[600],
+                            color:
+                                isCurrentUser
+                                    ? Colors.blue[600]
+                                    : Colors.grey[600],
                           ),
                         ),
                       ],
@@ -300,7 +304,7 @@ class StoryReactionsView extends StatelessWidget {
     );
   }
 
-  Widget _buildCloseButton() {
+  Widget _buildCloseButton(BuildContext context) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -316,9 +320,9 @@ class StoryReactionsView extends StatelessWidget {
           ),
           child: Container(
             padding: const EdgeInsets.all(16),
-            child: const Center(
+            child: Center(
               child: Text(
-                'Close',
+                S.of(context).close,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -337,13 +341,19 @@ class StoryReactionsView extends StatelessWidget {
     final difference = now.difference(time);
 
     if (difference.inMinutes < 1) {
-      return 'Just now';
+      return isArabic() ? 'الآن' : 'Just now';
     } else if (difference.inHours < 1) {
-      return '${difference.inMinutes}m ago';
+      return isArabic()
+          ? 'منذ  ${difference.inMinutes} دقيقه '
+          : '${difference.inMinutes}m ago';
     } else if (difference.inDays < 1) {
-      return '${difference.inHours}h ago';
+      return isArabic()
+          ? ' منذ ${difference.inHours}  ساعة'
+          : '${difference.inHours}h ago';
     } else if (difference.inDays < 7) {
-      return '${difference.inDays}d ago';
+      return isArabic()
+          ? 'منذ ${difference.inDays}  يوم'
+          : '${difference.inDays}d ago';
     } else {
       return DateFormat('MMM d').format(time);
     }
