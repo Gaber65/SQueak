@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:squeak/generated/l10n.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
   final String audioUrl;
@@ -245,7 +246,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'Audio message',
+                      S.of(context).audioFile,
                       style: TextStyle(
                         color:
                             widget.isMe

@@ -237,6 +237,7 @@ class ImageGridLayout extends StatelessWidget {
                   caption: imageAttachments[index].description,
                   captions: captionsList,
                   mediaTypes: typesList,
+                  initialIndex: index,
                 ),
               ),
             );
@@ -410,6 +411,7 @@ class ImageGridLayout extends StatelessWidget {
                   caption: imageAttachments[index].description,
                   captions: captionsList,
                   mediaTypes: typesList,
+                  initialIndex: index,
                 ),
               ),
             );

@@ -15,6 +15,7 @@ class FullScreenMediaViewer extends StatefulWidget {
   final String? caption;
   final List<String?>? captions;
   final List<MediaType>? mediaTypes; // Support mixed media types
+  final int initialIndex; // Index of the selected media
 
   const FullScreenMediaViewer({
     super.key,
@@ -24,6 +25,7 @@ class FullScreenMediaViewer extends StatefulWidget {
     this.caption,
     this.captions,
     this.mediaTypes,
+    this.initialIndex = 0,
   });
 
   @override
@@ -53,13 +55,16 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
       _mediaUrls = widget.mediaUrls!;
       _captions = widget.captions ?? List.filled(_mediaUrls.length, null);
       _mediaTypes = widget.mediaTypes ?? List.filled(_mediaUrls.length, widget.mediaType);
+      // Set current index from initialIndex parameter
+      _currentIndex = widget.initialIndex.clamp(0, _mediaUrls.length - 1);
     } else {
       _mediaUrls = [widget.mediaUrl];
       _captions = [widget.caption];
       _mediaTypes = [widget.mediaType];
+      _currentIndex = 0;
     }
     
-    _pageController = PageController();
+    _pageController = PageController(initialPage: _currentIndex);
     
     _initializeCurrentMedia();
   }
@@ -76,6 +81,9 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
 
   Future<void> _initializeVideo(String videoUrl) async {
     try {
+      // Only initialize if still mounted and this is the current video
+      if (!mounted) return;
+      
       _videoController?.dispose();
       _chewieController?.dispose();
       
@@ -84,6 +92,9 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
       );
 
       await _videoController!.initialize();
+
+      // Check again after async operation
+      if (!mounted) return;
 
       _chewieController = ChewieController(
         videoPlayerController: _videoController!,
@@ -119,10 +130,14 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
         ),
       );
 
+      if (!mounted) return;
+
       setState(() {
         _isInitializing = false;
       });
     } catch (e) {
+      if (!mounted) return;
+      
       setState(() {
         _errorMessage = e.toString();
         _isInitializing = false;
@@ -347,10 +362,20 @@ class _FullScreenMediaViewerState extends State<FullScreenMediaViewer> {
       onPageChanged: (index) {
         setState(() {
           _currentIndex = index;
+          _errorMessage = null; // Clear previous errors
         });
+        
+        // Dispose video controller when navigating away from a video
+        if (_mediaTypes[_currentIndex] == MediaType.image) {
+          _videoController?.dispose();
+          _chewieController?.dispose();
+          _videoController = null;
+          _chewieController = null;
+        }
+        
         // Initialize video if the new page is a video
         if (_mediaTypes[index] == MediaType.video) {
-          _initializeVideo(_mediaUrls[index]);
+          _initializeCurrentMedia();
         }
       },
       itemCount: _mediaUrls.length,
