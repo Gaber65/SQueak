@@ -448,7 +448,7 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Image not available',
+                        S.of(context).imageloadingFailed,
                         style: TextStyle(color: Colors.grey[600], fontSize: 12),
                       ),
                     ],
@@ -491,15 +491,11 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
-        width: 220,
-        height: 160,
+        width: 240,
+        height: 180,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.black87, Colors.black54],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(12),
+          color: Colors.black87,
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
@@ -510,45 +506,47 @@ class _ChatMessageBubbleState extends State<ChatMessageBubble>
         ),
         child: Stack(
           children: [
-            // Play button with enhanced animation
-            Center(
+            // Background
+            Positioned.fill(
               child: Container(
-                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.play_arrow_rounded,
-                  color: Colors.white,
-                  size: 40,
+                  color: Colors.black87,
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
             ),
-            // Video label
+            // Play button centered
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.25),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.play_arrow_rounded,
+                  color: Colors.white,
+                  size: 36,
+                ),
+              ),
+            ),
+            // Video label at bottom right
             Positioned(
               bottom: 8,
-              left: 8,
+              right: 8,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.black.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(6),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.videocam_rounded, color: Colors.white, size: 14),
-                    const SizedBox(width: 4),
-                    Text(
-                      S.of(context).video,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  S.of(context).video,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),

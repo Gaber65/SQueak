@@ -8,10 +8,7 @@ import '../../../domain/entities/message_entity.dart';
 class ImageGridLayout extends StatelessWidget {
   final List<Attachment> imageAttachments;
 
-  const ImageGridLayout({
-    super.key,
-    required this.imageAttachments,
-  });
+  const ImageGridLayout({super.key, required this.imageAttachments});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +26,14 @@ class ImageGridLayout extends StatelessWidget {
     final count = imageAttachments.length;
 
     if (count == 1) {
-      return _buildSingleImage(context, imageAttachments[0], 0);
+      return _buildMediaItem(
+        context,
+        imageAttachments[0],
+        index: 0,
+        width: 240,
+        height: 180,
+        borderRadius: 16,
+      );
     } else if (count == 2) {
       return _buildTwoImages(context);
     } else if (count == 3) {
@@ -39,38 +43,27 @@ class ImageGridLayout extends StatelessWidget {
     }
   }
 
-  Widget _buildSingleImage(BuildContext context, Attachment attachment, int index) {
-    return _buildImageWithTap(
-      context,
-      attachment.url,
-      width: 240,
-      height: 180,
-      borderRadius: 16,
-      index: index,
-    );
-  }
-
   Widget _buildTwoImages(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildImageWithTap(
+        _buildMediaItem(
           context,
-          imageAttachments[0].url,
-          width: 115,
-          height: 170,
-          borderRadius: 16,
-          margin: const EdgeInsets.only(right: 6),
+          imageAttachments[0],
           index: 0,
-        ),
-        _buildImageWithTap(
-          context,
-          imageAttachments[1].url,
           width: 115,
           height: 170,
           borderRadius: 16,
-          margin: const EdgeInsets.only(left: 6),
+          margin: const EdgeInsets.only(right: 4),
+        ),
+        _buildMediaItem(
+          context,
+          imageAttachments[1],
           index: 1,
+          width: 115,
+          height: 170,
+          borderRadius: 16,
+          margin: const EdgeInsets.only(left: 4),
         ),
       ],
     );
@@ -80,38 +73,37 @@ class ImageGridLayout extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Top row: 2 images
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildImageWithTap(
+            _buildMediaItem(
               context,
-              imageAttachments[0].url,
+              imageAttachments[0],
+              index: 0,
               width: 115,
               height: 85,
               borderRadius: 14,
               margin: const EdgeInsets.only(right: 4, bottom: 4),
-              index: 0,
             ),
-            _buildImageWithTap(
+            _buildMediaItem(
               context,
-              imageAttachments[1].url,
+              imageAttachments[1],
+              index: 1,
               width: 115,
               height: 85,
               borderRadius: 14,
               margin: const EdgeInsets.only(left: 4, bottom: 4),
-              index: 1,
             ),
           ],
         ),
-        _buildImageWithTap(
+        _buildMediaItem(
           context,
-          imageAttachments[2].url,
+          imageAttachments[2],
+          index: 2,
           width: 234,
           height: 85,
           borderRadius: 14,
           margin: const EdgeInsets.only(top: 4),
-          index: 2,
         ),
       ],
     );
@@ -123,82 +115,71 @@ class ImageGridLayout extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Top row
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildImageWithTap(
+            _buildMediaItem(
               context,
-              imageAttachments[0].url,
+              imageAttachments[0],
+              index: 0,
               width: 115,
               height: 85,
               borderRadius: 14,
               margin: const EdgeInsets.only(right: 4, bottom: 4),
-              index: 0,
             ),
-            _buildImageWithTap(
+            _buildMediaItem(
               context,
-              imageAttachments[1].url,
+              imageAttachments[1],
+              index: 1,
               width: 115,
               height: 85,
               borderRadius: 14,
               margin: const EdgeInsets.only(left: 4, bottom: 4),
-              index: 1,
             ),
           ],
         ),
-        // Bottom row
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildImageWithTap(
+            _buildMediaItem(
               context,
-              imageAttachments[2].url,
+              imageAttachments[2],
+              index: 2,
               width: 115,
               height: 85,
               borderRadius: 14,
               margin: const EdgeInsets.only(right: 4, top: 4),
-              index: 2,
             ),
-            if (isMoreThan4)
-              _buildImageWithCounterTap(
-                context,
-                imageAttachments[3].url,
-                width: 115,
-                height: 85,
-                borderRadius: 14,
-                margin: const EdgeInsets.only(left: 4, top: 4),
-                index: 3,
-                remainingCount: imageAttachments.length - 4,
-              )
-            else
-              _buildImageWithTap(
-                context,
-                imageAttachments[3].url,
-                width: 115,
-                height: 85,
-                borderRadius: 14,
-                margin: const EdgeInsets.only(left: 4, top: 4),
-                index: 3,
-              ),
+            
+            _buildMediaItem(
+              context,
+              imageAttachments[3],
+              index: 3,
+              width: 115,
+              height: 85,
+              borderRadius: 14,
+              margin: const EdgeInsets.only(left: 4, top: 4),
+              remainingCount: isMoreThan4 ? imageAttachments.length - 4 : null,
+            ),
           ],
         ),
       ],
     );
   }
 
-  /// Build a single image or video with tap handler and enhanced UI
-  Widget _buildImageWithTap(
+  /// Unified method to build any media item (image or video)
+  Widget _buildMediaItem(
     BuildContext context,
-    String attachmentUrl, {
+    Attachment attachment, {
+    required int index,
     required double width,
     required double height,
     required double borderRadius,
     EdgeInsets margin = EdgeInsets.zero,
-    int index = 0,
+    int? remainingCount,
   }) {
-    final heroTag = 'image_${attachmentUrl}_$index';
-    final isVideo = imageAttachments[index].attachmentType == 1;
+    final isVideo = attachment.attachmentType == 1;
+    final heroTag = 'media_${attachment.url}_${DateTime.now().millisecondsSinceEpoch}_$index';
 
     return Container(
       margin: margin,
@@ -217,103 +198,36 @@ class ImageGridLayout extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
         child: InkWell(
           borderRadius: BorderRadius.circular(borderRadius),
-          onTap: () {
-            // Prepare list of all media URLs (images and videos combined)
-            final mediaUrlsList = imageAttachments
-                .map((att) => imageUrl + att.url)
-                .toList();
-            final captionsList = imageAttachments
-                .map((att) => att.description)
-                .toList();
-            final typesList = imageAttachments
-                .map((att) => att.attachmentType == 0 ? MediaType.image : MediaType.video)
-                .toList();
-            
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => FullScreenMediaViewer(
-                  mediaUrl: imageUrl + attachmentUrl,
-                  mediaUrls: mediaUrlsList,
-                  mediaType: isVideo ? MediaType.video : MediaType.image,
-                  caption: imageAttachments[index].description,
-                  captions: captionsList,
-                  mediaTypes: typesList,
-                  initialIndex: index,
-                ),
-              ),
-            );
-          },
+          onTap: () => _openMediaViewer(context, index, isVideo),
           child: Hero(
             tag: heroTag,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                if (!isVideo)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                    child: SafeFastCachedImageExtension.safe(
-                      url: imageUrl + attachmentUrl,
-                      width: width,
-                      height: height,
-                      fit: BoxFit.cover,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(borderRadius),
+              child: SizedBox(
+                width: width,
+                height: height,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // Base media content
+                    _buildBaseMediaContent(
+                      attachment.url,
+                      isVideo,
+                      width,
+                      height,
                     ),
-                  )
-                else
-                  // Video placeholder
-                  Container(
-                    width: width,
-                    height: height,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.grey[800]!, Colors.grey[900]!],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                    
+                    // Overlays
+                    if (isVideo || remainingCount != null)
+                      _buildMediaOverlay(
+                        isVideo,
+                        remainingCount,
+                        width,
+                        height,
                       ),
-                      borderRadius: BorderRadius.circular(borderRadius),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.videocam,
-                          color: Colors.white.withOpacity(0.7),
-                          size: 40,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Video',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.6),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                // Play button overlay for videos
-                if (isVideo)
-                  Container(
-                    width: width,
-                    height: height,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(borderRadius),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withOpacity(0.2),
-                          Colors.black.withOpacity(0.3),
-                        ],
-                      ),
-                    ),
-                    child: const Icon(
-                      Icons.play_circle_filled,
-                      color: Colors.white,
-                      size: 48,
-                    ),
-                  ),
-              ],
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -321,163 +235,125 @@ class ImageGridLayout extends StatelessWidget {
     );
   }
 
-  /// Build media with a counter overlay and enhanced UI
-  Widget _buildImageWithCounterTap(
-    BuildContext context,
-    String attachmentUrl, {
-    required double width,
-    required double height,
-    required double borderRadius,
-    EdgeInsets margin = EdgeInsets.zero,
-    int index = 0,
-    required int remainingCount,
-  }) {
-    final heroTag = 'image_${attachmentUrl}_$index';
-    final isVideo = imageAttachments[index].attachmentType == 1;
+  /// Build the base content (image or video background)
+  Widget _buildBaseMediaContent(
+    String url,
+    bool isVideo,
+    double width,
+    double height,
+  ) {
+    if (isVideo) {
+      return Container(
+        width: width,
+        height: height,
+        color: Colors.black87,
+      );
+    }
 
+    return SafeFastCachedImageExtension.safe(
+      url: imageUrl + url,
+      width: width,
+      height: height,
+      fit: BoxFit.cover,
+    );
+  }
+
+  /// Build overlay for video play button or remaining count
+  Widget _buildMediaOverlay(
+    bool isVideo,
+    int? remainingCount,
+    double width,
+    double height,
+  ) {
     return Container(
-      margin: margin,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.black.withOpacity(remainingCount != null ? 0.3 : 0.25),
+            Colors.black.withOpacity(remainingCount != null ? 0.6 : 0.35),
+          ],
+        ),
       ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(borderRadius),
-          onTap: () {
-            // Prepare list of all media URLs (images and videos combined)
-            final mediaUrlsList = imageAttachments
-                .map((att) => imageUrl + att.url)
-                .toList();
-            final captionsList = imageAttachments
-                .map((att) => att.description)
-                .toList();
-            final typesList = imageAttachments
-                .map((att) => att.attachmentType == 0 ? MediaType.image : MediaType.video)
-                .toList();
-            
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => FullScreenMediaViewer(
-                  mediaUrl: imageUrl + attachmentUrl,
-                  mediaUrls: mediaUrlsList,
-                  mediaType: isVideo ? MediaType.video : MediaType.image,
-                  caption: imageAttachments[index].description,
-                  captions: captionsList,
-                  mediaTypes: typesList,
-                  initialIndex: index,
-                ),
-              ),
-            );
-          },
-          child: Hero(
-            tag: heroTag,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                if (!isVideo)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                    child: SafeFastCachedImageExtension.safe(
-                      url: imageUrl + attachmentUrl,
-                      width: width,
-                      height: height,
-                      fit: BoxFit.cover,
+      child: Center(
+        child: remainingCount != null && !isVideo
+            ? _buildCounterBadge(remainingCount)
+            : _buildPlayButton(),
+      ),
+    );
+  }
 
-                    ),
-                  )
-                else
-                  // Video placeholder
-                  Container(
-                    width: width,
-                    height: height,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.grey[800]!, Colors.grey[900]!],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(borderRadius),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.videocam,
-                          color: Colors.white.withOpacity(0.7),
-                          size: 40,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Video',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.6),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                // Gradient overlay for better text visibility
-                Container(
-                  width: width,
-                  height: height,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withOpacity(0.3),
-                        Colors.black.withOpacity(0.6),
-                      ],
-                    ),
-                  ),
-                ),
-                // Counter badge or play button
-                if (!isVideo)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
-                        width: 1,
-                      ),
-                    ),
-                    child: Text(
-                      '+$remainingCount',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  )
-                else
-                  const Icon(
-                    Icons.play_circle_filled,
-                    color: Colors.white,
-                    size: 48,
-                  ),
-              ],
-            ),
-          ),
+  /// Build play button for videos
+  Widget _buildPlayButton() {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.25),
+        shape: BoxShape.circle,
+      ),
+      child: const Icon(
+        Icons.play_arrow_rounded,
+        color: Colors.white,
+        size: 28,
+      ),
+    );
+  }
+
+  /// Build counter badge for remaining images
+  Widget _buildCounterBadge(int count) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 8,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.7),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Text(
+        '+$count',
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
         ),
       ),
     );
   }
 
+  /// Open full screen media viewer
+  void _openMediaViewer(BuildContext context, int index, bool isVideo) {
+    final mediaUrlsList =
+        imageAttachments.map((att) => imageUrl + att.url).toList();
+    final captionsList =
+        imageAttachments.map((att) => att.description).toList();
+    final typesList = imageAttachments
+        .map(
+          (att) =>
+              att.attachmentType == 0 ? MediaType.image : MediaType.video,
+        )
+        .toList();
 
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => FullScreenMediaViewer(
+          mediaUrl: imageUrl + imageAttachments[index].url,
+          mediaUrls: mediaUrlsList,
+          mediaType: isVideo ? MediaType.video : MediaType.image,
+          caption: imageAttachments[index].description,
+          captions: captionsList,
+          mediaTypes: typesList,
+          initialIndex: index,
+        ),
+      ),
+    );
+  }
 }
