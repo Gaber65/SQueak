@@ -49,11 +49,8 @@ class HomeScreen extends StatelessWidget {
 
                 imagePath = imageUrl + state.profile.pet!.imageName!;
                 return state.profile.pet;
-              } else if (state is ProfileLoaded &&
-                  state.profile.type == ProfileType.user) {
+              } else if (state is ProfileLoaded && state.profile.type == ProfileType.user) {
                 imagePath = imageUrl + state.profile.user!.imageName;
-                storyCubit.loadMyStories(state.profile.pet!.petId!);
-                storyCubit.loadFriendsStories(state.profile.pet!.petId!);
                 cubit.clearUserPosts();
                 cubit.getAllUserPosts('');
               } else {

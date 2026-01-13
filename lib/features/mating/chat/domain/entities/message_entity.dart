@@ -89,4 +89,21 @@ class MessageEntity {
       attachments: attachments ?? this.attachments,
     );
   }
+
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'description': description,
+    'image': image,
+    'video': video,
+    'audio': audio,
+    'file': file,
+    'status': status.index + 1,
+    'fromUserId': fromUserId,
+    'toUserId': toUserId,
+    'createdAt': createdAt.toIso8601String(),
+    'toMe': toMe,
+    'attachments': attachments.map((a) => a.toJson()).toList(),
+  };
+
 }

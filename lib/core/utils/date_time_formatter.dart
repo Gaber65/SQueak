@@ -5,6 +5,7 @@ import 'package:squeak/generated/l10n.dart';
 class DateTimeFormatter {
 
   static String formattedTime(DateTime dt, [String? locale]) {
+
     final loc = locale ?? Intl.getCurrentLocale();
     try {
       return DateFormat.jm(loc).format(dt);
