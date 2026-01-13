@@ -655,6 +655,8 @@
   "seeLess":"عرض أقل",
   "seeMore":"عرض المزيد",
   "close":"إغلاق",
-  "unsupported":"غير مدعوم"
+  "unsupported":"غير مدعوم",
+  "unsupportedImage":"صورة غير مدعومة",
+  "unsupportedVideo":"فيديو غير مدعوم"
   
 }

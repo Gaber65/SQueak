@@ -954,10 +954,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "unsupported": MessageLookupByLibrary.simpleMessage("Unsupported"),
         "unsupportedFileFormat":
             MessageLookupByLibrary.simpleMessage("Unsupported file format"),
+        "unsupportedImage":
+            MessageLookupByLibrary.simpleMessage("Unsupported Image"),
         "unsupportedImageFormat": MessageLookupByLibrary.simpleMessage(
             "Unsupported file type. Supported image types: JPG, JPEG, PNG, GIF"),
         "unsupportedMixedFormat": MessageLookupByLibrary.simpleMessage(
             "Unsupported file type. Supported formats:\nImage: JPG, JPEG, PNG, GIF\nVideo: MP4, WEBM, AVI, MOV"),
+        "unsupportedVideo":
+            MessageLookupByLibrary.simpleMessage("Unsupported Video"),
         "unsupportedVideoFormat":
             MessageLookupByLibrary.simpleMessage("Unsupported Video Format"),
         "unsupportedVideoFormatMessage": MessageLookupByLibrary.simpleMessage(

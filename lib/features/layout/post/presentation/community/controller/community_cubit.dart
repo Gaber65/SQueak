@@ -42,7 +42,7 @@ class CommunityCubit extends Cubit<CommunityState> {
         // تحقق من نوع الصورة
         if (fileType == 'unsupported') {
           mediaFiles.add(fileObj);
-          mediaTypes.add('unsupported');
+          mediaTypes.add('unsupported_image');
           unsupportedFiles.add(true); 
           emit(
             MediaSelectionErrorState(
@@ -57,7 +57,7 @@ class CommunityCubit extends Cubit<CommunityState> {
         if (fileSize > 10 * 1024 * 1024) {
           // 10MB
           mediaFiles.add(fileObj);
-          mediaTypes.add('oversized');
+          mediaTypes.add('unsupported_image');
           unsupportedFiles.add(true); 
           emit(
             MediaSelectionErrorState(
@@ -107,7 +107,7 @@ class CommunityCubit extends Cubit<CommunityState> {
         final videoValidation = _validateVideoExtension(videoFile);
         if (videoValidation == 'unsupported_video') {
           mediaFiles.add(File(videoFile.path));
-          mediaTypes.add('unsupported');
+          mediaTypes.add('unsupported_video');
           unsupportedFiles.add(true); 
           emit(
             MediaSelectionErrorState(
@@ -130,7 +130,7 @@ class CommunityCubit extends Cubit<CommunityState> {
         final fileSize = await File(videoFile.path).length();
         if (fileSize > 10 * 1024 * 1024) {
           mediaFiles.add(File(videoFile.path));
-          mediaTypes.add('oversized');
+          mediaTypes.add('unsupported_video');
           unsupportedFiles.add(true); 
           emit(
             MediaSelectionErrorState(

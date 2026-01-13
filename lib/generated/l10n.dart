@@ -6579,6 +6579,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Unsupported Image`
+  String get unsupportedImage {
+    return Intl.message(
+      'Unsupported Image',
+      name: 'unsupportedImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unsupported Video`
+  String get unsupportedVideo {
+    return Intl.message(
+      'Unsupported Video',
+      name: 'unsupportedVideo',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
