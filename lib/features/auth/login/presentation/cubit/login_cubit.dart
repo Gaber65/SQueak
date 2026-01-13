@@ -177,30 +177,34 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginWithFacebook() async {
-    final result = await FacebookAuth.instance.login(
-      permissions: ['email', 'public_profile'],
-    );
-    if (result.status == LoginStatus.success) {
-      final accessToken = result.accessToken!.tokenString;
+    await FacebookAuth.instance.logOut().then((value) async {
+      print('--------------------------');
+      final result = await FacebookAuth.instance.login(
+        permissions: ['email', 'public_profile'],
 
-      final resultRepo = await loginWithFacebookUseCase(
-        LoginWithFacebookPrames(
-          facebookAccessToken: accessToken,
-          isIos: Platform.isIOS,
-          isAndroid: Platform.isAndroid,
-          fbToken: await FirebaseMessaging.instance.getToken() ?? '',
-        ),
       );
+      if (result.status == LoginStatus.success) {
+        final accessToken = result.accessToken!.tokenString;
 
-      resultRepo.fold(
-        (l) => emit(LoginError(l.error)),
-        (r) => emit(LoginSuccess(r)),
-      );
-    }
+        final resultRepo = await loginWithFacebookUseCase(
+          LoginWithFacebookPrames(
+            facebookAccessToken: accessToken,
+            isIos: Platform.isIOS,
+            isAndroid: Platform.isAndroid,
+            fbToken: await FirebaseMessaging.instance.getToken() ?? '',
+          ),
+        );
+
+        resultRepo.fold(
+          (l) => emit(LoginError(l.error)),
+          (r) => emit(LoginSuccess(r)),
+        );
+      }
+    });
   }
 
   Future<void> loginWithGoogle() async {
-    GoogleSignIn().signOut().then((value) async{
+    GoogleSignIn().signOut().then((value) async {
       final googleUser =
           await GoogleSignIn(
             serverClientId: ConfigModel.serverClientIdGoogle,

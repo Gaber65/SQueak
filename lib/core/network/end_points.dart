@@ -45,7 +45,7 @@ const String allClinicEndPoint = '$version/clinics/paggination';
 const String updateClinicEndPoint = '$version/clinics/';
 const String deleteClinicEndPoint = '$version/clinics/';
 const String followClinicEndPoint = '$version/clinics/follow';
-const String myClinicsSearchEndPoint ='$version/clinics/withfollowstatus';
+const String myClinicsSearchEndPoint = '$version/clinics/withfollowstatus';
 const String followClinicByCodeEndPoint = '$version/clinics/followbycode';
 const String unfollowClinicEndPoint = '$version/clinics/unfollow';
 const String blockFollowerEndPoint = '$version/clinics/blockfollower';
@@ -181,7 +181,8 @@ const String cancelFriendshipEndPoint = '$version/petfriends/cancel';
 const String deleteFriendShipEndPoint = '$version/petfriends/delete';
 const String searchFriendsEndPoint = '$version/search/petfriends';
 const String getSentRequestsEndPoint = '$version/pet/sendrequest?MyPetId=';
-const String friendShipCountesEndPoint = '$version/general/friendship/counts?PetId=';
+const String friendShipCountesEndPoint =
+    '$version/general/friendship/counts?PetId=';
 String clearChatEndPoint(
   String conversationId, {
   bool deleteForMeOnly = true,
@@ -241,11 +242,9 @@ const String sendReplyMsgToStoryPetEndPoint = '$version/pet/reply/stories';
 const String getStoryReactionsEndPoint = '$version/mypet/react/stories/';
 const String reactToStoryEndPoint = '$version/pet/stories/react/';
 
-
 /// login with socail medai
 const String loginFacebookEndPoint = '$version/signin-facebook';
 const String loginGoogleEndPoint = '$version/signin-google';
-
 
 /// App State
 String? clintId;
