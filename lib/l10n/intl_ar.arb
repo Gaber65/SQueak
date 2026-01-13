@@ -654,6 +654,7 @@
   "addCaptionOptional":"إضافة وصف (اختياري)",
   "seeLess":"عرض أقل",
   "seeMore":"عرض المزيد",
-  "close":"إغلاق"
+  "close":"إغلاق",
+  "unsupported":"غير مدعوم"
   
 }

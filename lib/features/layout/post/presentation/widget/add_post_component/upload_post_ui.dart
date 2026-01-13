@@ -435,34 +435,40 @@ class UploadPostUI extends StatelessWidget {
             cubit.mediaFiles.length - 4,
             cubit,
             index,
+            context
           );
         }
-        return _buildMediaItem(cubit, index);
+        return _buildMediaItem(context, cubit, index);
       },
     );
   }
 
-  Widget _buildMediaItem(CommunityCubit cubit, int index) {
+  Widget _buildMediaItem(BuildContext context, CommunityCubit cubit, int index) {
     final isUploading = controller.isLoading;
     final file = cubit.mediaFiles[index];
     final type = cubit.mediaTypes[index];
+    final isUnsupported = cubit.unsupportedFiles[index];
 
     bool isSize = file.lengthSync() > 10 * 1024 * 1024;
 
-    bool isImage = type.startsWith('image'); // JPG, PNG, GIF, WebP
-    bool isVideo = type == 'video';
+    // Detect actual file type based on extension, even if unsupported
+    final actualFileType = _detectFileType(file);
+    bool isImage = type.startsWith('image') || (isUnsupported && actualFileType == 'image');
+    bool isVideo = type == 'video' || (isUnsupported && actualFileType == 'video');
 
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color:
-              isImage
-                  ? isSize
-                      ? Colors.red
-                      : Colors.transparent
-                  : Colors.transparent,
-          width: 5,
+              isUnsupported
+                  ? Colors.red
+                  : isImage
+                      ? isSize
+                          ? Colors.red
+                          : Colors.transparent
+                      : Colors.transparent,
+          width: isUnsupported ? 5 : (isSize ? 5 : 0),
         ),
       ),
       child: Stack(
@@ -518,7 +524,7 @@ class UploadPostUI extends StatelessWidget {
           ),
 
           // Badge للفيديو
-          if (isVideo)
+          if (isVideo && !isUnsupported)
             Positioned(
               bottom: 8,
               left: 8,
@@ -528,8 +534,29 @@ class UploadPostUI extends StatelessWidget {
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Text(
-                  'VIDEO',
+                child:  Text(
+                 S.of(context).video ,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+
+          if (isUnsupported)
+            Positioned(
+              bottom: 8,
+              right: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.red[600],
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child:  Text(
+                  S.of(context).unsupported,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 10,
@@ -547,10 +574,11 @@ class UploadPostUI extends StatelessWidget {
     int remainingCount,
     CommunityCubit cubit,
     int index,
+    BuildContext context,
   ) {
     return Stack(
       children: [
-        _buildMediaItem(cubit, index),
+        _buildMediaItem(context, cubit, index),
         Container(
           color: Colors.black54,
           child: Center(
@@ -575,6 +603,20 @@ class UploadPostUI extends StatelessWidget {
       height: double.infinity,
       child: VideoFileApp(video: videoFile),
     );
+  }
+
+  /// Detects file type based on extension
+  String _detectFileType(File file) {
+    final extension = file.path.toLowerCase().split('.').last;
+    final imageExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+    final videoExtensions = ['mp4', 'mov', 'avi', 'webm'];
+
+    if (imageExtensions.contains(extension)) {
+      return 'image';
+    } else if (videoExtensions.contains(extension)) {
+      return 'video';
+    }
+    return 'unknown';
   }
 
   Widget _buildMediaInfo(CommunityCubit cubit) {

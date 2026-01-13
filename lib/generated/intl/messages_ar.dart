@@ -936,6 +936,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "unknown": MessageLookupByLibrary.simpleMessage("غير معروف"),
         "unlinkQrCode":
             MessageLookupByLibrary.simpleMessage("إلغاء ربط رمز QR"),
+        "unsupported": MessageLookupByLibrary.simpleMessage("غير مدعوم"),
         "unsupportedFileFormat":
             MessageLookupByLibrary.simpleMessage("تنسيق ملف غير مدعوم"),
         "unsupportedImageFormat": MessageLookupByLibrary.simpleMessage(

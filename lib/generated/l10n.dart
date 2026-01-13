@@ -6569,6 +6569,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Unsupported`
+  String get unsupported {
+    return Intl.message(
+      'Unsupported',
+      name: 'unsupported',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
