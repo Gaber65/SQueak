@@ -660,6 +660,10 @@
   "addCaptionOptional":"Add a caption (optional)",
   "seeLess":"See Less",
   "seeMore":"See More",
-  "close":"Close"
+  "close":"Close",
+  "unsupported": "Unsupported",
+  "unsupportedImage":"Unsupported Image",
+  "unsupportedVideo":"Unsupported Video"
+
 
 }

@@ -435,34 +435,44 @@ class UploadPostUI extends StatelessWidget {
             cubit.mediaFiles.length - 4,
             cubit,
             index,
+            context,
           );
         }
-        return _buildMediaItem(cubit, index);
+        return _buildMediaItem(cubit, index, context);
       },
     );
   }
 
-  Widget _buildMediaItem(CommunityCubit cubit, int index) {
+  Widget _buildMediaItem(CommunityCubit cubit, int index ,context) {
     final isUploading = controller.isLoading;
     final file = cubit.mediaFiles[index];
     final type = cubit.mediaTypes[index];
+    final isUnsupported = cubit.unsupportedFiles[index];
 
     bool isSize = file.lengthSync() > 10 * 1024 * 1024;
 
     bool isImage = type.startsWith('image'); // JPG, PNG, GIF, WebP
     bool isVideo = type == 'video';
+    
+    // For unsupported files, check the type string
+    bool isUnsupportedImage = type == 'unsupported_image';
+    
+    // Determine if we should display as image (for unsupported files too)
+    bool shouldDisplayAsImage = isImage || isUnsupportedImage;
 
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color:
-              isImage
-                  ? isSize
-                      ? Colors.red
-                      : Colors.transparent
-                  : Colors.transparent,
-          width: 5,
+              isUnsupported
+                  ? Colors.red
+                  : isImage
+                      ? isSize
+                          ? Colors.red
+                          : Colors.transparent
+                      : Colors.transparent,
+          width: isUnsupported ? 5 : (isSize ? 5 : 0),
         ),
       ),
       child: Stack(
@@ -473,7 +483,7 @@ class UploadPostUI extends StatelessWidget {
             child: Container(
               color: Colors.grey[200],
               child:
-                  isImage
+                  shouldDisplayAsImage
                       ? Image.file(
                         file,
                         width: double.infinity,
@@ -518,7 +528,7 @@ class UploadPostUI extends StatelessWidget {
           ),
 
           // Badge للفيديو
-          if (isVideo)
+          if (isVideo && !isUnsupported)
             Positioned(
               bottom: 8,
               left: 8,
@@ -528,11 +538,33 @@ class UploadPostUI extends StatelessWidget {
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Text(
-                  'VIDEO',
+                child:  Text(
+                  S.of(context).video,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+
+          // Error badge for unsupported files
+          if (isUnsupported)
+            Positioned(
+              bottom: 8,
+              right: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.red[600],
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  isUnsupportedImage ? S.of(context).unsupportedImage : S.of(context).unsupportedVideo,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 9,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -547,10 +579,11 @@ class UploadPostUI extends StatelessWidget {
     int remainingCount,
     CommunityCubit cubit,
     int index,
+    BuildContext context,
   ) {
     return Stack(
       children: [
-        _buildMediaItem(cubit, index),
+        _buildMediaItem(cubit, index, context),
         Container(
           color: Colors.black54,
           child: Center(

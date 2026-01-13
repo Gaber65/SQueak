@@ -19,6 +19,7 @@ class CommunityCubit extends Cubit<CommunityState> {
 
   List<File> mediaFiles = [];
   List<String> mediaTypes = [];
+  List<bool> unsupportedFiles = []; 
 
   static const int maxMediaFiles = 10;
 
@@ -40,6 +41,9 @@ class CommunityCubit extends Cubit<CommunityState> {
 
         // تحقق من نوع الصورة
         if (fileType == 'unsupported') {
+          mediaFiles.add(fileObj);
+          mediaTypes.add('unsupported_image');
+          unsupportedFiles.add(true); 
           emit(
             MediaSelectionErrorState(
               '${S.of(context).supportedFormats}: JPG, JPEG, PNG, GIF',
@@ -52,6 +56,9 @@ class CommunityCubit extends Cubit<CommunityState> {
         final fileSize = await fileObj.length();
         if (fileSize > 10 * 1024 * 1024) {
           // 10MB
+          mediaFiles.add(fileObj);
+          mediaTypes.add('unsupported_image');
+          unsupportedFiles.add(true); 
           emit(
             MediaSelectionErrorState(
               'File ${file.name} is too large (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB). Max allowed: 10 MB',
@@ -63,6 +70,7 @@ class CommunityCubit extends Cubit<CommunityState> {
         // إضافة الملف المقبول
         mediaFiles.add(fileObj);
         mediaTypes.add(fileType);
+        unsupportedFiles.add(false);
       }
 
       if (mediaFiles.isNotEmpty) {
@@ -98,11 +106,15 @@ class CommunityCubit extends Cubit<CommunityState> {
         // Validate video extension
         final videoValidation = _validateVideoExtension(videoFile);
         if (videoValidation == 'unsupported_video') {
+          mediaFiles.add(File(videoFile.path));
+          mediaTypes.add('unsupported_video');
+          unsupportedFiles.add(true); 
           emit(
             MediaSelectionErrorState(
               S.of(context).unsupportedVideoFormatMessage,
             ),
           );
+          emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
           return;
         }
 
@@ -114,8 +126,24 @@ class CommunityCubit extends Cubit<CommunityState> {
           return;
         }
 
+        // Check file size
+        final fileSize = await File(videoFile.path).length();
+        if (fileSize > 10 * 1024 * 1024) {
+          mediaFiles.add(File(videoFile.path));
+          mediaTypes.add('unsupported_video');
+          unsupportedFiles.add(true); 
+          emit(
+            MediaSelectionErrorState(
+              'Video is too large (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB). Max allowed: 10 MB',
+            ),
+          );
+          emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
+          return;
+        }
+
         mediaFiles.add(File(videoFile.path));
         mediaTypes.add('video');
+        unsupportedFiles.add(false); 
         emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
       }
     } catch (e) {
@@ -238,6 +266,7 @@ class CommunityCubit extends Cubit<CommunityState> {
     if (index >= 0 && index < mediaFiles.length) {
       mediaFiles.removeAt(index);
       mediaTypes.removeAt(index);
+      unsupportedFiles.removeAt(index);
       emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
     }
   }
@@ -246,6 +275,7 @@ class CommunityCubit extends Cubit<CommunityState> {
   void clearAllMedia() {
     mediaFiles.clear();
     mediaTypes.clear();
+    unsupportedFiles.clear();
     emit(NoImageSelectedState());
   }
 

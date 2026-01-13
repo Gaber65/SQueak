@@ -936,12 +936,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "unknown": MessageLookupByLibrary.simpleMessage("غير معروف"),
         "unlinkQrCode":
             MessageLookupByLibrary.simpleMessage("إلغاء ربط رمز QR"),
+        "unsupported": MessageLookupByLibrary.simpleMessage("غير مدعوم"),
         "unsupportedFileFormat":
             MessageLookupByLibrary.simpleMessage("تنسيق ملف غير مدعوم"),
+        "unsupportedImage":
+            MessageLookupByLibrary.simpleMessage("صورة غير مدعومة"),
         "unsupportedImageFormat": MessageLookupByLibrary.simpleMessage(
             "تنسيق ملف غير مدعوم. تنسيقات الصور المدعومة: JPG, JPEG, PNG, GIF"),
         "unsupportedMixedFormat": MessageLookupByLibrary.simpleMessage(
             "تنسيق ملف غير مدعوم. التنسيقات المدعومة:\nصور: JPG, JPEG, PNG, GIF\nفيديوهات: MP4, WEBM, AVI, MOV"),
+        "unsupportedVideo":
+            MessageLookupByLibrary.simpleMessage("فيديو غير مدعوم"),
         "unsupportedVideoFormat":
             MessageLookupByLibrary.simpleMessage("صيغة فيديو غير مدعومة"),
         "unsupportedVideoFormatMessage": MessageLookupByLibrary.simpleMessage(

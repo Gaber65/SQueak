@@ -34,21 +34,13 @@ class UploadPostHelpers {
   /// Checks if file is an image based on extension
   static bool isImageFile(File file) {
     final extension = file.path.toLowerCase().split('.').last;
-    return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].contains(extension);
+    return ['jpg', 'jpeg', 'png', 'gif'].contains(extension);
   }
 
   /// Checks if file is a video based on extension
   static bool isVideoFile(File file) {
     final extension = file.path.toLowerCase().split('.').last;
-    return [
-      'mp4',
-      'mov',
-      'avi',
-      'wmv',
-      'flv',
-      'mkv',
-      'webm',
-    ].contains(extension);
+    return ['mp4', 'mov', 'avi', 'webm'].contains(extension);
   }
 
   /// Gets file type ('image' or 'video')
@@ -119,16 +111,11 @@ class UploadPostConstants {
     'jpeg',
     'png',
     'gif',
-    'bmp',
-    'webp',
   ];
   static const List<String> allowedVideoExtensions = [
     'mp4',
     'mov',
     'avi',
-    'wmv',
-    'flv',
-    'mkv',
     'webm',
   ];
 }
