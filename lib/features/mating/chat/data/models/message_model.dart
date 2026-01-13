@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 import '../../domain/entities/message_entity.dart';
 import '../../domain/entities/message_status.dart';
 
@@ -19,29 +21,8 @@ class MessageModel extends MessageEntity {
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     DateTime parsedCreatedAt;
-    final raw = json['createdAt'];
-    if (raw == null) {
-      parsedCreatedAt = DateTime.now();
-    } else {
-      try {
-        var tempDate = DateTime.parse(raw.toString());
+    parsedCreatedAt = parseBackendUtc(json['createdAt']);
 
-        if (tempDate.isUtc) {
-          parsedCreatedAt = tempDate.toLocal();
-        } else {
-          parsedCreatedAt = DateTime.parse('${raw}Z').toLocal();
-        }
-
-        if (parsedCreatedAt.year <= 1) parsedCreatedAt = DateTime.now();
-      } catch (_) {
-        try {
-          parsedCreatedAt = DateTime.parse(raw.toString()).toLocal();
-          if (parsedCreatedAt.year <= 1) parsedCreatedAt = DateTime.now();
-        } catch (_) {
-          parsedCreatedAt = DateTime.now();
-        }
-      }
-    }
 
     MessageStatus parsedStatus = MessageStatus.sent;
     if (json['messageStatus'] != null) {
@@ -136,5 +117,28 @@ class MessageModel extends MessageEntity {
       toMe: toMe ?? this.toMe,
       attachments: attachments ?? this.attachments,
     );
+  }
+}
+DateTime parseBackendUtc(dynamic raw) {
+  if (raw == null) return DateTime.now();
+
+  final value = raw.toString().trim();
+
+  try {
+    // ✅ ISO 8601 UTC
+    if (value.contains('T') && value.endsWith('Z')) {
+      return DateTime.parse(value).toLocal();
+    }
+
+    // ✅ US format لكن UTC (من الباك إند)
+    final usUtcFormat = DateFormat(
+      'M/d/yyyy h:mm:ss a',
+      'en_US',
+    );
+
+    final utcTime = usUtcFormat.parse(value, true);
+    return utcTime.toLocal();
+  } catch (_) {
+    return DateTime.now();
   }
 }

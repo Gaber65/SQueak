@@ -56,6 +56,8 @@ class StoryRemoteDataSourceImpl implements StoryRemoteDataSource {
     try {
       final result = await DioFinalHelper.getData(
         method: "$myActiveStoriesEndPoint?PetId=$petId",
+        language: true,
+
       );
       return (result.data['data']['result'] as List)
           .map((e) => StoryModel.fromJson(e))
@@ -72,6 +74,8 @@ class StoryRemoteDataSourceImpl implements StoryRemoteDataSource {
     try {
       final result = await DioFinalHelper.getData(
         method: "$friendsStoriesEndPoint?PetId=$petId",
+        language: true,
+
       );
       return (result.data['data']['result'] as List)
           .map((e) => FrindStoryModel.fromJson(e))
