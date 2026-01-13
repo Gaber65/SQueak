@@ -281,17 +281,17 @@ class StoryReactionsView extends StatelessWidget {
                             ),
                           ),
 
-                        // Time Text
-                        Text(
-                          '• ${_formatTime(reaction.reactedAt)}',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color:
-                                isCurrentUser
-                                    ? Colors.blue[600]
-                                    : Colors.grey[600],
-                          ),
-                        ),
+                        // // Time Text
+                        // Text(
+                        //   '• ${_formatTime(reaction.reactedAt)}',
+                        //   style: TextStyle(
+                        //     fontSize: 13,
+                        //     color:
+                        //         isCurrentUser
+                        //             ? Colors.blue[600]
+                        //             : Colors.grey[600],
+                        //   ),
+                        // ),
                       ],
                     ),
                   ],
@@ -337,6 +337,7 @@ class StoryReactionsView extends StatelessWidget {
   }
 
   String _formatTime(DateTime time) {
+    print(time);
     final now = DateTime.now();
     final difference = now.difference(time);
 
