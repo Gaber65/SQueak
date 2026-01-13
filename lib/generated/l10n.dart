@@ -6609,6 +6609,66 @@ class S {
       args: [],
     );
   }
+
+  /// `Allowed image Size is 10 MB`
+  String get allowedImageSize {
+    return Intl.message(
+      'Allowed image Size is 10 MB',
+      name: 'allowedImageSize',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// ` MB`
+  String get megaByte {
+    return Intl.message(
+      ' MB',
+      name: 'megaByte',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// ` is too large`
+  String get isTooLarge {
+    return Intl.message(
+      ' is too large',
+      name: 'isTooLarge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allowed Max Size Is Reached`
+  String get allowedMaxSize {
+    return Intl.message(
+      'Allowed Max Size Is Reached',
+      name: 'allowedMaxSize',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Video is too large`
+  String get videoIsTooLarge {
+    return Intl.message(
+      'Video is too large',
+      name: 'videoIsTooLarge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Allowed video Size is 100 MB`
+  String get allowedVideoSize {
+    return Intl.message(
+      'Allowed video Size is 100 MB',
+      name: 'allowedVideoSize',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

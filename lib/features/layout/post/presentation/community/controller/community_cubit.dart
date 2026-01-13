@@ -31,7 +31,7 @@ class CommunityCubit extends Cubit<CommunityState> {
       if (pickedFiles.isEmpty) return;
 
       if (mediaFiles.length + pickedFiles.length > maxMediaFiles) {
-        emit(MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'));
+        emit(MediaSelectionErrorState(S.of(context).allowedMaxSize));
         return;
       }
 
@@ -61,7 +61,7 @@ class CommunityCubit extends Cubit<CommunityState> {
           unsupportedFiles.add(true); 
           emit(
             MediaSelectionErrorState(
-              'File ${file.name} is too large (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB). Max allowed: 10 MB',
+              '${file.name} ${S.of(context).isTooLarge} (${(fileSize / 1024 / 1024).toStringAsFixed(2)} ${S.of(context).megaByte}).${S.of(context).allowedImageSize}',
             ),
           );
           continue;
@@ -121,7 +121,7 @@ class CommunityCubit extends Cubit<CommunityState> {
         // Check if adding this file would exceed the limit
         if (mediaFiles.length >= maxMediaFiles) {
           emit(
-            MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'),
+            MediaSelectionErrorState(S.of(context).allowedMaxSize),
           );
           return;
         }
@@ -134,7 +134,7 @@ class CommunityCubit extends Cubit<CommunityState> {
           unsupportedFiles.add(true); 
           emit(
             MediaSelectionErrorState(
-              'Video is too large (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB). Max allowed: 10 MB',
+              '${S.of(context).videoIsTooLarge}(${(fileSize / 1024 / 1024).toStringAsFixed(2)} ${S.of(context).megaByte}).${S.of(context).allowedVideoSize}',
             ),
           );
           emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
@@ -159,7 +159,7 @@ class CommunityCubit extends Cubit<CommunityState> {
       if (files.isNotEmpty) {
         if (mediaFiles.length + files.length > maxMediaFiles) {
           emit(
-            MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'),
+            MediaSelectionErrorState(S.of(context).allowedMaxSize),
           );
           return 'Maximum $maxMediaFiles files allowed';
         }
@@ -171,7 +171,7 @@ class CommunityCubit extends Cubit<CommunityState> {
           if (fileType == 'unsupported') {
             emit(
               MediaSelectionErrorState(
-                'Unsupported file type: ${file.name}. Supported formats:\nImage: JPG, JPEG, PNG, GIF\nVideo: MP4, WEBM, AVI, MOV',
+                '${S.of(context).unsupportedFileFormat} ${file.name}.${S.of(context).unsupportedMixedFormat}',
               ),
             );
             continue;
@@ -195,7 +195,7 @@ class CommunityCubit extends Cubit<CommunityState> {
           if (fileSize > maxSizeInBytes) {
             emit(
               MediaSelectionErrorState(
-                'File ${file.name} exceeds the 10 MB limit',
+               S.of(context).fileTooLarge,
               ),
             );
             continue;

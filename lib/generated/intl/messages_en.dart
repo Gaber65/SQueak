@@ -124,6 +124,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("All Appointments"),
         "all_required_complete": MessageLookupByLibrary.simpleMessage(
             "All required fields are complete!"),
+        "allowedImageSize":
+            MessageLookupByLibrary.simpleMessage("Allowed image Size is 10 MB"),
+        "allowedMaxSize":
+            MessageLookupByLibrary.simpleMessage("Allowed Max Size Is Reached"),
+        "allowedVideoSize": MessageLookupByLibrary.simpleMessage(
+            "Allowed video Size is 100 MB"),
         "alreadyHaveAccount":
             MessageLookupByLibrary.simpleMessage("Already have account?"),
         "appointmentButtonBooking":
@@ -544,6 +550,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Please select a video file with one of these formats: MP4, WEBM, AVI, MOV"),
         "inviteFriends": MessageLookupByLibrary.simpleMessage("Invite friends"),
         "invoiceNo": MessageLookupByLibrary.simpleMessage("Invoice No"),
+        "isTooLarge": MessageLookupByLibrary.simpleMessage(" is too large"),
         "itemName": MessageLookupByLibrary.simpleMessage("Item Name"),
         "justNow": MessageLookupByLibrary.simpleMessage("just now"),
         "labelPost":
@@ -615,6 +622,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Max Files size is 25 MB"),
         "maybe_later": MessageLookupByLibrary.simpleMessage("Maybe Later"),
         "mediaFiles": MessageLookupByLibrary.simpleMessage("Media Files"),
+        "megaByte": MessageLookupByLibrary.simpleMessage(" MB"),
         "mergePets": MessageLookupByLibrary.simpleMessage("Merge"),
         "message_hint":
             MessageLookupByLibrary.simpleMessage("Enter your message"),
@@ -1001,6 +1009,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "version": MessageLookupByLibrary.simpleMessage("Version"),
         "versionNumber": MessageLookupByLibrary.simpleMessage("Version"),
         "video": MessageLookupByLibrary.simpleMessage("Video"),
+        "videoIsTooLarge":
+            MessageLookupByLibrary.simpleMessage("Video is too large"),
         "videoLoadingFailed":
             MessageLookupByLibrary.simpleMessage("Failed to load video."),
         "videoPickerNotImplemented": MessageLookupByLibrary.simpleMessage(

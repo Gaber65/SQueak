@@ -115,6 +115,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("جميع مواعيدك"),
         "all_required_complete": MessageLookupByLibrary.simpleMessage(
             "جميع الحقول المطلوبة مكتملة!"),
+        "allowedImageSize": MessageLookupByLibrary.simpleMessage(
+            "الحجم المسموح به للصورة هو 10 ميجابايت"),
+        "allowedMaxSize": MessageLookupByLibrary.simpleMessage(
+            "تم بلوغ الحد الأقصى لحجم الملفات"),
+        "allowedVideoSize": MessageLookupByLibrary.simpleMessage(
+            "الحجم المسموح به للفيديو هو 100 ميجابايت"),
         "alreadyHaveAccount":
             MessageLookupByLibrary.simpleMessage("هل لديك حساب بالفعل؟"),
         "appointmentButtonBooking":
@@ -529,6 +535,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "يرجى تحديد ملف فيديو بإحدى هذه الصيغ: MP4, WEBM, AVI, MOV"),
         "inviteFriends": MessageLookupByLibrary.simpleMessage("دعوة الأصدقاء"),
         "invoiceNo": MessageLookupByLibrary.simpleMessage("رمز الفاتورة"),
+        "isTooLarge": MessageLookupByLibrary.simpleMessage("كبير جدًا"),
         "itemName": MessageLookupByLibrary.simpleMessage("اسم الصنف"),
         "justNow": MessageLookupByLibrary.simpleMessage("الآن"),
         "labelPost": MessageLookupByLibrary.simpleMessage("بما تفكر؟"),
@@ -985,6 +992,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "version": MessageLookupByLibrary.simpleMessage("الإصدار"),
         "versionNumber": MessageLookupByLibrary.simpleMessage("الإصدار"),
         "video": MessageLookupByLibrary.simpleMessage("فيديو"),
+        "videoIsTooLarge":
+            MessageLookupByLibrary.simpleMessage("حجم الفيديو كبير جدًا"),
         "videoLoadingFailed":
             MessageLookupByLibrary.simpleMessage("فشل تحميل الفيديو"),
         "videoPickerNotImplemented": MessageLookupByLibrary.simpleMessage(
