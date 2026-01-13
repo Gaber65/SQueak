@@ -217,6 +217,7 @@ class CommunityCubit extends Cubit<CommunityState> {
           }
           mediaFiles.add(File(file.path));
           mediaTypes.add(fileType);
+          unsupportedFiles.add(false);
         }
 
         if (mediaFiles.isNotEmpty) {
