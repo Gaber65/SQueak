@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:squeak/core/service/global_function/format_utils.dart';
-import 'package:squeak/core/service/global_widget/image_detail.dart';
-import 'package:intl/intl.dart';
 import 'package:squeak/core/network/end_points.dart';
+import 'package:squeak/core/service/global_widget/image_detail.dart';
 import 'package:squeak/generated/l10n.dart';
+
 import '../../../react/domain/repo/base_react_repo.dart';
 import '../../../react/presentation/animated_reaction/reaction_data.dart';
 import '../../domain/entities/story_reaction_entity.dart';
@@ -336,27 +335,4 @@ class StoryReactionsView extends StatelessWidget {
     );
   }
 
-  String _formatTime(DateTime time) {
-    print(time);
-    final now = DateTime.now();
-    final difference = now.difference(time);
-
-    if (difference.inMinutes < 1) {
-      return isArabic() ? 'الآن' : 'Just now';
-    } else if (difference.inHours < 1) {
-      return isArabic()
-          ? 'منذ  ${difference.inMinutes} دقيقه '
-          : '${difference.inMinutes}m ago';
-    } else if (difference.inDays < 1) {
-      return isArabic()
-          ? ' منذ ${difference.inHours}  ساعة'
-          : '${difference.inHours}h ago';
-    } else if (difference.inDays < 7) {
-      return isArabic()
-          ? 'منذ ${difference.inDays}  يوم'
-          : '${difference.inDays}d ago';
-    } else {
-      return DateFormat('MMM d').format(time);
-    }
-  }
 }
