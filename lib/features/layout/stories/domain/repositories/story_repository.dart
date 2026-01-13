@@ -39,7 +39,7 @@ class CreateStoryParams {
   Map<String, dynamic> toJson() => {
     'image': image,
     'petId': petId,
-    'dateTimeInUTC': dateTimeInUTC.toIso8601String(),
+    'dateTimeInUTC': DateTime.now().toUtc().toIso8601String(),
   };
 }
 

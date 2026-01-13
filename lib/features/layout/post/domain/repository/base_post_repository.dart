@@ -44,7 +44,7 @@ class CreatePostParams {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-
+      'dateTimeInUTC': DateTime.now().toUtc().toIso8601String(),
       'title': title,
       'content': content,
       'postSocailMedias': postSocailMedias,

@@ -289,7 +289,7 @@ String formatAge(dynamic birthDate, {bool isUser = false}) {
 String formatCustomTimePost(String createdAt) {
   try {
     final backendFormat = DateFormat(
-      'dd/MM/yy HH:mm:ss',
+      'M/d/yyyy h:mm:ss a',
       'en_US',
     );
 
@@ -298,7 +298,6 @@ String formatCustomTimePost(String createdAt) {
 
     final now = DateTime.now();
     final difference = now.difference(localTime);
-
     if (difference.inSeconds < 60) {
       return isArabic() ? 'الآن' : 'Just now';
     } else if (difference.inMinutes < 60) {

@@ -61,7 +61,8 @@ dependencies:
   permission_handler: ^11.3.1
   phone_text_field: ^0.0.7
   printing: ^5.13.3
-  qr_code_scanner: ^1.0.1
+
+  qr_code_scanner_plus: ^2.0.14
   qr_flutter: ^4.1.0
   quickalert: ^1.1.0
   record: ^6.0.0
