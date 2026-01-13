@@ -178,7 +178,7 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> loginWithFacebook() async {
     await FacebookAuth.instance.logOut().then((value) async {
-      print('--------------------------');
+      
       final result = await FacebookAuth.instance.login(
         permissions: ['email', 'public_profile'],
 
