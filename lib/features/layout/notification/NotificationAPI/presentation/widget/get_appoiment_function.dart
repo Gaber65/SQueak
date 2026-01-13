@@ -145,6 +145,7 @@ Future<void> getStroy({
   required BuildContext context,
 }) async {
   try {
+    print(deleteStoryEndPoint + id);
     final response = await DioFinalHelper.getData(
       method: deleteStoryEndPoint + id,
       language: true,

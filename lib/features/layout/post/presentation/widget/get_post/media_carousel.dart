@@ -198,6 +198,7 @@ class _MediaItemState extends State<_MediaItem> {
     );
   }
 
+
   Widget _videoThumbnailFromUrl() {
     return FutureBuilder<File?>(
       future: _thumbnailFuture,

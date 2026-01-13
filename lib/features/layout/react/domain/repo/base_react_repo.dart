@@ -23,6 +23,7 @@ class ReactParams {
   Map<String, dynamic> toJson() {
     return {
       'postId': postId,
+      'dateTimeInUTC': DateTime.now().toUtc().toIso8601String(),
       'petId': petId!.isEmpty ? null : petId,
       'reactType': reactType,
     };

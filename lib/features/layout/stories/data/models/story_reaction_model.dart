@@ -26,10 +26,8 @@ class StoryReactionModel extends StoryReactionEntity {
       userImage: json['userImage'],
       petName: json['petname'], // note lowercase
       petImage: json['petImage'],
-      reactedAt: DateTime.parse(
-        json['reactedAt'] ?? DateTime.now().toIso8601String(),
-      ),
-      viewAt: json['viewAt'] != null ? DateTime.parse(json['viewAt']) : null,
+      reactedAt : DateTime.now(),
+      viewAt: DateTime.now(),
     );
   }
 

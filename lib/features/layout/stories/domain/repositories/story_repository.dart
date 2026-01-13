@@ -55,6 +55,7 @@ class ReactToStoryParams {
   });
 
   Map<String, dynamic> toJson() => {
+    'dateTimeInUTC': DateTime.now().toUtc().toIso8601String(),
     'userStoryId': userStoryId,
     'reactType': reactType,
     'petId': petId,
