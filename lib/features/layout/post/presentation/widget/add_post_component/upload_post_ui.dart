@@ -112,18 +112,20 @@ class UploadPostUI extends StatelessWidget {
             builder: (context, value, _) {
               final bool hasContent =
                   value.text.trim().isNotEmpty || cubit.mediaFiles.isNotEmpty;
+              final bool hasUnsupportedFiles =
+                  cubit.unsupportedFiles.contains(true);
 
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 child: TextButton(
                   onPressed:
-                      hasContent && !isLoading
+                      hasContent && !isLoading && !hasUnsupportedFiles
                           ? () => controller.handlePostSubmit(context, cubit)
                           : null,
                   style: TextButton.styleFrom(
                     backgroundColor:
-                        hasContent && !isLoading
+                        hasContent && !isLoading && !hasUnsupportedFiles
                             ? ColorManager.primaryColor
                             : Colors.grey[300],
                     foregroundColor: Colors.white,
@@ -135,7 +137,7 @@ class UploadPostUI extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
                     ),
-                    elevation: hasContent && !isLoading ? 2 : 0,
+                    elevation: hasContent && !isLoading && !hasUnsupportedFiles ? 2 : 0,
                     shadowColor: ColorManager.primaryColor.withOpacity(0.3),
                   ),
                   child: Row(
