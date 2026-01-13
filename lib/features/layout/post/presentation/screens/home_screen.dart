@@ -9,6 +9,8 @@ import '../../../../pets/domain/entities/pet_entity.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_cubit.dart';
 import '../../../../profile_switch/Presentation/cubit/switch_profile_state.dart';
 import '../../../stories/presentation/controllers/story_cubit.dart';
+import '../../../stories/presentation/pages/stroy_page.dart';
+import '../widget/add_post_form.dart';
 import '../widget/build_search_box.dart';
 import '../widget/loading_posts.dart';
 
@@ -102,7 +104,13 @@ class HomeScreen extends StatelessWidget {
     }
 
     if (cubit.userPosts.isEmpty) {
-      return buildSearchBox(cubit);
+      return Column(
+        children: [
+          buildWhatsonyourmindSanjay(context, petId),
+          StoryPage(imagePath: imagePath, petID: petId),
+          buildSearchBox(cubit),
+        ],
+      );
     }
 
     return buildNotificationListenerUserPosts(
