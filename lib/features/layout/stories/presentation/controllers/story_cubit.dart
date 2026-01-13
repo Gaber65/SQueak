@@ -45,7 +45,7 @@ class StoryCubit extends Cubit<StoryState> {
     emit(state.copyWith(status: StoryStatus.creating));
 
     final result = await createStoryUseCase(
-      CreateStoryParams(image: image, petId: petId),
+      CreateStoryParams(image: image, petId: petId, dateTimeInUTC: DateTime.now().toUtc()),
     );
 
     result.fold(

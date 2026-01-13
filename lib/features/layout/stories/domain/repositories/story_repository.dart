@@ -28,10 +28,19 @@ abstract class StoryRepository {
 class CreateStoryParams {
   final String image; // base64 or path
   final String petId;
+  final DateTime dateTimeInUTC;
 
-  CreateStoryParams({required this.image, required this.petId});
+  CreateStoryParams({
+    required this.image,
+    required this.petId,
+    required this.dateTimeInUTC,
+  });
 
-  Map<String, dynamic> toJson() => {'image': image, 'petId': petId};
+  Map<String, dynamic> toJson() => {
+    'image': image,
+    'petId': petId,
+    'dateTimeInUTC': dateTimeInUTC.toIso8601String(),
+  };
 }
 
 class ReactToStoryParams {

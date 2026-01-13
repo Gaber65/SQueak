@@ -4,7 +4,6 @@ class StoryEntity {
   final String? image;
   final String? video;
   final String description;
-  final String issueDate;
   final String expireDate;
   final String createdAt;
   final String petName;
@@ -21,7 +20,6 @@ class StoryEntity {
     required this.createdAt,
     required this.myReactType,
     required this.description,
-    required this.issueDate,
     required this.expireDate,
     required this.petName,
     required this.petImage,
@@ -34,7 +32,6 @@ class StoryEntity {
     String? image,
     String? video,
     String? description,
-    String? issueDate,
     String? expireDate,
     String? petName,
     String? petImage,
@@ -48,7 +45,6 @@ class StoryEntity {
       image: image ?? this.image,
       video: video ?? this.video,
       description: description ?? this.description,
-      issueDate: issueDate ?? this.issueDate,
       expireDate: expireDate ?? this.expireDate,
       petName: petName ?? this.petName,
       petImage: petImage ?? this.petImage,
