@@ -622,6 +622,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Max Files size is 25 MB"),
         "maybe_later": MessageLookupByLibrary.simpleMessage("Maybe Later"),
         "mediaFiles": MessageLookupByLibrary.simpleMessage("Media Files"),
+        "mediaFilesSelected":
+            MessageLookupByLibrary.simpleMessage(" media files selected"),
         "megaByte": MessageLookupByLibrary.simpleMessage(" MB"),
         "mergePets": MessageLookupByLibrary.simpleMessage("Merge"),
         "message_hint":

@@ -97,12 +97,34 @@ class CommunityCubit extends Cubit<CommunityState> {
   // Pick multiple videos
   Future<void> pickMultipleVideos({required ImageSource source, required BuildContext context}) async {
     try {
-      final XFile? videoFile = await picker.pickVideo(
-        source: source,
-        maxDuration: const Duration(minutes: 5),
-      );
+      final List<XFile> pickedFiles = await picker.pickMultipleMedia();
 
-      if (videoFile != null) {
+      if (pickedFiles.isEmpty) return;
+
+      // Filter for video files only
+      final videoFiles = pickedFiles.where((file) {
+        final extension = file.path.split('.').last.toLowerCase();
+        return ['mp4', 'mov', 'avi', 'webm'].contains(extension);
+      }).toList();
+
+      if (videoFiles.isEmpty) {
+        emit(
+          MediaSelectionErrorState(
+            S.of(context).unsupportedVideoFormatMessage,
+          ),
+        );
+        return;
+      }
+
+      // Check if adding these files would exceed the limit
+      if (mediaFiles.length + videoFiles.length > maxMediaFiles) {
+        emit(
+          MediaSelectionErrorState(S.of(context).allowedMaxSize),
+        );
+        return;
+      }
+
+      for (var videoFile in videoFiles) {
         // Validate video extension
         final videoValidation = _validateVideoExtension(videoFile);
         if (videoValidation == 'unsupported_video') {
@@ -114,16 +136,7 @@ class CommunityCubit extends Cubit<CommunityState> {
               S.of(context).unsupportedVideoFormatMessage,
             ),
           );
-          emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
-          return;
-        }
-
-        // Check if adding this file would exceed the limit
-        if (mediaFiles.length >= maxMediaFiles) {
-          emit(
-            MediaSelectionErrorState(S.of(context).allowedMaxSize),
-          );
-          return;
+          continue;
         }
 
         // Check file size
@@ -137,13 +150,15 @@ class CommunityCubit extends Cubit<CommunityState> {
               '${S.of(context).videoIsTooLarge}(${(fileSize / 1024 / 1024).toStringAsFixed(2)} ${S.of(context).megaByte}).${S.of(context).allowedVideoSize}',
             ),
           );
-          emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
-          return;
+          continue;
         }
 
         mediaFiles.add(File(videoFile.path));
         mediaTypes.add('video');
-        unsupportedFiles.add(false); 
+        unsupportedFiles.add(false);
+      }
+
+      if (mediaFiles.isNotEmpty) {
         emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
       }
     } catch (e) {

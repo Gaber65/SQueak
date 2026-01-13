@@ -664,6 +664,7 @@
   "isTooLarge": "كبير جدًا",
   "allowedMaxSize":"تم بلوغ الحد الأقصى لحجم الملفات",
   "videoIsTooLarge": "حجم الفيديو كبير جدًا",
-  "allowedVideoSize":"الحجم المسموح به للفيديو هو 100 ميجابايت"
+  "allowedVideoSize":"الحجم المسموح به للفيديو هو 100 ميجابايت",
+  "mediaFilesSelected": "ملفات مختارة"
   
 }

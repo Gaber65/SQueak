@@ -670,7 +670,8 @@
   "isTooLarge":" is too large",
   "allowedMaxSize":"Allowed Max Size Is Reached",
   "videoIsTooLarge":"Video is too large",
-  "allowedVideoSize":"Allowed video Size is 100 MB"
+  "allowedVideoSize":"Allowed video Size is 100 MB",
+  "mediaFilesSelected": " media files selected"
 
 
 }

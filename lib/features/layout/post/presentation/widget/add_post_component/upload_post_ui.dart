@@ -212,7 +212,7 @@ class UploadPostUI extends StatelessWidget {
                 _buildTextInputSection(context, cubit),
                 if (cubit.mediaFiles.isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  _buildMediaPreview(cubit),
+                  _buildMediaPreview(context, cubit),
                 ],
                 const SizedBox(height: 100),
               ],
@@ -397,7 +397,7 @@ class UploadPostUI extends StatelessWidget {
     );
   }
 
-  Widget _buildMediaPreview(CommunityCubit cubit) {
+  Widget _buildMediaPreview(BuildContext context, CommunityCubit cubit) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -414,7 +414,7 @@ class UploadPostUI extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: Column(
-          children: [_buildMediaGrid(cubit), _buildMediaInfo(cubit)],
+          children: [_buildMediaGrid(cubit), _buildMediaInfo(cubit, context)],
         ),
       ),
     );
@@ -628,7 +628,7 @@ class UploadPostUI extends StatelessWidget {
     );
   }
 
-  Widget _buildMediaInfo(CommunityCubit cubit) {
+  Widget _buildMediaInfo(CommunityCubit cubit,context) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -640,7 +640,7 @@ class UploadPostUI extends StatelessWidget {
           Icon(Icons.photo_library, color: Colors.grey[600], size: 18),
           const SizedBox(width: 8),
           Text(
-            '${cubit.mediaFiles.length} media files selected',
+            '${cubit.mediaFiles.length} ${S.of(context).mediaFilesSelected}',
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 14,

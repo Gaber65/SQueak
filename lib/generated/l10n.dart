@@ -6669,6 +6669,16 @@ class S {
       args: [],
     );
   }
+
+  /// ` media files selected`
+  String get mediaFilesSelected {
+    return Intl.message(
+      ' media files selected',
+      name: 'mediaFilesSelected',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
