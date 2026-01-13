@@ -663,7 +663,8 @@
   "close":"Close",
   "unsupported": "Unsupported",
   "unsupportedImage":"Unsupported Image",
-  "unsupportedVideo":"Unsupported Video"
+  "unsupportedVideo":"Unsupported Video",
+  "mediaFiles":"Media Files"
 
 
 }

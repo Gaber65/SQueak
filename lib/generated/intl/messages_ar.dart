@@ -599,6 +599,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "maxFileSize": MessageLookupByLibrary.simpleMessage(
             "الحد الأقصى لحجم الملف هو 25 ميجابايت"),
         "maybe_later": MessageLookupByLibrary.simpleMessage("ربما لاحقًا"),
+        "mediaFiles": MessageLookupByLibrary.simpleMessage("ملفات "),
         "mergePets": MessageLookupByLibrary.simpleMessage("دمج"),
         "message_hint": MessageLookupByLibrary.simpleMessage("أدخل رسالتك"),
         "message_validation":

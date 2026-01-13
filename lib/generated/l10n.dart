@@ -6599,6 +6599,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Media Files`
+  String get mediaFiles {
+    return Intl.message(
+      'Media Files',
+      name: 'mediaFiles',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
