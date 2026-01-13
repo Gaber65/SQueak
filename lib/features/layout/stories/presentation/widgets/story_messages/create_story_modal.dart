@@ -260,6 +260,7 @@ class _CreateStoryModalState extends State<CreateStoryModal> {
                                     await cubit.createStory(
                                       petId: widget.petId,
                                       image: MainCubit.get(context).modelImage!.data,
+                                      dateTimeInUTC: DateTime.now(),
                                     );
                                   } catch (e) {
                                     if (!mounted) return;

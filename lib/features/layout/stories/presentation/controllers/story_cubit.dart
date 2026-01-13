@@ -41,11 +41,12 @@ class StoryCubit extends Cubit<StoryState> {
   Future<void> createStory({
     required String image,
     required String petId,
+    required DateTime dateTimeInUTC
   }) async {
     emit(state.copyWith(status: StoryStatus.creating));
 
     final result = await createStoryUseCase(
-      CreateStoryParams(image: image, petId: petId, dateTimeInUTC: DateTime.now().toUtc()),
+      CreateStoryParams(image: image, petId: petId, dateTimeInUTC: dateTimeInUTC),
     );
 
     result.fold(

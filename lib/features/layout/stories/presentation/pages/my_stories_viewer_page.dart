@@ -314,7 +314,7 @@ class _MyStoriesViewerPageState extends State<MyStoriesViewerPage>
                               ),
                             ),
                             Text(
-                              formatFacebookTimePost(
+                              formatCustomTimePost(
                                 currentStory.createdAt.toString(),
                               ),
                               style: const TextStyle(

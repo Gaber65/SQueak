@@ -284,3 +284,45 @@ String formatAge(dynamic birthDate, {bool isUser = false}) {
     return isArabic() ? "تاريخ غير صالح" : "Invalid date";
   }
 }
+
+
+String formatCustomTimePost(String createdAt) {
+  try {
+    final backendFormat = DateFormat(
+      'dd/MM/yy HH:mm:ss',
+      'en_US',
+    );
+
+    final utcTime = backendFormat.parse(createdAt, true);
+    final localTime = utcTime.toLocal();
+
+    final now = DateTime.now();
+    final difference = now.difference(localTime);
+
+    if (difference.inSeconds < 60) {
+      return isArabic() ? 'الآن' : 'Just now';
+    } else if (difference.inMinutes < 60) {
+      return isArabic()
+          ? 'منذ ${difference.inMinutes} دقيقة'
+          : '${difference.inMinutes} minutes ago';
+    } else if (difference.inHours < 24) {
+      return isArabic()
+          ? 'منذ ${difference.inHours} ساعة'
+          : '${difference.inHours} hours ago';
+    } else if (difference.inDays == 1) {
+      return isArabic()
+          ? 'أمس في ${DateFormat('h:mm a', 'ar').format(localTime)}'
+          : 'Yesterday at ${DateFormat('h:mm a').format(localTime)}';
+    } else if (difference.inDays < 7) {
+      return isArabic()
+          ? '${DateFormat('EEEE', 'ar').format(localTime)} في ${DateFormat('h:mm a', 'ar').format(localTime)}'
+          : DateFormat('EEEE \'at\' h:mm a').format(localTime);
+    } else {
+      return isArabic()
+          ? '${DateFormat('dd MMM yyyy', 'ar').format(localTime)} في ${DateFormat('h:mm a', 'ar').format(localTime)}'
+          : DateFormat('dd MMM yyyy \'at\' h:mm a').format(localTime);
+    }
+  } catch (e) {
+    return 'Invalid date';
+  }
+}

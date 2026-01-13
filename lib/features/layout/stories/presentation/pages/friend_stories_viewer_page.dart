@@ -383,7 +383,7 @@ class _FriendStoriesViewerPageState extends State<FriendStoriesViewerPage>
                         ),
                       ),
                       Text(
-                        formatFacebookTimePost(
+                        formatCustomTimePost(
                           currentStory.createdAt.toString(),
                         ),
                         style: const TextStyle(
