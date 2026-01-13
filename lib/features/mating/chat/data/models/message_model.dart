@@ -67,6 +67,7 @@ class MessageModel extends MessageEntity {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,
