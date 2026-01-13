@@ -378,7 +378,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
         'ToPetId': toPetId,
         'FromPetId': fromPetId,
         'Description': description,
-        'DateTimeInUTC': dateTimeInUTC.toIso8601String(),
+        'DateTimeInUTC': DateTime.now().toUtc().toIso8601String(),
         if (clinicId != null) 'ClinicId': clinicId,
         if (attachments != null && attachments.isNotEmpty)
           'attachments': attachments.map((att) => att.toJson()).toList(),
