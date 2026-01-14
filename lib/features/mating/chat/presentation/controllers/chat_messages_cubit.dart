@@ -13,6 +13,10 @@ import '../../domain/usecases/clear_conversation_use_case.dart';
 import '../../domain/usecases/parameters.dart';
 import '../../domain/usecases/rate_mating_use_case.dart';
 import 'chat_messages_state.dart';
+import 'chat_messages/message_status_manager.dart';
+import 'chat_messages/message_loader.dart';
+import 'chat_messages/message_operations.dart';
+import 'chat_messages/event_subscriber.dart';
 
 class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   final GetMessagesUseCase getMessagesUseCase;
@@ -30,55 +34,39 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
     required this.blockChatUseCase,
     required this.renameChatUseCase,
     required this.rateMatingUseCase,
-  }) : super(ChatMessagesInitial());
-
-  // Track message status per message id using MessageStatus enum
-  final Map<String, MessageStatus> messageStatuses = {};
-
-  // StreamController for real-time status updates (for StreamBuilder in UI)
-  final StreamController<Map<String, MessageStatus>> _statusStreamController =
-      StreamController<Map<String, MessageStatus>>.broadcast();
-
-  /// Stream of message statuses for UI to listen via StreamBuilder
-  Stream<Map<String, MessageStatus>> get messageStatusStream =>
-      _statusStreamController.stream;
-
-  /// Get numeric weight for message status to allow comparison
-  int _getStatusWeight(MessageStatus status) {
-    switch (status) {
-      case MessageStatus.sent:
-        return 1;
-      case MessageStatus.delivered:
-        return 2;
-      case MessageStatus.seen:
-        return 3;
-    }
+  }) : super(ChatMessagesInitial()) {
+    // Initialize extracted components
+    _messageLoader = MessageLoader(getMessagesUseCase: getMessagesUseCase);
+    _statusManager = MessageStatusManager();
+    _operations = MessageOperations(
+      statusManager: _statusManager,
+      messagesList: messagesList,
+    );
+    _eventSubscriber = EventSubscriber(
+      statusStreamController: _statusManager._statusStreamController,
+      statusManager: _statusManager,
+      operations: _operations,
+      messagesList: messagesList,
+    );
   }
 
-  /// Helper to update status and notify stream listeners
-  /// تحديث حالة الرسالة وإبلاغ المستمعين
-  void _updateMessageStatus(String messageId, MessageStatus status) {
-    final oldStatus = messageStatuses[messageId];
+  // Extracted components
+  late final MessageLoader _messageLoader;
+  late final MessageStatusManager _statusManager;
+  late final MessageOperations _operations;
+  late final EventSubscriber _eventSubscriber;
 
-    // Prevent regression (e.g. Delivered -> Sent)
-    // منع التراجع في الحالة (مثلاً من تم التوصيل -> تم الإرسال)
-    if (oldStatus != null) {
-      final oldWeight = _getStatusWeight(oldStatus);
-      final newWeight = _getStatusWeight(status);
-
-      if (newWeight < oldWeight) {
-        return;
-      }
-    }
-
-    messageStatuses[messageId] = status;
-    _statusStreamController.add(Map.from(messageStatuses));
-  }
+  // Backward compatibility - expose properties
+  List<MessageEntity> get messagesList => _messageLoader.messagesList;
+  bool get isLoadingMore => _messageLoader.isLoadingMore;
+  bool get hasMoreMessages => _messageLoader.hasMoreMessages;
+  
+  Map<String, MessageStatus> get messageStatuses => _statusManager.messageStatuses;
+  Map<String, String> get deliveryStatuses => _statusManager.deliveryStatuses;
+  Stream<Map<String, MessageStatus>> get messageStatusStream => _statusManager.messageStatusStream;
 
   // Legacy field - keeping for backwards compatibility
-  final Map<String, String> deliveryStatuses = {};
-
-  StreamSubscription? _conversationEventSubscription;
+  bool isOtherUserTyping = false;
 
   void _subscribeConversationEvents() {
     _conversationEventSubscription?.cancel();
@@ -291,77 +279,22 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   bool isLoadingMore = false;
 
   void addReceivedMessage(MessageEntity message, String senderID) {
-    final id = message.id;
-    if (id != null && id.isNotEmpty) {
-      final existsById = messagesList.any((m) => m.id == id);
-      if (existsById) {
-        return;
-      }
-    }
-
-    // Try to match and replace local optimistic messages (ids like 'local_*')
-    final matchIndex = messagesList.indexWhere((m) {
-      final sameSender = m.fromUserId == message.fromUserId;
-      final sameText = m.description == message.description;
-      final timeDiff = (message.createdAt.difference(m.createdAt).inSeconds).abs();
-      final isLocal = m.id != null && m.id!.startsWith('local_');
-      return sameSender && sameText && (isLocal || timeDiff <= 60);
-    });
-
-    if (matchIndex >= 0) {
-      messagesList[matchIndex] = message;
-    } else {
-      messagesList.add(message);
-    }
-
+    _operations.addReceivedMessage(message);
     emit(ChatMessagesLoaded(List.from(messagesList)));
   }
 
   void addOutgoingMessage(MessageEntity message) {
-    final id = message.id;
-    if (id != null && id.isNotEmpty) {
-      deliveryStatuses[id] = 'one';
-      _updateMessageStatus(id, MessageStatus.sent);
-    }
-
-    // Ensure messagesList is a List<MessageEntity> at runtime to avoid
-    // runtime type checks when inserting MessageEntity into a list
-    messagesList = List<MessageEntity>.from(messagesList);
-    messagesList.add(message);
+    _operations.addOutgoingMessage(message);
     emit(ChatMessagesLoaded(List.from(messagesList)));
   }
 
   void markOutgoingMessagesAsRead() {
-    for (var i = 0; i < messagesList.length; i++) {
-      final m = messagesList[i];
-      if (!m.toMe) {
-        messagesList[i] = messagesList[i].copyWith(status: MessageStatus.seen);
-        if (m.id != null && m.id!.isNotEmpty) {
-          deliveryStatuses[m.id!] = 'two_colored';
-          _updateMessageStatus(m.id!, MessageStatus.seen);
-        }
-      }
-    }
+    _operations.markOutgoingMessagesAsRead();
     emit(ChatMessagesLoaded(List.from(messagesList)));
   }
 
   void markSentMessagesAsDelivered() {
-    bool hasChanges = false;
-
-    for (var i = 0; i < messagesList.length; i++) {
-      final m = messagesList[i];
-      if (!m.toMe && m.status == MessageStatus.sent) {
-        messagesList[i] = messagesList[i].copyWith(
-          status: MessageStatus.delivered,
-        );
-        if (m.id != null && m.id!.isNotEmpty) {
-          deliveryStatuses[m.id!] = 'two_grey';
-          _updateMessageStatus(m.id!, MessageStatus.delivered);
-          hasChanges = true;
-        }
-      }
-    }
-
+    final hasChanges = _operations.markSentMessagesAsDelivered();
     if (hasChanges) {
       emit(ChatMessagesLoaded(List.from(messagesList)));
     }
@@ -513,7 +446,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       },
       (isSuccess) {
         if (isSuccess) {
-          messagesList.clear();
+          _messageLoader.clearMessages();
           emit(ClearChatSuccess());
         } else {
           emit(ClearChatError('Failed to clear chat'));
@@ -533,7 +466,7 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
       },
       (isSuccess) {
         if (isSuccess) {
-          messagesList.removeWhere((msg) => msg.id == parameters.messageId);
+          _operations.deleteMessage(parameters.messageId);
           emit(DeleteMessageSuccess());
         } else {
           emit(DeleteMessageError('Failed to delete message'));
@@ -545,13 +478,11 @@ class ChatMessagesCubit extends Cubit<ChatMessagesState> {
   @override
   Future<void> close() async {
     try {
-      await _conversationEventSubscription?.cancel();
-      await _statusStreamController.close();
+      _eventSubscriber.dispose();
+      _statusManager.dispose();
       try {
         await signalRService.disconnect();
       } catch (e) {}
-      deliveryStatuses.clear();
-      messageStatuses.clear();
     } catch (_) {}
     return super.close();
   }

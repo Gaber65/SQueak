@@ -8,43 +8,15 @@ import 'package:squeak/features/mating/chat/data/models/message_model.dart';
 import '../../../../../core/service/signalr/signalr_general_service.dart';
 import '../widgets/attach_files_in_chat/attachment_options_bottom_sheet.dart';
 import 'chat_app_state.dart';
+import 'chat_app/attachment_payload.dart';
+import 'chat_app/typing_manager.dart';
+import 'chat_app/conversation_manager.dart';
+import 'chat_app/message_sender.dart';
 
-class AttachmentPayload {
-  final String url;
-  final String? description;
-  final AttachmentType type;
-  final int? attachmentPlaceholder;
+// Re-export AttachmentPayload for backward compatibility
+export 'chat_app/attachment_payload.dart';
 
-  AttachmentPayload({
-    required this.url,
-    required this.type,
-    this.description,
-    this.attachmentPlaceholder,
-  });
-
-  Map<String, dynamic> toJson() => {
-    'url': url,
-    'type': _getAttachmentTypeValue(type),
-    if (description != null) 'description': description,
-    if (attachmentPlaceholder != null) 'attachmentPlaceholder': attachmentPlaceholder,
-  };
-
-  
-  int _getAttachmentTypeValue(AttachmentType type) {
-    switch (type) {
-      case AttachmentType.image:
-        return 0; 
-      case AttachmentType.video:
-        return 1; 
-      case AttachmentType.file:
-        return 2; 
-      case AttachmentType.audio:
-        return 3; 
-    }
-  }
-}
-
-class ChatAppCubit extends Cubit<ChatAppState> {
+class ChatAppCubit extends Emit<ChatAppState> {
   final String petId;
   final String fullName;
   final String image;
@@ -57,12 +29,6 @@ class ChatAppCubit extends Cubit<ChatAppState> {
   StreamSubscription? _onlineStatusSubscription;
   Timer? _pollingTimer;
 
-  final StreamController<Map<String, bool>> _typingIndicatorsController =
-      StreamController<Map<String, bool>>.broadcast();
-
-  Stream<Map<String, bool>> get typingIndicatorsStream =>
-      _typingIndicatorsController.stream;
-
   final StreamController<Map<String, int>> _unreadCountsController =
       StreamController<Map<String, int>>.broadcast();
 
@@ -70,9 +36,11 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       _unreadCountsController.stream;
 
   Map<String, int> unreadCounts = {};
-  Map<String, bool> typingIndicators = {};
-  String? currentConversationId;
-  String? currentUserId;
+  
+  // Extracted components
+  late final TypingManager _typingManager;
+  late final ConversationManager _conversationManager;
+  late final MessageSender _messageSender;
 
   static ChatAppCubit get(context) => BlocProvider.of(context);
 
@@ -80,7 +48,11 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     required this.petId,
     required this.fullName,
     required this.image,
-  }) : super(ChatAppInitial());
+  }) : super(ChatAppInitial()) {
+    _typingManager = TypingManager();
+    _conversationManager = ConversationManager(conversationHub: conversationHub);
+    _messageSender = MessageSender(conversationHub: conversationHub);
+  }
 
   Future<void> initialize() async {
     emit(ChatAppLoading());
@@ -167,8 +139,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
       final fromPetId = (data['FromPetId'] ?? data['fromPetId']) as String?;
 
       if (friendPetId != null && friendPetId.isNotEmpty) {
-        typingIndicators[friendPetId] = isTyping;
-        _typingIndicatorsController.add(Map.from(typingIndicators));
+        _typingManager.updateTypingStatus(friendPetId, isTyping);
 
         emit(FriendTypingInGeneral(friendPetId, isTyping, fromPetId ?? ''));
       }
@@ -245,11 +216,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
   Future<void> joinConversation(String conversationId) async {
     try {
       emit(JoiningConversation(conversationId));
-      currentConversationId = conversationId;
-      await conversationHub.connect(
-        conversationId: conversationId,
-        petId: petId,
-      );
+      await _conversationManager.joinConversation(conversationId, petId);
       _setupConversationListeners();
       _listenToConversationEvents();
       final unreadIds = await conversationHub.getUnreadMessageIds(
@@ -362,36 +329,16 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     required DateTime dateTimeInUTC,
   }) async {
     try {
-      // 📨 Start message sending process
-      debugPrint('📨 [SendMessage] Starting message send process...');
-      debugPrint('   • ConversationId: $conversationId');
-      debugPrint('   • ToPetId: $toPetId');
-      debugPrint('   • FromPetId: $fromPetId');
-      debugPrint('   • Message: "${description.isEmpty ? '(empty)' : description}"');
-      debugPrint('   • AttachmentCount: ${attachments?.length ?? 0}');
-      debugPrint('   • DateTimeInUTC: $dateTimeInUTC');
-
-      // 📦 Build command payload
-      debugPrint('📦 [Payload] Building command payload...');
-      final command = {
-        'ConversationId': conversationId,
-        'ToPetId': toPetId,
-        'FromPetId': fromPetId,
-        'Description': description,
-        'DateTimeInUTC': DateTime.now().toUtc().toIso8601String(),
-        if (clinicId != null) 'ClinicId': clinicId,
-        if (attachments != null && attachments.isNotEmpty)
-          'attachments': attachments.map((att) => att.toJson()).toList(),
-      };
-
-      debugPrint('📤 [Hub] Sending via SignalR...');
-      await conversationHub.sendMessageToUser(command);
-      
-      debugPrint('✅ [Success] Message sent successfully!');
-      debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-      
+      await _messageSender.sendMessage(
+        conversationId: conversationId,
+        toPetId: toPetId,
+        fromPetId: fromPetId,
+        description: description,
+        clinicId: clinicId,
+        attachments: attachments,
+        dateTimeInUTC: dateTimeInUTC,
+      );
     } catch (e) {
-      debugPrint('❌ [Error] Failed to send message: $e');
       emit(ChatAppError('Failed to send message: $e'));
     }
   }
@@ -458,11 +405,8 @@ class ChatAppCubit extends Cubit<ChatAppState> {
 
   Future<void> leaveConversation() async {
     try {
-      await conversationHub.disconnect();
+      await _conversationManager.leaveConversation();
       await _loadInitialData();
-
-      currentConversationId = null;
-      currentUserId = null;
 
       emit(ConversationLeft());
 
@@ -487,7 +431,7 @@ class ChatAppCubit extends Cubit<ChatAppState> {
     await _generalEventSubscription?.cancel();
     await _conversationEventSubscription?.cancel();
     await _onlineStatusSubscription?.cancel();
-    await _typingIndicatorsController.close();
+    _typingManager.dispose();
     await _unreadCountsController.close();
     await generalHub.disconnect();
     await conversationHub.disconnect();
