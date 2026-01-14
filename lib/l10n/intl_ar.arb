@@ -657,6 +657,14 @@
   "close":"إغلاق",
   "unsupported":"غير مدعوم",
   "unsupportedImage":"صورة غير مدعومة",
-  "unsupportedVideo":"فيديو غير مدعوم"
+  "unsupportedVideo":"فيديو غير مدعوم",
+  "mediaFiles": "ملفات ",
+  "allowedImageSize": "الحجم المسموح به للصورة هو 10 ميجابايت",
+  "megaBytes": "ميجابايت",
+  "isTooLarge": "كبير جدًا",
+  "allowedMaxSize":"تم بلوغ الحد الأقصى لحجم الملفات",
+  "videoIsTooLarge": "حجم الفيديو كبير جدًا",
+  "allowedVideoSize":"الحجم المسموح به للفيديو هو 100 ميجابايت",
+  "mediaFilesSelected": "ملفات مختارة"
   
 }

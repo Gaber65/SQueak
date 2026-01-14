@@ -31,7 +31,7 @@ class CommunityCubit extends Cubit<CommunityState> {
       if (pickedFiles.isEmpty) return;
 
       if (mediaFiles.length + pickedFiles.length > maxMediaFiles) {
-        emit(MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'));
+        emit(MediaSelectionErrorState(S.of(context).allowedMaxSize));
         return;
       }
 
@@ -61,7 +61,7 @@ class CommunityCubit extends Cubit<CommunityState> {
           unsupportedFiles.add(true); 
           emit(
             MediaSelectionErrorState(
-              'File ${file.name} is too large (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB). Max allowed: 10 MB',
+              '${file.name} ${S.of(context).isTooLarge} (${(fileSize / 1024 / 1024).toStringAsFixed(2)} ${S.of(context).megaByte}).${S.of(context).allowedImageSize}',
             ),
           );
           continue;
@@ -97,12 +97,34 @@ class CommunityCubit extends Cubit<CommunityState> {
   // Pick multiple videos
   Future<void> pickMultipleVideos({required ImageSource source, required BuildContext context}) async {
     try {
-      final XFile? videoFile = await picker.pickVideo(
-        source: source,
-        maxDuration: const Duration(minutes: 5),
-      );
+      final List<XFile> pickedFiles = await picker.pickMultipleMedia();
 
-      if (videoFile != null) {
+      if (pickedFiles.isEmpty) return;
+
+      // Filter for video files only
+      final videoFiles = pickedFiles.where((file) {
+        final extension = file.path.split('.').last.toLowerCase();
+        return ['mp4', 'mov', 'avi', 'webm'].contains(extension);
+      }).toList();
+
+      if (videoFiles.isEmpty) {
+        emit(
+          MediaSelectionErrorState(
+            S.of(context).unsupportedVideoFormatMessage,
+          ),
+        );
+        return;
+      }
+
+      // Check if adding these files would exceed the limit
+      if (mediaFiles.length + videoFiles.length > maxMediaFiles) {
+        emit(
+          MediaSelectionErrorState(S.of(context).allowedMaxSize),
+        );
+        return;
+      }
+
+      for (var videoFile in videoFiles) {
         // Validate video extension
         final videoValidation = _validateVideoExtension(videoFile);
         if (videoValidation == 'unsupported_video') {
@@ -114,16 +136,7 @@ class CommunityCubit extends Cubit<CommunityState> {
               S.of(context).unsupportedVideoFormatMessage,
             ),
           );
-          emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
-          return;
-        }
-
-        // Check if adding this file would exceed the limit
-        if (mediaFiles.length >= maxMediaFiles) {
-          emit(
-            MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'),
-          );
-          return;
+          continue;
         }
 
         // Check file size
@@ -134,16 +147,18 @@ class CommunityCubit extends Cubit<CommunityState> {
           unsupportedFiles.add(true); 
           emit(
             MediaSelectionErrorState(
-              'Video is too large (${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB). Max allowed: 10 MB',
+              '${S.of(context).videoIsTooLarge}(${(fileSize / 1024 / 1024).toStringAsFixed(2)} ${S.of(context).megaByte}).${S.of(context).allowedVideoSize}',
             ),
           );
-          emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
-          return;
+          continue;
         }
 
         mediaFiles.add(File(videoFile.path));
         mediaTypes.add('video');
-        unsupportedFiles.add(false); 
+        unsupportedFiles.add(false);
+      }
+
+      if (mediaFiles.isNotEmpty) {
         emit(MultiMediaSelectedState(mediaFiles, mediaTypes));
       }
     } catch (e) {
@@ -159,7 +174,7 @@ class CommunityCubit extends Cubit<CommunityState> {
       if (files.isNotEmpty) {
         if (mediaFiles.length + files.length > maxMediaFiles) {
           emit(
-            MediaSelectionErrorState('Maximum $maxMediaFiles files allowed'),
+            MediaSelectionErrorState(S.of(context).allowedMaxSize),
           );
           return 'Maximum $maxMediaFiles files allowed';
         }
@@ -171,7 +186,7 @@ class CommunityCubit extends Cubit<CommunityState> {
           if (fileType == 'unsupported') {
             emit(
               MediaSelectionErrorState(
-                'Unsupported file type: ${file.name}. Supported formats:\nImage: JPG, JPEG, PNG, GIF\nVideo: MP4, WEBM, AVI, MOV',
+                '${S.of(context).unsupportedFileFormat} ${file.name}.${S.of(context).unsupportedMixedFormat}',
               ),
             );
             continue;
@@ -195,13 +210,14 @@ class CommunityCubit extends Cubit<CommunityState> {
           if (fileSize > maxSizeInBytes) {
             emit(
               MediaSelectionErrorState(
-                'File ${file.name} exceeds the 10 MB limit',
+               S.of(context).fileTooLarge,
               ),
             );
             continue;
           }
           mediaFiles.add(File(file.path));
           mediaTypes.add(fileType);
+          unsupportedFiles.add(false);
         }
 
         if (mediaFiles.isNotEmpty) {

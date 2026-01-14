@@ -287,7 +287,6 @@ String formatAge(dynamic birthDate, {bool isUser = false}) {
 
 
 String formatCustomTimePost(String createdAt) {
-  print(createdAt);
   try {
     final backendFormat = DateFormat(
       'M/d/yyyy h:mm:ss a',

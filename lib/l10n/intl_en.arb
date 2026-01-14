@@ -663,7 +663,15 @@
   "close":"Close",
   "unsupported": "Unsupported",
   "unsupportedImage":"Unsupported Image",
-  "unsupportedVideo":"Unsupported Video"
+  "unsupportedVideo":"Unsupported Video",
+  "mediaFiles":"Media Files",
+  "allowedImageSize":"Allowed image Size is 10 MB",
+  "megaByte":" MB",
+  "isTooLarge":" is too large",
+  "allowedMaxSize":"Allowed Max Size Is Reached",
+  "videoIsTooLarge":"Video is too large",
+  "allowedVideoSize":"Allowed video Size is 100 MB",
+  "mediaFilesSelected": " media files selected"
 
 
 }

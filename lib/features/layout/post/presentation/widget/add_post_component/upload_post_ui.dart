@@ -112,18 +112,20 @@ class UploadPostUI extends StatelessWidget {
             builder: (context, value, _) {
               final bool hasContent =
                   value.text.trim().isNotEmpty || cubit.mediaFiles.isNotEmpty;
+              final bool hasUnsupportedFiles =
+                  cubit.unsupportedFiles.contains(true);
 
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 child: TextButton(
                   onPressed:
-                      hasContent && !isLoading
+                      hasContent && !isLoading && !hasUnsupportedFiles
                           ? () => controller.handlePostSubmit(context, cubit)
                           : null,
                   style: TextButton.styleFrom(
                     backgroundColor:
-                        hasContent && !isLoading
+                        hasContent && !isLoading && !hasUnsupportedFiles
                             ? ColorManager.primaryColor
                             : Colors.grey[300],
                     foregroundColor: Colors.white,
@@ -135,7 +137,7 @@ class UploadPostUI extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
                     ),
-                    elevation: hasContent && !isLoading ? 2 : 0,
+                    elevation: hasContent && !isLoading && !hasUnsupportedFiles ? 2 : 0,
                     shadowColor: ColorManager.primaryColor.withOpacity(0.3),
                   ),
                   child: Row(
@@ -210,7 +212,7 @@ class UploadPostUI extends StatelessWidget {
                 _buildTextInputSection(context, cubit),
                 if (cubit.mediaFiles.isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  _buildMediaPreview(cubit),
+                  _buildMediaPreview(context, cubit),
                 ],
                 const SizedBox(height: 100),
               ],
@@ -395,7 +397,7 @@ class UploadPostUI extends StatelessWidget {
     );
   }
 
-  Widget _buildMediaPreview(CommunityCubit cubit) {
+  Widget _buildMediaPreview(BuildContext context, CommunityCubit cubit) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -412,7 +414,7 @@ class UploadPostUI extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: Column(
-          children: [_buildMediaGrid(cubit), _buildMediaInfo(cubit)],
+          children: [_buildMediaGrid(cubit), _buildMediaInfo(cubit, context)],
         ),
       ),
     );
@@ -442,6 +444,19 @@ class UploadPostUI extends StatelessWidget {
       },
     );
   }
+
+  void _showAllMediaDialog(BuildContext context, CommunityCubit cubit) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BlocProvider.value(
+          value: cubit,
+          child: _MediaViewerPage(),
+        ),
+      ),
+    );
+  }
+
 
   Widget _buildMediaItem(CommunityCubit cubit, int index ,context) {
     final isUploading = controller.isLoading;
@@ -581,23 +596,26 @@ class UploadPostUI extends StatelessWidget {
     int index,
     BuildContext context,
   ) {
-    return Stack(
-      children: [
-        _buildMediaItem(cubit, index, context),
-        Container(
-          color: Colors.black54,
-          child: Center(
-            child: Text(
-              '+$remainingCount',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () => _showAllMediaDialog(context, cubit),
+      child: Stack(
+        children: [
+          _buildMediaItem(cubit, index, context),
+          Container(
+            color: Colors.black54,
+            child: Center(
+              child: Text(
+                '+$remainingCount',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -610,7 +628,7 @@ class UploadPostUI extends StatelessWidget {
     );
   }
 
-  Widget _buildMediaInfo(CommunityCubit cubit) {
+  Widget _buildMediaInfo(CommunityCubit cubit,context) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -622,7 +640,7 @@ class UploadPostUI extends StatelessWidget {
           Icon(Icons.photo_library, color: Colors.grey[600], size: 18),
           const SizedBox(width: 8),
           Text(
-            '${cubit.mediaFiles.length} media files selected',
+            '${cubit.mediaFiles.length} ${S.of(context).mediaFilesSelected}',
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 14,
@@ -792,6 +810,176 @@ class UploadPostUI extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _MediaViewerPage extends StatelessWidget {
+  const _MediaViewerPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<CommunityCubit, CommunityState>(
+      listener: (context, state) {
+        final cubit = context.read<CommunityCubit>();
+        if (cubit.mediaFiles.isEmpty) {
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.grey,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: BlocBuilder<CommunityCubit, CommunityState>(
+            builder: (context, state) {
+              final cubit = context.read<CommunityCubit>();
+              return Text(
+                '${cubit.mediaFiles.length} ${S.of(context).mediaFiles}',
+                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+              );
+            },
+          ),
+          centerTitle: true,
+        ),
+        body: BlocBuilder<CommunityCubit, CommunityState>(
+          builder: (context, state) {
+            final cubit = context.read<CommunityCubit>();
+            return GridView.builder(
+              padding: const EdgeInsets.all(8),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+              ),
+              itemCount: cubit.mediaFiles.length,
+              itemBuilder: (context, index) {
+                return _buildMediaItemInDialog(cubit, index, context);
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMediaItemInDialog(CommunityCubit cubit, int index, BuildContext context) {
+    final file = cubit.mediaFiles[index];
+    final type = cubit.mediaTypes[index];
+    final isUnsupported = cubit.unsupportedFiles[index];
+
+    bool isSize = file.lengthSync() > 10 * 1024 * 1024;
+    bool isImage = type.startsWith('image');
+    bool isVideo = type == 'video';
+    bool isUnsupportedImage = type == 'unsupported_image';
+    bool shouldDisplayAsImage = isImage || isUnsupportedImage;
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: isUnsupported
+              ? Colors.red
+              : isImage
+                  ? isSize
+                      ? Colors.red
+                      : Colors.transparent
+                  : Colors.transparent,
+          width: isUnsupported ? 3 : (isSize ? 3 : 0),
+        ),
+      ),
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              color: Colors.grey[200],
+              child: shouldDisplayAsImage
+                  ? Image.file(
+                      file,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return _buildVideoThumbnail(file);
+                      },
+                    )
+                  : _buildVideoThumbnail(file),
+            ),
+          ),
+          // Remove button
+          Positioned(
+            top: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap: () => cubit.removeMedia(index),
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: const BoxDecoration(
+                  color: Colors.black54,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.close, color: Colors.white, size: 18),
+              ),
+            ),
+          ),
+          // Badge للفيديو
+          if (isVideo && !isUnsupported)
+            Positioned(
+              bottom: 8,
+              left: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  S.of(context).video,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          // Error badge for unsupported files
+          if (isUnsupported)
+            Positioned(
+              bottom: 8,
+              right: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.red[600],
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  isUnsupportedImage ? S.of(context).unsupportedImage : S.of(context).unsupportedVideo,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVideoThumbnail(File videoFile) {
+    return Container(
+      color: Colors.black,
+      width: double.infinity,
+      height: double.infinity,
+      child: VideoFileApp(video: videoFile),
     );
   }
 }

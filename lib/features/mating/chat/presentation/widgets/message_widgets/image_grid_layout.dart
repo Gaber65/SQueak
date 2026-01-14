@@ -18,6 +18,8 @@ class ImageGridLayout extends StatefulWidget {
 class _ImageGridLayoutState extends State<ImageGridLayout> {
   final Map<String, Uint8List?> _thumbnailCache = {};
 
+  final double spacing = 4.0;
+
   @override
   Widget build(BuildContext context) {
     if (widget.imageAttachments.isEmpty) {
@@ -25,7 +27,12 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
     }
 
     return Container(
+      padding: const EdgeInsets.all(4),
       margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: _buildImageGrid(context),
     );
   }
@@ -62,8 +69,8 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
           width: 115,
           height: 170,
           borderRadius: 16,
-          margin: const EdgeInsets.only(right: 4),
         ),
+        SizedBox(width: spacing), 
         _buildMediaItem(
           context,
           widget.imageAttachments[1],
@@ -71,7 +78,6 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
           width: 115,
           height: 170,
           borderRadius: 16,
-          margin: const EdgeInsets.only(left: 4),
         ),
       ],
     );
@@ -81,18 +87,18 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        _buildMediaItem(
+          context,
+          widget.imageAttachments[0],
+          index: 0,
+          width: 230 + spacing, 
+          height: 110,
+          borderRadius: 14,
+        ),
+        SizedBox(height: spacing), 
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildMediaItem(
-              context,
-              widget.imageAttachments[0],
-              index: 0,
-              width: 234,
-              height: 85,
-              borderRadius: 14,
-              margin: const EdgeInsets.only(bottom: 4),
-            ),
             _buildMediaItem(
               context,
               widget.imageAttachments[1],
@@ -100,18 +106,17 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
               width: 115,
               height: 85,
               borderRadius: 14,
-              margin: const EdgeInsets.only(left: 4, bottom: 4),
+            ),
+            SizedBox(width: spacing), 
+            _buildMediaItem(
+              context,
+              widget.imageAttachments[2],
+              index: 2,
+              width: 115,
+              height: 85,
+              borderRadius: 14,
             ),
           ],
-        ),
-        _buildMediaItem(
-          context,
-          widget.imageAttachments[1],
-          index: 2,
-          width: 234,
-          height: 85,
-          borderRadius: 14,
-          margin: const EdgeInsets.only(top: 4),
         ),
       ],
     );
@@ -133,8 +138,8 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
               width: 115,
               height: 85,
               borderRadius: 14,
-              margin: const EdgeInsets.only(right: 4, bottom: 4),
             ),
+            SizedBox(width: spacing),
             _buildMediaItem(
               context,
               widget.imageAttachments[1],
@@ -142,10 +147,10 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
               width: 115,
               height: 85,
               borderRadius: 14,
-              margin: const EdgeInsets.only(left: 4, bottom: 4),
             ),
           ],
         ),
+        SizedBox(height: spacing),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -156,9 +161,8 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
               width: 115,
               height: 85,
               borderRadius: 14,
-              margin: const EdgeInsets.only(right: 4, top: 4),
             ),
-            
+            SizedBox(width: spacing),
             _buildMediaItem(
               context,
               widget.imageAttachments[3],
@@ -166,8 +170,8 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
               width: 115,
               height: 85,
               borderRadius: 14,
-              margin: const EdgeInsets.only(left: 4, top: 4),
-              remainingCount: isMoreThan4 ? widget.imageAttachments.length - 4 : null,
+              remainingCount:
+                  isMoreThan4 ? widget.imageAttachments.length - 4 : null,
             ),
           ],
         ),
@@ -175,7 +179,6 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
     );
   }
 
-  /// Unified method to build any media item (image or video)
   Widget _buildMediaItem(
     BuildContext context,
     Attachment attachment, {
@@ -183,14 +186,13 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
     required double width,
     required double height,
     required double borderRadius,
-    EdgeInsets margin = EdgeInsets.zero,
     int? remainingCount,
   }) {
     final isVideo = attachment.attachmentType == 1;
-    final heroTag = 'media_${attachment.url}_${DateTime.now().millisecondsSinceEpoch}_$index';
+    final heroTag =
+        'media_${attachment.url}_${DateTime.now().millisecondsSinceEpoch}_$index';
 
     return Container(
-      margin: margin,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
@@ -217,15 +219,12 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    // Base media content
                     _buildBaseMediaContent(
                       attachment.url,
                       isVideo,
                       width,
                       height,
                     ),
-                    
-                    // Overlays
                     if (isVideo || remainingCount != null)
                       _buildMediaOverlay(
                         isVideo,
@@ -243,7 +242,9 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
     );
   }
 
-  /// Build the base content (image or video background)
+ 
+
+ 
   Widget _buildBaseMediaContent(
     String url,
     bool isVideo,
@@ -272,7 +273,6 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
         },
       );
     }
-
     return SafeFastCachedImageExtension.safe(
       url: imageUrl + url,
       width: width,
@@ -281,33 +281,26 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
     );
   }
 
-  /// Generate thumbnail for video with caching
   Future<Uint8List?> _generateVideoThumbnail(
     String videoUrl_,
     double width,
     double height,
   ) async {
     try {
-      // Check cache first
       if (_thumbnailCache.containsKey(videoUrl_)) {
         return _thumbnailCache[videoUrl_];
       }
-
-      // Generate thumbnail
       final uint8list = await VideoThumbnail.thumbnailData(
         video: videoUrl_,
         imageFormat: ImageFormat.PNG,
         maxWidth: width.toInt(),
         maxHeight: height.toInt(),
         quality: 85,
-        timeMs: 0, // First frame
+        timeMs: 0,
       );
-
       if (uint8list != null) {
         _thumbnailCache[videoUrl_] = uint8list;
-        debugPrint('✅ [GridVideoThumbnail] Generated for ${videoUrl_.split('/').last}');
       }
-
       return uint8list;
     } catch (e) {
       debugPrint('❌ [GridVideoThumbnail] Error: $e');
@@ -315,7 +308,6 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
     }
   }
 
-  /// Build overlay for video play button or remaining count
   Widget _buildMediaOverlay(
     bool isVideo,
     int? remainingCount,
@@ -336,14 +328,14 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
         ),
       ),
       child: Center(
-        child: remainingCount != null && !isVideo
-            ? _buildCounterBadge(remainingCount)
-            : _buildPlayButton(),
+        child:
+            remainingCount != null && !isVideo
+                ? _buildCounterBadge(remainingCount)
+                : _buildPlayButton(),
       ),
     );
   }
 
-  /// Build play button for videos
   Widget _buildPlayButton() {
     return Container(
       padding: const EdgeInsets.all(10),
@@ -359,20 +351,13 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
     );
   }
 
-  /// Build counter badge for remaining images
   Widget _buildCounterBadge(int count) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.7),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
       ),
       child: Text(
         '+$count',
@@ -386,30 +371,31 @@ class _ImageGridLayoutState extends State<ImageGridLayout> {
     );
   }
 
-  /// Open full screen media viewer
   void _openMediaViewer(BuildContext context, int index, bool isVideo) {
     final mediaUrlsList =
         widget.imageAttachments.map((att) => imageUrl + att.url).toList();
     final captionList =
         widget.imageAttachments.map((att) => att.description).toList();
-    final typesList = widget.imageAttachments
-        .map(
-          (att) =>
-              att.attachmentType == 0 ? MediaType.image : MediaType.video,
-        )
-        .toList();
+    final typesList =
+        widget.imageAttachments
+            .map(
+              (att) =>
+                  att.attachmentType == 0 ? MediaType.image : MediaType.video,
+            )
+            .toList();
 
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => FullScreenMediaViewer(
-          mediaUrl: imageUrl + widget.imageAttachments[index].url,
-          mediaUrls: mediaUrlsList,
-          mediaType: isVideo ? MediaType.video : MediaType.image,
-          caption: widget.imageAttachments[index].description,
-          captions: captionList,
-          mediaTypes: typesList,
-          initialIndex: index,
-        ),
+        builder:
+            (context) => FullScreenMediaViewer(
+              mediaUrl: imageUrl + widget.imageAttachments[index].url,
+              mediaUrls: mediaUrlsList,
+              mediaType: isVideo ? MediaType.video : MediaType.image,
+              caption: widget.imageAttachments[index].description,
+              captions: captionList,
+              mediaTypes: typesList,
+              initialIndex: index,
+            ),
       ),
     );
   }
